@@ -29,6 +29,20 @@ All of the following must hold:
 3. The card and owner unit do not claim `sufficient` before promotion.
 4. The card, owner unit and source plan agree on the same pattern and source binding.
 
+## Per-dimension source binding
+
+A supported dimension may carry a `binding` with:
+
+- `source_id`;
+- `ledger_record`;
+- `section` from the ledger's read scope;
+- an exact `quote` from the source representation;
+- the ledger `revision` hash.
+
+A `sufficient` entry, or any entry with a promotion record, must bind every supported
+dimension. A binding whose section was not read or whose revision does not match the
+ledger is a validator failure.
+
 ## Independent review
 
 A sufficient promotion requires an independent external AI review under

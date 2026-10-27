@@ -7580,7 +7580,14 @@
         "mechanism": {
           "state": "supported",
           "quote": "Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative.",
-          "reason": "MinimumCD describes duplicate processing and result comparison against the incumbent path."
+          "reason": "MinimumCD describes duplicate processing and result comparison against the incumbent path.",
+          "binding": {
+            "source_id": "src.minimumcd-parallel-run",
+            "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
+            "section": "What is a parallel run?",
+            "quote": "A parallel run executes the old and new code paths against the same production input, but only returns the old result to the caller.",
+            "revision": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832"
+          }
         },
         "invariant": {
           "state": "partial",
@@ -7590,7 +7597,14 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a silent divergence or a duplicate effect; halt promotion, reconcile the difference and keep the old authority until the cause is understood.",
-          "reason": "MinimumCD names divergence and duplicate effects and requires containment before promotion."
+          "reason": "MinimumCD names divergence and duplicate effects and requires containment before promotion.",
+          "binding": {
+            "source_id": "src.minimumcd-parallel-run",
+            "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
+            "section": "Key pitfalls",
+            "quote": "The candidate’s failures must never affect the response.",
+            "revision": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832"
+          }
         },
         "alternative": {
           "state": "partial",
@@ -7640,7 +7654,14 @@
         "mechanism": {
           "state": "supported",
           "quote": "Dark launching calls new or changed back-end behavior from existing user requests without showing the result, so the new path does real work under production load.",
-          "reason": "Fowler defines hidden invocation of new behavior from real user requests."
+          "reason": "Fowler defines hidden invocation of new behavior from real user requests.",
+          "binding": {
+            "source_id": "src.fowler-dark-launching",
+            "ledger_record": "read.fowler-dark-launching.2026-10-26",
+            "section": "Dark Launching",
+            "quote": "Dark launching a feature means taking a new or changed back-end behavior and calling it from existing users without the users being able to tell it's being called.",
+            "revision": "3e39819c496dd5b8ee803eb43688992aa16814b9e9cd751214cf23c64c6a31bb"
+          }
         },
         "invariant": {
           "state": "partial",
@@ -7655,7 +7676,14 @@
         "alternative": {
           "state": "supported",
           "quote": "A canary, feature flag or environment switch that receives a small real share is the alternative when shadow traffic cannot be made side-effect free.",
-          "reason": "Fowler names feature-flag rollback and canary release as user-visible alternatives."
+          "reason": "Fowler names feature-flag rollback and canary release as user-visible alternatives.",
+          "binding": {
+            "source_id": "src.fowler-dark-launching",
+            "ledger_record": "read.fowler-dark-launching.2026-10-26",
+            "section": "Dark Launching",
+            "quote": "To test something that depends on a user's choice, Canary Release is the way to go.",
+            "revision": "3e39819c496dd5b8ee803eb43688992aa16814b9e9cd751214cf23c64c6a31bb"
+          }
         }
       },
       "decision_evidence": {
@@ -7817,12 +7845,26 @@
         "mechanism": {
           "state": "supported",
           "quote": "Federated identity accepts an identity asserted by an external issuer through a configured trust relationship, such as a signed token exchange.",
-          "reason": "RFC 9700 defines token issuer and audience validation for federated assertions."
+          "reason": "RFC 9700 defines token issuer and audience validation for federated assertions.",
+          "binding": {
+            "source_id": "src.openid-federation",
+            "ledger_record": "read.openid-federation.2026-10-26",
+            "section": "3. Entity Statement",
+            "quote": "An Entity Statement is a signed JWT. The subject of the JWT is the Entity itself. The issuer of the JWT is the party that issued the Entity Statement.",
+            "revision": "4a71afdfbed5755d6704d6a089f450f10aa9914204b283eae5fadee2897d1911"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The receiver must validate the issuer, audience, signature, expiry and intended use before accepting any claim from the federation.",
-          "reason": "RFC 9700 requires issuer, audience, signature, expiry and intended-use validation."
+          "reason": "RFC 9700 requires issuer, audience, signature, expiry and intended-use validation.",
+          "binding": {
+            "source_id": "src.oauth-security",
+            "ledger_record": "read.batch6-rfc9700.2026-10-21",
+            "section": "2. Best Practices",
+            "quote": "To put this into effect, the authorization server associates the access token with certain resource servers, and every resource server is obliged to verify, for every request, whether the access token sent with that request was meant to be used for that particular resource server. If it was not, the resource server MUST refuse to serve the respective request.",
+            "revision": "c00e2234fcd79581bc29669c60d693afaa42f67d9205bddee848f757ae975419"
+          }
         },
         "failure_recovery": {
           "state": "partial",
@@ -7994,7 +8036,14 @@
         "mechanism": {
           "state": "supported",
           "quote": "Role-based access control maps roles to permissions, while attribute-based control evaluates principal, resource and context attributes to reach a decision.",
-          "reason": "NIST and ASVS define role-based and attribute-based access-control models."
+          "reason": "NIST and ASVS define role-based and attribute-based access-control models.",
+          "binding": {
+            "source_id": "src.nist-sp-800-162",
+            "ledger_record": "read.nist-sp-800-162.2026-10-26",
+            "section": "2. Understanding ABAC",
+            "quote": "It represents a point in the space of logical access control that includes access control lists, role-based access control, and the ABAC method for providing access based on the evaluation of attributes.",
+            "revision": "ea90ee967a7011c8de5cfaffe0820d157167edefdea5fc2a84af730af4295cd7"
+          }
         },
         "invariant": {
           "state": "partial",
@@ -8054,12 +8103,26 @@
         "mechanism": {
           "state": "supported",
           "quote": "Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates both ends of a service connection with automatically rotated credentials.",
-          "reason": "Istio defines workload identity and mutual TLS authentication for service connections."
+          "reason": "Istio defines workload identity and mutual TLS authentication for service connections.",
+          "binding": {
+            "source_id": "src.istio",
+            "ledger_record": "read.batch6-istio.2026-10-21",
+            "section": "Identity and certificate management",
+            "quote": "Istio securely provisions strong identities to every workload with X.509 certificates.",
+            "revision": "0291fb8211b0215a91fe1c2bf389db7b3cdb6fffd57605f13fb4e6b402eb66e4"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The identity must bind to the workload, not to a network location, and authorization must still check the operation rather than assuming trust from the connection.",
-          "reason": "The source binds identity to the workload and keeps authorization policy separate from transport identity."
+          "reason": "The source binds identity to the workload and keeps authorization policy separate from transport identity.",
+          "binding": {
+            "source_id": "src.istio",
+            "ledger_record": "read.batch6-istio.2026-10-21",
+            "section": "Mutual TLS authentication",
+            "quote": "During the handshake, the client side Envoy also does a secure naming check to verify that the service account presented in the server certificate is authorized to run the target service.",
+            "revision": "0291fb8211b0215a91fe1c2bf389db7b3cdb6fffd57605f13fb4e6b402eb66e4"
+          }
         },
         "failure_recovery": {
           "state": "partial",

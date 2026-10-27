@@ -122,6 +122,9 @@
         },
         "reason": {
           "type": "string"
+        },
+        "binding": {
+          "$ref": "#/$defs/binding"
         }
       }
     },
@@ -580,6 +583,39 @@
           "type": "string",
           "minLength": 40,
           "maxLength": 400
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "ledger_record",
+        "section",
+        "quote",
+        "revision"
+      ],
+      "properties": {
+        "source_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ledger_record": {
+          "type": "string",
+          "minLength": 1
+        },
+        "section": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quote": {
+          "type": "string",
+          "minLength": 30
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
         }
       }
     }

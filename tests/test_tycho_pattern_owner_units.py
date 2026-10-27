@@ -103,6 +103,17 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["shared_pages"][0]["pattern_ids"].pop()
         self.check_error(data, "owner-units-shared-patterns")
 
+    def test_binding_section_must_be_read(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if any(value.get("binding")
+                           for value in entry["technical_evidence"].values()))
+        binding = next(value["binding"]
+                       for value in item["technical_evidence"].values()
+                       if value.get("binding"))
+        binding["section"] = "Not a recorded section"
+        self.check_error(data, "owner-units-binding-section")
+
     def test_sufficient_needs_a_promotion(self):
         evidence = self.data["entries"][0]["technical_evidence"]
         self.assertEqual(expected_coverage(evidence, "test"), "partial-bounded")
@@ -113,7 +124,7 @@ class PatternOwnerUnitTests(unittest.TestCase):
     def test_sufficient_claim_is_rejected(self):
         data = self.copy()
         data["entries"][0]["technical_coverage"] = "sufficient"
-        self.check_error(data, "owner-units-technical-derivation")
+        self.check_error(data, "owner-units-binding-missing")
 
     def test_reviewed_claim_is_rejected(self):
         data = self.copy()

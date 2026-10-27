@@ -25,6 +25,7 @@ SCHEMA = Path("schemas/pattern-owner-units.v1.schema.json")
 REGISTRY = Path("edition/patterns/registry.v1.json")
 BATCHES = Path("edition/patterns/card-batches.v1.json")
 LEDGER = Path("edition/patterns/reading-ledger.v1.json")
+SOURCE_PLAN = Path("edition/patterns/source-plan.v1.json")
 MANIFEST = Path("edition/atlas-manifest.json")
 PROMOTIONS = Path("edition/patterns/sufficient-promotions.v1.json")
 TICK = chr(96)
@@ -172,6 +173,26 @@ def expected_coverage(evidence, pattern_id, promotion=None):
             else "partial")
 
 
+def check_binding(entry, name, binding, plan_units, records):
+    pattern_id = entry["pattern_id"]
+    unit = plan_units.get(binding["source_id"])
+    require(unit is not None,
+            "owner-units-binding-source: " + pattern_id + ": " + name)
+    require(unit.get("read_record_id") == binding["ledger_record"],
+            "owner-units-binding-record: " + pattern_id + ": " + name)
+    record = records.get(binding["ledger_record"])
+    require(record is not None,
+            "owner-units-binding-record-missing: " + pattern_id + ": " + name)
+    require(record["status"] == "read",
+            "owner-units-binding-record-status: " + pattern_id + ": " + name)
+    require(record["source_id"] == binding["source_id"],
+            "owner-units-binding-record-source: " + pattern_id + ": " + name)
+    require(binding["section"] in record.get("sections_read", []),
+            "owner-units-binding-section: " + pattern_id + ": " + name)
+    require(binding["revision"] == record.get("content_sha256"),
+            "owner-units-binding-revision: " + pattern_id + ": " + name)
+
+
 def expected_overall(technical, decision):
     if technical == "not-applicable" and decision == "not-applicable":
         return "not-applicable"
@@ -198,6 +219,10 @@ def validate_data(data, root=ROOT):
     registry = load(root / REGISTRY)
     batches = load(root / BATCHES)
     ledger = load(root / LEDGER)
+    source_plan = load(root / SOURCE_PLAN)
+    plan_units = {item["pattern_id"]: {
+        unit["source_id"]: unit for unit in item["required_units"]}
+        for item in source_plan["entries"]}
     manifest = load(root / MANIFEST)
     promotion_data = load(root / PROMOTIONS)
     promotions = {item["pattern_id"]: item
@@ -302,6 +327,15 @@ def validate_data(data, root=ROOT):
             require(promotion["card_sha256"]
                     == hashlib.sha256((root / chapter["path"]).read_bytes()).hexdigest(),
                     "owner-units-promotion-card-hash: " + pattern_id)
+        for name in DIMENSIONS:
+            record = evidence[name]
+            binding = record.get("binding")
+            if binding:
+                check_binding(item, name, binding,
+                              plan_units.get(pattern_id, {}), records)
+            if (item["technical_coverage"] == "sufficient" or promotion):
+                require(record["state"] != "supported" or binding,
+                        "owner-units-binding-missing: " + pattern_id + ": " + name)
         computed = expected_coverage(evidence, pattern_id, promotion)
         require(item["technical_coverage"] == computed,
                 "owner-units-technical-derivation: " + pattern_id)
