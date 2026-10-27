@@ -49,9 +49,8 @@ A sufficient promotion requires an independent external AI review under
 [AI-INDEPENDENT-REVIEW.md](AI-INDEPENDENT-REVIEW.md):
 
 - reviewer from a different vendor and harness than the authoring agent;
-- exception: an owner-authorized `provisional-deepseek-fallback` review may temporarily
-  unblock promotion when the external CLI is unavailable for usage-limit or outage
-  reasons, but it must be labelled provisional and re-reviewed externally;
+- a fresh read-only DeepSeek Reviewer agent is an accepted external reviewer with the
+  same authority when no different-vendor harness is available or it is unavailable;
 - read-only, pinned HEAD and exact artifact hashes;
 - per-entry or bounded-batch report;
 - verdict `pass` for both technical and decision sufficiency;

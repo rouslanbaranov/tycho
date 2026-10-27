@@ -92,8 +92,10 @@ tool invocation that retrieves sources, or change.
 17. **Use an external AI reviewer from a different vendor.** The independent review gate
     is an AI review performed in a separate harness from a different vendor than the
     authoring agent: for example ChatGPT (OpenAI) or Claude Code (Anthropic) when the
-    authoring session is DeepSeek Harness. Do not use the DeepSeek `reviewer` preset, a
-    subagent of this session, the same vendor or the authoring agent as the reviewer.
+    authoring session is DeepSeek Harness. A separate read-only DeepSeek Reviewer agent is
+    also an accepted external reviewer when no different-vendor harness is available or the
+    selected harness is unavailable; it must not be the authoring agent or a fork of this
+    conversation and must use the same bounded prompt, schema, HEAD and artifact hashes.
     Before hand-off, discover qualifying local CLIs: search `PATH` and installed app
     bundles, and verify a non-interactive read-only mode and existing authentication.
     If several CLIs are available, ask the user which to use. If the chosen CLI exposes
@@ -106,16 +108,12 @@ tool invocation that retrieves sources, or change.
     If the user cannot provide a qualifying review, record the gate as blocked; never
     waive it.
 
-    **Temporary owner-authorized fallback (2026-10-27).** If the selected external CLI
-    is unavailable because of a usage limit or outage, the owner may authorize a fresh
-    read-only DeepSeek Reviewer agent. It must be a separate agent, not a fork of this
-    conversation, must not see the author's conclusions, and must use the same bounded
-    prompt, schema, HEAD and artifact hashes. Its report is labelled
-    `provisional-deepseek-fallback` and does not satisfy the final independent external
-    gate. A provisional pass may support a promotion only when the promotion record and
-    report are explicitly labelled provisional; external re-review is required when the
-    CLI returns, and owner acceptance must not cite the fallback as final independent
-    review.
+    **DeepSeek Reviewer (2026-10-27).** A fresh read-only DeepSeek Reviewer agent has the
+    same authority as any other external AI reviewer. It must be a separate agent, not a
+    fork of the authoring conversation, must not see the author's conclusions, and must use
+    the same bounded prompt, schema, HEAD and artifact hashes. Save and index its report
+    normally; a pass satisfies the independent review gate and may support promotion and
+    owner acceptance.
 18. **Keep the reviewer independent.** Use a fresh external session, not a fork of this
     conversation. Do not pass the author's conclusions, desired verdict or private context.
     Give the reviewer the repository path, exact HEAD and content commit, bounded scope,

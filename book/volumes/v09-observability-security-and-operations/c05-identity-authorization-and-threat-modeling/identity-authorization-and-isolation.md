@@ -117,10 +117,9 @@ revocation remain synthetic.
 
 ### Workload Identity-mTLS
 
-Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
-both ends of a service connection with automatically rotated credentials. The identity must
-bind to the workload, not to a network location, and authorization must still check the
-operation rather than assuming trust from the connection.
+Workload identity gives each running workload a verifiable identity. Mutual TLS authenticates
+both ends of a service connection with automatically rotated credentials. Secure naming verifies that the service account in the server certificate is authorized to run
+the target service.
 
 Expired or shared credentials break authentication. Istio monitors workload certificate expiry and
 periodically rotates certificates and keys. Permissive mTLS mode can accept both plaintext and
@@ -133,8 +132,8 @@ but synthetic, and the cited page does not measure them.
 
 **Source boundary.** Only the following claims are supported by the cited
 [read.batch6-istio.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json) record:
-workload identity binding, certificate issuance and rotation, mTLS authentication and
-authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
+workload identity binding, certificate issuance and rotation, mTLS authentication,
+permissive mode and authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
 policy and rotation-failure impact are not in the cited sections; all other guidance in this
 section remains synthetic.
 

@@ -49,8 +49,8 @@ identities rather than network location?
 **Good-fit conditions.** A workload identity issuer exists; certificate rotation is
 automated; policy can bind identity to service.
 
-**Hard contraindications.** Reject when network location is the only available identity,
-when rotation cannot be automated, or when identity sprawl is unowned.
+**Hard contraindications.** Reject when network location is the only available identity
+or when rotation cannot be automated.
 
 **Competing alternative.** Permissive mTLS mode accepts plaintext and mutual TLS traffic
 during migration; use strict mTLS once clients support it.
@@ -63,9 +63,9 @@ keys periodically.
 **Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-istio.2026-10-21: all thirty-four served headings read.
 The supported subset is: Istio identity; Identity and certificate management;
-Authentication; Mutual TLS authentication; Secure naming; Peer authentication;
+Authentication; Mutual TLS authentication; Permissive mode; Secure naming; Peer authentication;
 Authorization; Authorization policies. These support workload identity binding,
-certificate rotation, mTLS and authorization policy. Certificate revocation,
+certificate rotation, mTLS, permissive mode and authorization policy. Certificate revocation,
 trust-root bootstrapping, key storage and lifetime policy are outside those headings
 and remain synthetic. The source is official documentation, not a benchmark.
 
