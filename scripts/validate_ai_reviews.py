@@ -53,7 +53,8 @@ def validate(root=ROOT):
                 "ai-reviews-hash-mismatch: " + name)
         require(verdict in ("pass", "reject", "pass-with-findings"),
                 "ai-reviews-verdict: " + name)
-    reports = {path.name for path in archive.glob("*.md") if path.name != "README.md"}
+    reports = {path.name for path in archive.glob("*.md")
+               if path.name not in ("README.md", "REGRESSIONS.md")}
     require(reports == seen, "ai-reviews-unindexed")
     return {"reports": len(rows)}
 

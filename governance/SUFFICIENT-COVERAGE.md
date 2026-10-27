@@ -72,6 +72,12 @@ Do not use a mutable raw-HTML hash as a revision. Use the committed
 `scripts/source_content_hash.py` canonical text hash, or record an explicit,
 independently checkable representation and extraction procedure.
 
+## Regression guards
+
+Every review finding must add a mechanical regression guard, or record the exact
+manual check and why automation is not yet possible. Track guards in
+`authoring/ai-reviews/REGRESSIONS.md`; a finding without a guard is not closed.
+
 ## Scope and non-goals
 
 - This rule applies to the pattern atlas entries, not to unrelated book pages.
