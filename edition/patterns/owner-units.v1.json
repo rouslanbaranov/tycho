@@ -4716,14 +4716,17 @@
         "line": 93,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Cache Invalidation"
+          "Cache invalidation",
+          "authoritative value",
+          "On a write",
+          "expire data"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Cache invalidation removes or versions a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy.",
-          "reason": "Defines removal or versioning when the authoritative value changes.",
+          "quote": "Cache invalidation removes a cached entry when the authoritative value changes",
+          "reason": "Defines removal on authoritative change.",
           "binding": {
             "source_id": "src.microsoft-caching-guidance",
             "ledger_record": "read.batch3-ms-caching.2026-10-21",
@@ -4733,25 +4736,46 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "On a write, write the change to the data store, then remove the affected cache entry.",
+          "reason": "Orders invalidation after the data-store write.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "Invalidate on write: Write the change to the data store, and then remove the affected cache entry. The next read repopulates the cache from the data store.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A reader can experience a cache miss or briefly see stale data immediately after a write.",
+          "reason": "States the post-write stale-read window.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "a reader can experience a cache miss or briefly see stale data immediately after a write",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Many caching systems let you configure the cache to expire data, which reduces the period during which data might be out of date.",
+          "reason": "Names expiration as the bounded-staleness alternative.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "Many caching systems let you configure the cache to expire data, which reduces the period during which data might be out of date.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "cache-invalidation",
         "question": "Should cached entries be removed or refreshed when the authoritative value changes?",
-        "competing_alternative": "TTL-only expiry or versioned cache keys. Reverse the choice when invalidation fan-out and coupling exceed staleness cost.",
+        "competing_alternative": "Expiration after a configured period.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -4763,7 +4787,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -10828,11 +10852,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 48,
-    "failure_recovery_supported": 36,
-    "alternative_supported": 47,
-    "technical_partial_bounded": 43,
-    "technical_partial": 102,
+    "invariant_supported": 49,
+    "failure_recovery_supported": 37,
+    "alternative_supported": 48,
+    "technical_partial_bounded": 44,
+    "technical_partial": 101,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

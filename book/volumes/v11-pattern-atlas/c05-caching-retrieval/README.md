@@ -277,17 +277,16 @@ priority core.
 **Decision question.** Should cached entries be removed or refreshed when the
 authoritative value changes?
 
-**Good-fit conditions.** The authoritative change can emit an invalidation signal;
-consumers can tolerate a bounded stale window; failure is observable.
+**Good-fit conditions.** The authoritative change can emit an invalidation signal; consumers
+can tolerate a bounded stale window.
 
-**Hard contraindications.** Reject when no reliable invalidation path exists, when stale
-reads violate a hard contract, or when every writer must know every cache.
+**Hard contraindications.** Reject when no reliable invalidation path exists or stale reads
+violate a hard contract.
 
-**Competing alternative.** TTL-only expiry or versioned cache keys. Reverse the choice
-when invalidation fan-out and coupling exceed staleness cost.
+**Competing alternative.** Expiration after a configured period.
 
-**Failure and recovery.** Lost invalidations and races with fills are common; verify
-invalidation semantics in the owner section.
+**Failure and recovery.** A reader can miss or briefly see stale data immediately after a
+write.
 
 **Technical owner.** [Cache invalidation, stampedes and hot-key failure modes](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md#cache-invalidation) — invalidation is bounded, not a complete invalidation matrix.
 

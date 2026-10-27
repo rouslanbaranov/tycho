@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 140 |
+| Reviewed by independent agent | 139 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 5, "reviewed-by-independent-agent": 140}.
+Packet statuses: {"page-changed-since-review": 6, "reviewed-by-independent-agent": 139}.
 
 ## Review procedure
 
@@ -86,7 +86,7 @@ blank verdict template in the machine-readable file.
 
 - **Cache Invalidation**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Cache Stampede Protection**
   Current: pass; re-review: pass; report: pass-with-findings.
