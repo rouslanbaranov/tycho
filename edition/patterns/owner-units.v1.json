@@ -3400,22 +3400,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "An orchestrator persists a state machine and sends commands to participants.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+            "section": "Intro to Workflows",
+            "quote": "Each Workflow Execution emits a series of Commands and processes a sequence of Events , which are recorded in an Event History .",
+            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Its guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration.",
-          "reason": "Bounds guarantees by versioned state, activity semantics, timers and recovery configuration."
+          "reason": "Bounds guarantees by versioned state, activity semantics, timers and recovery configuration.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+            "section": "Resuming a Workflow",
+            "quote": "Because the Workflow is re-executed to rebuild its state: It has to make the same decisions when given the same history. It shouldn't depend on any values not recorded in the history which would be different between runs.",
+            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Operational failure appears as a lost coordinator, a history that cannot advance, or an activity applied twice.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+            "section": "How Workflow replay works",
+            "quote": "When a Workflow yields or encounters an error, the goal of Temporal is to bring the Workflow back to the exact same state it was in before the pause occurred.",
+            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Prefer one transaction when every effect shares an owner and a database.",
-          "reason": "Names a single transaction when every effect shares one owner and database."
+          "reason": "Source describes durable workflow orchestration only; no alternative to orchestration."
         }
       },
       "decision_evidence": {
@@ -3520,22 +3541,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "An outbox is a durable publication queue inside the state store.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-outbox.2026-10-21",
+            "section": "Solution",
+            "quote": "The solution is for the service that sends the message to first store the message in the database as part of the transaction that updates the business entities. A separate process then sends the messages to the message broker.",
+            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The business row and an intent row commit together",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-outbox.2026-10-21",
+            "section": "Result context",
+            "quote": "Messages are guaranteed to be sent if and only if the database transaction commits",
+            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A crash after publish before completion duplicates",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-outbox.2026-10-21",
+            "section": "Result context",
+            "quote": "The Message relay might publish a message more than once. It might, for example, crash after publishing a message but before recording the fact that it has done so. When it restarts, it will then publish the message again. As a result, a message consumer must be idempotent, perhaps by tracking the IDs of the messages that it has already processed.",
+            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Use an outbox when the lost-publication and duplicate-effect risk justifies relay complexity.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-outbox.2026-10-21",
+            "section": "Related patterns",
+            "quote": "The Event sourcing is an alternative solution",
+            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+          }
         }
       },
       "decision_evidence": {
@@ -3578,24 +3627,31 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
-          "reason": "Persists processed-event identity and business effect in one local transaction."
+          "reason": "Source starts a transaction and inserts the processed ID; it does not state the business effect commits in that transaction."
         },
         "invariant": {
           "state": "supported",
           "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
-          "reason": "Scopes identity by subscriber and event/effect."
+          "reason": "Scopes identity by subscriber and event/effect.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-idempotent-consumer.2026-10-21",
+            "section": "Solution",
+            "quote": "Since the (subscriberId, messageID) is the PROCESSED_MESSAGE table’s primary key the INSERT will fail if the message has been already processed successfully.",
+            "revision": "3edddaa1959c70dbd9953648e54759b5a2bc167cd121805124e5faafa0eca40f"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "a notification consumer writes a processed marker then crashes before making an external non-idempotent send. On redelivery it may falsely skip the missing send. Reversing the order may send twice.",
-          "reason": "Names marker-before-send crash windows that can skip or duplicate a send."
+          "reason": "Source handles duplicate insert by rollback/ignore, not crash between marker and external send."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A unique constraint or conditional insert on effect identity, a producer outbox, or an idempotent downstream API may be preferable when the inbox table and retention cost exceed the duplicate-impact risk.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Source names processed-ID storage options, not producer outbox or idempotent downstream API."
         }
       },
       "decision_evidence": {
@@ -3613,7 +3669,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated inbox section defines the atomic commit boundary and its limits; the later four-window trace adds crash detail."
     },
@@ -3638,24 +3694,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source states key uniqueness scope, not the full fingerprint/expiry mechanism."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source has no atomic outcome-record plus business-effect commit rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The owner also names the conflict response and the record a support engineer may inspect.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source defines retry/concurrent outcomes but no support-visible outcome record."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Some effects can rely on a uniqueness rule, a compare-and-set or one writer instead of a key store.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source varies key carrier, not a uniqueness rule or single-writer alternative."
         }
       },
       "decision_evidence": {
@@ -3673,7 +3729,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -9791,12 +9847,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 138,
-    "invariant_supported": 115,
-    "failure_recovery_supported": 118,
-    "alternative_supported": 125,
-    "technical_partial_bounded": 115,
-    "technical_partial": 30,
+    "mechanism_supported": 136,
+    "invariant_supported": 114,
+    "failure_recovery_supported": 116,
+    "alternative_supported": 122,
+    "technical_partial_bounded": 113,
+    "technical_partial": 32,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
