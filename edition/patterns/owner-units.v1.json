@@ -6926,22 +6926,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Rate limiting bounds requests per principal, key or window; it must define the identity, window, burst allowance and rejection response.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Per-Customer Limits",
+            "quote": "When global overload does occur, it's vital that the service only delivers error responses to misbehaving customers, while other customers remain unaffected. To achieve this outcome, service owners provision their capacity based on the negotiated usage with their customers and define per-customer quotas according to these agreements.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "it must define the identity, window, burst allowance and rejection response.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Client-Side Throttling",
+            "quote": "When a customer is out of quota, a backend task should reject requests quickly with the expectation that returning a \"customer is out of quota\" error consumes significantly fewer resources than actually processing the request and serving back a correct response.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Unfair limits and synchronized retries are common failure modes.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Client-Side Throttling",
+            "quote": "If the amount of rejected requests is significant, these numbers add up quickly. In such cases, the backend can become overloaded even though the vast majority of its CPU is spent just rejecting requests! Client-side throttling addresses this problem.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Global admission or per-tenant quotas may be preferable when the scarce resource is shared across principals.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "The Pitfalls of \"Queries per Second\"",
+            "quote": "A moving target makes a poor metric for designing and implementing load balancing. A better solution is to measure capacity directly in available resources.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         }
       },
       "decision_evidence": {
@@ -6984,24 +7012,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The admission rule of a bounded queue decides four things that the queue cannot decide for itself",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect",
-          "reason": "States the required invariant."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "When backlog age crosses its bound, reject new work before enqueue or shed it at the worker",
-          "reason": "Names the failure and recovery response."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Shedding is preferable when work cannot be deferred.",
-          "reason": "Names the competing choice and reversal."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
         }
       },
       "decision_evidence": {
@@ -7019,7 +7047,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -7194,22 +7222,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\".",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Defines the mechanism and its scope.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+            "section": "Define readiness probes",
+            "quote": "Readiness and liveness probes can be used in parallel for the same container. Using both can ensure that traffic does not reach a container that is not ready for it, and that containers are restarted when they fail.",
+            "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "They must not be collapsed into one endpoint.",
-          "reason": "States the required invariant."
+          "reason": "States the required invariant.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+            "section": "Caution",
+            "quote": "The readiness and liveness probes do not depend on each other to succeed.",
+            "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A shared dependency failure can fail every probe and cause mass ejection or restart; a cached \"healthy\" answer can keep sending traffic to a draining instance.",
-          "reason": "Names the failure and recovery response."
+          "reason": "Page has no shared-dependency mass-ejection or cached-health failure path."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Synthetic checks or SLO-based external monitoring may be preferable when the runtime probe cannot observe the user journey.",
-          "reason": "Names the competing choice and reversal."
+          "reason": "Page has only runtime probes, no synthetic/SLO alternative."
         }
       },
       "decision_evidence": {
@@ -7254,22 +7296,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Failover moves authority from region A to a surviving region B under an explicit decision; failback is a second migration from B back to A, not the inverse operation.",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Defines the mechanism and its scope.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "section": "26.2.4. Setting Up a Standby Server",
+            "quote": "If you're setting up the standby server for high availability purposes, set up WAL archiving, connections and authentication like the primary server, because the standby server will work as a primary server after failover.",
+            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then reintroduce A as a replica or standby before considering promotion.",
-          "reason": "States the required invariant."
+          "reason": "Local text ends at 26.2.9; 26.3 Failover content is absent."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A failback that merely points DNS back can resurrect stale writes and split authority.",
-          "reason": "Names the failure and recovery response."
+          "reason": "No failback, DNS repointing or split-authority passage."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its benefit.",
-          "reason": "Names the competing choice and reversal."
+          "reason": "No stay-on-promoted or rebuild-old-region comparison."
         }
       },
       "decision_evidence": {
@@ -7287,7 +7336,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded recovery-scenario section; failback itself is only a return-to-normal bullet in section 5."
     },
@@ -10764,12 +10813,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 121,
-    "invariant_supported": 69,
-    "failure_recovery_supported": 63,
-    "alternative_supported": 74,
-    "technical_partial_bounded": 68,
-    "technical_partial": 77,
+    "mechanism_supported": 120,
+    "invariant_supported": 67,
+    "failure_recovery_supported": 60,
+    "alternative_supported": 71,
+    "technical_partial_bounded": 66,
+    "technical_partial": 79,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

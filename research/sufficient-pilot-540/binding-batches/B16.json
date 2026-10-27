@@ -28,22 +28,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Rate limiting bounds requests per principal, key or window; it must define the identity, window, burst allowance and rejection response.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "it must define the identity, window, burst allowance and rejection response.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Unfair limits and synchronized retries are common failure modes.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Global admission or per-tenant quotas may be preferable when the scarce resource is shared across principals.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         }
       }
     },
@@ -64,24 +68,28 @@
       "revision": "12e636d8ff2a50bc42ffdbf93224c1f080af0ad4f82a7066a0e086ec6cf77a2a",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The admission rule of a bounded queue decides four things that the queue cannot decide for itself",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect",
-          "reason": "States the required invariant."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "When backlog age crosses its bound, reject new work before enqueue or shed it at the worker",
-          "reason": "Names the failure and recovery response."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Shedding is preferable when work cannot be deferred.",
-          "reason": "Names the competing choice and reversal."
+          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent.",
+          "has_binding": false
         }
       }
     },
@@ -121,24 +129,28 @@
       "revision": "6fb58a128cbc8adc2734604cd3ddca1c0fd43b7ad3ba2f3eb76204f2ecf37df9",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A priority queue is a broker-side ordering policy",
-          "reason": "Explains capacity reservation, class overtaking and the starvation risk a priority queue creates."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The queue must define class levels, per-level capacity and the broker's actual priority support.",
-          "reason": "States that criticality must be authenticated and propagated to each downstream hop."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Add aging or a maximum-wait rule so low classes make progress",
-          "reason": "Names starvation and requires max-wait, starvation and isolation rules to contain it."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "An admission-controlled FIFO or separate lanes per class avoids starvation when priority is unverifiable.",
-          "reason": "Names the competing queue policies and reversal condition."
+          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent.",
+          "has_binding": false
         }
       }
     },
@@ -159,22 +171,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A **hedged request** sends an additional equivalent read to another viable replica when an earlier attempt appears unexpectedly slow, then uses an acceptable response and cancels remaining attempts.",
-          "reason": "Defines the trigger, replica choice, response selection and cancellation."
+          "reason": "Defines the trigger, replica choice, response selection and cancellation.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Hedge delayed reads | Equivalent replicas; bounded speculative budget; cancellation; measured independent tails | Shared bottleneck, expensive writes, inconsistent replicas",
-          "reason": "Lists the required preconditions and contraindications for hedging."
+          "reason": "Lists the required preconditions and contraindications for hedging.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Hedging can double work exactly when a shared dependency is saturated; it also risks duplicate side effects if the read is not truly equivalent.",
-          "reason": "Names the doubled-work and duplicate-effect failure modes."
+          "reason": "Names the doubled-work and duplicate-effect failure modes.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Retry with jitter, improve the slow path, or parallelize truly independent reads may be preferable when replicas share a bottleneck or the operation is not safely repeatable.",
-          "reason": "Names the competing mitigations and reversal condition."
+          "reason": "Names the competing mitigations and reversal condition.",
+          "has_binding": true
         }
       }
     },
@@ -209,22 +225,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\".",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Defines the mechanism and its scope.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "They must not be collapsed into one endpoint.",
-          "reason": "States the required invariant."
+          "reason": "States the required invariant.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A shared dependency failure can fail every probe and cause mass ejection or restart; a cached \"healthy\" answer can keep sending traffic to a draining instance.",
-          "reason": "Names the failure and recovery response."
+          "reason": "Page has no shared-dependency mass-ejection or cached-health failure path.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Synthetic checks or SLO-based external monitoring may be preferable when the runtime probe cannot observe the user journey.",
-          "reason": "Names the competing choice and reversal."
+          "reason": "Page has only runtime probes, no synthetic/SLO alternative.",
+          "has_binding": false
         }
       }
     },
@@ -264,22 +284,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Failover moves authority from region A to a surviving region B under an explicit decision; failback is a second migration from B back to A, not the inverse operation.",
-          "reason": "Defines the mechanism and its scope."
+          "reason": "Defines the mechanism and its scope.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then reintroduce A as a replica or standby before considering promotion.",
-          "reason": "States the required invariant."
+          "reason": "Local text ends at 26.2.9; 26.3 Failover content is absent.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A failback that merely points DNS back can resurrect stale writes and split authority.",
-          "reason": "Names the failure and recovery response."
+          "reason": "No failback, DNS repointing or split-authority passage.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its benefit.",
-          "reason": "Names the competing choice and reversal."
+          "reason": "No stay-on-promoted or rebuild-old-region comparison.",
+          "has_binding": false
         }
       }
     }
