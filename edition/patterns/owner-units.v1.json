@@ -516,22 +516,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A self-contained service completes a request using its own state and a bounded set of dependencies, instead of requiring a caller to coordinate several owners for one user-visible outcome.",
-          "reason": "Defines local state plus a bounded dependency set for one request."
+          "reason": "Defines local state plus a bounded dependency set for one request.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-self-contained.2026-10-21",
+            "section": "Solution",
+            "quote": "Design a service so that it can respond to a synchronous request without waiting for the response from any other service.",
+            "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The service contract must state which dependencies are required, which are optional, and what response is valid when an optional dependency is unavailable.",
-          "reason": "Requires the contract to declare required, optional and degraded responses."
+          "reason": "Source does not require the contract to declare required/optional dependencies or degraded response."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Hidden shared state or a chatty dependency chain turns an apparently local request into a multi-owner transaction; dependency and latency traces reveal the undeclared coupling.",
-          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces."
+          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-self-contained.2026-10-21",
+            "section": "Forces",
+            "quote": "A service can retry a request to a failed collaborator but this increases response time.",
+            "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "An orchestrating service or backend for frontend can coordinate owners explicitly; accept that composition when the workflow genuinely spans separate authorities and the coordinator's failure behaviour is designed.",
-          "reason": "Names an orchestrator or backend for frontend with explicit coordination."
+          "reason": "Names an orchestrator or backend for frontend with explicit coordination.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-self-contained.2026-10-21",
+            "section": "Context",
+            "quote": "An alternative approach is to eliminate all synchronous communication between the Order Service and its collaborators by using the CQRS and Saga patterns.",
+            "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
+          }
         }
       },
       "decision_evidence": {
@@ -549,7 +570,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -573,22 +594,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A sidecar runs as a helper process or container beside each service instance and supplies networking, policy or telemetry behaviour without changing the application image.",
-          "reason": "Defines a per-instance helper for networking, policy or telemetry."
+          "reason": "Defines a per-instance helper for networking, policy or telemetry.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-sidecar.2026-10-21",
+            "section": "Solution",
+            "quote": "The application handles core functionality, and the sidecar handles peripheral tasks, like platform abstraction, proxy to remote services, logging, and configuration. Both the application and sidecar reside in a host. A sidecar service connects to the application without being part of it and deploys alongside it. Each application instance gets its own sidecar instance that shares its life cycle.",
+            "revision": "cf95d2673c75ee9cad0233e9ec615f739265ca8e4f7ebea046334d326f86126d"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "its lifecycle and configuration must have an owner",
-          "reason": "Requires named lifecycle and configuration ownership."
+          "reason": "Source does not require a named owner for sidecar lifecycle and configuration."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must include it, and the fail-open or fail-closed choice must be tested.",
-          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests."
+          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-sidecar.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Kubernetes provides native sidecar containers, which guarantee that the sidecar starts before the main application container and terminates after it. This behavior removes the need for custom startup-ordering logic and avoids shutdown races in which the sidecar exits while the application still depends on it.",
+            "revision": "cf95d2673c75ee9cad0233e9ec615f739265ca8e4f7ebea046334d326f86126d"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared proxy or an in-process library provides the same control without per-instance overhead; choose a sidecar when per-instance isolation or independent upgrade matters.",
-          "reason": "Contrasts a shared proxy or in-process library."
+          "reason": "Contrasts a shared proxy or in-process library.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-sidecar.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Consider whether to implement the functionality as a library or through a traditional extension mechanism. Language-specific libraries provide deeper integration and less network overhead.",
+            "revision": "cf95d2673c75ee9cad0233e9ec615f739265ca8e4f7ebea046334d326f86126d"
+          }
         }
       },
       "decision_evidence": {
@@ -606,7 +648,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -633,22 +675,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own discovery, TLS identity, retries, timeouts and telemetry away from the application.",
-          "reason": "Defines the outbound-brokering role and the concerns it can own."
+          "reason": "Defines the outbound-brokering role and the concerns it can own.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-ambassador.2026-10-21",
+            "section": "Ambassador pattern",
+            "quote": "Create helper services that send network requests on behalf of a consumer service or application. Think of an ambassador service as an out-of-process proxy that's colocated with the client. Use the Ambassador pattern to offload common client connectivity tasks like monitoring, logging, routing, security like Transport Layer Security (TLS), and resiliency patterns in a language-agnostic way.",
+            "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a clear data-plane owner, a configuration path and a failure policy for the proxy itself.",
-          "reason": "States the ownership, configuration and failure-policy preconditions."
+          "reason": "States the ownership, configuration and failure-policy preconditions.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-ambassador.2026-10-21",
+            "section": "Solution",
+            "quote": "You can manage features that are offloaded to the ambassador independently of the application. You can update and modify the ambassador without disturbing the application's legacy functionality. Separate, specialized teams can also implement and maintain security, networking, or authentication features that have been moved to the ambassador.",
+            "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a stale proxy configuration or a proxy that outlives its control plane; test configuration rollback and keep a direct-path recovery.",
-          "reason": "Names stale configuration and proxy/control-plane divergence, with rollback and direct-path recovery."
+          "reason": "Source names proxy latency and retry safety but not stale proxy configuration or rollback recovery."
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared gateway is the alternative when the concern is ingress rather than per-client egress.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice."
+          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-ambassador.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "Your application platform supports prebuilt solutions, like a service mesh, to handle mutual TLS (mTLS), traffic management, and policy capabilities. Use these solutions instead of creating a custom ambassador solution.",
+            "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
+          }
         }
       },
       "decision_evidence": {
@@ -693,22 +756,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "An anti-corruption layer is a translation boundary that keeps an external or legacy model from becoming the local authority.",
-          "reason": "Shows semantic translation that must preserve or reject meaning rather than map names."
+          "reason": "Shows semantic translation that must preserve or reject meaning rather than map names.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-acl.2026-10-21",
+            "section": "Solution",
+            "quote": "Isolate the different subsystems by placing an anti-corruption layer between them. This layer translates communication between the two systems. By using this approach, you can keep one system unchanged without compromising the design and technological approach of the other.",
+            "revision": "8fe5c77f698e88d66cb178ddb3e62fd5a65f37f299bd95fd52ccd1adf9098bec"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for values with no local meaning.",
-          "reason": "States the must-hold translation constraint."
+          "reason": "States the must-hold translation constraint.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-acl.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Make sure that you maintain and monitor transaction and data consistency.",
+            "revision": "8fe5c77f698e88d66cb178ddb3e62fd5a65f37f299bd95fd52ccd1adf9098bec"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A dual write or an unknown external outcome retains the correlation identifier and resolves against the authority before reporting success",
-          "reason": "Describes lost-response ambiguity and recovery via correlation then authority resolution."
+          "reason": "Describes lost-response ambiguity and recovery via correlation then authority resolution.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-acl.2026-10-21",
+            "section": "Next steps",
+            "quote": "Because the anti-corruption layer can become a single point of failure, plan for resilience by using the Retry pattern , Circuit Breaker pattern , Bulkhead pattern , and Health Endpoint Monitoring pattern .",
+            "revision": "8fe5c77f698e88d66cb178ddb3e62fd5a65f37f299bd95fd52ccd1adf9098bec"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A direct adapter or shared contract is preferable only when semantics are genuinely identical and stable.",
-          "reason": "Names direct/shared contract and the reversal."
+          "reason": "Source states a non-suitability condition but does not name direct adapter or shared-contract alternatives.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-acl.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "This pattern might not be suitable when: The new and legacy systems have no significant semantic differences.",
+            "revision": "8fe5c77f698e88d66cb178ddb3e62fd5a65f37f299bd95fd52ccd1adf9098bec"
+          }
         }
       },
       "decision_evidence": {
@@ -9253,7 +9344,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Three control-plane patterns have three distinct units, two dedicated bounded notes, on a coherent static-stability page."
     },
@@ -9428,11 +9519,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 144,
-    "invariant_supported": 133,
-    "failure_recovery_supported": 135,
-    "alternative_supported": 137,
-    "technical_partial_bounded": 133,
-    "technical_partial": 12,
+    "invariant_supported": 131,
+    "failure_recovery_supported": 134,
+    "alternative_supported": 136,
+    "technical_partial_bounded": 131,
+    "technical_partial": 14,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
