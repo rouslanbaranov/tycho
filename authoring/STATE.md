@@ -3,7 +3,9 @@
 > **Review-policy change — 2026-10-26:** the human-review gate is retired for future work.
 > Independent review is now performed by a different AI harness from a different vendor
 > (for example ChatGPT or Claude Code), read-only and pinned to HEAD. Historical human
-> review records remain historical evidence. See
+> review records remain historical evidence. Since 2026-10-27 the gate applies
+> only to book and atlas changes; research notes, tooling and other artifacts do not
+> require it. See
 > [the AI review policy](../governance/AI-INDEPENDENT-REVIEW.md).
 
 > **Current structural candidate — 2026.10.2-rc.1 (cut 2026-10-21):** 11

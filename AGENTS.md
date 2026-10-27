@@ -67,10 +67,10 @@ tool invocation that retrieves sources, or change.
     environmental constraints generically, e.g. `restricted enterprise environments`,
     `regulated environments`, `corporate infrastructure`, or
     `security-constrained deployments`. This applies in English, Russian, and
-    translated/inflected variants. Run the lexical boundary check and perform a separate
-    independent AI editorial review; the checker is not proof of neutrality outside
-    scanned repository text. Never quote prohibited terminology while explaining or enforcing this
-    rule.
+    translated/inflected variants. Run the lexical boundary check. For book and atlas
+    changes, also perform a separate independent AI editorial review under rules 17-21;
+    the checker is not proof of neutrality outside scanned repository text. Never quote
+    prohibited terminology while explaining or enforcing this rule.
 
 15. **Readable volume/chapter directories:** follow
     [the directory naming policy](authoring/DIRECTORY-NAMING.md). Under `book/volumes`, use
@@ -86,6 +86,13 @@ tool invocation that retrieves sources, or change.
     reformat unrelated files in the same change.
 
 ## Independent audit and review via external AI
+
+**Scope (owner decision, 2026-10-27):** the gate applies only to changes that alter book
+content or structure (`book/**`) or the pattern atlas (the V11 pages,
+`edition/patterns/**` and `edition/atlas-manifest.json`). Research notes, audits, review
+records, source registers, evaluation data, tooling, tests, deployment configuration and
+governance text do not require an external review. The lexical boundary check, mechanical
+validators and source-admission rules still apply to every change.
 
 17. **Use an external AI reviewer from a different vendor.** The independent review gate
     is an AI review performed in a separate harness from a different vendor than the
@@ -112,8 +119,9 @@ tool invocation that retrieves sources, or change.
     gate, but it is not owner acceptance, CI, sufficient coverage or permission to merge.
     The owner decides whether to apply verdicts; records and acceptance documents change
     only after that decision.
-21. **Record the review.** State the reviewer harness and vendor, model and version when
-    exposed, session or run id, review timestamp, HEAD, content commit, scope, saved
+21. **Record the review when the gate applies.** State the reviewer harness and vendor,
+    model and version when exposed, session or run id, review timestamp, HEAD, content
+    commit, scope, saved
     report path and any prior involvement. Use `ai_review` for the new gate;
     `human_review` is retired for future work. State `sufficient: 0` unless separate
     evidence exists. After the run, check `git status` and report hashes; if the reviewer

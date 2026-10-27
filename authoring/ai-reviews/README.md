@@ -4,6 +4,9 @@ This directory preserves verbatim reports from independent external AI reviewers
 Every completed review must be saved here; a review without a saved report is not a
 completed review.
 
+Reports are required only for in-scope changes: book content or structure and the pattern
+atlas. A review of another artifact may still be recorded here.
+
 ## Naming
 
 `YYYY-MM-DD-<scope-slug>-<reviewer-slug>.md`

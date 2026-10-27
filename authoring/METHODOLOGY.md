@@ -57,7 +57,8 @@ Route through the checkpoint and, once implemented, index. Initially load up to 
 Track research coverage, explanatory sufficiency, evidence support, review, and freshness
 separately. Draft, mechanically valid, evidence-reviewed, and independently AI-reviewed are
 distinct conditions. Do not claim independent AI review without a named review event,
-reviewer harness, vendor and report.
+reviewer harness, vendor and report. The gate applies to book and atlas changes; see
+[the review policy](../governance/AI-INDEPENDENT-REVIEW.md).
 
 A source change flags potential staleness of affected claims, pages, and graph relationships; it does not automatically invalidate them. Keep content verification dates distinct from formatting dates. Record the reviewer role and re-verification evidence required to close the flag.
 

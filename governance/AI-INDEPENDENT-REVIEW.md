@@ -1,7 +1,23 @@
 # Independent AI review
 
-Status: mandatory. Effective: 2026-10-26. Supersedes the human-review gate for all
-future reviews and acceptance decisions.
+Status: mandatory for in-scope changes. Effective: 2026-10-26; scope narrowed
+2026-10-27. Supersedes the human-review gate for all future in-scope reviews and
+acceptance decisions.
+
+## Scope
+
+The gate applies only to changes that alter:
+
+- book content or structure: any file under `book/`;
+- the pattern atlas: the V11 pages, `edition/patterns/**` and
+  `edition/atlas-manifest.json`.
+
+It does not apply to research notes, audits, review records, source registers, evaluation
+data, tooling, tests, deployment configuration or governance text. Those changes still
+require the lexical boundary check, the mechanical validators and source admission.
+
+A change that mixes in-scope and out-of-scope files needs the review for the in-scope part
+only; the reviewer receives the in-scope artifacts.
 
 ## Purpose
 
@@ -39,7 +55,7 @@ that the reviewer must not claim owner acceptance, CI or sufficient coverage.
 
 ## Required record
 
-Every review must leave a report containing:
+Every in-scope review must leave a report containing:
 
 - review harness and vendor;
 - model name and version, when exposed;
@@ -59,7 +75,7 @@ repository, stop, quarantine the changes and treat the review as contaminated.
 
 ## Preservation of reports
 
-Every completed external AI review must be preserved in the repository.
+Every completed in-scope review must be preserved in the repository.
 
 - Directory: `authoring/ai-reviews/`.
 - File name: `YYYY-MM-DD-<scope-slug>-<reviewer-slug>.md`.
