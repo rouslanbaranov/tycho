@@ -1,7 +1,7 @@
 {
   "batch": "B06",
   "entries": 4,
-  "bindings": 8,
+  "bindings": 6,
   "unbound": [
     {
       "pattern_id": "tycho.pattern.single-flight-request-coalescing",
@@ -21,6 +21,16 @@
     {
       "pattern_id": "tycho.pattern.single-flight-request-coalescing",
       "dimension": "alternative",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.stale-while-revalidate",
+      "dimension": "invariant",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.stale-while-revalidate",
+      "dimension": "failure_recovery",
       "state": "partial"
     },
     {
@@ -44,11 +54,10 @@
       "state": "partial"
     }
   ],
-  "review_ready": [
-    "Stale-While-Revalidate"
-  ],
+  "review_ready": [],
   "remediation": [
     "Single Flight / Request Coalescing",
+    "Stale-While-Revalidate",
     "Multi-Level Caching",
     "CDN / Edge Caching"
   ]

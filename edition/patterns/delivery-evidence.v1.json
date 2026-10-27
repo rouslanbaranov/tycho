@@ -17,9 +17,9 @@
     "retrieval_questions": 145,
     "ledger_records": 126,
     "sources": 275,
-    "partial_technical": 86,
+    "partial_technical": 100,
     "partial_decision": 0,
-    "partial_bounded_technical": 59,
+    "partial_bounded_technical": 45,
     "partial_bounded_decision": 145,
     "partial_reviewed_technical": 0,
     "partial_reviewed_decision": 0,
@@ -38,16 +38,6 @@
     "human_reviews": 1
   },
   "checks": [
-    {
-      "name": "premerge",
-      "status": "pass",
-      "evidence": "Local premerge passed on the Phase A acceptance branch; 511 tests OK"
-    },
-    {
-      "name": "full-tests",
-      "status": "pass",
-      "evidence": "511 tests, OK"
-    },
     {
       "name": "pattern-atlas",
       "status": "pass",
@@ -97,6 +87,16 @@
       "name": "owner-confirmed-human-review",
       "status": "pass",
       "evidence": "Owner-confirmed human review 2026-10-21; not independent and no per-page reviewer record supplied"
+    },
+    {
+      "name": "full-tests",
+      "status": "pass",
+      "evidence": "601 tests, OK on ca77efd2 before remediation"
+    },
+    {
+      "name": "premerge",
+      "status": "pass",
+      "evidence": "Local premerge passed on ca77efd2 before remediation"
     }
   ],
   "dod": [
@@ -197,7 +197,8 @@
     "Reviewer is an independent agent reviewer, not a human expert or owner; owner acceptance remains open; human review is recorded.",
     "Owner-confirmed human review passed on 2026-10-21; it is not independent and no per-page reviewer record was supplied.",
     "The 2026-10-25 re-audit leaves 56 PWF findings; none is a reject. Residual high/metadata findings remain remediation items, not sufficient coverage.",
-    "Independent agent Phase A v2/delta/gap and Phase B re-audit 2026-10-23: Phase A 33 pass / 16 PWF / 3 reject; Phase B 56 PWF / 0 reject with 37 promoted; not human review or owner acceptance."
+    "Independent agent Phase A v2/delta/gap and Phase B re-audit 2026-10-23: Phase A 33 pass / 16 PWF / 3 reject; Phase B 56 PWF / 0 reject with 37 promoted; not human review or owner acceptance.",
+    "External Codex review 2026-10-27 returned reject; 23 of 25 review-ready entries were downgraded. No promotion or sufficient claim exists."
   ],
-  "source_commit_note": "Current delivery HEAD after the 2026-10-25 full re-audit. Overall 89 pass / 56 PWF / 0 reject; sufficient remains 0."
+  "source_commit_note": "Batch audit at ca77efd2. External Codex review 2026-10-27 rejected the review-ready batch with 23 entry findings; remediation commit follows."
 }

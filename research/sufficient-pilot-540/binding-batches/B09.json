@@ -68,10 +68,10 @@
       "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Partitioning splits one logical data set into key ranges or lists inside a store so the planner can prune unrelated partitions for a query.",
-          "reason": "Defines key-range or list splits for planner pruning.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "invariant": {
           "state": "supported",
@@ -86,10 +86,10 @@
           "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Keep one table and add an index when the main query already prunes; partition only when the data volume, retention or maintenance benefit is measured.",
-          "reason": "Contrasts one indexed table with measured partitioning benefit.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         }
       }
     },
@@ -350,16 +350,16 @@
           "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "During a membership change, require the old and new quorums to overlap",
-          "reason": "States the invariant.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Overlap is necessary but not sufficient for freshness: choose the response with the highest version and repair replicas behind it.",
-          "reason": "Names stale-read failure and version/read-repair recovery.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",

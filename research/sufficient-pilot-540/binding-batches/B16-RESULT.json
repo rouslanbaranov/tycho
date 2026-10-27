@@ -1,8 +1,28 @@
 {
   "batch": "B16",
   "entries": 6,
-  "bindings": 11,
+  "bindings": 4,
   "unbound": [
+    {
+      "pattern_id": "tycho.pattern.rate-limiting",
+      "dimension": "mechanism",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.rate-limiting",
+      "dimension": "invariant",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.rate-limiting",
+      "dimension": "failure_recovery",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.rate-limiting",
+      "dimension": "alternative",
+      "state": "partial"
+    },
     {
       "pattern_id": "tycho.pattern.queue-based-load-leveling",
       "dimension": "mechanism",
@@ -40,6 +60,21 @@
     },
     {
       "pattern_id": "tycho.pattern.priority-queue",
+      "dimension": "alternative",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.hedged-requests",
+      "dimension": "invariant",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.hedged-requests",
+      "dimension": "failure_recovery",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.hedged-requests",
       "dimension": "alternative",
       "state": "partial"
     },
@@ -69,13 +104,12 @@
       "state": "partial"
     }
   ],
-  "review_ready": [
-    "Rate Limiting",
-    "Hedged Requests"
-  ],
+  "review_ready": [],
   "remediation": [
+    "Rate Limiting",
     "Queue-Based Load Leveling",
     "Priority Queue",
+    "Hedged Requests",
     "Health Endpoint Monitoring",
     "Failover / Failback"
   ]

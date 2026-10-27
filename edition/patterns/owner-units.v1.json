@@ -1221,28 +1221,14 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Header spoofing, confused-deputy paths and a proxy that becomes the only authorization point are common failures.",
-          "reason": "Names failure and recovery.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
-            "section": "Problems and considerations",
-            "quote": "Ensure the gateway is highly available and resilient to failure. Avoid single points of failure by running multiple instances of your gateway. Because the gateway terminates client connections and can buffer request bodies, consider how in-flight requests are handled during instance failures. Use connection draining or graceful shutdown mechanisms so that removing or restarting a gateway instance doesn't drop active sessions.",
-            "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A service-mesh sidecar, application-level authorization or direct pass-through may be preferable when the edge cannot attest identity.",
-          "reason": "Names the alternative and reversal.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
-            "section": "When to use this pattern",
-            "quote": "The offloaded concern is lightweight and the workload is latency-sensitive. The additional network hop through the gateway might not be justified when the overhead outweighs the benefit of centralization.",
-            "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -1285,16 +1271,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A backend for frontend composes the API surface for one client experience. It needs a client owner, a composition contract, a policy for duplicated domain logic and a boundary that prevents the BFF from becoming a second domain authority.",
-          "reason": "Explains per-client composition and the ownership/contract boundary.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.microsoft-bff.2026-10-21",
-            "section": "Solution",
-            "quote": "Introduce a new layer that handles only the requirements that are specific to the interface. This layer, known as the backend-for-frontend (BFF) service, sits between the frontend client and the backend service. If the application supports multiple interfaces, such as a web interface and a mobile app, create a BFF service for each interface.",
-            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
           "state": "supported",
@@ -1309,16 +1288,9 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is drift between the BFF and the domain API; version the composition and test the client contract.",
-          "reason": "Names drift and prescribes versioning and client-contract testing.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.microsoft-bff.2026-10-21",
-            "section": "Workload design",
-            "quote": "When you isolate services to a specific frontend interface, you contain malfunctions. The availability of one client doesn't affect the availability of another client's access.",
-            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -1348,7 +1320,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note under Bounded pattern ownership notes; all four dimensions are covered."
     },
@@ -3918,16 +3890,9 @@
           }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Use an outbox when the lost-publication and duplicate-effect risk justifies relay complexity.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.microservices-patterns",
-            "ledger_record": "read.batch2-outbox.2026-10-21",
-            "section": "Related patterns",
-            "quote": "The Event sourcing is an alternative solution",
-            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -4761,40 +4726,19 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
-          "reason": "Requires write-order or version guard and visible failed invalidation.",
-          "binding": {
-            "source_id": "src.microsoft-caching-guidance",
-            "ledger_record": "read.batch3-ms-caching.2026-10-21",
-            "section": "Considerations for using caching",
-            "quote": "Invalidate on write: Write the change to the data store, and then remove the affected cache entry.",
-            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
-          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry.",
-          "binding": {
-            "source_id": "src.microsoft-caching-guidance",
-            "ledger_record": "read.batch3-ms-caching.2026-10-21",
-            "section": "Caching and eventual consistency",
-            "quote": "One instance of an application can modify a data item and invalidate the cached version of that item. Another instance of the application might attempt to read this item from a cache, which causes a cache miss. It then reads the data from the data store and adds it to the cache. However, if the data store isn't fully synchronized with the other replicas, the application instance could read and populate the cache with the old value.",
-            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
-          "reason": "Contrasts TTL-only bounded staleness and versioned keys.",
-          "binding": {
-            "source_id": "src.microsoft-caching-guidance",
-            "ledger_record": "read.batch3-ms-caching.2026-10-21",
-            "section": "Caching and eventual consistency",
-            "quote": "When you design your caching strategy, decide how much staleness your application can tolerate and set time-to-live (TTL) values accordingly. For data that must be current, use shorter TTLs or bypass the cache entirely and read from the source data store.",
-            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -4812,7 +4756,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5114,28 +5058,14 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
-          "reason": "Requires a bounded observable stale window and refresh owner.",
-          "binding": {
-            "source_id": "src.rfc5861",
-            "ledger_record": "read.batch3-rfc5861.2026-10-21",
-            "section": "3. The stale-while-revalidate Cache-Control Extension",
-            "quote": "If delta-seconds passes without the cached entity being revalidated, it SHOULD NOT continue to be served stale, absent other information.",
-            "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
-          "reason": "Names repeated stale service and requires a stale-age cap, failure surfacing and blocking fallback.",
-          "binding": {
-            "source_id": "src.rfc5861",
-            "ledger_record": "read.batch3-rfc5861.2026-10-21",
-            "section": "3.1. Example",
-            "quote": "If validation is inconclusive, or if there is not traffic that triggers it, after 30 seconds the stale-while- revalidate function will cease to operate, and the cached response will be \"truly\" stale (i.e., the next request will block and be handled normally).",
-            "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -5165,7 +5095,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5406,16 +5336,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Partitioning splits one logical data set into key ranges or lists inside a store so the planner can prune unrelated partitions for a query.",
-          "reason": "Defines key-range or list splits for planner pruning.",
-          "binding": {
-            "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-partition.2026-10-21",
-            "section": "5.12.1. Overview",
-            "quote": "Partitioning refers to splitting what is logically one large table into smaller physical pieces.",
-            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
           "state": "supported",
@@ -5442,16 +5365,9 @@
           }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Keep one table and add an index when the main query already prunes; partition only when the data volume, retention or maintenance benefit is measured.",
-          "reason": "Contrasts one indexed table with measured partitioning benefit.",
-          "binding": {
-            "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-partition.2026-10-21",
-            "section": "5.12.1. Overview",
-            "quote": "These benefits will normally be worthwhile only when a table would otherwise be very large. The exact point at which a table will benefit from partitioning depends on the application, although a rule of thumb is that the size of the table should exceed the physical memory of the database server.",
-            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -5469,7 +5385,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -5786,28 +5702,14 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "During a membership change, require the old and new quorums to overlap",
-          "reason": "States the invariant.",
-          "binding": {
-            "source_id": "src.cassandra",
-            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
-            "section": "Picking Consistency Levels",
-            "quote": "If QUORUM is used for both writes and reads, at least one of the replicas is guaranteed to participate in both the write and the read request, which in turn guarantees that the quorums will overlap and the write will be visible to the read.",
-            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Overlap is necessary but not sufficient for freshness: choose the response with the highest version and repair replicas behind it.",
-          "reason": "Names stale-read failure and version/read-repair recovery.",
-          "binding": {
-            "source_id": "src.cassandra",
-            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
-            "section": "Replica Synchronization",
-            "quote": "As replicas in Cassandra can accept mutations independently, it is possible for some replicas to have newer data than others. Cassandra has many best-effort techniques to drive convergence of replicas including Replica read repair <read-repair> in the read path and Hinted handoff <hints> in the write path.",
-            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -5837,7 +5739,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Registry anchor is section 2, but the text covers voting-quorum arithmetic, not read/write quorum intersection."
     },
@@ -6132,40 +6034,19 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The backup chain must be complete and restorable, and a recovery target must be validated against the application's consistency requirements, not only produced.",
-          "reason": "Requires a complete restorable chain and an application-consistency check for the target.",
-          "binding": {
-            "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
-            "section": "25.3. Continuous Archiving and PITR",
-            "quote": "To recover successfully using continuous archiving (also called “ online backup ” by many database vendors), you need a continuous sequence of archived WAL files that extends back at least as far as the start time of your backup.",
-            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
-          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums.",
-          "binding": {
-            "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
-            "section": "25.3.5. Recovering Using a Continuous Archive Backup",
-            "quote": "If recovery finds corrupted WAL data, recovery will halt at that point and the server will not start. In such a case the recovery process could be re-run from the beginning, specifying a “ recovery target ” before the point of corruption so that recovery can complete normally. If recovery fails for an external reason, such as a system crash or if the WAL archive has become inaccessible, then the recovery can simply be restarted and it will restart almost from where it failed.",
-            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Promote a replica for availability, but it does not protect against replicated deletion or corruption; use backups when recovery point and retained history matter.",
-          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption.",
-          "binding": {
-            "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
-            "section": "25.3. Continuous Archiving and PITR",
-            "quote": "If we continuously feed the series of WAL files to another machine that has been loaded with the same base backup file, we have a warm standby system: at any point we can bring up the second machine and it will have a nearly-current copy of the database.",
-            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -6183,7 +6064,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -6519,16 +6400,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Deadline propagation carries the caller's remaining budget as a relative duration.",
-          "reason": "Explains how elapsed time is subtracted and the remaining budget propagated.",
-          "binding": {
-            "source_id": "src.sre-cascading",
-            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
-            "section": "Latency and Deadlines",
-            "quote": "With deadline propagation, a deadline is set high in the stack (e.g., in the frontend). The tree of RPCs emanating from an initial request will all have the same absolute deadline.",
-            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
           "state": "supported",
@@ -6543,16 +6417,9 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Clock skew, a lost header and a hop that ignores expiry are the common failures.",
-          "reason": "Describes post-deadline cleanup and reconciliation via a durable workflow.",
-          "binding": {
-            "source_id": "src.sre-cascading",
-            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
-            "section": "Latency and Deadlines",
-            "quote": "Using only simple deadline propagation, the initial call continues to use server resources until it eventually times out, despite being doomed to failure. Sending fatal errors or timeouts up the stack and cancelling other RPCs in the call tree prevents unneeded work if the request as a whole can't be fulfilled.",
-            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -6582,7 +6449,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Core deadline section; timeout, retry and backoff patterns also map here."
     },
@@ -6691,28 +6558,14 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Silent loss of correctness is worse than an explicit failure.",
-          "reason": "Names the failure mode and required response.",
-          "binding": {
-            "source_id": "src.sre-cascading",
-            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
-            "section": "Load Shedding and Graceful Degradation",
-            "quote": "Complex load shedding and graceful degradation can cause problems themselves—excessive complexity may cause the server to trip into a degraded mode when it is not desired, or enter feedback cycles at undesired times. Design a way to quickly turn off complex graceful degradation or tune parameters if needed.",
-            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A complete, explicit outage or added capacity may be preferable when no safe mode exists.",
-          "reason": "Names the competing choice and reversal condition.",
-          "binding": {
-            "source_id": "src.sre-cascading",
-            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
-            "section": "Immediate Steps to Address Cascading Failures",
-            "quote": "Dropping load is a big hammer, usually reserved for situations in which you have a true cascading failure on your hands and you cannot fix it by other means.",
-            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -6755,16 +6608,9 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Shedding requires one named bottleneck and an admission point close to it.",
-          "reason": "Bounded owner statement from the current section.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Utilization Signals",
-            "quote": "Our implementation of task-level overload protection is based on the notion of utilization . In many cases, the utilization is just a measurement of the CPU rate (i.e., the current CPU rate divided by the total CPUs reserved for the task), but in some cases we also factor in measurements such as the portion of the memory reserved that is currently being used. As utilization approaches configured thresholds, we start rejecting requests based on their criticality (higher thresholds for higher criticalities).",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
           "state": "supported",
@@ -6791,16 +6637,9 @@
           }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Those are product choices that deserve review outside an incident.",
-          "reason": "Bounded owner statement from the current section.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Criticality",
-            "quote": "We found that four values were sufficiently robust to model almost every service. We've had various discussions on proposals to add more values, because doing so would allow us to classify requests more finely. However, defining additional values would require more resources to operate various criticality-aware systems.",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -6818,7 +6657,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -6924,52 +6763,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Rate limiting bounds requests per principal, key or window; it must define the identity, window, burst allowance and rejection response.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Per-Customer Limits",
-            "quote": "When global overload does occur, it's vital that the service only delivers error responses to misbehaving customers, while other customers remain unaffected. To achieve this outcome, service owners provision their capacity based on the negotiated usage with their customers and define per-customer quotas according to these agreements.",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "it must define the identity, window, burst allowance and rejection response.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Client-Side Throttling",
-            "quote": "When a customer is out of quota, a backend task should reject requests quickly with the expectation that returning a \"customer is out of quota\" error consumes significantly fewer resources than actually processing the request and serving back a correct response.",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Unfair limits and synchronized retries are common failure modes.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Client-Side Throttling",
-            "quote": "If the amount of rejected requests is significant, these numbers add up quickly. In such cases, the backend can become overloaded even though the vast majority of its CPU is spent just rejecting requests! Client-side throttling addresses this problem.",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Global admission or per-tenant quotas may be preferable when the scarce resource is shared across principals.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "The Pitfalls of \"Queries per Second\"",
-            "quote": "A moving target makes a poor metric for designing and implementing load balancing. A better solution is to measure capacity directly in available resources.",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -6987,7 +6798,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -7144,40 +6955,19 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Hedge delayed reads | Equivalent replicas; bounded speculative budget; cancellation; measured independent tails | Shared bottleneck, expensive writes, inconsistent replicas",
-          "reason": "Lists the required preconditions and contraindications for hedging.",
-          "binding": {
-            "source_id": "src.morning-paper-tail-at-scale",
-            "ledger_record": "read.batch4-hedged.2026-10-21",
-            "section": "The Tail at Scale",
-            "quote": "This approach limits the additional load to approximately 5% while substantially shortening the tail latency.",
-            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Hedging can double work exactly when a shared dependency is saturated; it also risks duplicate side effects if the read is not truly equivalent.",
-          "reason": "Names the doubled-work and duplicate-effect failure modes.",
-          "binding": {
-            "source_id": "src.morning-paper-tail-at-scale",
-            "ledger_record": "read.batch4-hedged.2026-10-21",
-            "section": "The Tail at Scale",
-            "quote": "To avoid doubling or tripling your computation load though, don’t send the hedging requests straight away: defer sending a secondary request until the first request has been outstanding for more than the 95th-percentile expected latency for this class of requests.",
-            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Retry with jitter, improve the slow path, or parallelize truly independent reads may be preferable when replicas share a bottleneck or the operation is not safely repeatable.",
-          "reason": "Names the competing mitigations and reversal condition.",
-          "binding": {
-            "source_id": "src.morning-paper-tail-at-scale",
-            "ledger_record": "read.batch4-hedged.2026-10-21",
-            "section": "The Tail at Scale",
-            "quote": "2) Tied requests : instead of delaying before sending out hedged requests, enqueue requests simulateously on multiple servers, but tie them together but telling each server who else also has this in their queue. When the first server processes the request, it tells the others to cancel it from their queues.",
-            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -7195,7 +6985,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated section; the table supplies the conditions and the main contraindication."
     },
@@ -7786,28 +7576,14 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.",
-          "reason": "States the recovery requirements after metadata loss or reordering.",
-          "binding": {
-            "source_id": "src.jepsen-consistency",
-            "ledger_record": "read.batch4-causal.2026-10-21",
-            "section": "Causal Consistency",
-            "quote": "Causal consistency is sticky available: even in the presence of network partitions, every client connected to a non-faulty node can make progress. However, clients must stick to the same server.",
-            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "If total order is mandatory, use consensus and accept its coordination cost.",
-          "reason": "Contrasts global total order with per-item update order and states when total order is unnecessary.",
-          "binding": {
-            "source_id": "src.jepsen-consistency",
-            "ledger_record": "read.batch4-causal.2026-10-21",
-            "section": "Causal Consistency",
-            "quote": "When a total order is required, and you’re willing to sacrifice availability (and latency), consider sequential consistency .",
-            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -8304,28 +8080,14 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A shared database, queue, cache, control plane or configuration publisher can make all cells fail together",
-          "reason": "Names shared-control-plane blast radius and the required test.",
-          "binding": {
-            "source_id": "src.cell-boundaries",
-            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
-            "section": "What is a cell-based architecture?",
-            "quote": "With cell-based architectures, many common types of failure are contained within the cell itself, providing additional fault isolation.",
-            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A single deployment with failure-domain isolation may be preferable when the population is small and cell duplication cannot be justified.",
-          "reason": "Names single deployment with failure-domain isolation.",
-          "binding": {
-            "source_id": "src.cell-boundaries",
-            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
-            "section": "A workload with cell-based architecture",
-            "quote": "Rather than build out services as single-image systems, we propose a different approach: break your services down internally into cells and build thin layers to route traffic to the right cells.",
-            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -8404,16 +8166,9 @@
           }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A fixed cell anchors one tenant to a known home and population boundary.",
-          "reason": "Contrasts fixed cells and the dedicated-home condition.",
-          "binding": {
-            "source_id": "src.cortex-shuffle-sharding",
-            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
-            "section": "Background",
-            "quote": "The goal of shuffle sharding is to provide an alternative sharding strategy to reduce the blast radius of an outage and better isolate tenants.",
-            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -8468,16 +8223,9 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
-          "reason": "Lists the routing, authority, upgrade and shared-dependency preconditions.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
-            "section": "Problems and considerations",
-            "quote": "Traffic routing: As described previously in this article, routing traffic to the correct stamp for a given request can require an extra component that resolves tenants to stamps. This component might also need to be highly available.",
-            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
           "state": "supported",
@@ -8492,16 +8240,9 @@
           }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
-            "section": "Solution",
-            "quote": "In a deployment stamp architecture, each independent instance of your system serves a subset of your customers and users. In a geode architecture, every instance can serve requests from any user, but this approach is typically more complex to design and build.",
-            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -8519,7 +8260,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Bounded ownership note with full mechanism, failure path and alternative."
     },
@@ -8568,28 +8309,14 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a route to a stale or isolated region; the router must use an authoritative health and data-freshness signal, and failover must fence the old writer.",
-          "reason": "Names stale routing and prescribes health/freshness signalling plus fencing.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-geode.2026-10-21",
-            "section": "Solution",
-            "quote": "Furthermore, the resiliency of the whole solution increases with each added geode, since any geodes can take over if a regional outage takes one or more geodes offline.",
-            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Active-passive recovery is the alternative when cross-region consistency is not worth the routing complexity.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-geode.2026-10-21",
-            "section": "When to use this pattern",
-            "quote": "In this case, consider using deployment stamps in combination with a global routing plane that is aware of where a user's data sits, such as the traffic routing component described within the deployment stamps pattern .",
-            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -8656,16 +8383,9 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch3-ms-static.2026-10-21",
-            "section": "Problems and considerations",
-            "quote": "Changing, deleting, or restricting access to origin content doesn't invalidate cached copies. Purge caches when you need to, but account for propagation time and remember that CDN purges don't clear browser caches.",
-            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -8717,40 +8437,19 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
-          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials.",
-          "binding": {
-            "source_id": "src.microsoft-multitenant",
-            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
-            "section": "Deployment Stamps pattern",
-            "quote": "This pattern deploys dedicated infrastructure for a tenant or a group of tenants. A single stamp might serve multiple tenants or only a single tenant.",
-            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
-          "reason": "Forbids crossing tenant boundaries without a shared-resource contract.",
-          "binding": {
-            "source_id": "src.microsoft-multitenant",
-            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
-            "section": "Deployment Stamps pattern",
-            "quote": "Each stamp requires its own dedicated infrastructure, and that infrastructure can't be shared with other tenants.",
-            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
-          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests.",
-          "binding": {
-            "source_id": "src.microsoft-multitenant",
-            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
-            "section": "Deployment Stamps pattern",
-            "quote": "Multitenant stamps require extra patterns to manage multitenancy within the stamp, and the noisy neighbor problem still might occur.",
-            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -8780,7 +8479,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -9160,28 +8859,14 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
-          "reason": "Requires reproducibility from an artifact digest and drift detection.",
-          "binding": {
-            "source_id": "src.ibm-immutable-infrastructure",
-            "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
-            "section": "Provisioning with infrastructure as code",
-            "quote": "All infrastructure changes are then documented in version control systems like Git, ensuring they’re tested and reproducible.",
-            "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
-          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests.",
-          "binding": {
-            "source_id": "src.ibm-immutable-infrastructure",
-            "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
-            "section": "Recovery",
-            "quote": "Teams redeploy the previous image rather than debugging and troubleshooting modified servers—greatly reducing the detective work traditionally required when configuration management changes fail.",
-            "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -9211,7 +8896,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -9761,28 +9446,14 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Policy gaps, legacy bypass paths and identity-provider outages are common.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.owasp-asvs",
-            "ledger_record": "read.batch6-asvs.2026-10-21",
-            "section": "V8 Authorization",
-            "quote": "Verify that changes to values on which authorization decisions are made are applied immediately. Where changes cannot be applied immediately, (such as when relying on data in self‑contained tokens), there must be mitigating controls to alert when a consumer performs an action when they are no longer authorized to do so and revert the change. Note that this alternative would not mitigate information leakage.",
-            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Network segmentation, a VPN or mTLS-only service identity may be preferable when legacy components cannot enforce per-request identity or when policy-evaluation cost exceeds the threat reduction.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "binding": {
-            "source_id": "src.owasp-asvs",
-            "ledger_record": "read.batch6-asvs.2026-10-21",
-            "section": "V15 Secure Coding and Architecture",
-            "quote": "This could include techniques such as sandboxing, encapsulation, containerization or network level isolation to delay and deter attackers who compromise one part of an application from pivoting elsewhere in the application.",
-            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         }
       },
       "decision_evidence": {
@@ -10272,28 +9943,14 @@
           }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Field names, meaning and redaction rules must be versioned, and sensitive values must be excluded before emission.",
-          "reason": "Requires versioned fields, meaning and redaction before emission.",
-          "binding": {
-            "source_id": "src.otel",
-            "ledger_record": "read.batch6-otel-logs.2026-10-21",
-            "section": "Structured logs",
-            "quote": "The textual encoding can be JSON, protobuf, or another format, but what makes a log structured is the presence of a stable schema (field names, types, and semantics), not merely that it is valid JSON.",
-            "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter and review field allowlists when adding events.",
-          "reason": "Names schema drift and unredacted fields and requires emitter validation and allowlists.",
-          "binding": {
-            "source_id": "src.otel",
-            "ledger_record": "read.batch6-otel-logs.2026-10-21",
-            "section": "Semistructured logs",
-            "quote": "Semistructured logs include machine-readable key/value pairs or delimited fields but do not guarantee a stable schema across emitters.",
-            "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
-          }
+          "reason": "External review 2026-10-27: binding does not support the full owner claim."
         },
         "alternative": {
           "state": "supported",
@@ -10323,7 +9980,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -10751,7 +10408,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
     },
@@ -10765,7 +10422,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "keep",
       "rationale": "Two API-composition patterns have two dedicated bounded notes on a coherent contract page."
     },
@@ -10795,7 +10452,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Quorum reads/writes and quorum coordination now have two distinct dedicated units."
     },
@@ -10910,7 +10567,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Sharding now has a dedicated owner unit with explicit limits."
     },
@@ -11001,7 +10658,7 @@
       ],
       "unit_count": 5,
       "dedicated_units": 5,
-      "bounded_entries": 4,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Fallback, degradation, shedding, throttling and rate limiting now have distinct dedicated units with separate trigger and failure contracts."
     },
@@ -11031,7 +10688,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "keep",
       "rationale": "Three control-plane patterns have three distinct units, two dedicated bounded notes, on a coherent static-stability page."
     },
@@ -11062,7 +10719,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Cells, shuffle sharding and deployment stamps now have three distinct dedicated units."
     },
@@ -11106,7 +10763,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Structured logging and audit trail now have separate dedicated units with distinct retention and atomicity contracts."
     },
@@ -11193,7 +10850,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "keep",
       "rationale": "Tenant-based and multitenant isolation have dedicated bounded units on the isolation page."
     }
@@ -11205,12 +10862,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 117,
-    "invariant_supported": 60,
-    "failure_recovery_supported": 55,
-    "alternative_supported": 62,
-    "technical_partial_bounded": 59,
-    "technical_partial": 86,
+    "mechanism_supported": 111,
+    "invariant_supported": 50,
+    "failure_recovery_supported": 37,
+    "alternative_supported": 47,
+    "technical_partial_bounded": 45,
+    "technical_partial": 100,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

@@ -254,16 +254,16 @@
           "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A shared database, queue, cache, control plane or configuration publisher can make all cells fail together",
-          "reason": "Names shared-control-plane blast radius and the required test.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A single deployment with failure-domain isolation may be preferable when the population is small and cell duplication cannot be justified.",
-          "reason": "Names single deployment with failure-domain isolation.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         }
       }
     },
@@ -317,10 +317,10 @@
           "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A fixed cell anchors one tenant to a known home and population boundary.",
-          "reason": "Contrasts fixed cells and the dedicated-home condition.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         }
       }
     },
@@ -357,10 +357,10 @@
           "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
-          "reason": "Lists the routing, authority, upgrade and shared-dependency preconditions.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
@@ -369,10 +369,10 @@
           "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         }
       }
     },
@@ -409,16 +409,16 @@
           "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The failure path is a route to a stale or isolated region; the router must use an authoritative health and data-freshness signal, and failover must fence the old writer.",
-          "reason": "Names stale routing and prescribes health/freshness signalling plus fencing.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Active-passive recovery is the alternative when cross-region consistency is not worth the routing complexity.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         }
       }
     },
@@ -457,10 +457,10 @@
           "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
@@ -487,22 +487,22 @@
       "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
-          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
-          "reason": "Forbids crossing tenant boundaries without a shared-resource contract.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
-          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",

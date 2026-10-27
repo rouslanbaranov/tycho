@@ -301,22 +301,22 @@
           "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
-          "reason": "Requires write-order or version guard and visible failed invalidation.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
-          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
-          "reason": "Contrasts TTL-only bounded staleness and versioned keys.",
-          "has_binding": true
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
         }
       }
     },

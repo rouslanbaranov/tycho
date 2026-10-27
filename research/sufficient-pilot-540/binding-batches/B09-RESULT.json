@@ -1,7 +1,7 @@
 {
   "batch": "B09",
   "entries": 10,
-  "bindings": 21,
+  "bindings": 17,
   "unbound": [
     {
       "pattern_id": "tycho.pattern.sharding",
@@ -10,6 +10,16 @@
     },
     {
       "pattern_id": "tycho.pattern.sharding",
+      "dimension": "alternative",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.partitioning",
+      "dimension": "mechanism",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.partitioning",
       "dimension": "alternative",
       "state": "partial"
     },
@@ -59,6 +69,16 @@
       "state": "partial"
     },
     {
+      "pattern_id": "tycho.pattern.quorum-based-reads-writes",
+      "dimension": "invariant",
+      "state": "partial"
+    },
+    {
+      "pattern_id": "tycho.pattern.quorum-based-reads-writes",
+      "dimension": "failure_recovery",
+      "state": "partial"
+    },
+    {
       "pattern_id": "tycho.pattern.index-table",
       "dimension": "mechanism",
       "state": "partial"
@@ -99,16 +119,15 @@
       "state": "partial"
     }
   ],
-  "review_ready": [
-    "Partitioning",
-    "Quorum-Based Reads/Writes"
-  ],
+  "review_ready": [],
   "remediation": [
     "Sharding",
+    "Partitioning",
     "Consistent Hashing",
     "Leader-Follower Replication",
     "Multi-Leader Replication",
     "Read Replicas",
+    "Quorum-Based Reads/Writes",
     "Index Table",
     "Polyglot Persistence",
     "CQRS Read Projections"
