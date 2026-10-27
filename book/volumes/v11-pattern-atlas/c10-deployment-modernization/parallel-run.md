@@ -12,7 +12,7 @@ perspectives:
 summary: "Decision card for Parallel Run; bounded owner evidence and explicit limits."
 route_hints:
   questions:
-    - "Should old and new implementations process the same work"
+    - "Should old and new implementations process the same work concurrently for comparison?"
   prerequisites:
     - "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0"
   related_ids:
