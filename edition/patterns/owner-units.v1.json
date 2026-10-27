@@ -7986,22 +7986,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Load balancing chooses among eligible backends. The invariant is that no request reaches an ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and retry-safe callers.",
-          "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent."
+          "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent.",
+          "binding": {
+            "source_id": "src.sre-frontend-enrichment",
+            "ledger_record": "read.batch5-sre-frontend.2026-10-21",
+            "section": "Load Balancing Using DNS",
+            "quote": "The DNS load balancer needs to make sure that the datacenter it selects has enough capacity to serve requests from users that are likely to receive its reply. It also needs to know that the selected datacenter and its network connectivity are in good shape, because directing user requests to a datacenter that’s experiencing power or networking problems isn’t ideal.",
+            "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Cap request cost at the interface where one request can dominate a backend, and test the selector under the real cost distribution.",
-          "reason": "States a required bound and test for request-cost skew."
+          "reason": "SRE page has no per-request cost cap or selector test under real distribution."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A least-loaded or active-request selector assumes that a backend with spare capacity will do useful work. A seriously unhealthy backend can instead return an error in milliseconds, so its active-request count falls and the selector sends it more traffic. The backend becomes a sinkhole.",
-          "reason": "Describes fast-error attraction and the sinkhole failure it produces."
+          "reason": "Describes fast-error attraction and the sinkhole failure it produces.",
+          "binding": {
+            "source_id": "src.sre-frontend-enrichment",
+            "ledger_record": "read.batch5-sre-frontend.2026-10-21",
+            "section": "Load Balancing at the Virtual IP Address",
+            "quote": "What happens if one backend fails and needs to be removed from the backend list? Suddenly N becomes N-1 and then, id(packet) mod N becomes id(packet) mod N-1 . Almost every packet suddenly maps to a different backend! If backends don’t share any state between themselves, this remapping forces a reset of almost all of the existing connections. This scenario is definitely not the best user experience, even if such events are infrequent. Fortunately, there is an alternate solution that doesn’t require keeping the state of every connection in memory, but won’t force all connections to reset when a single machine goes down: consistent hashing .",
+            "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Compare round-robin, random choice, least-active requests and affinity against request cost, stale load signals and state placement.",
-          "reason": "Names competing selection policies but gives no condition that reverses the choice."
+          "reason": "Names competing selection policies but gives no condition that reverses the choice.",
+          "binding": {
+            "source_id": "src.sre-frontend-enrichment",
+            "ledger_record": "read.batch5-sre-frontend.2026-10-21",
+            "section": "Load Balancing at the Virtual IP Address",
+            "quote": "There are several possible approaches the balancer can take in deciding which backend should receive the request. The first (and perhaps most intuitive) approach is to always prefer the least loaded backend. In theory, this approach should result in the best end-user experience because requests are always routed to the least busy machine. Unfortunately, this logic breaks down quickly in the case of stateful protocols, which must use the same backend for the duration of a request.",
+            "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+          }
         }
       },
       "decision_evidence": {
@@ -8019,7 +8040,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The worked design and its subsections own selection signals, fast-error attraction and bounded subsets; alternative choice sits later."
     },
@@ -8046,22 +8067,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Horizontal scaling multiplies processing replicas; vertical scaling changes resources available to existing replicas.",
-          "reason": "States the scaling mechanism (adding replicas) directly."
+          "reason": "States the scaling mechanism (adding replicas) directly.",
+          "binding": {
+            "source_id": "src.k8s-hpa",
+            "ledger_record": "read.batch5-k8s-hpa.2026-10-21",
+            "section": "Horizontal Pod Autoscaling",
+            "quote": "Horizontal scaling means that the response to increased load is to deploy more Pods . This is different from vertical scaling, which for Kubernetes would mean assigning more resources (for example: memory or CPU) to the Pods that are already running for the workload.",
+            "revision": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Neither can increase throughput past a serial or externally fixed bottleneck.",
-          "reason": "States the capacity ceiling that scaling cannot exceed."
+          "reason": "K8s HPA page has no serial-bottleneck throughput ceiling."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A new replica may start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst and bound the work each replica can claim.",
-          "reason": "Names scale-out failure modes and the required test/bound."
+          "reason": "Names scale-out failure modes and the required test/bound.",
+          "binding": {
+            "source_id": "src.k8s-hpa",
+            "ledger_record": "read.batch5-k8s-hpa.2026-10-21",
+            "section": "Pod readiness and autoscaling metrics",
+            "quote": "This command line option helps exclude misleading high CPU usage from initializing Pods (for example: Java apps warming up) in HPA scaling decisions.",
+            "revision": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Vertical scaling or a queue/backpressure policy may be preferable when the bottleneck is per-replica resource or the workload cannot partition.",
-          "reason": "Names vertical scaling/backpressure and the reversal."
+          "reason": "Page does not compare vertical scaling or queue backpressure."
         }
       },
       "decision_evidence": {
@@ -8079,7 +8114,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded in the purpose section, shared with vertical scaling and autoscaling."
     },
@@ -8106,22 +8141,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "vertical scaling changes resources available to existing replicas",
-          "reason": "States the vertical mechanism: enlarge the resources of existing replicas."
+          "reason": "States the vertical mechanism: enlarge the resources of existing replicas.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch5-k8s-resources.2026-10-21",
+            "section": "In-place resize",
+            "quote": "You can modify the CPU and memory requests and limits of containers in a running Pod without recreating it. This is called in-place Pod vertical scaling or in-place Pod resize .",
+            "revision": "8eee4a66c18acfd2ad9798686ad1bec7831deaae5f71691e33217bc06e2c870e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed bottleneck.",
-          "reason": "States the capacity ceiling that vertical scaling cannot exceed."
+          "reason": "States the capacity ceiling that vertical scaling cannot exceed.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch5-k8s-resources.2026-10-21",
+            "section": "How Pods with resource requests are scheduled",
+            "quote": "Each node has a maximum capacity for each of the resource types: the amount of CPU and memory it can provide for Pods.",
+            "revision": "8eee4a66c18acfd2ad9798686ad1bec7831deaae5f71691e33217bc06e2c870e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A resize usually needs a restart or migration, so the old capacity is unavailable during the change; bound the maintenance window and keep a fallback.",
-          "reason": "Names resize unavailability and the required fallback."
+          "reason": "Names resize unavailability and the required fallback.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch5-k8s-resources.2026-10-21",
+            "section": "Resizing by launching replacement Pods",
+            "quote": "The cloud native approach to changing a Pod's resources is to update the Pod template in the workload object (such as a Deployment or StatefulSet) and let the workload's controller replace Pods with new ones that have the updated resources.",
+            "revision": "8eee4a66c18acfd2ad9798686ad1bec7831deaae5f71691e33217bc06e2c870e"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Horizontal scaling or sharding may be preferable when the workload partitions and a single node is an unacceptable failure domain.",
-          "reason": "Names horizontal/sharding and the reversal."
+          "reason": "K8s page does not compare horizontal scaling or sharding."
         }
       },
       "decision_evidence": {
@@ -10117,24 +10173,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A durable business audit records who attempted or authorized which object mutation and the resulting authoritative state, under a specified tamper and retention policy.",
-          "reason": "Defines the audit record's content and its tamper/retention contract."
+          "reason": "OpenLineage local text is only About page; no audit mutation/state content."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "If legal obligations require atomic audit recording, architect the local commit or durable audit handoff explicitly; arbitrary asynchronous logs are insufficient.",
-          "reason": "States the atomicity precondition when audit recording is mandatory."
+          "reason": "Text has no atomic audit recording or legal-retention rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The correct user outcome may still be committed; a missing log is not proof that booking disappeared.",
-          "reason": "Explains how to interpret audit/telemetry loss."
+          "reason": "Text has no missing-audit consequence or repair path."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "If there is no mandatory forensic retention, costly immutable business audit infrastructure may be unnecessary for ordinary verbose debug logs.",
-          "reason": "Names ordinary debug logs as the alternative and the no-mandatory-retention condition."
+          "reason": "Text has no forensic-retention or debug-log alternative."
         }
       },
       "decision_evidence": {
@@ -10152,7 +10208,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The walkthrough owns audit record semantics, atomic recording and partial-failure interpretation."
     },
@@ -10179,22 +10235,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**.",
-          "reason": "Shows how an objective converts user intents into an error budget and consumption."
+          "reason": "Shows how an objective converts user intents into an error budget and consumption.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.batch6-sre-slo.2026-10-21",
+            "section": "Defining Objectives",
+            "quote": "Instead, it is better to allow an error budget—a rate at which the SLOs can be missed—and track that on a daily or weekly basis.",
+            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot change retrospectively to improve the score.",
-          "reason": "States the required exclusions agreement and the no-retrospective-change rule."
+          "reason": "States the required exclusions agreement and the no-retrospective-change rule.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.batch6-sre-slo.2026-10-21",
+            "section": "Defining Objectives",
+            "quote": "For maximum clarity, SLOs should specify how they’re measured and the conditions under which they’re valid.",
+            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the service**, excluding 500 deliberate overload rejections before the handler, can report misleading health.",
-          "reason": "Names the misleading denominator and required review."
+          "reason": "Names the misleading denominator and required review.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.batch6-sre-slo.2026-10-21",
+            "section": "Collecting Indicators",
+            "quote": "However, some systems should be instrumented with client -side collection, because not measuring behavior at the client can miss a range of problems that affect users but don’t affect server-side metrics.",
+            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Metrics or a simpler availability check may be preferable when the user journey is not measurable.",
-          "reason": "Names simpler measurement and the reversal."
+          "reason": "Names simpler measurement and the reversal.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.batch6-sre-slo.2026-10-21",
+            "section": "Indicators",
+            "quote": "Ideally, the SLI directly measures a service level of interest, but sometimes only a proxy is available because the desired measure may be hard to obtain or interpret.",
+            "revision": "60851ff3487eef695bb59143b5123a79af081091ce8bf2909ad83ad924438365"
+          }
         }
       },
       "decision_evidence": {
@@ -10237,24 +10321,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Synthetic monitoring exercises a representative user journey from outside the service.",
-          "reason": "Defines the mechanism as an external representative-journey probe."
+          "reason": "SRE chapter has no synthetic probes or external journeys."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs a safe identity, a journey definition, location and frequency choices and a rule that separates probe failure from product failure.",
-          "reason": "Lists the required preconditions and the probe/product failure separation rule."
+          "reason": "Chapter has no probe identity, location or frequency rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a probe that cannot authenticate or that tests only a trivial path; rotate credentials, cover the critical journey and triage probe noise separately.",
-          "reason": "Describes probe failure modes and their remediation."
+          "reason": "Chapter has no probe-failure or credential remediation path."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Real-user monitoring is the alternative when actual traffic provides enough coverage without synthetic load.",
-          "reason": "Names a competing mechanism and the coverage condition that favors it."
+          "reason": "Chapter has no real-user-monitoring comparison."
         }
       },
       "decision_evidence": {
@@ -10272,7 +10356,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note; all four dimensions are stated within it."
     },
@@ -10299,22 +10383,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Health checks answer different questions: liveness asks whether the process should be restarted, readiness asks whether it should receive traffic, and startup asks whether initialization has completed.",
-          "reason": "Explains the distinct liveness, readiness and startup decisions."
+          "reason": "Explains the distinct liveness, readiness and startup decisions.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+            "section": "Define readiness probes",
+            "quote": "Readiness and liveness probes can be used in parallel for the same container. Using both can ensure that traffic does not reach a container that is not ready for it, and that containers are restarted when they fail.",
+            "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Each needs its own endpoint, timeout and failure action.",
-          "reason": "Requires separate endpoints, timeouts and failure actions."
+          "reason": "Requires separate endpoints, timeouts and failure actions.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+            "section": "Caution",
+            "quote": "The readiness and liveness probes do not depend on each other to succeed. If you want to wait before executing a readiness probe, you should use initialDelaySeconds or a startupProbe .",
+            "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a false restart or traffic sent to an unready instance; bound probe timeouts, require consecutive failures and keep shared-dependency checks out of liveness.",
-          "reason": "Describes false-restart and unready-traffic failures with containment measures."
+          "reason": "Describes false-restart and unready-traffic failures with containment measures.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+            "section": "Define readiness probes",
+            "quote": "Sometimes, applications are temporarily unable to serve traffic. For example, an application might need to load large data or configuration files during startup, or depend on external services after startup. In such cases, you don't want to kill the application, but you don't want to send it requests either.",
+            "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "External journey monitoring is the alternative when process-local probes cannot observe the user-visible contract.",
-          "reason": "Names the alternative and the observability condition that favors it."
+          "reason": "Kubernetes page has only container-local probes, no external journey."
         }
       },
       "decision_evidence": {
@@ -10736,7 +10841,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Horizontal, vertical and autoscaling now have distinct dedicated units with separate lag and failure behavior."
     },
@@ -10798,7 +10903,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Service discovery, client-side discovery, server-side discovery and load balancing now have four distinct dedicated units."
     },
@@ -10826,7 +10931,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Structured logging and audit trail now have separate dedicated units with distinct retention and atomicity contracts."
     },
@@ -10925,12 +11030,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 120,
-    "invariant_supported": 67,
-    "failure_recovery_supported": 60,
-    "alternative_supported": 71,
-    "technical_partial_bounded": 66,
-    "technical_partial": 79,
+    "mechanism_supported": 118,
+    "invariant_supported": 63,
+    "failure_recovery_supported": 58,
+    "alternative_supported": 66,
+    "technical_partial_bounded": 62,
+    "technical_partial": 83,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
