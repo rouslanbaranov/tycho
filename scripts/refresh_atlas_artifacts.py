@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
-"""Refresh every derived atlas artifact after card/page text changes in one pass."""
+"""Refresh every derived atlas artifact, optionally authorizing mechanical revisions."""
+import argparse
 import hashlib
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -9,9 +11,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(*args):
-    subprocess.run([sys.executable, *args], cwd=ROOT, check=True,
-                   stdout=subprocess.DEVNULL)
+def run(*args, check=True):
+    return subprocess.run([sys.executable, *args], cwd=ROOT,
+                          capture_output=True, text=True, check=check)
 
 
 def sha(path):
@@ -25,8 +27,60 @@ def sync_json(path, update):
     p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
 
 
+def authorize_missing(reason):
+    plan = run("scripts/book_change.py", "--plan", check=False).stdout + run(
+        "scripts/book_change.py", "--plan", check=False).stderr
+    lines = plan.splitlines()
+    entries = {"directory_documents": [], "enrichment_documents": [],
+               "enrichment_baselines": []}
+    i = 0
+    while i < len(lines):
+        m = re.match(r"- (directory_documents|enrichment_documents|enrichment_baselines): (.+)",
+                     lines[i].strip())
+        if m and i + 2 < len(lines):
+            prev = re.search(r"previous_sha256:\s*([0-9a-f]+)", lines[i + 1])
+            cur = re.search(r"current_sha256:\s*([0-9a-f]+)", lines[i + 2])
+            if prev and cur:
+                entries[m.group(1)].append({
+                    "path": m.group(2).strip(),
+                    "previous_sha256": prev.group(1),
+                    "current_sha256": cur.group(1),
+                })
+                i += 3
+                continue
+        i += 1
+    total = sum(len(v) for v in entries.values())
+    if not total:
+        return 0
+    if not reason:
+        print("book change requires authorized revisions; pass --authorize REASON")
+        return 1
+    revisions = json.loads((ROOT / "edition/content-revisions.json").read_text())
+    revisions["revisions"].append({
+        "issue": 540,
+        "authorized_at": "2026-10-27",
+        "authorization": reason,
+        "directory_documents": entries["directory_documents"],
+        "source_blocks": [],
+        "enrichment_documents": entries["enrichment_documents"],
+        "enrichment_additions": [],
+        "enrichment_baselines": entries["enrichment_baselines"],
+    })
+    (ROOT / "edition/content-revisions.json").write_text(
+        json.dumps(revisions, indent=2, ensure_ascii=False) + "\n")
+    print("authorized", total, "revisions")
+    return 0
+
+
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--authorize", default=None,
+                        help="reason for authorizing pending book revisions")
+    args = parser.parse_args()
+
     run("scripts/refresh_enrichment_baselines.py")
+    if authorize_missing(args.authorize):
+        return 1
     run("scripts/route_index.py", "build")
     run("scripts/section_fts_index.py", "build")
     run("scripts/pattern_census.py", "--write")
@@ -83,10 +137,17 @@ def main():
 
     run("scripts/validate_edition.py", "--write-inventory")
     run("scripts/sufficient_candidates.py", "--write")
+    candidates = json.loads((ROOT / "edition/patterns/sufficient-candidates.v1.json").read_text())
+    deeper = [e["pattern_id"] for e in candidates["entries"]
+              if e["status"] != "candidate-for-independent-review"]
+    if deeper:
+        print("candidate threshold not met:", ", ".join(deeper))
+        return 1
     run("scripts/build_rereview_scope.py", "--write")
     run("scripts/build_rereview_packets.py")
     print("atlas artifacts refreshed")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
