@@ -96,10 +96,10 @@ class CommittedPacketTests(unittest.TestCase):
     def test_committed_counts(self):
         summary = self.payload["summary"]
         self.assertEqual(summary["packets"], 145)
-        self.assertEqual(summary["promoted"], 138)
+        self.assertEqual(summary["promoted"], 139)
         self.assertEqual(summary["residual"], 0)
         self.assertEqual(summary["page_unverified"], 0)
-        self.assertEqual(summary["rejected"], 7)
+        self.assertEqual(summary["rejected"], 6)
         self.assertEqual(summary["unique_owner_pages"], 69)
         self.assertEqual(summary["ready"], 0)
         self.assertEqual(summary["reviewed"], 125)
