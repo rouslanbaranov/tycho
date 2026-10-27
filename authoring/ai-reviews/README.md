@@ -57,3 +57,5 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 parallel run after split round 2 | pass | `2026-10-27-parallel-run-split-review2-codex.md` | `f4db0f3d67061885e2dc47a743d2dc5a5c6f5d66df3511f8a86e361a1e829dfa` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar | reject |  |  |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar | reject | `2026-10-27-sidecar-review-codex.md` | `bf3cf2331ee6a342a3e3810f803d77ba57f9c963091e84502f05e41e0371980d` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar round 2 | reject |  |  |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar round 2 | reject | `2026-10-27-sidecar-review2-codex.md` | `1cfaefc5bb8b430d7646b4690488d0778a3874a643a7b373f97b75dcf589885c` |
