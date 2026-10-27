@@ -1,0 +1,287 @@
+{
+  "batch": "B16",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.rate-limiting",
+      "catalog_name": "Rate Limiting",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+      "owner_heading": "Rate Limiting",
+      "source_id": "src.sre-overload",
+      "ledger_record": "read.sre-overload.2026-10-21",
+      "url": "https://sre.google/sre-book/handling-overload/",
+      "unit": "Handling Overload — complete public chapter",
+      "sections": [
+        "Handling Overload",
+        "The Pitfalls of \"Queries per Second\"",
+        "Per-Customer Limits",
+        "Client-Side Throttling",
+        "Client request rejection probability",
+        "Criticality",
+        "Utilization Signals",
+        "Handling Overload Errors",
+        "Deciding to Retry",
+        "Load from Connections",
+        "Conclusions"
+      ],
+      "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Rate limiting bounds requests per principal, key or window; it must define the identity, window, burst allowance and rejection response.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "it must define the identity, window, burst allowance and rejection response.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Unfair limits and synchronized retries are common failure modes.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Global admission or per-tenant quotas may be preferable when the scarce resource is shared across principals.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.queue-based-load-leveling",
+      "catalog_name": "Queue-Based Load Leveling",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+      "owner_heading": "Queue-Based Load Leveling",
+      "source_id": "src.rabbitmq",
+      "ledger_record": "read.batch4-rabbit-reliability.2026-10-21",
+      "url": "https://www.rabbitmq.com/docs/reliability",
+      "unit": "Reliability Guide — RabbitMQ documentation",
+      "sections": [
+        "Acknowledgements and Confirms",
+        "Data Safety on the Publisher Side",
+        "Data Safety on the Consumer Side"
+      ],
+      "revision": "12e636d8ff2a50bc42ffdbf93224c1f080af0ad4f82a7066a0e086ec6cf77a2a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "The admission rule of a bounded queue decides four things that the queue cannot decide for itself",
+          "reason": "Defines the mechanism and its scope."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect",
+          "reason": "States the required invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "When backlog age crosses its bound, reject new work before enqueue or shed it at the worker",
+          "reason": "Names the failure and recovery response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Shedding is preferable when work cannot be deferred.",
+          "reason": "Names the competing choice and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.priority-queue",
+      "catalog_name": "Priority Queue",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+      "owner_heading": "Priority Queue",
+      "source_id": "src.rabbitmq",
+      "ledger_record": "read.batch4-rabbit-priority.2026-10-21",
+      "url": "https://www.rabbitmq.com/docs/priority",
+      "unit": "Priority Support in Queues — RabbitMQ documentation",
+      "sections": [
+        "Priority Support in Queues",
+        "Pre-requisites",
+        "What is a Priority Queue",
+        "Before Adopting Priority Queues: Consider the Alternatives",
+        "Declaration and Supported Priority Ranges",
+        "Classic Queues",
+        "Configuring the Maximum Number of Priorities",
+        "Using Client-provided Optional Arguments",
+        "Quorum Queues",
+        "Priorities Are Always Enabled",
+        "Priority Queue Behaviour",
+        "Quorum Queue Specifics",
+        "Per-Priority Message Counts",
+        "Redelivery of Returned Messages",
+        "Priority-Aware Message Expiration",
+        "Low Message Priority and the Resource Starvation Problem",
+        "Maximum Number of Priorities and Resource Usage",
+        "How Priority Queues Work with Consumers",
+        "Example",
+        "Now Add Priorities",
+        "Interaction with Other Features",
+        "Why Policy Definition is not Supported for Priority Queues"
+      ],
+      "revision": "6fb58a128cbc8adc2734604cd3ddca1c0fd43b7ad3ba2f3eb76204f2ecf37df9",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A priority queue is a broker-side ordering policy",
+          "reason": "Explains capacity reservation, class overtaking and the starvation risk a priority queue creates."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The queue must define class levels, per-level capacity and the broker's actual priority support.",
+          "reason": "States that criticality must be authenticated and propagated to each downstream hop."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Add aging or a maximum-wait rule so low classes make progress",
+          "reason": "Names starvation and requires max-wait, starvation and isolation rules to contain it."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "An admission-controlled FIFO or separate lanes per class avoids starvation when priority is unverifiable.",
+          "reason": "Names the competing queue policies and reversal condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.hedged-requests",
+      "catalog_name": "Hedged Requests",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/deadline-hedging.md",
+      "owner_heading": "4. Hedging, replication and selective degradation",
+      "source_id": "src.morning-paper-tail-at-scale",
+      "ledger_record": "read.batch4-hedged.2026-10-21",
+      "url": "https://blog.acolyer.org/2015/01/15/the-tail-at-scale/",
+      "unit": "The Tail at Scale — secondary summary",
+      "sections": [
+        "The Tail at Scale"
+      ],
+      "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A **hedged request** sends an additional equivalent read to another viable replica when an earlier attempt appears unexpectedly slow, then uses an acceptable response and cancels remaining attempts.",
+          "reason": "Defines the trigger, replica choice, response selection and cancellation."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Hedge delayed reads | Equivalent replicas; bounded speculative budget; cancellation; measured independent tails | Shared bottleneck, expensive writes, inconsistent replicas",
+          "reason": "Lists the required preconditions and contraindications for hedging."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Hedging can double work exactly when a shared dependency is saturated; it also risks duplicate side effects if the read is not truly equivalent.",
+          "reason": "Names the doubled-work and duplicate-effect failure modes."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Retry with jitter, improve the slow path, or parallelize truly independent reads may be preferable when replicas share a bottleneck or the operation is not safely repeatable.",
+          "reason": "Names the competing mitigations and reversal condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.health-endpoint-monitoring",
+      "catalog_name": "Health Endpoint Monitoring",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "owner_heading": "Health endpoint monitoring",
+      "source_id": "src.kubernetes",
+      "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+      "url": "https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/",
+      "unit": "Configure Liveness, Readiness and Startup Probes — Kubernetes documentation",
+      "sections": [
+        "Configure Liveness, Readiness and Startup Probes",
+        "Before you begin",
+        "Define a liveness command",
+        "Define a liveness HTTP request",
+        "Use HTTP/2 cleartext (h2c) with HTTP probes",
+        "Define a TCP liveness probe",
+        "Define a gRPC liveness probe",
+        "Use TLS with gRPC probes",
+        "Use a named port",
+        "Protect slow starting containers with startup probes",
+        "Define readiness probes",
+        "Note",
+        "Caution",
+        "What's next",
+        "Feedback"
+      ],
+      "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\".",
+          "reason": "Defines the mechanism and its scope."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "They must not be collapsed into one endpoint.",
+          "reason": "States the required invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A shared dependency failure can fail every probe and cause mass ejection or restart; a cached \"healthy\" answer can keep sending traffic to a draining instance.",
+          "reason": "Names the failure and recovery response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Synthetic checks or SLO-based external monitoring may be preferable when the runtime probe cannot observe the user journey.",
+          "reason": "Names the competing choice and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.failover-failback",
+      "catalog_name": "Failover / Failback",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+      "owner_heading": "Failover-Failback",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch3-pg-warm.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/warm-standby.html",
+      "unit": "Log-Shipping Standby Servers — PostgreSQL documentation",
+      "sections": [
+        "26.2. Log-Shipping Standby Servers",
+        "26.2.1. Planning",
+        "26.2.2. Standby Server Operation",
+        "26.2.3. Preparing the Primary for Standby Servers",
+        "26.2.4. Setting Up a Standby Server",
+        "26.2.5. Streaming Replication",
+        "26.2.5.1. Authentication",
+        "26.2.5.2. Monitoring",
+        "26.2.6. Replication Slots",
+        "26.2.6.1. Querying and Manipulating Replication Slots",
+        "26.2.6.2. Configuration Example",
+        "26.2.7. Cascading Replication",
+        "26.2.8. Synchronous Replication",
+        "26.2.8.1. Basic Configuration",
+        "26.2.8.2. Multiple Synchronous Standbys",
+        "26.2.8.3. Planning for Performance",
+        "26.2.8.4. Planning for High Availability",
+        "26.2.9. Continuous Archiving in Standby",
+        "26.3. Failover",
+        "26.4. Hot Standby"
+      ],
+      "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Failover moves authority from region A to a surviving region B under an explicit decision; failback is a second migration from B back to A, not the inverse operation.",
+          "reason": "Defines the mechanism and its scope."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then reintroduce A as a replica or standby before considering promotion.",
+          "reason": "States the required invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A failback that merely points DNS back can resurrect stale writes and split authority.",
+          "reason": "Names the failure and recovery response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its benefit.",
+          "reason": "Names the competing choice and reversal."
+        }
+      }
+    }
+  ]
+}
