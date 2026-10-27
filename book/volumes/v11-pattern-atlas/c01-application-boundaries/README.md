@@ -431,7 +431,7 @@ the main workload rather than inside it?
 its lifecycle; the platform can schedule and manage it.
 
 **Hard contraindications.** Reject when a language-specific library or traditional
-extension offers deeper integration and lower network overhead.
+extension's deeper integration and lower network overhead dominate the colocated-helper benefits.
 
 **Competing alternative.** A language-specific library or traditional extension when
 deeper integration and lower network overhead matter.
