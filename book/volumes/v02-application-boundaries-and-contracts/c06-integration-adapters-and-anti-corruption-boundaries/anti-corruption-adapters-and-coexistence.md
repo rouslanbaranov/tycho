@@ -110,12 +110,11 @@ An anti-corruption layer is a translation boundary that keeps an external or leg
 becoming the local authority. It owns mapping, validation and the explicit rejection of meanings
 that do not translate.
 
-Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for
-values with no local meaning. A dual write or an unknown external outcome retains the correlation
-identifier and resolves against the authority before reporting success; it does not hide the
-ambiguity behind retries. A synthetic example makes the risk concrete: an external ACTIVE status
-does not imply local AVAILABLE stock or allocation, so the mapping must preserve that uncertainty
-or reject it.
+The anti-corruption layer must maintain and monitor transaction and data consistency. It
+isolates the domain model from the external model and maps external concepts into the local
+domain language. The layer can become a single point of
+failure; plan for resilience with retry, circuit breaker, bulkhead and health endpoint
+monitoring.
 
 The pattern might not be suitable when the new and legacy systems have no significant semantic
 differences. An ACL fits when the external model is lossy, changes on a different cadence or

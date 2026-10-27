@@ -512,9 +512,8 @@ model.
 **Competing alternative.** No ACL when the new and legacy systems have no significant
 semantic differences.
 
-**Failure and recovery.** Lossy translation, dual writes and stale mappings are the
-main failure modes. Recovery requires contract tests, versioned mappings and an
-explicit cutover path; verify those mechanics in the technical owner.
+**Failure and recovery.** The ACL can become a single point of failure; use retry, circuit
+breaker, bulkhead and health endpoint monitoring.
 
 **Technical owner.** [Anti-Corruption Layer](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#anti-corruption-layer).
 

@@ -886,10 +886,10 @@
         "line": 107,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "translation boundary",
-          "version pinning",
-          "contract tests",
-          "correlation identifier"
+          "anti-corruption layer",
+          "transaction and data consistency",
+          "single point of failure",
+          "health endpoint monitoring"
         ]
       },
       "technical_evidence": {
@@ -906,9 +906,9 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for values with no local meaning.",
-          "reason": "Review: binding supports consistency monitoring, not version pinning/contract tests/rejection.",
+          "state": "supported",
+          "quote": "The anti-corruption layer must maintain and monitor transaction and data consistency.",
+          "reason": "Source requires maintaining and monitoring consistency.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-acl.2026-10-21",
@@ -918,9 +918,9 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A dual write or an unknown external outcome retains the correlation identifier and resolves against the authority before reporting success",
-          "reason": "Review: binding supports generic resilience, not dual-write/correlation/authority resolution.",
+          "state": "supported",
+          "quote": "The layer can become a single point of failure; plan for resilience with retry, circuit breaker, bulkhead and health endpoint monitoring.",
+          "reason": "Source names the single point of failure and resilience patterns.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-acl.2026-10-21",
@@ -957,7 +957,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "The definition is in Purpose, but this walkthrough supplies the translation, invariant and partial-failure mechanism."
     },
@@ -10880,11 +10880,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 51,
-    "failure_recovery_supported": 37,
+    "invariant_supported": 52,
+    "failure_recovery_supported": 38,
     "alternative_supported": 49,
-    "technical_partial_bounded": 42,
-    "technical_partial": 99,
+    "technical_partial_bounded": 43,
+    "technical_partial": 98,
     "technical_name_only": 0,
     "technical_sufficient": 4,
     "decision_partial_bounded": 141,
