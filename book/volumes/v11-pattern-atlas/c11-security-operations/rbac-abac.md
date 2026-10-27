@@ -52,11 +52,9 @@ are auditable; conflicts are resolved.
 **Hard contraindications.** Reject when access is purely static and tiny, when attributes
 are untrusted, or when policy complexity cannot be tested.
 
-**Competing alternative.** Direct capability checks or a simpler role model. Reverse the
-choice when policy administration cost exceeds access-control benefit.
+**Competing alternative.** Object ACLs use identity; RBAC uses roles.
 
-**Failure and recovery.** Role explosion and stale attributes are common; verify model in
-the owner section.
+**Failure and recovery.** Failure to remove or revoke access over time accumulates privileges.
 
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 

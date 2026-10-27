@@ -107,19 +107,16 @@ audited path with revocation tests and logging rather than a permanent broad rol
 ## RBAC-ABAC
 
 Role-based access control maps roles to permissions, while attribute-based control evaluates
-principal, resource and context attributes to reach a decision. Policy evaluation must be
-deterministic and deny by default, and every decision must be explainable from versioned
-policy and attributes.
+principal, resource and context attributes to reach a decision. Authorization is determined by evaluating attributes associated with the subject, object,
+requested operations, and environment conditions against policy.
 
 Policy decision and enforcement can be separate components: a policy decision point evaluates
 policy and attributes, a policy enforcement point applies the decision, a policy information
 point supplies attributes and a policy administration point manages policy. Distributed
 placement makes attribute freshness and audit harder.
 
-Role explosion or stale attributes grants unintended access; test policy changes against
-denied and allowed cases and record policy provenance. Explicit object access lists are
-transparent at small scale; move to roles or attributes when the number of objects and
-principals makes per-object grants unmaintainable.
+Failure to remove or revoke access over time leads to users accumulating privileges. ACLs
+work on the attribute of identity; RBAC works on the attribute of role.
 
 **Limits.** Policy/attribute freshness and decision logging are costs; an unexplainable deny or
 allow is a production incident, not a policy detail. Attribute sources need freshness SLAs; a

@@ -9658,25 +9658,46 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Policy evaluation must be deterministic and deny by default, and every decision must be explainable from versioned policy and attributes.",
-          "reason": "The deterministic, deny-by-default, versioned-policy clause is not fully bound to the cited requirement sections."
+          "state": "supported",
+          "quote": "Authorization is determined by evaluating attributes associated with the subject, object, requested operations, and environment conditions against policy.",
+          "reason": "NIST defines ABAC authorization through subject, object, operation and environment attributes.",
+          "binding": {
+            "source_id": "src.nist-sp-800-162",
+            "ledger_record": "read.nist-sp-800-162.2026-10-26",
+            "section": "2. Understanding ABAC",
+            "quote": "ABAC is a logical access control methodology where authorization to perform a set of operations is determined by evaluating attributes associated with the subject, object, requested operations, and, in some cases, environment conditions against policy, rules, or relationships that describe the allowable operations for a given set of attributes.",
+            "revision": "ea90ee967a7011c8de5cfaffe0820d157167edefdea5fc2a84af730af4295cd7"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Role explosion or stale attributes grants unintended access; test policy changes against denied and allowed cases and record policy provenance.",
-          "reason": "Role-explosion and attribute-freshness guidance is synthetic."
+          "state": "supported",
+          "quote": "Failure to remove or revoke access over time leads to users accumulating privileges.",
+          "reason": "NIST states that failure to remove or revoke access accumulates privileges.",
+          "binding": {
+            "source_id": "src.nist-sp-800-162",
+            "ledger_record": "read.nist-sp-800-162.2026-10-26",
+            "section": "2. Understanding ABAC",
+            "quote": "Failure to remove or revoke access over time leads to users accumulating privileges.",
+            "revision": "ea90ee967a7011c8de5cfaffe0820d157167edefdea5fc2a84af730af4295cd7"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Explicit object access lists are transparent at small scale; move to roles or attributes when the number of objects and principals makes per-object grants unmaintainable.",
-          "reason": "The object-ACL comparison is editorial, not bound to the cited standards."
+          "state": "supported",
+          "quote": "ACLs work on the attribute of identity; RBAC works on the attribute of role.",
+          "reason": "NIST contrasts ACL identity, RBAC role and ABAC attributes.",
+          "binding": {
+            "source_id": "src.nist-sp-800-162",
+            "ledger_record": "read.nist-sp-800-162.2026-10-26",
+            "section": "2. Understanding ABAC",
+            "quote": "ACLs work on the attribute of “identity”. RBAC works on the attribute of “role”.",
+            "revision": "ea90ee967a7011c8de5cfaffe0820d157167edefdea5fc2a84af730af4295cd7"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "rbac-abac",
         "question": "Should access be decided by roles or attributes rather than ad hoc checks?",
-        "competing_alternative": "Direct capability checks or a simpler role model. Reverse the choice when policy administration cost exceeds access-control benefit.",
+        "competing_alternative": "Object ACLs use identity; RBAC uses roles.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9688,7 +9709,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -10893,7 +10914,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 2,
+      "bounded_entries": 3,
       "decision": "keep",
       "rationale": "Zero trust, least privilege and RBAC/ABAC have dedicated bounded units on the authorization page."
     },
@@ -10920,11 +10941,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 55,
-    "failure_recovery_supported": 39,
-    "alternative_supported": 51,
-    "technical_partial_bounded": 41,
-    "technical_partial": 95,
+    "invariant_supported": 56,
+    "failure_recovery_supported": 40,
+    "alternative_supported": 52,
+    "technical_partial_bounded": 42,
+    "technical_partial": 94,
     "technical_name_only": 0,
     "technical_sufficient": 9,
     "decision_partial_bounded": 136,
