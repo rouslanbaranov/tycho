@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 139 |
+| Promoted after remediation | 138 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 128 |
-| Rejected after review | 6 |
+| Rejected after review | 7 |
 
 Packet statuses: {"page-changed-since-review": 17, "reviewed-by-independent-agent": 128}.
 
@@ -501,7 +501,7 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Service Discovery**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: reject; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **Service-Oriented Architecture (SOA)**

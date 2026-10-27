@@ -47,3 +47,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 2 | reject | `2026-10-27-anti-corruption-layer-review2-codex.md` | `a437bb9ad9c9073b372540526ccc1c6620539d13133a3dfe4cec57e369feb9fb` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 3 | reject | `2026-10-27-anti-corruption-layer-review3-codex.md` | `368ef64070e82cb0455215fc0baab508d360441ed0e24e3677d750495a871d58` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 4 | pass | `2026-10-27-anti-corruption-layer-review4-codex.md` | `e4c87513e47e5b75442837931e52761c6b1f8ae7825bf78de972b731c14d1338` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 service discovery | reject | `2026-10-27-service-discovery-review-codex.md` | `ff80611cb796877c1a04f57f32c2250436c5a54de1ae20206997d615159da716` |
