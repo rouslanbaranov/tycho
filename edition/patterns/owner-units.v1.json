@@ -3094,22 +3094,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "A claim check stores a large or sensitive payload outside the message and sends a claim token instead.",
-          "reason": "Defines storing the payload externally and sending a claim token."
+          "reason": "Defines storing the payload externally and sending a claim token.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-claim.2026-10-21",
+            "section": "Solution statement",
+            "quote": "Store message data in a persistent store and pass a Claim Check to subsequent components. These components can use the Claim Check to retrieve the stored information.",
+            "revision": "96395638cbc1165642bdff681ec21a2862359e68f88f59cb7a2b5b2ad4753fb5"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs payload lifecycle, authorization, expiry, integrity and a cleanup rule for abandoned claims.",
-          "reason": "Requires payload lifecycle, authorization, expiry, integrity and cleanup."
+          "reason": "Page has no payload lifecycle, authorization or expiry rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is an orphaned payload or a token that outlives its authorization; expire and garbage-collect claims, and make the consumer fail closed when the claim cannot be resolved.",
-          "reason": "Names orphaned payloads and overlong tokens and requires expiry, garbage collection and fail-closed resolution."
+          "reason": "Page has no orphaned-payload or overlong-token failure path."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An inline payload with encryption and size limits is the alternative when the transport can carry it safely.",
-          "reason": "Contrasts an inline encrypted size-limited payload."
+          "reason": "Page contrasts external storage but not inline encrypted payload."
         }
       },
       "decision_evidence": {
@@ -3127,7 +3134,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
     },
@@ -3152,24 +3159,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A bridge sits between broker contracts: it translates protocols or formats and therefore adds a hop, a retention policy and a failure domain.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Local page is Message Broker, not a broker-to-broker bridge."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The bridge contract must preserve identity, ordering and delivery semantics across translation.",
-          "reason": "Requires the bridge contract to preserve identity, ordering and delivery semantics."
+          "reason": "Page does not preserve identity/ordering across translation."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The broker half also needs an owner for outage, retention and delivery observability",
-          "reason": "Requires an owner for broker outage, retention and delivery observability."
+          "reason": "Page names bottleneck but not broker outage or retention."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A bridge is justified only when a protocol or ownership boundary cannot be removed",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page does not compare bridge with direct calls, fan-out or shared log."
         }
       },
       "decision_evidence": {
@@ -3187,7 +3194,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -3211,22 +3218,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A canonical data model gives producers and consumers one versioned shared representation, with translation at the edges instead of pairwise formats.",
-          "reason": "Defines one versioned shared representation with edge translation."
+          "reason": "Defines one versioned shared representation with edge translation.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-canonical.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "Therefore, design a Canonical Data Model that is independent from any specific application. Require each application to produce and consume messages in this common format.",
+            "revision": "02992f61d7529d80300b901e152622f0e876669b52f49d035dba00745a2405f8"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The canonical schema must be versioned and lossless for the fields each consumer needs, and translation must fail explicitly when a required meaning is absent.",
-          "reason": "Requires versioning, lossless consumer fields and explicit translation failure."
+          "reason": "Page has no schema versioning or losslessness rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A translation can preserve syntax while losing domain meaning; contract tests with representative payloads and an owner for schema changes are required.",
-          "reason": "Names syntax-preserving semantic loss and requires contract tests and schema ownership."
+          "reason": "Page has no semantic-loss or contract-test failure path."
         },
         "alternative": {
           "state": "supported",
           "quote": "Point-to-point translation or an anti-corruption layer avoids a central schema when integrations are few or their models genuinely differ.",
-          "reason": "Contrasts point-to-point translation or an anti-corruption layer."
+          "reason": "Contrasts point-to-point translation or an anti-corruption layer.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-canonical.2026-10-21",
+            "section": "Translator-count tradeoff (unheaded)",
+            "quote": "If we assume that each application sends and receives message to and from each other application, a solution consisting of 2 applications would require only 2 Message Translator s if we translate between the applications' data formats directly whereas the Canonical Data Model requires 4 Message Translator s.",
+            "revision": "02992f61d7529d80300b901e152622f0e876669b52f49d035dba00745a2405f8"
+          }
         }
       },
       "decision_evidence": {
@@ -3244,7 +3265,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -10256,7 +10277,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 4,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -10287,7 +10308,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "DLQ, claim check, correlation, request-reply and workflow-failure gates now have five dedicated units."
     },
@@ -10596,12 +10617,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 127,
-    "invariant_supported": 79,
-    "failure_recovery_supported": 74,
-    "alternative_supported": 83,
-    "technical_partial_bounded": 78,
-    "technical_partial": 67,
+    "mechanism_supported": 126,
+    "invariant_supported": 76,
+    "failure_recovery_supported": 71,
+    "alternative_supported": 81,
+    "technical_partial_bounded": 75,
+    "technical_partial": 70,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

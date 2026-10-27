@@ -20,22 +20,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "An aggregator fans in related results from multiple participants and returns one composed result.",
-          "reason": "Defines fan-in of participant results into one composed result."
+          "reason": "Defines fan-in of participant results into one composed result.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs correlation, a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses.",
-          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling."
+          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "The failure path is a stuck or missing participant; the aggregator must return a declared partial result, cancel remaining work or fail as a whole.",
-          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure."
+          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Client-side composition is the alternative when the caller can tolerate multiple responses.",
-          "reason": "Contrasts client-side composition when multiple responses are acceptable."
+          "reason": "Page lists completeness strategies, not client-side composition.",
+          "has_binding": false
         }
       }
     },
@@ -59,22 +63,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Scatter-gather sends one request to several participants and gathers their responses.",
-          "reason": "Defines one request sent to several participants with gathered responses."
+          "reason": "Defines one request sent to several participants with gathered responses.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs a response contract, a quorum or completeness rule, a deadline and a policy for stragglers.",
-          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy."
+          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "The failure path is a slow or missing participant; gather must return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
-          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work."
+          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A single authoritative call is the alternative when consistency matters more than coverage.",
-          "reason": "Contrasts one authoritative call when consistency dominates coverage."
+          "reason": "Page has no single authoritative call or coverage comparison.",
+          "has_binding": false
         }
       }
     },
@@ -99,22 +107,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A quarantine queue receives a message after its retry or age policy is exhausted, retaining payload, headers and failure context.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Retrying cannot repair an invalid schema or a permanently rejected target.",
-          "reason": "States that retry cannot repair invalid schema or permanent target rejection."
+          "reason": "Page does not state permanent schema/target failure separation.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence without leaking payload.",
-          "reason": "Requires separating transient, permanent and unknown outcomes with bounded attempts and evidence."
+          "reason": "Requires separating transient, permanent and unknown outcomes with bounded attempts and evidence.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with audit, drop with a record, or a repair table/outbox.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page lists related patterns without bounded-retry/audit comparison.",
+          "has_binding": false
         }
       }
     },
@@ -137,22 +149,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A server-side cursor plus retained messages lets an offline consumer resume after reconnect.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Delivery guarantees differ by broker and configuration.",
-          "reason": "Notes that delivery guarantees vary by broker and configuration."
+          "reason": "Page does not state broker/config-dependent delivery guarantees.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Resume is bounded only by retention, acknowledgement timeout and replay policy.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page does not state retention, ack-timeout or replay bounds.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a durable consumer or another persisted queue, not a best-effort subscription alone.",
-          "reason": "Contrasts ephemeral pub/sub with a durable consumer or persisted queue for recoverable tasks."
+          "reason": "Contrasts ephemeral pub/sub with a durable consumer or persisted queue for recoverable tasks.",
+          "has_binding": true
         }
       }
     },
@@ -174,22 +190,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "describes recording processed message IDs under a consumer identity in the same database transaction as the business update, so redelivery cannot apply it twice under that local model.",
-          "reason": "Explains recording processed message IDs atomically with the consumer's business update."
+          "reason": "Explains recording processed message IDs atomically with the consumer's business update.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Atomic (consumer, event/effect ID) uniqueness with business update",
-          "reason": "Requires atomic consumer/event uniqueness with the business update."
+          "reason": "Page has no atomic (consumer,event) uniqueness with business update.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A marker written before a separate external effect can lose it on crash; a marker written after can duplicate it. The consumer must use the external capability's idempotency/reconciliation boundary.",
-          "reason": "Describes crash windows and the external reconciliation boundary."
+          "reason": "Page has no crash window or external reconciliation boundary.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A business-key upsert, a conditional write or the downstream API's idempotency key may be preferable when no local processed-message table is available.",
-          "reason": "Names competing dedup mechanisms and the reversal."
+          "reason": "Names competing dedup mechanisms and the reversal.",
+          "has_binding": true
         }
       }
     },
@@ -214,22 +234,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A resequencer restores an intended order from messages that arrive out of order.",
-          "reason": "Defines restoring intended order from out-of-order arrivals."
+          "reason": "Defines restoring intended order from out-of-order arrivals.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate sequence numbers.",
-          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy."
+          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The failure path is a missing sequence that blocks later messages; release the buffer after a declared timeout or fail the affected partition.",
-          "reason": "Names a missing sequence blocking later messages and requires timeout release or partition failure."
+          "reason": "Page has no missing-sequence timeout or partition failure rule.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A partitioned consumer that preserves order within a key is the alternative when global order is unnecessary.",
-          "reason": "Contrasts partitioned per-key ordering when global order is unnecessary."
+          "reason": "Page does not name key-ordered partitioned consumers.",
+          "has_binding": false
         }
       }
     },
@@ -255,22 +279,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A claim check stores a large or sensitive payload outside the message and sends a claim token instead.",
-          "reason": "Defines storing the payload externally and sending a claim token."
+          "reason": "Defines storing the payload externally and sending a claim token.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "It needs payload lifecycle, authorization, expiry, integrity and a cleanup rule for abandoned claims.",
-          "reason": "Requires payload lifecycle, authorization, expiry, integrity and cleanup."
+          "reason": "Page has no payload lifecycle, authorization or expiry rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The failure path is an orphaned payload or a token that outlives its authorization; expire and garbage-collect claims, and make the consumer fail closed when the claim cannot be resolved.",
-          "reason": "Names orphaned payloads and overlong tokens and requires expiry, garbage collection and fail-closed resolution."
+          "reason": "Page has no orphaned-payload or overlong-token failure path.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "An inline payload with encryption and size limits is the alternative when the transport can carry it safely.",
-          "reason": "Contrasts an inline encrypted size-limited payload."
+          "reason": "Page contrasts external storage but not inline encrypted payload.",
+          "has_binding": false
         }
       }
     },
@@ -297,24 +325,28 @@
       "revision": "ddc6d825aa8a17ef30a18ff8178085022c9424432a6082947f9f7983826f79ca",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A bridge sits between broker contracts: it translates protocols or formats and therefore adds a hop, a retention policy and a failure domain.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Local page is Message Broker, not a broker-to-broker bridge.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The bridge contract must preserve identity, ordering and delivery semantics across translation.",
-          "reason": "Requires the bridge contract to preserve identity, ordering and delivery semantics."
+          "reason": "Page does not preserve identity/ordering across translation.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The broker half also needs an owner for outage, retention and delivery observability",
-          "reason": "Requires an owner for broker outage, retention and delivery observability."
+          "reason": "Page names bottleneck but not broker outage or retention.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A bridge is justified only when a protocol or ownership boundary cannot be removed",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page does not compare bridge with direct calls, fan-out or shared log.",
+          "has_binding": false
         }
       }
     },
@@ -339,22 +371,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A canonical data model gives producers and consumers one versioned shared representation, with translation at the edges instead of pairwise formats.",
-          "reason": "Defines one versioned shared representation with edge translation."
+          "reason": "Defines one versioned shared representation with edge translation.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The canonical schema must be versioned and lossless for the fields each consumer needs, and translation must fail explicitly when a required meaning is absent.",
-          "reason": "Requires versioning, lossless consumer fields and explicit translation failure."
+          "reason": "Page has no schema versioning or losslessness rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A translation can preserve syntax while losing domain meaning; contract tests with representative payloads and an owner for schema changes are required.",
-          "reason": "Names syntax-preserving semantic loss and requires contract tests and schema ownership."
+          "reason": "Page has no semantic-loss or contract-test failure path.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Point-to-point translation or an anti-corruption layer avoids a central schema when integrations are few or their models genuinely differ.",
-          "reason": "Contrasts point-to-point translation or an anti-corruption layer."
+          "reason": "Contrasts point-to-point translation or an anti-corruption layer.",
+          "has_binding": true
         }
       }
     },
@@ -380,22 +416,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A process manager keeps a central workflow state machine and decides the next step",
-          "reason": "Defines a central workflow state machine that decides the next step."
+          "reason": "Defines a central workflow state machine that decides the next step.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The invariant is a recorded dispatch intent, not merely a progress row",
-          "reason": "Requires a recorded dispatch intent rather than only a progress row."
+          "reason": "Page mentions workflow state but not recorded dispatch intent.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A lost dispatch or duplicate step leaves the workflow stuck or duplicated",
-          "reason": "Names lost dispatch and duplicate steps as stuck or duplicated workflows."
+          "reason": "Page warns about bottleneck but not lost/duplicate/stuck recovery.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A routing slip is simpler when the itinerary is fixed and each hop can forward it",
-          "reason": "Contrasts a fixed-itinerary routing slip with per-hop forwarding."
+          "reason": "Contrasts a fixed-itinerary routing slip with per-hop forwarding.",
+          "has_binding": true
         }
       }
     }
