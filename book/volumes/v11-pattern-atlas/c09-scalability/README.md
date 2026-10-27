@@ -348,8 +348,9 @@ versioning/purge cannot meet freshness, or when edge configuration is unowned.
 **Competing alternative.** Serve from origin or a cache with explicit TTL. Reverse the
 choice when edge complexity exceeds origin offload benefit.
 
-**Failure and recovery.** Origin outage, incomplete purge, stale deletion and a cold-cache
-miss storm are common; prewarm, verify propagation and keep versioned rollback.
+**Failure and recovery.** Changing, deleting, or restricting access to origin content doesn't
+invalidate cached copies. Purge caches and account for propagation time; CDN purges don't
+clear browser caches.
 
 **Technical owner.** [Static Content Hosting](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#static-content-hosting) — static hosting is bounded to edge/origin behavior.
 

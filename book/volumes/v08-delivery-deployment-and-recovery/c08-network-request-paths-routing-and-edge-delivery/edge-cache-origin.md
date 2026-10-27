@@ -152,8 +152,10 @@ manifest maps a stable alias to the current version.
 The host must own upload validation, origin protection and prewarming for a release. A retained
 version is the rollback path, so garbage collection may delete old objects only after the rollback
 window; a deleted object needs a tombstone or purge proof. The cache key, TTL and authorization
-boundary must agree, especially for private assets signed at the edge. Cold-cache miss storms and
-incomplete purges are common; exercise origin failover and a known purge.
+boundary must agree, especially for private assets signed at the edge. Changing, deleting, or
+restricting access to origin content doesn't invalidate cached copies. Purge caches when you
+need to, but account for propagation time and remember that CDN purges don't clear browser
+caches.
 
 Retained versions and edge copies carry storage, egress and purge cost; a second origin or
 duplicated manifest needs one version authority, or the rollback path becomes ambiguous.

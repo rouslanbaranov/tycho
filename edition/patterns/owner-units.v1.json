@@ -8332,7 +8332,7 @@
         "unit_terms": [
           "Static content hosting",
           "retained version",
-          "incomplete purges",
+          "CDN purges",
           "dynamic origin"
         ]
       },
@@ -8362,9 +8362,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Changing, deleting, or restricting access to origin content doesn't invalidate cached copies. Purge caches when you need to, but account for propagation time and remember that CDN purges don't clear browser caches.",
+          "reason": "Names stale edge copies after origin changes and purge propagation bounds.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Changing, deleting, or restricting access to origin content doesn't invalidate cached copies. Purge caches when you need to, but account for propagation time and remember that CDN purges don't clear browser caches.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -10794,7 +10801,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 47,
-    "failure_recovery_supported": 34,
+    "failure_recovery_supported": 35,
     "alternative_supported": 45,
     "technical_partial_bounded": 42,
     "technical_partial": 103,
