@@ -171,13 +171,12 @@ A valet key is a time-limited credential that grants access to specific resource
 allows only predefined operations. Applications issue keys to clients so the client can
 perform the operation without the application handling the data transfer.
 
-The key should allow only the actions necessary to complete the operation.
+The key should allow only the actions necessary to complete the operation. Access is limited
+in both scope and duration, and the key can be revoked.
 
 If leaked or compromised, the key unlocks the target item and makes it available for
 malicious use during its validity period; a key can usually be revoked or disabled.
-Applications can invalidate the key when the client reports that the transfer is complete.
-
 The other is to implement the Gateway Routing pattern to set up an endpoint where clients
 use proxied access to storage.
 
-**Limits.** A key that cannot be revoked or audited is a standing exposure.
+**Limits.** A key that cannot be revoked is a standing exposure.

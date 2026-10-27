@@ -262,15 +262,14 @@ security-pattern; priority core.
 direct resource access?
 
 **Good-fit conditions.** Access is limited in scope and duration; the key can be revoked or
-disabled; operations are audited.
+disabled.
 
-**Hard contraindications.** Reject when access must be mediated, the key cannot be revoked,
-or audit is required and unavailable.
+**Hard contraindications.** Reject when access must be mediated or the key cannot be revoked.
 
 **Competing alternative.** Gateway Routing with proxied access to storage.
 
 **Failure and recovery.** A leaked key unlocks the target during its validity period; revoke
-or disable it and keep logs protected.
+or disable it.
 
 **Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — scoped credential issuance, enforcement and revocation are bounded, not a key-management guide.
 
