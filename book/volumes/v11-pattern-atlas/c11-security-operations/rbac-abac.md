@@ -25,6 +25,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.owasp-asvs"
+    - "src.nist-sp-800-162"
   claim_ids: []
   status: "source-linked"
   notes: "Moved card page; source binding remains in the owner unit."

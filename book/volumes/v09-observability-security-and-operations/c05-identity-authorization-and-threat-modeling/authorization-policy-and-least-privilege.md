@@ -106,9 +106,9 @@ audited path with revocation tests and logging rather than a permanent broad rol
 
 ## RBAC-ABAC
 
-Role-based access control maps roles to permissions, while attribute-based control evaluates
+RBAC employs pre-defined roles that carry a specific set of privileges; ABAC evaluates
 principal, resource and context attributes to reach a decision. Authorization is determined by evaluating attributes associated with the subject, object,
-requested operations, and environment conditions against policy.
+requested operations, and, where applicable, environment conditions against policy.
 
 Policy decision and enforcement can be separate components: a policy decision point evaluates
 policy and attributes, a policy enforcement point applies the decision, a policy information
