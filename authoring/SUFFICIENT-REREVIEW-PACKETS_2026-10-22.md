@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 138 |
+| Promoted after remediation | 137 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 127 |
-| Rejected after review | 7 |
+| Rejected after review | 8 |
 
 Packet statuses: {"page-changed-since-review": 18, "reviewed-by-independent-agent": 127}.
 
@@ -393,7 +393,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Parallel Run**
-  Current: pass; re-review: pass; report: pass-with-findings.
+  Current: reject; re-review: pass; report: pass-with-findings.
   Status: page-changed-since-review.
 
 - **Partitioning**
