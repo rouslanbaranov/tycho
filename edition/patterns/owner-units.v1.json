@@ -8333,14 +8333,14 @@
           "Static content hosting",
           "retained version",
           "CDN purges",
-          "dynamic origin"
+          "storage service"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Static content hosting publishes immutable objects to an object store or CDN origin and serves them by URL without per-request application compute.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "quote": "Static content hosting places static resources in a storage service that serves them directly, reducing load on the application compute that handles other requests.",
+          "reason": "States storage serving and application-compute offload.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.batch3-ms-static.2026-10-21",
@@ -8375,8 +8375,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A dynamic origin or edge compute may be preferable when content changes per request or publication cannot be governed.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "quote": "The application must process or personalize content for each request before delivering it.",
+          "reason": "Names the per-request processing condition that defeats static hosting.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.batch3-ms-static.2026-10-21",
@@ -8389,7 +8389,7 @@
       "decision_evidence": {
         "atlas_section": "static-content-hosting",
         "question": "Should static content be served from a dedicated store or edge rather than the application origin?",
-        "competing_alternative": "Serve from origin or a cache with explicit TTL. Reverse the choice when edge complexity exceeds origin offload benefit.",
+        "competing_alternative": "Process or personalize content for each request before delivery.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

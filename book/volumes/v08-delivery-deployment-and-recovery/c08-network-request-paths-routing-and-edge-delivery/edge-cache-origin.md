@@ -145,9 +145,8 @@ authorization boundary are explicit.
 
 ### Static Content Hosting
 
-Static content hosting publishes immutable objects to an object store or CDN origin and serves them
-by URL without per-request application compute. The URL carries a version or content hash; a small
-manifest maps a stable alias to the current version.
+Static content hosting places static resources in a storage service that serves them directly,
+reducing load on the application compute that handles other requests.
 
 The host must own upload validation, origin protection and prewarming for a release. A retained
 version is the rollback path, so garbage collection may delete old objects only after the rollback
@@ -160,6 +159,4 @@ caches.
 Retained versions and edge copies carry storage, egress and purge cost; a second origin or
 duplicated manifest needs one version authority, or the rollback path becomes ambiguous.
 
-A dynamic origin or edge compute may be preferable when content changes per request or publication
-cannot be governed. Static hosting is a fit when assets are immutable, versioned and the publisher
-can prove upload, prewarm and purge.
+The application must process or personalize content for each request before delivering it.

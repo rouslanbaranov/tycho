@@ -345,8 +345,7 @@ controlled; origin protection is owned.
 **Hard contraindications.** Reject when content is personalized/uncacheable, when
 versioning/purge cannot meet freshness, or when edge configuration is unowned.
 
-**Competing alternative.** Serve from origin or a cache with explicit TTL. Reverse the
-choice when edge complexity exceeds origin offload benefit.
+**Competing alternative.** Process or personalize content for each request before delivery.
 
 **Failure and recovery.** Changing, deleting, or restricting access to origin content doesn't
 invalidate cached copies. Purge caches and account for propagation time; CDN purges don't
