@@ -52,5 +52,7 @@ Tycho is authored and maintained by **Ruslan Baranov**
 
 Copyright © 2026 Ruslan Baranov.
 
+Citation metadata is provided in [CITATION.cff](CITATION.cff).
+
 Third-party sources cited in the book remain subject to their own terms; see the
 [source register](sources/register.json).
