@@ -1,0 +1,92 @@
+#!/usr/bin/env python3
+"""Refresh every derived atlas artifact after card/page text changes in one pass."""
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def run(*args):
+    subprocess.run([sys.executable, *args], cwd=ROOT, check=True,
+                   stdout=subprocess.DEVNULL)
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def sync_json(path, update):
+    p = ROOT / path
+    data = json.loads(p.read_text())
+    update(data)
+    p.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+
+
+def main():
+    run("scripts/refresh_enrichment_baselines.py")
+    run("scripts/route_index.py", "build")
+    run("scripts/section_fts_index.py", "build")
+    run("scripts/pattern_census.py", "--write")
+    run("scripts/pattern_coverage.py", "--write")
+    run("scripts/phase4_audit.py")
+
+    phase4 = json.loads((ROOT / "edition/patterns/phase4.v1.json").read_text())["summary"]
+    route_snapshot = json.loads((ROOT / "generated/route-index.v1.json").read_text())["snapshot_sha256"]
+
+    def atlas(data):
+        for item in data["documents"]:
+            if item.get("path"):
+                item["sha256"] = sha(ROOT / item["path"])
+    sync_json("edition/atlas-manifest.json", atlas)
+
+    def semantic(data):
+        for page in data["pages"]:
+            page["sha256"] = sha(ROOT / page["path"])
+        data["summary"]["pages"] = len(data["pages"])
+        data["summary"]["by_tier"]["atlas"] = sum(
+            1 for p in data["pages"] if p["tier"] == "atlas")
+        data["summary"]["by_disposition"]["sound"] = sum(
+            1 for p in data["pages"] if p["review"]["disposition"] == "sound")
+    sync_json("edition/patterns/semantic-audit.v1.json", semantic)
+
+    def delivery(data):
+        s = data["summary"]
+        s["pages"] = phase4["pages"]
+        s["routes"] = phase4["routes"]
+        s["related_labels"] = phase4["related_labels"]
+        s["non_routes"] = phase4["non_routes"]
+        s["cards"] = phase4["cards"]
+        s["entries"] = phase4["entries"]
+        s["retrieval_questions"] = phase4["retrieval_questions"]
+        s["semantic_pages"] = len(json.loads(
+            (ROOT / "edition/patterns/semantic-audit.v1.json").read_text())["pages"])
+    sync_json("edition/patterns/delivery-evidence.v1.json", delivery)
+
+    for name in ("corpus-qrels.v1.json", "corpus-qrels.v2.json"):
+        def qrels(data):
+            data["snapshot"]["document_count"] = phase4["pages"]
+            data["snapshot"]["route_index_snapshot"] = route_snapshot
+        sync_json("evaluation/" + name, qrels)
+
+    registry_sha = sha(ROOT / "edition/patterns/registry.v1.json")
+    for path in ("edition/patterns/source-plan.v1.json", "edition/atlas-manifest.json"):
+        def bind(data):
+            data["registry_sha256"] = registry_sha
+        sync_json(path, bind)
+
+    def source_plan(data):
+        data["route_index_snapshot"] = route_snapshot
+    sync_json("edition/patterns/source-plan.v1.json", source_plan)
+
+    run("scripts/validate_edition.py", "--write-inventory")
+    run("scripts/sufficient_candidates.py", "--write")
+    run("scripts/build_rereview_scope.py", "--write")
+    run("scripts/build_rereview_packets.py")
+    print("atlas artifacts refreshed")
+
+
+if __name__ == "__main__":
+    main()
