@@ -438,22 +438,17 @@ integration pattern; priority core.
 **Decision question.** Should a client submit work and later fetch a result, rather than
 hold one synchronous request open?
 
-**Good-fit conditions.** Work exceeds a request deadline; durable acceptance and
-recovery are required; clients can poll or receive a callback; operation identity and
-cleanup are defined.
+**Good-fit conditions.** Work does not fit a same-connection response; clients can poll a status
+endpoint; operation identity is defined.
 
-**Hard contraindications.** Reject the claim when a synchronous call reliably meets the
-deadline; when the client cannot handle pending state; when result retention and
-cleanup have no owner; when duplicate submission cannot be made safe by an idempotency
-key or reconciliation.
+**Hard contraindications.** Reject when a same-connection synchronous response suffices or when
+duplicate submission cannot be made idempotent.
 
-**Competing alternative.** Synchronous request-reply with a bounded deadline. Reverse
-the choice when durable work and client polling add more complexity than the latency
-benefit.
+**Competing alternative.** A same-connection synchronous response when most APIs respond
+quickly enough.
 
-**Failure and recovery.** Lost replies, duplicate submissions and orphaned jobs are
-common. Recovery requires stable operation IDs and status cleanup; verify the async
-contract in the owner section.
+**Failure and recovery.** A lost response is ambiguous; an idempotency key lets a retry return
+the existing status resource.
 
 **Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-request-reply) — async demand and cancellation; not a full request-reply implementation.
 

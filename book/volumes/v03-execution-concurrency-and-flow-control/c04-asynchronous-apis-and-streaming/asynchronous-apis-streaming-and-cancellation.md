@@ -111,15 +111,15 @@ source claim.
 
 ### Asynchronous Request-Reply
 
-An asynchronous request-reply interface accepts a request, returns a durable handle and later
-exposes the terminal result through polling or a callback. A duplicate request must return the
+An asynchronous request-reply interface returns a location reference that points to an endpoint
+the client can poll for the result. A duplicate request must return the
 existing status resource instead of enqueuing a second work item. The status resource records
-the operation outcome.
+the operation outcome. It remains queryable. The location reference points to an endpoint the client can poll for
+that outcome.
 
-A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record
-queryable and reconcile before retrying the original request. A synchronous call with a bounded
-deadline is simpler when the work reliably finishes inside the request budget; split the interaction
-only when waiting would exceed it.
+A lost response is indistinguishable from a request that was never received; an idempotency key
+lets a retry return the existing status resource. Most APIs respond quickly enough for the response
+to return over the same connection.
 
 **Limits.** The handle store, retention, polling/callback security and terminal-state schema
 are costs; callbacks need authentication and an idempotent receiver, and polling needs backoff

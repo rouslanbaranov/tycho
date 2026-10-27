@@ -1738,7 +1738,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "An asynchronous request-reply interface accepts a request, returns a durable handle and later exposes the terminal result through polling or a callback.",
+          "quote": "An asynchronous request-reply interface returns a location reference that points to an endpoint the client can poll for the result.",
           "reason": "Defines a durable handle and later polling or callback result.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -1762,7 +1762,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record queryable and reconcile before retrying the original request.",
+          "quote": "A lost response is indistinguishable from a request that was never received; an idempotency key lets a retry return the existing status resource.",
           "reason": "Requires a queryable operation record and reconciliation before retry.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -1774,7 +1774,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A synchronous call with a bounded deadline is simpler when the work reliably finishes inside the request budget; split the interaction only when waiting would exceed it.",
+          "quote": "Most APIs respond quickly enough for the response to return over the same connection.",
           "reason": "Names a synchronous bounded-deadline call when the work fits the request budget.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -1788,7 +1788,7 @@
       "decision_evidence": {
         "atlas_section": "asynchronous-request-reply",
         "question": "Should a client submit work and later fetch a result, rather than hold one synchronous request open?",
-        "competing_alternative": "Synchronous request-reply with a bounded deadline. Reverse the choice when durable work and client polling add more complexity than the latency benefit.",
+        "competing_alternative": "A same-connection synchronous response when most APIs respond quickly enough.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
