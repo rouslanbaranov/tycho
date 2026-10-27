@@ -1,3 +1,5 @@
+# SUPERSEDED — use the current saved review report under authoring/ai-reviews/.
+
 # Manual external review hand-off — Valet Key
 
 - Status: awaiting external review; Codex CLI quota exhausted.

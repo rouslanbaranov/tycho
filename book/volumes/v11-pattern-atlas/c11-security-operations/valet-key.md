@@ -18,7 +18,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.419769c372ccaa569796954878e3bef9"
   excludes:
-    - "No sufficient coverage or owner acceptance is implied beyond the promotion record."
+    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved card."
   keywords:
     - "pattern atlas"
     - "valet key"

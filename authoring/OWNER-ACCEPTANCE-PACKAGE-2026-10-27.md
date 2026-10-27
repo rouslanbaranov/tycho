@@ -1,12 +1,13 @@
-# Owner acceptance package — four sufficient entries
+# Owner acceptance package — three retained sufficient entries
 
-Status: **accepted by owner on 2026-10-27** for all four entries.
+Status: **accepted by owner on 2026-10-27** for the three retained entries. Valet Key
+is superseded pending a fresh review and a new owner decision after its card moved.
 
 ## Entries
 
 1. Static Content Hosting — `sufficient`
 2. Transactional Outbox — `sufficient`
-3. Valet Key — `sufficient`
+3. Valet Key — superseded; awaiting fresh review
 4. Cache Invalidation — `sufficient`
 
 Each entry has an external `pass`, a saved report, exact owner/card hashes and a promotion
