@@ -1,0 +1,403 @@
+{
+  "batch": "B14",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.aggregator",
+      "catalog_name": "Aggregator",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+      "owner_heading": "Aggregator",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-aggregator.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/Aggregator.html",
+      "unit": "Aggregator — pattern page",
+      "sections": [
+        "Aggregator",
+        "Example: Serverless Loan Broker on AWS",
+        "Example: Serverless Loan Broker on GCP"
+      ],
+      "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An aggregator fans in related results from multiple participants and returns one composed result.",
+          "reason": "Defines fan-in of participant results into one composed result."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs correlation, a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses.",
+          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is a stuck or missing participant; the aggregator must return a declared partial result, cancel remaining work or fail as a whole.",
+          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Client-side composition is the alternative when the caller can tolerate multiple responses.",
+          "reason": "Contrasts client-side composition when multiple responses are acceptable."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.scatter-gather",
+      "catalog_name": "Scatter-Gather",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+      "owner_heading": "Scatter-Gather",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-scatter.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/BroadcastAggregate.html",
+      "unit": "Scatter-Gather — pattern page",
+      "sections": [
+        "Scatter-Gather",
+        "Example: Serverless Loan Broker on AWS",
+        "Example: Mulesoft ESB",
+        "Example: Azure Durable Functions (Fan out/fan in)"
+      ],
+      "revision": "ed4e25c160ba5c6c908b79de8011ba8f69c26c40ccd92f7612903029b7db78e6",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Scatter-gather sends one request to several participants and gathers their responses.",
+          "reason": "Defines one request sent to several participants with gathered responses."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs a response contract, a quorum or completeness rule, a deadline and a policy for stragglers.",
+          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is a slow or missing participant; gather must return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
+          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A single authoritative call is the alternative when consistency matters more than coverage.",
+          "reason": "Contrasts one authoritative call when consistency dominates coverage."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.dead-letter-channel-dlq",
+      "catalog_name": "Dead Letter Channel / DLQ",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+      "owner_heading": "Dead Letter Channel-DLQ",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-dlq.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/DeadLetterChannel.html",
+      "unit": "Dead Letter Channel — pattern page",
+      "sections": [
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Example: Dead Letter Queue in Amazon SQS",
+        "Example: Kafka Connect",
+        "Related patterns"
+      ],
+      "revision": "714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A quarantine queue receives a message after its retry or age policy is exhausted, retaining payload, headers and failure context.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Retrying cannot repair an invalid schema or a permanently rejected target.",
+          "reason": "States that retry cannot repair invalid schema or permanent target rejection."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence without leaking payload.",
+          "reason": "Requires separating transient, permanent and unknown outcomes with bounded attempts and evidence."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with audit, drop with a record, or a repair table/outbox.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.durable-subscriber",
+      "catalog_name": "Durable Subscriber",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Durable Subscriber",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-durable.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/DurableSubscription.html",
+      "unit": "Durable Subscriber — pattern page",
+      "sections": [
+        "Problem/context (unheaded)",
+        "Solution (unheaded)",
+        "Related patterns"
+      ],
+      "revision": "d8697f78f17e355548692ad6ed8459e2fe3932ab1119d7b613c029774e0f2139",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A server-side cursor plus retained messages lets an offline consumer resume after reconnect.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Delivery guarantees differ by broker and configuration.",
+          "reason": "Notes that delivery guarantees vary by broker and configuration."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Resume is bounded only by retention, acknowledgement timeout and replay policy.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Ephemeral pub/sub fits a notification whose loss while offline is acceptable. A recoverable business task needs a durable consumer or another persisted queue, not a best-effort subscription alone.",
+          "reason": "Contrasts ephemeral pub/sub with a durable consumer or persisted queue for recoverable tasks."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.idempotent-receiver",
+      "catalog_name": "Idempotent Receiver",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+      "owner_heading": "Idempotent Receiver",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-idempotent.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/IdempotentReceiver.html",
+      "unit": "Idempotent Receiver — pattern page",
+      "sections": [
+        "Problem (unlabelled)",
+        "Solution (unlabelled)"
+      ],
+      "revision": "e9c278723f6c5bdcab0fdd9c410e8a17bc4eda0b2f63aefb8fe4afb22d76a86d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "describes recording processed message IDs under a consumer identity in the same database transaction as the business update, so redelivery cannot apply it twice under that local model.",
+          "reason": "Explains recording processed message IDs atomically with the consumer's business update."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Atomic (consumer, event/effect ID) uniqueness with business update",
+          "reason": "Requires atomic consumer/event uniqueness with the business update."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A marker written before a separate external effect can lose it on crash; a marker written after can duplicate it. The consumer must use the external capability's idempotency/reconciliation boundary.",
+          "reason": "Describes crash windows and the external reconciliation boundary."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A business-key upsert, a conditional write or the downstream API's idempotency key may be preferable when no local processed-message table is available.",
+          "reason": "Names competing dedup mechanisms and the reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.resequencer",
+      "catalog_name": "Resequencer",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Resequencer",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-resequencer.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/Resequencer.html",
+      "unit": "Resequencer — pattern page",
+      "sections": [
+        "Problem/context (unheaded)",
+        "Problem question (unheaded)",
+        "Solution (unheaded)",
+        "Solution explanation",
+        "Related patterns"
+      ],
+      "revision": "cafe3058fa70fe3bda25f83941e1ac604875e172d2388f6a334c7ff84327f42f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A resequencer restores an intended order from messages that arrive out of order.",
+          "reason": "Defines restoring intended order from out-of-order arrivals."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate sequence numbers.",
+          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is a missing sequence that blocks later messages; release the buffer after a declared timeout or fail the affected partition.",
+          "reason": "Names a missing sequence blocking later messages and requires timeout release or partition failure."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A partitioned consumer that preserves order within a key is the alternative when global order is unnecessary.",
+          "reason": "Contrasts partitioned per-key ordering when global order is unnecessary."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.claim-check",
+      "catalog_name": "Claim Check",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+      "owner_heading": "Claim Check",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-claim.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/StoreInLibrary.html",
+      "unit": "Claim Check — pattern page",
+      "sections": [
+        "Introductory context",
+        "Problem question",
+        "Solution statement",
+        "Five-step process",
+        "Airport analogy",
+        "Related patterns"
+      ],
+      "revision": "96395638cbc1165642bdff681ec21a2862359e68f88f59cb7a2b5b2ad4753fb5",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A claim check stores a large or sensitive payload outside the message and sends a claim token instead.",
+          "reason": "Defines storing the payload externally and sending a claim token."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs payload lifecycle, authorization, expiry, integrity and a cleanup rule for abandoned claims.",
+          "reason": "Requires payload lifecycle, authorization, expiry, integrity and cleanup."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is an orphaned payload or a token that outlives its authorization; expire and garbage-collect claims, and make the consumer fail closed when the claim cannot be resolved.",
+          "reason": "Names orphaned payloads and overlong tokens and requires expiry, garbage collection and fail-closed resolution."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "An inline payload with encryption and size limits is the alternative when the transport can carry it safely.",
+          "reason": "Contrasts an inline encrypted size-limited payload."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
+      "catalog_name": "Message Broker / Messaging Bridge",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Message Broker-Messaging Bridge",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-broker.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html",
+      "unit": "Message Broker — pattern page",
+      "sections": [
+        "Introduction",
+        "Problem question",
+        "Solution statement",
+        "Hub-and-spoke",
+        "Architecture-pattern scope",
+        "Not monolithic",
+        "Bottleneck and scaling",
+        "Related patterns",
+        "Further reading"
+      ],
+      "revision": "ddc6d825aa8a17ef30a18ff8178085022c9424432a6082947f9f7983826f79ca",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A bridge sits between broker contracts: it translates protocols or formats and therefore adds a hop, a retention policy and a failure domain.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The bridge contract must preserve identity, ordering and delivery semantics across translation.",
+          "reason": "Requires the bridge contract to preserve identity, ordering and delivery semantics."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The broker half also needs an owner for outage, retention and delivery observability",
+          "reason": "Requires an owner for broker outage, retention and delivery observability."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A bridge is justified only when a protocol or ownership boundary cannot be removed",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.canonical-data-model",
+      "catalog_name": "Canonical Data Model",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Canonical Data Model",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-canonical.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/CanonicalDataModel.html",
+      "unit": "Canonical Data Model — pattern page",
+      "sections": [
+        "Context and problem (unheaded)",
+        "Solution (unheaded)",
+        "Rationale (unheaded)",
+        "Translator-count tradeoff (unheaded)",
+        "Related patterns"
+      ],
+      "revision": "02992f61d7529d80300b901e152622f0e876669b52f49d035dba00745a2405f8",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A canonical data model gives producers and consumers one versioned shared representation, with translation at the edges instead of pairwise formats.",
+          "reason": "Defines one versioned shared representation with edge translation."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The canonical schema must be versioned and lossless for the fields each consumer needs, and translation must fail explicitly when a required meaning is absent.",
+          "reason": "Requires versioning, lossless consumer fields and explicit translation failure."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A translation can preserve syntax while losing domain meaning; contract tests with representative payloads and an owner for schema changes are required.",
+          "reason": "Names syntax-preserving semantic loss and requires contract tests and schema ownership."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Point-to-point translation or an anti-corruption layer avoids a central schema when integrations are few or their models genuinely differ.",
+          "reason": "Contrasts point-to-point translation or an anti-corruption layer."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.process-manager-routing-slip",
+      "catalog_name": "Process Manager / Routing Slip",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "owner_heading": "Process Manager-Routing Slip",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-process.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html",
+      "unit": "Process Manager — pattern page",
+      "sections": [
+        "Problem (unheaded)",
+        "Solution (unheaded)",
+        "Mechanics and trade-offs",
+        "Example: Serverless Loan Broker with AWS Step Functions",
+        "Example: Serverless Loan Broker with GCP Workflows",
+        "Related patterns"
+      ],
+      "revision": "ac6e6180c5ee20833a84ff28fc856851828832cdbefd1fc3db2807007d4cbbd1",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A process manager keeps a central workflow state machine and decides the next step",
+          "reason": "Defines a central workflow state machine that decides the next step."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The invariant is a recorded dispatch intent, not merely a progress row",
+          "reason": "Requires a recorded dispatch intent rather than only a progress row."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A lost dispatch or duplicate step leaves the workflow stuck or duplicated",
+          "reason": "Names lost dispatch and duplicate steps as stuck or duplicated workflows."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A routing slip is simpler when the itinerary is fixed and each hop can forward it",
+          "reason": "Contrasts a fixed-itinerary routing slip with per-hop forwarding."
+        }
+      }
+    }
+  ]
+}
