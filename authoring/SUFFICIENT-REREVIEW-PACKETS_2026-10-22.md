@@ -9,12 +9,12 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 140 |
+| Promoted after remediation | 139 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 134 |
-| Rejected after review | 5 |
+| Rejected after review | 6 |
 
 Packet statuses: {"page-changed-since-review": 11, "reviewed-by-independent-agent": 134}.
 
