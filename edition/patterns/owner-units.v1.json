@@ -2531,22 +2531,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "An aggregator fans in related results from multiple participants and returns one composed result.",
-          "reason": "Defines fan-in of participant results into one composed result."
+          "reason": "Defines fan-in of participant results into one composed result.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-aggregator.2026-10-21",
+            "section": "Aggregator",
+            "quote": "Once a complete set of messages has been received (more on how to decide when a set is 'complete' below), the Aggregator collects information from each correlated message and publishes a single, aggregated message to the output channel for further processing.",
+            "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs correlation, a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses.",
-          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling."
+          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-aggregator.2026-10-21",
+            "section": "Aggregator",
+            "quote": "When designing an Aggregator , we need to specify the following items: Correlation - which incoming messages belong together? Completeness Condition - when are we ready to publish the result message? Aggregation Algorithm - how do we combine the received messages into a single result message?",
+            "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a stuck or missing participant; the aggregator must return a declared partial result, cancel remaining work or fail as a whole.",
-          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure."
+          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-aggregator.2026-10-21",
+            "section": "Aggregator",
+            "quote": "An incomplete order may not be meaningful. So if not all items are received within a certain time-out period an error condition should be raised by the Aggregator .",
+            "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Client-side composition is the alternative when the caller can tolerate multiple responses.",
-          "reason": "Contrasts client-side composition when multiple responses are acceptable."
+          "reason": "Page lists completeness strategies, not client-side composition."
         }
       },
       "decision_evidence": {
@@ -2591,22 +2612,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Scatter-gather sends one request to several participants and gathers their responses.",
-          "reason": "Defines one request sent to several participants with gathered responses."
+          "reason": "Defines one request sent to several participants with gathered responses.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-scatter.2026-10-21",
+            "section": "Scatter-Gather",
+            "quote": "Use a Scatter-Gather that broadcasts a message to multiple recipients and re-aggregates the responses back into a single message",
+            "revision": "ed4e25c160ba5c6c908b79de8011ba8f69c26c40ccd92f7612903029b7db78e6"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a response contract, a quorum or completeness rule, a deadline and a policy for stragglers.",
-          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy."
+          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-scatter.2026-10-21",
+            "section": "Example: Azure Durable Functions (Fan out/fan in)",
+            "quote": "The number of recipients can be calculated at run-time, and the completeness condition can support a variety of strategies, including \"Wait for all\" ( Task.WhenAll ), \"First Best\" ( Task.WhenAny ), or \"Fixed Timeout\" ( Task.WaitAll ).",
+            "revision": "ed4e25c160ba5c6c908b79de8011ba8f69c26c40ccd92f7612903029b7db78e6"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a slow or missing participant; gather must return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
-          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work."
+          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-scatter.2026-10-21",
+            "section": "Example: Mulesoft ESB",
+            "quote": "Route errors propagate to the Scatter-Gather, which in turn flags an error, passing on any results that were successfully passed by the individual routes.",
+            "revision": "ed4e25c160ba5c6c908b79de8011ba8f69c26c40ccd92f7612903029b7db78e6"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A single authoritative call is the alternative when consistency matters more than coverage.",
-          "reason": "Contrasts one authoritative call when consistency dominates coverage."
+          "reason": "Page has no single authoritative call or coverage comparison."
         }
       },
       "decision_evidence": {
@@ -3068,22 +3110,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A process manager keeps a central workflow state machine and decides the next step",
-          "reason": "Defines a central workflow state machine that decides the next step."
+          "reason": "Defines a central workflow state machine that decides the next step.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-process.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "Use a central processing unit, a Process Manager , to maintain the state of the sequence and determine the next processing step based on intermediate results.",
+            "revision": "ac6e6180c5ee20833a84ff28fc856851828832cdbefd1fc3db2807007d4cbbd1"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The invariant is a recorded dispatch intent, not merely a progress row",
-          "reason": "Requires a recorded dispatch intent rather than only a progress row."
+          "reason": "Page mentions workflow state but not recorded dispatch intent."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A lost dispatch or duplicate step leaves the workflow stuck or duplicated",
-          "reason": "Names lost dispatch and duplicate steps as stuck or duplicated workflows."
+          "reason": "Page warns about bottleneck but not lost/duplicate/stuck recovery."
         },
         "alternative": {
           "state": "supported",
           "quote": "A routing slip is simpler when the itinerary is fixed and each hop can forward it",
-          "reason": "Contrasts a fixed-itinerary routing slip with per-hop forwarding."
+          "reason": "Contrasts a fixed-itinerary routing slip with per-hop forwarding.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-process.2026-10-21",
+            "section": "Problem (unheaded)",
+            "quote": "The solution of the Routing Slip is based on two key assumptions: the sequence of processing steps has to be determined up-front and the sequence is linear.",
+            "revision": "ac6e6180c5ee20833a84ff28fc856851828832cdbefd1fc3db2807007d4cbbd1"
+          }
         }
       },
       "decision_evidence": {
@@ -3101,7 +3157,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -7330,22 +7386,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Causal ordering delivers operations so no effect is observed before its cause.",
-          "reason": "Explains the three happens-before generating rules and Lamport-clock advancement."
+          "reason": "Explains the three happens-before generating rules and Lamport-clock advancement.",
+          "binding": {
+            "source_id": "src.jepsen-consistency",
+            "ledger_record": "read.batch4-causal.2026-10-21",
+            "section": "Formally",
+            "quote": "Causal memory stems from Lamport’s definition of the happens-before relation , which captures the notion of potential causality by relating an operation to previous operations by the same process, and to operations on other processes whose effects could have been visible thanks to messages exchanged between those processes.",
+            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "can distinguish concurrent updates from causally ordered ones",
-          "reason": "States the core causal-order invariant."
+          "reason": "States the core causal-order invariant.",
+          "binding": {
+            "source_id": "src.jepsen-consistency",
+            "ledger_record": "read.batch4-causal.2026-10-21",
+            "section": "Causal Consistency",
+            "quote": "Causal consistency captures the notion that causally-related operations should appear in the same order on all processes—though processes may disagree about the order of causally independent operations.",
+            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.",
-          "reason": "States the recovery requirements after metadata loss or reordering."
+          "reason": "States the recovery requirements after metadata loss or reordering.",
+          "binding": {
+            "source_id": "src.jepsen-consistency",
+            "ledger_record": "read.batch4-causal.2026-10-21",
+            "section": "Causal Consistency",
+            "quote": "Causal consistency is sticky available: even in the presence of network partitions, every client connected to a non-faulty node can make progress. However, clients must stick to the same server.",
+            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "If total order is mandatory, use consensus and accept its coordination cost.",
-          "reason": "Contrasts global total order with per-item update order and states when total order is unnecessary."
+          "reason": "Contrasts global total order with per-item update order and states when total order is unnecessary.",
+          "binding": {
+            "source_id": "src.jepsen-consistency",
+            "ledger_record": "read.batch4-causal.2026-10-21",
+            "section": "Causal Consistency",
+            "quote": "When a total order is required, and you’re willing to sacrifice availability (and latency), consider sequential consistency .",
+            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+          }
         }
       },
       "decision_evidence": {
@@ -7388,24 +7472,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The product owner defines what counts as one session and which observations its users must retain.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Jepsen Consistency Models does not define a session or owner scope."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "That choice sets the guarantee; no infrastructure default should supply it implicitly.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Text defines model implication but not product-owner guarantee choice."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "must not collapse a concurrent frontier into one scalar",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Text has no session frontier or rejection rule."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The routing layer owns the wait, reroute and rejection policy.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Text relates models by implication, not session routing or reroute."
         }
       },
       "decision_evidence": {
@@ -7423,7 +7507,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Token section explains how session requirements are carried and enforced; later sections cover costs and alternatives."
     },
@@ -7450,22 +7534,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A durable workflow records progress as a state machine, not as an in-memory coroutine.",
-          "reason": "Defines the durable state machine and replay model."
+          "reason": "Defines the durable state machine and replay model.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+            "section": "Resuming a Workflow",
+            "quote": "When it's time to continue the Workflow, Temporal doesn't restore memory from a snapshot. It starts the Workflow code from the beginning, replays the Event History step by step, and uses that history to guide the code back to the exact state as before.",
+            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Recovery replays durable history, so activities need stable identities and explicit retry, cancel and compensation outcomes.",
-          "reason": "States the recovery invariants."
+          "reason": "States the recovery invariants.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+            "section": "Resuming a Workflow",
+            "quote": "When a Workflow calls an Activity, the Activity runs once, its result is recorded in the Event History. During replay, that result is reused, not recomputed. So Activities aren't executed again during replay.",
+            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Keep a repair state for an unknown external effect; a completed flag is not proof that the effect committed.",
-          "reason": "Names the unknown-effect failure and the repair boundary."
+          "reason": "Temporal text has no unknown external-effect repair state."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Use choreography, a job table or a simple queue when steps are few, timers are short, or no engine can be operated.",
-          "reason": "Names the competing orchestration alternatives."
+          "reason": "Text does not compare choreography, job table or simple queue."
         }
       },
       "decision_evidence": {
@@ -9974,7 +10072,7 @@
       ],
       "unit_count": 5,
       "dedicated_units": 5,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Saga, choreography, orchestration, compensation and process manager have distinct units."
     },
@@ -10337,12 +10435,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 128,
-    "invariant_supported": 88,
-    "failure_recovery_supported": 84,
-    "alternative_supported": 94,
-    "technical_partial_bounded": 87,
-    "technical_partial": 58,
+    "mechanism_supported": 127,
+    "invariant_supported": 86,
+    "failure_recovery_supported": 81,
+    "alternative_supported": 90,
+    "technical_partial_bounded": 85,
+    "technical_partial": 60,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
