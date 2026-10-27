@@ -1912,22 +1912,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Publish-subscribe is a delivery contract, not a fire-and-forget call.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-pubsub.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Send the event on a Publish-Subscribe Channel , which delivers a copy of a particular event to each receiver. A Publish-Subscribe Channel works like this: It has one input channel that splits into multiple output channels, one for each subscriber.",
+            "revision": "ecc6aeec40253b2dba2f326af9fce678bb110a0d26902339f2184db7129196b4"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Record whether it is ephemeral or durable before claiming a guarantee.",
-          "reason": "Requires recording ephemeral versus durable delivery before claiming a guarantee."
+          "reason": "Abridged page has no durability or delivery-guarantee prose."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Redelivery follows an effect that committed before its acknowledgement; the opposite order loses work.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page has no ack-ordering or redelivery recovery text."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Use ephemeral pub/sub only when losing a signal with no listener is acceptable; a durable business task needs a persisted consumer or queue.",
-          "reason": "Contrasts ephemeral loss with a persisted consumer or queue for durable tasks."
+          "reason": "Page has no comparison or selection guidance."
         }
       },
       "decision_evidence": {
@@ -1945,7 +1952,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "NATS subsection is the only sustained pub/sub discussion; it is framed as a durability contrast."
     },
@@ -1972,22 +1979,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "One message has one eligible worker at a time",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-p2p.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Send the message on a Point-to-Point Channel , which ensures that only one receiver will receive a particular message. A Point-to-Point Channel ensures that only one receiver consumes any given message.",
+            "revision": "d49b1e29621d358d9132f88cf051f320778547c1136a5e97c5a9467dd9631291"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The queue contract must state its ordering scope and terminal path for poison messages.",
-          "reason": "Requires the contract to state ordering scope and a poison-message terminal path."
+          "reason": "Page states single-receiver delivery only, no ordering or terminal rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A worker crash after the effect but before acknowledgement can cause redelivery",
-          "reason": "Names crash-after-effect redelivery and requires an idempotent effect boundary."
+          "reason": "Page has no crash, ack, redelivery or duplicate text."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "When one task has one natural owner, direct request/response or a shared log may avoid brokered indirection; fan-out fits when several independent subscribers need a copy.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page links related patterns without comparison."
         }
       },
       "decision_evidence": {
@@ -2005,7 +2019,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "RabbitMQ subsection explains queue acknowledgements and redelivery, not single-consumer dispatch."
     },
@@ -2029,22 +2043,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Several consumers read from one queue, and each message is delivered to one of them so the work is processed in parallel.",
-          "reason": "Defines multiple consumers sharing one queue with one delivery per message."
+          "reason": "Defines multiple consumers sharing one queue with one delivery per message.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-competing.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Create multiple Competing Consumers on a single channel so that the consumers can process multiple messages concurrently. Competing Consumers are multiple consumers that are all created to receive messages from a single Point-to-Point Channel . When the channel delivers a message, any of the consumers could potentially receive it.",
+            "revision": "4e7aeddaaaf41076903f75e647af7990dcdb940fb5c13c1da0793261f33f003d"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Acknowledgment must follow the durable business effect, and redelivery after a missing acknowledgment must not duplicate that effect.",
-          "reason": "Requires acknowledgment after the durable effect and deduplication on redelivery."
+          "reason": "Page has no ack, dedup or idempotency requirement."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery; bound attempts and route permanently failing work to a declared terminal path.",
-          "reason": "Names visibility-timeout redelivery and requires attempt bounds and a terminal path."
+          "reason": "Page has no visibility-timeout, poison or terminal path."
         },
         "alternative": {
           "state": "supported",
           "quote": "Partitioned consumers own a stable key range and preserve per-key order; prefer competing consumers when order is not required and pool parallelism is the goal.",
-          "reason": "Contrasts partitioned consumers that preserve per-key order."
+          "reason": "Contrasts partitioned consumers that preserve per-key order.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-competing.2026-10-21",
+            "section": "Example: Apache Kafka",
+            "quote": "This router is generally a Content-Based Router that works off the message key. This allows the sender to control the distribution of messages, e.g. to assure related messages go onto the same partition. This can be necessary to preserve order because in-order delivery is not guaranteed across partitions.",
+            "revision": "4e7aeddaaaf41076903f75e647af7990dcdb940fb5c13c1da0793261f33f003d"
+          }
         }
       },
       "decision_evidence": {
@@ -2062,7 +2090,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -9969,7 +9997,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 11,
+      "bounded_entries": 8,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -10310,11 +10338,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 128,
-    "invariant_supported": 91,
-    "failure_recovery_supported": 87,
-    "alternative_supported": 96,
-    "technical_partial_bounded": 90,
-    "technical_partial": 55,
+    "invariant_supported": 88,
+    "failure_recovery_supported": 84,
+    "alternative_supported": 94,
+    "technical_partial_bounded": 87,
+    "technical_partial": 58,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
