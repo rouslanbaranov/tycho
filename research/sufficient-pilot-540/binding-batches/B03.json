@@ -21,22 +21,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Layering is a dependency rule: presentation may call application, application may call domain, and domain calls neither.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The owner of each layer names its public surface and the test that catches a bypass.",
-          "reason": "States the invariant."
+          "reason": "Source covers layer responsibilities and dependency direction, not layer ownership or bypass tests.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Transaction boundaries that span layers and anemic domain models are the failure modes",
-          "reason": "Names failure and recovery."
+          "reason": "Source has no transaction-boundary or anemic-domain failure discussion.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Choose hexagonal ports or a clear modular monolith when explicit substitution or module ownership adds more value than layer count.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "has_binding": true
         }
       }
     },
@@ -61,22 +65,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Modules own their rules, data and contracts.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The deployable is one unit, but each module has a named owner, an allowed-call surface and a dependency test that fails a bypass.",
-          "reason": "States the invariant."
+          "reason": "Source discusses modular design but not a named module owner or dependency test.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Synchronous call chains across modules and one deployment blast radius are the operational risk",
-          "reason": "Names failure and recovery."
+          "reason": "Source warns about dependency tangles, not synchronous chains or deployment blast radius.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Choose services or a layered structure only when module enforcement costs more than the coordination benefit.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "has_binding": true
         }
       }
     },
@@ -120,22 +128,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A microservice owner accepts a deployable, its data and the pager that follows both.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Independence is credible only when the team can release without coordinating another service's schedule.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Retried commands carry a stable idempotency key or a natural unique effect, and the owner records the outcome.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source discusses failure and circuit breakers but not retry/idempotency outcome recording.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "One team owning every invariant may do better with a modular monolith than with remote boundaries.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
         }
       }
     },
@@ -179,22 +191,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "SOA publishes capabilities as governed service contracts and routes consumers through a mediation layer.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A service contract must declare its capability, message semantics, version and consumer obligations.",
-          "reason": "States the invariant."
+          "reason": "Source discusses contracts but not the declared capability/message/version/consumer obligations invariant.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "a centralized bus is a shared bottleneck and single point that must be sized and failed over.",
-          "reason": "Names failure and recovery."
+          "reason": "Source criticizes ESB-mediated SOA but does not state bus bottleneck or failover.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Microservices may be preferable when capabilities map to independent product teams; a modular monolith when one ownership boundary suffices.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "has_binding": true
         }
       }
     },
@@ -230,22 +246,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A port names the capability the application needs; an adapter maps a technology to it.",
-          "reason": "Shows the port contract with two interchangeable adapters."
+          "reason": "Shows the port contract with two interchangeable adapters.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Domain code must not depend on adapter or technology types; dependencies point inward.",
-          "reason": "States the domain invariant that adapter substitution must preserve."
+          "reason": "States the domain invariant that adapter substitution must preserve.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Mapping layers can hide latency and translate adapter errors inconsistently; contract tests and explicit error translation keep the boundary honest.",
-          "reason": "Names mapping-layer latency and inconsistent adapter-error translation with contract tests/error translation as recovery."
+          "reason": "Source names added-layer latency but not adapter-error translation or contract-test recovery.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A layered or modular-monolith structure can be simpler when one persistence choice is stable.",
-          "reason": "Names simple direct persistence and the condition that removes the need for an adapter hierarchy."
+          "reason": "Names simple direct persistence and the condition that removes the need for an adapter hierarchy.",
+          "has_binding": true
         }
       }
     },
@@ -275,22 +295,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Clean and onion styles place domain rules at the centre and let source dependencies point inward only, with application services coordinating use cases and outer layers supplying technology adapters. The dependency rule, not the number of drawn rings, is the mechanism.",
-          "reason": "Defines inward source dependencies and outer technology adapters."
+          "reason": "Defines inward source dependencies and outer technology adapters.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "No domain module may import a framework, transport or storage dependency, and an automated build check must enforce the direction rather than a diagram.",
-          "reason": "Requires no domain import of framework, transport or storage and an automated direction check."
+          "reason": "Requires no domain import of framework, transport or storage and an automated direction check.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Convenience imports erode the boundary until the domain must change for a technology reason; the remedy is an enforceable dependency test and a deliberate adapter, not another layer name.",
-          "reason": "Names convenience imports as erosion and requires a dependency test and adapter."
+          "reason": "Names convenience imports as erosion and requires a dependency test and adapter.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Hexagonal ports and adapters expresses the same inward rule with explicit application ports; prefer the simpler layering when the port indirection adds no tested change benefit.",
-          "reason": "Contrasts explicit hexagonal ports with simpler layering."
+          "reason": "Source groups hexagonal/onion as similar but does not compare port indirection with simpler layering.",
+          "has_binding": false
         }
       }
     },
@@ -313,22 +337,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A bounded context has one accountable model owner and one accepted vocabulary.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A named domain expert co-owns that vocabulary and arbitrates disputed meanings.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source does not state that a named domain expert co-owns vocabulary or arbitrates meaning.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Model behavior changes are reviewed with the domain expert before a boundary moves.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source does not describe reviewing model behavior with a domain expert before moving a boundary.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Reopen the boundary when a shared term changes meaning, a translation gains a second owner or releases become unavoidably coupled.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
         }
       }
     },
@@ -356,22 +384,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Each service owns its schema and storage, and other services reach that data only through the owner's contract or published events. The boundary is an ownership rule even when several schemas share one physical server.",
-          "reason": "Defines service-owned schema and storage with access through contract or events."
+          "reason": "Defines service-owned schema and storage with access through contract or events.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Only the owning service writes its records, and no critical-path query joins another service's tables without an explicit contract.",
-          "reason": "Requires only the owner to write and forbids undeclared cross-service joins."
+          "reason": "Requires only the owner to write and forbids undeclared cross-service joins.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Dual writes, stale replicas and cross-service queries are common; use an outbox or idempotent reconciliation for cross-service effects and verify replica freshness before joining.",
-          "reason": "Names dual writes, stale replicas and cross-service queries with outbox/reconciliation."
+          "reason": "Source names cross-service transaction/query problems but not dual writes, stale replicas or outbox recovery.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A shared database with enforced module ownership is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost.",
-          "reason": "Contrasts a shared database with enforced module ownership."
+          "reason": "Source calls shared database an anti-pattern, not a simpler enforced-module option.",
+          "has_binding": false
         }
       }
     },
@@ -399,22 +431,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A self-contained service completes a request using its own state and a bounded set of dependencies, instead of requiring a caller to coordinate several owners for one user-visible outcome.",
-          "reason": "Defines local state plus a bounded dependency set for one request."
+          "reason": "Defines local state plus a bounded dependency set for one request.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The service contract must state which dependencies are required, which are optional, and what response is valid when an optional dependency is unavailable.",
-          "reason": "Requires the contract to declare required, optional and degraded responses."
+          "reason": "Source does not require the contract to declare required/optional dependencies or degraded response.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Hidden shared state or a chatty dependency chain turns an apparently local request into a multi-owner transaction; dependency and latency traces reveal the undeclared coupling.",
-          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces."
+          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "An orchestrating service or backend for frontend can coordinate owners explicitly; accept that composition when the workflow genuinely spans separate authorities and the coordinator's failure behaviour is designed.",
-          "reason": "Names an orchestrator or backend for frontend with explicit coordination."
+          "reason": "Names an orchestrator or backend for frontend with explicit coordination.",
+          "has_binding": true
         }
       }
     },
@@ -443,22 +479,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A sidecar runs as a helper process or container beside each service instance and supplies networking, policy or telemetry behaviour without changing the application image.",
-          "reason": "Defines a per-instance helper for networking, policy or telemetry."
+          "reason": "Defines a per-instance helper for networking, policy or telemetry.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "its lifecycle and configuration must have an owner",
-          "reason": "Requires named lifecycle and configuration ownership."
+          "reason": "Source does not require a named owner for sidecar lifecycle and configuration.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must include it, and the fail-open or fail-closed choice must be tested.",
-          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests."
+          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A shared proxy or an in-process library provides the same control without per-instance overhead; choose a sidecar when per-instance isolation or independent upgrade matters.",
-          "reason": "Contrasts a shared proxy or in-process library."
+          "reason": "Contrasts a shared proxy or in-process library.",
+          "has_binding": true
         }
       }
     }

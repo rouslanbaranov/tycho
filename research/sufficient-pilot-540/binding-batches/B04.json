@@ -25,22 +25,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own discovery, TLS identity, retries, timeouts and telemetry away from the application.",
-          "reason": "Defines the outbound-brokering role and the concerns it can own."
+          "reason": "Defines the outbound-brokering role and the concerns it can own.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs a clear data-plane owner, a configuration path and a failure policy for the proxy itself.",
-          "reason": "States the ownership, configuration and failure-policy preconditions."
+          "reason": "States the ownership, configuration and failure-policy preconditions.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The failure path is a stale proxy configuration or a proxy that outlives its control plane; test configuration rollback and keep a direct-path recovery.",
-          "reason": "Names stale configuration and proxy/control-plane divergence, with rollback and direct-path recovery."
+          "reason": "Source names proxy latency and retry safety but not stale proxy configuration or rollback recovery.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A shared gateway is the alternative when the concern is ingress rather than per-client egress.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice."
+          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "has_binding": true
         }
       }
     },
@@ -69,22 +73,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "An anti-corruption layer is a translation boundary that keeps an external or legacy model from becoming the local authority.",
-          "reason": "Shows semantic translation that must preserve or reject meaning rather than map names."
+          "reason": "Shows semantic translation that must preserve or reject meaning rather than map names.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for values with no local meaning.",
-          "reason": "States the must-hold translation constraint."
+          "reason": "States the must-hold translation constraint.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A dual write or an unknown external outcome retains the correlation identifier and resolves against the authority before reporting success",
-          "reason": "Describes lost-response ambiguity and recovery via correlation then authority resolution."
+          "reason": "Describes lost-response ambiguity and recovery via correlation then authority resolution.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A direct adapter or shared contract is preferable only when semantics are genuinely identical and stable.",
-          "reason": "Names direct/shared contract and the reversal."
+          "reason": "Source states a non-suitability condition but does not name direct adapter or shared-contract alternatives.",
+          "has_binding": true
         }
       }
     }

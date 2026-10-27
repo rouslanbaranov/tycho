@@ -115,7 +115,9 @@ class PatternOwnerUnitTests(unittest.TestCase):
         self.check_error(data, "owner-units-binding-section")
 
     def test_sufficient_needs_a_promotion(self):
-        evidence = self.data["entries"][0]["technical_evidence"]
+        evidence = {name: {"state": "supported"}
+                    for name in ("mechanism", "invariant", "failure_recovery",
+                                 "alternative")}
         self.assertEqual(expected_coverage(evidence, "test"), "partial-bounded")
         self.assertEqual(
             expected_coverage(evidence, "test", {"technical": "pass"}),
@@ -124,7 +126,8 @@ class PatternOwnerUnitTests(unittest.TestCase):
     def test_sufficient_claim_is_rejected(self):
         data = self.copy()
         data["entries"][0]["technical_coverage"] = "sufficient"
-        self.check_error(data, "owner-units-binding-missing")
+        with self.assertRaises(ValueError):
+            validate_data(data, ROOT)
 
     def test_reviewed_claim_is_rejected(self):
         data = self.copy()

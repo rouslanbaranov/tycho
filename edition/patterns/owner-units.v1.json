@@ -39,22 +39,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Layering is a dependency rule: presentation may call application, application may call domain, and domain calls neither.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.fowler-layering",
+            "ledger_record": "read.fowler-layering.2026-10-21",
+            "section": "Presentation Domain Data Layering",
+            "quote": "The dependencies generally run from top to bottom through the layer stack: presentation depends on the domain, which then depends on the data source.",
+            "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The owner of each layer names its public surface and the test that catches a bypass.",
-          "reason": "States the invariant."
+          "reason": "Source covers layer responsibilities and dependency direction, not layer ownership or bypass tests."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Transaction boundaries that span layers and anemic domain models are the failure modes",
-          "reason": "Names failure and recovery."
+          "reason": "Source has no transaction-boundary or anemic-domain failure discussion."
         },
         "alternative": {
           "state": "supported",
           "quote": "Choose hexagonal ports or a clear modular monolith when explicit substitution or module ownership adds more value than layer count.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.fowler-layering",
+            "ledger_record": "read.fowler-layering.2026-10-21",
+            "section": "Presentation Domain Data Layering",
+            "quote": "When this happens it's usually not best to use presentation-domain-data as the higher level of modules. Often frameworks encourage you to have something like view-model-data as the top level namespaces; that's OK for smaller systems, but once any of these layers gets too big you should split your top level into domain oriented modules which are internally layered.",
+            "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444"
+          }
         }
       },
       "decision_evidence": {
@@ -72,7 +86,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Thin embedded definition; detailed layering mechanisms are explicitly delegated to dependencies-ports.md."
     },
@@ -99,22 +113,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Modules own their rules, data and contracts.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.monolith-first",
+            "ledger_record": "read.monolith-first.2026-10-21",
+            "section": "Monolith First",
+            "quote": "The logical way is to design a monolith carefully, paying attention to modularity within the software, both at the API boundaries and how the data is stored.",
+            "revision": "722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The deployable is one unit, but each module has a named owner, an allowed-call surface and a dependency test that fails a bypass.",
-          "reason": "States the invariant."
+          "reason": "Source discusses modular design but not a named module owner or dependency test."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Synchronous call chains across modules and one deployment blast radius are the operational risk",
-          "reason": "Names failure and recovery."
+          "reason": "Source warns about dependency tangles, not synchronous chains or deployment blast radius."
         },
         "alternative": {
           "state": "supported",
           "quote": "Choose services or a layered structure only when module enforcement costs more than the coordination benefit.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.monolith-first",
+            "ledger_record": "read.monolith-first.2026-10-21",
+            "section": "Monolith First",
+            "quote": "The counter argument says that starting with microservices allows you to get used to the rhythm of developing in a microservice environment. It takes a lot, perhaps too much, discipline to build a monolith in a sufficiently modular way that it can be broken down into microservices easily. By starting with microservices you get everyone used to developing in separate small teams from the beginning, and having teams separated by service boundaries makes it much easier to scale up the development effort when you need to.",
+            "revision": "722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446"
+          }
         }
       },
       "decision_evidence": {
@@ -132,7 +160,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Definitional purpose section; module-enforcement detail is delegated to module-enforcement.md."
     },
@@ -159,22 +187,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A microservice owner accepts a deployable, its data and the pager that follows both.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.microservices",
+            "ledger_record": "read.microservices-article.2026-10-21",
+            "section": "Decentralized Governance",
+            "quote": "Perhaps the apogee of decentralised governance is the build it / run it ethos popularised by Amazon. Teams are responsible for all aspects of the software they build including operating the software 24/7. Devolution of this level of responsibility is definitely not the norm but we do see more and more companies pushing responsibility to the development teams. Netflix is another organisation that has adopted this ethos 10 . Being woken up at 3am every night by your pager is certainly a powerful incentive to focus on quality when writing your code.",
+            "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Independence is credible only when the team can release without coordinating another service's schedule.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.microservices",
+            "ledger_record": "read.microservices-article.2026-10-21",
+            "section": "Componentization via Services",
+            "quote": "But if that application is decomposed into multiple services, you can expect many single service changes to only require that service to be redeployed. That's not an absolute, some changes will change service interfaces resulting in some coordination, but the aim of a good microservice architecture is to minimize these through cohesive service boundaries and evolution mechanisms in the service contracts.",
+            "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Retried commands carry a stable idempotency key or a natural unique effect, and the owner records the outcome.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source discusses failure and circuit breakers but not retry/idempotency outcome recording."
         },
         "alternative": {
           "state": "supported",
           "quote": "One team owning every invariant may do better with a modular monolith than with remote boundaries.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.microservices",
+            "ledger_record": "read.microservices-article.2026-10-21",
+            "section": "Are Microservices the Future?",
+            "quote": "One reasonable argument we've heard is that you shouldn't start with a microservices architecture. Instead begin with a monolith , keep it modular, and split it into microservices once the monolith becomes a problem. (Although this advice isn't ideal , since a good in-process interface is usually not a good service interface.)",
+            "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+          }
         }
       },
       "decision_evidence": {
@@ -219,22 +268,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "SOA publishes capabilities as governed service contracts and routes consumers through a mediation layer.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microservices",
+            "ledger_record": "read.microservices-article.2026-10-21",
+            "section": "Smart endpoints and dumb pipes",
+            "quote": "A good example of this is the Enterprise Service Bus (ESB), where ESB products often include sophisticated facilities for message routing, choreography, transformation, and applying business rules.",
+            "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A service contract must declare its capability, message semantics, version and consumer obligations.",
-          "reason": "States the invariant."
+          "reason": "Source discusses contracts but not the declared capability/message/version/consumer obligations invariant."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "a centralized bus is a shared bottleneck and single point that must be sized and failed over.",
-          "reason": "Names failure and recovery."
+          "reason": "Source criticizes ESB-mediated SOA but does not state bus bottleneck or failover."
         },
         "alternative": {
           "state": "supported",
           "quote": "Microservices may be preferable when capabilities map to independent product teams; a modular monolith when one ownership boundary suffices.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microservices",
+            "ledger_record": "read.microservices-article.2026-10-21",
+            "section": "Microservices and SOA",
+            "quote": "This common manifestation of SOA has led some microservice advocates to reject the SOA label entirely, although others consider microservices to be one form of SOA 6 , perhaps service orientation done right .",
+            "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+          }
         }
       },
       "decision_evidence": {
@@ -252,7 +315,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Shares Purpose and mission with microservices; composition/governance mechanics are not developed."
     },
@@ -279,22 +342,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A port names the capability the application needs; an adapter maps a technology to it.",
-          "reason": "Shows the port contract with two interchangeable adapters."
+          "reason": "Shows the port contract with two interchangeable adapters.",
+          "binding": {
+            "source_id": "src.aws-hexagonal",
+            "ledger_record": "read.aws-hexagonal.2026-10-21",
+            "section": "Intent",
+            "quote": "In this loosely coupled architecture, the application communicates with external components over interfaces called ports , and uses adapters to translate the technical exchanges with these components.",
+            "revision": "1f1251e05084ad30f148d8f9b5491a56a9d1261513d0f6c36fc50045d721b17b"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Domain code must not depend on adapter or technology types; dependencies point inward.",
-          "reason": "States the domain invariant that adapter substitution must preserve."
+          "reason": "States the domain invariant that adapter substitution must preserve.",
+          "binding": {
+            "source_id": "src.aws-hexagonal",
+            "ledger_record": "read.aws-hexagonal.2026-10-21",
+            "section": "Domain model",
+            "quote": "The domain model class has no knowledge of external components or dependencies—it only implements the business logic.",
+            "revision": "1f1251e05084ad30f148d8f9b5491a56a9d1261513d0f6c36fc50045d721b17b"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Mapping layers can hide latency and translate adapter errors inconsistently; contract tests and explicit error translation keep the boundary honest.",
-          "reason": "Names mapping-layer latency and inconsistent adapter-error translation with contract tests/error translation as recovery."
+          "reason": "Source names added-layer latency but not adapter-error translation or contract-test recovery."
         },
         "alternative": {
           "state": "supported",
           "quote": "A layered or modular-monolith structure can be simpler when one persistence choice is stable.",
-          "reason": "Names simple direct persistence and the condition that removes the need for an adapter hierarchy."
+          "reason": "Names simple direct persistence and the condition that removes the need for an adapter hierarchy.",
+          "binding": {
+            "source_id": "src.aws-hexagonal",
+            "ledger_record": "read.aws-hexagonal.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "The additional adapter code that makes the architecture pluggable is justified only if the application component requires several input sources and output destinations to write to, or when the inputs and output data store has to change over time. Otherwise, the adapter becomes another additional layer to maintain, which introduces maintenance overhead.",
+            "revision": "1f1251e05084ad30f148d8f9b5491a56a9d1261513d0f6c36fc50045d721b17b"
+          }
         }
       },
       "decision_evidence": {
@@ -339,22 +423,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Clean and onion styles place domain rules at the centre and let source dependencies point inward only, with application services coordinating use cases and outer layers supplying technology adapters. The dependency rule, not the number of drawn rings, is the mechanism.",
-          "reason": "Defines inward source dependencies and outer technology adapters."
+          "reason": "Defines inward source dependencies and outer technology adapters.",
+          "binding": {
+            "source_id": "src.clean-architecture",
+            "ledger_record": "read.clean-architecture.2026-10-21",
+            "section": "The Dependency Rule",
+            "quote": "The overriding rule that makes this architecture work is The Dependency Rule . This rule says that source code dependencies can only point inwards .",
+            "revision": "ca86d5653333b894f0a525b2bc96e4a31e013138a8096d27742817296877554d"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "No domain module may import a framework, transport or storage dependency, and an automated build check must enforce the direction rather than a diagram.",
-          "reason": "Requires no domain import of framework, transport or storage and an automated direction check."
+          "reason": "Requires no domain import of framework, transport or storage and an automated direction check.",
+          "binding": {
+            "source_id": "src.clean-architecture",
+            "ledger_record": "read.clean-architecture.2026-10-21",
+            "section": "The Dependency Rule",
+            "quote": "Nothing in an inner circle can know anything at all about something in an outer circle.",
+            "revision": "ca86d5653333b894f0a525b2bc96e4a31e013138a8096d27742817296877554d"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Convenience imports erode the boundary until the domain must change for a technology reason; the remedy is an enforceable dependency test and a deliberate adapter, not another layer name.",
-          "reason": "Names convenience imports as erosion and requires a dependency test and adapter."
+          "reason": "Names convenience imports as erosion and requires a dependency test and adapter.",
+          "binding": {
+            "source_id": "src.clean-architecture",
+            "ledger_record": "read.clean-architecture.2026-10-21",
+            "section": "What data crosses the boundaries.",
+            "quote": "For example, many database frameworks return a convenient data format in response to a query. We might call this a RowStructure. We don’t want to pass that row structure inwards across a boundary. That would violate The Dependency Rule because it would force an inner circle to know something about an outer circle. So when we pass data across a boundary, it is always in the form that is most convenient for the inner circle.",
+            "revision": "ca86d5653333b894f0a525b2bc96e4a31e013138a8096d27742817296877554d"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Hexagonal ports and adapters expresses the same inward rule with explicit application ports; prefer the simpler layering when the port indirection adds no tested change benefit.",
-          "reason": "Contrasts explicit hexagonal ports with simpler layering."
+          "reason": "Source groups hexagonal/onion as similar but does not compare port indirection with simpler layering."
         }
       },
       "decision_evidence": {
@@ -399,22 +504,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A bounded context has one accountable model owner and one accepted vocabulary.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.fowler-bounded-context",
+            "ledger_record": "read.fowler-bounded-context.2026-10-21",
+            "section": "Bounded Context",
+            "quote": "So instead DDD divides up a large system into Bounded Contexts, each of which can have a unified model - essentially a way of structuring MultipleCanonicalModels .",
+            "revision": "5f6bbdd9567aeb45cb81d536a9e01a7636f2792ba41fa0abeff5603b74d46184"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A named domain expert co-owns that vocabulary and arbitrates disputed meanings.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source does not state that a named domain expert co-owns vocabulary or arbitrates meaning."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Model behavior changes are reviewed with the domain expert before a boundary moves.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source does not describe reviewing model behavior with a domain expert before moving a boundary."
         },
         "alternative": {
           "state": "supported",
           "quote": "Reopen the boundary when a shared term changes meaning, a translation gains a second owner or releases become unavoidably coupled.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.fowler-bounded-context",
+            "ledger_record": "read.fowler-bounded-context.2026-10-21",
+            "section": "Bounded Context",
+            "quote": "Usually the dominant one is human culture, since models act as Ubiquitous Language, you need a different model when the language changes.",
+            "revision": "5f6bbdd9567aeb45cb81d536a9e01a7636f2792ba41fa0abeff5603b74d46184"
+          }
         }
       },
       "decision_evidence": {
@@ -432,7 +551,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded ownership section; authority and context-map material sits in sections 2-3."
     },
@@ -459,22 +578,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Each service owns its schema and storage, and other services reach that data only through the owner's contract or published events. The boundary is an ownership rule even when several schemas share one physical server.",
-          "reason": "Defines service-owned schema and storage with access through contract or events."
+          "reason": "Defines service-owned schema and storage with access through contract or events.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-database-per-service.2026-10-21",
+            "section": "Solution",
+            "quote": "Keep each microservice’s persistent data private to that service and accessible only via its API.",
+            "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Only the owning service writes its records, and no critical-path query joins another service's tables without an explicit contract.",
-          "reason": "Requires only the owner to write and forbids undeclared cross-service joins."
+          "reason": "Requires only the owner to write and forbids undeclared cross-service joins.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-database-per-service.2026-10-21",
+            "section": "Solution",
+            "quote": "Private-tables-per-service – each service owns a set of tables that must only be accessed by that service",
+            "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Dual writes, stale replicas and cross-service queries are common; use an outbox or idempotent reconciliation for cross-service effects and verify replica freshness before joining.",
-          "reason": "Names dual writes, stale replicas and cross-service queries with outbox/reconciliation."
+          "reason": "Source names cross-service transaction/query problems but not dual writes, stale replicas or outbox recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A shared database with enforced module ownership is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost.",
-          "reason": "Contrasts a shared database with enforced module ownership."
+          "reason": "Source calls shared database an anti-pattern, not a simpler enforced-module option."
         }
       },
       "decision_evidence": {
@@ -9034,7 +9167,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Layered, hexagonal and clean/onion styles now have three distinct dedicated units with separate dependency mechanisms."
     },
@@ -9048,7 +9181,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Microservices and SOA now have distinct dedicated units with separate contract and ownership emphasis."
     },
@@ -9519,11 +9652,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 144,
-    "invariant_supported": 131,
-    "failure_recovery_supported": 134,
-    "alternative_supported": 136,
-    "technical_partial_bounded": 131,
-    "technical_partial": 14,
+    "invariant_supported": 127,
+    "failure_recovery_supported": 127,
+    "alternative_supported": 134,
+    "technical_partial_bounded": 127,
+    "technical_partial": 18,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
