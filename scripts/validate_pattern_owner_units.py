@@ -175,7 +175,12 @@ def expected_coverage(evidence, pattern_id, promotion=None):
 
 def check_binding(entry, name, binding, plan_units, records):
     pattern_id = entry["pattern_id"]
-    unit = plan_units.get(binding["source_id"])
+    units = plan_units.get(binding["source_id"], [])
+    unit = next((item for item in units
+                 if item.get("read_record_id") == binding["ledger_record"]),
+                None)
+    if unit is None:
+        unit = next(iter(units), None)
     require(unit is not None,
             "owner-units-binding-source: " + pattern_id + ": " + name)
     require(unit.get("read_record_id") == binding["ledger_record"],
@@ -221,7 +226,9 @@ def validate_data(data, root=ROOT):
     ledger = load(root / LEDGER)
     source_plan = load(root / SOURCE_PLAN)
     plan_units = {item["pattern_id"]: {
-        unit["source_id"]: unit for unit in item["required_units"]}
+        source_id: [unit for unit in item["required_units"]
+                    if unit["source_id"] == source_id]
+        for source_id in {unit["source_id"] for unit in item["required_units"]}}
         for item in source_plan["entries"]}
     manifest = load(root / MANIFEST)
     promotion_data = load(root / PROMOTIONS)

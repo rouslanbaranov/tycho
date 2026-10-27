@@ -3833,22 +3833,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Change data capture reads the database's own change log and turns committed row changes into a replayable stream.",
-          "reason": "Defines reading the database change log as a replayable stream."
+          "reason": "Defines reading the database change log as a replayable stream.",
+          "binding": {
+            "source_id": "src.postgres-logical",
+            "ledger_record": "read.batch8-postgres-logical.2026-10-22",
+            "section": "Chapter 29. Logical Replication",
+            "quote": "When logical replication of a table typically starts, PostgreSQL takes a snapshot of the table's data on the publisher database and copies it to the subscriber. Once complete, changes on the publisher since the initial copy are sent continually to the subscriber.",
+            "revision": "cc529913e4400bf21371fbf6f5c74aa7c21b9b6380725f319a6d287028a49065"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The stream must preserve per-key order and transaction grouping",
-          "reason": "Requires per-key order and transaction grouping in the stream."
+          "reason": "Source states order/transactional consistency, not a durable capture offset/resume invariant."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Connector lag, slot retention, schema changes and a snapshot-to-stream gap are common.",
-          "reason": "Names the CDC failure modes."
+          "reason": "Source names conflict possibility but no gap recovery or reconciliation rule."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be preferable when log access is unavailable or the team cannot operate a connector.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Source does not name outbox, dual-write or scheduled extraction alternatives."
         }
       },
       "decision_evidence": {
@@ -3866,7 +3873,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section 1 explains committed-change observation and cursor gaps; later sections cover Kafka Streams state."
     },
@@ -3893,22 +3900,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "A materialized view stores the result of a query so repeated reads avoid recomputing it.",
-          "reason": "Describes the event-fed read store and its freshness limit, which is the materialized-view mechanism."
+          "reason": "Describes the event-fed read store and its freshness limit, which is the materialized-view mechanism.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch9-pg-matview-refresh.2026-10-22",
+            "section": "Description",
+            "quote": "If WITH DATA is specified (or defaults) the backing query is executed to provide the new data, and the materialized view is left in a scannable state.",
+            "revision": "68f246e884ac043c72ac06086401e4eab0a63903908b206ff0adf450a0d518d6"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Refresh is a separate write operation with an owner and a mode.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source states MAINTAIN privilege, not a read-consistency or refresh-atomicity invariant."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An on-demand refresh can block reads while it rebuilds",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source discusses refresh blocking/resources, not failed-refresh stale-view recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A native query, cache-aside or a synchronous read may be preferable when the required freshness exceeds the view benefit.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source does not compare native query, cache-aside or synchronous read."
         }
       },
       "decision_evidence": {
@@ -3926,7 +3940,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded in the CQRS section: a derived read store is described, but the term 'materialized view' is only in the atlas backlink."
     },
@@ -3950,22 +3964,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A command-side replica serves reads that must observe the latest accepted command state while the read projections still lag. The query is routed to a replica of the command-side store, and the reply reports the applied position it observed.",
-          "reason": "Routes reads to a command-store replica and reports the applied position."
+          "reason": "Routes reads to a command-store replica and reports the applied position.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-command-side.2026-10-21",
+            "section": "Solution",
+            "quote": "Replica database - a read-only replica of the data from the provider service. The command service keeps the replica up to data by subscribing to Domain events published by the provider service",
+            "revision": "ef4d815712f4a5e31ac94966fccf20dc434bd4d320380d8ef7e47184b348c306"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The replica must apply a committed command before it answers a query that claims to include that command; otherwise the result is stale.",
-          "reason": "Requires applying a committed command before answering a query that claims it."
+          "reason": "Source does not require the replica to apply a committed command before answering."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Replication delay or failover can serve an older position, so the client must check the reported position or wait for the required one before treating a read as current.",
-          "reason": "Requires checking or waiting for the reported position under lag or failover."
+          "reason": "Source does not address replication delay, failover or position checks."
         },
         "alternative": {
           "state": "supported",
           "quote": "Serve the same read from the authoritative command store or block until the projection catches up; reverse the choice when replica lag is bounded and read load would otherwise overload the authority.",
-          "reason": "Names the authoritative store or waiting for the projection."
+          "reason": "Names the authoritative store or waiting for the projection.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-command-side.2026-10-21",
+            "section": "Context",
+            "quote": "One option is for the Order Service to query the Restaurant Service each time. The query can either be implemented synchronously using, for example, or asynchronously as a saga step.",
+            "revision": "ef4d815712f4a5e31ac94966fccf20dc434bd4d320380d8ef7e47184b348c306"
+          }
         }
       },
       "decision_evidence": {
@@ -3983,7 +4011,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4007,22 +4035,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A coordinator asks every participant to prepare, collects the votes, then records one commit or abort decision that the participants apply while holding prepared state.",
-          "reason": "Defines prepare, vote and a single durable commit or abort decision."
+          "reason": "Defines prepare, vote and a single durable commit or abort decision.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch2-pg-2pc.2026-10-21",
+            "section": "67.4. Two-Phase Transactions",
+            "quote": "PostgreSQL supports a two-phase commit (2PC) protocol that allows multiple distributed systems to work together in a transactional manner. The commands are PREPARE TRANSACTION , COMMIT PREPARED and ROLLBACK PREPARED . Two-phase transactions are intended for use by external transaction management systems.",
+            "revision": "94713ca9be2f8b8b45be69e8f15febc7d9bef4df43e97d28cacdbb63d6c32b8f"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "No participant may commit before the coordinator's durable decision, and the decision must survive coordinator failure for prepared participants to recover.",
-          "reason": "Forbids commit before the durable coordinator decision."
+          "reason": "Forbids commit before the durable coordinator decision.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch2-pg-2pc.2026-10-21",
+            "section": "67.4. Two-Phase Transactions",
+            "quote": "When the user executes PREPARE TRANSACTION , the only possible next commands are COMMIT PREPARED or ROLLBACK PREPARED .",
+            "revision": "94713ca9be2f8b8b45be69e8f15febc7d9bef4df43e97d28cacdbb63d6c32b8f"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A coordinator crash after prepare leaves participants holding locks with an unknown outcome; recovery depends on a durable decision log and an explicit resolution procedure.",
-          "reason": "Requires a durable decision log and resolution procedure after coordinator failure."
+          "reason": "Source does not address coordinator crash recovery or a durable decision log."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A saga with compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic business outcomes; prefer 2PC when participants can hold locks and atomic durability is required. A single local transaction is preferable when every resource shares one database.",
-          "reason": "Contrasts a saga and a single local transaction."
+          "reason": "Source does not name saga, compensating actions or a single local transaction as alternatives."
         }
       },
       "decision_evidence": {
@@ -9425,7 +9467,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 6,
-      "bounded_entries": 4,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
     },
@@ -9925,11 +9967,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 136,
-    "invariant_supported": 110,
-    "failure_recovery_supported": 110,
-    "alternative_supported": 119,
-    "technical_partial_bounded": 109,
-    "technical_partial": 36,
+    "invariant_supported": 107,
+    "failure_recovery_supported": 106,
+    "alternative_supported": 116,
+    "technical_partial_bounded": 106,
+    "technical_partial": 39,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

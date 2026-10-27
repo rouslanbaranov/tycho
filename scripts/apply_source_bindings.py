@@ -46,9 +46,14 @@ def main():
             require(dim in DIMENSIONS, "binding-dimension: " + pid)
             require(binding["quote"] and len(binding["quote"].strip()) >= 30,
                     "binding-quote: " + pid + ": " + dim)
-            units = {unit["source_id"]: unit
-                     for unit in plan[pid]["required_units"]}
-            unit = units.get(binding["source_id"])
+            units = plan[pid]["required_units"]
+            unit = next((item for item in units
+                         if item["source_id"] == binding["source_id"]
+                         and item.get("read_record_id") == binding["ledger_record"]),
+                        None)
+            if unit is None:
+                unit = next((item for item in units
+                             if item["source_id"] == binding["source_id"]), None)
             require(unit is not None, "binding-source: " + pid + ": " + dim)
             require(unit.get("read_record_id") == binding["ledger_record"],
                     "binding-record: " + pid + ": " + dim)
