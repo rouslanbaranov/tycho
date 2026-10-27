@@ -1,0 +1,410 @@
+{
+  "batch": "B11",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.rolling-deployment",
+      "catalog_name": "Rolling Deployment",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+      "owner_heading": "Rolling Deployment",
+      "source_id": "src.k8s-deployments",
+      "ledger_record": "read.batch5-k8s-deployment.2026-10-21",
+      "url": "https://kubernetes.io/docs/concepts/workloads/controllers/deployment/",
+      "unit": "Deployments — Kubernetes documentation",
+      "sections": [
+        "Deployments",
+        "Use Case",
+        "Creating a Deployment",
+        "Updating a Deployment",
+        "Rolling Back a Deployment",
+        "Scaling a Deployment",
+        "Pausing and Resuming a rollout",
+        "Deployment status",
+        "Clean up Policy",
+        "Canary deployments",
+        "Writing a Deployment Spec",
+        "What's next"
+      ],
+      "revision": "c82226c31d75f773ecb82ae0c09af9435648b0991082fa3bd2c467d29812cf7d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A rolling deployment replaces instances in batches, so old and new versions serve traffic together during the rollout.",
+          "reason": "Defines batch replacement with old and new versions serving together."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Both versions must be compatible with the shared data and contracts for the whole overlap, or the rollout must stop before an incompatible state is written.",
+          "reason": "Requires data and contract compatibility for the whole overlap."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Mixed versions expose an incompatibility that a single-version test missed; gate each batch on readiness and error signals and keep a tested stop condition.",
+          "reason": "Names mixed-version incompatibility and requires readiness/error gates and a stop condition."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Blue/green switches a complete environment at once; choose rolling when the extra capacity for a second environment is unavailable.",
+          "reason": "Contrasts blue/green when a second environment is too costly."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.blue-green-deployment",
+      "catalog_name": "Blue/Green Deployment",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+      "owner_heading": "Blue-Green Deployment",
+      "source_id": "src.argo-rollouts",
+      "ledger_record": "read.batch5-argo-bluegreen.2026-10-21",
+      "url": "https://argoproj.github.io/argo-rollouts/features/bluegreen/",
+      "unit": "BlueGreen — Argo Rollouts documentation",
+      "sections": [
+        "BlueGreen Deployment Strategy",
+        "Overview",
+        "Example",
+        "Configurable Features",
+        "Sequence of Events",
+        "autoPromotionEnabled",
+        "autoPromotionSeconds",
+        "antiAffinity",
+        "maxUnavailable",
+        "prePromotionAnalysis",
+        "postPromotionAnalysis",
+        "previewService",
+        "previewReplicaCount",
+        "scaleDownDelaySeconds",
+        "scaleDownDelayRevisionLimit"
+      ],
+      "revision": "7b9285254c0e92d6640d6bf7e458aef609b4adce4e96f49ed6da2b5d33a81ea3",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the previous environment available for a short reversal.",
+          "reason": "Defines two environments and a routing switch with short reversal."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The switch must remain reversible until the new version's persisted effects are proven compatible with the old version.",
+          "reason": "Requires reversibility until persisted effects are proven compatible."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and data compatibility before declaring the cutover.",
+          "reason": "Names half-switched routes and new-only writes and requires routing/data checks."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A rolling or canary rollout uses less spare capacity; choose blue/green when a fast, complete reversal and a clean environment comparison justify the double capacity.",
+          "reason": "Contrasts rolling/canary with lower spare capacity."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.canary-release",
+      "catalog_name": "Canary Release",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+      "owner_heading": "Canary Release",
+      "source_id": "src.argo-rollouts",
+      "ledger_record": "read.batch5-argo-canary.2026-10-21",
+      "url": "https://argoproj.github.io/argo-rollouts/features/canary/",
+      "unit": "Canary — Argo Rollouts documentation",
+      "sections": [
+        "Canary Deployment Strategy",
+        "Overview",
+        "Example",
+        "Pause Duration",
+        "Dynamic Canary Scale (with Traffic Routing)",
+        "Dynamic Stable Scale (with Traffic Routing)",
+        "Mimicking Rolling Update",
+        "Other Configurable Features",
+        "analysis",
+        "antiAffinity",
+        "canaryService",
+        "stableService",
+        "maxSurge",
+        "maxUnavailable",
+        "trafficRouting"
+      ],
+      "revision": "925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Route a small, identifiable cohort to the new version and check that it is representative",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The exposure slice is not a data-compatibility boundary",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure hides",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute twice.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.feature-flags-feature-toggles",
+      "catalog_name": "Feature Flags / Feature Toggles",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+      "owner_heading": "Feature Flags-Feature Toggles",
+      "source_id": "src.fowler-feature-toggles",
+      "ledger_record": "read.batch5-fowler-feature-toggles.2026-10-21",
+      "url": "https://martinfowler.com/articles/feature-toggles.html",
+      "unit": "Feature Toggles — article",
+      "sections": [
+        "A Toggling Tale",
+        "Categories of toggles",
+        "Implementation Techniques",
+        "Toggle Configuration",
+        "Working with feature-flagged systems",
+        "Acknowledgements",
+        "Significant Revisions"
+      ],
+      "revision": "d4e1a56d2d8c96cdcb278ec7fa16caf9805397e6a91fb862bf8642292a270e8d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment, with a default and kill switch.",
+          "reason": "Defines the flag mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Flags never replace an authorization check.",
+          "reason": "Explicit safety rule separating flags from authorization."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "on evaluation failure the default must be the safe branch, not a silent enable.",
+          "reason": "Names flag failure modes."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A canary or branch-by-abstraction is preferable when the toggle would become permanent configuration.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.gitops",
+      "catalog_name": "GitOps",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+      "owner_heading": "GitOps",
+      "source_id": "src.opengitops",
+      "ledger_record": "read.batch5-opengitops.2026-10-21",
+      "url": "https://opengitops.dev/",
+      "unit": "OpenGitOps — principles",
+      "sections": [
+        "What is OpenGitOps?",
+        "GitOps Principles v1.0.0",
+        "Declarative",
+        "Versioned and Immutable",
+        "Pulled Automatically",
+        "Continuously Reconciled",
+        "Past Events"
+      ],
+      "revision": "61eb24afa22a5717ddbbc8941e2c10ec4cc2d3b5d7f6f59a407e1a337ed339fe",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "GitOps treats a versioned desired-state repository as reviewed intent.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact reference.",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Controller outage, drift, repository compromise and stale artifact references are common",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A pipeline-driven deployment, manual release or imperative operator may be preferable when imperative one-off changes dominate or no reconciler owner exists.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.immutable-infrastructure",
+      "catalog_name": "Immutable Infrastructure",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+      "owner_heading": "Immutable Infrastructure",
+      "source_id": "src.ibm-immutable-infrastructure",
+      "ledger_record": "read.batch5-ibm-immutable.2026-10-21",
+      "url": "https://www.ibm.com/think/topics/immutable-infrastructure",
+      "unit": "What is Immutable Infrastructure? — IBM",
+      "sections": [
+        "What is immutable infrastructure?",
+        "How does immutable infrastructure work?",
+        "Provisioning with infrastructure as code",
+        "Deployment through CI/CD pipelines",
+        "External data storage",
+        "Recovery",
+        "Benefits of immutable infrastructure",
+        "Predictable server state",
+        "Improved horizontal scalability",
+        "Enhanced security",
+        "Challenges of immutable infrastructure"
+      ],
+      "revision": "44075e8bbd9269c29e14d87fa34e51f3efb5593f2e2dbd1a03b925358ae1de72",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Immutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts, so each instance is reproducible from a recorded artifact.",
+          "reason": "Defines replacement from a versioned image or definition rather than mutation."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
+          "reason": "Requires reproducibility from an artifact digest and drift detection."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
+          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "choose immutable replacement when reproducibility, an automated replacement path and artifact rollback speed matter",
+          "reason": "Names immutable replacement when reproducibility and fast artifact rollback matter."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.strangler-fig",
+      "catalog_name": "Strangler Fig",
+      "owner_path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+      "owner_heading": "Strangler Fig",
+      "source_id": "src.fowler-strangler",
+      "ledger_record": "read.fowler-strangler.2026-10-21",
+      "url": "https://martinfowler.com/bliki/StranglerFigApplication.html",
+      "unit": "Strangler Fig — complete public article",
+      "sections": [
+        "Strangler Fig",
+        "Further Reading"
+      ],
+      "revision": "ac274ebe2a36e7553e9f1923e7fbfbc3ff52504c542eec5353127ffba335989e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Intercept requests at a façade or route and send one capability at a time to the new implementation while the old path remains available.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Branch by abstraction, parallel run or a big-bang replacement",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.branch-by-abstraction",
+      "catalog_name": "Branch by Abstraction",
+      "owner_path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+      "owner_heading": "Branch by Abstraction",
+      "source_id": "src.fowler-branch",
+      "ledger_record": "read.batch5-fowler-branch.2026-10-21",
+      "url": "https://martinfowler.com/bliki/BranchByAbstraction.html",
+      "unit": "Branch By Abstraction — article",
+      "sections": [
+        "Branch By Abstraction",
+        "Further Reading",
+        "Acknowledgements",
+        "Notes"
+      ],
+      "revision": "0b5f655e2e3eee9910995808c8327abf5739bb7db4a2d1d1885a2ec3b47688fb",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An internal interface can route old/new implementations with one deployable",
+          "reason": "Explains the internal abstraction that routes old and new implementations in one deployable."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Old and new implementations behind the internal interface must preserve the same contract and observable effects; the switch must remain reversible until the old path is removed.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Untested side effects, a bypass around the abstraction and divergent implementations can break that contract.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A strangler facade can route requests by capability when the boundary is external.",
+          "reason": "Names the strangler facade and its external-boundary condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.expand-and-contract",
+      "catalog_name": "Expand-and-Contract",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+      "owner_heading": "Expand-and-Contract",
+      "source_id": "src.flyway",
+      "ledger_record": "read.batch3-flyway.2026-10-21",
+      "url": "https://documentation.red-gate.com/flyway/flyway-concepts/migrations",
+      "unit": "Migrations — Flyway documentation",
+      "sections": [
+        "Migrations",
+        "Migrate",
+        "Example 1",
+        "Example 2",
+        "Undo",
+        "Callbacks",
+        "File formats",
+        "Schema history",
+        "Discovery",
+        "Migration execution",
+        "Migration generation",
+        "Migration validation",
+        "Deployment reports",
+        "Placeholders",
+        "Transaction handling",
+        "Schema handling",
+        "Script configuration"
+      ],
+      "revision": "8952ed4d377476f95a6a4a90f93c5c01db800de6f6d076570298b1a9f490a897",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence.",
+          "reason": "States the expand, migrate, verify and contract sequence."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "New writers must preserve enough old representation for old supported readers until a verified cutover.",
+          "reason": "States the compatibility precondition that must hold during coexistence."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Incompatible writes hold the rollout and may require forward repair rather than redeploying N.",
+          "reason": "Names the failure, the hold, and forward repair as recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A big-bang migration, a parallel run or a versioned API cutover may be preferable when no mixed-version compatibility window is possible or the dataset is small enough to migrate under a verified pause.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    }
+  ]
+}
