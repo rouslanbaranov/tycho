@@ -1529,22 +1529,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "An asynchronous request-reply interface accepts a request, returns a durable handle and later exposes the terminal result through polling or a callback.",
-          "reason": "Defines a durable handle and later polling or callback result."
+          "reason": "Defines a durable handle and later polling or callback result.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-async-request-reply.2026-10-21",
+            "section": "Solution",
+            "quote": "The response includes a location reference that points to an endpoint that the client can poll to check the result of the long-running operation.",
+            "revision": "e87a0d9ec8ed297d180c4f0f3348131f00371b2b0fed97a80ec747689cfcb58a"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The handle must identify one recorded operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown effect.",
-          "reason": "Requires the handle to identify one recorded durable operation."
+          "reason": "Source binds duplicate-key idempotency, not the durable handle invariant; no exact handle-durability rule found."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record queryable and reconcile before retrying the original request.",
-          "reason": "Requires a queryable operation record and reconciliation before retry."
+          "reason": "Requires a queryable operation record and reconciliation before retry.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-async-request-reply.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "You can require clients to supply an idempotency key, for example in an Idempotency-Key request header, when they submit the initial request. If the back end receives a duplicate key, it should return the existing status resource instead of enqueuing a second work item. This approach protects against network failures that cause the client to retry a POST that the server already accepted. It's especially important in this pattern because the client can't distinguish between a lost response and a request that was never received.",
+            "revision": "e87a0d9ec8ed297d180c4f0f3348131f00371b2b0fed97a80ec747689cfcb58a"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A synchronous call with a bounded deadline is simpler when the work reliably finishes inside the request budget; split the interaction only when waiting would exceed it.",
-          "reason": "Names a synchronous bounded-deadline call when the work fits the request budget."
+          "reason": "Names a synchronous bounded-deadline call when the work fits the request budget.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-async-request-reply.2026-10-21",
+            "section": "Context and problem",
+            "quote": "Most APIs respond quickly enough for the response to return over the same connection.",
+            "revision": "e87a0d9ec8ed297d180c4f0f3348131f00371b2b0fed97a80ec747689cfcb58a"
+          }
         }
       },
       "decision_evidence": {
@@ -1562,7 +1583,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -1586,22 +1607,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A gatekeeper is a dedicated request-validation boundary that authenticates the caller and evaluates coarse authorization before forwarding a request to the protected service.",
-          "reason": "Defines a validation boundary before forwarding to the protected service."
+          "reason": "Defines a validation boundary before forwarding to the protected service.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
+            "section": "Gatekeeper pattern",
+            "quote": "Protect applications and services by using a dedicated component to broker requests between clients and the application or service. The broker validates and sanitizes the requests, and can provide an extra layer of security and limit the system's attack surface.",
+            "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The protected service must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the boundary cannot be sidestepped by an alternate route.",
-          "reason": "Requires the protected service to reject bypasses or repeat security checks."
+          "reason": "Requires the protected service to reject bypasses or repeat security checks.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Ensure that the trusted hosts expose only internal or protected endpoints that only the gatekeeper uses. The trusted hosts shouldn't expose any external endpoints or interfaces.",
+            "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine network policy, denial logs and a bypass test in the acceptance evidence.",
-          "reason": "Names stale policy and direct paths and requires network policy, denial logs and a bypass test."
+          "reason": "Source names SPoF and redundancy, not stale-policy or bypass-detection recovery."
         },
         "alternative": {
           "state": "supported",
           "quote": "Enforce authorization inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every route must apply and the bypass surface is closed.",
-          "reason": "Names in-service authorization at each effect boundary."
+          "reason": "Names in-service authorization at each effect boundary.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "This pattern might not be suitable when: You can satisfy security and validation requirements through built-in platform controls on the back-end service without adding a dedicated gatekeeper tier.",
+            "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0"
+          }
         }
       },
       "decision_evidence": {
@@ -9386,11 +9428,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 144,
-    "invariant_supported": 134,
-    "failure_recovery_supported": 136,
+    "invariant_supported": 133,
+    "failure_recovery_supported": 135,
     "alternative_supported": 137,
-    "technical_partial_bounded": 134,
-    "technical_partial": 11,
+    "technical_partial_bounded": 133,
+    "technical_partial": 12,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

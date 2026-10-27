@@ -29,22 +29,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "An asynchronous request-reply interface accepts a request, returns a durable handle and later exposes the terminal result through polling or a callback.",
-          "reason": "Defines a durable handle and later polling or callback result."
+          "reason": "Defines a durable handle and later polling or callback result.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The handle must identify one recorded operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown effect.",
-          "reason": "Requires the handle to identify one recorded durable operation."
+          "reason": "Source binds duplicate-key idempotency, not the durable handle invariant; no exact handle-durability rule found.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record queryable and reconcile before retrying the original request.",
-          "reason": "Requires a queryable operation record and reconciliation before retry."
+          "reason": "Requires a queryable operation record and reconciliation before retry.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A synchronous call with a bounded deadline is simpler when the work reliably finishes inside the request budget; split the interaction only when waiting would exceed it.",
-          "reason": "Names a synchronous bounded-deadline call when the work fits the request budget."
+          "reason": "Names a synchronous bounded-deadline call when the work fits the request budget.",
+          "has_binding": true
         }
       }
     },
@@ -73,22 +77,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A gatekeeper is a dedicated request-validation boundary that authenticates the caller and evaluates coarse authorization before forwarding a request to the protected service.",
-          "reason": "Defines a validation boundary before forwarding to the protected service."
+          "reason": "Defines a validation boundary before forwarding to the protected service.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "The protected service must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the boundary cannot be sidestepped by an alternate route.",
-          "reason": "Requires the protected service to reject bypasses or repeat security checks."
+          "reason": "Requires the protected service to reject bypasses or repeat security checks.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine network policy, denial logs and a bypass test in the acceptance evidence.",
-          "reason": "Names stale policy and direct paths and requires network policy, denial logs and a bypass test."
+          "reason": "Source names SPoF and redundancy, not stale-policy or bypass-detection recovery.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Enforce authorization inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every route must apply and the bypass surface is closed.",
-          "reason": "Names in-service authorization at each effect boundary."
+          "reason": "Names in-service authorization at each effect boundary.",
+          "has_binding": true
         }
       }
     }
