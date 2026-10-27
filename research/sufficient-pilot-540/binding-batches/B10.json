@@ -1,0 +1,150 @@
+{
+  "batch": "B10",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.expand-and-contract-schema",
+      "catalog_name": "Expand-and-Contract Schema",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+      "owner_heading": "Expand-and-Contract Schema",
+      "source_id": "src.flyway",
+      "ledger_record": "read.batch3-flyway.2026-10-21",
+      "url": "https://documentation.red-gate.com/flyway/flyway-concepts/migrations",
+      "unit": "Migrations — Flyway documentation",
+      "sections": [
+        "Migrations",
+        "Migrate",
+        "Example 1",
+        "Example 2",
+        "Undo",
+        "Callbacks",
+        "File formats",
+        "Schema history",
+        "Discovery",
+        "Migration execution",
+        "Migration generation",
+        "Migration validation",
+        "Deployment reports",
+        "Placeholders",
+        "Transaction handling",
+        "Schema handling",
+        "Script configuration"
+      ],
+      "revision": "8952ed4d377476f95a6a4a90f93c5c01db800de6f6d076570298b1a9f490a897",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Expand-and-contract is a staged change protocol",
+          "reason": "The text alternative lays out the expand/map/backfill/reconcile/contract sequence."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Each phase has a compatibility gate.",
+          "reason": "States the retirement precondition that must hold before contract."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "a migration with no contract date becomes a permanent dual schema",
+          "reason": "The cutover failure row gives the rollback and forward-repair response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A smaller change may keep the schema and add a mapping layer instead of moving authority.",
+          "reason": "Names the mapping-layer/smaller-change alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.online-data-migration",
+      "catalog_name": "Online Data Migration",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+      "owner_heading": "Online Data Migration",
+      "source_id": "src.gh-ost",
+      "ledger_record": "read.batch3-gh-ost.2026-10-21",
+      "url": "https://github.com/github/gh-ost",
+      "unit": "gh-ost README — online schema migration",
+      "sections": [
+        "gh-ost",
+        "GitHub's online schema migration for MySQL",
+        "How?",
+        "Highlights",
+        "Usage",
+        "What's in a name?",
+        "License",
+        "Community",
+        "Download/binaries/source",
+        "Authors"
+      ],
+      "revision": "07b6cf866971f100fa01fb6675d94e325d15eefb23300feb378b19a55da2cc19",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "If backfill takes hours, it may read records while new writes occur. A design needs an authoritative writer and a change-capture/reconciliation plan.",
+          "reason": "Explains copy-while-live-writes and the change-capture/reconciliation arrangement."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
+          "reason": "States the single-writer constraint that must hold during backfill."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.",
+          "reason": "Names checkpoint and mapping failure and the reconciliation response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate is low or the changed-row set is small.",
+          "reason": "Names stop-the-world/dual-write and the reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.backup-pitr-and-restore",
+      "catalog_name": "Backup, PITR and Restore",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
+      "owner_heading": "Backup, PITR and Restore",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/continuous-archiving.html",
+      "unit": "Continuous Archiving and PITR — PostgreSQL documentation",
+      "sections": [
+        "25.3. Continuous Archiving and PITR",
+        "25.3.1. Setting Up WAL Archiving",
+        "25.3.2. Making a Base Backup",
+        "25.3.3. Making an Incremental Backup",
+        "25.3.4. Making a Base Backup Using the Low Level API",
+        "25.3.4.1. Backing Up the Data Directory",
+        "25.3.5. Recovering Using a Continuous Archive Backup",
+        "25.3.6. Timelines",
+        "25.3.7. Tips and Examples",
+        "25.3.7.1. Standalone Hot Backups",
+        "25.3.7.2. Compressed Archive Logs",
+        "25.3.7.3. archive_command Scripts",
+        "25.3.8. Caveats"
+      ],
+      "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A base backup plus a continuous archive of write-ahead records lets an operator restore the data to a chosen point in time before an incident.",
+          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The backup chain must be complete and restorable, and a recovery target must be validated against the application's consistency requirements, not only produced.",
+          "reason": "Requires a complete restorable chain and an application-consistency check for the target."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
+          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Promote a replica for availability, but it does not protect against replicated deletion or corruption; use backups when recovery point and retained history matter.",
+          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption."
+        }
+      }
+    }
+  ]
+}
