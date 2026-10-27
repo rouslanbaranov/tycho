@@ -8346,22 +8346,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A deployment stamp is an independently operated deployment unit used for scale, isolation or locality.",
-          "reason": "Defines the independent deployment unit and its purposes."
+          "reason": "Defines the independent deployment unit and its purposes.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+            "section": "Solution",
+            "quote": "To avoid these problems, consider grouping resources into scale units and provisioning multiple copies of your stamps . Each scale unit hosts and serves a subset of your tenants. Stamps run independently of each other, and you can deploy and update them independently.",
+            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
-          "reason": "Lists the routing, authority, upgrade and shared-dependency preconditions."
+          "reason": "Lists the routing, authority, upgrade and shared-dependency preconditions.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Traffic routing: As described previously in this article, routing traffic to the correct stamp for a given request can require an extra component that resolves tenants to stamps. This component might also need to be highly available.",
+            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is configuration drift or split state across stamps; version the stamp definition, route by an explicit key and reconcile state at the authority.",
-          "reason": "Names drift and split state, with versioning, routing and reconciliation controls."
+          "reason": "Names drift and split state, with versioning, routing and reconciliation controls.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Governance and configuration drift: As the number of stamps increases, it becomes harder to keep security policies, role-based access control (RBAC) assignments, network controls, observability settings, and service configurations consistent. Use Azure Policy to treat governance as code and continuously validate each stamp for drift to prevent inconsistent behavior and compliance gaps.",
+            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice."
+          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+            "section": "Solution",
+            "quote": "In a deployment stamp architecture, each independent instance of your system serves a subset of your customers and users. In a geode architecture, every instance can serve requests from any user, but this approach is typically more complex to design and build.",
+            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
+          }
         }
       },
       "decision_evidence": {
@@ -8406,22 +8434,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Geode places identical regional nodes behind a global routing layer so clients can use a nearby healthy region.",
-          "reason": "States the nodes-plus-routing mechanism."
+          "reason": "States the nodes-plus-routing mechanism.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-geode.2026-10-21",
+            "section": "Solution",
+            "quote": "Deploy the service into multiple satellite deployments spread around the globe, each of which is called a geode . The geode pattern harnesses key features of Azure to route traffic via the shortest path to a nearby geode, which improves latency and performance.",
+            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
-          "reason": "Lists the replication, health, routing and authority preconditions."
+          "reason": "Lists the replication, health, routing and authority preconditions.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-geode.2026-10-21",
+            "section": "Solution",
+            "quote": "Each geode is behind a global load balancer, and uses a geo-replicated read-write service like Azure Cosmos DB to host the data plane, ensuring cross-geode data consistency.",
+            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a route to a stale or isolated region; the router must use an authoritative health and data-freshness signal, and failover must fence the old writer.",
-          "reason": "Names stale routing and prescribes health/freshness signalling plus fencing."
+          "reason": "Names stale routing and prescribes health/freshness signalling plus fencing.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-geode.2026-10-21",
+            "section": "Solution",
+            "quote": "Furthermore, the resiliency of the whole solution increases with each added geode, since any geodes can take over if a regional outage takes one or more geodes offline.",
+            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Active-passive recovery is the alternative when cross-region consistency is not worth the routing complexity.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice."
+          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch5-geode.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "In this case, consider using deployment stamps in combination with a global routing plane that is aware of where a user's data sits, such as the traffic routing component described within the deployment stamps pattern .",
+            "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364"
+          }
         }
       },
       "decision_evidence": {
@@ -8466,22 +8522,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Static content hosting publishes immutable objects to an object store or CDN origin and serves them by URL without per-request application compute.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "Solution",
+            "quote": "In most cloud hosting environments, you can put some of an application's resources and static pages in a storage service. The storage service can serve requests for these resources, reducing load on the compute resources that handle other web requests.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "A retained version is the rollback path",
-          "reason": "Requires cache key, freshness and authorization to agree for served static assets."
+          "reason": "Requires cache key, freshness and authorization to agree for served static assets.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Coordinate application and asset deployments. Publish changed assets at new, versioned URLs before deploying pages that reference them. Retain older assets while cached pages, supported application versions, or rollback procedures still depend on them.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Changing, deleting, or restricting access to origin content doesn't invalidate cached copies. Purge caches when you need to, but account for propagation time and remember that CDN purges don't clear browser caches.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A dynamic origin or edge compute may be preferable when content changes per request or publication cannot be governed.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch3-ms-static.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "The application must process or personalize content for each request before delivering it. For example, it might need to insert user-specific data into a document.",
+            "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
+          }
         }
       },
       "decision_evidence": {
@@ -8523,22 +8607,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
-          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials."
+          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials.",
+          "binding": {
+            "source_id": "src.microsoft-multitenant",
+            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
+            "section": "Deployment Stamps pattern",
+            "quote": "This pattern deploys dedicated infrastructure for a tenant or a group of tenants. A single stamp might serve multiple tenants or only a single tenant.",
+            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
-          "reason": "Forbids crossing tenant boundaries without a shared-resource contract."
+          "reason": "Forbids crossing tenant boundaries without a shared-resource contract.",
+          "binding": {
+            "source_id": "src.microsoft-multitenant",
+            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
+            "section": "Deployment Stamps pattern",
+            "quote": "Each stamp requires its own dedicated infrastructure, and that infrastructure can't be shared with other tenants.",
+            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
-          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests."
+          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests.",
+          "binding": {
+            "source_id": "src.microsoft-multitenant",
+            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
+            "section": "Deployment Stamps pattern",
+            "quote": "Multitenant stamps require extra patterns to manage multitenancy within the stamp, and the noisy neighbor problem still might occur.",
+            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared pool with tenant-scoped predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance risk dominates.",
-          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources."
+          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources.",
+          "binding": {
+            "source_id": "src.microsoft-multitenant",
+            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
+            "section": "Deployment Stamps pattern",
+            "quote": "You can also apply the Deployment Stamps pattern to create multitenant stamps. This approach supports resource sharing and reduces infrastructure costs.",
+            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
+          }
         }
       },
       "decision_evidence": {
