@@ -5287,22 +5287,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "One leader accepts writes and appends a replicated log; followers apply it in order.",
-          "reason": "Defines the leader/follower replication path."
+          "reason": "Defines the leader/follower replication path.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "section": "26.2. Log-Shipping Standby Servers",
+            "quote": "The primary server operates in continuous archiving mode, while each standby server operates in continuous recovery mode, reading the WAL files from the primary.",
+            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A stale leader can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
-          "reason": "States the single-writer rule during a partition."
+          "reason": "Local text lacks 26.3 Failover and any quorum/term or fencing contract."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Promotion requires a quorum/term check and a fencing token; the old leader must be rejected, and the follower log must catch up before it serves authoritative reads.",
-          "reason": "Covers isolation, new-leader election and stale-leader rejection with log catch-up."
+          "reason": "Local text lacks 26.3 Failover and old-leader rejection; 26.2.2 is procedure only."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Quorum-replicated consensus, multi-leader replication or asynchronous read replicas may be preferable depending on the required write availability, read freshness and conflict model.",
-          "reason": "Names the alternatives and reversal."
+          "reason": "Text contrasts sync/async shipping, not consensus, multi-leader or read replicas."
         }
       },
       "decision_evidence": {
@@ -5320,7 +5327,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Page-level owner; the walkthrough shows leader-based failover but not the follower replication protocol."
     },
@@ -5344,22 +5351,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Several nodes accept writes for the same logical data and replicate them to each other, so every accepted write must eventually converge to one declared outcome.",
-          "reason": "Defines multiple write acceptors with eventual convergence."
+          "reason": "Defines multiple write acceptors with eventual convergence.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Dataset Partitioning: Consistent Hashing",
+            "quote": "As every replica can independently accept mutations to every key that it owns, every key must be versioned.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The system must define a conflict-resolution rule and preserve every acknowledged effect according to that rule; silent last-writer-wins is not a convergence proof.",
-          "reason": "Requires a conflict rule and preservation of every acknowledged effect."
+          "reason": "Requires a conflict rule and preservation of every acknowledged effect.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Data Versioning",
+            "quote": "Cassandra uses mutation timestamp versioning to guarantee eventual consistency of data. Specifically all mutations that enter the system do so with a timestamp provided either from a client clock or, absent a client-provided timestamp, from the coordinator node’s clock. Updates resolve according to the conflict resolution rule of last write wins.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Concurrent writes to one key produce conflicts that surface later during reads or reconciliation; record the conflicting versions and expose a deterministic resolution path.",
-          "reason": "Requires recording conflicting versions and a deterministic resolution path."
+          "reason": "Requires recording conflicting versions and a deterministic resolution path.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Replica Synchronization",
+            "quote": "Like the original Dynamo paper Cassandra supports full repairs where replicas hash their entire dataset, create Merkle trees, send them to each other and sync any ranges that don’t match.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Single-leader replication avoids write conflicts at the cost of write availability across regions; choose multi-leader only when accepting local writes outweighs the conflict contract.",
-          "reason": "Contrasts single-leader conflict avoidance with write availability."
+          "reason": "Cassandra text has no single-leader comparison or write-availability conflict tradeoff."
         }
       },
       "decision_evidence": {
@@ -5401,22 +5429,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Read replicas serve read-only traffic from followers, reducing load on the leader while accepting that a replica can lag behind the latest committed write.",
-          "reason": "Defines follower read serving with bounded lag."
+          "reason": "Defines follower read serving with bounded lag.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "section": "26.2. Log-Shipping Standby Servers",
+            "quote": "A standby server can also be used for read-only queries, in which case it is called a hot standby server.",
+            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "A read must state the freshness it requires, and read-your-writes or monotonic guarantees must be enforced by routing, a position wait or an authority read.",
-          "reason": "Requires a freshness statement and routing, wait or authority read for stronger guarantees."
+          "reason": "Requires a freshness statement and routing, wait or authority read for stronger guarantees.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "section": "26.2.8.1. Basic Configuration",
+            "quote": "Setting synchronous_commit to remote_apply will cause each commit to wait until the current synchronous standbys report that they have replayed the transaction, making it visible to user queries. In simple cases, this allows for load balancing with causal consistency.",
+            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lag spike serves stale data even though replication is healthy; monitor applied position and lag, and route freshness-critical reads away from a lagging replica.",
-          "reason": "Requires applied-position and lag monitoring with freshness-critical routing."
+          "reason": "Requires applied-position and lag monitoring with freshness-critical routing.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "section": "26.2.5.2. Monitoring",
+            "quote": "An important health indicator of streaming replication is the amount of WAL records generated in the primary, but not yet applied in the standby. You can calculate this lag by comparing the current WAL write location on the primary with the last WAL location received by the standby.",
+            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies.",
-          "reason": "Names leader or quorum reads when freshness dominates."
+          "reason": "Text does not compare leader reads or quorum reads when freshness dominates."
         }
       },
       "decision_evidence": {
@@ -9670,7 +9719,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "Replication, consensus, multi-leader and read-replica patterns now have five dedicated units."
     },
@@ -10065,11 +10114,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 134,
-    "invariant_supported": 103,
-    "failure_recovery_supported": 101,
-    "alternative_supported": 113,
-    "technical_partial_bounded": 102,
-    "technical_partial": 43,
+    "invariant_supported": 102,
+    "failure_recovery_supported": 100,
+    "alternative_supported": 110,
+    "technical_partial_bounded": 101,
+    "technical_partial": 44,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
