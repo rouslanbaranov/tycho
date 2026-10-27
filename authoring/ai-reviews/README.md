@@ -62,3 +62,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 workload identity | reject | `2026-10-27-workload-identity-review-codex.md` | `aaea18396c072a32896cc3f24815f0802b57d534c01a53bb734934b060678ba3` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 workload identity round 2 | reject | `2026-10-27-workload-identity-review2-codex.md` | `020838225bccbf9f3e1ccb027b80d8c50446e0575f2d3b3a82163f48e0b24070` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 workload identity round 5 | pass | `2026-10-27-workload-identity-review5-codex.md` | `e17f5382b3f36b7acda6280a6de38ea6ead21f030de7a3ab2652129c8e0d6d62` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar round 5 | pass | `2026-10-27-sidecar-review5-codex.md` | `dd0ee130dbd4e1d717e833725eb0a71b46fa79634e85c067f5c98c28abd11bc2` |
