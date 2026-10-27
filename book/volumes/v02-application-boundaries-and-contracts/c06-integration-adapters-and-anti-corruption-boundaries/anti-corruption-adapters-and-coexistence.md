@@ -117,6 +117,6 @@ ambiguity behind retries. A synthetic example makes the risk concrete: an extern
 does not imply local AVAILABLE stock or allocation, so the mapping must preserve that uncertainty
 or reject it.
 
-A direct adapter or shared contract is preferable only when semantics are genuinely identical and
-stable. An ACL fits when the external model is lossy, changes on a different cadence or carries
-vocabulary the local domain must not inherit.
+The pattern might not be suitable when the new and legacy systems have no significant semantic
+differences. An ACL fits when the external model is lossy, changes on a different cadence or
+carries vocabulary the local domain must not inherit.

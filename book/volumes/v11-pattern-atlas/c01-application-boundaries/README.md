@@ -509,9 +509,8 @@ layer adds no semantic translation; when latency or data duplication violates a 
 constraint; when the mapping has no owner; or when the ACL would become a second domain
 model.
 
-**Competing alternative.** Direct integration against a shared contract. Reverse the
-choice when the external model stabilizes and aligns semantically, or when the ACL
-becomes a permanent duplicate domain.
+**Competing alternative.** No ACL when the new and legacy systems have no significant
+semantic differences.
 
 **Failure and recovery.** Lossy translation, dual writes and stale mappings are the
 main failure modes. Recovery requires contract tests, versioned mappings and an

@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 135 |
+| Reviewed by independent agent | 134 |
 | Rejected after review | 5 |
 
-Packet statuses: {"page-changed-since-review": 10, "reviewed-by-independent-agent": 135}.
+Packet statuses: {"page-changed-since-review": 11, "reviewed-by-independent-agent": 134}.
 
 ## Review procedure
 
@@ -42,7 +42,7 @@ blank verdict template in the machine-readable file.
 
 - **Anti-Corruption Layer**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **API Composition**
   Current: pass; re-review: pass; report: None.
