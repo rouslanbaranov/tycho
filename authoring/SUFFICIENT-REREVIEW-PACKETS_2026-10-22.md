@@ -541,7 +541,7 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Static Content Hosting**
-  Current: pass; re-review: pass; report: reject.
+  Current: reject; re-review: pass; report: reject.
   Status: page-changed-since-review.
 
 - **Strangler Fig**
