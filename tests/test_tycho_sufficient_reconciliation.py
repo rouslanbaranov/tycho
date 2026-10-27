@@ -131,7 +131,7 @@ class CommittedLedgerTests(unittest.TestCase):
         summary = ledger["summary"]
         self.assertEqual(summary["records"], 145)
         self.assertEqual(summary["current_verdicts"],
-                         {"pass": 145})
+                         {"pass": 144, "reject": 1})
         self.assertEqual(summary["verdict_mismatches"], 130)
         self.assertEqual(summary["re_reviewed"], 145)
         self.assertEqual(summary["re_review_with_separate_report"], 145)
