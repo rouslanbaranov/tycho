@@ -59,13 +59,14 @@ Residual findings:
 - **R2-01:** ASVS source unit still mixed the overview URL/label with the full PDF, and
   one ledger claim still described the page as an overview. Corrected: manifest now
   points to the PDF/versioned label; stale claim removed.
-- **R2-02:** Spanner raw HTML hash is not reproducible. Recorded as an unreproduced
-  mutable representation; the ledger no longer implies a verified revision.
+- **R2-02:** Spanner raw HTML hash was not reproducible. Replaced with a reproducible
+  canonical article-text hash (`aa3be889...`) computed by `scripts/source_content_hash.py`;
+  raw HTML chrome remains mutable and is not the hash domain.
 - **R2-03:** four manifest `current_coverage` fields were stale. Synchronized with
   owner units and registry.
 - **R2-04:** the mTLS card cited an unexplained eight-heading subset. The eight named
   headings are now listed.
 
 R2 accepts retaining the rejected/blocked pilot; it does not authorize promotion. Any
-future promotion requires new evidence and its own review. R2-02 remains a revision
-verification gap, not a sufficient claim.
+future promotion requires new evidence and its own review. The R2 revision gap is now
+addressed by a documented canonical-text hash, not a sufficient claim.
