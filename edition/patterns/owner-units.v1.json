@@ -2117,22 +2117,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A push subscription hands each message to the consumer; the handler, not a polling loop, decides when work is acknowledged.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-event-consumer.2026-10-21",
+            "section": "Event-Driven Consumer",
+            "quote": "The application should use an Event-Driven Consumer , one that is automatically handed messages as they’re delivered on the channel.",
+            "revision": "bdd22eb6db0ea6606a9ff53c93d17750b2977ec7f0a25120467a49c532c446d0"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It must own effect identity, deduplication and acknowledgement ordering",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page defines delivery/callback but not consumer-owned dedup or ack ordering."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A crash between effect and acknowledgement leaves the outcome unknown; acknowledging before the effect can lose work.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-event-consumer.2026-10-21",
+            "section": "Example: RabbitMQ Consumer",
+            "quote": "This implementation is not a Transactional Client because the client acknowledges messages automatically on receipt but before processing.",
+            "revision": "bdd22eb6db0ea6606a9ff53c93d17750b2977ec7f0a25120467a49c532c446d0"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Polling a queue or a scheduled batch job may be preferable when volume is low, batch control matters or the consumer cannot own a cursor.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Page links Polling Consumer without comparison."
         }
       },
       "decision_evidence": {
@@ -2150,7 +2164,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -2174,22 +2188,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A requester sends a message with a reply address and a correlation value, and the responder returns a message that the requester matches to the original request.",
-          "reason": "Defines a reply address and correlation value matched to the request."
+          "reason": "Defines a reply address and correlation value matched to the request.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-request-reply.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "Send a pair of Request-Reply messages, each on its own channel. Request-Reply has two participants: Requestor – Sends a request message and waits for a reply message. Replier – Receives the request message and responds with a reply message.",
+            "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "A reply must correlate to exactly one outstanding request and must not be processed as a new command by another consumer.",
-          "reason": "Requires one outstanding request per correlation value and no command reinterpretation."
+          "reason": "Requires one outstanding request per correlation value and no command reinterpretation.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-request-reply.2026-10-21",
+            "section": "Synchronous Block",
+            "quote": "The request thread awaiting the response implies that there is only one outstanding request, or that the reply channel for this request is private for this thread.",
+            "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply a reply deadline and reconcile before retrying.",
-          "reason": "Requires an outstanding-request record, reply deadline and reconciliation before retry."
+          "reason": "Page has crash/restart but no lost-request record or reply deadline."
         },
         "alternative": {
           "state": "supported",
           "quote": "Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits the request budget; choose messaging when availability or latency requires decoupling.",
-          "reason": "Contrasts synchronous RPC with messaging for availability or latency decoupling."
+          "reason": "Contrasts synchronous RPC with messaging for availability or latency decoupling.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-request-reply.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "When a caller performs a Remote Procedure Invocation , the caller's thread must block while it waits for the response.",
+            "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
+          }
         }
       },
       "decision_evidence": {
@@ -2234,22 +2269,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A correlation identifier ties together messages that belong to one request, workflow or conversation.",
-          "reason": "Defines an identifier tying messages to one request, workflow or conversation."
+          "reason": "Defines an identifier tying messages to one request, workflow or conversation.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-correlation.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Each reply message should contain a Correlation Identifier , a unique identifier that indicates which request message this reply is for.",
+            "revision": "d388f9c3f4b82638a3d57033e9e8e779ab919370c13af8a5fd79c76219e327e1"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a generation rule, propagation across asynchronous boundaries, a retention window and a collision check.",
-          "reason": "Requires generation, propagation, retention and collision rules."
+          "reason": "Requires generation, propagation, retention and collision rules.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-correlation.2026-10-21",
+            "section": "Solution (unlabelled)",
+            "quote": "Request ID — A token in the request that uniquely identifies the request. Correlation ID — A token in the reply that has the same value as the request ID in the request.",
+            "revision": "d388f9c3f4b82638a3d57033e9e8e779ab919370c13af8a5fd79c76219e327e1"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a lost or duplicated identifier; carry it in the message contract and record it at every boundary.",
-          "reason": "Names lost or duplicated identifiers and requires contract carriage and boundary recording."
+          "reason": "Page defines IDs only; no lost/duplicate or failure path."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A transport-native message identity is the alternative when the broker guarantees the needed scope and lifetime.",
-          "reason": "Contrasts transport-native message identity."
+          "reason": "Page lists related patterns without alternative comparison."
         }
       },
       "decision_evidence": {
@@ -2471,22 +2520,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A splitter turns one input into several independently processable messages.",
-          "reason": "Defines one input becoming several processable messages."
+          "reason": "Defines one input becoming several processable messages.",
+          "binding": {
+            "source_id": "src.camel",
+            "ledger_record": "read.batch2-splitter.2026-10-21",
+            "section": "Split",
+            "quote": "Use a Splitter to break out the composite message into a series of individual messages, each containing data related to one item. The Splitter from the EIP patterns allows you to split a message into a number of pieces and process them individually.",
+            "revision": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out.",
-          "reason": "Requires part identity, per-part idempotency, completion/compensation and bounded fan-out."
+          "reason": "Camel documents part index/complete/size but not per-part idempotency or fan-out bound."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a split that produces only some parts; record part identity and completion, then retry missing parts without duplicating completed effects.",
-          "reason": "Requires partial-split recording and retry of missing parts without duplicating completed effects."
+          "reason": "Requires partial-split recording and retry of missing parts without duplicating completed effects.",
+          "binding": {
+            "source_id": "src.camel",
+            "ledger_record": "read.batch2-splitter.2026-10-21",
+            "section": "Value-based watermark",
+            "quote": "The watermark is only updated when the split completes successfully. If the split is aborted (e.g., due to exceeding maxFailedRecords ), the watermark is not updated, which allows the failed batch to be retried.",
+            "revision": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A single consumer with internal fan-out is the alternative when the parts are small and atomicity is required.",
-          "reason": "Contrasts a single consumer with internal fan-out when atomicity is required."
+          "reason": "Page does not compare single-unit processing or single-consumer fan-out."
         }
       },
       "decision_evidence": {
@@ -2504,7 +2567,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
     },
@@ -10095,7 +10158,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 8,
+      "bounded_entries": 7,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -10110,7 +10173,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Three messaging composition patterns have three dedicated bounded notes on one coherent family page."
     },
@@ -10436,11 +10499,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 127,
-    "invariant_supported": 86,
-    "failure_recovery_supported": 81,
-    "alternative_supported": 90,
-    "technical_partial_bounded": 85,
-    "technical_partial": 60,
+    "invariant_supported": 84,
+    "failure_recovery_supported": 79,
+    "alternative_supported": 87,
+    "technical_partial_bounded": 83,
+    "technical_partial": 62,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
