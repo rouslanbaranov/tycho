@@ -3100,22 +3100,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "The write owner accepts command admission, invariant checks and rejection semantics.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.fowler-cqrs",
+            "ledger_record": "read.fowler-cqrs.2026-10-21",
+            "section": "CQRS",
+            "quote": "By separate models we most commonly mean different object models, probably running in different logical processes, perhaps on separate hardware. A web example would see a user looking at a web page that's rendered using the query model. If they initiate a change that change is routed to the separate command model for processing, the resulting change is communicated to the query model to render the updated state.",
+            "revision": "11cf46ce308805e94e4b110016b09d004fbf8c47669a7041080f661c798b2f29"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Neither side may claim authority merely because it can read the other's tables.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source permits shared database and states no read/write authority rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Apply projection events idempotently: commit the derived row and its cursor atomically, and disable outbound side effects during rebuild.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Source discusses eventual consistency but not idempotent projection, cursor commit or rebuild side effects."
         },
         "alternative": {
           "state": "supported",
           "quote": "Revisit the separation when command contention, projection lag or rebuild duration outweighs the read benefit, and prefer one model when that case cannot be made.",
-          "reason": "Bounded owner statement from the current section."
+          "reason": "Bounded owner statement from the current section.",
+          "binding": {
+            "source_id": "src.fowler-cqrs",
+            "ledger_record": "read.fowler-cqrs.2026-10-21",
+            "section": "When to use it",
+            "quote": "Like any pattern, CQRS is useful in some places, but not in others. Many systems do fit a CRUD mental model, and so should be done in that style. CQRS is a significant mental leap for all concerned, so shouldn't be tackled unless the benefit is worth the jump.",
+            "revision": "11cf46ce308805e94e4b110016b09d004fbf8c47669a7041080f661c798b2f29"
+          }
         }
       },
       "decision_evidence": {
@@ -3133,7 +3147,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Owner unit covers recorded CQRS decision, side authority, idempotent projection/cursor rebuild and reversal; projector-crash recovery also appears in section 4 outside this bounded unit."
     },
@@ -3160,22 +3174,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "In event sourcing, a durable append-only record of domain facts becomes an authoritative input to reconstruct the present state.",
-          "reason": "Defines the append-only event history and replay reconstruction."
+          "reason": "Defines the append-only event history and replay reconstruction.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-event-sourcing.2026-10-21",
+            "section": "Solution",
+            "quote": "Event sourcing persists the state of a business entity such an Order or a Customer as a sequence of state-changing events. Whenever the state of a business entity changes, a new event is appended to the list of events. Since saving an event is a single operation, it is inherently atomic. The application reconstructs an entity’s current state by replaying the events.",
+            "revision": "aade58421e5ad48ba8092b614a33c6e9efc34389bcde5429a4b045322a6f4edb"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Rebuilds must check offset continuity and event schema compatibility.",
-          "reason": "States a must-hold rebuild precondition for snapshots and replay."
+          "reason": "States a must-hold rebuild precondition for snapshots and replay.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-event-sourcing.2026-10-21",
+            "section": "Solution",
+            "quote": "To reconstruct the current state, the application finds the most recent snapshot and the events that have occurred since that snapshot. As a result, there are fewer events to replay.",
+            "revision": "aade58421e5ad48ba8092b614a33c6e9efc34389bcde5429a4b045322a6f4edb"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.",
-          "reason": "Identifies replay divergence and prescribes versioned handlers and invariant rules to contain it."
+          "reason": "Source lists drawbacks but not replay under changed semantics or versioned handlers."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "State-stored CRUD with an audit log, CDC/outbox or event notification may be preferable when full replay is unnecessary, event-schema ownership is absent or external side effects cannot be isolated.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Source does not name state-stored CRUD, CDC/outbox or event notification as alternatives."
         }
       },
       "decision_evidence": {
@@ -3220,22 +3248,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "A domain event publishes a committed business fact to other owners.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-domain-event.2026-10-21",
+            "section": "Solution",
+            "quote": "Organize the business logic of a service as a collection of DDD aggregates that emit domain events when they created or updated. The service publishes these domain events so that they can be consumed by other services.",
+            "revision": "1993222e69c51b0d383a7462d5225c9d6635be957ff0547708c7422112938536"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Use it when the fact has identity, version and causation",
-          "reason": "States the invariant."
+          "reason": "Source defines aggregate emission but not event identity, version, causation or ordering."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Duplicate, late, out-of-order and schema-evolved events are normal.",
-          "reason": "Names failure and recovery."
+          "reason": "Source has no duplicate, late, out-of-order or schema-evolution handling."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A synchronous call or command message is preferable when event fan-out and eventual consistency exceed the decoupling benefit.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Source does not compare synchronous calls or command messages with domain events."
         }
       },
       "decision_evidence": {
@@ -3253,7 +3288,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded distinction only: the section separates a domain-event log from broker transport; it does not cover event production or consumption."
     },
@@ -3280,22 +3315,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A saga is a long-running business protocol across independent owners.",
-          "reason": "Defines a long-running protocol across independent owners."
+          "reason": "Defines a long-running protocol across independent owners.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Solution",
+            "quote": "Implement each business transaction that spans multiple services as a saga. A saga is a reliably coordinated sequence of local transactions.",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
-          "reason": "Requires one authority and one effect identity per step without atomicity or rollback."
+          "reason": "Requires one authority and one effect identity per step without atomicity or rollback.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Resulting context",
+            "quote": "Lack of automatic rollback - a developer must design compensating transactions that explicitly undo changes made earlier in a saga rather than relying on the automatic rollback feature of ACID transactions",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A lost acknowledgment is an unknown outcome, not a failure, and a failed compensation remains a repair item.",
-          "reason": "Treats a lost acknowledgment as unknown and failed compensation as a repair item."
+          "reason": "Source covers local transaction compensation, not unknown acknowledgment or failed compensation repair."
         },
         "alternative": {
           "state": "supported",
           "quote": "Use one local transaction when all effects fit one owner, or two-phase commit when participants can hold prepared state and atomic visibility is mandatory.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Context",
+            "quote": "Since Orders and Customers are in different databases owned by different services the application cannot simply use a local ACID transaction.",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          }
         }
       },
       "decision_evidence": {
@@ -3340,22 +3396,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Participants react to one another's events; the protocol is distributed across those reactions, not held in a central state machine.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Solution",
+            "quote": "Choreography - each local transaction publishes domain events that trigger local transactions in other services",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs correlation identity, deduplication, dead-letter handling, versioned event contracts and a per-step timeout policy",
-          "reason": "States the invariant."
+          "reason": "Source defines event-triggered local transactions but not correlation, dedup, DLQ, contracts or timeouts."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Long chains, hidden coupling and conflicting compensations are the failure modes; a trace shows correlation, not durable business truth.",
-          "reason": "Names failure and recovery."
+          "reason": "Source has no long-chain, hidden-coupling or conflicting-compensation failure rule."
         },
         "alternative": {
           "state": "supported",
           "quote": "Orchestration or a single local transaction may be preferable when steps need central visibility, when compensation ordering must be centrally enforced, or when compensations cannot be made safe.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Solution",
+            "quote": "Orchestration - an orchestrator (object) tells the participants what local transactions to execute",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          }
         }
       },
       "decision_evidence": {
@@ -3373,7 +3443,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Only one clause defines event propagation; risks and selection conditions sit in section 5."
     },
@@ -3481,22 +3551,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "A compensating transaction is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail.",
-          "reason": "Defines compensation as a new action, not rollback."
+          "reason": "Defines compensation as a new action, not rollback.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Resulting context",
+            "quote": "Lack of automatic rollback - a developer must design compensating transactions that explicitly undo changes made earlier in a saga rather than relying on the automatic rollback feature of ACID transactions",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The domain must determine which actions are reversible and which require manual reconciliation.",
-          "reason": "Leaves reversibility and manual reconciliation to the domain."
+          "reason": "Source requires designed compensation, not domain reversibility or manual-reconciliation rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant.",
-          "reason": "Names irreversible delivery and already-released artifacts as repair items."
+          "reason": "Source does not address irreversible delivered effects or already-released artifacts."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Orchestration or a single local transaction may be preferable when steps need central visibility, when compensation ordering must be centrally enforced, or when compensations cannot be made safe.",
-          "reason": "Names the alternative and reversal condition."
+          "reason": "Source names orchestration/2PC but not the preference conditions for compensation ordering."
         }
       },
       "decision_evidence": {
@@ -3514,7 +3591,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Compensation is discussed inside the saga section, including failed release, irreversible effects and manual reconciliation."
     },
@@ -9348,7 +9425,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 6,
-      "bounded_entries": 6,
+      "bounded_entries": 4,
       "decision": "deepen",
       "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
     },
@@ -9484,7 +9561,7 @@
       ],
       "unit_count": 5,
       "dedicated_units": 5,
-      "bounded_entries": 5,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "Saga, choreography, orchestration, compensation and process manager have distinct units."
     },
@@ -9848,11 +9925,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 136,
-    "invariant_supported": 114,
-    "failure_recovery_supported": 116,
-    "alternative_supported": 122,
-    "technical_partial_bounded": 113,
-    "technical_partial": 32,
+    "invariant_supported": 110,
+    "failure_recovery_supported": 110,
+    "alternative_supported": 119,
+    "technical_partial_bounded": 109,
+    "technical_partial": 36,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
