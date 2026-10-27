@@ -3,6 +3,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 C11 = ROOT / "book/volumes/v11-pattern-atlas/c11-security-operations/README.md"
+MTLS = ROOT / "book/volumes/v11-pattern-atlas/c11-security-operations/workload-identity-mtls.md"
 
 
 class CardSourceNoteTests(unittest.TestCase):
@@ -12,7 +13,7 @@ class CardSourceNoteTests(unittest.TestCase):
         self.assertNotIn("it has no levels or verification requirements headings", text)
 
     def test_mtls_note_names_the_supported_headings(self):
-        text = C11.read_text()
+        text = MTLS.read_text()
         for heading in ("Istio identity", "Identity and certificate management",
                         "Authentication", "Mutual TLS authentication",
                         "Secure naming", "Peer authentication",

@@ -80,404 +80,44 @@ none claims sufficient technical or decision coverage.
 
 ### Federated Identity
 
-**Identity.** Federated Identity; family Security, isolation and operational architecture;
-kind security-pattern; priority core.
-
-**Decision question.** Should identity be asserted by a trusted issuer and accepted across
-services, rather than locally re-authenticated?
-
-**Good-fit conditions.** Issuer/audience/expiry are validated; federation trust is
-explicit; revocation and key rotation are handled.
-
-**Hard contraindications.** Reject when one local identity store suffices, when issuer
-trust cannot be established, or when token replay/revocation cannot be controlled.
-
-**Competing alternative.** Local authentication or a gateway-only identity check. Reverse
-the choice when federation trust and revocation cost exceed single-sign-on benefit.
-
-**Failure and recovery.** Audience confusion and stale trust are common; verify token
-validation in the owner section.
-
-**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — federation trust and token validation are bounded; IdP lifecycle is owner-specific.
-
-**Sources.** [src.oauth-security](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-rfc9700.2026-10-21: all 78 numbered sections read;
-the prior 100,000-character truncation is superseded.
-[src.openid-federation](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.openid-federation.2026-10-26: all 25 top-level sections and
-199 headings read. OpenID Federation supports trust anchors, Entity Statements, trust
-chains, metadata refresh and key rollover. It defines revocation status data for keys
-and trust marks, but no revocation process; federation-specific replay and revocation
-mechanics are synthetic, not source claims.
-The source is a public pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Zero Trust Architecture; Workload Identity / mTLS; Least Privilege;
-RBAC / ABAC.
-
+See the [dedicated Federated Identity card](federated-identity.md).
 ### Zero Trust Architecture
 
-**Identity.** Zero Trust Architecture; family Security, isolation and operational
-architecture; kind security-pattern; priority core.
-
-**Decision question.** Should every access be authenticated and authorized at the
-resource, rather than trusted because it is inside a network?
-
-**Good-fit conditions.** Resource-level policy is enforceable; identity is strong;
-telemetry is available; legacy paths can be segmented.
-
-**Hard contraindications.** Reject when a trusted local boundary is genuinely sufficient,
-when policy enforcement cannot reach the resource, or when the migration would break
-critical flows.
-
-**Competing alternative.** Perimeter security with explicit compensating controls. Reverse
-the choice when zero-trust policy complexity exceeds the trust-boundary risk.
-
-**Failure and recovery.** Policy gaps, legacy bypasses and identity-provider outages are
-common; deny by default, test indirect paths and keep a bounded audited break-glass path.
-
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#zero-trust-architecture) — policy enforcement points and trust assumptions are bounded; network architecture is owner-specific.
-
-**Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
-V1-V17 and appendices A-E. The source is a public
-pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Federated Identity; Least Privilege; RBAC / ABAC; Workload Identity /
-mTLS.
-
+See the [dedicated Zero Trust Architecture card](zero-trust-architecture.md).
 ### Least Privilege
 
-**Identity.** Least Privilege; family Security, isolation and operational architecture;
-kind security-pattern; priority core.
-
-**Decision question.** Should each identity and workload hold only the permissions needed
-for its current task?
-
-**Good-fit conditions.** Permissions are enumerable; scope is time/task-bound; revocation
-is possible; audit exists.
-
-**Hard contraindications.** Reject when broad permissions are unavoidable for a bounded
-migration, when no owner can review scope, or when least privilege would block recovery.
-
-**Competing alternative.** Role-based broad access with monitoring. Reverse the choice
-when permission granularity creates unmanageable operational overhead.
-
-**Failure and recovery.** Permission creep and orphaned grants are common; verify review
-in the owner section.
-
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — permission scope and review cadence are bounded; entitlement catalogue is platform-specific.
-
-**Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
-V1-V17 and appendices A-E.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** RBAC / ABAC; Zero Trust; Valet Key; Multitenant Isolation.
-
+See the [dedicated Least Privilege card](least-privilege.md).
 ### RBAC / ABAC
 
-**Identity.** RBAC / ABAC; family Security, isolation and operational architecture; kind
-security-pattern; priority core.
-
-**Decision question.** Should access be decided by roles or attributes rather than ad hoc
-checks?
-
-**Good-fit conditions.** A policy model exists; roles/attributes have owners; decisions
-are auditable; conflicts are resolved.
-
-**Hard contraindications.** Reject when access is purely static and tiny, when attributes
-are untrusted, or when policy complexity cannot be tested.
-
-**Competing alternative.** Direct capability checks or a simpler role model. Reverse the
-choice when policy administration cost exceeds access-control benefit.
-
-**Failure and recovery.** Role explosion and stale attributes are common; verify model in
-the owner section.
-
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
-
-**Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
-V1-V17 and appendices A-E.
-[src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.nist-sp-800-162.2026-10-26: full 47-page PDF read; appendices A-B.
-ASVS provides verification framing; NIST supports PDP/PEP/PIP/PAP and policy
-administration. Revocation mechanics, role explosion and attribute-freshness guidance
-remain synthetic. The sources are public standards, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Least Privilege; Zero Trust; Multitenant Isolation; Federated
-Identity.
-
+See the [dedicated RBAC / ABAC card](rbac-abac.md).
 ### Workload Identity / mTLS
 
-**Identity.** Workload Identity / mTLS; family Security, isolation and operational
-architecture; kind security-pattern; priority core.
-
-**Decision question.** Should workloads authenticate each other with cryptographic
-identities rather than network location?
-
-**Good-fit conditions.** A workload identity issuer exists; certificate rotation is
-automated; policy can bind identity to service.
-
-**Hard contraindications.** Reject when network location is the only available identity,
-when rotation cannot be automated, or when identity sprawl is unowned.
-
-**Competing alternative.** Network policy plus service accounts, or a gateway boundary.
-Reverse the choice when mTLS operational cost exceeds lateral-movement risk.
-
-**Failure and recovery.** Certificate expiry and identity mismatch are common; verify
-rotation in the owner section.
-
-**Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
-
-**Sources.** [src.istio](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-istio.2026-10-21: all thirty-four served headings read.
-The supported subset is: Istio identity; Identity and certificate management;
-Authentication; Mutual TLS authentication; Secure naming; Peer authentication;
-Authorization; Authorization policies. These support workload identity binding,
-certificate rotation, mTLS and authorization policy. Certificate revocation,
-trust-root bootstrapping, key storage and lifetime policy are outside those headings
-and remain synthetic. The source is official documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Zero Trust; Federated Identity; Least Privilege; Service Mesh.
-
+See the [dedicated Workload Identity / mTLS card](workload-identity-mtls.md).
 ### Valet Key
 
 See the [dedicated Valet Key card](valet-key.md).
 
 ### Multitenant Isolation
 
-**Identity.** Multitenant Isolation; family Security, isolation and operational
-architecture; kind security-pattern; priority core.
-
-**Decision question.** Should tenants be isolated in compute, data, identity and network
-layers rather than share one trusted pool?
-
-**Good-fit conditions.** Tenant identity is trustworthy; isolation can be enforced at each
-layer; noisy-neighbor and data-leak risks are material.
-
-**Hard contraindications.** Reject when one tenant exists, when isolation would strand
-capacity, or when the resource cannot enforce tenant scope.
-
-**Competing alternative.** A tenant-per-deployment boundary. Reverse the choice when
-isolation cost exceeds residual risk.
-
-**Failure and recovery.** Cross-tenant leakage and quota bypass are common; verify layers
-in the owner section.
-
-**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#multitenant-isolation-1) — tenant boundary and isolation evidence are bounded; infrastructure tenancy is platform-specific.
-
-**Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
-V1-V17 and appendices A-E.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Zero Trust; Least Privilege; Tenant-Based Resource Isolation;
-Cell-Based Architecture.
-
+See the [dedicated Multitenant Isolation card](multitenant-isolation.md).
 ### Distributed Tracing
 
-**Identity.** Distributed Tracing; family Security, isolation and operational
-architecture; kind observability-pattern; priority core.
-
-**Decision question.** Should requests carry a trace context so spans across services can
-be correlated?
-
-**Good-fit conditions.** Context propagation is possible; sampling policy is explicit;
-sensitive data is excluded; storage/retention are owned.
-
-**Hard contraindications.** Reject when one service suffices, when context cannot cross a
-boundary, or when trace data would leak sensitive payloads.
-
-**Competing alternative.** Structured logs with request IDs. Reverse the choice when
-cross-service latency diagnosis justifies trace infrastructure.
-
-**Failure and recovery.** Broken context and sampling bias are common; verify propagation
-in the owner section.
-
-**Technical owner.** [Distributed Tracing](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#distributed-tracing) — tracing is bounded, not an SDK implementation.
-
-**Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-traces.2026-10-21: all nineteen served headings read.
-Sampling was not a section; sampling policy is synthetic guidance. The source is a
-public pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Structured Logging; Audit Trail; SLI/SLO; Sampling.
-
+See the [dedicated Distributed Tracing card](distributed-tracing.md).
 ### Structured Logging
 
-**Identity.** Structured Logging; family Security, isolation and operational architecture;
-kind observability-pattern; priority core.
-
-**Decision question.** Should logs be emitted as structured events with stable fields
-rather than free text?
-
-**Good-fit conditions.** Fields are stable; redaction is defined; retention/cost are
-owned; correlation IDs are available.
-
-**Hard contraindications.** Reject when logs contain unredactable sensitive data, when
-schema churn is unowned, or when volume overwhelms storage.
-
-**Competing alternative.** Unstructured text parsed at query time. Reverse the choice when
-structured logging cost exceeds diagnostic benefit.
-
-**Failure and recovery.** On leakage, stop emission, rotate credentials, purge/redact retained
-records and notify. On schema drift, migrate/backfill or dual-write with a compatibility window.
-
-**Technical owner.** [Structured logging, authoritative audit and data lineage](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#structured-logging) — logging/audit is bounded, not a logging platform manual.
-
-**Sources.** [src.otel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-otel-logs.2026-10-21: all seventeen served headings read. Attributes and
-correlation were not headings; correlation policy is synthetic guidance. The source is a public
-pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Distributed Tracing; Audit Trail; OpenLineage; Retention.
-
+See the [dedicated Structured Logging card](structured-logging.md).
 ### Audit Trail
 
-**Identity.** Audit Trail; family Security, isolation and operational architecture; kind
-observability-pattern; priority core.
-
-**Decision question.** Should security-relevant actions be recorded in an append-only,
-attributable log?
-
-**Good-fit conditions.** The audited events are defined; identity/time/source are
-captured; retention and access are controlled.
-
-**Hard contraindications.** Reject when logs are mutable/deletable by the actor, when
-events cannot be attributed, or when audit data is excessive/unused.
-
-**Competing alternative.** Application logs with stricter retention or external SIEM.
-Reverse the choice when audit completeness cannot be evidenced.
-
-**Failure and recovery.** Tampering and missing events are common; verify authority in the
-owner section.
-
-**Technical owner.** [Audit Trail](../../v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md#audit-trail) — logging/audit is bounded, not a logging platform manual.
-
-**Sources.** [src.openlineage](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-openlineage.2026-10-21: sections "About OpenLineage",
-"Object Model". The unit
-covers lineage, not tamper-proof audit records; audit policy is synthetic design guidance.
-The source is a public pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Structured Logging; Distributed Tracing; Least Privilege; Retention.
-
+See the [dedicated Audit Trail card](audit-trail.md).
 ### SLI / SLO and Error Budgets
 
-**Identity.** SLI/SLO and Error Budgets; family Security, isolation and operational
-architecture; kind operations-pattern; priority core.
-
-**Decision question.** Should service health be governed by user-visible indicators,
-objectives and an explicit error budget?
-
-**Good-fit conditions.** An SLI measures a meaningful journey; SLO target/window are
-agreed; error budget drives action.
-
-**Hard contraindications.** Reject when metrics are not user-visible, when targets are
-arbitrary, or when budget breach has no consequence.
-
-**Competing alternative.** Synthetic checks or raw infrastructure metrics alone. Reverse
-the choice when measurement cost exceeds decision value.
-
-**Failure and recovery.** Gaming and window mismatch are common; verify decisions in the
-owner section.
-
-**Technical owner.** [SLI / SLO and Error Budgets](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#sli-slo-and-error-budgets) — SLOs are bounded, not a complete measurement system.
-
-**Sources.** [src.sre](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-slo.2026-10-21: all eighteen served headings
-read. Error Budgets was not a section; budget arithmetic is synthetic
-guidance. The source is a public pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Synthetic Monitoring; Alerting; Incident Response; Health Checks.
-
+See the [dedicated SLI / SLO and Error Budgets card](sli-slo-and-error-budgets.md).
 ### Synthetic Monitoring
 
-**Identity.** Synthetic Monitoring; family Security, isolation and operational
-architecture; kind operations-pattern; priority core.
-
-**Decision question.** Should probes exercise user-visible behavior from outside the
-service rather than rely only on internal metrics?
-
-**Good-fit conditions.** A representative journey can be probed; coverage/locations are
-known; false positives are triaged.
-
-**Hard contraindications.** Reject when probes cannot authenticate safely, when they test
-only shallow endpoints, or when alert noise exceeds signal.
-
-**Competing alternative.** Real-user monitoring or internal SLOs. Reverse the choice when
-synthetic coverage cost exceeds detection benefit.
-
-**Failure and recovery.** Probe blindness and credential leakage are common; verify
-journey coverage in the owner section.
-
-**Technical owner.** [Burn-rate and alerts are actions, not decorations](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
-
-**Sources.** [src.sre-workbook](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-workbook-monitoring.2026-10-21: all twenty-three
-headings read; no Synthetic Monitoring or Alerting headings exist. The source is a public
-pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** SLI/SLO; Health Checks; Incident Response; Alerting.
-
+See the [dedicated Synthetic Monitoring card](synthetic-monitoring.md).
 ### Health, Readiness and Liveness Checks
 
-**Identity.** Health, Readiness and Liveness Checks; family Security, isolation and
-operational architecture; kind operations-pattern; priority core.
-
-**Decision question.** Should the runtime distinguish process liveness, traffic readiness
-and startup completion?
-
-**Good-fit conditions.** Probes have different failure meanings; dependencies are not
-conflated; restart/traffic removal are separate.
-
-**Hard contraindications.** Reject when one probe is used for every failure, when a
-liveness probe restarts healthy processes on a shared dependency, or when startup is
-ignored.
-
-**Competing alternative.** External journey monitoring plus process supervision. Reverse
-the choice when probe complexity causes false restarts.
-
-**Failure and recovery.** False positives and shared-dependency coupling are common;
-verify semantics in the owner section.
-
-**Technical owner.** [Practice response before production failure](../../v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md#health-readiness-and-liveness-checks) — health checks are bounded to recovery readiness.
-
-**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
-The source is a public pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Synthetic Monitoring; Failover/Failback; Incident Response; SLI/SLO.
-
+See the [dedicated Health, Readiness and Liveness Checks card](health-readiness-and-liveness-checks.md).
 ## Chapter result and counterexample
 
 Thirteen cards establish a conditional decision route. Owner sections are bounded; none

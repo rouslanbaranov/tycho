@@ -62,7 +62,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Distributed Tracing](../../v11-pattern-atlas/c11-security-operations/README.md#distributed-tracing) — decision conditions and contraindications.
+> [Distributed Tracing](../../v11-pattern-atlas/c11-security-operations/distributed-tracing.md#distributed-tracing) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.f921597aae854c6996459fc025a9bca3:0 -->
 ## Purpose and mission

@@ -1,0 +1,75 @@
+---
+metadata_version: 1
+id: "tycho.page.77358ffa634cea630d04103c13c58086"
+kind: "page"
+parent_id: "tycho.chapter.419769c372ccaa569796954878e3bef9"
+canonical_path: "book/volumes/v11-pattern-atlas/c11-security-operations/rbac-abac.md"
+title: "RBAC / ABAC"
+topic_ids:
+  - "security-architecture"
+perspectives:
+  - "architecture"
+summary: "Decision card for RBAC / ABAC; bounded owner evidence and explicit limits."
+route_hints:
+  questions:
+    - "Should access be decided by roles or attributes rather than ad hoc"
+  prerequisites:
+    - "tycho.chapter.419769c372ccaa569796954878e3bef9"
+  related_ids:
+    - "tycho.chapter.419769c372ccaa569796954878e3bef9"
+  excludes:
+    - "No sufficient coverage, promotion or owner acceptance is claimed."
+  keywords:
+    - "pattern atlas"
+    - "rbac-abac"
+evidence_scope:
+  source_ids:
+    - "src.owasp-asvs"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Moved card page; source binding remains in the owner unit."
+content_review:
+  status: "self-checked"
+  reviewed_at: "2026-10-27"
+  reviewer: "Automated authoring agent"
+  proof_uri: null
+authored_at: "2026-10-27"
+updated_at: "2026-10-27"
+source_inspection_date: "2026-10-21"
+content_verified_at: null
+---
+# RBAC / ABAC
+
+**Identity.** RBAC / ABAC; family Security, isolation and operational architecture; kind
+security-pattern; priority core.
+
+**Decision question.** Should access be decided by roles or attributes rather than ad hoc
+checks?
+
+**Good-fit conditions.** A policy model exists; roles/attributes have owners; decisions
+are auditable; conflicts are resolved.
+
+**Hard contraindications.** Reject when access is purely static and tiny, when attributes
+are untrusted, or when policy complexity cannot be tested.
+
+**Competing alternative.** Direct capability checks or a simpler role model. Reverse the
+choice when policy administration cost exceeds access-control benefit.
+
+**Failure and recovery.** Role explosion and stale attributes are common; verify model in
+the owner section.
+
+**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
+
+**Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;
+V1-V17 and appendices A-E.
+[src.nist-sp-800-162](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.nist-sp-800-162.2026-10-26: full 47-page PDF read; appendices A-B.
+ASVS provides verification framing; NIST supports PDP/PEP/PIP/PAP and policy
+administration. Revocation mechanics, role explosion and attribute-freshness guidance
+remain synthetic. The sources are public standards, not benchmarks.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Least Privilege; Zero Trust; Multitenant Isolation; Federated
+Identity.

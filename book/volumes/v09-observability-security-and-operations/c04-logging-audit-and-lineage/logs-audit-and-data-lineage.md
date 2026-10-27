@@ -61,8 +61,8 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Structured Logging](../../v11-pattern-atlas/c11-security-operations/README.md#structured-logging) — decision conditions and contraindications.
-> [Audit Trail](../../v11-pattern-atlas/c11-security-operations/README.md#audit-trail) — decision conditions and contraindications.
+> [Structured Logging](../../v11-pattern-atlas/c11-security-operations/structured-logging.md#structured-logging) — decision conditions and contraindications.
+> [Audit Trail](../../v11-pattern-atlas/c11-security-operations/audit-trail.md#audit-trail) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:0 -->
 ## Purpose and mission

@@ -66,7 +66,7 @@ def validate(root=ROOT):
     for batch in batches:
         chapter = chapters[batch["chapter"]]
         for item in batch["entries"]:
-            card_paths[item["pattern_id"]] = chapter["path"]
+            card_paths[item["pattern_id"]] = item.get("card_path", chapter["path"])
     seen = set()
     for entry in entries:
         pid = entry["pattern_id"]

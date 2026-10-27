@@ -65,7 +65,7 @@ centrally. OWASP REST guidance treats object-level authorization as part of acce
 it does not prescribe this isolation design.
 
 > **Pattern atlas:**
-> [Multitenant Isolation](../../v11-pattern-atlas/c11-security-operations/README.md#multitenant-isolation) — decision conditions and contraindications.
+> [Multitenant Isolation](../../v11-pattern-atlas/c11-security-operations/multitenant-isolation.md#multitenant-isolation) — decision conditions and contraindications.
 > [Tenant-Based Resource Isolation](../../v11-pattern-atlas/c09-scalability/README.md#tenant-based-resource-isolation) — decision conditions and contraindications.
 
 ## Tenant-Based Resource Isolation

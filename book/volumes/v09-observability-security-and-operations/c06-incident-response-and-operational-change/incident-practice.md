@@ -64,7 +64,7 @@ An uncontrolled real failure is not an acceptable experiment merely to validate 
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Health, Readiness and Liveness Checks](../../v11-pattern-atlas/c11-security-operations/README.md#health-readiness-and-liveness-checks) — decision conditions and contraindications.
+> [Health, Readiness and Liveness Checks](../../v11-pattern-atlas/c11-security-operations/health-readiness-and-liveness-checks.md#health-readiness-and-liveness-checks) — decision conditions and contraindications.
 
 
 ## Original tabletop exercise — recovery must have an oracle

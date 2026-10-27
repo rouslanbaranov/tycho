@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 132 |
+| Reviewed by independent agent | 123 |
 | Rejected after review | 8 |
 
-Packet statuses: {"page-changed-since-review": 13, "reviewed-by-independent-agent": 132}.
+Packet statuses: {"hash-mismatch": 6, "page-changed-since-review": 16, "reviewed-by-independent-agent": 123}.
 
 ## Review procedure
 
@@ -58,7 +58,7 @@ blank verdict template in the machine-readable file.
 
 - **Audit Trail**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Autoscaling**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -206,7 +206,7 @@ blank verdict template in the machine-readable file.
 
 - **Distributed Tracing**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Workflow Orchestration**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -254,7 +254,7 @@ blank verdict template in the machine-readable file.
 
 - **Federated Identity**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: hash-mismatch.
 
 - **Fencing Tokens**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -342,7 +342,7 @@ blank verdict template in the machine-readable file.
 
 - **Least Privilege**
   Current: pass; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: hash-mismatch.
 
 - **Load Balancing**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -442,7 +442,7 @@ blank verdict template in the machine-readable file.
 
 - **RBAC / ABAC**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: hash-mismatch.
 
 - **Read Replicas**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -530,7 +530,7 @@ blank verdict template in the machine-readable file.
 
 - **SLI/SLO and Error Budgets**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: hash-mismatch.
 
 - **Splitter**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -550,7 +550,7 @@ blank verdict template in the machine-readable file.
 
 - **Structured Logging**
   Current: pass; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Synthetic Monitoring**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -594,7 +594,7 @@ blank verdict template in the machine-readable file.
 
 - **Workload Identity / mTLS**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: hash-mismatch.
 
 - **Write-Around**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -610,7 +610,7 @@ blank verdict template in the machine-readable file.
 
 - **Zero Trust Architecture**
   Current: pass; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: hash-mismatch.
 
 ## Limits
 
