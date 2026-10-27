@@ -345,11 +345,10 @@ old path remains authoritative until cutover.
 **Hard contraindications.** Reject when duplicate side effects cannot be suppressed, when
 comparison is meaningless, or when cost is prohibitive.
 
-**Competing alternative.** Shadow traffic or canary. Reverse the choice when comparison
-cost exceeds confidence benefit.
+**Competing alternative.** Branch by abstraction with a smaller, monitored rollout.
 
-**Failure and recovery.** Divergent outputs and doubled cost are common; verify authority
-in the owner section.
+**Failure and recovery.** A candidate failure must never affect the response; keep the old
+authority until cutover.
 
 **Technical owner.** [Parallel Run](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#parallel-run) — parallel run is bounded to coexistence/authority states.
 

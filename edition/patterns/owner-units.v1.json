@@ -9113,10 +9113,10 @@
         "line": 130,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "same work in old and new implementations",
-          "old path remains authoritative",
-          "comparison key",
-          "canary or shadow traffic"
+          "Parallel run",
+          "side effects",
+          "branch by abstraction",
+          "old authority"
         ]
       },
       "technical_evidence": {
@@ -9133,14 +9133,21 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "It needs a comparison key, a side-effect boundary, a divergence owner and a rule for which path may commit.",
-          "reason": "MinimumCD supports dual execution and comparison; the divergence owner and complete commit rule are not established."
+          "state": "supported",
+          "quote": "Parallel run must not execute both implementations when the operation has side effects, such as sending an email or charging a card.",
+          "reason": "Source forbids dual execution for side-effecting operations.",
+          "binding": {
+            "source_id": "src.minimumcd-parallel-run",
+            "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
+            "section": "When a parallel run is not enough",
+            "quote": "The old and new implementations must not both execute , for example when the operation has side effects like sending an email or charging a card.",
+            "revision": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832"
+          }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The failure path is a silent divergence or a duplicate effect; halt promotion, reconcile the difference and keep the old authority until the cause is understood.",
-          "reason": "MinimumCD names divergence and duplicate effects and requires containment before promotion.",
+          "quote": "A candidate failure must never affect the response; keep the old authority until cutover.",
+          "reason": "Source requires candidate failures not to affect the primary response.",
           "binding": {
             "source_id": "src.minimumcd-parallel-run",
             "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
@@ -9150,15 +9157,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A canary or shadow traffic is the alternative when full parallel processing is unnecessary.",
-          "reason": "The canary/shadow comparison is editorial, not bound to the cited guide."
+          "state": "supported",
+          "quote": "For operations with side effects, use branch by abstraction with a smaller, monitored rollout instead.",
+          "reason": "Source names branch by abstraction and a monitored rollout.",
+          "binding": {
+            "source_id": "src.minimumcd-parallel-run",
+            "ledger_record": "read.minimumcd-parallel-run.2026-10-26",
+            "section": "When a parallel run is not enough",
+            "quote": "For operations with side effects, use branch by abstraction with a smaller, monitored rollout instead.",
+            "revision": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "parallel-run",
         "question": "Should old and new implementations process the same work concurrently for comparison?",
-        "competing_alternative": "Shadow traffic or canary. Reverse the choice when comparison cost exceeds confidence benefit.",
+        "competing_alternative": "Branch by abstraction with a smaller, monitored rollout.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9170,7 +9184,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Dedicated bounded note under 'Bounded pattern ownership notes'; all four dimensions are stated."
     },
@@ -10887,11 +10901,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 53,
+    "invariant_supported": 54,
     "failure_recovery_supported": 38,
-    "alternative_supported": 49,
-    "technical_partial_bounded": 43,
-    "technical_partial": 97,
+    "alternative_supported": 50,
+    "technical_partial_bounded": 44,
+    "technical_partial": 96,
     "technical_name_only": 0,
     "technical_sufficient": 5,
     "decision_partial_bounded": 140,
