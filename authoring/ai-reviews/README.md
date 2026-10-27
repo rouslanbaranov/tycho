@@ -26,3 +26,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-26 | Codex / OpenAI | #540 six-entry sufficient pilot | reject | `2026-10-26-sufficient-pilot-codex.md` | `b755e412cf6de44e58d111448dd2595a228dbd4a133d20087f65ffccd13faaa9` |
 | 2026-10-27 | Codex / OpenAI | #540 sufficient pilot remediation R2 | pass-with-findings | `2026-10-27-sufficient-r2-codex.md` | `3997c55722125ca28477b4a0e07feb57437710ed334708595187effb1ded5278` |
 | 2026-10-27 | Codex / OpenAI | #540 sufficient R2 residual re-review | pass-with-findings | `2026-10-27-sufficient-r3-codex.md` | `0b1ca9965cc40f8522a8f6994a3bb27ea76c5eb99af1dc56d0957c975d4a718d` |
+| 2026-10-27 | Codex / OpenAI | #540 sufficient R3-01 remediation | pass | `2026-10-27-sufficient-r4-codex.md` | `38bf30011abb8b68288b30940411a2f0378741fcc641253002a4358b27bf738a` |

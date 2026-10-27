@@ -87,3 +87,16 @@ notes now name the full 120-page ASVS 5.0.0 PDF, V1-V17 and appendices A-E.
 
 The R2 residuals are closed for the six-entry scope. Future promotion still needs
 positive technical evidence, not only decision passes.
+
+## R4 review — 2026-10-27
+
+Report: `authoring/ai-reviews/2026-10-27-sufficient-r4-codex.md`.
+SHA-256: `38bf30011abb8b68288b30940411a2f0378741fcc641253002a4358b27bf738a`.
+Reviewed HEAD: `b58a17ce`.
+
+Verdict: **pass** for the focused R3-01 citation remediation. R3-01 is closed with no
+blocking or non-blocking finding in scope. The six technical promotion verdicts remain
+**reject**; no entry is promoted. `sufficient: 0`.
+
+The remediation phase is complete. Promotion still requires positive technical source
+bindings, not only decision passes; this is the per-dimension binding work.
