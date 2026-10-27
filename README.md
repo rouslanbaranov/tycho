@@ -43,3 +43,14 @@ Volumes and chapters now use `vNN-<description>/cNN-<description>/` under `book/
 ## Industry-neutral delivery
 
 Describe deployment and compatibility requirements without naming a specific sector or institution. Use neutral descriptions such as `restricted enterprise environments`, `regulated environments`, and `security-constrained deployments`. This applies to docs, prompts, examples, code, filenames, issues and releases; see [governance/INDEPENDENCE.md](governance/INDEPENDENCE.md) and [AGENTS.md](AGENTS.md) for mandatory contributor rules.
+
+## License
+
+Tycho is authored and maintained by **Ruslan Baranov**
+([@rouslanbaranov](https://github.com/rouslanbaranov)) and is released under the
+[MIT License](LICENSE).
+
+Copyright © 2026 Ruslan Baranov.
+
+Third-party sources cited in the book remain subject to their own terms; see the
+[source register](sources/register.json).
