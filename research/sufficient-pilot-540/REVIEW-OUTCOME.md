@@ -100,3 +100,30 @@ blocking or non-blocking finding in scope. The six technical promotion verdicts 
 
 The remediation phase is complete. Promotion still requires positive technical source
 bindings, not only decision passes; this is the per-dimension binding work.
+
+## R5 batch review — 2026-10-27
+
+Report: `authoring/ai-reviews/2026-10-27-sufficient-batch-review-codex.md`.
+Reviewed HEAD: `ca77efd2`.
+Reviewer: Codex / OpenAI, model `gpt-5.6-sol`, separate read-only harness.
+Scope: 25 entries with four supported dimensions and complete bindings.
+
+Verdict: **reject**. 25 major findings. All 100 bindings matched a source-plan unit,
+section, source and revision, but many quotes did not support the full owner claim.
+
+The review also found a missing `B12-RESULT.json`, a stale delivery `source_commit`, and
+a batch-plan status that still described the pilot as draft.
+
+Remediation applied at `365adeb6`:
+
+- 23 entries downgraded on the affected dimensions and removed from review-ready;
+- `B12-RESULT.json` generated;
+- all B01-B18 result files regenerated from owner units;
+- batch plan set to `batches-audited-awaiting-remediation`;
+- delivery evidence pointed at the remediation commit.
+
+Only **Valet Key** and **SLI/SLO and Error Budgets** retain four supported bindings.
+No entry is promoted. `sufficient: 0`.
+
+A fresh external review of those two survivors, plus remediation of the 23 rejected
+entries, is still required. The R5 report is evidence of rejection, not acceptance.
