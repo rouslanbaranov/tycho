@@ -5849,22 +5849,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A base backup plus a continuous archive of write-ahead records lets an operator restore the data to a chosen point in time before an incident.",
-          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time."
+          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+            "section": "25.3. Continuous Archiving and PITR",
+            "quote": "Since we can combine an indefinitely long sequence of WAL files for replay, continuous backup can be achieved simply by continuing to archive the WAL files. This is particularly valuable for large databases, where it might not be convenient to take a full backup frequently. It is not necessary to replay the WAL entries all the way to the end. We could stop the replay at any point and have a consistent snapshot of the database as it was at that time. Thus, this technique supports point-in-time recovery : it is possible to restore the database to its state at any time since your base backup was taken.",
+            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The backup chain must be complete and restorable, and a recovery target must be validated against the application's consistency requirements, not only produced.",
-          "reason": "Requires a complete restorable chain and an application-consistency check for the target."
+          "reason": "Requires a complete restorable chain and an application-consistency check for the target.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+            "section": "25.3. Continuous Archiving and PITR",
+            "quote": "To recover successfully using continuous archiving (also called “ online backup ” by many database vendors), you need a continuous sequence of archived WAL files that extends back at least as far as the start time of your backup.",
+            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
-          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums."
+          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+            "section": "25.3.5. Recovering Using a Continuous Archive Backup",
+            "quote": "If recovery finds corrupted WAL data, recovery will halt at that point and the server will not start. In such a case the recovery process could be re-run from the beginning, specifying a “ recovery target ” before the point of corruption so that recovery can complete normally. If recovery fails for an external reason, such as a system crash or if the WAL archive has become inaccessible, then the recovery can simply be restarted and it will restart almost from where it failed.",
+            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Promote a replica for availability, but it does not protect against replicated deletion or corruption; use backups when recovery point and retained history matter.",
-          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption."
+          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+            "section": "25.3. Continuous Archiving and PITR",
+            "quote": "If we continuously feed the series of WAL files to another machine that has been loaded with the same base backup file, we have a warm standby system: at any point we can bring up the second machine and it will have a nearly-current copy of the database.",
+            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
+          }
         }
       },
       "decision_evidence": {
