@@ -166,3 +166,28 @@ synthetic example with no measurements. It is linked from the knowledge
 platform plan, decision navigation and the target/transition model. No agent
 implementation, tool change, fixture, benchmark, evaluation or human review is
 claimed. See [the contract](ROCINANTE-STAGED-MODERNIZATION-CONTRACT.md).
+
+## 2026-10-27 — TYCHO-547 public landscape and coverage comparison
+
+Recorded two bounded research notes. [The landscape scan](LANDSCAPE-SCAN_2026-10-27.md)
+compares documentation MCP servers (Context7, Grounded Docs, GitMCP, Microsoft
+Learn, AWS Knowledge, Google Developer Knowledge, Ref, docs.page),
+repository-wiki generators (DeepWiki and its clones), architecture method and
+corpora (arc42, C4, ADR, microservices.io, Azure Architecture Center, System
+Design Primer, awesome-scalability), knowledge infrastructure and commercial
+learning products. It states overlaps, gaps, risks and options, and it does not
+claim novelty: the absence of a match is bounded by the scan.
+
+[The coverage comparison](COVERAGE-COMPARISON_2026-10-27.md) counts, with
+explicit rules, 145 Tycho pattern entries in 11 families, 275 registered
+sources (220 admitted, 45 pending, 10 bibliography-only), 64 sources in the
+full-unit reading plan and 49 sources bound to pattern evidence. On the same
+date it counts microservices.io at 54 pattern pages, Azure Architecture Center
+at 44 patterns, System Design Primer at 335 links and awesome-scalability at
+921 links. Tycho is the broadest by pattern count and alone publishes an
+evidence layer; it also has the least page space per pattern, and only 26% of
+patterns have supported failure and recovery.
+
+No independent AI review, market sizing, adoption or answer-quality
+measurement is claimed. Counts are a 2026-10-27 snapshot; counting rules and
+limits are in the artifacts. Both notes cite public sources only.
