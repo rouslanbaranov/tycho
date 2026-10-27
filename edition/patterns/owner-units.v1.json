@@ -5730,24 +5730,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Expand-and-contract is a staged change protocol",
-          "reason": "The text alternative lays out the expand/map/backfill/reconcile/contract sequence."
+          "reason": "Flyway covers ordered migrations, not tolerant dual representation."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Each phase has a compatibility gate.",
-          "reason": "States the retirement precondition that must hold before contract."
+          "reason": "Flyway has no compatibility gate or dual-shape reader/writer rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "a migration with no contract date becomes a permanent dual schema",
-          "reason": "The cutover failure row gives the rollback and forward-repair response."
+          "reason": "Flyway has no contract-date or forward-repair recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A smaller change may keep the schema and add a mapping layer instead of moving authority.",
-          "reason": "Names the mapping-layer/smaller-change alternative."
+          "reason": "Flyway alternatives are migration types, not a mapping layer."
         }
       },
       "decision_evidence": {
@@ -5765,7 +5765,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Unit is the whole level-2 section, including its two level-3 subsections."
     },
@@ -5792,22 +5792,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "If backfill takes hours, it may read records while new writes occur. A design needs an authoritative writer and a change-capture/reconciliation plan.",
-          "reason": "Explains copy-while-live-writes and the change-capture/reconciliation arrangement."
+          "reason": "Explains copy-while-live-writes and the change-capture/reconciliation arrangement.",
+          "binding": {
+            "source_id": "src.gh-ost",
+            "ledger_record": "read.batch3-gh-ost.2026-10-21",
+            "section": "How?",
+            "quote": "All existing online-schema-change tools operate in similar manner: they create a ghost table in the likeness of your original table, migrate that table while empty, slowly and incrementally copy data from your original table to the ghost table, meanwhile propagating ongoing changes (any INSERT , DELETE , UPDATE applied to your table) to the ghost table. Finally, at the right time, they replace your original table with the ghost table. gh-ost uses the same pattern. However it differs from all existing tools by not using triggers. We have recognized the triggers to be the source of many limitations and risks . Instead, gh-ost uses the binary log stream to capture table changes, and asynchronously applies them onto the ghost table.",
+            "revision": "07b6cf866971f100fa01fb6675d94e325d15eefb23300feb378b19a55da2cc19"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
-          "reason": "States the single-writer constraint that must hold during backfill."
+          "reason": "gh-ost README has no two-writer atomicity or dual-schema rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.",
-          "reason": "Names checkpoint and mapping failure and the reconciliation response."
+          "reason": "README has no crash checkpoint or row-reconciliation procedure."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate is low or the changed-row set is small.",
-          "reason": "Names stop-the-world/dual-write and the reversal."
+          "reason": "README names modes/tools, not stop-the-world or dual-write alternatives."
         }
       },
       "decision_evidence": {
@@ -5825,7 +5832,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Nested inside the expand/contract unit; the registry anchor points to this subsection."
     },
@@ -8025,24 +8032,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A rolling deployment replaces instances in batches, so old and new versions serve traffic together during the rollout.",
-          "reason": "Defines batch replacement with old and new versions serving together."
+          "reason": "Local HTML hash differs from the recorded revision; all 12 sections are present but the representation is not pinned."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Both versions must be compatible with the shared data and contracts for the whole overlap, or the rollout must stop before an incompatible state is written.",
-          "reason": "Requires data and contract compatibility for the whole overlap."
+          "reason": "No shared-data or contract compatibility rule; local revision also differs."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Mixed versions expose an incompatibility that a single-version test missed; gate each batch on readiness and error signals and keep a tested stop condition.",
-          "reason": "Names mixed-version incompatibility and requires readiness/error gates and a stop condition."
+          "reason": "Quote binds automatic stop, not mixed-version incompatibility; local revision differs."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Blue/green switches a complete environment at once; choose rolling when the extra capacity for a second environment is unavailable.",
-          "reason": "Contrasts blue/green when a second environment is too costly."
+          "reason": "Quote binds Recreate only; local revision differs."
         }
       },
       "decision_evidence": {
@@ -8060,7 +8067,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -8087,22 +8094,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the previous environment available for a short reversal.",
-          "reason": "Defines two environments and a routing switch with short reversal."
+          "reason": "Defines two environments and a routing switch with short reversal.",
+          "binding": {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.batch5-argo-bluegreen.2026-10-21",
+            "section": "Overview",
+            "quote": "The active Service is used to send regular application traffic to the old version, while the preview Service is used to funnel traffic to the new version. The rollout controller ensures proper traffic routing by injecting a unique hash of the ReplicaSet to these services' selectors. This allows the rollout to define an active and preview stack and a process to migrate replica sets from the preview to the active.",
+            "revision": "7b9285254c0e92d6640d6bf7e458aef609b4adce4e96f49ed6da2b5d33a81ea3"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The switch must remain reversible until the new version's persisted effects are proven compatible with the old version.",
-          "reason": "Requires reversibility until persisted effects are proven compatible."
+          "reason": "Unit gates promotion on analysis but has no persisted-data or contract compatibility rule."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and data compatibility before declaring the cutover.",
-          "reason": "Names half-switched routes and new-only writes and requires routing/data checks."
+          "reason": "Names half-switched routes and new-only writes and requires routing/data checks.",
+          "binding": {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.batch5-argo-bluegreen.2026-10-21",
+            "section": "Overview",
+            "quote": "When the rollout changes the selector on a service, there is a propagation delay before all the nodes update their IP tables to send traffic to the new pods instead of the old. During this delay, traffic will be directed to the old pods if the nodes have not been updated yet. In order to prevent the packets from being sent to a node that killed the old pod, the rollout uses the scaleDownDelaySeconds field to give nodes enough time to broadcast the IP table changes.",
+            "revision": "7b9285254c0e92d6640d6bf7e458aef609b4adce4e96f49ed6da2b5d33a81ea3"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A rolling or canary rollout uses less spare capacity; choose blue/green when a fast, complete reversal and a clean environment comparison justify the double capacity.",
-          "reason": "Contrasts rolling/canary with lower spare capacity."
+          "reason": "Unit does not compare blue/green with rolling or canary."
         }
       },
       "decision_evidence": {
@@ -8120,7 +8141,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -8147,22 +8168,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Route a small, identifiable cohort to the new version and check that it is representative",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.batch5-argo-canary.2026-10-21",
+            "section": "Canary Deployment Strategy",
+            "quote": "A canary rollout is a deployment strategy where the operator releases a new version of their application to a small percentage of the production traffic.",
+            "revision": "925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The exposure slice is not a data-compatibility boundary",
-          "reason": "States the invariant."
+          "reason": "Unit covers traffic weights and analysis, not shared state or data compatibility."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure hides",
-          "reason": "Names failure and recovery."
+          "reason": "Names failure and recovery.",
+          "binding": {
+            "source_id": "src.argo-rollouts",
+            "ledger_record": "read.batch5-argo-canary.2026-10-21",
+            "section": "analysis",
+            "quote": "Configure the background Analysis to execute during the rollout. If the analysis is unsuccessful the rollout will be aborted.",
+            "revision": "925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute twice.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Unit does not present shadow, blue/green or flags as alternatives."
         }
       },
       "decision_evidence": {
@@ -8180,7 +8215,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -8433,22 +8468,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Intercept requests at a façade or route and send one capability at a time to the new implementation while the old path remains available.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.fowler-strangler",
+            "ledger_record": "read.fowler-strangler.2026-10-21",
+            "section": "Strangler Fig",
+            "quote": "The alternative that my colleagues and I prefer, is to do a gradual process of modernization. Like the fig, it begins with small additions, often new features, that are built on top of, yet separate to the legacy code base. As we do this we move bits of behavior from the legacy system into the new code base.",
+            "revision": "ac274ebe2a36e7553e9f1923e7fbfbc3ff52504c542eec5353127ffba335989e"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.fowler-strangler",
+            "ledger_record": "read.fowler-strangler.2026-10-21",
+            "section": "Strangler Fig",
+            "quote": "When doing this, people often balk at the necessity of building transitional architecture to allow the new and legacy system to coexist, code that will go away once the modernization is complete.",
+            "revision": "ac274ebe2a36e7553e9f1923e7fbfbc3ff52504c542eec5353127ffba335989e"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Fowler article has no interception/bypass failure or recovery path."
         },
         "alternative": {
           "state": "supported",
           "quote": "Branch by abstraction, parallel run or a big-bang replacement",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.fowler-strangler",
+            "ledger_record": "read.fowler-strangler.2026-10-21",
+            "section": "Strangler Fig",
+            "quote": "Eventually people realize that they can't patch any more, and need a wholesale modernization. Faced with this choice, it is easy to think of the exercise as a simple replacement.",
+            "revision": "ac274ebe2a36e7553e9f1923e7fbfbc3ff52504c542eec5353127ffba335989e"
+          }
         }
       },
       "decision_evidence": {
@@ -8493,22 +8549,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "An internal interface can route old/new implementations with one deployable",
-          "reason": "Explains the internal abstraction that routes old and new implementations in one deployable."
+          "reason": "Explains the internal abstraction that routes old and new implementations in one deployable.",
+          "binding": {
+            "source_id": "src.fowler-branch",
+            "ledger_record": "read.batch5-fowler-branch.2026-10-21",
+            "section": "Branch By Abstraction",
+            "quote": "Use an abstraction layer to allow multiple implementations to co-exist in the software system. Use the notion of one abstraction and multiple implementations to perform the migration from one implementation to the other.",
+            "revision": "0b5f655e2e3eee9910995808c8327abf5739bb7db4a2d1d1885a2ec3b47688fb"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Old and new implementations behind the internal interface must preserve the same contract and observable effects; the switch must remain reversible until the old path is removed.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.fowler-branch",
+            "ledger_record": "read.batch5-fowler-branch.2026-10-21",
+            "section": "Branch By Abstraction",
+            "quote": "Ensure that the system builds and runs correctly at all times, so you can continue to use Continuous Delivery while you are doing the replacement.",
+            "revision": "0b5f655e2e3eee9910995808c8327abf5739bb7db4a2d1d1885a2ec3b47688fb"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Untested side effects, a bypass around the abstraction and divergent implementations can break that contract.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Article has no untested-side-effect, bypass or divergence recovery rule."
         },
         "alternative": {
           "state": "supported",
           "quote": "A strangler facade can route requests by capability when the boundary is external.",
-          "reason": "Names the strangler facade and its external-boundary condition."
+          "reason": "Names the strangler facade and its external-boundary condition.",
+          "binding": {
+            "source_id": "src.fowler-branch",
+            "ledger_record": "read.batch5-fowler-branch.2026-10-21",
+            "section": "Further Reading",
+            "quote": "Paul Hammant provides more details of using Branch-by-Abstraction, particularly as an alternative to using version-control branching.",
+            "revision": "0b5f655e2e3eee9910995808c8327abf5739bb7db4a2d1d1885a2ec3b47688fb"
+          }
         }
       },
       "decision_evidence": {
@@ -8699,24 +8776,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence.",
-          "reason": "States the expand, migrate, verify and contract sequence."
+          "reason": "Flyway page has no expand/migrate/contract phases."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "New writers must preserve enough old representation for old supported readers until a verified cutover.",
-          "reason": "States the compatibility precondition that must hold during coexistence."
+          "reason": "Flyway has no old-reader/new-writer invariant."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Incompatible writes hold the rollout and may require forward repair rather than redeploying N.",
-          "reason": "Names the failure, the hold, and forward repair as recovery."
+          "reason": "Flyway has no forward-repair or incompatible-write recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A big-bang migration, a parallel run or a versioned API cutover may be preferable when no mixed-version compatibility window is possible or the dataset is small enough to migrate under a verified pause.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Flyway Undo is not a big-bang/parallel-run alternative."
         }
       },
       "decision_evidence": {
@@ -8734,7 +8811,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Heading uses expand-migrate-contract wording, not the catalog alias; unit is embedded."
     },
@@ -9909,7 +9986,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Expand-and-contract and online migration now have two distinct dedicated units."
     },
@@ -10032,7 +10109,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 3,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
@@ -10190,12 +10267,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 134,
-    "invariant_supported": 101,
-    "failure_recovery_supported": 98,
-    "alternative_supported": 108,
-    "technical_partial_bounded": 100,
-    "technical_partial": 45,
+    "mechanism_supported": 131,
+    "invariant_supported": 95,
+    "failure_recovery_supported": 92,
+    "alternative_supported": 102,
+    "technical_partial_bounded": 94,
+    "technical_partial": 51,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,

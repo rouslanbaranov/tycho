@@ -27,24 +27,28 @@
       "revision": "c82226c31d75f773ecb82ae0c09af9435648b0991082fa3bd2c467d29812cf7d",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A rolling deployment replaces instances in batches, so old and new versions serve traffic together during the rollout.",
-          "reason": "Defines batch replacement with old and new versions serving together."
+          "reason": "Local HTML hash differs from the recorded revision; all 12 sections are present but the representation is not pinned.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Both versions must be compatible with the shared data and contracts for the whole overlap, or the rollout must stop before an incompatible state is written.",
-          "reason": "Requires data and contract compatibility for the whole overlap."
+          "reason": "No shared-data or contract compatibility rule; local revision also differs.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Mixed versions expose an incompatibility that a single-version test missed; gate each batch on readiness and error signals and keep a tested stop condition.",
-          "reason": "Names mixed-version incompatibility and requires readiness/error gates and a stop condition."
+          "reason": "Quote binds automatic stop, not mixed-version incompatibility; local revision differs.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Blue/green switches a complete environment at once; choose rolling when the extra capacity for a second environment is unavailable.",
-          "reason": "Contrasts blue/green when a second environment is too costly."
+          "reason": "Quote binds Recreate only; local revision differs.",
+          "has_binding": false
         }
       }
     },
@@ -79,22 +83,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Blue/green runs two complete environments and switches traffic at a routing boundary, leaving the previous environment available for a short reversal.",
-          "reason": "Defines two environments and a routing switch with short reversal."
+          "reason": "Defines two environments and a routing switch with short reversal.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The switch must remain reversible until the new version's persisted effects are proven compatible with the old version.",
-          "reason": "Requires reversibility until persisted effects are proven compatible."
+          "reason": "Unit gates promotion on analysis but has no persisted-data or contract compatibility rule.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A half-switched route or a new-only write makes reversal unsafe; verify routing completeness and data compatibility before declaring the cutover.",
-          "reason": "Names half-switched routes and new-only writes and requires routing/data checks."
+          "reason": "Names half-switched routes and new-only writes and requires routing/data checks.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A rolling or canary rollout uses less spare capacity; choose blue/green when a fast, complete reversal and a clean environment comparison justify the double capacity.",
-          "reason": "Contrasts rolling/canary with lower spare capacity."
+          "reason": "Unit does not compare blue/green with rolling or canary.",
+          "has_binding": false
         }
       }
     },
@@ -129,22 +137,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Route a small, identifiable cohort to the new version and check that it is representative",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The exposure slice is not a data-compatibility boundary",
-          "reason": "States the invariant."
+          "reason": "Unit covers traffic weights and analysis, not shared state or data compatibility.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure hides",
-          "reason": "Names failure and recovery."
+          "reason": "Names failure and recovery.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute twice.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Unit does not present shadow, blue/green or flags as alternatives.",
+          "has_binding": false
         }
       }
     },
@@ -171,22 +183,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment, with a default and kill switch.",
-          "reason": "Defines the flag mechanism."
+          "reason": "Defines the flag mechanism.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Flags never replace an authorization check.",
-          "reason": "Explicit safety rule separating flags from authorization."
+          "reason": "Fowler text has no authorization-check rule; Permissioning Toggles only expose groups.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "on evaluation failure the default must be the safe branch, not a silent enable.",
-          "reason": "Names flag failure modes."
+          "reason": "Text names carrying cost and Knight Capital but no evaluation-failure default.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A canary or branch-by-abstraction is preferable when the toggle would become permanent configuration.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Text treats canary as a flag application; no branch-by-abstraction recommendation.",
+          "has_binding": false
         }
       }
     },
@@ -213,22 +229,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "GitOps treats a versioned desired-state repository as reviewed intent.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Rollback is a revert commit, which needs a linear, reviewable history and an immutable artifact reference.",
-          "reason": "States the invariant."
+          "reason": "States the invariant.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Controller outage, drift, repository compromise and stale artifact references are common",
-          "reason": "Names failure and recovery."
+          "reason": "Local representation is landing plus four principles; no controller outage or drift recovery.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A pipeline-driven deployment, manual release or imperative operator may be preferable when imperative one-off changes dominate or no reconciler owner exists.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Local representation has no pipeline-driven, manual or imperative alternative.",
+          "has_binding": false
         }
       }
     },
@@ -259,22 +279,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Immutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts, so each instance is reproducible from a recorded artifact.",
-          "reason": "Defines replacement from a versioned image or definition rather than mutation."
+          "reason": "Defines replacement from a versioned image or definition rather than mutation.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
-          "reason": "Requires reproducibility from an artifact digest and drift detection."
+          "reason": "Requires reproducibility from an artifact digest and drift detection.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
-          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests."
+          "reason": "Names rebuilt images that diverge and requires digest recording and rebuild tests.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "choose immutable replacement when reproducibility, an automated replacement path and artifact rollback speed matter",
-          "reason": "Names immutable replacement when reproducibility and fast artifact rollback matter."
+          "reason": "Names immutable replacement when reproducibility and fast artifact rollback matter.",
+          "has_binding": true
         }
       }
     },
@@ -296,22 +320,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Intercept requests at a façade or route and send one capability at a time to the new implementation while the old path remains available.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Fowler article has no interception/bypass failure or recovery path.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Branch by abstraction, parallel run or a big-bang replacement",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         }
       }
     },
@@ -335,22 +363,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "An internal interface can route old/new implementations with one deployable",
-          "reason": "Explains the internal abstraction that routes old and new implementations in one deployable."
+          "reason": "Explains the internal abstraction that routes old and new implementations in one deployable.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Old and new implementations behind the internal interface must preserve the same contract and observable effects; the switch must remain reversible until the old path is removed.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Untested side effects, a bypass around the abstraction and divergent implementations can break that contract.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Article has no untested-side-effect, bypass or divergence recovery rule.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A strangler facade can route requests by capability when the boundary is external.",
-          "reason": "Names the strangler facade and its external-boundary condition."
+          "reason": "Names the strangler facade and its external-boundary condition.",
+          "has_binding": true
         }
       }
     },
@@ -385,24 +417,28 @@
       "revision": "8952ed4d377476f95a6a4a90f93c5c01db800de6f6d076570298b1a9f490a897",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence.",
-          "reason": "States the expand, migrate, verify and contract sequence."
+          "reason": "Flyway page has no expand/migrate/contract phases.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "New writers must preserve enough old representation for old supported readers until a verified cutover.",
-          "reason": "States the compatibility precondition that must hold during coexistence."
+          "reason": "Flyway has no old-reader/new-writer invariant.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Incompatible writes hold the rollout and may require forward repair rather than redeploying N.",
-          "reason": "Names the failure, the hold, and forward repair as recovery."
+          "reason": "Flyway has no forward-repair or incompatible-write recovery.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A big-bang migration, a parallel run or a versioned API cutover may be preferable when no mixed-version compatibility window is possible or the dataset is small enough to migrate under a verified pause.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Flyway Undo is not a big-bang/parallel-run alternative.",
+          "has_binding": false
         }
       }
     }

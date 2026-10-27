@@ -32,24 +32,28 @@
       "revision": "8952ed4d377476f95a6a4a90f93c5c01db800de6f6d076570298b1a9f490a897",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Expand-and-contract is a staged change protocol",
-          "reason": "The text alternative lays out the expand/map/backfill/reconcile/contract sequence."
+          "reason": "Flyway covers ordered migrations, not tolerant dual representation.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Each phase has a compatibility gate.",
-          "reason": "States the retirement precondition that must hold before contract."
+          "reason": "Flyway has no compatibility gate or dual-shape reader/writer rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "a migration with no contract date becomes a permanent dual schema",
-          "reason": "The cutover failure row gives the rollback and forward-repair response."
+          "reason": "Flyway has no contract-date or forward-repair recovery.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A smaller change may keep the schema and add a mapping layer instead of moving authority.",
-          "reason": "Names the mapping-layer/smaller-change alternative."
+          "reason": "Flyway alternatives are migration types, not a mapping layer.",
+          "has_binding": false
         }
       }
     },
@@ -79,22 +83,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "If backfill takes hours, it may read records while new writes occur. A design needs an authoritative writer and a change-capture/reconciliation plan.",
-          "reason": "Explains copy-while-live-writes and the change-capture/reconciliation arrangement."
+          "reason": "Explains copy-while-live-writes and the change-capture/reconciliation arrangement.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
-          "reason": "States the single-writer constraint that must hold during backfill."
+          "reason": "gh-ost README has no two-writer atomicity or dual-schema rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.",
-          "reason": "Names checkpoint and mapping failure and the reconciliation response."
+          "reason": "README has no crash checkpoint or row-reconciliation procedure.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate is low or the changed-row set is small.",
-          "reason": "Names stop-the-world/dual-write and the reversal."
+          "reason": "README names modes/tools, not stop-the-world or dual-write alternatives.",
+          "has_binding": false
         }
       }
     },
@@ -127,22 +135,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A base backup plus a continuous archive of write-ahead records lets an operator restore the data to a chosen point in time before an incident.",
-          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time."
+          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "The backup chain must be complete and restorable, and a recovery target must be validated against the application's consistency requirements, not only produced.",
-          "reason": "Requires a complete restorable chain and an application-consistency check for the target."
+          "reason": "Requires a complete restorable chain and an application-consistency check for the target.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
-          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums."
+          "reason": "Names missing or corrupt archive segments and requires scheduled restore drills and checksums.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Promote a replica for availability, but it does not protect against replicated deletion or corruption; use backups when recovery point and retained history matter.",
-          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption."
+          "reason": "Contrasts replica promotion, which does not protect against replicated deletion or corruption.",
+          "has_binding": true
         }
       }
     }
