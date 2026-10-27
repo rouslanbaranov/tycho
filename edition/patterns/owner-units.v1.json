@@ -8220,24 +8220,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Autoscaling is a **feedback-control mechanism**, not a promise of immediate extra capacity. A signal must be collected, interpreted, acted on, and followed by resource provisioning, application readiness and dependent-service capacity.",
-          "reason": "Explains the control loop and its provisioning/readiness chain."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A signal must be collected, interpreted, acted on, and followed by resource provisioning, application readiness and dependent-service capacity.",
-          "reason": "States the required end-to-end sequence for capacity to become usable."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "During that delay, new demand still reaches the old infrastructure.",
-          "reason": "Names lag exposure; scheduled headroom and static capacity are the containment options."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Scheduled capacity or static headroom may be simpler when demand is predictable or the scale-out path is slower than the burst.",
-          "reason": "Names scheduled/static capacity and the reversal."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content."
         }
       },
       "decision_evidence": {
@@ -8255,7 +8255,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded in the purpose section, shared with both scaling patterns."
     },
@@ -8282,22 +8282,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A cell-based architecture runs multiple copies of the serving stack, each with a routing key and a data partition",
-          "reason": "Defines the cell as a bounded population with independent capacity and failure domain."
+          "reason": "Defines the cell as a bounded population with independent capacity and failure domain.",
+          "binding": {
+            "source_id": "src.cell-boundaries",
+            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+            "section": "What is a cell-based architecture?",
+            "quote": "A cell routing layer distributes requests to individual cells based on the partition key and presents a single endpoint to clients. A cell-based architecture uses multiple isolated instances of a workload, where each instance is known as a cell . Each cell is independent, does not share state with other cells, and handles a subset of the overall workload requests.",
+            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The boundary is only real if every dependency is cell-scoped.",
-          "reason": "States that shared dependencies defeat a nominal cell boundary."
+          "reason": "States that shared dependencies defeat a nominal cell boundary.",
+          "binding": {
+            "source_id": "src.cell-boundaries",
+            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+            "section": "What is a cell-based architecture?",
+            "quote": "Each cell is independent, does not share state with other cells, and handles a subset of the overall workload requests.",
+            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A shared database, queue, cache, control plane or configuration publisher can make all cells fail together",
-          "reason": "Names shared-control-plane blast radius and the required test."
+          "reason": "Names shared-control-plane blast radius and the required test.",
+          "binding": {
+            "source_id": "src.cell-boundaries",
+            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+            "section": "What is a cell-based architecture?",
+            "quote": "With cell-based architectures, many common types of failure are contained within the cell itself, providing additional fault isolation.",
+            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A single deployment with failure-domain isolation may be preferable when the population is small and cell duplication cannot be justified.",
-          "reason": "Names single deployment with failure-domain isolation."
+          "reason": "Names single deployment with failure-domain isolation.",
+          "binding": {
+            "source_id": "src.cell-boundaries",
+            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+            "section": "A workload with cell-based architecture",
+            "quote": "Rather than build out services as single-image systems, we propose a different approach: break your services down internally into cells and build thin layers to route traffic to the right cells.",
+            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+          }
         }
       },
       "decision_evidence": {
@@ -8342,22 +8370,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A shuffle shard selects a random subset of workers for each tenant",
-          "reason": "Explains the subset selection and partial tenant overlap."
+          "reason": "Explains the subset selection and partial tenant overlap.",
+          "binding": {
+            "source_id": "src.cortex-shuffle-sharding",
+            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
+            "section": "What is shuffle sharding?",
+            "quote": "The idea is to assign each tenant a shard composed of a subset of the Cortex service instances, aiming to minimize the overlapping instances between two different tenants.",
+            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Hash-based assignment alone does not prove statistical independence.",
-          "reason": "Safety rule against assuming hash-based independence."
+          "reason": "Safety rule against assuming hash-based independence.",
+          "binding": {
+            "source_id": "src.cortex-shuffle-sharding",
+            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
+            "section": "Guaranteed properties",
+            "quote": "Probabilistically and for a large enough cluster, it ensures that every tenant gets a different set of instances, with a reduced number of overlapping instances between two tenants to improve failure isolation.",
+            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A failed worker affects every tenant whose subset includes it",
-          "reason": "Names shared-dependency and assignment-stability tests."
+          "reason": "Names shared-dependency and assignment-stability tests.",
+          "binding": {
+            "source_id": "src.cortex-shuffle-sharding",
+            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
+            "section": "What is shuffle sharding?",
+            "quote": "An outage on some Cortex cluster instances/nodes will only affect a subset of tenants.",
+            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A fixed cell anchors one tenant to a known home and population boundary.",
-          "reason": "Contrasts fixed cells and the dedicated-home condition."
+          "reason": "Contrasts fixed cells and the dedicated-home condition.",
+          "binding": {
+            "source_id": "src.cortex-shuffle-sharding",
+            "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
+            "section": "Background",
+            "quote": "The goal of shuffle sharding is to provide an alternative sharding strategy to reduce the blast radius of an outage and better isolate tenants.",
+            "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633"
+          }
         }
       },
       "decision_evidence": {
@@ -9941,22 +9997,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A valet key is a scoped, time-limited credential that lets a client reach one resource directly.",
-          "reason": "Defines the scoped, time-limited direct-access credential."
+          "reason": "Defines the scoped, time-limited direct-access credential.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Solution",
+            "quote": "It provides time-limited access to specific resources and allows only predefined operations with granular control such as writing to storage but not reading, or uploading and downloading in a web browser. Applications can create and issue valet keys to client devices and web browsers quickly and easily, allowing clients to perform the required operations without requiring the application to directly handle the data transfer.",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a least-privilege scope, an audience, an expiry, a revocation path and an audit trail.",
-          "reason": "Lists the required scope, audience, expiry, revocation and audit properties."
+          "reason": "Lists the required scope, audience, expiry, revocation and audit properties.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Workload design",
+            "quote": "This pattern enables a client to directly access a resource without needing long-lasting or standing credentials. All access requests start with an auditable transaction. The granted access is then limited in both scope and duration. This pattern also makes it easier to revoke the granted access.",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and scope, and revoke at the authority.",
-          "reason": "Describes the credential failure and its remediation."
+          "reason": "Describes the credential failure and its remediation.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "If leaked or compromised, the key effectively unlocks the target item and makes it available for malicious use during the validity period. A key can usually be revoked or disabled, depending on how it was issued. Server-side policies can be changed or, the server key it was signed with can be invalidated. Specify a short validity period to minimize the risk of allowing unauthorized operations to take place against the data store.",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A mediated gateway is the alternative when the resource cannot enforce scope or when the client cannot protect a credential.",
-          "reason": "Names the competing mechanism and the conditions that favor it."
+          "reason": "Names the competing mechanism and the conditions that favor it.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.batch6-valet.2026-10-21",
+            "section": "Example",
+            "quote": "Without this pattern, the workload has essentially two options. The first is to provide standing access and configuration to all the clients to perform uploads directly to a storage account. The other is to implement the Gateway Routing pattern to set up an endpoint where clients use proxied access to storage, but this might not be adding additional value to the transaction.",
+            "revision": "29af0f5f447a7dfe4e57d6dce33b3740fe58c52c10129a8d16243644b5bbd092"
+          }
         }
       },
       "decision_evidence": {
@@ -10058,22 +10142,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Distributed tracing reconstructs *a selected execution story*: a request enters a component, starts work, calls another component and may later complete asynchronously.",
-          "reason": "Explains tracing as reconstructing a selected cross-component execution story."
+          "reason": "Explains tracing as reconstructing a selected cross-component execution story.",
+          "binding": {
+            "source_id": "src.otel",
+            "ledger_record": "read.batch6-otel-traces.2026-10-21",
+            "section": "Traces",
+            "quote": "Traces give us the big picture of what happens when a request is made to an application. Whether your application is a monolith with a single database or a sophisticated mesh of services, traces are essential to understanding the full “path” a request takes in your application.",
+            "revision": "e9678cd76218165297a0182a94a79d19a2338d926ea1a5fc0d01c6f11c4a4a98"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A trace can illuminate critical-path waiting, retries and failure propagation—but **it is not an authoritative record of every business effect**.",
-          "reason": "States the limit on what a trace may be treated as proving."
+          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A missing span may mean no work occurred, the instrumentation failed, or the sampling policy intentionally discarded it.",
-          "reason": "Names missing-span ambiguity and the instrumentation check."
+          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "For aggregate latency or a discrete business event, metrics or structured logs may be preferable; use tracing when the cross-component path itself is the question.",
-          "reason": "Names metrics/logs and the reversal."
+          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule."
         }
       },
       "decision_evidence": {
@@ -10091,7 +10182,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Purpose and mission defines traces and their limits; propagation and sampling pages are elsewhere."
     },
@@ -10115,22 +10206,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Structured logging emits events with stable field names and types so records can be queried and compared without parsing free text.",
-          "reason": "Defines stable field names and types for queryable events."
+          "reason": "Defines stable field names and types for queryable events.",
+          "binding": {
+            "source_id": "src.otel",
+            "ledger_record": "read.batch6-otel-logs.2026-10-21",
+            "section": "Structured logs",
+            "quote": "A structured log is a log with a defined, consistent schema or typed fields that downstream systems can reliably parse and interpret.",
+            "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Field names, meaning and redaction rules must be versioned, and sensitive values must be excluded before emission.",
-          "reason": "Requires versioned fields, meaning and redaction before emission."
+          "reason": "Requires versioned fields, meaning and redaction before emission.",
+          "binding": {
+            "source_id": "src.otel",
+            "ledger_record": "read.batch6-otel-logs.2026-10-21",
+            "section": "Structured logs",
+            "quote": "The textual encoding can be JSON, protobuf, or another format, but what makes a log structured is the presence of a stable schema (field names, types, and semantics), not merely that it is valid JSON.",
+            "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter and review field allowlists when adding events.",
-          "reason": "Names schema drift and unredacted fields and requires emitter validation and allowlists."
+          "reason": "Names schema drift and unredacted fields and requires emitter validation and allowlists.",
+          "binding": {
+            "source_id": "src.otel",
+            "ledger_record": "read.batch6-otel-logs.2026-10-21",
+            "section": "Semistructured logs",
+            "quote": "Semistructured logs include machine-readable key/value pairs or delimited fields but do not guarantee a stable schema across emitters.",
+            "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Unstructured text parsed at query time is cheaper to start; adopt structured events when consistent querying, correlation or retention obligations justify the schema.",
-          "reason": "Contrasts unstructured query-time parsing with structured events."
+          "reason": "Contrasts unstructured query-time parsing with structured events.",
+          "binding": {
+            "source_id": "src.otel",
+            "ledger_record": "read.batch6-otel-logs.2026-10-21",
+            "section": "Unstructured logs",
+            "quote": "Although it’s possible to parse unstructured logs for analysis purposes, doing this may be more work than switching to structured logging, such as via a standard logging framework in your applications.",
+            "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
+          }
         }
       },
       "decision_evidence": {
@@ -10841,7 +10960,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Horizontal, vertical and autoscaling now have distinct dedicated units with separate lag and failure behavior."
     },
@@ -11030,12 +11149,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 118,
-    "invariant_supported": 63,
-    "failure_recovery_supported": 58,
-    "alternative_supported": 66,
-    "technical_partial_bounded": 62,
-    "technical_partial": 83,
+    "mechanism_supported": 117,
+    "invariant_supported": 61,
+    "failure_recovery_supported": 56,
+    "alternative_supported": 64,
+    "technical_partial_bounded": 60,
+    "technical_partial": 85,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
