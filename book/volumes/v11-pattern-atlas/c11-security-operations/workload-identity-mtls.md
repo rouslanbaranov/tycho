@@ -52,11 +52,11 @@ automated; policy can bind identity to service.
 **Hard contraindications.** Reject when network location is the only available identity,
 when rotation cannot be automated, or when identity sprawl is unowned.
 
-**Competing alternative.** Network policy plus service accounts, or a gateway boundary.
-Reverse the choice when mTLS operational cost exceeds lateral-movement risk.
+**Competing alternative.** Permissive mTLS mode accepts plaintext and mutual TLS traffic
+during migration; use strict mTLS once clients support it.
 
-**Failure and recovery.** Certificate expiry and identity mismatch are common; verify
-rotation in the owner section.
+**Failure and recovery.** Certificate expiry must be monitored; rotate certificates and
+keys periodically.
 
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#workload-identity-mtls) — workload identity binding and mTLS trust are bounded; credential issuance is platform-specific.
 

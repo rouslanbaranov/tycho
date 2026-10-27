@@ -9738,20 +9738,34 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Expired or shared credentials break authentication or erase the distinction between workloads; rotate, isolate and test an unauthorized peer.",
-          "reason": "Istio supports rotation and identity testing; revocation and the complete recovery rule are synthetic."
+          "state": "supported",
+          "quote": "Istio monitors workload certificate expiry and periodically rotates certificates and keys.",
+          "reason": "Source states Istio monitors certificate expiry and periodically rotates certificates and keys.",
+          "binding": {
+            "source_id": "src.istio",
+            "ledger_record": "read.batch6-istio.2026-10-21",
+            "section": "Identity and certificate management",
+            "quote": "Istio agent monitors the expiration of the workload certificate. The above process repeats periodically for certificate and key rotation.",
+            "revision": "0291fb8211b0215a91fe1c2bf389db7b3cdb6fffd57605f13fb4e6b402eb66e4"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Network policy with shared secrets is easier when PKI operations are unavailable; choose workload identity when lateral movement and credential reuse are the dominant risk.",
-          "reason": "The comparative network-policy recommendation is not in the bound Istio sections."
+          "state": "supported",
+          "quote": "Permissive mTLS mode can accept both plaintext and mutual TLS traffic during migration; use strict mTLS once clients support it.",
+          "reason": "Source defines permissive mode accepting plaintext and mTLS simultaneously.",
+          "binding": {
+            "source_id": "src.istio",
+            "ledger_record": "read.batch6-istio.2026-10-21",
+            "section": "Permissive mode",
+            "quote": "Istio mutual TLS has a permissive mode, which allows a service to accept both plaintext traffic and mutual TLS traffic at the same time.",
+            "revision": "0291fb8211b0215a91fe1c2bf389db7b3cdb6fffd57605f13fb4e6b402eb66e4"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "workload-identity-mtls",
         "question": "Should workloads authenticate each other with cryptographic identities rather than network location?",
-        "competing_alternative": "Network policy plus service accounts, or a gateway boundary. Reverse the choice when mTLS operational cost exceeds lateral-movement risk.",
+        "competing_alternative": "Permissive mTLS mode accepts plaintext and mutual TLS traffic during migration; use strict mTLS once clients support it.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -10909,8 +10923,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 55,
-    "failure_recovery_supported": 38,
-    "alternative_supported": 50,
+    "failure_recovery_supported": 39,
+    "alternative_supported": 51,
     "technical_partial_bounded": 44,
     "technical_partial": 95,
     "technical_name_only": 0,

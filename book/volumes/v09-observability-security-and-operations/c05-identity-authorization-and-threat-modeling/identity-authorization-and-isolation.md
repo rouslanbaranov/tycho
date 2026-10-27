@@ -122,10 +122,9 @@ both ends of a service connection with automatically rotated credentials. The id
 bind to the workload, not to a network location, and authorization must still check the
 operation rather than assuming trust from the connection.
 
-Expired or shared credentials break authentication or erase the distinction between workloads;
-rotate, isolate and test an unauthorized peer. Network policy with shared secrets is easier when PKI
-operations are unavailable; choose workload identity when lateral movement and credential reuse are
-the dominant risk.
+Expired or shared credentials break authentication. Istio monitors workload certificate expiry and
+periodically rotates certificates and keys. Permissive mTLS mode can accept both plaintext and
+mutual TLS traffic during migration; use strict mTLS once clients support it.
 
 **Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
 authenticates the workload, not every operation it requests. Certificate issuance availability
