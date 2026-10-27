@@ -21,22 +21,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Load balancing chooses among eligible backends. The invariant is that no request reaches an ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and retry-safe callers.",
-          "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent."
+          "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Cap request cost at the interface where one request can dominate a backend, and test the selector under the real cost distribution.",
-          "reason": "States a required bound and test for request-cost skew."
+          "reason": "SRE page has no per-request cost cap or selector test under real distribution.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A least-loaded or active-request selector assumes that a backend with spare capacity will do useful work. A seriously unhealthy backend can instead return an error in milliseconds, so its active-request count falls and the selector sends it more traffic. The backend becomes a sinkhole.",
-          "reason": "Describes fast-error attraction and the sinkhole failure it produces."
+          "reason": "Describes fast-error attraction and the sinkhole failure it produces.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Compare round-robin, random choice, least-active requests and affinity against request cost, stale load signals and state placement.",
-          "reason": "Names competing selection policies but gives no condition that reverses the choice."
+          "reason": "Names competing selection policies but gives no condition that reverses the choice.",
+          "has_binding": true
         }
       }
     },
@@ -86,22 +90,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Horizontal scaling multiplies processing replicas; vertical scaling changes resources available to existing replicas.",
-          "reason": "States the scaling mechanism (adding replicas) directly."
+          "reason": "States the scaling mechanism (adding replicas) directly.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Neither can increase throughput past a serial or externally fixed bottleneck.",
-          "reason": "States the capacity ceiling that scaling cannot exceed."
+          "reason": "K8s HPA page has no serial-bottleneck throughput ceiling.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A new replica may start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst and bound the work each replica can claim.",
-          "reason": "Names scale-out failure modes and the required test/bound."
+          "reason": "Names scale-out failure modes and the required test/bound.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Vertical scaling or a queue/backpressure policy may be preferable when the bottleneck is per-replica resource or the workload cannot partition.",
-          "reason": "Names vertical scaling/backpressure and the reversal."
+          "reason": "Page does not compare vertical scaling or queue backpressure.",
+          "has_binding": false
         }
       }
     },
@@ -154,22 +162,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "vertical scaling changes resources available to existing replicas",
-          "reason": "States the vertical mechanism: enlarge the resources of existing replicas."
+          "reason": "States the vertical mechanism: enlarge the resources of existing replicas.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed bottleneck.",
-          "reason": "States the capacity ceiling that vertical scaling cannot exceed."
+          "reason": "States the capacity ceiling that vertical scaling cannot exceed.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A resize usually needs a restart or migration, so the old capacity is unavailable during the change; bound the maintenance window and keep a fallback.",
-          "reason": "Names resize unavailability and the required fallback."
+          "reason": "Names resize unavailability and the required fallback.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Horizontal scaling or sharding may be preferable when the workload partitions and a single node is an unacceptable failure domain.",
-          "reason": "Names horizontal/sharding and the reversal."
+          "reason": "K8s page does not compare horizontal scaling or sharding.",
+          "has_binding": false
         }
       }
     },
@@ -188,24 +200,28 @@
       "revision": "8c704134e53dcad3b724345ae03898697b0825380417decaa3cbf7656f7baa1f",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Autoscaling is a **feedback-control mechanism**, not a promise of immediate extra capacity. A signal must be collected, interpreted, acted on, and followed by resource provisioning, application readiness and dependent-service capacity.",
-          "reason": "Explains the control loop and its provisioning/readiness chain."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A signal must be collected, interpreted, acted on, and followed by resource provisioning, application readiness and dependent-service capacity.",
-          "reason": "States the required end-to-end sequence for capacity to become usable."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "During that delay, new demand still reaches the old infrastructure.",
-          "reason": "Names lag exposure; scheduled headroom and static capacity are the containment options."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Scheduled capacity or static headroom may be simpler when demand is predictable or the scale-out path is slower than the burst.",
-          "reason": "Names scheduled/static capacity and the reversal."
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
         }
       }
     },
@@ -228,22 +244,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A cell-based architecture runs multiple copies of the serving stack, each with a routing key and a data partition",
-          "reason": "Defines the cell as a bounded population with independent capacity and failure domain."
+          "reason": "Defines the cell as a bounded population with independent capacity and failure domain.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "The boundary is only real if every dependency is cell-scoped.",
-          "reason": "States that shared dependencies defeat a nominal cell boundary."
+          "reason": "States that shared dependencies defeat a nominal cell boundary.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A shared database, queue, cache, control plane or configuration publisher can make all cells fail together",
-          "reason": "Names shared-control-plane blast radius and the required test."
+          "reason": "Names shared-control-plane blast radius and the required test.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A single deployment with failure-domain isolation may be preferable when the population is small and cell duplication cannot be justified.",
-          "reason": "Names single deployment with failure-domain isolation."
+          "reason": "Names single deployment with failure-domain isolation.",
+          "has_binding": true
         }
       }
     },
@@ -281,22 +301,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A shuffle shard selects a random subset of workers for each tenant",
-          "reason": "Explains the subset selection and partial tenant overlap."
+          "reason": "Explains the subset selection and partial tenant overlap.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Hash-based assignment alone does not prove statistical independence.",
-          "reason": "Safety rule against assuming hash-based independence."
+          "reason": "Safety rule against assuming hash-based independence.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A failed worker affects every tenant whose subset includes it",
-          "reason": "Names shared-dependency and assignment-stability tests."
+          "reason": "Names shared-dependency and assignment-stability tests.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A fixed cell anchors one tenant to a known home and population boundary.",
-          "reason": "Contrasts fixed cells and the dedicated-home condition."
+          "reason": "Contrasts fixed cells and the dedicated-home condition.",
+          "has_binding": true
         }
       }
     },
@@ -329,22 +353,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A deployment stamp is an independently operated deployment unit used for scale, isolation or locality.",
-          "reason": "Defines the independent deployment unit and its purposes."
+          "reason": "Defines the independent deployment unit and its purposes.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
-          "reason": "Lists the routing, authority, upgrade and shared-dependency preconditions."
+          "reason": "Lists the routing, authority, upgrade and shared-dependency preconditions.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "The failure path is configuration drift or split state across stamps; version the stamp definition, route by an explicit key and reconcile state at the authority.",
-          "reason": "Names drift and split state, with versioning, routing and reconciliation controls."
+          "reason": "Names drift and split state, with versioning, routing and reconciliation controls.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice."
+          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "has_binding": true
         }
       }
     },
@@ -371,22 +399,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Geode places identical regional nodes behind a global routing layer so clients can use a nearby healthy region.",
-          "reason": "States the nodes-plus-routing mechanism."
+          "reason": "States the nodes-plus-routing mechanism.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
-          "reason": "Lists the replication, health, routing and authority preconditions."
+          "reason": "Lists the replication, health, routing and authority preconditions.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "The failure path is a route to a stale or isolated region; the router must use an authoritative health and data-freshness signal, and failover must fence the old writer.",
-          "reason": "Names stale routing and prescribes health/freshness signalling plus fencing."
+          "reason": "Names stale routing and prescribes health/freshness signalling plus fencing.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Active-passive recovery is the alternative when cross-region consistency is not worth the routing complexity.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice."
+          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "has_binding": true
         }
       }
     },
@@ -415,22 +447,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Static content hosting publishes immutable objects to an object store or CDN origin and serves them by URL without per-request application compute.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "A retained version is the rollback path",
-          "reason": "Requires cache key, freshness and authorization to agree for served static assets."
+          "reason": "Requires cache key, freshness and authorization to agree for served static assets.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A dynamic origin or edge compute may be preferable when content changes per request or publication cannot be governed.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         }
       }
     },
@@ -453,22 +489,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
-          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials."
+          "reason": "Defines per-tenant compute, storage and quota with explicit routing and credentials.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
-          "reason": "Forbids crossing tenant boundaries without a shared-resource contract."
+          "reason": "Forbids crossing tenant boundaries without a shared-resource contract.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
-          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests."
+          "reason": "Names shared-cache and worker leaks and requires tenant-scoped keys and foreign-ID tests.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A shared pool with tenant-scoped predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance risk dominates.",
-          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources."
+          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources.",
+          "has_binding": true
         }
       }
     }

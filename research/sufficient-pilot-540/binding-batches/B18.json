@@ -39,22 +39,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Every request is authenticated and authorized at the resource boundary using principal identity, workload/device posture, policy and least privilege.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Network location is not trust; a valid token is not object permission.",
-          "reason": "States the no-implicit-trust rule and requires denied-path testing."
+          "reason": "States the no-implicit-trust rule and requires denied-path testing.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Policy gaps, legacy bypass paths and identity-provider outages are common.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Network segmentation, a VPN or mTLS-only service identity may be preferable when legacy components cannot enforce per-request identity or when policy-evaluation cost exceeds the threat reduction.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
         }
       }
     },
@@ -96,22 +100,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Least privilege grants each principal only the permissions its task needs, limited in resource scope, action and time.",
-          "reason": "Defines task-scoped permissions bounded by resource, action and time."
+          "reason": "Defines task-scoped permissions bounded by resource, action and time.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Every credential must have a bounded scope, an owner and a revocation path that does not depend on the compromised principal.",
-          "reason": "Requires bounded scope, ownership and a revocation path independent of the principal."
+          "reason": "Requires bounded scope, ownership and a revocation path independent of the principal.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Permission creep and long-lived credentials widen the blast radius without any visible incident; review grants on a schedule and prefer short-lived scoped credentials.",
-          "reason": "Names permission creep and long-lived credentials and requires scheduled review and short-lived credentials."
+          "reason": "Names permission creep and long-lived credentials and requires scheduled review and short-lived credentials.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Coarse roles are simpler to administer for small stable systems; narrow them once measured access reviews or incident impact justify the overhead.",
-          "reason": "Contrasts coarse roles for small stable systems with measured narrowing."
+          "reason": "ASVS Appendix D only recommends role allocation; no coarse-vs-narrow trade-off.",
+          "has_binding": false
         }
       }
     },
@@ -140,22 +148,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A valet key is a scoped, time-limited credential that lets a client reach one resource directly.",
-          "reason": "Defines the scoped, time-limited direct-access credential."
+          "reason": "Defines the scoped, time-limited direct-access credential.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "It needs a least-privilege scope, an audience, an expiry, a revocation path and an audit trail.",
-          "reason": "Lists the required scope, audience, expiry, revocation and audit properties."
+          "reason": "Lists the required scope, audience, expiry, revocation and audit properties.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "The failure path is a leaked or over-scoped token; shorten lifetime, bind audience and scope, and revoke at the authority.",
-          "reason": "Describes the credential failure and its remediation."
+          "reason": "Describes the credential failure and its remediation.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "A mediated gateway is the alternative when the resource cannot enforce scope or when the client cannot protect a credential.",
-          "reason": "Names the competing mechanism and the conditions that favor it."
+          "reason": "Names the competing mechanism and the conditions that favor it.",
+          "has_binding": true
         }
       }
     },
@@ -197,22 +209,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Multitenant isolation keeps tenant data and effects separate inside a shared application by deriving tenant scope from authenticated context at every access path.",
-          "reason": "Derives tenant scope from authenticated context on every access path."
+          "reason": "Derives tenant scope from authenticated context on every access path.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The tenant identifier must be derived from authentication and authorization, never accepted from an arbitrary caller field alone.",
-          "reason": "Forbids trusting an arbitrary caller-supplied tenant field."
+          "reason": "ASVS 8.4.1 does not require tenant ID derived from authn/authz.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A missing tenant predicate in a query, cache or background task exposes another tenant's records; test indirect paths and enforce the predicate centrally.",
-          "reason": "Names missing predicates in query, cache or background work and requires indirect-path tests and central enforcement."
+          "reason": "ASVS has no missing-tenant-predicate or indirect-path test.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A tenant-per-deployment boundary removes shared-code risk at higher cost; share a deployment only when scoping is enforced consistently across every path.",
-          "reason": "Contrasts tenant-per-deployment isolation with shared deployment scope enforcement."
+          "reason": "ASVS does not compare per-deployment isolation with shared scoping.",
+          "has_binding": false
         }
       }
     },
@@ -251,22 +267,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Distributed tracing reconstructs *a selected execution story*: a request enters a component, starts work, calls another component and may later complete asynchronously.",
-          "reason": "Explains tracing as reconstructing a selected cross-component execution story."
+          "reason": "Explains tracing as reconstructing a selected cross-component execution story.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A trace can illuminate critical-path waiting, retries and failure propagation—but **it is not an authoritative record of every business effect**.",
-          "reason": "States the limit on what a trace may be treated as proving."
+          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A missing span may mean no work occurred, the instrumentation failed, or the sampling policy intentionally discarded it.",
-          "reason": "Names missing-span ambiguity and the instrumentation check."
+          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "For aggregate latency or a discrete business event, metrics or structured logs may be preferable; use tracing when the cross-component path itself is the question.",
-          "reason": "Names metrics/logs and the reversal."
+          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule.",
+          "has_binding": false
         }
       }
     },
@@ -303,22 +323,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Structured logging emits events with stable field names and types so records can be queried and compared without parsing free text.",
-          "reason": "Defines stable field names and types for queryable events."
+          "reason": "Defines stable field names and types for queryable events.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Field names, meaning and redaction rules must be versioned, and sensitive values must be excluded before emission.",
-          "reason": "Requires versioned fields, meaning and redaction before emission."
+          "reason": "Requires versioned fields, meaning and redaction before emission.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter and review field allowlists when adding events.",
-          "reason": "Names schema drift and unredacted fields and requires emitter validation and allowlists."
+          "reason": "Names schema drift and unredacted fields and requires emitter validation and allowlists.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Unstructured text parsed at query time is cheaper to start; adopt structured events when consistent querying, correlation or retention obligations justify the schema.",
-          "reason": "Contrasts unstructured query-time parsing with structured events."
+          "reason": "Contrasts unstructured query-time parsing with structured events.",
+          "has_binding": true
         }
       }
     },
@@ -338,24 +362,28 @@
       "revision": "13bcdf8f66cb9e0e16c1c4224185f81b2398fec2d0fb8fa2b1f62a7fd140458d",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A durable business audit records who attempted or authorized which object mutation and the resulting authoritative state, under a specified tamper and retention policy.",
-          "reason": "Defines the audit record's content and its tamper/retention contract."
+          "reason": "OpenLineage local text is only About page; no audit mutation/state content.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "If legal obligations require atomic audit recording, architect the local commit or durable audit handoff explicitly; arbitrary asynchronous logs are insufficient.",
-          "reason": "States the atomicity precondition when audit recording is mandatory."
+          "reason": "Text has no atomic audit recording or legal-retention rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The correct user outcome may still be committed; a missing log is not proof that booking disappeared.",
-          "reason": "Explains how to interpret audit/telemetry loss."
+          "reason": "Text has no missing-audit consequence or repair path.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "If there is no mandatory forensic retention, costly immutable business audit infrastructure may be unnecessary for ordinary verbose debug logs.",
-          "reason": "Names ordinary debug logs as the alternative and the no-mandatory-retention condition."
+          "reason": "Text has no forensic-retention or debug-log alternative.",
+          "has_binding": false
         }
       }
     },
@@ -393,22 +421,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**.",
-          "reason": "Shows how an objective converts user intents into an error budget and consumption."
+          "reason": "Shows how an objective converts user intents into an error budget and consumption.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot change retrospectively to improve the score.",
-          "reason": "States the required exclusions agreement and the no-retrospective-change rule."
+          "reason": "States the required exclusions agreement and the no-retrospective-change rule.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the service**, excluding 500 deliberate overload rejections before the handler, can report misleading health.",
-          "reason": "Names the misleading denominator and required review."
+          "reason": "Names the misleading denominator and required review.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Metrics or a simpler availability check may be preferable when the user journey is not measurable.",
-          "reason": "Names simpler measurement and the reversal."
+          "reason": "Names simpler measurement and the reversal.",
+          "has_binding": true
         }
       }
     },
@@ -449,24 +481,28 @@
       "revision": "59b5a725916658fd26a0e7feff813f4854be46e878e0bf19ec7f040a71314143",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Synthetic monitoring exercises a representative user journey from outside the service.",
-          "reason": "Defines the mechanism as an external representative-journey probe."
+          "reason": "SRE chapter has no synthetic probes or external journeys.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "It needs a safe identity, a journey definition, location and frequency choices and a rule that separates probe failure from product failure.",
-          "reason": "Lists the required preconditions and the probe/product failure separation rule."
+          "reason": "Chapter has no probe identity, location or frequency rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The failure path is a probe that cannot authenticate or that tests only a trivial path; rotate credentials, cover the critical journey and triage probe noise separately.",
-          "reason": "Describes probe failure modes and their remediation."
+          "reason": "Chapter has no probe-failure or credential remediation path.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Real-user monitoring is the alternative when actual traffic provides enough coverage without synthetic load.",
-          "reason": "Names a competing mechanism and the coverage condition that favors it."
+          "reason": "Chapter has no real-user-monitoring comparison.",
+          "has_binding": false
         }
       }
     },
@@ -501,22 +537,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Health checks answer different questions: liveness asks whether the process should be restarted, readiness asks whether it should receive traffic, and startup asks whether initialization has completed.",
-          "reason": "Explains the distinct liveness, readiness and startup decisions."
+          "reason": "Explains the distinct liveness, readiness and startup decisions.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "Each needs its own endpoint, timeout and failure action.",
-          "reason": "Requires separate endpoints, timeouts and failure actions."
+          "reason": "Requires separate endpoints, timeouts and failure actions.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "The failure path is a false restart or traffic sent to an unready instance; bound probe timeouts, require consecutive failures and keep shared-dependency checks out of liveness.",
-          "reason": "Describes false-restart and unready-traffic failures with containment measures."
+          "reason": "Describes false-restart and unready-traffic failures with containment measures.",
+          "has_binding": true
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "External journey monitoring is the alternative when process-local probes cannot observe the user-visible contract.",
-          "reason": "Names the alternative and the observability condition that favors it."
+          "reason": "Kubernetes page has only container-local probes, no external journey.",
+          "has_binding": false
         }
       }
     }

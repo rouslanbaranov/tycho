@@ -9739,22 +9739,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Every request is authenticated and authorized at the resource boundary using principal identity, workload/device posture, policy and least privilege.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V8 Authorization",
+            "quote": "Verify that adaptive security controls based on a consumer’s environmental and contextual attributes (such as time of day, location, IP address, or device) are implemented for authentication and authorization decisions, as defined in the application’s documentation. These controls must be applied when the consumer tries to start a new session and also during an existing session.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Network location is not trust; a valid token is not object permission.",
-          "reason": "States the no-implicit-trust rule and requires denied-path testing."
+          "reason": "States the no-implicit-trust rule and requires denied-path testing.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V8 Authorization",
+            "quote": "Verify that access to administrative interfaces incorporates multiple layers of security, including continuous consumer identity verification, device security posture assessment, and contextual risk analysis, ensuring that network location or trusted endpoints are not the sole factors for authorization even though they may reduce the likelihood of unauthorized access.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Policy gaps, legacy bypass paths and identity-provider outages are common.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V8 Authorization",
+            "quote": "Verify that changes to values on which authorization decisions are made are applied immediately. Where changes cannot be applied immediately, (such as when relying on data in self‑contained tokens), there must be mitigating controls to alert when a consumer performs an action when they are no longer authorized to do so and revert the change. Note that this alternative would not mitigate information leakage.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Network segmentation, a VPN or mTLS-only service identity may be preferable when legacy components cannot enforce per-request identity or when policy-evaluation cost exceeds the threat reduction.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V15 Secure Coding and Architecture",
+            "quote": "This could include techniques such as sandboxing, encapsulation, containerization or network level isolation to delay and deter attackers who compromise one part of an application from pivoting elsewhere in the application.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         }
       },
       "decision_evidence": {
@@ -9796,22 +9824,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Least privilege grants each principal only the permissions its task needs, limited in resource scope, action and time.",
-          "reason": "Defines task-scoped permissions bounded by resource, action and time."
+          "reason": "Defines task-scoped permissions bounded by resource, action and time.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V13 Configuration",
+            "quote": "Verify that communications between backend application components, including local or operating system services, APIs, middleware, and data layers, are performed with accounts assigned the least necessary privileges.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Every credential must have a bounded scope, an owner and a revocation path that does not depend on the compromised principal.",
-          "reason": "Requires bounded scope, ownership and a revocation path independent of the principal."
+          "reason": "Requires bounded scope, ownership and a revocation path independent of the principal.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V10 OAuth and OIDC",
+            "quote": "Verify that refresh tokens and reference access tokens can be revoked by an authorized user using the authorization server user interface, to mitigate the risk of malicious clients or stolen tokens.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Permission creep and long-lived credentials widen the blast radius without any visible incident; review grants on a schedule and prefer short-lived scoped credentials.",
-          "reason": "Names permission creep and long-lived credentials and requires scheduled review and short-lived credentials."
+          "reason": "Names permission creep and long-lived credentials and requires scheduled review and short-lived credentials.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V13 Configuration",
+            "quote": "Authentication must use individual service accounts, short‑term tokens, or certificate‑based authentication and not unchanging credentials such as passwords, API keys, or shared accounts with privileged access.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Coarse roles are simpler to administer for small stable systems; narrow them once measured access reviews or incident impact justify the overhead.",
-          "reason": "Contrasts coarse roles for small stable systems with measured narrowing."
+          "reason": "ASVS Appendix D only recommends role allocation; no coarse-vs-narrow trade-off."
         }
       },
       "decision_evidence": {
@@ -10082,22 +10131,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Multitenant isolation keeps tenant data and effects separate inside a shared application by deriving tenant scope from authenticated context at every access path.",
-          "reason": "Derives tenant scope from authenticated context on every access path."
+          "reason": "Derives tenant scope from authenticated context on every access path.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V8 Authorization",
+            "quote": "Verify that multi‑tenant applications use cross‑tenant controls to ensure consumer operations will never affect tenants with which they do not have permissions to interact.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The tenant identifier must be derived from authentication and authorization, never accepted from an arbitrary caller field alone.",
-          "reason": "Forbids trusting an arbitrary caller-supplied tenant field."
+          "reason": "ASVS 8.4.1 does not require tenant ID derived from authn/authz."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A missing tenant predicate in a query, cache or background task exposes another tenant's records; test indirect paths and enforce the predicate centrally.",
-          "reason": "Names missing predicates in query, cache or background work and requires indirect-path tests and central enforcement."
+          "reason": "ASVS has no missing-tenant-predicate or indirect-path test."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A tenant-per-deployment boundary removes shared-code risk at higher cost; share a deployment only when scoping is enforced consistently across every path.",
-          "reason": "Contrasts tenant-per-deployment isolation with shared deployment scope enforcement."
+          "reason": "ASVS does not compare per-deployment isolation with shared scoping."
         }
       },
       "decision_evidence": {
@@ -10115,7 +10171,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -11137,7 +11193,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "keep",
       "rationale": "Tenant-based and multitenant isolation have dedicated bounded units on the isolation page."
     }
@@ -11150,11 +11206,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 117,
-    "invariant_supported": 61,
-    "failure_recovery_supported": 56,
-    "alternative_supported": 64,
-    "technical_partial_bounded": 60,
-    "technical_partial": 85,
+    "invariant_supported": 60,
+    "failure_recovery_supported": 55,
+    "alternative_supported": 62,
+    "technical_partial_bounded": 59,
+    "technical_partial": 86,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
