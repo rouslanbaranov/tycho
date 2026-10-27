@@ -1,6 +1,6 @@
 # Owner acceptance package — four sufficient entries
 
-Status: **pending owner decision**. This package is not acceptance.
+Status: **accepted by owner on 2026-10-27** for all four entries.
 
 ## Entries
 
