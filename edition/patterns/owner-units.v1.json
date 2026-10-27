@@ -5419,22 +5419,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Let N be the replica count, W the acknowledgements required for a write and R the responses required for a read.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Tunable Consistency",
+            "quote": "Cassandra’s consistency levels are a version of Dynamo’s R + W > N consistency mechanism where operators could configure the number of nodes that must participate in reads ( R ) and writes ( W ) to be larger than the replication factor ( N ).",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "During a membership change, require the old and new quorums to overlap",
-          "reason": "States the invariant."
+          "reason": "States the invariant.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Picking Consistency Levels",
+            "quote": "If QUORUM is used for both writes and reads, at least one of the replicas is guaranteed to participate in both the write and the read request, which in turn guarantees that the quorums will overlap and the write will be visible to the read.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Overlap is necessary but not sufficient for freshness: choose the response with the highest version and repair replicas behind it.",
-          "reason": "Names stale-read failure and version/read-repair recovery."
+          "reason": "Names stale-read failure and version/read-repair recovery.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Replica Synchronization",
+            "quote": "As replicas in Cassandra can accept mutations independently, it is possible for some replicas to have newer data than others. Cassandra has many best-effort techniques to drive convergence of replicas including Replica read repair <read-repair> in the read path and Hinted handoff <hints> in the write path.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Use this when the chosen W/R latency fits and the membership service is trustworthy.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Picking Consistency Levels",
+            "quote": "If this type of strong consistency isn’t required, lower consistency levels like LOCAL_ONE or ONE may be used to improve throughput, latency, and availability.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          }
         }
       },
       "decision_evidence": {
@@ -5477,24 +5505,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An index table is an application-owned lookup table that maps a query key to a primary key or row locator.",
-          "reason": "Defines the mechanism."
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Every lookup row must resolve to the current base row",
-          "reason": "States the invariant."
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows are common design-time failure modes",
-          "reason": "Names failure and recovery."
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A native secondary index, a materialized view or a query-time join may be preferable when the primary store already serves the access path.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
         }
       },
       "decision_evidence": {
@@ -5512,7 +5540,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level anchor; covers index lifecycle, not the access-path catalogue."
     },
@@ -9966,12 +9994,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 136,
-    "invariant_supported": 107,
-    "failure_recovery_supported": 106,
-    "alternative_supported": 116,
-    "technical_partial_bounded": 106,
-    "technical_partial": 39,
+    "mechanism_supported": 135,
+    "invariant_supported": 106,
+    "failure_recovery_supported": 105,
+    "alternative_supported": 115,
+    "technical_partial_bounded": 105,
+    "technical_partial": 40,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
