@@ -122,7 +122,9 @@ both ends of a service connection with automatically rotated credentials. Secure
 the target service.
 
 Expired or shared credentials break authentication. Istio monitors workload certificate expiry and
-periodically rotates certificates and keys. Permissive mTLS mode accepts both plaintext and mutual TLS traffic at the same time.
+periodically rotates certificates and keys. Permissive mTLS mode accepts both mutual TLS and plain text traffic; it is most useful
+during migrations when workloads without a sidecar cannot use mutual TLS, and should switch
+to STRICT once workloads are migrated with sidecar injection.
 
 **Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
 authenticates the workload, not every operation it requests. Certificate issuance availability

@@ -51,8 +51,8 @@ automated; policy can bind identity to service.
 **Hard contraindications.** Reject when network location is the only available identity
 or when rotation cannot be automated.
 
-**Competing alternative.** Permissive mTLS mode accepts both plaintext and mutual TLS traffic
-at the same time.
+**Competing alternative.** Permissive mTLS accepts plain text and mutual TLS during
+migration, then switches to STRICT once workloads have sidecars.
 
 **Failure and recovery.** Certificate expiry must be monitored; rotate certificates and
 keys periodically.
