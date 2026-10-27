@@ -108,8 +108,11 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
     page = route_docs.get(candidate["owner_path"])
     page_sha = page["sha256"] if page else None
     re_review = record.get("re_review") or {}
+    delta = record.get("delta_review") or {}
     rebind = rebind or {}
     reviewed_sha = re_review.get("reviewed_page_sha256") or page_sha
+    if delta.get("verdict") == "pass" and delta.get("page_sha256"):
+        reviewed_sha = delta["page_sha256"]
     disk_sha = None
     if page is not None:
         path = ROOT / candidate["owner_path"]
@@ -139,7 +142,6 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         status = "reviewed-by-independent-agent"
     else:
         status = "ready-for-independent-rereview"
-    delta = record.get("delta_review") or {}
     current_verdict = delta.get("verdict") or record["verdict"]
     return {
         "pattern_id": candidate["pattern_id"],
