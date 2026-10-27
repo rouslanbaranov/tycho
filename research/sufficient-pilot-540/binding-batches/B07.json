@@ -1,0 +1,447 @@
+{
+  "batch": "B07",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.command-query-responsibility-segregation-cqrs",
+      "catalog_name": "Command Query Responsibility Segregation (CQRS)",
+      "owner_path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "owner_heading": "Command Query Responsibility Segregation (CQRS)",
+      "source_id": "src.fowler-cqrs",
+      "ledger_record": "read.fowler-cqrs.2026-10-21",
+      "url": "https://martinfowler.com/bliki/CQRS.html",
+      "unit": "CQRS — complete public article",
+      "sections": [
+        "CQRS",
+        "When to use it",
+        "Further Reading"
+      ],
+      "revision": "11cf46ce308805e94e4b110016b09d004fbf8c47669a7041080f661c798b2f29",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "The write owner accepts command admission, invariant checks and rejection semantics.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Neither side may claim authority merely because it can read the other's tables.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Apply projection events idempotently: commit the derived row and its cursor atomically, and disable outbound side effects during rebuild.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Revisit the separation when command contention, projection lag or rebuild duration outweighs the read benefit, and prefer one model when that case cannot be made.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.event-sourcing",
+      "catalog_name": "Event Sourcing",
+      "owner_path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "owner_heading": "2. Event sourcing: what becomes authoritative?",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-event-sourcing.2026-10-21",
+      "url": "https://microservices.io/patterns/data/event-sourcing.html",
+      "unit": "Event Sourcing — pattern page",
+      "sections": [
+        "Pattern: Event sourcing",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Example",
+        "Resulting context",
+        "Related patterns",
+        "See also"
+      ],
+      "revision": "aade58421e5ad48ba8092b614a33c6e9efc34389bcde5429a4b045322a6f4edb",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "In event sourcing, a durable append-only record of domain facts becomes an authoritative input to reconstruct the present state.",
+          "reason": "Defines the append-only event history and replay reconstruction."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Rebuilds must check offset continuity and event schema compatibility.",
+          "reason": "States a must-hold rebuild precondition for snapshots and replay."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.",
+          "reason": "Identifies replay divergence and prescribes versioned handlers and invariant rules to contain it."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "State-stored CRUD with an audit log, CDC/outbox or event notification may be preferable when full replay is unnecessary, event-schema ownership is absent or external side effects cannot be isolated.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.domain-events",
+      "catalog_name": "Domain Events",
+      "owner_path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "owner_heading": "Domain Events",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-domain-event.2026-10-21",
+      "url": "https://microservices.io/patterns/data/domain-event.html",
+      "unit": "Domain Events — pattern page",
+      "sections": [
+        "Context",
+        "Problem",
+        "Solution",
+        "Related patterns",
+        "See also"
+      ],
+      "revision": "1993222e69c51b0d383a7462d5225c9d6635be957ff0547708c7422112938536",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A domain event publishes a committed business fact to other owners.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Use it when the fact has identity, version and causation",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Duplicate, late, out-of-order and schema-evolved events are normal.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A synchronous call or command message is preferable when event fan-out and eventual consistency exceed the decoupling benefit.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.saga",
+      "catalog_name": "Saga",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "owner_heading": "Saga",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-saga.2026-10-21",
+      "url": "https://microservices.io/patterns/data/saga.html",
+      "unit": "Saga — pattern page",
+      "sections": [
+        "Pattern: Saga",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Example: Choreography-based saga",
+        "Example: Orchestration-based saga",
+        "Resulting context",
+        "Related patterns",
+        "Learn more",
+        "Example code"
+      ],
+      "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A saga is a long-running business protocol across independent owners.",
+          "reason": "Defines a long-running protocol across independent owners."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
+          "reason": "Requires one authority and one effect identity per step without atomicity or rollback."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A lost acknowledgment is an unknown outcome, not a failure, and a failed compensation remains a repair item.",
+          "reason": "Treats a lost acknowledgment as unknown and failed compensation as a repair item."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Use one local transaction when all effects fit one owner, or two-phase commit when participants can hold prepared state and atomic visibility is mandatory.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.saga-choreography",
+      "catalog_name": "Saga Choreography",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "owner_heading": "Saga Choreography",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-saga.2026-10-21",
+      "url": "https://microservices.io/patterns/data/saga.html",
+      "unit": "Saga — pattern page",
+      "sections": [
+        "Pattern: Saga",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Example: Choreography-based saga",
+        "Example: Orchestration-based saga",
+        "Resulting context",
+        "Related patterns",
+        "Learn more",
+        "Example code"
+      ],
+      "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Participants react to one another's events; the protocol is distributed across those reactions, not held in a central state machine.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs correlation identity, deduplication, dead-letter handling, versioned event contracts and a per-step timeout policy",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Long chains, hidden coupling and conflicting compensations are the failure modes; a trace shows correlation, not durable business truth.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Orchestration or a single local transaction may be preferable when steps need central visibility, when compensation ordering must be centrally enforced, or when compensations cannot be made safe.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.saga-orchestration",
+      "catalog_name": "Saga Orchestration",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "owner_heading": "Saga Orchestration",
+      "source_id": "src.temporal",
+      "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+      "url": "https://docs.temporal.io/workflows",
+      "unit": "Temporal Workflow — durable orchestration",
+      "sections": [
+        "Temporal Workflow",
+        "Intro to Workflows",
+        "How Workflow replay works",
+        "Resuming a Workflow"
+      ],
+      "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An orchestrator persists a state machine and sends commands to participants.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Its guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration.",
+          "reason": "Bounds guarantees by versioned state, activity semantics, timers and recovery configuration."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Operational failure appears as a lost coordinator, a history that cannot advance, or an activity applied twice.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Prefer one transaction when every effect shares an owner and a database.",
+          "reason": "Names a single transaction when every effect shares one owner and database."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.compensating-transaction",
+      "catalog_name": "Compensating Transaction",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "owner_heading": "Compensating Transaction",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-saga.2026-10-21",
+      "url": "https://microservices.io/patterns/data/saga.html",
+      "unit": "Saga — pattern page",
+      "sections": [
+        "Pattern: Saga",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Example: Choreography-based saga",
+        "Example: Orchestration-based saga",
+        "Resulting context",
+        "Related patterns",
+        "Learn more",
+        "Example code"
+      ],
+      "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A compensating transaction is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail.",
+          "reason": "Defines compensation as a new action, not rollback."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The domain must determine which actions are reversible and which require manual reconciliation.",
+          "reason": "Leaves reversibility and manual reconciliation to the domain."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A release itself can fail; a delivered message cannot be un-delivered; the kit may already have been handed to a participant.",
+          "reason": "Names irreversible delivery and already-released artifacts as repair items."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Orchestration or a single local transaction may be preferable when steps need central visibility, when compensation ordering must be centrally enforced, or when compensations cannot be made safe.",
+          "reason": "Names the alternative and reversal condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.transactional-outbox",
+      "catalog_name": "Transactional Outbox",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+      "owner_heading": "Transactional Outbox",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-outbox.2026-10-21",
+      "url": "https://microservices.io/patterns/data/transactional-outbox.html",
+      "unit": "Transactional Outbox — pattern page",
+      "sections": [
+        "Pattern: Transactional outbox",
+        "Also known as",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Result context",
+        "Related patterns",
+        "Learn more"
+      ],
+      "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An outbox is a durable publication queue inside the state store.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The business row and an intent row commit together",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A crash after publish before completion duplicates",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Use an outbox when the lost-publication and duplicate-effect risk justifies relay complexity.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.transactional-inbox",
+      "catalog_name": "Transactional Inbox",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md",
+      "owner_heading": "3. Inbox and consumer-local atomicity",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-idempotent-consumer.2026-10-21",
+      "url": "https://microservices.io/patterns/communication-style/idempotent-consumer.html",
+      "unit": "Idempotent Consumer — pattern page",
+      "sections": [
+        "Pattern: Idempotent Consumer",
+        "Context",
+        "Problem",
+        "Solution",
+        "See also"
+      ],
+      "revision": "3edddaa1959c70dbd9953648e54759b5a2bc167cd121805124e5faafa0eca40f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
+          "reason": "Persists processed-event identity and business effect in one local transaction."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
+          "reason": "Scopes identity by subscriber and event/effect."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "a notification consumer writes a processed marker then crashes before making an external non-idempotent send. On redelivery it may falsely skip the missing send. Reversing the order may send twice.",
+          "reason": "Names marker-before-send crash windows that can skip or duplicate a send."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A unique constraint or conditional insert on effect identity, a producer outbox, or an idempotent downstream API may be preferable when the inbox table and retention cost exceed the duplicate-impact risk.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.idempotency-key",
+      "catalog_name": "Idempotency Key",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+      "owner_heading": "Idempotency Key",
+      "source_id": "src.ietf-idempotency-key",
+      "ledger_record": "read.batch2-ietf.2026-10-21",
+      "url": "https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt",
+      "unit": "Idempotency-Key HTTP Header Field — IETF draft",
+      "sections": [
+        "Introduction",
+        "Notational Conventions",
+        "The Idempotency-Key HTTP Request Header Field",
+        "Syntax",
+        "Uniqueness of Idempotency Key",
+        "Idempotency Key Validity and Expiry",
+        "Idempotency Fingerprint",
+        "Responsibilities",
+        "Client",
+        "Resource",
+        "Idempotency Enforcement",
+        "Error Handling",
+        "IANA Considerations",
+        "The Idempotency-Key HTTP Request Header Field (IANA)",
+        "Implementation Status",
+        "Implementing the Concept",
+        "Security Considerations",
+        "Examples",
+        "References",
+        "Normative References",
+        "Informative References",
+        "Appendix A. Changes from Draft-06",
+        "Acknowledgments",
+        "Authors' Addresses"
+      ],
+      "revision": "956a446923d6b6cd0ab72b0dbc552937c5b0fcf443da6b47c055d17dcdfa542f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The owner also names the conflict response and the record a support engineer may inspect.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Some effects can rely on a uniqueness rule, a compare-and-set or one writer instead of a key store.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    }
+  ]
+}
