@@ -527,6 +527,7 @@ def validate_data(data, root=ROOT):
             "units": counts["owner_units"], "shared_pages": counts["shared_pages"],
             "bounded": counts["technical_partial_bounded"],
             "partial": counts["technical_partial"],
+            "sufficient": counts["technical_sufficient"],
             "decisions": decisions,
             "scope": "section-level ownership evidence; not independent review"}
 

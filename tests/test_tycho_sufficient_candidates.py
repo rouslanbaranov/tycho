@@ -22,9 +22,14 @@ class SufficientCandidateTests(unittest.TestCase):
         self.assertEqual(data["summary"]["entries"], 145)
         self.assertEqual(data["summary"]["candidates"], 145)
         self.assertEqual(sum(data["summary"]["by_status"].values()), 145)
-        self.assertTrue(all(row["technical_coverage"] in ("partial-bounded", "partial")
+        promoted = {row["pattern_id"] for row in json.loads(
+            (ROOT / "edition/patterns/sufficient-promotions.v1.json").read_text()
+        )["promotions"]}
+        self.assertTrue(all(row["technical_coverage"] in ("partial-bounded", "partial",
+                                                            "sufficient")
                             for row in data["entries"]))
-        self.assertEqual(data["summary"]["by_status"].get("sufficient", 0), 0)
+        self.assertEqual({row["pattern_id"] for row in data["entries"]
+                          if row["technical_coverage"] == "sufficient"}, promoted)
         gateway = next(row for row in data["entries"]
                        if row["pattern_id"] == "tycho.pattern.api-gateway")
         self.assertEqual(gateway["review"]["verdict"], "pass")
