@@ -50,3 +50,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 service discovery | reject | `2026-10-27-service-discovery-review-codex.md` | `ff80611cb796877c1a04f57f32c2250436c5a54de1ae20206997d615159da716` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 parallel run | reject | `2026-10-27-parallel-run-review-codex.md` | `d298b3529aa2136b1ad73360cd367bcc6dcf1c86c027bf789d867917e607bf13` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 parallel run round 3 | pass | `2026-10-27-parallel-run-review3-codex.md` | `84904118869e13d928eb699301eb53f4b2360e7b3fde5ef29ff144e0644e67ca` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 async request-reply | reject | `2026-10-27-async-request-reply-review-codex.md` | `05cb7aca247305bab1e5fcb8fefc0c95f347416c0990ea5f99d04b53e58a616c` |
