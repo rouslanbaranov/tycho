@@ -1,0 +1,466 @@
+{
+  "batch": "B03",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.layered-architecture",
+      "catalog_name": "Layered Architecture",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+      "owner_heading": "Layered Architecture",
+      "source_id": "src.fowler-layering",
+      "ledger_record": "read.fowler-layering.2026-10-21",
+      "url": "https://martinfowler.com/bliki/PresentationDomainDataLayering.html",
+      "unit": "Presentation Domain Data Layering — article",
+      "sections": [
+        "Presentation Domain Data Layering",
+        "Further Reading",
+        "Acknowledgements",
+        "Notes"
+      ],
+      "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Layering is a dependency rule: presentation may call application, application may call domain, and domain calls neither.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The owner of each layer names its public surface and the test that catches a bypass.",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Transaction boundaries that span layers and anemic domain models are the failure modes",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Choose hexagonal ports or a clear modular monolith when explicit substitution or module ownership adds more value than layer count.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.modular-monolith",
+      "catalog_name": "Modular Monolith",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+      "owner_heading": "Modular Monolith",
+      "source_id": "src.monolith-first",
+      "ledger_record": "read.monolith-first.2026-10-21",
+      "url": "https://martinfowler.com/bliki/MonolithFirst.html",
+      "unit": "Monolith First — article",
+      "sections": [
+        "Monolith First",
+        "Microservices Guide",
+        "Further Reading",
+        "Notes",
+        "Acknowledgements"
+      ],
+      "revision": "722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Modules own their rules, data and contracts.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The deployable is one unit, but each module has a named owner, an allowed-call surface and a dependency test that fails a bypass.",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Synchronous call chains across modules and one deployment blast radius are the operational risk",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Choose services or a layered structure only when module enforcement costs more than the coordination benefit.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.microservices-architecture",
+      "catalog_name": "Microservices Architecture",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md",
+      "owner_heading": "Microservices Architecture",
+      "source_id": "src.microservices",
+      "ledger_record": "read.microservices-article.2026-10-21",
+      "url": "https://martinfowler.com/articles/microservices.html",
+      "unit": "Microservices — architectural style and trade-offs",
+      "sections": [
+        "Microservices",
+        "Characteristics of a Microservice Architecture",
+        "Componentization via Services",
+        "Organized around Business Capabilities",
+        "How big is a microservice?",
+        "Products not Projects",
+        "Smart endpoints and dumb pipes",
+        "Microservices and SOA",
+        "Decentralized Governance",
+        "Many languages, many options",
+        "Decentralized Data Management",
+        "Battle-tested standards and enforced standards",
+        "Infrastructure Automation",
+        "Make it easy to do the right thing",
+        "Design for failure",
+        "The circuit breaker and production ready code",
+        "Synchronous calls considered harmful",
+        "Evolutionary Design",
+        "Are Microservices the Future?",
+        "Microservice Trade-Offs",
+        "Footnotes",
+        "References",
+        "Further Reading",
+        "Significant Revisions"
+      ],
+      "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A microservice owner accepts a deployable, its data and the pager that follows both.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Independence is credible only when the team can release without coordinating another service's schedule.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Retried commands carry a stable idempotency key or a natural unique effect, and the owner records the outcome.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "One team owning every invariant may do better with a modular monolith than with remote boundaries.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.service-oriented-architecture-soa",
+      "catalog_name": "Service-Oriented Architecture (SOA)",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md",
+      "owner_heading": "Service-Oriented Architecture (SOA)",
+      "source_id": "src.microservices",
+      "ledger_record": "read.microservices-article.2026-10-21",
+      "url": "https://martinfowler.com/articles/microservices.html",
+      "unit": "Microservices — architectural style and trade-offs",
+      "sections": [
+        "Microservices",
+        "Characteristics of a Microservice Architecture",
+        "Componentization via Services",
+        "Organized around Business Capabilities",
+        "How big is a microservice?",
+        "Products not Projects",
+        "Smart endpoints and dumb pipes",
+        "Microservices and SOA",
+        "Decentralized Governance",
+        "Many languages, many options",
+        "Decentralized Data Management",
+        "Battle-tested standards and enforced standards",
+        "Infrastructure Automation",
+        "Make it easy to do the right thing",
+        "Design for failure",
+        "The circuit breaker and production ready code",
+        "Synchronous calls considered harmful",
+        "Evolutionary Design",
+        "Are Microservices the Future?",
+        "Microservice Trade-Offs",
+        "Footnotes",
+        "References",
+        "Further Reading",
+        "Significant Revisions"
+      ],
+      "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "SOA publishes capabilities as governed service contracts and routes consumers through a mediation layer.",
+          "reason": "Defines the mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A service contract must declare its capability, message semantics, version and consumer obligations.",
+          "reason": "States the invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "a centralized bus is a shared bottleneck and single point that must be sized and failed over.",
+          "reason": "Names failure and recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Microservices may be preferable when capabilities map to independent product teams; a modular monolith when one ownership boundary suffices.",
+          "reason": "Names the alternative and reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.hexagonal-architecture-ports-and-adapters",
+      "catalog_name": "Hexagonal Architecture / Ports and Adapters",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+      "owner_heading": "Hexagonal Architecture and Ports and Adapters",
+      "source_id": "src.aws-hexagonal",
+      "ledger_record": "read.aws-hexagonal.2026-10-21",
+      "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html",
+      "unit": "Hexagonal architecture pattern — AWS Prescriptive Guidance",
+      "sections": [
+        "Hexagonal architecture pattern",
+        "Intent",
+        "Motivation",
+        "Applicability",
+        "Issues and considerations",
+        "Implementation",
+        "High-level architecture",
+        "Implementation using AWS services",
+        "Sample code",
+        "Domain model",
+        "Input port",
+        "DynamoDB adapter class",
+        "Unit testing",
+        "GitHub repository",
+        "Related content",
+        "Videos"
+      ],
+      "revision": "1f1251e05084ad30f148d8f9b5491a56a9d1261513d0f6c36fc50045d721b17b",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A port names the capability the application needs; an adapter maps a technology to it.",
+          "reason": "Shows the port contract with two interchangeable adapters."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Domain code must not depend on adapter or technology types; dependencies point inward.",
+          "reason": "States the domain invariant that adapter substitution must preserve."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Mapping layers can hide latency and translate adapter errors inconsistently; contract tests and explicit error translation keep the boundary honest.",
+          "reason": "Names mapping-layer latency and inconsistent adapter-error translation with contract tests/error translation as recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A layered or modular-monolith structure can be simpler when one persistence choice is stable.",
+          "reason": "Names simple direct persistence and the condition that removes the need for an adapter hierarchy."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.clean-onion-architecture",
+      "catalog_name": "Clean / Onion Architecture",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+      "owner_heading": "Clean-Onion Architecture",
+      "source_id": "src.clean-architecture",
+      "ledger_record": "read.clean-architecture.2026-10-21",
+      "url": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html",
+      "unit": "The Clean Architecture — article",
+      "sections": [
+        "The Clean Architecture",
+        "The Dependency Rule",
+        "Entities",
+        "Use Cases",
+        "Interface Adapters",
+        "Frameworks and Drivers.",
+        "Only Four Circles?",
+        "Crossing boundaries.",
+        "What data crosses the boundaries.",
+        "Conclusion"
+      ],
+      "revision": "ca86d5653333b894f0a525b2bc96e4a31e013138a8096d27742817296877554d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Clean and onion styles place domain rules at the centre and let source dependencies point inward only, with application services coordinating use cases and outer layers supplying technology adapters. The dependency rule, not the number of drawn rings, is the mechanism.",
+          "reason": "Defines inward source dependencies and outer technology adapters."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "No domain module may import a framework, transport or storage dependency, and an automated build check must enforce the direction rather than a diagram.",
+          "reason": "Requires no domain import of framework, transport or storage and an automated direction check."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Convenience imports erode the boundary until the domain must change for a technology reason; the remedy is an enforceable dependency test and a deliberate adapter, not another layer name.",
+          "reason": "Names convenience imports as erosion and requires a dependency test and adapter."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Hexagonal ports and adapters expresses the same inward rule with explicit application ports; prefer the simpler layering when the port indirection adds no tested change benefit.",
+          "reason": "Contrasts explicit hexagonal ports with simpler layering."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.domain-driven-design-bounded-context",
+      "catalog_name": "Domain-Driven Design / Bounded Context",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+      "owner_heading": "Domain-Driven Design and Bounded Context",
+      "source_id": "src.fowler-bounded-context",
+      "ledger_record": "read.fowler-bounded-context.2026-10-21",
+      "url": "https://martinfowler.com/bliki/BoundedContext.html",
+      "unit": "Bounded Context — article",
+      "sections": [
+        "Bounded Context",
+        "Further Reading",
+        "Notes"
+      ],
+      "revision": "5f6bbdd9567aeb45cb81d536a9e01a7636f2792ba41fa0abeff5603b74d46184",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A bounded context has one accountable model owner and one accepted vocabulary.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A named domain expert co-owns that vocabulary and arbitrates disputed meanings.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Model behavior changes are reviewed with the domain expert before a boundary moves.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Reopen the boundary when a shared term changes meaning, a translation gains a second owner or releases become unavoidably coupled.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.database-per-service",
+      "catalog_name": "Database per Service",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/ownership-isolation.md",
+      "owner_heading": "Database per Service",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.microservices-database-per-service.2026-10-21",
+      "url": "https://microservices.io/patterns/data/database-per-service.html",
+      "unit": "Database per Service — pattern page",
+      "sections": [
+        "Pattern: Database per service",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Example",
+        "Resulting context",
+        "Related patterns"
+      ],
+      "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Each service owns its schema and storage, and other services reach that data only through the owner's contract or published events. The boundary is an ownership rule even when several schemas share one physical server.",
+          "reason": "Defines service-owned schema and storage with access through contract or events."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Only the owning service writes its records, and no critical-path query joins another service's tables without an explicit contract.",
+          "reason": "Requires only the owner to write and forbids undeclared cross-service joins."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Dual writes, stale replicas and cross-service queries are common; use an outbox or idempotent reconciliation for cross-service effects and verify replica freshness before joining.",
+          "reason": "Names dual writes, stale replicas and cross-service queries with outbox/reconciliation."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A shared database with enforced module ownership is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost.",
+          "reason": "Contrasts a shared database with enforced module ownership."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.self-contained-service",
+      "catalog_name": "Self-Contained Service",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md",
+      "owner_heading": "Self-Contained Service",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.microservices-self-contained.2026-10-21",
+      "url": "https://microservices.io/patterns/decomposition/self-contained-service.html",
+      "unit": "Self-contained Service — pattern page",
+      "sections": [
+        "Self-contained service",
+        "Context",
+        "Problem",
+        "Forces",
+        "Solution",
+        "Example",
+        "Resulting Context",
+        "Related patterns"
+      ],
+      "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A self-contained service completes a request using its own state and a bounded set of dependencies, instead of requiring a caller to coordinate several owners for one user-visible outcome.",
+          "reason": "Defines local state plus a bounded dependency set for one request."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The service contract must state which dependencies are required, which are optional, and what response is valid when an optional dependency is unavailable.",
+          "reason": "Requires the contract to declare required, optional and degraded responses."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Hidden shared state or a chatty dependency chain turns an apparently local request into a multi-owner transaction; dependency and latency traces reveal the undeclared coupling.",
+          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "An orchestrating service or backend for frontend can coordinate owners explicitly; accept that composition when the workflow genuinely spans separate authorities and the coordinator's failure behaviour is designed.",
+          "reason": "Names an orchestrator or backend for frontend with explicit coordination."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.sidecar",
+      "catalog_name": "Sidecar",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+      "owner_heading": "Sidecar",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-sidecar.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar",
+      "unit": "Sidecar — pattern page",
+      "sections": [
+        "Sidecar pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next steps",
+        "Related resource"
+      ],
+      "revision": "cf95d2673c75ee9cad0233e9ec615f739265ca8e4f7ebea046334d326f86126d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A sidecar runs as a helper process or container beside each service instance and supplies networking, policy or telemetry behaviour without changing the application image.",
+          "reason": "Defines a per-instance helper for networking, policy or telemetry."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "its lifecycle and configuration must have an owner",
+          "reason": "Requires named lifecycle and configuration ownership."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must include it, and the fail-open or fail-closed choice must be tested.",
+          "reason": "Names missing or misconfigured sidecars and requires readiness and fail-mode tests."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A shared proxy or an in-process library provides the same control without per-instance overhead; choose a sidecar when per-instance isolation or independent upgrade matters.",
+          "reason": "Contrasts a shared proxy or in-process library."
+        }
+      }
+    }
+  ]
+}

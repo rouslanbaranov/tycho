@@ -1,0 +1,92 @@
+{
+  "batch": "B04",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.ambassador",
+      "catalog_name": "Ambassador",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+      "owner_heading": "Ambassador",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-ambassador.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/ambassador",
+      "unit": "Ambassador — pattern page",
+      "sections": [
+        "Ambassador pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next step"
+      ],
+      "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own discovery, TLS identity, retries, timeouts and telemetry away from the application.",
+          "reason": "Defines the outbound-brokering role and the concerns it can own."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs a clear data-plane owner, a configuration path and a failure policy for the proxy itself.",
+          "reason": "States the ownership, configuration and failure-policy preconditions."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is a stale proxy configuration or a proxy that outlives its control plane; test configuration rollback and keep a direct-path recovery.",
+          "reason": "Names stale configuration and proxy/control-plane divergence, with rollback and direct-path recovery."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A shared gateway is the alternative when the concern is ingress rather than per-client egress.",
+          "reason": "Names a competing mechanism and the condition that reverses the choice."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.anti-corruption-layer",
+      "catalog_name": "Anti-Corruption Layer",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+      "owner_heading": "Anti-Corruption Layer",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-acl.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer",
+      "unit": "Anti-corruption Layer — pattern page",
+      "sections": [
+        "Anti-Corruption Layer pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next steps",
+        "Related resources"
+      ],
+      "revision": "8fe5c77f698e88d66cb178ddb3e62fd5a65f37f299bd95fd52ccd1adf9098bec",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An anti-corruption layer is a translation boundary that keeps an external or legacy model from becoming the local authority.",
+          "reason": "Shows semantic translation that must preserve or reject meaning rather than map names."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Every mapping needs version pinning and contract tests for lossy fields, plus a rejection path for values with no local meaning.",
+          "reason": "States the must-hold translation constraint."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A dual write or an unknown external outcome retains the correlation identifier and resolves against the authority before reporting success",
+          "reason": "Describes lost-response ambiguity and recovery via correlation then authority resolution."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A direct adapter or shared contract is preferable only when semantics are genuinely identical and stable.",
+          "reason": "Names direct/shared contract and the reversal."
+        }
+      }
+    }
+  ]
+}

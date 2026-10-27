@@ -1,0 +1,96 @@
+{
+  "batch": "B02",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.asynchronous-request-reply",
+      "catalog_name": "Asynchronous Request-Reply",
+      "owner_path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+      "owner_heading": "Asynchronous Request-Reply",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-async-request-reply.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/asynchronous-request-reply",
+      "unit": "Asynchronous Request-Reply — pattern page",
+      "sections": [
+        "Asynchronous Request-Reply pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "AsyncProcessingWorkAcceptor function",
+        "AsyncProcessingBackgroundWorker function",
+        "AsyncOperationStatusChecker function",
+        "Next steps",
+        "Related resources"
+      ],
+      "revision": "e87a0d9ec8ed297d180c4f0f3348131f00371b2b0fed97a80ec747689cfcb58a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An asynchronous request-reply interface accepts a request, returns a durable handle and later exposes the terminal result through polling or a callback.",
+          "reason": "Defines a durable handle and later polling or callback result."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The handle must identify one recorded operation whose outcome is durable, so a lost reply cannot turn an accepted request into an unknown effect.",
+          "reason": "Requires the handle to identify one recorded durable operation."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A lost or expired reply leaves the caller unable to decide the outcome; keep the operation record queryable and reconcile before retrying the original request.",
+          "reason": "Requires a queryable operation record and reconciliation before retry."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A synchronous call with a bounded deadline is simpler when the work reliably finishes inside the request budget; split the interaction only when waiting would exceed it.",
+          "reason": "Names a synchronous bounded-deadline call when the work fits the request budget."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.gatekeeper",
+      "catalog_name": "Gatekeeper",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+      "owner_heading": "Gatekeeper",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/gatekeeper",
+      "unit": "Gatekeeper — pattern page",
+      "sections": [
+        "Gatekeeper pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next steps",
+        "Related resources"
+      ],
+      "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A gatekeeper is a dedicated request-validation boundary that authenticates the caller and evaluates coarse authorization before forwarding a request to the protected service.",
+          "reason": "Defines a validation boundary before forwarding to the protected service."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The protected service must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the boundary cannot be sidestepped by an alternate route.",
+          "reason": "Requires the protected service to reject bypasses or repeat security checks."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine network policy, denial logs and a bypass test in the acceptance evidence.",
+          "reason": "Names stale policy and direct paths and requires network policy, denial logs and a bypass test."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Enforce authorization inside the service at each effect boundary; use a gatekeeper when it centralizes a policy that every route must apply and the bypass surface is closed.",
+          "reason": "Names in-service authorization at each effect boundary."
+        }
+      }
+    }
+  ]
+}

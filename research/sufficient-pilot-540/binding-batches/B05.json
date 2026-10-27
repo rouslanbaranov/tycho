@@ -1,0 +1,426 @@
+{
+  "batch": "B05",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.distributed-cache",
+      "catalog_name": "Distributed Cache",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+      "owner_heading": "Distributed Cache",
+      "source_id": "src.hazelcast",
+      "ledger_record": "read.batch3-hazelcast-cache.2026-10-21",
+      "url": "https://docs.hazelcast.com/hazelcast/5.6/cache/overview",
+      "unit": "Caching Data — Hazelcast documentation",
+      "sections": [
+        "Caching Data",
+        "What is a Cache?",
+        "Caching Topologies",
+        "Caching Data on the Client-Side",
+        "Caching Patterns",
+        "Cache in Spring Applications",
+        "Second-Level Cache for Hibernate",
+        "Cache Manager in JCache",
+        "Caching Web Sessions in Hazelcast",
+        "Caching with JDBC Data Stores",
+        "Building a Custom Database Cache",
+        "Related Resources"
+      ],
+      "revision": "c787d91df678cb6b34660d688310cecc98a23e6b7b978c375c3491f7631f7490",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "API replicas A and B cache the same inventory availability record, authoritative database revision v17.",
+          "reason": "Illustrates a shared cache across replicas and the stale-freshness problem."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Never treat cached tenant permissions or exclusive availability as harmlessly stale without the actual security/domain owner's approval.",
+          "reason": "States a safety rule for stale authorization and availability data."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Blind bypass can turn a cache incident into an authoritative database overload. Define bounded concurrent fallback, explicit overload response and whether stale public descriptions may be served.",
+          "reason": "Describes the outage failure and the containment policy required."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Fail the cache strategy if user-visible freshness or pool budgets are breached; a direct authoritative query with better indexes may be the lower-risk alternative.",
+          "reason": "Names direct authoritative reads and the freshness/budget breach that reverses the cache choice."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.cache-aside-lazy-loading",
+      "catalog_name": "Cache-Aside / Lazy Loading",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+      "owner_heading": "4. Cache-aside is a sequence, not a consistency theorem",
+      "source_id": "src.aws-caching-strategies",
+      "ledger_record": "read.batch3-aws-caching.2026-10-21",
+      "url": "https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html",
+      "unit": "Caching patterns — cache-aside and write-through",
+      "sections": [
+        "Caching patterns",
+        "Cache-Aside (Lazy Loading)",
+        "Write-Through"
+      ],
+      "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
+          "reason": "Gives the canonical read-miss-fill-invalidate sequence."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A source result may fill a cache if a competing update has not made it obsolete.",
+          "reason": "States the fill precondition that must hold to avoid publishing obsolete state."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations.",
+          "reason": "Names stale-authorization exposure and bypass/verify mitigation; detection procedure is operational."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "When the read budget allows, serving from the source or a shorter TTL with retried invalidation is the alternative",
+          "reason": "Names the source read and shorter-TTL path as the alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.read-through-cache",
+      "catalog_name": "Read-Through Cache",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+      "owner_heading": "Read-Through Cache",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A read-through cache loads a miss from the source on behalf of the caller and stores the result, so the application never performs the fill itself.",
+          "reason": "Defines source fill on a miss with the cache storing the result."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the source.",
+          "reason": "Requires explicit fill-error mapping and stampede control."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Slow fills and error masking make the cache appear healthy while the source degrades; bound fill concurrency, timeouts and error translation.",
+          "reason": "Names slow fills and error masking and requires concurrency, timeout and translation bounds."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Cache-aside with application-owned fill keeps loading policy visible; prefer read-through when the cache can call the source and the loading contract is uniform.",
+          "reason": "Contrasts application-owned cache-aside fill."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.write-through-cache",
+      "catalog_name": "Write-Through Cache",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+      "owner_heading": "Write-Through Cache",
+      "source_id": "src.aws-caching-strategies",
+      "ledger_record": "read.batch3-aws-caching.2026-10-21",
+      "url": "https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html",
+      "unit": "Caching patterns — cache-aside and write-through",
+      "sections": [
+        "Caching patterns",
+        "Cache-Aside (Lazy Loading)",
+        "Write-Through"
+      ],
+      "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A write-through path updates the cache and the authoritative store in one controlled sequence, so a later read can use the cached copy.",
+          "reason": "Defines a controlled cache-and-store update sequence."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A write must not be acknowledged before both sides reach the declared state, or an explicit reconciliation must repair a partial write.",
+          "reason": "Forbids acknowledging before both sides reach the declared state or an explicit reconciliation."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Failure between the two updates leaves cache and store divergent; version the value and retry or invalidate with an audit trail of the failed write.",
+          "reason": "Names partial-write divergence and requires versioning plus retry or audited invalidation."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Write-behind or cache-aside with invalidation reduces write latency; choose write-through when read-after-write freshness outweighs the extra write cost.",
+          "reason": "Contrasts write-behind or cache-aside invalidation for lower write latency."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.write-behind-write-back",
+      "catalog_name": "Write-Behind / Write-Back",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+      "owner_heading": "Write-Behind-Write-Back",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A write-behind cache acknowledges a write after placing it in a pending buffer and flushes it to durable storage asynchronously.",
+          "reason": "Defines asynchronous flush from a pending write buffer."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "If the buffer has its own durable or replicated record separate from the cache, cache loss is recoverable and the acknowledged write survives.",
+          "reason": "Requires a durable or replicated buffer separate from the cache for acknowledged writes."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "If that buffer is the cache itself, cache loss can discard acknowledged writes; that is the card's hard contraindication.",
+          "reason": "Names cache loss discarding acknowledged writes as the hard contraindication."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Write-through acknowledges only after both sides update; prefer write-behind when write throughput dominates and a measured loss window is acceptable for at-risk writes, not for durable acknowledged writes.",
+          "reason": "Contrasts write-through acknowledgement after both sides update."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.write-around",
+      "catalog_name": "Write-Around",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+      "owner_heading": "Write-Around",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A write-around policy writes directly to the authoritative store and does not populate the cache, leaving later reads to fill it.",
+          "reason": "Defines direct store writes without cache population."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A cached copy must be invalidated or versioned at the update, or a later read can restore a value older than the committed write.",
+          "reason": "Requires invalidation or versioning at update to prevent older reads."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "the policy requires reliable invalidation or versioning at the update and a read test immediately after a write.",
+          "reason": "Requires reliable invalidation/versioning and a post-write read test."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Write-through keeps the cache current at the cost of write amplification; choose write-around when write volume is high and later reads can tolerate a refill.",
+          "reason": "Contrasts write-through write amplification with later refill tolerance."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.cache-invalidation",
+      "catalog_name": "Cache Invalidation",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+      "owner_heading": "Cache Invalidation",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Cache invalidation removes or versions a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy.",
+          "reason": "Defines removal or versioning when the authoritative value changes."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
+          "reason": "Requires write-order or version guard and visible failed invalidation."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
+          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
+          "reason": "Contrasts TTL-only bounded staleness and versioned keys."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.ttl-based-expiration",
+      "catalog_name": "TTL-Based Expiration",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+      "owner_heading": "TTL-Based Expiration",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "**expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit.",
+          "reason": "Defines lifetime-bounded invalidation, the TTL mechanism."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The installed Caffeine version and precise loader/executor policy must be checked before promising behavior.",
+          "reason": "States an implementation precondition for any freshness promise."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts.",
+          "reason": "Names eviction-induced read bursts and the required refresh bound."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately.",
+          "reason": "Names explicit invalidation/versioned keys and the reversal."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.negative-caching",
+      "catalog_name": "Negative Caching",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md",
+      "owner_heading": "4. Negative caching and evicted authorization",
+      "source_id": "src.google-cdn-negative-caching",
+      "ledger_record": "read.batch3-google-negative.2026-10-21",
+      "url": "https://docs.cloud.google.com/cdn/docs/using-negative-caching?hl=en",
+      "unit": "Use negative caching — Google Cloud documentation",
+      "sections": [
+        "Use negative caching",
+        "Before you begin",
+        "Status codes and default TTLs",
+        "Setting up negative caching",
+        "Console",
+        "gcloud",
+        "api",
+        "Disable negative caching",
+        "Console (disable)",
+        "gcloud (disable)",
+        "api (disable)"
+      ],
+      "revision": "a8965b0a185de2ca1f52a47fafa7c8db5660222ea2016910bb93297cc1596f70",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Caching an absent result can protect against repeated misses for nonexistent IDs. But it creates a freshness question: if a new object is created, a cached not-found may hide it.",
+          "reason": "Explains what negative caching does and its freshness exposure."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.",
+          "reason": "States a hard safety rule for tenant/principal-scoped visibility."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A stale *allow* or *deny* decision can have more serious authorization consequences than an old description.",
+          "reason": "Names stale allow/deny authorization risk and revocation-path consistency; detection procedure is operational."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "otherwise use a short TTL, bypass, or a per-principal key",
+          "reason": "Names the bypass, per-principal-key and short-TTL alternatives."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.cache-stampede-protection",
+      "catalog_name": "Cache Stampede Protection",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+      "owner_heading": "Cache Stampede Protection",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads.",
+          "reason": "Defines the mechanism and its origin-load consequence."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A stampede policy must bound concurrent origin loads per key and total source work, and stale-while-revalidate is only valid when the operation accepts the stale value.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "An expired lease can release a second refresh while the first is still writing; jittered TTLs do not protect one extremely hot key.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A distributed refresh lease or request coalescing is preferable when one key dominates and stale data is acceptable for the operation.",
+          "reason": "Names distributed lease/coalescing and the hot-key condition."
+        }
+      }
+    }
+  ]
+}
