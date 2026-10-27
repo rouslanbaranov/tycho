@@ -158,8 +158,6 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "card_sha256": (hashlib.sha256((ROOT / card_paths()[candidate["pattern_id"]]).read_bytes()).hexdigest()
                         if candidate["pattern_id"] in card_paths() else None),
         "owner_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
-        "head": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
-                               capture_output=True, text=True, check=True).stdout.strip(),
         "source_read": candidate["source_read"],
         "page_sha256": reviewed_sha,
         "current_page_sha256": page_sha,
@@ -181,12 +179,10 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         "rebind_report_path": rebind.get("report_path"),
         "review_checklist": CHECKS,
         "verdict_template": {**TEMPLATE,
-                             "page_sha256": reviewed_sha,
+                             "page_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
                              "owner_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
                              "card_sha256": (hashlib.sha256((ROOT / card_paths()[candidate["pattern_id"]]).read_bytes()).hexdigest()
                                              if candidate["pattern_id"] in card_paths() else None),
-                             "head": subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT,
-                                                    capture_output=True, text=True, check=True).stdout.strip(),
                              "checks": dict(TEMPLATE["checks"])},
     }
 
