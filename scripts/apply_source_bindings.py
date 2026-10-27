@@ -68,7 +68,9 @@ def main():
             if existing is not None:
                 require(existing == binding, "binding-conflict: " + pid + ": " + dim)
             else:
-                evidence["binding"] = binding
+                evidence["binding"] = {key: binding[key] for key in
+                                       ("source_id", "ledger_record", "section",
+                                        "quote", "revision")}
                 count += 1
     (root / OWNER).write_text(json.dumps(owner, indent=2, ensure_ascii=False) + "\n")
     print("PASS: bindings applied", count)

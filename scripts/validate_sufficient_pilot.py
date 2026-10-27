@@ -117,8 +117,11 @@ def validate(root=ROOT):
                 "pilot-sufficient-claim: " + pid)
     plan = load(root / PLAN)
     require(set(plan["pilot_entries"]) == seen, "pilot-plan-mismatch")
-    planned = [item["pattern_id"] for batch in plan["batches"]
-               for item in batch["entries"]]
+    planned_items = [item for batch in plan["batches"]
+                     for item in batch["entries"]]
+    planned = [item["pattern_id"] for item in planned_items]
+    planned_status = {item["pattern_id"]: item.get("status", "ready")
+                      for item in planned_items}
     require(len(planned) == len(set(planned)), "pilot-plan-duplicate")
     require(len(planned) == plan["remaining_entries"], "pilot-plan-count")
     require(all(1 <= len(batch["entries"]) <= plan["batch_size"]
@@ -126,6 +129,11 @@ def validate(root=ROOT):
     require(set(planned) == set(patterns) - seen, "pilot-plan-partition")
     for pid in planned:
         owner = owners[pid]
+        if planned_status[pid] == "remediation":
+            require(owner["technical_coverage"] in ("partial", "partial-bounded"),
+                    "batch-remediation-coverage: " + pid)
+            require(pid not in promoted, "batch-remediation-promoted: " + pid)
+            continue
         require(all(owner["technical_evidence"][name]["state"] == "supported"
                     for name in DIMENSIONS),
                 "batch-dimension: " + pid)

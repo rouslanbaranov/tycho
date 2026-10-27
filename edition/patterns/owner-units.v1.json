@@ -753,22 +753,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A gateway can centralize routing, quotas and common policy.",
-          "reason": "Explains the gateway's centralizing role for shared edge concerns."
+          "reason": "Explains the gateway's centralizing role for shared edge concerns.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-gateway.2026-10-21",
+            "section": "Solution",
+            "quote": "Implement an API gateway that is the single entry point for all clients.",
+            "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Keep resource authorization at the boundary owning the resource, with documented delegation if a central decision service is used.",
-          "reason": "Requires domain authorization to remain at the resource-owning boundary."
+          "reason": "Source page discusses routing and fan-out but not resource-authorization boundaries."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Gateway bypass, configuration drift, a stale route and an outage that blocks every backend are common.",
-          "reason": "Names failure and recovery."
+          "reason": "Source page does not discuss bypass, configuration drift, stale routes or total outage."
         },
         "alternative": {
           "state": "supported",
           "quote": "A BFF, a service-mesh sidecar or direct backend exposure with an explicit identity contract may be preferable when the gateway adds a shared bottleneck without a required central policy.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-gateway.2026-10-21",
+            "section": "Variation: Backends for frontends",
+            "quote": "A variation of this pattern is the Backends for frontends pattern. It defines a separate API gateway for each kind of client.",
+            "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+          }
         }
       },
       "decision_evidence": {
@@ -786,7 +800,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The boundary contract owns gateway centralization and resource-authority limits; alternatives sit in a later section."
     },
@@ -813,22 +827,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Gateway routing is an edge contract over a versioned route table: a gateway matches request attributes to a route and applies policy, each route binds match predicates to a backend and a policy version, and the table changes independently of the backends.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+            "section": "Gateway Routing pattern",
+            "quote": "Route requests to multiple services or multiple service instances using a single endpoint.",
+            "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Describe separately the externally resolved name, the service membership view, the connection destination and the backend selected for each request.",
-          "reason": "Requires the four routing concerns to remain separately described."
+          "reason": "Source page does not separate externally resolved name, membership, connection destination and selected backend."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Stale routes, ambiguous matches and bypass around the gateway are common.",
-          "reason": "Names failure and recovery."
+          "reason": "Names failure and recovery.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-routing.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "The gateway service can introduce a single point of failure. Ensure it's properly designed to meet your availability requirements. Consider resiliency and fault tolerance capabilities in the implementation.",
+            "revision": "c2c7ecda427fb76fa98431ccfab5aa20c610e1fc9d2485293625da7e2b435b4f"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is simple or the gateway would become a hidden shared dependency.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Source page does not name reverse proxy, client discovery or BFF alternatives."
         }
       },
       "decision_evidence": {
@@ -846,7 +874,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Atlas anchor points at this section; it states the routing/selection contract but not gateway request routing rules."
     },
@@ -873,22 +901,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "Gateway aggregation composes several owner responses into one client response at the edge.",
-          "reason": "Defines edge-side composition of several owner responses."
+          "reason": "Defines edge-side composition of several owner responses.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-10-21",
+            "section": "Solution",
+            "quote": "Use a gateway to reduce chattiness between the client and the services. The gateway receives client requests, dispatches requests to the various back-end systems, and aggregates the results before it sends them back to the client.",
+            "revision": "8c2a339db63a704b42c7cf66dae15cf2603825d934dc54f7dcc0ff061c68a300"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Each downstream call carries its own deadline and authorization.",
-          "reason": "Requires every downstream call to carry its own deadline and authorization."
+          "reason": "Source page gives timeout guidance but does not require per-call deadline and authorization."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "a gateway retry must not multiply load across every participant",
-          "reason": "Limits gateway retries so one failure does not multiply load across participants."
+          "reason": "Limits gateway retries so one failure does not multiply load across participants.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "If one or more service calls take too long, it might be acceptable to time out and return a partial set of data. Consider how your application will handle this scenario.",
+            "revision": "8c2a339db63a704b42c7cf66dae15cf2603825d934dc54f7dcc0ff061c68a300"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Client-side composition, a backend for frontend or an API Composition layer with a narrow contract may be preferable",
-          "reason": "Names client composition, a backend for frontend or a narrow API composition layer."
+          "reason": "Source page names an aggregation service behind the gateway, not client composition, BFF or API composition."
         }
       },
       "decision_evidence": {
@@ -906,7 +948,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -933,22 +975,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "An edge can terminate TLS, validate tokens, compress, cache or enforce quotas before forwarding.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
+            "section": "Solution",
+            "quote": "Offload some capabilities into a gateway. The gateway then handles cross-cutting concerns such as client-facing certificate management, authentication, TLS termination, monitoring, protocol translation, and throttling on behalf of backend services.",
+            "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Offloading changes the trust boundary: downstream must receive an authenticated identity from a trusted intermediary and still enforce resource authorization.",
-          "reason": "Bounds what the offloaded TLS endpoint identity proves."
+          "reason": "Bounds what the offloaded TLS endpoint identity proves.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Define whether each backend authorizes the original caller, the gateway's workload identity, or both. Preserve caller tokens or trusted claims only when the backend requires delegated user context. Always authenticate the gateway to the backend separately. Don't treat unverified forwarded headers as proof of identity.",
+            "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Header spoofing, confused-deputy paths and a proxy that becomes the only authorization point are common failures.",
-          "reason": "Names failure and recovery."
+          "reason": "Names failure and recovery.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "Ensure the gateway is highly available and resilient to failure. Avoid single points of failure by running multiple instances of your gateway. Because the gateway terminates client connections and can buffer request bodies, consider how in-flight requests are handled during instance failures. Use connection draining or graceful shutdown mechanisms so that removing or restarting a gateway instance doesn't drop active sessions.",
+            "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A service-mesh sidecar, application-level authorization or direct pass-through may be preferable when the edge cannot attest identity.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-offloading.2026-10-21",
+            "section": "When to use this pattern",
+            "quote": "The offloaded concern is lightweight and the workload is latency-sensitive. The additional network hop through the gateway might not be justified when the overhead outweighs the benefit of centralization.",
+            "revision": "dc071313e197819284fabdafe21f0bc0e0525a6bb1a8382f5adb8dceb76d56c9"
+          }
         }
       },
       "decision_evidence": {
@@ -993,22 +1063,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "A backend for frontend composes the API surface for one client experience. It needs a client owner, a composition contract, a policy for duplicated domain logic and a boundary that prevents the BFF from becoming a second domain authority.",
-          "reason": "Explains per-client composition and the ownership/contract boundary."
+          "reason": "Explains per-client composition and the ownership/contract boundary.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-bff.2026-10-21",
+            "section": "Solution",
+            "quote": "Introduce a new layer that handles only the requirements that are specific to the interface. This layer, known as the backend-for-frontend (BFF) service, sits between the frontend client and the backend service. If the application supports multiple interfaces, such as a web interface and a mobile app, create a BFF service for each interface.",
+            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Do not use it when one API contract serves all clients or when the BFF would own core business rules.",
-          "reason": "States exclusion preconditions for use."
+          "reason": "States exclusion preconditions for use.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-bff.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "The BFF service should only handle client-specific logic related to a specific user experience. Cross-cutting features, such as monitoring and authorization, should be abstracted to maintain efficiency.",
+            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is drift between the BFF and the domain API; version the composition and test the client contract.",
-          "reason": "Names drift and prescribes versioning and client-contract testing."
+          "reason": "Names drift and prescribes versioning and client-contract testing.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-bff.2026-10-21",
+            "section": "Workload design",
+            "quote": "When you isolate services to a specific frontend interface, you contain malfunctions. The availability of one client doesn't affect the availability of another client's access.",
+            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared API with client-side selection is the alternative when the differences are small and can be expressed without a new authority.",
-          "reason": "Names shared API plus client-side selection and the condition reversing the choice."
+          "reason": "Names shared API plus client-side selection and the condition reversing the choice.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-bff.2026-10-21",
+            "section": "Solution",
+            "quote": "Many BFF services traditionally relied on REST APIs, but GraphQL implementations are emerging as an alternative. With GraphQL, the querying mechanism eliminates the need for a separate BFF layer because it allows clients to request the data that they need without relying on predefined endpoints.",
+            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
+          }
         }
       },
       "decision_evidence": {
@@ -1050,22 +1148,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "An API composition layer calls several owner APIs for one request and assembles their responses into a single caller-visible result.",
-          "reason": "Defines query-time calls to several owner APIs and assembly of one caller-visible result."
+          "reason": "Defines query-time calls to several owner APIs and assembly of one caller-visible result.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-composition.2026-10-21",
+            "section": "Solution",
+            "quote": "Implement a query by defining an API Composer, which invoking the services that own the data and performs an in-memory join of the results.",
+            "revision": "7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The composed response must declare per-source freshness and what partial failure means, rather than presenting one aggregate result as uniformly current.",
-          "reason": "Requires per-source freshness and an explicit partial-failure meaning."
+          "reason": "Source describes an in-memory join but not per-source freshness or a partial-failure contract."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly.",
-          "reason": "Requires per-call deadlines, missing-part marking or explicit failure."
+          "reason": "Source does not address slow or failed participants, deadlines, missing parts or explicit failure."
         },
         "alternative": {
           "state": "supported",
           "quote": "Build a maintained read model or a client-specific backend for frontend; prefer composition when the sources are authoritative and the caller needs a live view.",
-          "reason": "Names a maintained read model or client-specific backend for frontend."
+          "reason": "Names a maintained read model or client-specific backend for frontend.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-composition.2026-10-21",
+            "section": "Related patterns",
+            "quote": "The CQRS pattern is an alternative solution",
+            "revision": "7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b"
+          }
         }
       },
       "decision_evidence": {
@@ -1083,7 +1195,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -1110,22 +1222,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A reverse proxy accepts client connections and forwards them to a selected backend, hiding topology and optionally terminating TLS.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-http-connection.2026-10-21",
+            "section": "HTTP lifecycle",
+            "quote": "Proxying of the request begins when the downstream HTTP codec has successfully decoded request header map.",
+            "revision": "fb600d4e013c69d80e36491d19bd423ea1ad5917dab450d5fa7052d76b77b6f2"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "It must define route identity, peer authentication, forwarded-header policy and backend failure behavior.",
-          "reason": "Bounds what the proxy-terminated client identity establishes."
+          "reason": "Bounds what the proxy-terminated client identity establishes.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-http-connection.2026-10-21",
+            "section": "Route table configuration",
+            "quote": "Each HTTP connection manager filter has an associated route table, which can be specified in one of two ways:",
+            "revision": "fb600d4e013c69d80e36491d19bd423ea1ad5917dab450d5fa7052d76b77b6f2"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Proxy bypass, stale routes and trusting a client-supplied identity header are common.",
-          "reason": "Names failure and recovery."
+          "reason": "Scoped Envoy page does not discuss proxy bypass, stale routes or confused-deputy recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Direct service discovery, a gateway/BFF or a mesh sidecar may be preferable when the proxy adds a shared bottleneck without a required policy function.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Scoped Envoy page does not compare direct discovery, gateway/BFF or mesh sidecar alternatives."
         }
       },
       "decision_evidence": {
@@ -1170,22 +1296,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "Service discovery may publish addresses plus eligibility metadata to a proxy or client.",
-          "reason": "Explains discovery as publishing addresses and eligibility metadata to a consumer."
+          "reason": "Explains discovery as publishing addresses and eligibility metadata to a consumer.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-service-discovery.2026-10-21",
+            "section": "Endpoint discovery service (EDS)",
+            "quote": "The endpoint discovery service is a xDS management server based on gRPC or REST-JSON API server used by Envoy to fetch cluster members. The cluster members are called “endpoint” in Envoy terminology. For each cluster, Envoy fetch the endpoints from the discovery service.",
+            "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "If membership is stale, continued reachability still cannot establish write authority.",
-          "reason": "Bounds what stale membership may authorize."
+          "reason": "Scoped Envoy page discusses eventually consistent membership but not write authority."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
-          "reason": "Requires stale-membership detection and separates the control path from last-known data-plane continuity."
+          "reason": "Requires stale-membership detection and separates the control path from last-known data-plane continuity.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-service-discovery.2026-10-21",
+            "section": "On eventually consistent service discovery",
+            "quote": "This is very important since the design assumes that the discovery service can fail at any time. If a host continues to pass health check even after becoming absent from the discovery data, Envoy will still route. Although it would be impossible to add new hosts in this scenario, existing hosts will continue to operate normally. When the discovery service is operating normally again the data will eventually re-converge.",
+            "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-service-discovery.2026-10-21",
+            "section": "Static",
+            "quote": "Static is the simplest service discovery type. The configuration explicitly specifies the resolved network name (IP address/port, unix domain socket, etc.) of each upstream host.",
+            "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
+          }
         }
       },
       "decision_evidence": {
@@ -1203,7 +1350,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Discovery is bounded to update boundaries, stale-membership detection and last-known data-plane use."
     },
@@ -1230,22 +1377,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "The caller obtains the membership view from a registry/control plane, caches it and selects a backend.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-client-discovery.2026-10-21",
+            "section": "Solution",
+            "quote": "When making a request to a service, the client obtains the location of a service instance by querying a Service Registry, which knows the locations of all service instances.",
+            "revision": "f0b2510f0a5ff627999df0247ee49a86a193df7bf55c8c3c40792465eb85be39"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Stale membership can send traffic to a removed instance even when the address remains reachable.",
-          "reason": "Applies the stale-membership safety rule to a client-held view as well."
+          "reason": "Source states dynamic instance locations but does not state a stale-membership safety rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Bound the cache age, refresh budget and stale-cache alarm, and use a last-known set only for reads with an explicit freshness bound.",
-          "reason": "Requires the client-side observer to detect stale membership and bound continued data-plane use."
+          "reason": "Source has no caching, refresh, freshness-bound or stale-cache recovery discussion."
         },
         "alternative": {
           "state": "supported",
           "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-client-discovery.2026-10-21",
+            "section": "Related patterns",
+            "quote": "Server Side Discovery is an alternative solution to this problem.",
+            "revision": "f0b2510f0a5ff627999df0247ee49a86a193df7bf55c8c3c40792465eb85be39"
+          }
         }
       },
       "decision_evidence": {
@@ -1263,7 +1424,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The section names the client as a discovery consumer; client-specific lookup, caching and selection are not explained."
     },
@@ -1290,22 +1451,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A proxy, gateway or platform keeps the membership view and selects a backend for a stable virtual name.",
-          "reason": "Defines the mechanism."
+          "reason": "Defines the mechanism.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-server-discovery.2026-10-21",
+            "section": "Solution",
+            "quote": "When making a request to a service, the client makes a request via a router (a.k.a load balancer) that runs at a well known location. The router queries a service registry, which might be built into the router, and forwards the request to an available service instance.",
+            "revision": "b454d07aafdc283ceb7378d097a61e28b2b8013892c83458d49cec384e4d77bb"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Stale membership can keep a removed backend in the selection set even when the proxy is healthy.",
-          "reason": "Applies the stale-membership safety rule to a proxy-held membership view."
+          "reason": "Source has no stale-membership or removed-backend safety rule."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose a degraded path and plan the proxy's own failover.",
-          "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use."
+          "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-server-discovery.2026-10-21",
+            "section": "Resulting context",
+            "quote": "It will also need to be replicated for availability and capacity.",
+            "revision": "b454d07aafdc283ceb7378d097a61e28b2b8013892c83458d49cec384e4d77bb"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
-          "reason": "Names the alternative and reversal."
+          "reason": "Names the alternative and reversal.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-server-discovery.2026-10-21",
+            "section": "Related patterns",
+            "quote": "Client Side Discovery is an alternative solution",
+            "revision": "b454d07aafdc283ceb7378d097a61e28b2b8013892c83458d49cec384e4d77bb"
+          }
         }
       },
       "decision_evidence": {
@@ -1323,7 +1505,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "The section names a proxy as a discovery consumer; proxy-owned lookup and selection policy are not explained."
     },
@@ -8763,7 +8945,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "keep",
       "rationale": "Two API-composition patterns have two dedicated bounded notes on a coherent contract page."
     },
@@ -9076,7 +9258,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Service discovery, client-side discovery, server-side discovery and load balancing now have four distinct dedicated units."
     },
@@ -9146,7 +9328,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Gateway routing and health endpoint monitoring now have separate dedicated units."
     },
@@ -9162,7 +9344,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 4,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Four gateway functions have dedicated bounded units on the new gateway page."
     },
@@ -9204,11 +9386,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 144,
-    "invariant_supported": 141,
-    "failure_recovery_supported": 140,
-    "alternative_supported": 140,
-    "technical_partial_bounded": 141,
-    "technical_partial": 4,
+    "invariant_supported": 134,
+    "failure_recovery_supported": 136,
+    "alternative_supported": 137,
+    "technical_partial_bounded": 134,
+    "technical_partial": 11,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
