@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 import sys
@@ -41,6 +42,22 @@ class SearchReindexTests(unittest.TestCase):
         if report["status"] == "current-with-stale-qrels":
             self.assertIn("qrels-stale", report["issues"])
             self.assertTrue(report["qrels_stale"])
+
+    def test_check_reports_content_change(self):
+        with patch.object(search_reindex, "content_digest",
+                          return_value=("0" * 64, 423)):
+            report = search_reindex.check(ROOT)
+        self.assertIn("content-changed", report["issues"])
+        self.assertEqual(report["status"], "stale")
+
+    def test_check_reports_stale_index(self):
+        stale = {"snapshot": "f" * 64, "coverage": "complete",
+                 "documents": 423, "sections": 1, "passages": 0,
+                 "bytes": 1}
+        with patch.object(search_reindex.section_fts_index, "stats",
+                          return_value=stale):
+            report = search_reindex.check(ROOT)
+        self.assertIn("index-stale", report["issues"])
 
 
 if __name__ == "__main__":
