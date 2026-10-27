@@ -190,4 +190,5 @@ patterns have supported failure and recovery.
 
 No independent AI review, market sizing, adoption or answer-quality
 measurement is claimed. Counts are a 2026-10-27 snapshot; counting rules and
-limits are in the artifacts. Both notes cite public sources only.
+limits are in the artifacts. Both notes cite public sources only. See
+[PR #548](https://github.com/rouslanbaranov/tycho/pull/548).
