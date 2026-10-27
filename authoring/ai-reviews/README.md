@@ -42,7 +42,6 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 cache | pass | `2026-10-27-cache-invalidation-review-codex.md` | `26323bcdf779dbca8db2f9e4abe439affd94bb24143896d02df314d12b139a0b` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ttl | reject | `2026-10-27-ttl-expiration-review-codex.md` | `06e0574b1134e12c6549f3725a8022e4cb947ec2029aa64bf92b6c56fc18404b` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer | reject | `2026-10-27-anti-corruption-layer-review-codex.md` | `4b29a05eee669687ded6ab84d2ffb2248ec2cc74e188dbbc1569227f9d2419a1` |
-| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 dark launching | reject | `2026-10-27-dark-launching-review-codex.md` | `1d757b4448f2711e5cdcb67d987308413f89b3d9fd3d15abc3ca66f4b168a3d9` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 2 | reject | `2026-10-27-anti-corruption-layer-review2-codex.md` | `a437bb9ad9c9073b372540526ccc1c6620539d13133a3dfe4cec57e369feb9fb` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 3 | reject | `2026-10-27-anti-corruption-layer-review3-codex.md` | `368ef64070e82cb0455215fc0baab508d360441ed0e24e3677d750495a871d58` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 4 | pass | `2026-10-27-anti-corruption-layer-review4-codex.md` | `e4c87513e47e5b75442837931e52761c6b1f8ae7825bf78de972b731c14d1338` |
@@ -63,3 +62,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 workload identity round 2 | reject | `2026-10-27-workload-identity-review2-codex.md` | `020838225bccbf9f3e1ccb027b80d8c50446e0575f2d3b3a82163f48e0b24070` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 workload identity round 5 | pass | `2026-10-27-workload-identity-review5-codex.md` | `e17f5382b3f36b7acda6280a6de38ea6ead21f030de7a3ab2652129c8e0d6d62` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar round 5 | pass | `2026-10-27-sidecar-review5-codex.md` | `dd0ee130dbd4e1d717e833725eb0a71b46fa79634e85c067f5c98c28abd11bc2` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 dark launching | reject | `2026-10-27-dark-launching-review-codex.md` | `750b4f9ad590ce64c5994e79bc0beb77c2ac4c70901bf075487c9bfc2a949fa0` |
