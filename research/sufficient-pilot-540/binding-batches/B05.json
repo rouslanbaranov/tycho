@@ -29,22 +29,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "API replicas A and B cache the same inventory availability record, authoritative database revision v17.",
-          "reason": "Illustrates a shared cache across replicas and the stale-freshness problem."
+          "reason": "Illustrates a shared cache across replicas and the stale-freshness problem.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Never treat cached tenant permissions or exclusive availability as harmlessly stale without the actual security/domain owner's approval.",
-          "reason": "States a safety rule for stale authorization and availability data."
+          "reason": "Source has no tenant/permission or stale-authorization invariant.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Blind bypass can turn a cache incident into an authoritative database overload. Define bounded concurrent fallback, explicit overload response and whether stale public descriptions may be served.",
-          "reason": "Describes the outage failure and the containment policy required."
+          "reason": "Source has no bypass, overload or bounded fallback discussion.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Fail the cache strategy if user-visible freshness or pool budgets are breached; a direct authoritative query with better indexes may be the lower-risk alternative.",
-          "reason": "Names direct authoritative reads and the freshness/budget breach that reverses the cache choice."
+          "reason": "Source contrasts topologies, not direct authoritative queries or cache reversal.",
+          "has_binding": false
         }
       }
     },
@@ -67,22 +71,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
-          "reason": "Gives the canonical read-miss-fill-invalidate sequence."
+          "reason": "Gives the canonical read-miss-fill-invalidate sequence.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A source result may fill a cache if a competing update has not made it obsolete.",
-          "reason": "States the fill precondition that must hold to avoid publishing obsolete state."
+          "reason": "Source has no fill precondition tied to a competing update.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations.",
-          "reason": "Names stale-authorization exposure and bypass/verify mitigation; detection procedure is operational."
+          "reason": "Source has no stale-authorization or revocation-sensitive recovery rule.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "When the read budget allows, serving from the source or a shorter TTL with retried invalidation is the alternative",
-          "reason": "Names the source read and shorter-TTL path as the alternative."
+          "reason": "Names the source read and shorter-TTL path as the alternative.",
+          "has_binding": true
         }
       }
     },
@@ -107,24 +115,28 @@
       "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A read-through cache loads a miss from the source on behalf of the caller and stores the result, so the application never performs the fill itself.",
-          "reason": "Defines source fill on a miss with the cache storing the result."
+          "reason": "Source describes application-owned cache-aside only; no read-through loader.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the source.",
-          "reason": "Requires explicit fill-error mapping and stampede control."
+          "reason": "Source has no fill-error mapping or concurrent-fill rule.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Slow fills and error masking make the cache appear healthy while the source degrades; bound fill concurrency, timeouts and error translation.",
-          "reason": "Names slow fills and error masking and requires concurrency, timeout and translation bounds."
+          "reason": "Source has no slow-fill or error-masking recovery rule.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Cache-aside with application-owned fill keeps loading policy visible; prefer read-through when the cache can call the source and the loading contract is uniform.",
-          "reason": "Contrasts application-owned cache-aside fill."
+          "reason": "Contrasts application-owned cache-aside fill.",
+          "has_binding": true
         }
       }
     },
@@ -145,24 +157,28 @@
       "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A write-through path updates the cache and the authoritative store in one controlled sequence, so a later read can use the cached copy.",
-          "reason": "Defines a controlled cache-and-store update sequence."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A write must not be acknowledged before both sides reach the declared state, or an explicit reconciliation must repair a partial write.",
-          "reason": "Forbids acknowledging before both sides reach the declared state or an explicit reconciliation."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Failure between the two updates leaves cache and store divergent; version the value and retry or invalidate with an audit trail of the failed write.",
-          "reason": "Names partial-write divergence and requires versioning plus retry or audited invalidation."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Write-behind or cache-aside with invalidation reduces write latency; choose write-through when read-after-write freshness outweighs the extra write cost.",
-          "reason": "Contrasts write-behind or cache-aside invalidation for lower write latency."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         }
       }
     },
@@ -187,24 +203,28 @@
       "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A write-behind cache acknowledges a write after placing it in a pending buffer and flushes it to durable storage asynchronously.",
-          "reason": "Defines asynchronous flush from a pending write buffer."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "If the buffer has its own durable or replicated record separate from the cache, cache loss is recoverable and the acknowledged write survives.",
-          "reason": "Requires a durable or replicated buffer separate from the cache for acknowledged writes."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "If that buffer is the cache itself, cache loss can discard acknowledged writes; that is the card's hard contraindication.",
-          "reason": "Names cache loss discarding acknowledged writes as the hard contraindication."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Write-through acknowledges only after both sides update; prefer write-behind when write throughput dominates and a measured loss window is acceptable for at-risk writes, not for durable acknowledged writes.",
-          "reason": "Contrasts write-through acknowledgement after both sides update."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         }
       }
     },
@@ -229,24 +249,28 @@
       "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A write-around policy writes directly to the authoritative store and does not populate the cache, leaving later reads to fill it.",
-          "reason": "Defines direct store writes without cache population."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A cached copy must be invalidated or versioned at the update, or a later read can restore a value older than the committed write.",
-          "reason": "Requires invalidation or versioning at update to prevent older reads."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "the policy requires reliable invalidation or versioning at the update and a read test immediately after a write.",
-          "reason": "Requires reliable invalidation/versioning and a post-write read test."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "Write-through keeps the cache current at the cost of write amplification; choose write-around when write volume is high and later reads can tolerate a refill.",
-          "reason": "Contrasts write-through write amplification with later refill tolerance."
+          "reason": "Admitted AWS caching unit redirects to a different representation; quote is not usable for the recorded unit.",
+          "has_binding": false
         }
       }
     },
@@ -273,22 +297,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Cache invalidation removes or versions a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy.",
-          "reason": "Defines removal or versioning when the authoritative value changes."
+          "reason": "Defines removal or versioning when the authoritative value changes.",
+          "has_binding": true
         },
         "invariant": {
           "state": "supported",
           "owner_quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
-          "reason": "Requires write-order or version guard and visible failed invalidation."
+          "reason": "Requires write-order or version guard and visible failed invalidation.",
+          "has_binding": true
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
-          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry."
+          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
-          "reason": "Contrasts TTL-only bounded staleness and versioned keys."
+          "reason": "Contrasts TTL-only bounded staleness and versioned keys.",
+          "has_binding": true
         }
       }
     },
@@ -315,22 +343,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "**expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit.",
-          "reason": "Defines lifetime-bounded invalidation, the TTL mechanism."
+          "reason": "Defines lifetime-bounded invalidation, the TTL mechanism.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "The installed Caffeine version and precise loader/executor policy must be checked before promising behavior.",
-          "reason": "States an implementation precondition for any freshness promise."
+          "reason": "Source has no installed-version or loader/executor precondition.",
+          "has_binding": false
         },
         "failure_recovery": {
           "state": "supported",
           "owner_quote": "Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts.",
-          "reason": "Names eviction-induced read bursts and the required refresh bound."
+          "reason": "Names eviction-induced read bursts and the required refresh bound.",
+          "has_binding": true
         },
         "alternative": {
           "state": "supported",
           "owner_quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately.",
-          "reason": "Names explicit invalidation/versioned keys and the reversal."
+          "reason": "Names explicit invalidation/versioned keys and the reversal.",
+          "has_binding": true
         }
       }
     },
@@ -361,22 +393,26 @@
         "mechanism": {
           "state": "supported",
           "owner_quote": "Caching an absent result can protect against repeated misses for nonexistent IDs. But it creates a freshness question: if a new object is created, a cached not-found may hide it.",
-          "reason": "Explains what negative caching does and its freshness exposure."
+          "reason": "Explains what negative caching does and its freshness exposure.",
+          "has_binding": true
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.",
-          "reason": "States a hard safety rule for tenant/principal-scoped visibility."
+          "reason": "Source describes per-status-code TTLs, not principal/tenant visibility scoping.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A stale *allow* or *deny* decision can have more serious authorization consequences than an old description.",
-          "reason": "Names stale allow/deny authorization risk and revocation-path consistency; detection procedure is operational."
+          "reason": "Source does not address stale allow/deny authorization decisions.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "otherwise use a short TTL, bypass, or a per-principal key",
-          "reason": "Names the bypass, per-principal-key and short-TTL alternatives."
+          "reason": "Source offers TTL tuning and exclusion, not visibility-scoped alternatives.",
+          "has_binding": false
         }
       }
     },
@@ -401,24 +437,28 @@
       "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
       "dimensions": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads.",
-          "reason": "Defines the mechanism and its origin-load consequence."
+          "reason": "Source unit has no stampede, coalescing, lease or jitter passage.",
+          "has_binding": false
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A stampede policy must bound concurrent origin loads per key and total source work, and stale-while-revalidate is only valid when the operation accepts the stale value.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source covers update concurrency, not concurrent origin-load bounds.",
+          "has_binding": false
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "An expired lease can release a second refresh while the first is still writing; jittered TTLs do not protect one extremely hot key.",
-          "reason": "States the mechanism, invariant, failure or alternative."
+          "reason": "Source covers cache unavailability but not refresh-lease failure.",
+          "has_binding": false
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "owner_quote": "A distributed refresh lease or request coalescing is preferable when one key dominates and stale data is acceptable for the operation.",
-          "reason": "Names distributed lease/coalescing and the hot-key condition."
+          "reason": "Source mentions shorter TTL/bypass, not distributed leases or coalescing.",
+          "has_binding": false
         }
       }
     }

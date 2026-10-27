@@ -3934,22 +3934,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "API replicas A and B cache the same inventory availability record, authoritative database revision v17.",
-          "reason": "Illustrates a shared cache across replicas and the stale-freshness problem."
+          "reason": "Illustrates a shared cache across replicas and the stale-freshness problem.",
+          "binding": {
+            "source_id": "src.hazelcast",
+            "ledger_record": "read.batch3-hazelcast-cache.2026-10-21",
+            "section": "What is a Cache?",
+            "quote": "In Hazelcast, the RAM of all cluster members is combined into a single in-memory data store to provide fast access to data.",
+            "revision": "c787d91df678cb6b34660d688310cecc98a23e6b7b978c375c3491f7631f7490"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Never treat cached tenant permissions or exclusive availability as harmlessly stale without the actual security/domain owner's approval.",
-          "reason": "States a safety rule for stale authorization and availability data."
+          "reason": "Source has no tenant/permission or stale-authorization invariant."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Blind bypass can turn a cache incident into an authoritative database overload. Define bounded concurrent fallback, explicit overload response and whether stale public descriptions may be served.",
-          "reason": "Describes the outage failure and the containment policy required."
+          "reason": "Source has no bypass, overload or bounded fallback discussion."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Fail the cache strategy if user-visible freshness or pool budgets are breached; a direct authoritative query with better indexes may be the lower-risk alternative.",
-          "reason": "Names direct authoritative reads and the freshness/budget breach that reverses the cache choice."
+          "reason": "Source contrasts topologies, not direct authoritative queries or cache reversal."
         }
       },
       "decision_evidence": {
@@ -3967,7 +3974,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Shared local/shared-cache walkthrough; mechanism partial because topology and partitioning are not covered."
     },
@@ -3994,22 +4001,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.",
-          "reason": "Gives the canonical read-miss-fill-invalidate sequence."
+          "reason": "Gives the canonical read-miss-fill-invalidate sequence.",
+          "binding": {
+            "source_id": "src.aws-caching-strategies",
+            "ledger_record": "read.batch3-aws-caching.2026-10-21",
+            "section": "Cache-Aside (Lazy Loading)",
+            "quote": "Whenever your application requests data, it first makes the request to the ElastiCache cache. If the data exists in the cache and is current, ElastiCache returns the data to your application. If the data doesn't exist in the cache or has expired, your application requests the data from your data store. Your data store then returns the data to your application. Your application next writes the data received from the store to the cache.",
+            "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A source result may fill a cache if a competing update has not made it obsolete.",
-          "reason": "States the fill precondition that must hold to avoid publishing obsolete state."
+          "reason": "Source has no fill precondition tied to a competing update."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or require strict verification for revocation-sensitive operations.",
-          "reason": "Names stale-authorization exposure and bypass/verify mitigation; detection procedure is operational."
+          "reason": "Source has no stale-authorization or revocation-sensitive recovery rule."
         },
         "alternative": {
           "state": "supported",
           "quote": "When the read budget allows, serving from the source or a shorter TTL with retried invalidation is the alternative",
-          "reason": "Names the source read and shorter-TTL path as the alternative."
+          "reason": "Names the source read and shorter-TTL path as the alternative.",
+          "binding": {
+            "source_id": "src.aws-caching-strategies",
+            "ledger_record": "read.batch3-aws-caching.2026-10-21",
+            "section": "Cache-Aside (Lazy Loading)",
+            "quote": "To address this issue, you can use the Write-through and Adding TTL strategies.",
+            "revision": "7285674270bc8c142038380b991124a33538c4eecef644b40539cb32a8902c4b"
+          }
         }
       },
       "decision_evidence": {
@@ -4027,7 +4048,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Heading names the alias exactly; dedicated although the thesis is a limit."
     },
@@ -4049,24 +4070,31 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A read-through cache loads a miss from the source on behalf of the caller and stores the result, so the application never performs the fill itself.",
-          "reason": "Defines source fill on a miss with the cache storing the result."
+          "reason": "Source describes application-owned cache-aside only; no read-through loader."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the source.",
-          "reason": "Requires explicit fill-error mapping and stampede control."
+          "reason": "Source has no fill-error mapping or concurrent-fill rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Slow fills and error masking make the cache appear healthy while the source degrades; bound fill concurrency, timeouts and error translation.",
-          "reason": "Names slow fills and error masking and requires concurrency, timeout and translation bounds."
+          "reason": "Source has no slow-fill or error-masking recovery rule."
         },
         "alternative": {
           "state": "supported",
           "quote": "Cache-aside with application-owned fill keeps loading policy visible; prefer read-through when the cache can call the source and the loading contract is uniform.",
-          "reason": "Contrasts application-owned cache-aside fill."
+          "reason": "Contrasts application-owned cache-aside fill.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Implement caching by using Azure Managed Redis",
+            "quote": "These libraries provide the primitives required to build common caching patterns, but the application must implement the caching logic itself.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         }
       },
       "decision_evidence": {
@@ -4084,7 +4112,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -4282,22 +4310,50 @@
         "mechanism": {
           "state": "supported",
           "quote": "Cache invalidation removes or versions a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy.",
-          "reason": "Defines removal or versioning when the authoritative value changes."
+          "reason": "Defines removal or versioning when the authoritative value changes.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "An explicit removal policy: Removes items from the cache based on a triggering event, such as the data being modified.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "The invalidation must be ordered with the write or guarded by a version, and a failed invalidation must remain visible rather than silently skipped.",
-          "reason": "Requires write-order or version guard and visible failed invalidation."
+          "reason": "Requires write-order or version guard and visible failed invalidation.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "Invalidate on write: Write the change to the data store, and then remove the affected cache entry.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "A lost invalidation or in-flight fill resurrects stale data; bound the TTL, record failed invalidations and keep a durable retry path.",
-          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry."
+          "reason": "Names lost invalidation and in-flight fill and requires TTL, recording and durable retry.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Caching and eventual consistency",
+            "quote": "One instance of an application can modify a data item and invalidate the cached version of that item. Another instance of the application might attempt to read this item from a cache, which causes a cache miss. It then reads the data from the data store and adds it to the cache. However, if the data store isn't fully synchronized with the other replicas, the application instance could read and populate the cache with the old value.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every reader can carry the version.",
-          "reason": "Contrasts TTL-only bounded staleness and versioned keys."
+          "reason": "Contrasts TTL-only bounded staleness and versioned keys.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Caching and eventual consistency",
+            "quote": "When you design your caching strategy, decide how much staleness your application can tolerate and set time-to-live (TTL) values accordingly. For data that must be current, use shorter TTLs or bypass the cache entirely and read from the source data store.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         }
       },
       "decision_evidence": {
@@ -4342,22 +4398,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "**expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit.",
-          "reason": "Defines lifetime-bounded invalidation, the TTL mechanism."
+          "reason": "Defines lifetime-bounded invalidation, the TTL mechanism.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "Many caching systems let you configure the cache to expire data, which reduces the period during which data might be out of date. After cached data expires, the cache removes it.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The installed Caffeine version and precise loader/executor policy must be checked before promising behavior.",
-          "reason": "States an implementation precondition for any freshness promise."
+          "reason": "Source has no installed-version or loader/executor precondition."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts.",
-          "reason": "Names eviction-induced read bursts and the required refresh bound."
+          "reason": "Names eviction-induced read bursts and the required refresh bound.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Considerations for using caching",
+            "quote": "If you allow data to remain in the cache for a long time, the cache might fill up. In this case, any requests to add new items to the cache might cause the cache to forcibly remove some items in a process known as eviction.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         },
         "alternative": {
           "state": "supported",
           "quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately.",
-          "reason": "Names explicit invalidation/versioned keys and the reversal."
+          "reason": "Names explicit invalidation/versioned keys and the reversal.",
+          "binding": {
+            "source_id": "src.microsoft-caching-guidance",
+            "ledger_record": "read.batch3-ms-caching.2026-10-21",
+            "section": "Caching and eventual consistency",
+            "quote": "For data that must be current, use shorter TTLs or bypass the cache entirely and read from the source data store.",
+            "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+          }
         }
       },
       "decision_evidence": {
@@ -4375,7 +4452,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Embedded because the heading describes eviction/refresh, not TTL by name."
     },
@@ -9451,7 +9528,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 6,
-      "bounded_entries": 2,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Local and distributed cache patterns now have distinct dedicated units with authority, freshness and durability contracts."
     },
@@ -9465,7 +9542,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Cache-aside and TTL expiration now have separate dedicated units."
     },
@@ -9714,12 +9791,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 139,
-    "invariant_supported": 119,
-    "failure_recovery_supported": 121,
-    "alternative_supported": 126,
-    "technical_partial_bounded": 119,
-    "technical_partial": 26,
+    "mechanism_supported": 138,
+    "invariant_supported": 115,
+    "failure_recovery_supported": 118,
+    "alternative_supported": 125,
+    "technical_partial_bounded": 115,
+    "technical_partial": 30,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
