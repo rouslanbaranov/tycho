@@ -6898,24 +6898,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "At a time, a node believes itself a leader for a given term, but other nodes can still be unaware because messages are delayed.",
-          "reason": "States term-scoped leadership and the quorum/term/log rules for safe commitment."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "An acknowledged committed log entry has a protocol-specific durability/leader-completeness guarantee, contingent on correct stable storage and membership behavior.",
-          "reason": "States a durability/leader-completeness guarantee with its stable-storage precondition."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads.",
-          "reason": "States the quorum-loss stop condition."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Leaderless quorum coordination, static primary assignment or single-writer partitioning may be simpler when elections add latency without a real failover requirement.",
-          "reason": "Names the competing coordination choices."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         }
       },
       "decision_evidence": {
@@ -6933,7 +6933,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Heading names leader elections; the section lists term, quorum/log and client-observation rules without election-algorithm detail."
     },
@@ -6958,24 +6958,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "nodes A, B and C replicate one state machine. A was leader. A's network connection to B and C fails; B and C may form a quorum and eventually select a new leader.",
-          "reason": "Illustrates quorum-based leader replacement and single-writer commit authority under partition."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Safety means no two leaders commit conflicting decisions; progress means a quorum can eventually decide.",
-          "reason": "Requires a valid quorum/term contract before authoritative writes."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "reject stale leader commands and catch up the log",
-          "reason": "Names stale-leader rejection and log catch-up; full recovery procedure is operational."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail the requirement.",
-          "reason": "Contrasts asynchronous replicas for tolerable staleness with quorum/consensus for linearizable authority."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         }
       },
       "decision_evidence": {
@@ -6993,7 +6993,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Page-level owner; quorum/term safety and liveness are covered through the partition walkthrough and table."
     },
@@ -7240,24 +7240,24 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Compute the voting threshold from the configured replica set",
-          "reason": "Explains majority quorum arithmetic and the failure envelope for N voters."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "On a membership change, require joint or overlapping agreement",
-          "reason": "States the correctness precondition for quorum arithmetic and membership changes."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "behind the current term cannot confirm the current term's entry",
-          "reason": "Distinguishes a lagging voter from a response that cannot confirm the current-term entry; a lagging candidate cannot win."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Choose quorum coordination when a stable majority can be maintained",
-          "reason": "Names leader-based coordination as the alternative."
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause."
         }
       },
       "decision_evidence": {
@@ -7275,7 +7275,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Section 2 is the quorum arithmetic and failure-envelope owner; read/write quorums are not covered."
     },
@@ -9885,7 +9885,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "The election and the lock/lease/fencing patterns now have four dedicated units."
     },
@@ -9899,7 +9899,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Quorum reads/writes and quorum coordination now have two distinct dedicated units."
     },
@@ -9915,7 +9915,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 3,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Replication, consensus, multi-leader and read-replica patterns now have five dedicated units."
     },
@@ -10309,12 +10309,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 131,
-    "invariant_supported": 94,
-    "failure_recovery_supported": 90,
-    "alternative_supported": 99,
-    "technical_partial_bounded": 93,
-    "technical_partial": 52,
+    "mechanism_supported": 128,
+    "invariant_supported": 91,
+    "failure_recovery_supported": 87,
+    "alternative_supported": 96,
+    "technical_partial_bounded": 90,
+    "technical_partial": 55,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
