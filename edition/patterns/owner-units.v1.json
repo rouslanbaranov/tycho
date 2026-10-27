@@ -9208,16 +9208,15 @@
         "line": 111,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "new or changed back-end behavior",
-          "side-effect boundary",
-          "mirrored request",
-          "small real share"
+          "Dark launching",
+          "mirrored",
+          "canary release"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Dark launching calls new or changed back-end behavior from existing user requests without showing the result, so the new path does real work under production load.",
+          "quote": "Dark launching calls new or changed back-end behavior from existing user requests without showing the result.",
           "reason": "Fowler defines hidden invocation of new behavior from real user requests.",
           "binding": {
             "source_id": "src.fowler-dark-launching",
@@ -9241,8 +9240,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Mirrored responses are discarded, so they do not affect the primary response.",
-          "reason": "Source states responses are discarded.",
+          "quote": "Inspect the mirrored service access logs to detect failures.",
+          "reason": "Source states access logs identify mirrored requests.",
           "binding": {
             "source_id": "src.istio-traffic-mirroring",
             "ledger_record": "read.batch7-istio-mirroring.2026-10-26",
@@ -9253,8 +9252,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A canary, feature flag or environment switch that receives a small real share is the alternative when shadow traffic cannot be made side-effect free.",
-          "reason": "Fowler names feature-flag rollback and canary release as user-visible alternatives.",
+          "quote": "A canary release is the alternative when the decision depends on a user choice.",
+          "reason": "Source names canary release for user-choice testing.",
           "binding": {
             "source_id": "src.fowler-dark-launching",
             "ledger_record": "read.fowler-dark-launching.2026-10-26",
@@ -9267,7 +9266,7 @@
       "decision_evidence": {
         "atlas_section": "dark-launching-shadow-traffic",
         "question": "Should new code receive real or shadow traffic before it is authoritative?",
-        "competing_alternative": "Canary release or feature flags. Reverse the choice when shadow load/cost exceeds confidence benefit.",
+        "competing_alternative": "Canary release when the decision depends on a user choice.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

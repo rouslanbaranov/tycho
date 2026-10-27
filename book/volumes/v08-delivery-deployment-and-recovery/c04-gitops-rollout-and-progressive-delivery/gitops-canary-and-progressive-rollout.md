@@ -111,16 +111,16 @@ source claim by themselves.
 ### Dark Launching-Shadow Traffic
 
 Dark launching calls new or changed back-end behavior from existing user requests without
-showing the result, so the new path does real work under production load. Shadow traffic
+showing the result. Shadow traffic
 copies live requests to a mirrored service while the old path remains authoritative.
 
 Mirrored requests are fire-and-forget: their responses are discarded, so they do not affect the
 primary response. Their Host/Authority headers carry a `-shadow` suffix. The new path still
 needs a side-effect boundary and a load budget; these are synthetic design conditions.
 
-Mirrored responses are discarded, so they do not affect the primary response. A canary, feature
-flag or environment switch that receives a small real share is the alternative when shadow
-traffic cannot be made side-effect free.
+Mirrored responses are discarded, so they do not affect the primary response. Inspect the
+mirrored service access logs to detect failures. A canary release is the alternative when the
+decision depends on a user choice.
 
 **Source boundary.** The
 [read.fowler-dark-launching.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)

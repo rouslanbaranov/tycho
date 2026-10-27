@@ -348,11 +348,10 @@ the old path remains authoritative.
 **Hard contraindications.** Reject when shadow requests cause writes, when traffic cannot
 be mirrored safely, or when load cost is prohibitive.
 
-**Competing alternative.** Canary release or feature flags. Reverse the choice when shadow
-load/cost exceeds confidence benefit.
+**Competing alternative.** Canary release when the decision depends on a user choice.
 
-**Failure and recovery.** Mirrored responses are discarded; isolate the shadow path and bound
-its load.
+**Failure and recovery.** Mirrored responses are discarded; inspect the mirrored service
+access logs to detect failures.
 
 **Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
 
