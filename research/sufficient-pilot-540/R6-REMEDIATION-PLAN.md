@@ -58,3 +58,18 @@ Each pilot must end in one of: `review-ready`, `remediation` with a recorded sou
 - owner: explicit acceptance record.
 
 Until all four hold, `sufficient: 0` and no promotion record is written.
+
+## Parallelization
+
+Parallel work is allowed only where evidence cannot race.
+
+- Lane A: read-only subagents audit one entry each. They return exact claims, quotes,
+  bindings and gaps; they do not write, classify support or issue verdicts.
+- Lane B: the parent applies book and owner-unit changes serially. Entries sharing an
+  owner page stay in one change set.
+- Lane C: shared artifacts are rebuilt once after the serial edits.
+- Lane D: external reviewers run at one frozen HEAD, one bounded scope per run. Do not
+  edit the repository while a review is running.
+
+A subagent report is never review evidence. The parent recomputes every quote, section,
+revision and hash before use. External review remains the only independent gate.
