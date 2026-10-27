@@ -255,33 +255,7 @@ and remain synthetic. The source is official documentation, not a benchmark.
 
 ### Valet Key
 
-**Identity.** Valet Key; family Security, isolation and operational architecture; kind
-security-pattern; priority core.
-
-**Decision question.** Should a client receive a scoped, time-limited credential for
-direct resource access?
-
-**Good-fit conditions.** Access is limited in scope and duration; the key can be revoked or
-disabled.
-
-**Hard contraindications.** Reject when access must be mediated.
-
-**Competing alternative.** Gateway Routing with proxied access to storage.
-
-**Failure and recovery.** A leaked key unlocks the target during its validity period; revoke
-or disable it.
-
-**Technical owner.** [Valet Key](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#valet-key) — scoped credential issuance, enforcement and revocation are bounded, not a key-management guide.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-valet.2026-10-21: all nine served headings read.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Least Privilege; Federated Identity; Object Credentials; API Gateway.
+See the [dedicated Valet Key card](valet-key.md).
 
 ### Multitenant Isolation
 

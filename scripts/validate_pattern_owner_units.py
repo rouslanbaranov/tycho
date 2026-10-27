@@ -332,8 +332,9 @@ def validate_data(data, root=ROOT):
             require(promotion["owner_page_sha256"]
                     == hashlib.sha256(page.read_bytes()).hexdigest(),
                     "owner-units-promotion-owner-hash: " + pattern_id)
+            card_path = card.get("card_path", chapter["path"])
             require(promotion["card_sha256"]
-                    == hashlib.sha256((root / chapter["path"]).read_bytes()).hexdigest(),
+                    == hashlib.sha256((root / card_path).read_bytes()).hexdigest(),
                     "owner-units-promotion-card-hash: " + pattern_id)
         for name in DIMENSIONS:
             record = evidence[name]

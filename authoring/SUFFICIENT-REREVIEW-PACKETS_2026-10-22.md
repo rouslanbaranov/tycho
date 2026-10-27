@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 133 |
+| Reviewed by independent agent | 132 |
 | Rejected after review | 8 |
 
-Packet statuses: {"page-changed-since-review": 12, "reviewed-by-independent-agent": 133}.
+Packet statuses: {"page-changed-since-review": 13, "reviewed-by-independent-agent": 132}.
 
 ## Review procedure
 
@@ -586,7 +586,7 @@ blank verdict template in the machine-readable file.
 
 - **Valet Key**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Vertical Scaling**
   Current: pass; re-review: pass; report: pass-with-findings.

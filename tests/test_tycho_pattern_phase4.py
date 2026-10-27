@@ -28,7 +28,7 @@ class Phase4Tests(unittest.TestCase):
     def test_page_count_is_rejected(self):
         data = copy.deepcopy(self.data)
         data["page_dispositions"].pop()
-        self.check_error(data, "phase4-schema")
+        self.check_error(data, "phase4-summary-pages")
 
     def test_missing_dimension_is_rejected(self):
         data = copy.deepcopy(self.data)

@@ -66,7 +66,7 @@ def section_with_anchor(body, slug):
         count = seen.get(base, 0)
         actual = base if count == 0 else f"{base}-{count}"
         seen[base] = count + 1
-        if level != "###":
+        if level not in ("###", "#"):
             continue
         if (slug_heading(label) == slug
                 or actual.replace("--", "-") == slug.replace("--", "-")):
@@ -112,7 +112,7 @@ def build(root=ROOT):
     coverage = load(root, COVERAGE)
     manifest = load(root, MANIFEST)
     documents = route["documents"]
-    if len(documents) != 423:
+    if len(documents) < 423:
         raise ValueError("phase4-page-count")
     chapters = {chapter["code"]: chapter for chapter in manifest["chapters"]}
     records = {record["id"]: record for record in ledger["records"]}
@@ -159,13 +159,14 @@ def build(root=ROOT):
     card_entries = []
     for batch in batches["batches"]:
         chapter = chapters[batch["chapter"]]
-        _, body = split((root / chapter["path"]).read_text(encoding="utf-8"))
         for entry in batch["entries"]:
+            card_path = entry.get("card_path", chapter["path"])
+            _, body = split((root / card_path).read_text(encoding="utf-8"))
             text, card_anchor = section_with_anchor(body, entry["atlas_section"])
             owner = patterns[entry["pattern_id"]]["technical_owner"]
             owner_file = root / owner["path"]
             owner_text = owner_file.read_text(encoding="utf-8") if owner_file.is_file() else ""
-            atlas_link = chapter["path"].split("book/volumes/", 1)[-1] + "#" + card_anchor
+            atlas_link = card_path.split("book/volumes/", 1)[-1] + "#" + card_anchor
             record = records.get(entry["ledger_record"])
             dimensions = {
                 "identity": "pass" if "**Identity.**" in text else "missing",

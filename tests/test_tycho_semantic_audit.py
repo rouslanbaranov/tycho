@@ -43,7 +43,7 @@ class PatternSemanticAuditTests(unittest.TestCase):
     def test_missing_page_is_rejected(self):
         data = self.copy()
         data["pages"].pop()
-        self.check_error(data, "semantic-audit-schema")
+        self.check_error(data, "semantic-audit-page-count")
 
     def test_duplicate_page_is_rejected(self):
         data = self.copy()
