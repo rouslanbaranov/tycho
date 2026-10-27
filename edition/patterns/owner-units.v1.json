@@ -2343,22 +2343,36 @@
         "mechanism": {
           "state": "supported",
           "quote": "A content-based router chooses a destination from message content.",
-          "reason": "Defines destination selection from message content."
+          "reason": "Defines destination selection from message content.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-cbr.2026-10-21",
+            "section": "Content-Based Router",
+            "quote": "The Content-Based Router examines the message content and routes the message onto a different channel based on data contained in the message.",
+            "revision": "2e1bcb059062a373d4a86319925c989b73ec891cebffe089608b4e48bc69256c"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "It needs a versioned predicate set, a default or dead-letter path and an owner for rule changes.",
-          "reason": "Requires versioned predicates, a default or DLQ and rule ownership."
+          "reason": "Page has maintainability prose but no versioned predicate set or rule owner."
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "The failure path is an unmatched or misrouted message; route to a declared fallback and record the predicate version.",
-          "reason": "Names unmatched or misrouted messages and requires fallback plus predicate version recording."
+          "reason": "Names unmatched or misrouted messages and requires fallback plus predicate version recording.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-cbr.2026-10-21",
+            "section": "Example: Apache Camel",
+            "quote": "errorHandler(deadLetterChannel(\"mock:error\")); from(\"direct:in\") .choice() .when(header(\"type\").isEqualTo(\"widget\")) .to(\"direct:widget\") .when(header(\"type\").isEqualTo(\"gadget\")) .to(\"direct:gadget\") .otherwise() .to(\"direct:other\");",
+            "revision": "2e1bcb059062a373d4a86319925c989b73ec891cebffe089608b4e48bc69256c"
+          }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A workflow/orchestrator is the alternative when routing needs multiple steps or compensations; do not hide a process engine inside the router.",
-          "reason": "Contrasts a workflow/orchestrator for multi-step routing."
+          "reason": "Page has no workflow or process-engine alternative."
         }
       },
       "decision_evidence": {
@@ -2376,7 +2390,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Bounded ownership note; includes mechanism, preconditions, failure path and alternative."
     },
@@ -2400,22 +2414,43 @@
         "mechanism": {
           "state": "supported",
           "quote": "A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding the rest by policy.",
-          "reason": "Defines predicate-based forwarding and policy discard."
+          "reason": "Defines predicate-based forwarding and policy discard.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-filter.2026-10-21",
+            "section": "Message Filter",
+            "quote": "If the message content matches the criteria specified by the Message Filter , the message is routed to the output channel. If the message content does not match the criteria, the message is discarded.",
+            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
+          }
         },
         "invariant": {
           "state": "supported",
           "quote": "Every discarded message must be an intentional drop under a versioned predicate, not an unobserved loss.",
-          "reason": "Requires intentional drops under a versioned predicate rather than unobserved loss."
+          "reason": "Requires intentional drops under a versioned predicate rather than unobserved loss.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-filter.2026-10-21",
+            "section": "Message Filter",
+            "quote": "Use a special kind of Message Router, a Message Filter , to eliminate undesired messages from a channel based on a set of criteria.",
+            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
+          }
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a declared fallback for unmatched messages.",
-          "reason": "Names predicate drift and requires filter-rate monitoring and a fallback."
+          "reason": "Page has no drift, filter-rate monitoring or unmatched fallback."
         },
         "alternative": {
           "state": "supported",
           "quote": "A content-based router sends different subsets to different destinations; prefer filtering when the destination is the same and only selection changes.",
-          "reason": "Contrasts a router that sends subsets to different destinations."
+          "reason": "Contrasts a router that sends subsets to different destinations.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-filter.2026-10-21",
+            "section": "Message Filter",
+            "quote": "The Message Filter has only a single output channel.",
+            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
+          }
         }
       },
       "decision_evidence": {
@@ -2460,22 +2495,29 @@
         "mechanism": {
           "state": "supported",
           "quote": "Pipes and filters decompose processing into ordered, replaceable stages connected by a message contract.",
-          "reason": "Defines ordered replaceable stages connected by a message contract."
+          "reason": "Defines ordered replaceable stages connected by a message contract.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-pipes.2026-10-21",
+            "section": "Solution (unheaded)",
+            "quote": "Use the Pipes and Filters architectural style to divide a larger processing task into a sequence of smaller, independent processing steps (Filters) that are connected by channels (Pipes).",
+            "revision": "850988a7f88fc170ad5d90f5791040fff4bc4b42643ce851466db4b4f6fb1d90"
+          }
         },
         "invariant": {
-          "state": "supported",
+          "state": "partial",
           "quote": "Each stage needs its own failure and retry policy, and the pipeline needs backpressure, a rule for partial completion and a declared ordering scope.",
-          "reason": "Requires per-stage retry, backpressure, partial-completion rules and ordering scope."
+          "reason": "Page has no per-stage failure, backpressure or partial-completion rule."
         },
         "failure_recovery": {
-          "state": "supported",
+          "state": "partial",
           "quote": "The failure path is a failed middle stage with earlier effects already applied; record stage identity and compensate or replay from a declared checkpoint.",
-          "reason": "Requires stage identity and compensation or replay from a checkpoint."
+          "reason": "Page has no failed-middle-stage or checkpoint recovery."
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "A single in-process transformation is the alternative when the stages are small and cannot be operated independently.",
-          "reason": "Contrasts a single in-process transformation for small non-independent stages."
+          "reason": "Page names no single in-process transformation alternative."
         }
       },
       "decision_evidence": {
@@ -2493,7 +2535,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
+      "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
       "notes": "Bounded ownership note; includes stages, failure handling, backpressure and alternative."
     },
@@ -10158,7 +10200,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 7,
+      "bounded_entries": 5,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -10499,11 +10541,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 127,
-    "invariant_supported": 84,
-    "failure_recovery_supported": 79,
-    "alternative_supported": 87,
-    "technical_partial_bounded": 83,
-    "technical_partial": 62,
+    "invariant_supported": 82,
+    "failure_recovery_supported": 77,
+    "alternative_supported": 85,
+    "technical_partial_bounded": 81,
+    "technical_partial": 64,
     "technical_name_only": 0,
     "technical_sufficient": 0,
     "decision_partial_bounded": 145,
