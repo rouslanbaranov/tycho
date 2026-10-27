@@ -1,0 +1,460 @@
+{
+  "batch": "B15",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.circuit-breaker",
+      "catalog_name": "Circuit Breaker",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+      "owner_heading": "Circuit Breaker",
+      "source_id": "src.resilience4j",
+      "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
+      "url": "https://resilience4j.readme.io/docs/circuitbreaker",
+      "unit": "CircuitBreaker — Resilience4j documentation",
+      "sections": [
+        "CircuitBreaker",
+        "Introduction",
+        "Count-based sliding window",
+        "Time-based sliding window",
+        "Failure rate and slow call rate thresholds",
+        "Create a CircuitBreakerRegistry",
+        "Create and configure a CircuitBreaker",
+        "Decorate and execute a functional interface",
+        "Consume emitted RegistryEvents",
+        "Consume emitted CircuitBreakerEvents",
+        "Override the RegistryStore"
+      ],
+      "revision": "cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A circuit breaker is a state machine around one dependency",
+          "reason": "States the breaker action: suppress repeated calls and probe recovery."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The threshold needs a minimum request volume so one failure does not trip a quiet dependency.",
+          "reason": "Flags the safety constraint that an open breaker is neither recovery nor backpressure."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "an open caused by local resource exhaustion hides the real bottleneck",
+          "reason": "Covers failure detection, call containment and recovery probing."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures are not fast.",
+          "reason": "Names the competing controls and reversal condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.bulkhead",
+      "catalog_name": "Bulkhead",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+      "owner_heading": "Bulkhead",
+      "source_id": "src.resilience4j",
+      "ledger_record": "read.batch4-r4j-bulkhead.2026-10-21",
+      "url": "https://resilience4j.readme.io/docs/bulkhead",
+      "unit": "Bulkhead — Resilience4j documentation",
+      "sections": [
+        "Bulkhead",
+        "Introduction",
+        "Create a BulkheadRegistry",
+        "Create and configure a Bulkhead",
+        "Create and configure a ThreadPoolBulkhead",
+        "Decorate and execute a functional interface",
+        "Consume emitted RegistryEvents",
+        "Consume emitted BulkheadEvents"
+      ],
+      "revision": "0335679ad552dc45fec36e0ac830a8f40e40cf498a1793de1f2feb0cb38e60a5",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A bulkhead reserves bounded workers or pools for independent classes or dependencies.",
+          "reason": "States the isolation mechanism: separate bounded pools per class or dependency."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Partition too tightly and waste capacity, or allow bypass",
+          "reason": "Names the two dangerous misuses that the isolation boundary must avoid."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A bulkhead bypass, undersized partition or shared hidden queue can defeat isolation; detect per-pool queue age, utilization and rejected work, and rebalance or fail the isolated class explicitly.",
+          "reason": "Names the isolation failures and the detection/response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Admission/rate limiting bounds a shared resource; a circuit breaker rejects calls to a failing dependency; a bulkhead bounds concurrent capacity per class.",
+          "reason": "Names the competing controls and reversal condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.retry-with-exponential-backoff",
+      "catalog_name": "Retry with Exponential Backoff",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "owner_heading": "Retry with Exponential Backoff",
+      "source_id": "src.resilience4j",
+      "ledger_record": "read.batch4-r4j-retry.2026-10-21",
+      "url": "https://resilience4j.readme.io/docs/retry",
+      "unit": "Retry — Resilience4j documentation",
+      "sections": [
+        "Retry",
+        "Create a RetryRegistry",
+        "Create and configure Retry",
+        "Decorate and execute a functional interface",
+        "Consume emitted RegistryEvents",
+        "Use a custom IntervalFunction"
+      ],
+      "revision": "afa81b6647292d1e276178d8dc5f22a0d72fc389b5b96e01fafaed8e2380a204",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Grow the delay after each failure, cap it and add jitter so clients do not synchronize.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Budget retries per dependency and caller class in addition to a service-wide cap",
+          "reason": "States retry preconditions and bounded budgets that must hold."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "When the budget is exhausted, return the overload result and let the caller choose fail-fast or queue; do not retry a permanent failure or an operation without effect identity.",
+          "reason": "Describes broad-overload detection and containment by returning an explicit result instead of retrying."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "When the budget is exhausted, return the overload result and let the caller choose fail-fast or queue; do not retry a permanent failure or an operation without effect identity.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.retry-with-jitter",
+      "catalog_name": "Retry with Jitter",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "owner_heading": "Retry with Jitter",
+      "source_id": "src.resilience4j",
+      "ledger_record": "read.batch4-r4j-retry.2026-10-21",
+      "url": "https://resilience4j.readme.io/docs/retry",
+      "unit": "Retry — Resilience4j documentation",
+      "sections": [
+        "Retry",
+        "Create a RetryRegistry",
+        "Create and configure Retry",
+        "Decorate and execute a functional interface",
+        "Consume emitted RegistryEvents",
+        "Use a custom IntervalFunction"
+      ],
+      "revision": "afa81b6647292d1e276178d8dc5f22a0d72fc389b5b96e01fafaed8e2380a204",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Jitter randomizes each retry delay so independent clients do not retry in lockstep, spreading attempts across a window or adding a random offset to an exponential base.",
+          "reason": "Defines randomized retry delays that break client lockstep."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Every attempt must consume the same end-to-end deadline and attempt budget, so added delay cannot extend the caller's useful completion window.",
+          "reason": "Requires every attempt to share the end-to-end deadline and budget."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Synchronized retries convert a brief failure into a sustained overload; compare actual attempt counts and retry arrivals with the planned budget and stop the retry policy when pushback persists.",
+          "reason": "Names synchronized retry overload and requires comparing attempts and arrivals with the budget."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Retry without jitter at a single layer, or do not retry at all when the failure is non-retryable; add jitter when many clients share the same dependency and retry signal.",
+          "reason": "Contrasts unjittered single-layer retry or no retry for non-retryable failures."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.timeout",
+      "catalog_name": "Timeout",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "owner_heading": "Timeout",
+      "source_id": "src.resilience4j",
+      "ledger_record": "read.batch4-r4j-timelimiter.2026-10-21",
+      "url": "https://resilience4j.readme.io/docs/timeout",
+      "unit": "TimeLimiter — Resilience4j documentation",
+      "sections": [
+        "TimeLimiter",
+        "Create a TimeLimiterRegistry",
+        "Create and configure TimeLimiter",
+        "Decorate and execute a functional interface"
+      ],
+      "revision": "7cdd450b6deb5a09f8aa3db478bfbd769f2e2ef5747f077ca92342949a34010a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A timeout is a local wait bound on one operation; the request deadline is the caller's end-to-end budget.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Each hop should use at most the remaining deadline, minus its own processing and margin, and propagate the remainder.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Prefer explicit outcome lookup for an ambiguous durable command, rather than treating every timeout as \"nothing happened\".",
+          "reason": "Treats timeout as an ambiguous outcome and prescribes authority lookup."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A shorter local timeout with explicit cancellation may protect capacity better than a long caller deadline",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.deadline-propagation",
+      "catalog_name": "Deadline Propagation",
+      "owner_path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "owner_heading": "Deadline Propagation",
+      "source_id": "src.sre-cascading",
+      "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+      "url": "https://sre.google/sre-book/addressing-cascading-failures/",
+      "unit": "Addressing Cascading Failures — public chapter",
+      "sections": [
+        "Addressing Cascading Failures",
+        "Causes of Cascading Failures and Designing to Avoid Them",
+        "Server Overload",
+        "Resource Exhaustion",
+        "Service Unavailability",
+        "Preventing Server Overload",
+        "Queue Management",
+        "Load Shedding and Graceful Degradation",
+        "Retries",
+        "Latency and Deadlines",
+        "Slow Startup and Cold Caching",
+        "Always Go Downward in the Stack",
+        "Triggering Conditions for Cascading Failures",
+        "Testing for Cascading Failures",
+        "Immediate Steps to Address Cascading Failures",
+        "Closing Remarks"
+      ],
+      "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Deadline propagation carries the caller's remaining budget as a relative duration.",
+          "reason": "Explains how elapsed time is subtracted and the remaining budget propagated."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The ingress sets the budget and each hop checks expiry before starting work.",
+          "reason": "States the per-hop budget bound that must hold."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Clock skew, a lost header and a hop that ignores expiry are the common failures.",
+          "reason": "Describes post-deadline cleanup and reconciliation via a durable workflow."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "independent per-hop timeouts fit only when the hops are genuinely independent.",
+          "reason": "States the mechanism, invariant, failure or alternative."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.fallback",
+      "catalog_name": "Fallback",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+      "owner_heading": "Fallback",
+      "source_id": "src.sre-cascading",
+      "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+      "url": "https://sre.google/sre-book/addressing-cascading-failures/",
+      "unit": "Addressing Cascading Failures — public chapter",
+      "sections": [
+        "Addressing Cascading Failures",
+        "Causes of Cascading Failures and Designing to Avoid Them",
+        "Server Overload",
+        "Resource Exhaustion",
+        "Service Unavailability",
+        "Preventing Server Overload",
+        "Queue Management",
+        "Load Shedding and Graceful Degradation",
+        "Retries",
+        "Latency and Deadlines",
+        "Slow Startup and Cold Caching",
+        "Always Go Downward in the Stack",
+        "Triggering Conditions for Cascading Failures",
+        "Testing for Cascading Failures",
+        "Immediate Steps to Address Cascading Failures",
+        "Closing Remarks"
+      ],
+      "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "The owner of the primary outcome also owns its fallback, because only that owner can judge whether an alternate preserves the same correctness contract.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A dependency team's proposal needs explicit acceptance.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "State the fallback freshness, authority and caller-visible label, and require it to be cheaper, independently safe and independent of the failed resource.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A plausible substitute that hides its limits is a correctness failure; do not let the alternate impersonate the primary.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.graceful-degradation",
+      "catalog_name": "Graceful Degradation",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+      "owner_heading": "Graceful Degradation",
+      "source_id": "src.sre-cascading",
+      "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+      "url": "https://sre.google/sre-book/addressing-cascading-failures/",
+      "unit": "Addressing Cascading Failures — public chapter",
+      "sections": [
+        "Addressing Cascading Failures",
+        "Causes of Cascading Failures and Designing to Avoid Them",
+        "Server Overload",
+        "Resource Exhaustion",
+        "Service Unavailability",
+        "Preventing Server Overload",
+        "Queue Management",
+        "Load Shedding and Graceful Degradation",
+        "Retries",
+        "Latency and Deadlines",
+        "Slow Startup and Cold Caching",
+        "Always Go Downward in the Stack",
+        "Triggering Conditions for Cascading Failures",
+        "Testing for Cascading Failures",
+        "Immediate Steps to Address Cascading Failures",
+        "Closing Remarks"
+      ],
+      "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Degradation removes optional features or reduces quality to protect an essential outcome under overload.",
+          "reason": "Defines the mechanism and its scope."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "which outcomes stay mandatory, which become unavailable and how callers observe the reduced state.",
+          "reason": "States the correctness or policy invariant."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Silent loss of correctness is worse than an explicit failure.",
+          "reason": "Names the failure mode and required response."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A complete, explicit outage or added capacity may be preferable when no safe mode exists.",
+          "reason": "Names the competing choice and reversal condition."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.load-shedding",
+      "catalog_name": "Load Shedding",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+      "owner_heading": "Load Shedding",
+      "source_id": "src.sre-overload",
+      "ledger_record": "read.sre-overload.2026-10-21",
+      "url": "https://sre.google/sre-book/handling-overload/",
+      "unit": "Handling Overload — complete public chapter",
+      "sections": [
+        "Handling Overload",
+        "The Pitfalls of \"Queries per Second\"",
+        "Per-Customer Limits",
+        "Client-Side Throttling",
+        "Client request rejection probability",
+        "Criticality",
+        "Utilization Signals",
+        "Handling Overload Errors",
+        "Deciding to Retry",
+        "Load from Connections",
+        "Conclusions"
+      ],
+      "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Shedding requires one named bottleneck and an admission point close to it.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A load balancer rejecting traffic without that link merely relocates the queue.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The policy owner defines criticality classes, tenant fairness and the share of work that may be refused.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Those are product choices that deserve review outside an incident.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.throttling",
+      "catalog_name": "Throttling",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+      "owner_heading": "Throttling",
+      "source_id": "src.sre-overload",
+      "ledger_record": "read.sre-overload.2026-10-21",
+      "url": "https://sre.google/sre-book/handling-overload/",
+      "unit": "Handling Overload — complete public chapter",
+      "sections": [
+        "Handling Overload",
+        "The Pitfalls of \"Queries per Second\"",
+        "Per-Customer Limits",
+        "Client-Side Throttling",
+        "Client request rejection probability",
+        "Criticality",
+        "Utilization Signals",
+        "Handling Overload Errors",
+        "Deciding to Retry",
+        "Load from Connections",
+        "Conclusions"
+      ],
+      "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Throttling slows work that has already been admitted; it does not decide who deserves service.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The invariant is that every admitted class has a bounded wait and a declared rejection point; no class waits without a deadline.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A finite buffer and an upstream backpressure signal make pacing enforceable.",
+          "reason": "Bounded owner statement from the current section."
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Rejecting excess work or adding capacity may be cheaper than delaying everyone.",
+          "reason": "Bounded owner statement from the current section."
+        }
+      }
+    }
+  ]
+}
