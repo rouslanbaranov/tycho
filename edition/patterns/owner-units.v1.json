@@ -717,7 +717,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 162,
+        "line": 163,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -726,8 +726,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A sidecar runs as a colocated helper process or container beside the application instance and can supply proxying or logging behaviour.",
-          "reason": "Source supports colocated helper processes and proxying/logging.",
+          "quote": "A sidecar is a colocated helper service beside the application instance, is not part of the application, and can supply proxying or logging behaviour.",
+          "reason": "Source describes a colocated helper service outside the application.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-sidecar.2026-10-21",
@@ -762,8 +762,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A library or traditional extension provides the same helper behaviour without a separate process and its network overhead; choose a sidecar when process isolation is required.",
-          "reason": "Source compares a library or traditional extension with sidecar overhead.",
+          "quote": "A language-specific library or traditional extension offers deeper integration and less network overhead; consider it when those trade-offs dominate.",
+          "reason": "Source compares language-specific libraries and network overhead.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-sidecar.2026-10-21",
@@ -775,8 +775,8 @@
       },
       "decision_evidence": {
         "atlas_section": "sidecar",
-        "question": "Should auxiliary runtime behavior run in a colocated process/container beside the main workload, rather than inside it or in a separate remote service?",
-        "competing_alternative": "An in-process library or traditional extension when the helper can share the application process.",
+        "question": "Should auxiliary runtime behavior run in a colocated helper beside the main workload rather than inside it?",
+        "competing_alternative": "A language-specific library or traditional extension when deeper integration and lower network overhead matter.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -802,7 +802,7 @@
         "heading": "Ambassador",
         "anchor": "ambassador",
         "level": 3,
-        "line": 146,
+        "line": 147,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy or sidecar",
@@ -8884,7 +8884,7 @@
         "heading": "Immutable Infrastructure",
         "anchor": "immutable-infrastructure",
         "level": 3,
-        "line": 177,
+        "line": 181,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Immutable Infrastructure"

@@ -140,8 +140,9 @@ The source material keeps its original published/inferred/synthetic/unverified d
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is
-not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+not the main subject of this page. Where a section names an admitted source, that
+source supports the bounded claims; limits and deployment notes remain synthetic
+and create no new source claim.
 
 ### Ambassador
 
@@ -161,14 +162,17 @@ it adds a data-plane hop whose latency and outage must be budgeted.
 
 ### Sidecar
 
-A sidecar runs as a colocated helper process or container beside the application instance and
-can supply proxying or logging behaviour. Each application instance gets its own sidecar
-instance that shares its life cycle. The sidecar remains a separate process from the application
-and is scheduled beside it. Startup and shutdown ordering between the application and its sidecar
-must avoid races.
+A sidecar is a colocated helper service beside the application instance, is not part of the
+application, and can supply proxying or logging behaviour. Each application instance gets its
+own sidecar instance that shares its life cycle. The sidecar remains a separate process from
+the application and is scheduled beside it. Startup and shutdown ordering between the
+application and its sidecar must avoid races.
 
-A library or traditional extension provides the same helper behaviour without a separate process
-and its network overhead; choose a sidecar when process isolation is required.
+A language-specific library or traditional extension offers deeper integration and less network
+overhead; consider it when those trade-offs dominate. **Source.** The
+[Microsoft Sidecar pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar)
+supports the colocated helper, shared lifecycle, startup/shutdown ordering and library/extension
+trade-off claims. The deployment compatibility note below is synthetic.
 
 **Limits.** A sidecar cannot isolate a compromised shared kernel or replace host-level policy.
 Synthetic deployment note: record the application and sidecar images as one tested compatibility

@@ -424,18 +424,17 @@ CQRS.
 **Identity.** Sidecar; family Application architecture and boundaries; kind
 deployment-pattern; priority core.
 
-**Decision question.** Should auxiliary runtime behavior run in a colocated
-process/container beside the main workload, rather than inside it or in a separate
-remote service?
+**Decision question.** Should auxiliary runtime behavior run in a colocated helper beside
+the main workload rather than inside it?
 
-**Good-fit conditions.** The helper shares the application instance lifecycle; process
-isolation is useful; the platform can schedule and manage sidecars.
+**Good-fit conditions.** The helper is colocated with the application instance; process
+isolation is useful; the platform can schedule and manage it.
 
-**Hard contraindications.** Reject when the helper must outlive or be upgraded
-independently of the application instance.
+**Hard contraindications.** Reject when a language-specific library or traditional
+extension provides the needed behavior with less operational overhead.
 
-**Competing alternative.** An in-process library or traditional extension when the
-helper can share the application process.
+**Competing alternative.** A language-specific library or traditional extension when
+deeper integration and lower network overhead matter.
 
 **Failure and recovery.** Startup and shutdown ordering between the application and
 sidecar must avoid races.
