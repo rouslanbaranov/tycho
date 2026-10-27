@@ -353,6 +353,20 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["content_trust"],
                          mcp_server.CONTENT_TRUST)
 
+    def test_h3_match_maps_to_parent_and_is_not_readable(self):
+        payload = self.call(self.server(), "tycho_search", {
+            "query": "nested text", "limit": 2,
+        })["structuredContent"]
+        top = payload["results"][0]
+        self.assertEqual(top["section_id"], "retry-budget")
+        self.assertEqual(top["matched_passage_heading"], "Nested detail")
+        self.assertIn("~", top["matched_passage_key"])
+        self.assertEqual(top["citation"], "book/alpha.md#retry-budget")
+        read = self.call(self.server(), "tycho_read", {
+            "section_key": top["matched_passage_key"],
+        })
+        self.assertTrue(read["isError"])
+
     def test_no_results_is_not_a_tool_error(self):
         result = self.call(self.server(), "tycho_search", {
             "query": "nothingmatches",

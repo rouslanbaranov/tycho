@@ -71,6 +71,34 @@ class SearchReindexTests(unittest.TestCase):
             report = search_reindex.check(ROOT)
         self.assertIn("qrels-stale", report["issues"])
 
+    def test_diff_reports_page_and_qrels_changes(self):
+        old = {"content": {"files_sha256": {"a": "1", "b": "2"}},
+               "qrels": [{"path": "q", "sha256": "x"}],
+               "section_index": {"sections": 2, "passages": 1}}
+        new = {"content": {"files_sha256": {"a": "1", "c": "3"}},
+               "qrels": [{"path": "q", "sha256": "y"}],
+               "section_index": {"sections": 3, "passages": 2}}
+        report = search_reindex.diff_manifests(old, new)
+        self.assertEqual(report["added_pages"], ["c"])
+        self.assertEqual(report["removed_pages"], ["b"])
+        self.assertEqual(report["qrels_changed"], ["q"])
+        self.assertEqual(report["status"], "changed")
+
+    def test_reindex_lock_excludes_concurrent_build(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            with search_reindex.reindex_lock(tmp):
+                with self.assertRaises(RuntimeError):
+                    with search_reindex.reindex_lock(tmp):
+                        pass
+
+    def test_check_reports_missing_or_corrupt_index(self):
+        for exc in (RuntimeError("missing"),
+                    search_reindex.sqlite3.DatabaseError("corrupt")):
+            with patch.object(search_reindex.section_fts_index, "stats",
+                              side_effect=exc):
+                report = search_reindex.check(ROOT)
+            self.assertIn("index-missing", report["issues"])
+
 
 if __name__ == "__main__":
     unittest.main()

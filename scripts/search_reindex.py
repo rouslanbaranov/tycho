@@ -8,7 +8,9 @@ or qrels no longer match the frozen pre-enrichment manifest.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
+import sqlite3
 import subprocess
 import sys
 
@@ -36,11 +38,16 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def content_digest(root):
+def content_files(root):
     root = Path(root)
-    rows = []
-    for path in sorted((root / "book").rglob("*.md")):
-        rows.append((path.relative_to(root).as_posix(), sha(path)))
+    return {
+        path.relative_to(root).as_posix(): sha(path)
+        for path in sorted((root / "book").rglob("*.md"))
+    }
+
+
+def content_digest(root):
+    rows = sorted(content_files(root).items())
     payload = json.dumps(rows, separators=(",", ":")).encode("utf-8")
     return hashlib.sha256(payload).hexdigest(), len(rows)
 
@@ -77,17 +84,46 @@ def qrels_state(root):
     return rows
 
 
+class reindex_lock:
+    """Exclusive lock so two rebuilds cannot publish one snapshot."""
+
+    def __init__(self, root):
+        self.path = Path(root) / "generated/.search-reindex.lock"
+        self.fd = None
+
+    def __enter__(self):
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            self.fd = os.open(self.path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError as exc:
+            raise RuntimeError("reindex already running") from exc
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if self.fd is not None:
+            os.close(self.fd)
+            self.fd = None
+        try:
+            self.path.unlink()
+        except FileNotFoundError:
+            pass
+        return False
+
+
 def build(root, allow_partial=False):
     root = Path(root).resolve()
-    route = route_index.canonical_scan(root, allow_partial=allow_partial)
-    ROUTE_INDEX.parent.mkdir(parents=True, exist_ok=True)
-    ROUTE_INDEX.write_text(
-        json.dumps(route, sort_keys=True, indent=2, ensure_ascii=False) + "\n",
-        encoding="utf-8")
-    result = section_fts_index.publish(
-        root, full=True, allow_partial=allow_partial)
-    stats = section_fts_index.stats(root)
-    return route, result, stats
+    with reindex_lock(root):
+        route = route_index.canonical_scan(root, allow_partial=allow_partial)
+        ROUTE_INDEX.parent.mkdir(parents=True, exist_ok=True)
+        temp = ROUTE_INDEX.with_suffix(".json.tmp")
+        temp.write_text(
+            json.dumps(route, sort_keys=True, indent=2, ensure_ascii=False)
+            + "\n", encoding="utf-8")
+        os.replace(temp, ROUTE_INDEX)
+        result = section_fts_index.publish(
+            root, full=True, allow_partial=allow_partial)
+        stats = section_fts_index.stats(root)
+        return route, result, stats
 
 
 def make_manifest(root, route, result, stats):
@@ -101,7 +137,8 @@ def make_manifest(root, route, result, stats):
         "kind": "pre-enrichment-search-snapshot",
         "created": "2026-10-27",
         "git_commit": git_commit(root),
-        "content": {"sha256": digest, "files": files},
+        "content": {"sha256": digest, "files": files,
+                    "files_sha256": content_files(root)},
         "route": {
             "snapshot": route["snapshot_sha256"],
             "documents": len(route["documents"]),
@@ -125,6 +162,58 @@ def make_manifest(root, route, result, stats):
     }
 
 
+def diff_manifests(old, new):
+    old_files = old.get("content", {}).get("files_sha256", {})
+    new_files = new.get("content", {}).get("files_sha256", {})
+    old_keys, new_keys = set(old_files), set(new_files)
+    added = sorted(new_keys - old_keys)
+    removed = sorted(old_keys - new_keys)
+    changed = sorted(
+        key for key in old_keys & new_keys
+        if old_files[key] != new_files[key])
+    old_qrels = {row["path"]: row for row in old.get("qrels", [])}
+    new_qrels = {row["path"]: row for row in new.get("qrels", [])}
+    qrels_changed = sorted(
+        path for path in set(old_qrels) | set(new_qrels)
+        if old_qrels.get(path) != new_qrels.get(path))
+    old_sections = old.get("section_index", {}).get("sections")
+    new_sections = new.get("section_index", {}).get("sections")
+    old_passages = old.get("section_index", {}).get("passages")
+    new_passages = new.get("section_index", {}).get("passages")
+    return {
+        "status": "changed" if (added or removed or changed or qrels_changed
+                                 or old_sections != new_sections
+                                 or old_passages != new_passages)
+                  else "unchanged",
+        "added_pages": added,
+        "removed_pages": removed,
+        "changed_pages": changed,
+        "qrels_changed": qrels_changed,
+        "sections": {"old": old_sections, "new": new_sections},
+        "passages": {"old": old_passages, "new": new_passages},
+    }
+
+
+def diff_current(root, manifest_path=DEFAULT_MANIFEST):
+    old = load(manifest_path)
+    new = {
+        "content": {"files": len(content_files(root)),
+                    "files_sha256": content_files(root)},
+        "qrels": qrels_state(root),
+        "section_index": {},
+    }
+    try:
+        stats = section_fts_index.stats(root)
+        new["section_index"] = {
+            "sections": stats["sections"], "passages": stats["passages"]}
+    except (OSError, ValueError, RuntimeError, sqlite3.DatabaseError):
+        pass
+    report = diff_manifests(old, new)
+    report["manifest"] = str(manifest_path)
+    report["qrels_stale"] = check(root, manifest_path).get("qrels_stale", [])
+    return report
+
+
 def check(root, manifest_path=DEFAULT_MANIFEST):
     root = Path(root).resolve()
     manifest = load(manifest_path)
@@ -143,7 +232,7 @@ def check(root, manifest_path=DEFAULT_MANIFEST):
             issues.append("section-count-changed")
         if stats["passages"] != manifest["section_index"]["passages"]:
             issues.append("passage-count-changed")
-    except (OSError, ValueError, RuntimeError):
+    except (OSError, ValueError, RuntimeError, sqlite3.DatabaseError):
         issues.append("index-missing")
     stale = []
     current_route = route["snapshot_sha256"]
@@ -175,7 +264,7 @@ def check(root, manifest_path=DEFAULT_MANIFEST):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("action", choices=("snapshot", "check", "rebuild"))
+    ap.add_argument("action", choices=("snapshot", "check", "rebuild", "diff"))
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     ap.add_argument("--allow-partial", action="store_true")
@@ -193,6 +282,10 @@ def main(argv=None):
         report = check(args.root, args.manifest)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0 if report["status"] == "current" else 1
+    if args.action == "diff":
+        report = diff_current(args.root, args.manifest)
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return 0 if report["status"] == "unchanged" else 1
     route, result, stats = build(args.root, args.allow_partial)
     report = {
         "status": "rebuilt",
