@@ -44,8 +44,8 @@ content_verified_at: null
 **Identity.** RBAC / ABAC; family Security, isolation and operational architecture; kind
 security-pattern; priority core.
 
-**Decision question.** Should access be decided by roles or attributes rather than ad hoc
-checks?
+**Decision question.** Should access be decided by roles or attributes rather than identity
+ACLs?
 
 **Good-fit conditions.** A policy model exists; roles/attributes have owners; decisions
 are auditable; conflicts are resolved.
@@ -55,7 +55,8 @@ are untrusted, or when policy complexity cannot be tested.
 
 **Competing alternative.** Object ACLs use identity; RBAC uses roles.
 
-**Failure and recovery.** Failure to remove or revoke access over time accumulates privileges.
+**Failure and recovery.** In ACL/IBAC systems, failure to remove or revoke access over time
+accumulates privileges.
 
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 

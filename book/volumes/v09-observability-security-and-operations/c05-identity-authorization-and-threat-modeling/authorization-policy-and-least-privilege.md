@@ -106,7 +106,7 @@ audited path with revocation tests and logging rather than a permanent broad rol
 
 ## RBAC-ABAC
 
-RBAC employs pre-defined roles that carry a specific set of privileges; ABAC evaluates
+RBAC employs pre-defined roles that carry a specific set of privileges. ABAC evaluates
 principal, resource and context attributes to reach a decision. Authorization is determined by evaluating attributes associated with the subject, object,
 requested operations, and, where applicable, environment conditions against policy.
 
@@ -115,8 +115,8 @@ policy and attributes, a policy enforcement point applies the decision, a policy
 point supplies attributes and a policy administration point manages policy. Distributed
 placement makes attribute freshness and audit harder.
 
-Failure to remove or revoke access over time leads to users accumulating privileges. ACLs
-work on the attribute of identity; RBAC works on the attribute of role.
+In ACL/IBAC systems, failure to remove or revoke access over time leads to users accumulating
+privileges. ACLs work on the attribute of identity; RBAC works on the attribute of role.
 
 **Limits.** Policy/attribute freshness and decision logging are costs; an unexplainable deny or
 allow is a production incident, not a policy detail. Attribute sources need freshness SLAs; a
