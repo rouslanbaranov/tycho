@@ -3,9 +3,9 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **16 sufficient / 145**, **14 owner-accepted**, **2 pending owner decisions**.
+Current: **16 sufficient / 145**, **16 owner-accepted**, **0 pending owner decisions**.
 Pilot six: **all six sufficient**.
-Owner accepted 14 entries on 2026-10-28; Federated Identity and Ambassador await decisions.
+Owner accepted all 16 sufficient entries on 2026-10-28.
 
 ## Sufficient and accepted
 
@@ -19,19 +19,19 @@ Owner accepted 14 entries on 2026-10-28; Federated Identity and Ambassador await
 
 | Entry | External report | Owner accepted |
 |---|---|---|
-| Valet Key | `2026-10-27-valet-key-split-review6-codex.md` | no |
-| Anti-Corruption Layer | `2026-10-27-anti-corruption-layer-split-review4-codex.md` | no |
-| Parallel Run | `2026-10-27-parallel-run-split-review2-codex.md` | no |
-| Workload Identity / mTLS | `2026-10-27-workload-identity-review5-codex.md` | no |
-| Sidecar | `2026-10-27-sidecar-review5-codex.md` | no |
-| Dark Launching / Shadow Traffic | `2026-10-27-dark-launching-review2-codex.md` | no |
-| Async Request-Reply | `2026-10-27-async-request-reply-review3-codex.md` | no |
-| RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | no |
-| Service Discovery | `2026-10-28-service-discovery-review-codex.md` | no |
-| Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | no |
-| Request-Reply Messaging | `2026-10-28-request-reply-messaging-review-codex.md` | no |
-| Federated Identity | `2026-10-28-federated-identity-review2-codex.md` | no |
-| Ambassador | `2026-10-28-ambassador-review-codex.md` | no |
+| Valet Key | `2026-10-27-valet-key-split-review6-codex.md` | yes |
+| Anti-Corruption Layer | `2026-10-27-anti-corruption-layer-split-review4-codex.md` | yes |
+| Parallel Run | `2026-10-27-parallel-run-split-review2-codex.md` | yes |
+| Workload Identity / mTLS | `2026-10-27-workload-identity-review5-codex.md` | yes |
+| Sidecar | `2026-10-27-sidecar-review5-codex.md` | yes |
+| Dark Launching / Shadow Traffic | `2026-10-27-dark-launching-review2-codex.md` | yes |
+| Async Request-Reply | `2026-10-27-async-request-reply-review3-codex.md` | yes |
+| RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | yes |
+| Service Discovery | `2026-10-28-service-discovery-review-codex.md` | yes |
+| Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | yes |
+| Request-Reply Messaging | `2026-10-28-request-reply-messaging-review-codex.md` | yes |
+| Federated Identity | `2026-10-28-federated-identity-review2-codex.md` | yes |
+| Ambassador | `2026-10-28-ambassador-review-codex.md` | yes |
 
 ## Pilot six
 

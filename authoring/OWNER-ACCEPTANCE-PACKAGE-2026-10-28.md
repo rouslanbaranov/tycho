@@ -1,6 +1,6 @@
 # Owner acceptance record — 16 sufficient entries
 
-Status: **14 accepted; Federated Identity and Ambassador pending owner decision**.
+Status: **accepted by owner on 2026-10-28; all 16 entries accepted**.
 All sixteen have a fresh external `pass` and a promotion record.
 
 ## Already accepted
@@ -24,8 +24,8 @@ All sixteen have a fresh external `pass` and a promotion record.
 | 9 | Service Discovery | `authoring/ai-reviews/2026-10-28-service-discovery-review-codex.md` | yes |
 | 10 | Controlled Cutover | `authoring/ai-reviews/2026-10-28-controlled-cutover-review-codex.md` | yes |
 | 11 | Request-Reply Messaging | `authoring/ai-reviews/2026-10-28-request-reply-messaging-review-codex.md` | yes |
-| 12 | Federated Identity | `authoring/ai-reviews/2026-10-28-federated-identity-review2-codex.md` | no |
-| 13 | Ambassador | `authoring/ai-reviews/2026-10-28-ambassador-review-codex.md` | no |
+| 12 | Federated Identity | `authoring/ai-reviews/2026-10-28-federated-identity-review2-codex.md` | yes |
+| 13 | Ambassador | `authoring/ai-reviews/2026-10-28-ambassador-review-codex.md` | yes |
 
 ## Evidence limits
 
@@ -103,4 +103,4 @@ To accept both, add:
 }
 ```
 
-Until then the owner acceptance count remains 14 of 16 sufficient entries.
+The owner accepted both entries on 2026-10-28; acceptance is 16 of 16 sufficient entries.
