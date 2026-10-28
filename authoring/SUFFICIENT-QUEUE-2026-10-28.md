@@ -24,6 +24,7 @@ and a promotion record; owner acceptance is separate.
 | Async Request-Reply | `2026-10-27-async-request-reply-review3-codex.md` | no |
 | RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | no |
 | Service Discovery | `2026-10-28-service-discovery-review-codex.md` | no |
+| Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | no |
 
 ## Pilot six
 
@@ -34,7 +35,7 @@ and a promotion record; owner acceptance is separate.
 | Dark Launching | sufficient | owner acceptance pending |
 | RBAC/ABAC | sufficient | owner acceptance pending |
 | Federated Identity | remediation | local-account alternative unsupported |
-| Controlled Cutover | remediation | all four dimensions synthetic |
+| Controlled Cutover | sufficient | owner acceptance pending |
 
 ## Frozen by page-bound promotion
 
