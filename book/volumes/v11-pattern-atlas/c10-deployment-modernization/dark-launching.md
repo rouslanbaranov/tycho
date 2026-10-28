@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "migration"
-summary: "Decision card for Dark Launching / Shadow Traffic; bounded owner evidence and explicit limits."
+summary: "Decision card for Dark Launching; bounded owner evidence and limits."
 route_hints:
   questions:
     - "Should new code receive shadow traffic before it is authoritative?"
@@ -27,6 +27,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.istio-traffic-mirroring"
+    - "src.fowler-dark-launching"
   claim_ids: []
   status: "source-linked"
   notes: "Moved card page; source binding remains in the owner unit."
