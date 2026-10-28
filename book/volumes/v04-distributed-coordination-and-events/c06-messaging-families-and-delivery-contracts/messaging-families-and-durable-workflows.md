@@ -42,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-28"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -56,7 +56,7 @@ content_verified_at: null
 
 > **Pattern atlas:**
 > [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) — decision conditions and contraindications.
-> [Splitter](../../v11-pattern-atlas/c03-messaging-integration/README.md#splitter) — decision conditions and contraindications.
+> [Splitter](../../v11-pattern-atlas/c03-messaging-integration/splitter.md#splitter) — decision conditions and contraindications.
 > [Aggregator](../../v11-pattern-atlas/c03-messaging-integration/README.md#aggregator) — decision conditions and contraindications.
 > [Scatter-Gather](../../v11-pattern-atlas/c03-messaging-integration/README.md#scatter-gather) — decision conditions and contraindications.
 
@@ -134,20 +134,37 @@ aggregates their responses through an aggregator.
 
 ### Splitter
 
-A splitter turns one input into several independently processable messages. It needs
-part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out. Carry a parent correlation key and an expected-part set; a coordinator owns
-completion and decides how missing parts are retried; completion tracking does not establish
-ordering, so a sequencer is still needed when causal order matters. Use it when downstream steps can make progress independently and partial
-completion is meaningful. Do not use it when the whole input must succeed atomically or
-when downstream ordering cannot be reconstructed.
+**Decision.** Split a composite message only when its parts can make progress
+independently and completion is observable. If the parts must succeed atomically, keep the
+composite whole; if the work is to combine related messages, use an aggregator.
+
+**Mechanism.** A splitter turns one input into several independently processable messages.
+Apache Camel's splitter breaks a composite into one message per item and processes each
+part; the default output is the original input unless an aggregation strategy is supplied.
+
+**Invariant.** Each part must carry a part identity and a position so completion is
+decidable. Spring Integration's base splitter populates CORRELATION_ID, SEQUENCE_SIZE, and
+SEQUENCE_NUMBER on produced messages; when the size is unknown, SEQUENCE_SIZE is zero and
+the aggregate remains incomplete until a custom release strategy or expiry closes it. The
+source states: "It is a MessageHandler implementation that encapsulates features common to
+splitters, such as filling in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE,
+and SEQUENCE_NUMBER) on the messages that are produced." A completion or compensation rule
+must have an owner; Tycho's design guidance adds a bounded fan-out and per-part idempotency,
+which the source does not fix.
+
+**Failure and recovery.** A split that aborts does not advance a successful-completion
+watermark, so the failed batch can be retried; completed effects must remain idempotent or
+be deduplicated because a retry can re-deliver parts. An unknown part count leaves the
+aggregate incomplete rather than silently complete.
+
+**Alternative.** Aggregation is the mirror-image decision. Spring Integration describes the
+aggregator as "Basically a mirror-image of the splitter, the aggregator is a type of message
+handler that receives multiple messages and combines them into a single message." Use that
+side when the work is to combine related messages, not to divide one composite; the source
+states the relationship, while the decision framing is Tycho's synthesis.
 
 **Limits.** Fan-out multiplies message volume, tracking state and partial-failure cleanup; a
 split with no completion marker leaks orphaned work and needs an owner.
-
-The failure path is a split that produces only some parts; record part identity and
-completion, then retry missing parts without duplicating completed effects. A single
-consumer with internal fan-out is the alternative when the parts are small and atomicity
-is required.
 
 ### Scatter-Gather
 

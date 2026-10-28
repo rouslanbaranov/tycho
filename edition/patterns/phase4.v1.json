@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "e13951c5796ec0c379040b9ad2997d18fab6b89218a4a9c9fc790ccb49dc4f9d",
-    "ledger_sha256": "28ef99e678a718f36752d7bd27ca05c0d6f2a4799206fde4bf8ed1f58fb81a13",
-    "card_batches_sha256": "8b4a471be6d1056ddf5af20a6aa692cb649544a799041537e1b25333ec13d5f8",
-    "route_index_sha256": "43ea6149e93b36ac694dfaf8486dc150e2421fe7e5ed6eb34ea5ad85a74e3f99",
-    "coverage_sha256": "1f89c4ece2c9696ad36a79a4f1eab6b85a5b6c8f94d4941f3625e196387fe930"
+    "registry_sha256": "681e5463bff92597fc049042afc41fefcbc21eef17c8c32171b57962ae1c6238",
+    "ledger_sha256": "d901d60c70f04aabf3fc58cfcc2c3e323752e6a7f1f8e496920e9487440521de",
+    "card_batches_sha256": "abca8030ec06dafeb9e66be6342f9e12d77217c6d79fb9cc8a0190fe1f24925e",
+    "route_index_sha256": "d9ade1f8bd65befb59778a27304365ebd7cee0306c2a551448f201464cdb0671",
+    "coverage_sha256": "8bdba5e41c14b09f036da1067b1b8688ccc0e155feff393d4b4ac7f397f12b76"
   },
   "dimensions": [
     "identity",
@@ -24,10 +24,10 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 444,
+    "pages": 445,
     "entries": 145,
     "cards": 145,
-    "routes": 471,
+    "routes": 467,
     "related_labels": 24,
     "non_routes": 24,
     "unresolved_related": 0,
@@ -2978,6 +2978,13 @@
     {
       "document_id": "tycho.page.b21078a397214496a24305a2f016b021",
       "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
+      "document_id": "tycho.page.ed3237e11d1348a7898b79b16f3244c8",
+      "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md",
       "kind": "page",
       "disposition": "atlas-decision",
       "reason": "V11 decision layer"
@@ -6411,11 +6418,11 @@
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ],
@@ -8544,13 +8551,13 @@
     },
     {
       "pattern_id": "tycho.pattern.splitter",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ]
@@ -10877,26 +10884,6 @@
     {
       "from": "tycho.pattern.single-flight-request-coalescing",
       "to": "tycho.pattern.timeout",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.splitter",
-      "to": "tycho.pattern.aggregator",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.splitter",
-      "to": "tycho.pattern.pipes-and-filters",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.splitter",
-      "to": "tycho.pattern.process-manager-routing-slip",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.splitter",
-      "to": "tycho.pattern.scatter-gather",
       "basis": "card-related-entry"
     },
     {

@@ -2572,7 +2572,6 @@
         "unit_terms": [
           "one input into several independently processable messages",
           "part identity",
-          "bounded fan-out",
           "completion or compensation rule"
         ]
       },
@@ -2580,7 +2579,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "A splitter turns one input into several independently processable messages.",
-          "reason": "Defines one input becoming several processable messages.",
+          "reason": "Defines one input becoming several independently processable messages.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
@@ -2590,14 +2589,21 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "It needs part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out.",
-          "reason": "Camel documents part index/complete/size but not per-part idempotency or fan-out bound."
+          "state": "supported",
+          "quote": "Each part must carry a part identity and a position so completion is decidable.",
+          "reason": "Spring Integration populates correlation, sequence size and sequence number; an unknown size leaves the aggregate incomplete until a release strategy or expiry closes it.",
+          "binding": {
+            "source_id": "src.spring-integration",
+            "ledger_record": "read.spring-splitter.2026-10-28",
+            "section": "Programming Model",
+            "quote": "It is a MessageHandler implementation that encapsulates features common to splitters, such as filling in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the messages that are produced.",
+            "revision": "60507878879812400e92ac71f7a8eeb586cc0dd5744d140bd6fe2860aa4e0b94"
+          }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The failure path is a split that produces only some parts; record part identity and completion, then retry missing parts without duplicating completed effects.",
-          "reason": "Requires partial-split recording and retry of missing parts without duplicating completed effects.",
+          "quote": "A split that aborts does not advance a successful-completion watermark, so the failed batch can be retried; completed effects must remain idempotent or be deduplicated because a retry can re-deliver parts.",
+          "reason": "Camel watermark is not advanced when a split aborts, so the failed batch can be retried; idempotency is required because completed parts can be re-delivered.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
@@ -2607,15 +2613,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A single consumer with internal fan-out is the alternative when the parts are small and atomicity is required.",
-          "reason": "Page does not compare single-unit processing or single-consumer fan-out."
+          "state": "supported",
+          "quote": "Aggregation is the mirror-image decision.",
+          "reason": "Spring Integration describes the aggregator as the mirror-image of the splitter; the decision framing is Tycho's synthesis.",
+          "binding": {
+            "source_id": "src.spring-integration",
+            "ledger_record": "read.spring-aggregator.2026-10-28",
+            "section": "Aggregator (opening definition)",
+            "quote": "Basically a mirror-image of the splitter, the aggregator is a type of message handler that receives multiple messages and combines them into a single message.",
+            "revision": "c6055542da52e10d65129c4adaf1e6dd2b312aaa0e5a2b7f4629a582074635cf"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "splitter",
         "question": "Should a composite message be divided into independently processed parts?",
-        "competing_alternative": "Process the composite as one unit. Reverse the choice when independent processing creates more coordination than value.",
+        "competing_alternative": "Aggregation is the mirror-image decision: \"Basically a mirror-image of the splitter, the aggregator is a type of message handler that receives multiple messages and combines them into a single message.\" Choose aggregation when related messages must be combined rather than one composite divided; choose single-unit processing when atomicity dominates.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2627,9 +2640,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
+      "notes": "Bounded decision note; all four technical dimensions bound to public source quotes; coverage remains partial-bounded pending independent review."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -2715,9 +2728,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "All four technical dimensions supported; promotion suspended after the shared c03 page change; fresh independent review required."
     },
     {
       "pattern_id": "tycho.pattern.scatter-gather",
@@ -2729,7 +2742,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 152,
+        "line": 169,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -2803,9 +2816,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "All four technical dimensions supported; promotion suspended after the shared c03 page change; fresh independent review required."
     },
     {
       "pattern_id": "tycho.pattern.dead-letter-channel-dlq",
@@ -10702,7 +10715,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 0,
+      "bounded_entries": 3,
       "decision": "keep",
       "rationale": "Three messaging composition patterns have three dedicated bounded notes on one coherent family page."
     },
@@ -11028,17 +11041,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 57,
+    "invariant_supported": 58,
     "failure_recovery_supported": 45,
-    "alternative_supported": 55,
-    "technical_partial_bounded": 32,
-    "technical_partial": 93,
+    "alternative_supported": 56,
+    "technical_partial_bounded": 35,
+    "technical_partial": 92,
     "technical_name_only": 0,
-    "technical_sufficient": 20,
-    "decision_partial_bounded": 125,
+    "technical_sufficient": 18,
+    "decision_partial_bounded": 127,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 20,
+    "decision_sufficient": 18,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

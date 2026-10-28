@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-28. Entries: 276.
+Inventory date: 2026-10-28. Entries: 277.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -102,6 +102,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.quarkus / supporting | [Quarkus Virtual Thread Support](https://quarkus.io/guides/virtual-threads) — Quarkus | Execution model, blocking dispatch and reactive interoperability. | admitted-for-research / public-web-or-author-download |
 | src.jdk24-release-notes / supporting | [JDK 24 Release Notes](https://www.oracle.com/java/technologies/javase/24all-relnotes.html) — Oracle Java documentation | Accessible release evidence for version-specific virtual-thread changes, including JEP 491. | admitted-for-research / public-web-or-author-download |
 | src.jdk25-virtual-threads / core | [Java 25 Virtual Threads Guide](https://docs.oracle.com/en/java/javase/25/core/virtual-threads.html) — Oracle Java documentation | Accessible operational guidance on virtual threads and their limitations. | admitted-for-research / public-web-or-author-download |
+| src.spring-integration / supporting | [Spring Integration Reference](https://docs.spring.io/spring-integration/reference/) — Spring | Bounded public reference for splitter part identity/completion invariants and the aggregator as the inverse operation. | admitted-for-research / public-web-or-author-download |
 
 ## Streaming
 

@@ -319,35 +319,7 @@ unit, not a benchmark.
 
 ### Splitter
 
-**Identity.** Splitter; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should a composite message be divided into independently processed
-parts?
-
-**Good-fit conditions.** The parts are independently actionable; aggregation or completion
-policy is defined; each part has an identity; errors can be correlated.
-
-**Hard contraindications.** Reject when the parts must be processed atomically, when
-ordering across parts is mandatory and no sequencer reconstructs it, or when the split loses
-required context.
-
-**Competing alternative.** Process the composite as one unit. Reverse the choice when
-independent processing creates more coordination than value.
-
-**Failure and recovery.** Partial completion and orphaned parts are common; verify
-aggregation and error policy in the owner section.
-
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — split policy and completeness marker are bounded; durable fan-out is owner-specific.
-
-**Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-splitter.2026-10-21: all thirty served headings read. The source is a
-public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Aggregator; Scatter-Gather; Pipes and Filters; Process Manager.
+See the [dedicated Splitter card](splitter.md).
 
 ### Aggregator
 
