@@ -1,0 +1,46 @@
+# Sufficient coverage queue — 2026-10-28
+
+Status: working queue, not acceptance. `sufficient` requires a saved external pass
+and a promotion record; owner acceptance is separate.
+
+## Sufficient and accepted
+
+| Entry | External report | Owner accepted |
+|---|---|---|
+| Static Content Hosting | `2026-10-27-static-content-hosting-review6-codex.md` | yes |
+| Transactional Outbox | `2026-10-27-transactional-outbox-review4-codex.md` | yes |
+| Cache Invalidation | `2026-10-27-cache-invalidation-review-codex.md` | yes |
+
+## Sufficient, pending owner acceptance
+
+| Entry | External report | Owner accepted |
+|---|---|---|
+| Valet Key | `2026-10-27-valet-key-split-review6-codex.md` | no |
+| Anti-Corruption Layer | `2026-10-27-anti-corruption-layer-split-review4-codex.md` | no |
+| Parallel Run | `2026-10-27-parallel-run-split-review2-codex.md` | no |
+| Workload Identity / mTLS | `2026-10-27-workload-identity-review5-codex.md` | no |
+| Sidecar | `2026-10-27-sidecar-review5-codex.md` | no |
+| Dark Launching / Shadow Traffic | `2026-10-27-dark-launching-review2-codex.md` | no |
+| Async Request-Reply | `2026-10-27-async-request-reply-review3-codex.md` | no |
+
+## Pilot six
+
+| Entry | Status | Blocker |
+|---|---|---|
+| Parallel Run | sufficient | owner acceptance pending |
+| Workload Identity | sufficient | owner acceptance pending |
+| Dark Launching | sufficient | owner acceptance pending |
+| RBAC/ABAC | remediation | decision conditions and source section gaps |
+| Federated Identity | remediation | local-account alternative unsupported |
+| Controlled Cutover | remediation | all four dimensions synthetic |
+
+## Frozen by page-bound promotion
+
+- c01 README — Sidecar promotion;
+- c02 README — Async promotion;
+- c05 README — Cache Invalidation promotion;
+- c09 README — Static Content Hosting promotion;
+- c10 README — Dark Launching promotion;
+- c04 README — Transactional Outbox promotion.
+
+Editing these pages requires a split and fresh review before promotion can remain valid.
