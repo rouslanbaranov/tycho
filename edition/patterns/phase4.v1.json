@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "2b0c2f98c5dabf51be5fc3f051f42f6ed6b10f9ee876ff0a6fb9c22d51af9802",
-    "ledger_sha256": "70a610204565802241144c5ba2a0f89549fff7d51c830b140bb5a908cfb049d5",
+    "registry_sha256": "f28128c8e231297b4fe867c011e1f843ae57c0d1351ef4060fe76d196635f723",
+    "ledger_sha256": "2f4f156c9de9bae7bdb10981bb68971ac1548db6e2a3a593faa7ca209b0d31c0",
     "card_batches_sha256": "8acc05ad666af95ff51f65ed4935243b6a4cfee690a54d63970f771623bf296f",
-    "route_index_sha256": "93b6ef6ef96b037c07ea2a1172a38fe417f3f04439b87430ea845d792a107a06",
-    "coverage_sha256": "09f2b712534befd37413cd7a9ae97791e3c00859306e443f9ca15c37d4d064a3"
+    "route_index_sha256": "45176a53002bbd8a2d6871f55ca925632dbf3d4618225c91cf61807d8030b625",
+    "coverage_sha256": "00e630cb07892df12d23ff3a8ce694f2d92cd7ae866fb0e877bb977215f086de"
   },
   "dimensions": [
     "identity",
@@ -27,7 +27,7 @@
     "pages": 446,
     "entries": 145,
     "cards": 145,
-    "routes": 463,
+    "routes": 464,
     "related_labels": 24,
     "non_routes": 24,
     "unresolved_related": 0,
@@ -3773,15 +3773,15 @@
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ],
-      "question": "Should large or sensitive payloads be stored separately and referenced by a claim check?"
+      "question": "Should a large or sensitive payload travel outside the message and be retrieved through a claim check?"
     },
     {
       "pattern_id": "tycho.pattern.clean-onion-architecture",
@@ -5561,18 +5561,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should processing be composed as independent stages connected by a message contract?"
@@ -5899,18 +5899,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
@@ -7232,13 +7232,13 @@
     },
     {
       "pattern_id": "tycho.pattern.claim-check",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ]
@@ -8129,14 +8129,14 @@
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8298,14 +8298,14 @@
     },
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -9186,6 +9186,11 @@
     {
       "from": "tycho.pattern.claim-check",
       "to": "tycho.pattern.dead-letter-channel-dlq",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.claim-check",
+      "to": "tycho.pattern.idempotent-receiver",
       "basis": "card-related-entry"
     },
     {
@@ -11423,7 +11428,7 @@
     {
       "pattern_id": "tycho.pattern.claim-check",
       "atlas_section": "claim-check",
-      "question": "Should large or sensitive payloads be stored separately and referenced by a claim check?"
+      "question": "Should a large or sensitive payload travel outside the message and be retrieved through a claim check?"
     },
     {
       "pattern_id": "tycho.pattern.clean-onion-architecture",

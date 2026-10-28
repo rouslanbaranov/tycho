@@ -2182,7 +2182,7 @@
         "heading": "Request-Reply Messaging",
         "anchor": "request-reply-messaging",
         "level": 3,
-        "line": 203,
+        "line": 232,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Request-Reply Messaging"
@@ -2253,9 +2253,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Promotion suspended 2026-10-28 because the shared workflow-failure.md owner page changed for the Claim Check rewrite; all four dimensions remain supported; coverage partial-bounded; fresh external review required."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -2267,7 +2267,7 @@
         "heading": "Correlation Identifier",
         "anchor": "correlation-identifier",
         "level": 3,
-        "line": 183,
+        "line": 212,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ties together messages",
@@ -2845,7 +2845,7 @@
         "heading": "Dead Letter Channel-DLQ",
         "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 219,
+        "line": 248,
         "unit_kind": "dedicated",
         "unit_terms": [
           "quarantine queue",
@@ -3141,48 +3141,69 @@
         "heading": "Claim Check",
         "anchor": "claim-check",
         "level": 3,
-        "line": 167,
+        "line": 169,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "stores a large or sensitive payload outside the message",
-          "claim token",
-          "cleanup rule for abandoned claims",
+          "external data store",
+          "claim check",
+          "payload write",
           "fail closed"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A claim check stores a large or sensitive payload outside the message and sends a claim token instead.",
-          "reason": "Defines storing the payload externally and sending a claim token.",
+          "quote": "The sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system.",
+          "reason": "The source describes writing the full payload to an external store and sending a reference; the receiver resolves it.",
           "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-claim.2026-10-21",
-            "section": "Solution statement",
-            "quote": "Store message data in a persistent store and pass a Claim Check to subsequent components. These components can use the Claim Check to retrieve the stored information.",
-            "revision": "96395638cbc1165642bdff681ec21a2862359e68f88f59cb7a2b5b2ad4753fb5"
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-claim-check.2026-10-28",
+            "section": "Solution",
+            "quote": "A sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system.",
+            "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "It needs payload lifecycle, authorization, expiry, integrity and a cleanup rule for abandoned claims.",
-          "reason": "Page has no payload lifecycle, authorization or expiry rule."
+          "state": "supported",
+          "quote": "Publish the token only after the payload write succeeds.",
+          "reason": "The source requires publishing the token only after the payload write succeeds; token-to-payload binding, expiry and access rules are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-claim-check.2026-10-28",
+            "section": "Problems and considerations",
+            "quote": "Publish the token only after the payload write succeeds.",
+            "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is an orphaned payload or a token that outlives its authorization; expire and garbage-collect claims, and make the consumer fail closed when the claim cannot be resolved.",
-          "reason": "Page has no orphaned-payload or overlong-token failure path."
+          "state": "supported",
+          "quote": "An orphaned payload, an unresolvable token, a store outage, a duplicate claim check or an integrity mismatch are the failure cases.",
+          "reason": "The source states the orphaned-payload and unresolvable-token failure path; expiry, fail-closed and idempotency policy are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-claim-check.2026-10-28",
+            "section": "Problems and considerations",
+            "quote": "A failure after payload write but before token publication can leave a payload orphaned. A token published before its payload is retrievable can mean consumers receive references they can't resolve.",
+            "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "An inline payload with encryption and size limits is the alternative when the transport can carry it safely.",
-          "reason": "Page contrasts external storage but not inline encrypted payload."
+          "state": "supported",
+          "quote": "Inline delivery is the alternative when the payload fits the transport and latency budget; compression or a compact serializer is the documented way to reduce inline size.",
+          "reason": "The source documents reducing inline payload size with compression or a compact serializer.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-claim-check.2026-10-28",
+            "section": "Alternatives",
+            "quote": "Reduce the inline payload size. Compression can reduce repetitive text or binary payloads, and a more compact serializer can reduce message overhead.",
+            "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "claim-check",
-        "question": "Should large or sensitive payloads be stored separately and referenced by a claim check?",
-        "competing_alternative": "Inline payload with transport compression/encryption. Reverse the choice when retrieval and storage complexity exceed transport savings.",
+        "question": "Should a large or sensitive payload travel outside the message and be retrieved through a claim check?",
+        "competing_alternative": "Inline payload with compression or a compact serializer. Reverse the choice when retrieval and storage complexity exceed the savings.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3194,9 +3215,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
+      "notes": "Dedicated owner section and c03 card rewritten decision-first; all four dimensions bind to the Microsoft Learn Claim Check page and the EIP pattern page; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
@@ -10746,9 +10767,9 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 1,
+      "bounded_entries": 3,
       "decision": "deepen",
-      "rationale": "DLQ, claim check, correlation, request-reply and workflow-failure gates now have five dedicated units."
+      "rationale": "Claim Check, correlation, request-reply and workflow-failure gates have four dedicated units; DLQ remains partial."
     },
     {
       "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
@@ -11056,17 +11077,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 59,
-    "failure_recovery_supported": 43,
-    "alternative_supported": 55,
-    "technical_partial_bounded": 35,
-    "technical_partial": 91,
+    "invariant_supported": 60,
+    "failure_recovery_supported": 44,
+    "alternative_supported": 56,
+    "technical_partial_bounded": 37,
+    "technical_partial": 90,
     "technical_name_only": 0,
-    "technical_sufficient": 19,
-    "decision_partial_bounded": 126,
+    "technical_sufficient": 18,
+    "decision_partial_bounded": 127,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 19,
+    "decision_sufficient": 18,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

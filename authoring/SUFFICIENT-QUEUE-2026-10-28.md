@@ -3,9 +3,10 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **16 sufficient / 145**, **16 owner-accepted**, **2 suspended pending split
-review**. Pilot six: **all six sufficient**. Owner accepted all 16 currently promoted
-entries on 2026-10-28.
+Current: **18 sufficient / 145**, **16 owner-accepted**, **2 suspended promotions**
+(Request-Reply Messaging, Message Filter). Claim Check is review-ready but not promoted.
+Pilot six: **all six sufficient**. Owner accepted 16 of the 18 current promotions on
+2026-10-28; Splitter and Pipes and Filters await final acceptance.
 
 ## Sufficient and accepted
 
@@ -32,15 +33,21 @@ entries on 2026-10-28.
 | Federated Identity | `2026-10-28-federated-identity-review2-codex.md` | yes |
 | Ambassador | `2026-10-28-ambassador-review-codex.md` | yes |
 
-## Suspended pending split review
+## Suspended promotions
 
-Both c03 cards moved to dedicated pages on 2026-10-28. Coverage is
-`partial-bounded`; neither entry is promoted or counted as sufficient.
+Both c03 cards moved to dedicated pages on 2026-10-28. Request-Reply Messaging was
+suspended again when the shared `workflow-failure.md` owner page changed for the Claim
+Check rewrite. Coverage is `partial-bounded`; neither entry is promoted or counted as
+sufficient.
 
 | Entry | Prior report | State |
 |---|---|---|
 | Request-Reply Messaging | `2026-10-28-request-reply-review4-codex.md` | suspended |
 | Message Filter | `2026-10-28-message-filter-review-codex.md` | suspended |
+
+Claim Check is not a suspended promotion: no promotion record exists. It is review-ready
+with four source-bound dimensions and `partial-bounded` coverage; a fresh external review
+is required before any promotion decision.
 
 ## Pilot six
 
@@ -61,7 +68,8 @@ Both c03 cards moved to dedicated pages on 2026-10-28. Coverage is
 - c09 README — Static Content Hosting promotion;
 - c10 README — Dark card moved to its own page, promotion restored;
 - c04 README — Transactional Outbox promotion;
-- c03 README — both c03 cards moved to dedicated pages; both promotions suspended.
+- c03 README — no active card-page promotion; Claim Check card prepared in place;
+  Request-Reply Messaging and Message Filter suspensions are tracked above.
 
 Editing these pages requires a split and fresh review before promotion can remain valid.
 

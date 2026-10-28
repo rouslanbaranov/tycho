@@ -1907,6 +1907,56 @@
       "status": "read"
     },
     {
+      "id": "read.microsoft-claim-check.2026-10-28",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/claim-check",
+      "unit_label": "Claim Check pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe",
+      "sections_read": [
+        "Claim Check pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Alternatives",
+        "Workload design",
+        "Examples",
+        "Next steps",
+        "Related resources"
+      ],
+      "sections_not_read": [
+        "linked child pages and sample code",
+        "navigation and unrelated chrome (not read as content)",
+        "images and their interiors",
+        "the linked canonical Enterprise Integration Patterns description"
+      ],
+      "tables_figures": [
+        "the workload-design table was read in extracted text form; diagram interiors and sample code were not inspected"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The Claim Check pattern separates payload storage from message delivery: the sender writes the full payload to an external data store and sends a reference through the messaging system.",
+        "Receiving applications resolve the reference against the data store; the messaging system carries only the claim check.",
+        "Payload write and token publication are not atomic; publish the token only after the payload write succeeds.",
+        "A failure after payload write but before token publication can orphan a payload; a token published before its payload is retrievable leaves consumers with unresolvable references.",
+        "Store outage or data loss prevents holders of valid tokens from retrieving payloads; duplicate delivery needs an idempotent consumer, and integrity mismatches need a disposition.",
+        "Inline delivery with compression or a compact serializer is an alternative when the reduced payload fits the transport and every producer and consumer can use the same format."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, throughput, latency or production outcomes",
+        "linked sample code, linked pages or images",
+        "independent reproduction, benchmark or local execution",
+        "the complete book treatment of Claim Check"
+      ],
+      "limitations": "One living Microsoft Learn page, last updated 2026-09-25; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including title and navigation chrome because the page has no recognized article-body marker; quoted sentences were checked against that extraction. Linked sample code, images and the canonical Enterprise Integration Patterns description were not read.",
+      "content_sha256": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe",
+      "read_scope": "complete publicly served article text including Context and problem, Solution, Problems and considerations, When to use this pattern, Alternatives, Workload design, Examples, Next steps and Related resources; linked pages, images and sample code excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
       "id": "read.batch2-broker.2026-10-21",
       "source_id": "src.enterprise-integration",
       "unit_url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html",

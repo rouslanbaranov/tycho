@@ -162,23 +162,52 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+measured evidence, and they do not create a new source claim. The Claim Check
+note is the exception: it is source-bound, with quotations and an Evidence
+paragraph tied to the Microsoft Learn record named in its card and owner unit.
 
 ### Claim Check
 
-A claim check stores a large or sensitive payload outside the message and sends a claim
-token instead. It needs payload lifecycle, authorization, expiry, integrity and a cleanup
-rule for abandoned claims. Use it when message size, retention or access boundaries make
-an inline payload unsafe. Do not use it when the payload is small enough to inline or when
-an external store would create an unacceptable consistency dependency. An untracked
-claim store becomes a data-retention liability. Bind the claim token to the message and
-tenant and to a payload digest; a token must not resolve to another payload. The retrieval
-hop needs a latency budget and bounded retries.
+**Decision.** Store a large or sensitive payload outside the messaging system and send a
+claim check only when payload size, sensitivity or repeated serialization justifies the
+extra store and retrieval hop, and when payload lifecycle, access control and failure
+handling have owners. Keep the payload inline when it fits the transport and latency budget.
 
-The failure path is an orphaned payload or a token that outlives its authorization; expire
-and garbage-collect claims, and make the consumer fail closed when the claim cannot be
-resolved. An inline payload with encryption and size limits is the alternative when the
-transport can carry it safely.
+**Mechanism.** The sending application writes the full payload to an external data store and
+sends a reference to that payload through the messaging system. Receiving applications
+resolve the reference against the data store; the broker carries only the claim check. The
+source describes the sequence as saving the payload, generating the reference after a
+successful save, publishing it, and letting the receiver retrieve the payload before
+processing.
+
+**Invariant.** Publish the token only after the payload write succeeds. Payload write and token
+publication occur in separate systems and are not atomic, so a token published before its
+payload is retrievable leaves consumers with references they cannot resolve; a payload
+written without a published token is orphaned. Tycho guidance, not a source claim: keep the
+token bound to the stored payload it names, coordinate message expiration with payload
+retention, and keep a valid claim check from pointing to deleted or unauthorized data.
+
+**Failure and recovery.** An orphaned payload, an unresolvable token, a store outage, a
+duplicate claim check or an integrity mismatch are the failure cases. Tycho guidance: expire
+and garbage-collect claims, fail closed when the claim cannot be resolved, and give duplicate
+delivery an idempotent consumer. A store outage stalls every consumer holding a valid token;
+verify durability, retention and restore before relying on the store.
+
+**Alternative.** Inline delivery is the alternative when the payload fits the transport and
+latency budget; compression or a compact serializer is the documented way to reduce inline
+size. Reverse the choice when retrieval and storage complexity exceed the savings.
+
+**Limits.** A claim check adds an external store, a retrieval hop and a second consistency
+boundary; it is not a payload catalogue or a security token. Tycho guidance, not a source
+claim: bind the token to the message and tenant and give the store an owner, a retention
+horizon and a cleanup path.
+
+**Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
+text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the
+mechanism, the write-before-publish invariant, the orphaned and unresolvable-token failure
+path and the inline-compression alternative. The public Enterprise Integration Patterns Claim
+Check page (read.batch2-claim.2026-10-21) supports the stored-payload and claim-token
+description; it is publisher-abridged and does not state the failure or alternative policy.
 
 ### Correlation Identifier
 
