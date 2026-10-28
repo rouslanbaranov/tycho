@@ -648,8 +648,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A self-contained service completes a request using its own state and a bounded set of dependencies, instead of requiring a caller to coordinate several owners for one user-visible outcome.",
-          "reason": "Defines local state plus a bounded dependency set for one request.",
+          "quote": "A self-contained service is designed to respond to a synchronous request without waiting for another service.",
+          "reason": "The pattern designs a service to respond without waiting for collaborators.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
@@ -659,39 +659,46 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The service contract must state which dependencies are required, which are optional, and what response is valid when an optional dependency is unavailable.",
-          "reason": "Source does not require the contract to declare required/optional dependencies or degraded response."
-        },
-        "failure_recovery": {
           "state": "supported",
-          "quote": "Hidden shared state or a chatty dependency chain turns an apparently local request into a multi-owner transaction; dependency and latency traces reveal the undeclared coupling.",
-          "reason": "Names hidden shared state and chatty chains and requires dependency/latency traces.",
+          "quote": "It can use CQRS to maintain a replica of data owned by other services and Saga to maintain consistency asynchronously.",
+          "reason": "Self-contained service uses CQRS and Saga for replica and asynchronous consistency.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
-            "section": "Forces",
-            "quote": "A service can retry a request to a failed collaborator but this increases response time.",
+            "section": "Solution",
+            "quote": "A self-contained service uses the Saga pattern to asynchronously maintain data consistency. It uses the CQRS pattern to maintain a replica of data owned by other services.",
+            "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
+          }
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "quote": "If a collaborator is unavailable, a service that waits cannot complete the request and returns an error.",
+          "reason": "Synchronous collaboration blocks when a collaborator is unavailable.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-self-contained.2026-10-21",
+            "section": "Context",
+            "quote": "However, a key drawback of using synchronous request/response is that it reduces availability. That’s because if any of the Order Sevice’s collaborators are unavailable, it will not be able to create the order and must return an error to the client.",
             "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
           }
         },
         "alternative": {
           "state": "supported",
-          "quote": "An orchestrating service or backend for frontend can coordinate owners explicitly; accept that composition when the workflow genuinely spans separate authorities and the coordinator's failure behaviour is designed.",
-          "reason": "Names an orchestrator or backend for frontend with explicit coordination.",
+          "quote": "A service can retry a failed collaborator, but this increases response time.",
+          "reason": "Retry is the alternative and increases response time.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
             "section": "Context",
-            "quote": "An alternative approach is to eliminate all synchronous communication between the Order Service and its collaborators by using the CQRS and Saga patterns.",
+            "quote": "A service can retry a request to a failed collaborator but this increases response time.",
             "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
           }
         }
       },
       "decision_evidence": {
         "atlas_section": "self-contained-service",
-        "question": "Should a service reduce synchronous dependencies by owning or duplicating the data and behavior it needs, rather than calling other services on every request?",
-        "competing_alternative": "API composition or orchestration with explicit latency budgets. Reverse the choice when duplication and invalidation cost exceed the coupling benefit.",
+        "question": "Should a service respond to a synchronous request without waiting for another service?",
+        "competing_alternative": "Synchronous request/response or retry; retry increases response time and synchronous calls reduce availability.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -703,7 +710,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -11000,11 +11007,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 56,
+    "invariant_supported": 57,
     "failure_recovery_supported": 44,
     "alternative_supported": 53,
-    "technical_partial_bounded": 36,
-    "technical_partial": 94,
+    "technical_partial_bounded": 37,
+    "technical_partial": 93,
     "technical_name_only": 0,
     "technical_sufficient": 15,
     "decision_partial_bounded": 130,

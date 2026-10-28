@@ -386,38 +386,29 @@ Transactional Outbox; CQRS.
 **Identity.** Self-Contained Service; family Application architecture and boundaries;
 kind service-decomposition-pattern; priority advanced.
 
-**Decision question.** Should a service reduce synchronous dependencies by owning or
-duplicating the data and behavior it needs, rather than calling other services on every
-request?
+**Decision question.** Should a service respond to a synchronous request without waiting for another
+service?
 
-**Good-fit conditions.** Latency and availability coupling are material; the capability
-can own a local read model; duplication and reconciliation are acceptable; the service
-boundary is stable enough to absorb change.
+**Good-fit conditions.** Runtime availability coupling is material; the service can own a local read
+model; asynchronous reconciliation is acceptable.
 
-**Hard contraindications.** Reject the claim when strong consistency is mandatory, when
-data cannot be duplicated for legal or ownership reasons, or when the "self-contained"
-service still hides synchronous calls behind a local cache.
+**Hard contraindications.** Reject when strong consistency is mandatory or data cannot be replicated.
 
-**Competing alternative.** API composition or orchestration with explicit latency
-budgets. Reverse the choice when duplication and invalidation cost exceed the coupling
-benefit.
+**Competing alternative.** Synchronous request/response or retry; retry increases response time and
+synchronous calls reduce availability.
 
-**Failure and recovery.** Stale local data, hidden coupling and complex invalidation are
-common. Recovery requires reconciliation and clear ownership; the bounded owner section
-describes hidden shared state and orchestration/BFF alternatives.
+**Failure and recovery.** An unavailable collaborator blocks a waiting service; retry increases
+response time.
 
-**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — The section owns dependency budgets, fallback contracts and orchestration/BFF alternatives.
+**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — bounded to response independence.
 
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-self-contained.2026-10-21: Self-contained service,
-sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting Context",
-"Related patterns". This is a pattern page, not a comparative study.
+**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microservices-self-contained.2026-10-21: Self-contained service pattern page.
+The source is public documentation, not a benchmark.
 
-**Decision state.** `applicable-under-conditions`.
+**Decision state.** applicable-under-conditions.
 
-**Related entries.** Microservices Architecture; API Composition; Database per Service;
-CQRS.
+**Related entries.** API Composition; Backend for Frontend; CQRS; Saga.
 
 ### Sidecar
 

@@ -115,18 +115,12 @@ source claim.
 
 ### Self-Contained Service
 
-A self-contained service completes a request using its own state and a bounded set of dependencies,
-instead of requiring a caller to coordinate several owners for one user-visible outcome. The service
-contract must state which dependencies are required, which are optional, and what response is valid
-when an optional dependency is unavailable.
-
-Hidden shared state or a chatty dependency chain turns an apparently local request into a
-multi-owner transaction; dependency and latency traces reveal the undeclared coupling. A local
-read model is justified only when the service can own duplication and reconciliation: state
-which copy is authoritative, how stale data is detected and repaired, and why strong consistency
-is not required. Otherwise API composition is preferable. An orchestrating service or backend
-for frontend can coordinate owners explicitly; accept that composition when the workflow
-genuinely spans separate authorities and the coordinator's failure behaviour is designed.
-
-**Limits.** Dependency budget, fallback contract and coordination latency are costs; a
-self-contained service can still hide a shared database or synchronous chain.
+A self-contained service is designed to respond to a synchronous request without waiting for another
+service. It can use CQRS to maintain a replica of data owned by other services and Saga to maintain
+consistency asynchronously. If a collaborator is unavailable, a service that waits cannot complete the
+request and returns an error. A service can retry a failed collaborator, but this increases response
+time. Synchronous request/response reduces availability because any unavailable collaborator blocks
+the request. The service owns a local read model and reconciles it asynchronously. The trade-off is
+duplication, reconciliation and staleness. A self-contained service still exposes a synchronous
+contract to its caller. It reduces runtime coupling, not the service boundary. The pattern is about
+response independence and availability.

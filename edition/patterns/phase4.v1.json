@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "643e46c29fa0fadba88b132bcc35c11c5f709c5698780c755b096d293f9a568e",
+    "registry_sha256": "0d9c05b25e10f8358b6bf8c89f683f98d0e71e349b8f52598d9c319d145ca868",
     "ledger_sha256": "a71376199ffff701d9dd1c73f78a3344760b5dd9af4852eb17e57b8d35d15150",
     "card_batches_sha256": "9d9d88f2781608f074a27f9931d33c3604226c7938e440e75dc620b21e6e2067",
-    "route_index_sha256": "00d11778e56d764e8475df69005c4869320a167ebbde586f91e816ba02168d36",
-    "coverage_sha256": "e5830ab99e1b13a877347b66cabb87487374344a10aa17e23252844970f7d8fb"
+    "route_index_sha256": "569457db43720fcc1f5306a783005da93b1d2dc100d61afef383c23a8bb1a0fa",
+    "coverage_sha256": "5190418e8662bdf98ae843bd9f8038ce7c57e7350ad971bcb988551649a8360c"
   },
   "dimensions": [
     "identity",
@@ -6137,15 +6137,15 @@
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ],
-      "question": "Should a service reduce synchronous dependencies by owning or duplicating the data and behavior it needs, rather than calling other services on every request?"
+      "question": "Should a service respond to a synchronous request without waiting for another service?"
     },
     {
       "pattern_id": "tycho.pattern.server-side-discovery",
@@ -8400,13 +8400,13 @@
     },
     {
       "pattern_id": "tycho.pattern.self-contained-service",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ]
@@ -10762,17 +10762,17 @@
     },
     {
       "from": "tycho.pattern.self-contained-service",
+      "to": "tycho.pattern.backend-for-frontend-bff",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.self-contained-service",
       "to": "tycho.pattern.command-query-responsibility-segregation-cqrs",
       "basis": "card-related-entry"
     },
     {
       "from": "tycho.pattern.self-contained-service",
-      "to": "tycho.pattern.database-per-service",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.self-contained-service",
-      "to": "tycho.pattern.microservices-architecture",
+      "to": "tycho.pattern.saga",
       "basis": "card-related-entry"
     },
     {
@@ -11935,7 +11935,7 @@
     {
       "pattern_id": "tycho.pattern.self-contained-service",
       "atlas_section": "self-contained-service",
-      "question": "Should a service reduce synchronous dependencies by owning or duplicating the data and behavior it needs, rather than calling other services on every request?"
+      "question": "Should a service respond to a synchronous request without waiting for another service?"
     },
     {
       "pattern_id": "tycho.pattern.server-side-discovery",
