@@ -180,3 +180,12 @@ tool invocation that retrieves sources, or change.
     delegated reading is not independent AI review, CI or source
     completeness. Do not close a source-reading issue or claim whole-book
     coverage from child summaries alone.
+
+28. **New public source units are automatically authorized.** Once a new public
+    source unit satisfies rules 2, 5, 19 and 22-25, adding it to
+    `sources/register.json`, the reading ledger, the source plan and the registry
+    is authorized without a separate owner confirmation. This authorization covers
+    only public, independently accessible units and their evidence records; it is
+    not permission to use restricted material, change scope, promote an entry,
+    claim sufficient coverage or record owner acceptance. Those decisions remain
+    with the owner and the independent review gate.
