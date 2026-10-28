@@ -426,38 +426,31 @@ See the [dedicated Sidecar card](sidecar.md).
 ### Ambassador
 
 **Identity.** Ambassador; family Application architecture and boundaries; kind
-deployment-pattern; priority advanced.
+deployment-pattern; priority core.
 
-**Decision question.** Should a local proxy mediate a client's network capabilities,
-rather than embedding connectivity logic in the client or centralizing it remotely?
+**Decision question.** Should client connectivity be offloaded to a colocated out-of-process proxy?
 
-**Good-fit conditions.** A legacy client cannot be changed easily; connectivity behavior
-such as retries, TLS or routing is shared; the proxy lifecycle can be owned; an extra
-network hop is acceptable.
+**Good-fit conditions.** Many languages need common connectivity; a legacy application is hard to
+modify; monitoring or resilience belongs outside the client.
 
-**Hard contraindications.** Reject the claim when the client can use a library, when no
-operational owner exists for the proxy, when latency or resource constraints forbid an
-extra hop, or when the proxy becomes a single point of failure.
+**Hard contraindications.** Reject when proxy latency outweighs offloading or when retries are
+needed for non-idempotent operations.
 
-**Competing alternative.** A shared ingress gateway when the concern is ingress rather than
-per-client egress, or an in-process client library. Reverse the choice when the proxy adds a
-hop without providing a needed capability.
+**Competing alternative.** A client library invoked directly by the application when proxy overhead
+outweighs offloading.
 
-**Failure and recovery.** Proxy outage, configuration drift and control-plane divergence are
-common. Recovery requires configuration rollback and a direct-path recovery; the bounded owner
-section covers per-client egress, not an ingress gateway.
+**Failure and recovery.** Proxy latency adds overhead; proxy retries are unsafe unless operations
+are idempotent.
 
-**Technical owner.** [Ambassador](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — per-client egress proxy ownership is bounded, not a shared ingress gateway.
+**Technical owner.** [Static stability and colocated helpers](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — bounded to the client-side proxy pattern.
 
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-ambassador.2026-10-21: all eight served headings read.
-This is a vendor pattern page, not a comparative
-study.
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-ambassador.2026-10-21: Ambassador pattern page.
+The source is public documentation, not a benchmark.
 
-**Decision state.** `applicable-under-conditions`.
+**Decision state.** applicable-under-conditions.
 
-**Related entries.** Sidecar; Service Mesh; Gateway Routing; Anti-Corruption Layer.
+**Related entries.** Sidecar; Gateway Routing; Service Mesh; Retry with Jitter.
 
 ### Anti-Corruption Layer
 

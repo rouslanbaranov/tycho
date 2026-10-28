@@ -146,19 +146,15 @@ and create no new source claim.
 
 ### Ambassador
 
-An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own
-discovery, TLS identity, retries, timeouts and telemetry away from the application. It
-needs a clear data-plane owner, a configuration path and a failure policy for the proxy
-itself. Use it when many clients need the same remote-access contract. Do not use it when
-a client library is simpler or when the proxy would become an unobserved single point of
-failure.
-
-The failure path is a stale proxy configuration or a proxy that outlives its control
-plane; test configuration rollback and keep a direct-path recovery. A shared gateway is
-the alternative when the concern is ingress rather than per-client egress.
-
-**Limits.** An ambassador cannot grant authority the remote peer does not recognize, and
-it adds a data-plane hop whose latency and outage must be budgeted.
+An ambassador is an out-of-process proxy colocated with the client. It forwards requests to remote
+services and can offload monitoring, logging, routing, TLS and resilience. The proxy adds latency
+overhead, and proxy retries are unsafe unless all operations are idempotent. A client library invoked
+directly by the application may be better when overhead outweighs offloading. The proxy can monitor
+performance metrics such as latency or resource usage on the same host. A mechanism can let the client
+pass context, such as an HTTP header to opt out of retry or cap retries. Use the pattern when many
+languages or frameworks need common connectivity features, or a legacy application is hard to modify.
+The proxy can be packaged as a separate container on the same host and can standardize and extend
+instrumentation across languages.
 
 ### Sidecar
 

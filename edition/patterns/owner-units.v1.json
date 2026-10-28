@@ -717,7 +717,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 163,
+        "line": 159,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -788,8 +788,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
     {
@@ -805,59 +805,64 @@
         "line": 147,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "proxy or sidecar",
-          "outbound calls",
-          "configuration path",
-          "shared gateway"
+          "out-of-process proxy",
+          "colocated with the client"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own discovery, TLS identity, retries, timeouts and telemetry away from the application.",
-          "reason": "Defines the outbound-brokering role and the concerns it can own.",
+          "quote": "An ambassador is an out-of-process proxy colocated with the client.",
+          "reason": "Microsoft defines Ambassador as a colocated out-of-process proxy.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
-            "section": "Ambassador pattern",
-            "quote": "Create helper services that send network requests on behalf of a consumer service or application. Think of an ambassador service as an out-of-process proxy that's colocated with the client. Use the Ambassador pattern to offload common client connectivity tasks like monitoring, logging, routing, security like Transport Layer Security (TLS), and resiliency patterns in a language-agnostic way.",
+            "section": "Solution",
+            "quote": "Think of an ambassador service as an out-of-process proxy that's colocated with the client.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a clear data-plane owner, a configuration path and a failure policy for the proxy itself.",
-          "reason": "States the ownership, configuration and failure-policy preconditions.",
+          "quote": "It forwards requests to remote services and can offload monitoring, logging, routing, TLS and resilience.",
+          "reason": "The proxy mediates requests and responses.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
             "section": "Solution",
-            "quote": "You can manage features that are offloaded to the ambassador independently of the application. You can update and modify the ambassador without disturbing the application's legacy functionality. Separate, specialized teams can also implement and maintain security, networking, or authentication features that have been moved to the ambassador.",
+            "quote": "The client application sends requests to the ambassador instead of calling external services directly. The ambassador forwards those requests to the remote service. Responses from the remote service return through the ambassador and back to the client application.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a stale proxy configuration or a proxy that outlives its control plane; test configuration rollback and keep a direct-path recovery.",
-          "reason": "Source names proxy latency and retry safety but not stale proxy configuration or rollback recovery."
-        },
-        "alternative": {
           "state": "supported",
-          "quote": "A shared gateway is the alternative when the concern is ingress rather than per-client egress.",
-          "reason": "Names a competing mechanism and the condition that reverses the choice.",
+          "quote": "The proxy adds latency overhead, and proxy retries are unsafe unless all operations are idempotent.",
+          "reason": "Microsoft warns about latency and retry safety.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
-            "section": "When to use this pattern",
-            "quote": "Your application platform supports prebuilt solutions, like a service mesh, to handle mutual TLS (mTLS), traffic management, and policy capabilities. Use these solutions instead of creating a custom ambassador solution.",
+            "section": "Problems and considerations",
+            "quote": "The proxy adds some latency overhead. Consider whether a client library that the application directly invokes is a better approach.",
+            "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
+          }
+        },
+        "alternative": {
+          "state": "supported",
+          "quote": "A client library invoked directly by the application may be better when overhead outweighs offloading.",
+          "reason": "Microsoft names direct client library as the alternative.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-ambassador.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "The proxy adds some latency overhead. Consider whether a client library that the application directly invokes is a better approach.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         }
       },
       "decision_evidence": {
         "atlas_section": "ambassador",
-        "question": "Should a local proxy mediate a client's network capabilities, rather than embedding connectivity logic in the client or centralizing it remotely?",
-        "competing_alternative": "A shared ingress gateway when the concern is ingress rather than per-client egress, or an in-process client library. Reverse the choice when the proxy adds a hop without providing a needed capability.",
+        "question": "Should client connectivity be offloaded to a colocated out-of-process proxy?",
+        "competing_alternative": "A client library invoked directly by the application when proxy overhead outweighs offloading.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8897,7 +8902,7 @@
         "heading": "Immutable Infrastructure",
         "anchor": "immutable-infrastructure",
         "level": 3,
-        "line": 180,
+        "line": 176,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Immutable Infrastructure"
@@ -10820,7 +10825,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Three control-plane patterns have three distinct units, two dedicated bounded notes, on a coherent static-stability page."
     },
@@ -10996,16 +11001,16 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 56,
-    "failure_recovery_supported": 43,
+    "failure_recovery_supported": 44,
     "alternative_supported": 53,
-    "technical_partial_bounded": 36,
+    "technical_partial_bounded": 37,
     "technical_partial": 94,
     "technical_name_only": 0,
-    "technical_sufficient": 15,
-    "decision_partial_bounded": 130,
+    "technical_sufficient": 14,
+    "decision_partial_bounded": 131,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 15,
+    "decision_sufficient": 14,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

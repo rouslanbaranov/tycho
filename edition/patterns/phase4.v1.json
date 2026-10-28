@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "643e46c29fa0fadba88b132bcc35c11c5f709c5698780c755b096d293f9a568e",
+    "registry_sha256": "24fe41e1c3a9ea4e0ab1a005ef84f361a85bd1267a4099951c3ea96ecfcfc231",
     "ledger_sha256": "a71376199ffff701d9dd1c73f78a3344760b5dd9af4852eb17e57b8d35d15150",
     "card_batches_sha256": "815eba65945703e29d059111267aeaf5ed0173c4e3f2fbc171168a88f1acb3b3",
-    "route_index_sha256": "d5ae887e8e56d4cd26f34a77ae8f316b7f6d133ffa02c47d36bc619d9347e1da",
-    "coverage_sha256": "6b2447fe1eb6fbe51c60247c1fc3a82efe2759b0f0af87be6a9e6467bd098631"
+    "route_index_sha256": "faf4a27d85245a388038f1ac3d91dcfefc1a157ca51c9cc5256a6bcf84d12659",
+    "coverage_sha256": "abacae61e0386eb95ea6255e946a72a5da40ea4dd7ae3d8f7434b363076abd41"
   },
   "dimensions": [
     "identity",
@@ -3174,7 +3174,7 @@
         "decision-partial-bounded",
         "independent-review-missing"
       ],
-      "question": "Should a local proxy mediate a client's network capabilities, rather than embedding connectivity logic in the client or centralizing it remotely?"
+      "question": "Should client connectivity be offloaded to a colocated out-of-process proxy?"
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",
@@ -6306,18 +6306,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should auxiliary runtime behavior run in a colocated helper beside the main workload rather than inside it?"
@@ -8484,14 +8484,14 @@
     },
     {
       "pattern_id": "tycho.pattern.sidecar",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8805,12 +8805,12 @@
     },
     {
       "from": "tycho.pattern.ambassador",
-      "to": "tycho.pattern.anti-corruption-layer",
+      "to": "tycho.pattern.gateway-routing",
       "basis": "card-related-entry"
     },
     {
       "from": "tycho.pattern.ambassador",
-      "to": "tycho.pattern.gateway-routing",
+      "to": "tycho.pattern.retry-with-jitter",
       "basis": "card-related-entry"
     },
     {
@@ -11380,7 +11380,7 @@
     {
       "pattern_id": "tycho.pattern.ambassador",
       "atlas_section": "ambassador",
-      "question": "Should a local proxy mediate a client's network capabilities, rather than embedding connectivity logic in the client or centralizing it remotely?"
+      "question": "Should client connectivity be offloaded to a colocated out-of-process proxy?"
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",
