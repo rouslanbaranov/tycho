@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "fcaedcf669be5d6c2893f0ee22876b1ebb7bb5d551e6e6ddef3285828325b6f4",
+    "registry_sha256": "55d7754f6b8daf904fa97ff8f5cae89d2f9857cd4beb4284b4593d7e0308df3d",
     "ledger_sha256": "67cf68b77bcb0e5e7524ceb81ccd3ebb9465118f7f51d9bd718f3d81b502fa12",
-    "card_batches_sha256": "f6593487408e738c416f57e20f74f112a59eefef581461516a40b113d97d99b4",
-    "route_index_sha256": "191a69e8762badd9b294da580b9325d818270daf3e52c7bc612b3735424d24ef",
-    "coverage_sha256": "b5e693596237b8fc8397f9c344d00c967da6320751fd903a039ed8274ff482da"
+    "card_batches_sha256": "e140f775e14e5fcae8a4d1778144fb8d595f9507e34c507974f28d77556728c5",
+    "route_index_sha256": "12e6563c415ea025485fcef0bea22093301cd8819b8059e34b25448a3bcc67ca",
+    "coverage_sha256": "c4673a1d37e7b0ed19c03265a7288792a0de49b5e8763f1d2fce7a63f7de9414"
   },
   "dimensions": [
     "identity",
@@ -24,10 +24,10 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 439,
+    "pages": 440,
     "entries": 145,
     "cards": 145,
-    "routes": 489,
+    "routes": 485,
     "related_labels": 25,
     "non_routes": 25,
     "unresolved_related": 0,
@@ -3004,6 +3004,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999",
+      "path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb",
       "path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md",
       "kind": "page",
@@ -4056,18 +4063,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should new code receive real or shadow traffic before it is authoritative?"
@@ -7352,14 +7359,14 @@
     },
     {
       "pattern_id": "tycho.pattern.dark-launching-shadow-traffic",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -9392,26 +9399,6 @@
     {
       "from": "tycho.pattern.cqrs-read-projections",
       "to": "tycho.pattern.materialized-view",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.dark-launching-shadow-traffic",
-      "to": "tycho.pattern.canary-release",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.dark-launching-shadow-traffic",
-      "to": "tycho.pattern.feature-flags-feature-toggles",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.dark-launching-shadow-traffic",
-      "to": "tycho.pattern.parallel-run",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.dark-launching-shadow-traffic",
-      "to": "tycho.pattern.strangler-fig",
       "basis": "card-related-entry"
     },
     {

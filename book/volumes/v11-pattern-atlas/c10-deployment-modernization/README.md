@@ -334,41 +334,10 @@ unit, not a benchmark.
 ### Parallel Run
 
 See the [dedicated Parallel Run card](parallel-run.md).
+
 ### Dark Launching / Shadow Traffic
 
-**Identity.** Dark Launching / Shadow Traffic; family Deployment and legacy modernization;
-kind modernization-pattern; priority advanced.
-
-**Decision question.** Should new code receive real or shadow traffic before it is
-authoritative?
-
-**Good-fit conditions.** Traffic can be mirrored to a shadow service; responses are discarded;
-the old path remains authoritative.
-
-**Hard contraindications.** Reject when shadow requests cause writes, when traffic cannot
-be mirrored safely, or when load cost is prohibitive.
-
-**Competing alternative.** Canary release when the decision depends on a user choice.
-
-**Failure and recovery.** A worrying performance impact can be switched off with a feature
-flag before users notice.
-
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
-
-**Sources.** [src.fowler-dark-launching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-dark-launching.2026-10-26: section "Dark Launching".
-[src.istio-traffic-mirroring](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch7-istio-mirroring.2026-10-26: sections "Mirroring", "Before you begin",
-"Creating a default routing policy", "Mirroring traffic to httpbin-v2", "Cleaning up",
-"See also". The first supports hidden invocation, load assessment, feature-flag rollback and
-old/new comparison; the second supports request mirroring, fire-and-forget responses and fractional
-mirroring. Measurement method, side-effect
-suppression and capacity bounds are synthetic. The sources are public
-articles/documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Canary Release; Parallel Run; Feature Flags; Strangler Fig.
+See the [dedicated Dark Launching card](dark-launching.md).
 
 ### Expand-and-Contract
 
