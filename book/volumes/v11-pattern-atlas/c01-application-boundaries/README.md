@@ -425,32 +425,7 @@ See the [dedicated Sidecar card](sidecar.md).
 
 ### Ambassador
 
-**Identity.** Ambassador; family Application architecture and boundaries; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should client connectivity be offloaded to a colocated out-of-process proxy?
-
-**Good-fit conditions.** Many languages need common connectivity; a legacy application is hard to
-modify; monitoring or resilience belongs outside the client.
-
-**Hard contraindications.** Reject when proxy latency outweighs offloading or when retries are
-needed for non-idempotent operations.
-
-**Competing alternative.** A client library invoked directly by the application when proxy overhead
-outweighs offloading.
-
-**Failure and recovery.** Proxy latency adds overhead; proxy retries are unsafe unless operations
-are idempotent.
-
-**Technical owner.** [Static stability and colocated helpers](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — bounded to the client-side proxy pattern.
-
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-ambassador.2026-10-21: Ambassador pattern page.
-The source is public documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Sidecar; Gateway Routing; Service Mesh; Retry with Jitter.
+See the [dedicated Ambassador card](ambassador.md).
 
 ### Anti-Corruption Layer
 

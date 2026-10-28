@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "2d4fea12a51cd3f713165bb028209c68bcc7dcb19e7bfb7b569caa0e9d8a2a43",
+    "registry_sha256": "24fe41e1c3a9ea4e0ab1a005ef84f361a85bd1267a4099951c3ea96ecfcfc231",
     "ledger_sha256": "a71376199ffff701d9dd1c73f78a3344760b5dd9af4852eb17e57b8d35d15150",
-    "card_batches_sha256": "815eba65945703e29d059111267aeaf5ed0173c4e3f2fbc171168a88f1acb3b3",
-    "route_index_sha256": "faf4a27d85245a388038f1ac3d91dcfefc1a157ca51c9cc5256a6bcf84d12659",
-    "coverage_sha256": "5f58663c79620479802e7bf223bd7fee80490c755ecedbfed49801ab7225f286"
+    "card_batches_sha256": "9d9d88f2781608f074a27f9931d33c3604226c7938e440e75dc620b21e6e2067",
+    "route_index_sha256": "00d11778e56d764e8475df69005c4869320a167ebbde586f91e816ba02168d36",
+    "coverage_sha256": "87e6a28fd5b1dc014679774b913398e1227c71a688336c0ec9ba3e162cd723e5"
   },
   "dimensions": [
     "identity",
@@ -24,12 +24,12 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 441,
+    "pages": 442,
     "entries": 145,
     "cards": 145,
-    "routes": 482,
-    "related_labels": 25,
-    "non_routes": 25,
+    "routes": 479,
+    "related_labels": 24,
+    "non_routes": 24,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -2927,6 +2927,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.0465c87ed370438db997a1fcfcbe54cd",
+      "path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.849bdcae7fb65f6daa4d9db920961789",
       "path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md",
       "kind": "page",
@@ -3160,18 +3167,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should client connectivity be offloaded to a colocated out-of-process proxy?"
@@ -6306,18 +6313,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should auxiliary runtime behavior run in a colocated helper beside the main workload rather than inside it?"
@@ -6911,14 +6918,14 @@
     },
     {
       "pattern_id": "tycho.pattern.ambassador",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8484,14 +8491,14 @@
     },
     {
       "pattern_id": "tycho.pattern.sidecar",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8801,21 +8808,6 @@
     {
       "from": "tycho.pattern.aggregator",
       "to": "tycho.pattern.splitter",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.ambassador",
-      "to": "tycho.pattern.gateway-routing",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.ambassador",
-      "to": "tycho.pattern.retry-with-jitter",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.ambassador",
-      "to": "tycho.pattern.sidecar",
       "basis": "card-related-entry"
     },
     {
@@ -11195,13 +11187,6 @@
     }
   ],
   "related_dispositions": [
-    {
-      "from": "tycho.pattern.ambassador",
-      "label": "Service Mesh",
-      "disposition": "non-route",
-      "target": null,
-      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
-    },
     {
       "from": "tycho.pattern.autoscaling",
       "label": "Capacity Planning.",
