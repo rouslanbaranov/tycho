@@ -197,3 +197,10 @@ tool invocation that retrieves sources, or change.
     the complete planned batch set is finished, listing every accepted entry, report and
     hash. A promotion without acceptance remains sufficient evidence but not owner
     acceptance.
+
+30. **No research or structural blocker is terminal.** A coupled page, missing
+    source, rate-limited reviewer or large batch is a planning problem, not a stop
+    condition. Keep a concrete next plan and execute it without pausing for owner
+    approval or confirmation. Do not report a blocker as the end of work. Stop only
+    for restricted-material handling, destructive actions outside the plan, or an
+    explicit owner stop. Owner acceptance remains batched after all planned work.
