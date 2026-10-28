@@ -189,3 +189,11 @@ tool invocation that retrieves sources, or change.
     not permission to use restricted material, change scope, promote an entry,
     claim sufficient coverage or record owner acceptance. Those decisions remain
     with the owner and the independent review gate.
+
+29. **Owner acceptance is recorded after all planned batches, not per batch.** A
+    promotion may remain acceptance-pending while later batches are researched and
+    reviewed. Do not treat the end of one batch as the final owner-acceptance point,
+    and do not ask for acceptance after each batch. Record the final owner decision once
+    the complete planned batch set is finished, listing every accepted entry, report and
+    hash. A promotion without acceptance remains sufficient evidence but not owner
+    acceptance.
