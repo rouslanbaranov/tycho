@@ -2567,7 +2567,7 @@
         "heading": "Splitter",
         "anchor": "splitter",
         "level": 3,
-        "line": 135,
+        "line": 138,
         "unit_kind": "dedicated",
         "unit_terms": [
           "one input into several independently processable messages",
@@ -2602,13 +2602,13 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A split that aborts does not advance a successful-completion watermark, so the failed batch can be retried; completed effects must remain idempotent or be deduplicated because a retry can re-deliver parts.",
-          "reason": "Camel watermark is not advanced when a split aborts, so the failed batch can be retried; idempotency is required because completed parts can be re-delivered.",
+          "quote": "A split that aborts does not advance a successful-completion watermark, so the failed batch can be retried.",
+          "reason": "Camel states that an aborted split leaves the watermark unchanged, so the failed batch can be retried; idempotency and re-delivery are Tycho guidance, not source-stated.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
             "section": "Value-based watermark",
-            "quote": "The watermark is only updated when the split completes successfully. If the split is aborted (e.g., due to exceeding maxFailedRecords ), the watermark is not updated, which allows the failed batch to be retried.",
+            "quote": "The watermark is only updated when the split completes successfully. If the split is aborted (e.g., due to exceeding maxFailedRecords), the watermark is not updated, which allows the failed batch to be retried.",
             "revision": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0"
           }
         },
@@ -2642,7 +2642,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded decision note; all four technical dimensions bound to public source quotes; coverage remains partial-bounded pending independent review."
+      "notes": "Bounded decision note; all four technical dimensions have public source bindings; idempotency/re-delivery and the decision framing are Tycho guidance; coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -2678,32 +2678,32 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs correlation, a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses.",
-          "reason": "Requires correlation, per-participant timeout, partial-failure policy and late/duplicate handling.",
+          "quote": "An aggregator fans in related results from multiple participants and returns one composed result. It needs correlation, a completeness condition and an aggregation algorithm.",
+          "reason": "The source names correlation, the completeness condition and the aggregation algorithm as the design items; timeout and duplicate/late handling are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-aggregator.2026-10-21",
             "section": "Aggregator",
-            "quote": "When designing an Aggregator , we need to specify the following items: Correlation - which incoming messages belong together? Completeness Condition - when are we ready to publish the result message? Aggregation Algorithm - how do we combine the received messages into a single result message?",
+            "quote": "When designing an Aggregator, we need to specify the following items: Correlation - which incoming messages belong together? Completeness Condition - when are we ready to publish the result message? Aggregation Algorithm - how do we combine the received messages into a single result message?",
             "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
           }
         },
         "failure_recovery": {
-          "state": "supported",
-          "quote": "The failure path is a stuck or missing participant; the aggregator must return a declared partial result, cancel remaining work or fail as a whole.",
-          "reason": "Names stuck or missing participants and requires partial result, cancellation or whole failure.",
+          "state": "partial",
+          "quote": "The source states that a missing or delayed message can prevent further processing and that an incomplete set should raise an error after a timeout. Tycho guidance, not a source claim: an implementation should also return a declared partial result, cancel remaining work or fail as a whole.",
+          "reason": "Whole-set timeout failure is source-stated; partial-result and cancellation are Tycho guidance, not bound to the cited passage.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-aggregator.2026-10-21",
             "section": "Aggregator",
-            "quote": "An incomplete order may not be meaningful. So if not all items are received within a certain time-out period an error condition should be raised by the Aggregator .",
+            "quote": "An incomplete order may not be meaningful. So if not all items are received within a certain time-out period an error condition should be raised by the Aggregator.",
             "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
           }
         },
         "alternative": {
-          "state": "supported",
-          "quote": "Scatter-gather is the alternative when one request must reach several recipients: it broadcasts similar or related requests and aggregates their responses through an aggregator.",
-          "reason": "Page defines scatter-gather as broadcasting requests to several recipients and aggregating responses through an aggregator; the alternative framing follows from that relationship.",
+          "state": "partial",
+          "quote": "Tycho synthesis: scatter-gather is the alternative when one request must reach several recipients; it broadcasts similar or related requests and aggregates their responses through an aggregator.",
+          "reason": "The source defines scatter-gather broadcasting and its aggregator component; the alternative decision framing is Tycho synthesis, not a source statement.",
           "binding": {
             "source_id": "src.aws-scatter-gather",
             "ledger_record": "read.aws-scatter-gather.2026-10-28",
@@ -2716,7 +2716,7 @@
       "decision_evidence": {
         "atlas_section": "aggregator",
         "question": "Should related messages be combined using completion and timeout rules?",
-        "competing_alternative": "Scatter-gather, which broadcasts one request to several recipients and aggregates their responses through an aggregator. Reverse the choice when the request must reach several recipients rather than fan in already-correlated messages.",
+        "competing_alternative": "Tycho synthesis: scatter-gather broadcasts one request to several recipients and aggregates their responses through an aggregator. Reverse the choice when the request must reach several recipients rather than fan in already-correlated messages.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2730,7 +2730,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "All four technical dimensions supported; promotion suspended after the shared c03 page change; fresh independent review required."
+      "notes": "Mechanism and invariant are source-bound; failure recovery is partial because partial-result and cancellation are Tycho guidance; alternative is Tycho synthesis; coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.scatter-gather",
@@ -2742,7 +2742,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 169,
+        "line": 173,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -2766,8 +2766,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a response contract, a quorum or completeness rule, a deadline and a policy for stragglers.",
-          "reason": "Requires a response contract, quorum/completeness rule, deadline and straggler policy.",
+          "quote": "Scatter-gather sends one request to several participants and gathers their responses. It needs a completeness condition and a deadline; the source names wait-for-all, first-best and fixed-timeout strategies.",
+          "reason": "The source lists wait-for-all, first-best and fixed-timeout completeness strategies; response-contract and straggler details are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-scatter.2026-10-21",
@@ -2777,21 +2777,21 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
-          "quote": "The failure path is a slow or missing participant; gather must return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
-          "reason": "Requires bounded partial results or declared failure and cancellation of outstanding work.",
+          "state": "partial",
+          "quote": "The source states that timed-out responses should be communicated as an incomplete response and can be ignored. Tycho guidance, not a source claim: gather should return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
+          "reason": "Partial-response handling is source-stated; cancellation and a general failure rule are Tycho guidance, not bound to the cited passage.",
           "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-scatter.2026-10-21",
-            "section": "Example: Mulesoft ESB",
-            "quote": "Route errors propagate to the Scatter-Gather, which in turn flags an error, passing on any results that were successfully passed by the individual routes.",
-            "revision": "ed4e25c160ba5c6c908b79de8011ba8f69c26c40ccd92f7612903029b7db78e6"
+            "source_id": "src.aws-scatter-gather",
+            "ledger_record": "read.aws-scatter-gather.2026-10-28",
+            "section": "Issues and considerations",
+            "quote": "When requests are scattered to multiple recipients, some recipients can time out. In these cases, the implementation should communicate to the client that the response is incomplete.",
+            "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
           }
         },
         "alternative": {
-          "state": "supported",
-          "quote": "An aggregator alone is the alternative when responses already exist: the page describes the aggregator as another messaging pattern that collects and distills responses, while scatter-gather adds the broadcast.",
-          "reason": "Page describes the aggregator as another messaging pattern for collecting and distilling responses, separate from the scatter phase.",
+          "state": "partial",
+          "quote": "Tycho synthesis: an aggregator alone is the alternative when responses already exist; the source describes the aggregator as another messaging pattern that collects and distills responses, while scatter-gather adds the broadcast.",
+          "reason": "The source describes the aggregator as a component and related pattern; the standalone alternative framing is Tycho synthesis, not a source statement.",
           "binding": {
             "source_id": "src.aws-scatter-gather",
             "ledger_record": "read.aws-scatter-gather.2026-10-28",
@@ -2804,7 +2804,7 @@
       "decision_evidence": {
         "atlas_section": "scatter-gather",
         "question": "Should one request be broadcast to several recipients and their responses combined?",
-        "competing_alternative": "A standalone aggregator, when responses already exist and no broadcast is needed. Reverse the choice when one request must reach several recipients and their responses must be combined.",
+        "competing_alternative": "Tycho synthesis: a standalone aggregator, when responses already exist and no broadcast is needed. Reverse the choice when one request must reach several recipients and their responses must be combined.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2818,7 +2818,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "All four technical dimensions supported; promotion suspended after the shared c03 page change; fresh independent review required."
+      "notes": "Mechanism and invariant are source-bound; failure recovery is partial because partial-result and cancellation are Tycho guidance; alternative is Tycho synthesis; coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.dead-letter-channel-dlq",
@@ -11042,8 +11042,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 58,
-    "failure_recovery_supported": 45,
-    "alternative_supported": 56,
+    "failure_recovery_supported": 43,
+    "alternative_supported": 54,
     "technical_partial_bounded": 35,
     "technical_partial": 92,
     "technical_name_only": 0,

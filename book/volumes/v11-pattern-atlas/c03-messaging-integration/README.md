@@ -329,20 +329,24 @@ integration-pattern; priority core.
 **Decision question.** Should related messages be combined using completion and timeout
 rules?
 
-**Good-fit conditions.** Correlation is stable; completion conditions are explicit;
-partial results are representable; duplicate and late messages are handled.
+**Good-fit conditions.** Correlation is stable; completion conditions are explicit.
+Tycho guidance, not a source claim: partial results are representable, duplicate and late
+messages are handled, and a per-participant timeout is available.
 
-**Hard contraindications.** Reject when responses are independent, when no bounded
-completion rule exists, or when aggregation state has no durable owner.
+**Hard contraindications.** Reject when responses are unrelated, when one participant is
+authoritative, when atomicity across participants is required, when one slow participant
+would consume the caller's budget, when no bounded completion rule exists, or when
+aggregation state has no durable owner.
 
-**Competing alternative.** Scatter-gather, which broadcasts one request to several
-recipients and aggregates their responses through an aggregator. Reverse the choice when
-the request must reach several recipients rather than fan in already-correlated messages.
+**Competing alternative.** Tycho synthesis: scatter-gather broadcasts one request to
+several recipients and aggregates their responses through an aggregator. Reverse the
+choice when the request must reach several recipients rather than fan in
+already-correlated messages.
 
 **Failure and recovery.** Late, missing and duplicate messages are common; verify
 completion and eviction in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is owner-specific.
+**Technical owner.** [Aggregator](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is Tycho guidance.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
@@ -366,19 +370,23 @@ integration-pattern; priority core.
 responses combined?
 
 **Good-fit conditions.** Recipients are known or discoverable; partial responses are
-acceptable; per-recipient deadlines exist; the aggregate is bounded.
+acceptable; per-recipient deadlines exist; the aggregate is bounded. Tycho guidance, not
+a source claim: define a response contract and a quorum or completeness rule, and assign
+a straggler policy to an owner.
 
-**Hard contraindications.** Reject when one authoritative recipient suffices, when all
-responses must be globally consistent, or when fan-out can exhaust the caller.
+**Hard contraindications.** Reject when one authoritative recipient suffices, when
+responses are not comparable, when the aggregate must be globally consistent, or when
+tail latency would exceed the caller's budget. Tycho guidance: fan-out that can exhaust
+the caller is also a contraindication.
 
-**Competing alternative.** A standalone aggregator, when responses already exist and no
-broadcast is needed. Reverse the choice when one request must reach several recipients and
-their responses must be combined.
+**Competing alternative.** Tycho synthesis: a standalone aggregator, when responses
+already exist and no broadcast is needed. Reverse the choice when one request must reach
+several recipients and their responses must be combined.
 
 **Failure and recovery.** Slow or missing recipients dominate tail latency; verify
 deadlines and partial results in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; partial-response handling is owner-specific.
+**Technical owner.** [Scatter-Gather](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; partial-response handling is Tycho guidance.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
