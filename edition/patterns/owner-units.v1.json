@@ -9361,7 +9361,7 @@
         "line": 131,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "planned application downtime",
+          "write pipeline",
           "data freshness",
           "reverse replication"
         ]
@@ -9369,13 +9369,13 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A controlled cutover requires a planned application downtime window.",
+          "quote": "A controlled cutover drains the write pipeline and verifies that source changes replicate before switching writes.",
           "reason": "The Spanner cutover procedure requires planned downtime.",
           "binding": {
             "source_id": "src.gcp-spanner-cutover",
             "ledger_record": "read.gcp-spanner-cutover.2026-10-26",
             "section": "Perform cutover",
-            "quote": "The cutover procedure described in this guide requires a planned application downtime window.",
+            "quote": "The following sections describe how to drain the write pipeline and verify that all source changes replicate to Spanner before switching application writes.",
             "revision": "aa3be8892206c03c58a52f97a163a7f6dd23e30a3715ccdd88c062cba5cc75dc"
           }
         },
@@ -9393,7 +9393,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A failed cutover uses the reverse replication fallback to the source.",
+          "quote": "A contingency fallback pathway can be configured before cutover using reverse replication.",
           "reason": "Spanner supports reverse replication as a fallback pathway.",
           "binding": {
             "source_id": "src.gcp-spanner-cutover",
@@ -9411,7 +9411,7 @@
             "source_id": "src.fowler-strangler",
             "ledger_record": "read.fowler-strangler.2026-10-21",
             "section": "Strangler Fig",
-            "quote": "Once we have seams to isolate a few components, we can start replacing them. Since these components are small, there isn’t so much risk involved when we introduce the new software.",
+            "quote": "Once we have seams to isolate a few components, we can start replacing them. Since these components are small, there isn't so much risk involved when we introduce the new software.",
             "revision": "ac274ebe2a36e7553e9f1923e7fbfbc3ff52504c542eec5353127ffba335989e"
           }
         }
@@ -9433,7 +9433,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Gated cutover is bounded to go/no-go evidence and forward repair; no dedicated controlled-cutover section."
+      "notes": "Three technical bindings use Spanner cutover; the alternative uses Fowler Strangler Fig."
     },
     {
       "pattern_id": "tycho.pattern.federated-identity",

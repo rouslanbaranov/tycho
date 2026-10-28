@@ -387,7 +387,8 @@ be verified.
 
 **Competing alternative.** Strangler Fig replacement moves authority incrementally through seams.
 
-**Failure and recovery.** A failed cutover uses the reverse replication fallback to the source.
+**Failure and recovery.** A contingency fallback pathway can be configured before cutover
+using reverse replication.
 
 **Technical owner.** [Cutover gates](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — bounded to the Spanner cutover procedure, not a generic no-return contract.
 
