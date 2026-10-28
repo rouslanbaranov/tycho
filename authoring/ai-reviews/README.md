@@ -93,3 +93,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | DeepSeek Reviewer | #540 aggregator/scatter-gather | pass | `2026-10-28-aggregator-scatter-deepseek.md` | `20a17a26bf0c7b1bd2bbf21c43ed9105d04bf01c696de78cef2d15bd3613d234` |
 | 2026-10-28 | DeepSeek Reviewer | #540 splitter set final | pass | `2026-10-28-splitter-set-final-deepseek.md` | `af101290b583fab947064423c386451926ba1a67cfd0589a95f3eb3a1d497668` |
 | 2026-10-28 | DeepSeek Reviewer | #540 pipes/filter final | pass | `2026-10-28-pipes-filter-final-deepseek.md` | `0dcbc2fd50dfcb16a6a1fa7af9276335b37d2d0b0bbfb882aa1ac95cb41fbb25` |
+| 2026-10-28 | DeepSeek Reviewer | #540 claim/request | pass | `2026-10-28-claim-request-deepseek.md` | `fa9ee4e7abc10781120d5f1d01fc39b1bb826ea5c8054c5917b8405dc78c63f3` |
