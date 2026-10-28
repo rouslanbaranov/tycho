@@ -73,3 +73,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 RBAC/ABAC | pass | `2026-10-28-rbac-abac-review-codex.md` | `e729d03b2f1f81ead2e9d4d9011477ef6392c259f5b8698da37fe37868414371` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 async split | pass | `2026-10-28-async-request-reply-split-review-codex.md` | `59b9b64d0aeed47c31263fe33cab103fa787558d85feb9326aee987d610f8fe9` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 dark split | pass | `2026-10-28-dark-launching-split-review-codex.md` | `a7471e45c8632ed81def3f0a87e38dc049d99236bc2e1cb8fd74cf9b7f671ccd` |
+| 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 service discovery | pass | `2026-10-28-service-discovery-review-codex.md` | `b0f08b230e052109eef51c2f4b0876234d2b7046417906675d3dbb4b1771447f` |
