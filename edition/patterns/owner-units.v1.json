@@ -2203,15 +2203,8 @@
         },
         "failure_recovery": {
           "state": "partial",
-          "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller context.",
-          "reason": "Request-Reply supports restarting the reply thread and re-establishing caller context.",
-          "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-request-reply.2026-10-21",
-            "section": "Request-Reply",
-            "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller’s context.",
-            "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
-          }
+          "quote": "A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply a reply deadline and reconcile before retrying.",
+          "reason": "Page has crash/restart but no lost-request record or reply deadline."
         },
         "alternative": {
           "state": "supported",

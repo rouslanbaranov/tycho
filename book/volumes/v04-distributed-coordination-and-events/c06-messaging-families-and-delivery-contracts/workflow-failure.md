@@ -207,8 +207,8 @@ a message that the requester matches to the original request. The reply channel 
 owner and is cleaned after its retention window. A reply must correlate to exactly one
 outstanding request and must not be processed as a new command by another consumer.
 
-If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity,
-however, is the callback mechanism that must re-establish the caller context. A reply after the deadline is late, not valid for
+A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply
+a reply deadline and reconcile before retrying. A reply after the deadline is late, not valid for
 a new operation: detect it from the request state and quarantine or audit it. A duplicate reply is
 deduplicated by request and responder identity; only the first accepted reply is applied. Request
 state and dedup records must outlive the reply deadline, or a late reply becomes an orphan with no
