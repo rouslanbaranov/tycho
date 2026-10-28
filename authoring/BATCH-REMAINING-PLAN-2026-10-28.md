@@ -55,3 +55,15 @@ current card, requiring a page rewrite or a decision to keep it partial.
 c01 README now carries the Ambassador promotion. Self-Contained Service edits on
 c01 invalidate that promotion until the Ambassador card is split onto its own page
 and re-reviewed.
+
+## Source gaps found
+
+- **Message Filter** — the Filter page supports predicate routing, discard and a
+  single output channel, but not the Content-Based Router alternative. A separate
+  admitted Content-Based Router record is required before the alternative can be
+  marked supported.
+- **Aggregator / Scatter-Gather** — the pages list each other as related patterns,
+  not as mutually exclusive alternatives; a new bounded source is required.
+- **Throttling** — the client-side rewrite passed technical/decision checks, but
+  packet, scope and B15-RESULT provenance must be regenerated in one commit before
+  a fresh review.
