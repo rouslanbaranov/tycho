@@ -38,7 +38,7 @@ and a promotion record; owner acceptance is separate.
 ## Frozen by page-bound promotion
 
 - c01 README — Sidecar promotion;
-- c02 README — Async promotion;
+- c02 README — Async card moved to its own page, promotion restored;
 - c05 README — Cache Invalidation promotion;
 - c09 README — Static Content Hosting promotion;
 - c10 README — Dark Launching promotion;

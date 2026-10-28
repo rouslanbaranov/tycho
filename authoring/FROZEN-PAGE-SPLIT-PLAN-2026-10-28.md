@@ -8,7 +8,7 @@ without a new owner decision.
 | Page | Promotion-bound card | Owner decision needed | Sequence |
 |---|---|---|---|
 | c01 README | Sidecar | no | 1 |
-| c02 README | Async Request-Reply | no | 2 |
+| c02 README | Async Request-Reply — **done** | no | 2 |
 | c05 README | Cache Invalidation | yes (accepted) | 4 |
 | c09 README | Static Content Hosting | yes (accepted) | 5 |
 | c10 README | Dark Launching | no | 3 |
@@ -36,4 +36,5 @@ promotion/review evidence stays attributable to one page hash.
 - c11 fully split;
 - c01 ACL split;
 - c10 Parallel Run split;
-- c04/c05/c09/c02/c01/c10 still carry promotion-bound cards listed above.
+- c04/c05/c09/c01/c10 still carry promotion-bound cards listed above;
+- c02 is split, with the Async card on its own page and its promotion restored.
