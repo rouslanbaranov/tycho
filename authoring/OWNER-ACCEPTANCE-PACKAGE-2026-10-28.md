@@ -37,3 +37,33 @@ owner-accepted until the owner records a decision.
 Record the accepted subset in `edition/patterns/sufficient-owner-acceptance.v1.json`,
 or reject one or more entries with a reason. Until then `accepted_entries` remains
 limited to the three entries accepted on 2026-10-27.
+
+## Ready-to-paste decision
+
+If all ten are accepted, the owner can record this payload in
+`edition/patterns/sufficient-owner-acceptance.v1.json`:
+
+```json
+{
+  "status": "accepted",
+  "owner": "Ruslan Baranov",
+  "accepted_at": "YYYY-MM-DD",
+  "accepted_entries": [
+    "tycho.pattern.static-content-hosting",
+    "tycho.pattern.transactional-outbox",
+    "tycho.pattern.cache-invalidation",
+    "tycho.pattern.valet-key",
+    "tycho.pattern.anti-corruption-layer",
+    "tycho.pattern.parallel-run",
+    "tycho.pattern.workload-identity-mtls",
+    "tycho.pattern.sidecar",
+    "tycho.pattern.dark-launching-shadow-traffic",
+    "tycho.pattern.asynchronous-request-reply",
+    "tycho.pattern.rbac-abac",
+    "tycho.pattern.service-discovery",
+    "tycho.pattern.controlled-cutover"
+  ]
+}
+```
+
+Accepting a subset requires removing the unaccepted IDs and recording a reason.
