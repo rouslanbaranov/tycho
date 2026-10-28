@@ -45,3 +45,14 @@ and a promotion record; owner acceptance is separate.
 - c04 README — Transactional Outbox promotion.
 
 Editing these pages requires a split and fresh review before promotion can remain valid.
+
+## Shared-page blockers
+
+- **Federated Identity** — owner page `identity-authorization-and-isolation.md`
+  also carries the Workload Identity promotion. Editing it invalidates Workload;
+  split the page and re-review both before Federated work.
+- **Controlled Cutover** — atlas card is on the c10 page with the Dark Launching
+  promotion. Split c10 before editing the card.
+- **Service Discovery / Load Balancing** — cards are on c02/c09 pages with Async
+  and Static Content Hosting promotions.
+- **TTL-based Expiration** — card is on the c05 page with Cache Invalidation.
