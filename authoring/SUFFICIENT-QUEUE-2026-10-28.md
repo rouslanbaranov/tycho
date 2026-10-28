@@ -3,6 +3,9 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
+Current: **13 sufficient / 145**, **3 owner-accepted**, **10 pending owner decision**.
+Pilot six: five sufficient, Federated Identity remains remediation.
+
 ## Sufficient and accepted
 
 | Entry | External report | Owner accepted |
