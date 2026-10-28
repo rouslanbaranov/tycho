@@ -41,7 +41,7 @@ and a promotion record; owner acceptance is separate.
 - c02 README — Async card moved to its own page, promotion restored;
 - c05 README — Cache Invalidation promotion;
 - c09 README — Static Content Hosting promotion;
-- c10 README — Dark Launching promotion;
+- c10 README — Dark card moved to its own page, promotion restored;
 - c04 README — Transactional Outbox promotion.
 
 Editing these pages requires a split and fresh review before promotion can remain valid.
