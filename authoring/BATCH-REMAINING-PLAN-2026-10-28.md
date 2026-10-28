@@ -49,3 +49,9 @@ the owner section.
 
 No entry is promised to pass. A source may support only a narrower claim than the
 current card, requiring a page rewrite or a decision to keep it partial.
+
+## c01 Ambassador blocker
+
+c01 README now carries the Ambassador promotion. Self-Contained Service edits on
+c01 invalidate that promotion until the Ambassador card is split onto its own page
+and re-reviewed.
