@@ -40,7 +40,6 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key round 3 | reject | `2026-10-27-valet-key-review3-codex.md` | `733227f644caf5e4ae8f846f84b3082b12e50d41204a4135a814263ea72afa92` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 valet key round 4 | pass | `2026-10-27-valet-key-review4-codex.md` | `2aab633fc5a566532cc3973814f5803143cc979368a5ffd5855e22d4cdbe77ff` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 cache | pass | `2026-10-27-cache-invalidation-review-codex.md` | `26323bcdf779dbca8db2f9e4abe439affd94bb24143896d02df314d12b139a0b` |
-| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 ttl | reject | `2026-10-27-ttl-expiration-review-codex.md` | `06e0574b1134e12c6549f3725a8022e4cb947ec2029aa64bf92b6c56fc18404b` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer | reject | `2026-10-27-anti-corruption-layer-review-codex.md` | `4b29a05eee669687ded6ab84d2ffb2248ec2cc74e188dbbc1569227f9d2419a1` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 2 | reject | `2026-10-27-anti-corruption-layer-review2-codex.md` | `a437bb9ad9c9073b372540526ccc1c6620539d13133a3dfe4cec57e369feb9fb` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 anti-corruption layer round 3 | reject | `2026-10-27-anti-corruption-layer-review3-codex.md` | `368ef64070e82cb0455215fc0baab508d360441ed0e24e3677d750495a871d58` |
@@ -69,3 +68,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 service discovery round 2 | reject | `2026-10-27-service-discovery-review2-codex.md` | `b9dd6228423a3c728f5127f1ae6d3d6147c8368dfc95562bfde1f5ac2a0297ac` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 async request-reply round 2 | reject | `2026-10-27-async-request-reply-review2-codex.md` | `ccad0f776364db002b9a51e5918c40752fcd286b39ac6dc9630648d63d256098` |
 | 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 async request-reply round 3 | pass | `2026-10-27-async-request-reply-review3-codex.md` | `8918f85776490abd2ca5015d3c35baebc9d559e185b5026846b11b132aa6562a` |
+| 2026-10-27 | Codex / OpenAI (gpt-5.6-sol) | #540 TTL expiration | reject | `2026-10-27-ttl-expiration-review-codex.md` | `411dab8517b5c729a4fa522e3a3583d0f4f12655bd8a04bde8d06e9f732a72db` |
