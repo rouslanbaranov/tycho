@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "fcaedcf669be5d6c2893f0ee22876b1ebb7bb5d551e6e6ddef3285828325b6f4",
+    "registry_sha256": "7aed982ac23ef7f1cc76aa671c799566296b0565b3c995e21f1efb817da08117",
     "ledger_sha256": "67cf68b77bcb0e5e7524ceb81ccd3ebb9465118f7f51d9bd718f3d81b502fa12",
-    "card_batches_sha256": "0e30caf8aa9438482c883c023f94f41b673fb8702dc2b90c78abfc20bb1df98b",
-    "route_index_sha256": "432116e76de89f7720ad69591416aaf7cdc7ac679f70fe133f1a18bb86a4ecc5",
-    "coverage_sha256": "9f277ddf44fcd2a5d69b0ab595e94926796313763ed1567d9f0b4f9f3448f203"
+    "card_batches_sha256": "f6593487408e738c416f57e20f74f112a59eefef581461516a40b113d97d99b4",
+    "route_index_sha256": "191a69e8762badd9b294da580b9325d818270daf3e52c7bc612b3735424d24ef",
+    "coverage_sha256": "64de5a918ccc591a2d6abead146474bdd0cec4cab7159a2cedc7e75a62af442e"
   },
   "dimensions": [
     "identity",
@@ -24,12 +24,12 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 438,
+    "pages": 439,
     "entries": 145,
     "cards": 145,
-    "routes": 492,
-    "related_labels": 26,
-    "non_routes": 26,
+    "routes": 489,
+    "related_labels": 25,
+    "non_routes": 25,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -2941,6 +2941,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f",
+      "path": "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.chapter.a4b31346a691566550633efe0cf2693e",
       "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/README.md",
       "kind": "chapter",
@@ -3243,18 +3250,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should a client submit work and later fetch a result, rather than hold one synchronous request open?"
@@ -6942,14 +6949,14 @@
     },
     {
       "pattern_id": "tycho.pattern.asynchronous-request-reply",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8835,21 +8842,6 @@
     {
       "from": "tycho.pattern.api-gateway",
       "to": "tycho.pattern.reverse-proxy",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.asynchronous-request-reply",
-      "to": "tycho.pattern.api-composition",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.asynchronous-request-reply",
-      "to": "tycho.pattern.api-gateway",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.asynchronous-request-reply",
-      "to": "tycho.pattern.deadline-propagation",
       "basis": "card-related-entry"
     },
     {
@@ -11227,13 +11219,6 @@
     {
       "from": "tycho.pattern.ambassador",
       "label": "Service Mesh",
-      "disposition": "non-route",
-      "target": null,
-      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
-    },
-    {
-      "from": "tycho.pattern.asynchronous-request-reply",
-      "label": "Retry with Idempotency",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"

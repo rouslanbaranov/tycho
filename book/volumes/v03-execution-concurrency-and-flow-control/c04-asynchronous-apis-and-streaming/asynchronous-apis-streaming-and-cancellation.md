@@ -60,7 +60,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Asynchronous Request-Reply](../../v11-pattern-atlas/c02-api-communication/README.md#asynchronous-request-reply) — decision conditions and contraindications.
+> [Asynchronous Request-Reply](../../v11-pattern-atlas/c02-api-communication/async-request-reply.md#asynchronous-request-reply) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:0 -->
 ## Purpose and mission

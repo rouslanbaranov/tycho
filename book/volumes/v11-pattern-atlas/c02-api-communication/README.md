@@ -432,36 +432,7 @@ Gateway.
 
 ### Asynchronous Request-Reply
 
-**Identity.** Asynchronous Request-Reply; family API and service communication; kind
-integration pattern; priority core.
-
-**Decision question.** Should a client submit work and later fetch a result, rather than
-hold one synchronous request open?
-
-**Good-fit conditions.** Work does not fit a same-connection response; clients can poll a status
-endpoint; operation identity is defined.
-
-**Hard contraindications.** Reject when a same-connection synchronous response suffices or when
-duplicate submission cannot be made idempotent.
-
-**Competing alternative.** A same-connection synchronous response when most APIs respond
-quickly enough.
-
-**Failure and recovery.** A lost response is ambiguous; an idempotency key lets a retry return
-the existing status resource.
-
-**Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-request-reply) — async demand and cancellation; not a full request-reply implementation.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-async-request-reply.2026-10-21: all twelve served
-headings read. Vendor pattern page, not a
-benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; API Composition; Retry with Idempotency; Deadline
-Propagation.
+See the [dedicated Asynchronous Request-Reply card](async-request-reply.md).
 
 ### Gatekeeper
 
