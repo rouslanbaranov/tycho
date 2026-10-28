@@ -25,6 +25,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.oauth-security"
+    - "src.openid-federation"
   claim_ids: []
   status: "source-linked"
   notes: "Moved card page; source binding remains in the owner unit."
@@ -43,20 +44,20 @@ content_verified_at: null
 **Identity.** Federated Identity; family Security, isolation and operational architecture;
 kind security-pattern; priority core.
 
-**Decision question.** Should identity be asserted by a trusted issuer and accepted across
-services, rather than locally re-authenticated?
+**Decision question.** Should trust be mediated by a multilateral federation rather than bilateral
+direct trust?
 
-**Good-fit conditions.** Issuer/audience/expiry are validated; federation trust is
-explicit; revocation and key rotation are handled.
+**Good-fit conditions.** A federation authority can mediate trust; entities publish signed Entity
+Statements; access tokens are audience-bound.
 
-**Hard contraindications.** Reject when one local identity store suffices, when issuer
-trust cannot be established, or when token replay/revocation cannot be controlled.
+**Hard contraindications.** Reject when no federation authority exists and bilateral direct trust
+is impractical.
 
-**Competing alternative.** Local authentication or a gateway-only identity check. Reverse
-the choice when federation trust and revocation cost exceed single-sign-on benefit.
+**Competing alternative.** Bilateral direct trust between two organizations when multilateral
+mediation is impractical.
 
-**Failure and recovery.** Audience confusion and stale trust are common; verify token
-validation in the owner section.
+**Failure and recovery.** Entity Configuration expiration controls federation key refresh;
+expired metadata must be refreshed.
 
 **Technical owner.** [Identity and workload trust](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md#federated-identity) — federation trust and token validation are bounded; IdP lifecycle is owner-specific.
 

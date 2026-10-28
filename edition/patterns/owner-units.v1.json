@@ -9461,8 +9461,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Federated identity accepts an identity asserted by an external issuer through a configured trust relationship, such as a signed token exchange.",
-          "reason": "RFC 9700 defines token issuer and audience validation for federated assertions.",
+          "quote": "A federation Entity publishes a signed Entity Statement: a JWT whose subject is the Entity and whose issuer is the party that issued it.",
+          "reason": "OpenID Federation defines Entity Statements as signed JWTs about the Entity.",
           "binding": {
             "source_id": "src.openid-federation",
             "ledger_record": "read.openid-federation.2026-10-26",
@@ -9473,8 +9473,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "The receiver must validate the issuer, audience, signature, expiry and intended use before accepting any claim from the federation.",
-          "reason": "RFC 9700 requires issuer, audience, signature, expiry and intended-use validation.",
+          "quote": "A resource server verifies that an access token was meant for it and refuses otherwise.",
+          "reason": "RFC 9700 requires resource servers to verify audience and intended resource.",
           "binding": {
             "source_id": "src.oauth-security",
             "ledger_record": "read.batch6-rfc9700.2026-10-21",
@@ -9484,20 +9484,34 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A stale signing key or an over-broad trust configuration accepts the wrong issuer; rotate keys deliberately and test rejection of an unexpected audience.",
-          "reason": "RFC 9700 supports validation rejection; acceptance of a wrong issuer and key-compromise recovery are not established."
+          "state": "supported",
+          "quote": "Entity Configuration expiration controls how often federation keys are refetched; expired metadata must be refreshed.",
+          "reason": "OpenID Federation uses Entity Configuration expiration to control key refresh.",
+          "binding": {
+            "source_id": "src.openid-federation",
+            "ledger_record": "read.openid-federation.2026-10-26",
+            "section": "11. Updating Metadata, Key Rollover, and Revocation",
+            "quote": "The expiration time (exp) of an Entity Configuration is used to control how often it needs to be retrieved to fetch an updated set of Federation Keys from its jwks member.",
+            "revision": "4a71afdfbed5755d6704d6a089f450f10aa9914204b283eae5fadee2897d1911"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Local accounts avoid external trust but duplicate identity lifecycle; federate when many services or partners need one governed identity source.",
-          "reason": "The local-account lifecycle comparison is editorial, not bound to the cited specification."
+          "state": "supported",
+          "quote": "Bilateral direct trust between two organizations is the alternative when multilateral third-party mediation is impractical.",
+          "reason": "OpenID Federation contrasts bilateral direct trust with multilateral mediation.",
+          "binding": {
+            "source_id": "src.openid-federation",
+            "ledger_record": "read.openid-federation.2026-10-26",
+            "section": "Abstract",
+            "quote": "In bilateral federations, direct trust can be established between two organizations belonging to the same federation. In a multilateral federation, bilateral agreements might not be practical, in which case, trust can be mediated by a third party.",
+            "revision": "4a71afdfbed5755d6704d6a089f450f10aa9914204b283eae5fadee2897d1911"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "federated-identity",
-        "question": "Should identity be asserted by a trusted issuer and accepted across services, rather than locally re-authenticated?",
-        "competing_alternative": "Local authentication or a gateway-only identity check. Reverse the choice when federation trust and revocation cost exceed single-sign-on benefit.",
+        "question": "Should trust be mediated by a multilateral federation rather than bilateral direct trust?",
+        "competing_alternative": "Bilateral direct trust between two organizations when multilateral mediation is impractical.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9511,7 +9525,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Mechanism, failure and alternative use OpenID Federation; invariant uses RFC 9700 audience validation."
     },
     {
       "pattern_id": "tycho.pattern.zero-trust-architecture",
@@ -9763,7 +9777,7 @@
         "heading": "Workload Identity-mTLS",
         "anchor": "workload-identity-mtls",
         "level": 3,
-        "line": 118,
+        "line": 103,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Workload identity",
@@ -9836,8 +9850,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
     {
@@ -10895,7 +10909,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Identity federation and workload identity remain on the identity page; authorization and isolation moved to separate pages."
     },
@@ -10982,16 +10996,16 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 56,
-    "failure_recovery_supported": 42,
-    "alternative_supported": 52,
-    "technical_partial_bounded": 37,
+    "failure_recovery_supported": 43,
+    "alternative_supported": 53,
+    "technical_partial_bounded": 38,
     "technical_partial": 94,
     "technical_name_only": 0,
-    "technical_sufficient": 14,
-    "decision_partial_bounded": 131,
+    "technical_sufficient": 13,
+    "decision_partial_bounded": 132,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 14,
+    "decision_sufficient": 13,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
