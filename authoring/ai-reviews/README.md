@@ -82,3 +82,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar split | pass | `2026-10-28-sidecar-split-review-codex.md` | `1457a2a769edca01e59fff6424fe2ae614454d24e8afcc55924a895423064d9d` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 ambassador | pass | `2026-10-28-ambassador-review-codex.md` | `ec385313b887742ca865a576eddfb0d70856fe6f5ec64a5627b2b7ecac70d4e8` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar after page change | pass | `2026-10-28-sidecar-review-codex.md` | `3a5ab63edb52224287ff15b3e7d4fe349a5854c15da2d516e9d1e447ee3fa361` |
+| 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar after Ambassador page | pass | `2026-10-28-sidecar-review9-codex.md` | `78ada626bd8ca6fa274e5e24bc1050cb070fa06842427ec65ee8f43ff3839e47` |
