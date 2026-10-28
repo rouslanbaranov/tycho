@@ -1,4 +1,4 @@
-# Owner acceptance record — 17 sufficient entries
+# Owner acceptance record — 18 sufficient entries
 
 Status: **16 accepted; Ambassador pending owner decision**.
 All entries with a promotion have a fresh external pass; Self-Contained and Ambassador await owner decisions.
@@ -83,7 +83,7 @@ existing acceptance record:
 }
 ```
 
-Until then the owner acceptance count remains 16 of 17 sufficient entries.
+Until then the owner acceptance count remains 17 of 18 sufficient entries.
 
 ## Two-entry decision
 
@@ -103,7 +103,7 @@ To accept both, add:
 }
 ```
 
-Ambassador awaits an owner decision; acceptance is 16 of 17 sufficient entries.
+Message Filter awaits the final owner acceptance; acceptance is 17 of 18 sufficient entries.
 
 ## Ambassador decision
 

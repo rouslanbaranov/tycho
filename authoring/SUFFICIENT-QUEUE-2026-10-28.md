@@ -3,7 +3,7 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **17 sufficient / 145**, **16 owner-accepted**, **1 pending owner decision**.
+Current: **18 sufficient / 145**, **17 owner-accepted**, **1 pending owner decision**.
 Pilot six: **all six sufficient**.
 Owner accepted all 16 sufficient entries on 2026-10-28.
 
