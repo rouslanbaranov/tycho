@@ -1,8 +1,7 @@
-# Owner acceptance package — eleven additional sufficient entries
+# Owner acceptance record — 14 sufficient entries
 
-Status: **pending owner decision**. Three entries were accepted on 2026-10-27.
-These eleven have a fresh external `pass` and a promotion record, but are **not**
-owner-accepted until the owner records a decision.
+Status: **accepted by owner on 2026-10-28**.
+All fourteen have a fresh external `pass` and a promotion record.
 
 ## Already accepted
 
@@ -39,9 +38,9 @@ Record the accepted subset in `edition/patterns/sufficient-owner-acceptance.v1.j
 or reject one or more entries with a reason. Until then `accepted_entries` remains
 limited to the three entries accepted on 2026-10-27.
 
-## Ready-to-paste decision
+## Recorded decision
 
-If all ten are accepted, the owner can record this payload in
+The owner recorded this payload in
 `edition/patterns/sufficient-owner-acceptance.v1.json`:
 
 ```json
@@ -67,4 +66,4 @@ If all ten are accepted, the owner can record this payload in
 }
 ```
 
-Accepting a subset requires removing the unaccepted IDs and recording a reason.
+The recorded decision accepts all fourteen entries.
