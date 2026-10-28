@@ -55,8 +55,7 @@ needed for non-idempotent operations.
 **Competing alternative.** A client library invoked directly by the application when proxy overhead
 outweighs offloading.
 
-**Failure and recovery.** Proxy latency adds overhead; proxy retries are unsafe unless operations
-are idempotent.
+**Failure and recovery.** Proxy retries are unsafe unless operations are idempotent.
 
 **Technical owner.** [Static stability and colocated helpers](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — bounded to the client-side proxy pattern.
 

@@ -147,8 +147,7 @@ and create no new source claim.
 ### Ambassador
 
 An ambassador is an out-of-process proxy colocated with the client. It forwards requests to remote
-services and can offload monitoring, logging, routing, TLS and resilience. The proxy adds latency
-overhead, and proxy retries are unsafe unless all operations are idempotent. A client library invoked
+services and can offload monitoring, logging, routing, TLS and resilience. Proxy retries are unsafe unless all operations are idempotent. A client library invoked
 directly by the application may be better when overhead outweighs offloading. The proxy can monitor
 performance metrics such as latency or resource usage on the same host. A mechanism can let the client
 pass context, such as an HTTP header to opt out of retry or cap retries. Use the pattern when many

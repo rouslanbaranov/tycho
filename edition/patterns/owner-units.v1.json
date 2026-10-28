@@ -724,7 +724,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 159,
+        "line": 158,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -795,8 +795,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
     {
@@ -843,13 +843,13 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The proxy adds latency overhead, and proxy retries are unsafe unless all operations are idempotent.",
-          "reason": "Microsoft warns about latency and retry safety.",
+          "quote": "Proxy retries are unsafe unless all operations are idempotent.",
+          "reason": "Microsoft warns that proxy retries are unsafe for non-idempotent operations.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
             "section": "Problems and considerations",
-            "quote": "The proxy adds some latency overhead. Consider whether a client library that the application directly invokes is a better approach.",
+            "quote": "For example, the ambassador could handle retries, but that approach might not be safe unless all operations are idempotent.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         },
@@ -8909,7 +8909,7 @@
         "heading": "Immutable Infrastructure",
         "anchor": "immutable-infrastructure",
         "level": 3,
-        "line": 176,
+        "line": 175,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Immutable Infrastructure"
@@ -10832,7 +10832,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Three control-plane patterns have three distinct units, two dedicated bounded notes, on a coherent static-stability page."
     },
@@ -11010,14 +11010,14 @@
     "invariant_supported": 57,
     "failure_recovery_supported": 44,
     "alternative_supported": 53,
-    "technical_partial_bounded": 36,
+    "technical_partial_bounded": 37,
     "technical_partial": 93,
     "technical_name_only": 0,
-    "technical_sufficient": 16,
-    "decision_partial_bounded": 129,
+    "technical_sufficient": 15,
+    "decision_partial_bounded": 130,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 16,
+    "decision_sufficient": 15,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
