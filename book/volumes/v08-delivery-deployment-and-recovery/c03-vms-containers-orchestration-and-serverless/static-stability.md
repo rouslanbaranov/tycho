@@ -85,7 +85,7 @@ Assume three zones, each can demonstrably serve 60 *identical invented* units/s 
 > **Pattern atlas:**
 > [Immutable Infrastructure](../../v11-pattern-atlas/c10-deployment-modernization/README.md#immutable-infrastructure) — decision conditions and contraindications.
 
-> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/sidecar.md#sidecar) — decision conditions and contraindications.
+> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/README.md#sidecar) — decision conditions and contraindications.
 > [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/README.md#ambassador) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:3 -->
 ## Placement and topology constraints

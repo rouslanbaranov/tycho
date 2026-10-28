@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "46cfef6fffa9b8fe4233aa2a73e4db2f891bf24f2d47532b535c5b6ee8caa74f",
+    "registry_sha256": "f7bde7759c593e8e29721d4ef8315f6796b9ff5b27ab0d72e99a6ebf16b6ee16",
     "ledger_sha256": "67cf68b77bcb0e5e7524ceb81ccd3ebb9465118f7f51d9bd718f3d81b502fa12",
-    "card_batches_sha256": "b05dae3cc2e897fb06ecad60dc89ae69488161f48dce0d88af3582cb77ac9c7b",
-    "route_index_sha256": "2a06f07adf94e82d62cc2c79adf397139dc9e56e597f03a5dc79f61339b58187",
-    "coverage_sha256": "ee547aa6c940cb2dd371ff66a5710ee9f24205797f50ef181f0cdf6854365d59"
+    "card_batches_sha256": "0e30caf8aa9438482c883c023f94f41b673fb8702dc2b90c78abfc20bb1df98b",
+    "route_index_sha256": "cc177d5fd2d759131226433c4c2d2674db5248d9656ac0215b6cf18363a66bd1",
+    "coverage_sha256": "e642e28917e184dfec6ff2af1ce588ecb6a53ffca00923c802e7ec4ffce2fa4b"
   },
   "dimensions": [
     "identity",
@@ -24,12 +24,12 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 439,
+    "pages": 438,
     "entries": 145,
     "cards": 145,
-    "routes": 490,
-    "related_labels": 25,
-    "non_routes": 25,
+    "routes": 492,
+    "related_labels": 26,
+    "non_routes": 26,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -2929,13 +2929,6 @@
     {
       "document_id": "tycho.page.849bdcae7fb65f6daa4d9db920961789",
       "path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md",
-      "kind": "page",
-      "disposition": "atlas-decision",
-      "reason": "V11 decision layer"
-    },
-    {
-      "document_id": "tycho.page.755a7467ba4ec16c2f288b69dd8be7ee",
-      "path": "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md",
       "kind": "page",
       "disposition": "atlas-decision",
       "reason": "V11 decision layer"
@@ -6292,18 +6285,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should auxiliary runtime behavior run in a colocated helper beside the main workload rather than inside it?"
@@ -8470,14 +8463,14 @@
     },
     {
       "pattern_id": "tycho.pattern.sidecar",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -10920,6 +10913,16 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.sidecar",
+      "to": "tycho.pattern.ambassador",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.sidecar",
+      "to": "tycho.pattern.immutable-infrastructure",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.single-flight-request-coalescing",
       "to": "tycho.pattern.cache-aside-lazy-loading",
       "basis": "card-related-entry"
@@ -11364,6 +11367,13 @@
     {
       "from": "tycho.pattern.saga-orchestration",
       "label": "Workflow Failure.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.sidecar",
+      "label": "Service Mesh",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
