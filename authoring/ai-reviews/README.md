@@ -79,3 +79,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 request-reply messaging | pass | `2026-10-28-request-reply-messaging-review-codex.md` | `0b87ff932e6ae8287ac6ac710eddad46e743031d064215c4d870dad525bc8dfe` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 workload identity after page change | pass | `2026-10-28-workload-identity-review6-codex.md` | `c7c476c3df3d76f61d2300112454956f370b8ca5f8cde26d96cc2ec8bddf6d66` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 federated identity | pass | `2026-10-28-federated-identity-review2-codex.md` | `ebef99dcc833f149723cb463f09ce638d2691e65dbcc215b8ef140920325e1fd` |
+| 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar split | pass | `2026-10-28-sidecar-split-review-codex.md` | `1457a2a769edca01e59fff6424fe2ae614454d24e8afcc55924a895423064d9d` |
