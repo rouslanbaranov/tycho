@@ -47,11 +47,11 @@ security-pattern; priority core.
 **Decision question.** Should access be decided by roles or attributes rather than identity
 ACLs?
 
-**Good-fit conditions.** A policy model exists; roles/attributes have owners; decisions
-are auditable; conflicts are resolved.
+**Good-fit conditions.** Access requirements are finer than identity ACLs; roles or
+attributes are available and can be administered.
 
-**Hard contraindications.** Reject when access is purely static and tiny, when attributes
-are untrusted, or when policy complexity cannot be tested.
+**Hard contraindications.** Reject when identity ACLs suffice or when attribute-policy
+administration costs more than the access-control benefit.
 
 **Competing alternative.** Object ACLs use identity; RBAC uses roles.
 
