@@ -1,4 +1,4 @@
-# Owner acceptance record — 17 sufficient entries
+# Owner acceptance record — 16 sufficient entries
 
 Status: **accepted by owner on 2026-10-28; all 16 entries accepted**.
 All entries with a promotion have a fresh external pass; Self-Contained and Ambassador await owner decisions.
