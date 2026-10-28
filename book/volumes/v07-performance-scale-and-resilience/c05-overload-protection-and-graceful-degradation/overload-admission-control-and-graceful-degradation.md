@@ -210,24 +210,14 @@ policy should also state who may approve an emergency exception and for how long
 
 ### Throttling
 
-Throttling slows work that has already been admitted; it does not decide who deserves service.
-The invariant is that every admitted class has a bounded wait and a declared rejection point;
-no class waits without a deadline. The owner must state which dependency is protected and which
-class waits. That declaration
-belongs with the operational policy, not only in a dashboard.
-
-A finite buffer and an upstream backpressure signal make pacing enforceable. Without them,
-pacing shifts latency and memory pressure downstream. That buffer converts overload into an
-explicit decision rather than a growing delay. Sizing should follow observed service time, not
-an arbitrary request count.
-
-When capacity is exhausted, reject requests quickly rather than processing them; callers may
-retry when appropriate. Publish the limit, measurement window and retry guidance so callers can
-pace themselves.
-
-Rejecting excess work or adding capacity may be cheaper than delaying everyone. Review the
-policy when the protected dependency, traffic shape or deadline changes. Emergency work needs an
-exception path with an owner and an expiry.
+When a customer is out of quota, a backend task rejects requests quickly with an out-of-quota error.
+The rejection consumes significantly fewer resources than processing the request. Client-side
+throttling relies on per-customer limits, and the backend should treat retries and new requests
+equally and reject both quickly when overloaded. A rejected request can be retried immediately on a
+different backend task that may have spare resources. This redirects load toward tasks with spare
+capacity and is a form of organic load balancing. If a large subset of backend tasks is overloaded,
+requests should not be retried; errors bubble up to the caller. The approach protects the backend
+from spending resources on requests it cannot serve. Per-customer limits bound the rejected traffic.
 
 ### Rate Limiting
 

@@ -367,27 +367,26 @@ The source is a public pattern/documentation unit, not a benchmark.
 **Identity.** Throttling; family Resilience and fault tolerance; kind resilience-pattern;
 priority core.
 
-**Decision question.** Should request rate be limited to protect a dependency or budget?
+**Decision question.** Should an out-of-quota request be rejected quickly and retried on another
+backend?
 
-**Good-fit conditions.** A measurable bottleneck rate is known; throttling is observable;
-callers can back off; queue age and per-class latency are measured.
+**Good-fit conditions.** Per-customer limits exist; a retry path to another backend exists;
+rejection is cheaper than processing.
 
-**Hard contraindications.** Reject when the limit is arbitrary, when clients cannot react,
-or when throttling would drop mandatory work.
+**Hard contraindications.** Reject when all backends are overloaded or rejection costs as much as
+processing.
 
-**Competing alternative.** Rate limiting at the edge or admission control. Reverse the
-choice when per-client fairness matters more than aggregate rate.
+**Competing alternative.** Do not retry when a large subset of backends is overloaded; bubble the
+error to the caller.
 
-**Failure and recovery.** When capacity is exhausted, reject requests quickly rather than
-processing them; callers may retry when appropriate.
+**Failure and recovery.** A rejected request is retried immediately on a different backend with
+spare resources.
 
-**Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — throttling is bounded to already-admitted work, not a universal rate-limit algorithm.
+**Technical owner.** [Overload admission and graceful degradation](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — bounded to client-side rejection and retry.
 
 **Sources.** [src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.sre-overload.2026-10-21: all eleven served headings read.
-The record covers client-side adaptive rejection, not server-side
-pacing; server-side pacing is synthetic owner guidance. The source is a public
-pattern/documentation unit, not a benchmark.
+The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

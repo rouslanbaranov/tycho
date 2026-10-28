@@ -6739,41 +6739,16 @@
         "line": 211,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Throttling slows work that",
-          "The owner must state",
-          "That declaration belongs with",
-          "A finite buffer and"
+          "out-of-quota error",
+          "rejects requests quickly",
+          "spare resources"
         ]
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Throttling slows work that has already been admitted; it does not decide who deserves service.",
-          "reason": "Bounded owner statement from the current section.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Client-Side Throttling",
-            "quote": "When a client detects that a significant portion of its recent requests have been rejected due to \"out of quota\" errors, it starts self-regulating and caps the amount of outgoing traffic it generates. Requests above the cap fail locally without even reaching the network.",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
-        },
-        "invariant": {
-          "state": "partial",
-          "quote": "The invariant is that every admitted class has a bounded wait and a declared rejection point; no class waits without a deadline.",
-          "reason": "Bounded owner statement from the current section.",
-          "binding": {
-            "source_id": "src.sre-overload",
-            "ledger_record": "read.sre-overload.2026-10-21",
-            "section": "Client-Side Throttling",
-            "quote": "Clients can continue to issue requests to the backend until requests is K times as large as accepts . Once that cutoff is reached, the client begins to self-regulate and new requests are rejected locally (i.e., at the client) with the probability calculated in Client request rejection probability .",
-            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
-          }
-        },
-        "failure_recovery": {
-          "state": "partial",
-          "quote": "When capacity is exhausted, reject requests quickly rather than processing them; callers may retry when appropriate.",
-          "reason": "SRE overload chapter recommends quick rejection when a customer is out of quota.",
+          "state": "supported",
+          "quote": "When a customer is out of quota, a backend task rejects requests quickly with an out-of-quota error.",
+          "reason": "SRE client-side throttling rejects out-of-quota requests quickly.",
           "binding": {
             "source_id": "src.sre-overload",
             "ledger_record": "read.sre-overload.2026-10-21",
@@ -6782,23 +6757,47 @@
             "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
           }
         },
-        "alternative": {
-          "state": "partial",
-          "quote": "Rejecting excess work or adding capacity may be cheaper than delaying everyone.",
-          "reason": "Bounded owner statement from the current section.",
+        "invariant": {
+          "state": "supported",
+          "quote": "The rejection consumes significantly fewer resources than processing the request.",
+          "reason": "SRE states rejection consumes fewer resources than processing.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Client-Side Throttling",
+            "quote": "When a customer is out of quota, a backend task should reject requests quickly with the expectation that returning a “customer is out of quota” error consumes significantly fewer resources than actually processing the request and serving back a correct response.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "quote": "A rejected request can be retried immediately on a different backend task that may have spare resources.",
+          "reason": "SRE recommends immediate retry on a backend with spare resources.",
           "binding": {
             "source_id": "src.sre-overload",
             "ledger_record": "read.sre-overload.2026-10-21",
             "section": "Handling Overload Errors",
-            "quote": "Even if a backend is only slightly overloaded, a client request is often better served if the backend rejects retry and new requests equally and quickly. These requests can then be retried immediately on a different backend task that may have spare resources.",
+            "quote": "These requests can then be retried immediately on a different backend task that may have spare resources.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
+        },
+        "alternative": {
+          "state": "supported",
+          "quote": "If a large subset of backend tasks is overloaded, requests should not be retried; errors bubble up to the caller.",
+          "reason": "SRE says errors should bubble up when a large subset is overloaded.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Handling Overload Errors",
+            "quote": "If a large subset of backend tasks in the datacenter are overloaded, requests should not be retried and errors should bubble up all the way to the caller (e.g., returning an error to the end user).",
             "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
           }
         }
       },
       "decision_evidence": {
         "atlas_section": "throttling",
-        "question": "Should request rate be limited to protect a dependency or budget?",
-        "competing_alternative": "Rate limiting at the edge or admission control. Reverse the choice when per-client fairness matters more than aggregate rate.",
+        "question": "Should an out-of-quota request be rejected quickly and retried on another backend?",
+        "competing_alternative": "Do not retry when a large subset of backends is overloaded; bubble the error to the caller.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -6810,7 +6809,7 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
@@ -6824,7 +6823,7 @@
         "heading": "Rate Limiting",
         "anchor": "rate-limiting",
         "level": 3,
-        "line": 232,
+        "line": 222,
         "unit_kind": "dedicated",
         "unit_terms": [
           "bounds requests",
@@ -10790,7 +10789,7 @@
       ],
       "unit_count": 5,
       "dedicated_units": 5,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Fallback, degradation, shedding, throttling and rate limiting now have distinct dedicated units with separate trigger and failure contracts."
     },
@@ -10994,12 +10993,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 109,
-    "invariant_supported": 56,
-    "failure_recovery_supported": 43,
-    "alternative_supported": 53,
-    "technical_partial_bounded": 36,
-    "technical_partial": 94,
+    "mechanism_supported": 110,
+    "invariant_supported": 57,
+    "failure_recovery_supported": 44,
+    "alternative_supported": 54,
+    "technical_partial_bounded": 37,
+    "technical_partial": 93,
     "technical_name_only": 0,
     "technical_sufficient": 15,
     "decision_partial_bounded": 130,
