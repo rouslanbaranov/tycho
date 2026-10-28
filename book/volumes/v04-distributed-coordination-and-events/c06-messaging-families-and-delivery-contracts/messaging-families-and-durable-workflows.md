@@ -111,7 +111,8 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+measured evidence; the Aggregator and Scatter-Gather alternatives carry
+separate source bindings recorded in their cards and owner units.
 
 ### Aggregator
 
