@@ -9370,7 +9370,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "A controlled cutover drains the write pipeline and verifies that source changes replicate before switching writes.",
-          "reason": "The Spanner cutover procedure requires planned downtime.",
+          "reason": "The Perform cutover section drains writes and verifies replication before switching.",
           "binding": {
             "source_id": "src.gcp-spanner-cutover",
             "ledger_record": "read.gcp-spanner-cutover.2026-10-26",
@@ -9431,8 +9431,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
       "notes": "Three technical bindings use Spanner cutover; the alternative uses Fowler Strangler Fig."
     },
     {
@@ -10902,7 +10902,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Branch by abstraction and controlled cutover now have two distinct dedicated units."
     },
@@ -10977,14 +10977,14 @@
     "invariant_supported": 56,
     "failure_recovery_supported": 41,
     "alternative_supported": 52,
-    "technical_partial_bounded": 39,
+    "technical_partial_bounded": 38,
     "technical_partial": 94,
     "technical_name_only": 0,
-    "technical_sufficient": 12,
-    "decision_partial_bounded": 133,
+    "technical_sufficient": 13,
+    "decision_partial_bounded": 132,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 12,
+    "decision_sufficient": 13,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
