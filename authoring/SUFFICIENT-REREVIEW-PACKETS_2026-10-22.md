@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 125 |
+| Reviewed by independent agent | 124 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 20, "reviewed-by-independent-agent": 125}.
+Packet statuses: {"page-changed-since-review": 21, "reviewed-by-independent-agent": 124}.
 
 ## Review procedure
 
@@ -166,7 +166,7 @@ blank verdict template in the machine-readable file.
 
 - **Controlled Cutover**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Correlation Identifier**
   Current: pass; re-review: pass; report: pass-with-findings.

@@ -376,32 +376,26 @@ Compatibility; Backup/PITR.
 **Identity.** Controlled Cutover; family Deployment and legacy modernization; kind
 modernization-pattern; priority core.
 
-**Decision question.** Should the final authority switch be gated by explicit go/no-go
-evidence and a no-return contract?
+**Decision question.** Should authority switch during a planned downtime only after writes pause,
+replication drains and data freshness reaches zero?
 
-**Good-fit conditions.** Cutover criteria are measurable; rollback limits are known;
-authority transfer is explicit.
+**Good-fit conditions.** A downtime window is available; schema and backfill are complete; CDC
+replication is active; a reverse fallback can be configured.
 
-**Hard contraindications.** Reject when no measurable gate exists, when rollback is
-assumed but not possible, or when the switch can be partial without detection.
+**Hard contraindications.** Reject when writes cannot be paused or replication completeness cannot
+be verified.
 
-**Competing alternative.** Rolling/blue-green deployment, a reversible canary gate or
-scheduled maintenance. Reverse when no-return evidence cannot be obtained or the change is
-small enough to reverse.
+**Competing alternative.** Strangler Fig replacement moves authority incrementally through seams.
 
-**Failure and recovery.** No-return points and partial cutovers are common; verify gates
-in the owner section.
+**Failure and recovery.** A failed cutover uses the reverse replication fallback to the source.
 
-**Technical owner.** [Controlled Cutover](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — controlled cutover is bounded to gate/reversal reasoning.
+**Technical owner.** [Cutover gates](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — bounded to the Spanner cutover procedure, not a generic no-return contract.
 
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
-context for the transition narrative.
-[src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
+**Sources.** [src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.gcp-spanner-cutover.2026-10-26: all ten served headings read.
-Spanner supports a bounded drain-and-switch example. General
-no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
-are public articles/documentation, not benchmarks.
+[src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.fowler-strangler.2026-10-21: Strangler Fig alternative.
+The sources are public documentation/articles, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
