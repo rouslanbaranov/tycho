@@ -104,3 +104,16 @@ To accept both, add:
 ```
 
 Ambassador awaits an owner decision; acceptance is 16 of 17 sufficient entries.
+
+## Ambassador decision
+
+Ambassador has a fresh external pass after the failure-binding fix. To accept it:
+
+```json
+{
+  "accepted_entry": "tycho.pattern.ambassador",
+  "review_report": "authoring/ai-reviews/2026-10-28-ambassador-review3-codex.md"
+}
+```
+
+Until then acceptance remains 16 of 17 sufficient entries.
