@@ -1903,7 +1903,7 @@
         "heading": "Publish-Subscribe",
         "anchor": "publish-subscribe",
         "level": 3,
-        "line": 320,
+        "line": 326,
         "unit_kind": "dedicated",
         "unit_terms": [
           "topic",
@@ -1970,7 +1970,7 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 336,
+        "line": 342,
         "unit_kind": "dedicated",
         "unit_terms": [
           "eligible worker",
@@ -2037,7 +2037,7 @@
         "heading": "Competing Consumers",
         "anchor": "competing-consumers",
         "level": 3,
-        "line": 278,
+        "line": 281,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Competing Consumers"
@@ -2108,7 +2108,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 350,
+        "line": 356,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2341,7 +2341,7 @@
         "heading": "Content-Based Router",
         "anchor": "content-based-router",
         "level": 3,
-        "line": 211,
+        "line": 214,
         "unit_kind": "dedicated",
         "unit_terms": [
           "A content-based router chooses a destination",
@@ -2415,7 +2415,7 @@
         "heading": "Message Filter",
         "anchor": "message-filter",
         "level": 3,
-        "line": 293,
+        "line": 296,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Message Filter"
@@ -2447,16 +2447,9 @@
           }
         },
         "failure_recovery": {
-          "state": "supported",
-          "quote": "A discarded message produces no output.",
-          "reason": "A discarded message has no downstream output.",
-          "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-filter.2026-10-21",
-            "section": "Message Filter",
-            "quote": "If the message content does not match the criteria, the message is discarded.",
-            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
-          }
+          "state": "partial",
+          "quote": "The public pattern page is publisher-abridged and does not state a rejected-message disposition, audit record or recovery path, so those remain unknown and out of scope for this note.",
+          "reason": "The served page supports only that a non-matching message is discarded; rejected-message disposition, audit and recovery are not stated, so failure recovery remains partial and is not claimed as source-supported."
         },
         "alternative": {
           "state": "supported",
@@ -2474,7 +2467,7 @@
       "decision_evidence": {
         "atlas_section": "message-filter",
         "question": "Should messages be discarded when they do not match explicit criteria?",
-        "competing_alternative": "A content-based router sends each message to a different channel based on content.",
+        "competing_alternative": "A content-based router sends each message to a different channel based on content. Prefer the router when messages require different destinations or routing must choose among channels; the filter fits only a single-output pass-or-discard decision.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2488,7 +2481,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Promotion suspended after the shared message-selection.md owner page changed; all four dimensions remain supported; fresh external review required."
+      "notes": "Promotion suspended after the shared message-selection.md owner page changed; mechanism, invariant and alternative are source-bound; failure recovery is partial because the publisher-abridged page states no rejected-message disposition, audit or recovery. Coverage partial-bounded; no promotion; fresh external review required."
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
@@ -2500,7 +2493,7 @@
         "heading": "Pipes and Filters",
         "anchor": "pipes-and-filters",
         "level": 3,
-        "line": 229,
+        "line": 232,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ordered stages",
@@ -2576,7 +2569,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner section and card rewritten decision-first; all four dimensions bind to the Chapter 3 PDF section and the public pattern page. Coverage partial-bounded; no promotion."
+      "notes": "Source-bound owner section inside the page's bounded pattern notes, an explicit exception to its synthetic-guidance preamble; all four dimensions bind to the Chapter 3 PDF section and the public pattern page. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.splitter",
@@ -2926,7 +2919,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 369,
+        "line": 375,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -3074,7 +3067,7 @@
         "heading": "Resequencer",
         "anchor": "resequencer",
         "level": 3,
-        "line": 193,
+        "line": 196,
         "unit_kind": "dedicated",
         "unit_terms": [
           "restores an intended order",
@@ -3215,7 +3208,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 387,
+        "line": 393,
         "unit_kind": "dedicated",
         "unit_terms": [
           "broker",
@@ -3275,7 +3268,7 @@
         "heading": "Canonical Data Model",
         "anchor": "canonical-data-model",
         "level": 3,
-        "line": 304,
+        "line": 310,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Canonical Data Model"
@@ -11064,7 +11057,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 59,
-    "failure_recovery_supported": 44,
+    "failure_recovery_supported": 43,
     "alternative_supported": 55,
     "technical_partial_bounded": 36,
     "technical_partial": 91,
