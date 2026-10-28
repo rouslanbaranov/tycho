@@ -3,7 +3,7 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **13 sufficient / 145**, **3 owner-accepted**, **10 pending owner decision**.
+Current: **14 sufficient / 145**, **3 owner-accepted**, **11 pending owner decision**.
 Pilot six: five sufficient, Federated Identity remains remediation.
 
 ## Sufficient and accepted
@@ -28,6 +28,7 @@ Pilot six: five sufficient, Federated Identity remains remediation.
 | RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | no |
 | Service Discovery | `2026-10-28-service-discovery-review-codex.md` | no |
 | Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | no |
+| Request-Reply Messaging | `2026-10-28-request-reply-messaging-review-codex.md` | no |
 
 ## Pilot six
 

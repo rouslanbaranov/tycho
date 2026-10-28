@@ -1,7 +1,7 @@
-# Owner acceptance package — ten additional sufficient entries
+# Owner acceptance package — eleven additional sufficient entries
 
 Status: **pending owner decision**. Three entries were accepted on 2026-10-27.
-These ten have a fresh external `pass` and a promotion record, but are **not**
+These eleven have a fresh external `pass` and a promotion record, but are **not**
 owner-accepted until the owner records a decision.
 
 ## Already accepted
@@ -24,6 +24,7 @@ owner-accepted until the owner records a decision.
 | 8 | RBAC / ABAC | `authoring/ai-reviews/2026-10-28-rbac-abac-review-codex.md` | yes |
 | 9 | Service Discovery | `authoring/ai-reviews/2026-10-28-service-discovery-review-codex.md` | yes |
 | 10 | Controlled Cutover | `authoring/ai-reviews/2026-10-28-controlled-cutover-review-codex.md` | yes |
+| 11 | Request-Reply Messaging | `authoring/ai-reviews/2026-10-28-request-reply-messaging-review-codex.md` | yes |
 
 ## Evidence limits
 
