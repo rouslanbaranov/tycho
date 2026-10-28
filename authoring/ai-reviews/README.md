@@ -88,3 +88,5 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar after Ambassador fix | pass | `2026-10-28-sidecar-review10-codex.md` | `445018565323f0b68e19bc14a9da744e55db3055ceac4a160d87cd8a56c8fed6` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 message filter | pass | `2026-10-28-message-filter-review-codex.md` | `9cd31daccc99bfd1056ac46027cb264c6e2b00104f3af9edb24ac2b97bf999e6` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 request-reply after page change | pass | `2026-10-28-request-reply-review4-codex.md` | `9f88fb7e8a2a54453c2c7835a2a1897a23c299bdfd94ee27e18dc8fb4134b2d1` |
+| 2026-10-28 | Codex / OpenAI | #540 tycho.pattern.request-reply-messaging | pass | `2026-10-28-request-reply-split-review2-codex.json` | `103a6d41d0bdcb20a36ef502e6813bd58dd7b1dcca998d40565342286d5ceba3` |
+| 2026-10-28 | Codex / OpenAI | #540 tycho.pattern.message-filter | pass | `2026-10-28-message-filter-split-review2-codex.json` | `69b8e804d8b687af50b41ea4c30cb452d4344d96b8f073020fc126d619befb0c` |
