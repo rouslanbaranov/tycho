@@ -68,3 +68,18 @@ The owner recorded this payload in
 ```
 
 The recorded decision accepts all fourteen entries.
+
+## Federated Identity decision
+
+Federated Identity passed external review and promotion after the shared-page rewrite.
+It is not yet in `accepted_entries`. To accept it, add this ID and report to the
+existing acceptance record:
+
+```json
+{
+  "accepted_entry": "tycho.pattern.federated-identity",
+  "review_report": "authoring/ai-reviews/2026-10-28-federated-identity-review2-codex.md"
+}
+```
+
+Until then the owner acceptance count remains 14 of 15 sufficient entries.
