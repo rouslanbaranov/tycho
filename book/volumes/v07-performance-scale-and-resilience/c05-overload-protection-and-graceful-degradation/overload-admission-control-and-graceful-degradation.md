@@ -221,8 +221,9 @@ pacing shifts latency and memory pressure downstream. That buffer converts overl
 explicit decision rather than a growing delay. Sizing should follow observed service time, not
 an arbitrary request count.
 
-Publish the limit, measurement window and retry guidance so callers can pace themselves. Watch
-waiting time and class-specific completion, not only the arrival rate.
+When capacity is exhausted, reject requests quickly rather than processing them; callers may
+retry when appropriate. Publish the limit, measurement window and retry guidance so callers can
+pace themselves.
 
 Rejecting excess work or adding capacity may be cheaper than delaying everyone. Review the
 policy when the protected dependency, traffic shape or deadline changes. Emergency work needs an

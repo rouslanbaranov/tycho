@@ -378,8 +378,8 @@ or when throttling would drop mandatory work.
 **Competing alternative.** Rate limiting at the edge or admission control. Reverse the
 choice when per-client fairness matters more than aggregate rate.
 
-**Failure and recovery.** Throttle oscillation, hidden capacity loss and unfairness are
-common; keep a bounded queue, propagate backpressure and measure per-class latency.
+**Failure and recovery.** When capacity is exhausted, reject requests quickly rather than
+processing them; callers may retry when appropriate.
 
 **Technical owner.** [Throttling](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md#throttling) — throttling is bounded to already-admitted work, not a universal rate-limit algorithm.
 

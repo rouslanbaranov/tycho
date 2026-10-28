@@ -6766,8 +6766,15 @@
         },
         "failure_recovery": {
           "state": "partial",
-          "quote": "A finite buffer and an upstream backpressure signal make pacing enforceable.",
-          "reason": "SRE overload chapter has no buffer/backpressure failure rule."
+          "quote": "When capacity is exhausted, reject requests quickly rather than processing them; callers may retry when appropriate.",
+          "reason": "SRE overload chapter recommends quick rejection when a customer is out of quota.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Client-Side Throttling",
+            "quote": "When a customer is out of quota, a backend task should reject requests quickly with the expectation that returning a “customer is out of quota” error consumes significantly fewer resources than actually processing the request and serving back a correct response.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -6811,7 +6818,7 @@
         "heading": "Rate Limiting",
         "anchor": "rate-limiting",
         "level": 3,
-        "line": 231,
+        "line": 232,
         "unit_kind": "dedicated",
         "unit_terms": [
           "bounds requests",
