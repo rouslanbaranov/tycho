@@ -215,8 +215,8 @@ Envoy fetches cluster members from a xDS management server through the endpoint 
 The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the
 discovery service. EDS carries per-host attributes such as load-balancing weight, canary status
 and zone. Envoy assumes hosts come and go in an eventually consistent way. Active health checking
-determines cluster health. Static endpoint configuration is the simplest alternative when
-membership changes are rare. Envoy supports static, strict DNS, logical DNS, endpoint discovery service
+determines cluster health. EDS is the preferred service discovery mechanism for Envoy. Static endpoint configuration is the
+simplest alternative. Envoy supports static, strict DNS, logical DNS, endpoint discovery service
 and original destination service discovery. With EDS, Envoy has explicit knowledge of each upstream
 host and can make more intelligent load-balancing decisions. Extra attributes carried in the
 discovery response inform Envoy of load-balancing weight, canary status and zone.

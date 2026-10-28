@@ -333,9 +333,9 @@ than a static endpoint list?
 **Good-fit conditions.** Cluster membership changes; a xDS management server is available;
 Envoy can use the endpoint discovery service.
 
-**Hard contraindications.** Reject when membership is static or no xDS control plane exists.
+**Hard contraindications.** Reject when no xDS management server exists.
 
-**Competing alternative.** Static endpoint configuration when membership changes are rare.
+**Competing alternative.** Static endpoint configuration is the simplest alternative.
 
 **Failure and recovery.** Discovery is eventually consistent; active health checking determines
 cluster health.

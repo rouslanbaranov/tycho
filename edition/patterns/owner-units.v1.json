@@ -1533,7 +1533,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Static endpoint configuration is the simplest alternative when membership changes are rare",
+          "quote": "Static endpoint configuration is the simplest alternative.",
           "reason": "Envoy calls static the simplest service discovery type.",
           "binding": {
             "source_id": "src.envoy",
@@ -1547,7 +1547,7 @@
       "decision_evidence": {
         "atlas_section": "service-discovery",
         "question": "Should Envoy fetch cluster members from a xDS discovery service rather than a static endpoint list?",
-        "competing_alternative": "Static endpoint configuration when membership changes are rare.",
+        "competing_alternative": "Static endpoint configuration is the simplest alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1561,7 +1561,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Discovery is bounded to update boundaries, stale-membership detection and last-known data-plane use."
+      "notes": "Envoy EDS scope: cluster endpoint fetching, endpoint attributes, eventual consistency, active health checking and static discovery."
     },
     {
       "pattern_id": "tycho.pattern.client-side-discovery",
