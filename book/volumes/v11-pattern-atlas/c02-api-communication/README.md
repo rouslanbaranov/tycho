@@ -324,39 +324,31 @@ documentation, not a benchmark.
 
 ### Service Discovery
 
-**Identity.** Service Discovery; family API and service communication; kind
-infrastructure pattern; priority core.
+**Identity.** Service Discovery; family API and service communication; kind infrastructure
+pattern; priority core.
 
-**Decision question.** Should callers resolve backend instances through a discovery
-mechanism rather than static addresses?
+**Decision question.** Should Envoy fetch cluster members from a xDS discovery service rather
+than a static endpoint list?
 
-**Good-fit conditions.** Instances change frequently; membership and health are
-observable; stale membership can be detected; callers can handle resolution failure and
-backoff; the routing contract is owned.
+**Good-fit conditions.** Cluster membership changes; a xDS management server is available;
+Envoy can use the endpoint discovery service.
 
-**Hard contraindications.** Reject the claim when a small static endpoint is stable;
-when discovery would publish stale or unauthorized endpoints; when clients cannot
-maintain backoff and observability; when discovery is treated as authorization.
+**Hard contraindications.** Reject when membership is static or no xDS control plane exists.
 
-**Competing alternative.** Static endpoints, DNS or a single proxy. Reverse the choice
-when discovery control-plane cost and stale-state risk exceed the change rate.
+**Competing alternative.** Static endpoint configuration when membership changes are rare.
 
-**Failure and recovery.** Stale membership, discovery outage and fast-error attraction
-are common. Recovery requires last-known-good policy and health checks; verify the
-routing contract in the owner section.
+**Failure and recovery.** Discovery is eventually consistent; active health checking determines
+cluster health.
 
-**Technical owner.** [Service Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#service-discovery) — discovery and selection; not a full control-plane implementation.
+**Technical owner.** [Network request paths: discovery and balancing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#service-discovery) — bounded to Envoy EDS, not a generic discovery contract.
 
 **Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.envoy-service-discovery.2026-10-21: Service discovery, sections
-"Supported service discovery types", "Static", "Strict DNS", "Logical DNS", "Original
-destination", "Endpoint discovery service (EDS)", "Custom cluster", "On eventually
-consistent service discovery". Vendor documentation, not a benchmark.
+read record read.envoy-service-discovery.2026-10-21: Envoy service discovery page read.
+The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Client-Side Discovery; Server-Side Discovery; Gateway Routing;
-Reverse Proxy.
+**Related entries.** Client-Side Discovery; Server-Side Discovery; Load Balancing; DNS.
 
 ### Client-Side Discovery
 

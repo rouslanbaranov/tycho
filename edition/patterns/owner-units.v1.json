@@ -1489,29 +1489,28 @@
         "line": 212,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "publish addresses",
-          "stale membership",
-          "control path",
-          "Static DNS"
+          "Envoy",
+          "endpoint discovery service",
+          "xDS management server"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Service discovery may publish addresses plus eligibility metadata to a proxy or client.",
-          "reason": "Explains discovery as publishing addresses and eligibility metadata to a consumer.",
+          "quote": "Envoy fetches cluster members from a xDS management server through the endpoint discovery service.",
+          "reason": "Envoy EDS fetches cluster endpoints from an xDS management server.",
           "binding": {
             "source_id": "src.envoy",
             "ledger_record": "read.envoy-service-discovery.2026-10-21",
             "section": "Endpoint discovery service (EDS)",
-            "quote": "The endpoint discovery service is a xDS management server based on gRPC or REST-JSON API server used by Envoy to fetch cluster members. The cluster members are called “endpoint” in Envoy terminology. For each cluster, Envoy fetch the endpoints from the discovery service.",
+            "quote": "The endpoint discovery service is a xDS management server based on gRPC or REST-JSON API server used by Envoy to fetch cluster members.",
             "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
           }
         },
         "invariant": {
           "state": "supported",
-          "quote": "Service discovery assumes hosts come and go in an eventually consistent way.",
-          "reason": "Envoy states eventual consistency of discovery membership.",
+          "quote": "Envoy assumes hosts come and go in an eventually consistent way",
+          "reason": "Envoy service discovery is eventually consistent by design.",
           "binding": {
             "source_id": "src.envoy",
             "ledger_record": "read.envoy-service-discovery.2026-10-21",
@@ -1522,33 +1521,33 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Document who observes updates and how stale membership is detected. Distinguish the discovery control path from data-plane requests that can continue against a last-known usable set.",
-          "reason": "Requires stale-membership detection and separates the control path from last-known data-plane continuity.",
+          "quote": "Active health checking determines cluster health.",
+          "reason": "Envoy recommends active health checking with eventually consistent discovery.",
           "binding": {
             "source_id": "src.envoy",
             "ledger_record": "read.envoy-service-discovery.2026-10-21",
             "section": "On eventually consistent service discovery",
-            "quote": "This is very important since the design assumes that the discovery service can fail at any time. If a host continues to pass health check even after becoming absent from the discovery data, Envoy will still route. Although it would be impossible to add new hosts in this scenario, existing hosts will continue to operate normally. When the discovery service is operating normally again the data will eventually re-converge.",
+            "quote": "Our recommended way of deploying a service to service Envoy mesh configuration uses eventually consistent service discovery along with active health checking (Envoy explicitly health checking upstream cluster members) to determine cluster health.",
             "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
           }
         },
         "alternative": {
           "state": "supported",
-          "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
-          "reason": "Names the alternative and reversal.",
+          "quote": "Static endpoint configuration is the simplest alternative when membership changes are rare",
+          "reason": "Envoy calls static the simplest service discovery type.",
           "binding": {
             "source_id": "src.envoy",
             "ledger_record": "read.envoy-service-discovery.2026-10-21",
             "section": "Static",
-            "quote": "Static is the simplest service discovery type. The configuration explicitly specifies the resolved network name (IP address/port, unix domain socket, etc.) of each upstream host.",
+            "quote": "Static is the simplest service discovery type.",
             "revision": "f8e4f3e08d81df8cb182ef8e7b443162d2180d8b2b6b653785722a6e282571af"
           }
         }
       },
       "decision_evidence": {
         "atlas_section": "service-discovery",
-        "question": "Should callers resolve backend instances through a discovery mechanism rather than static addresses?",
-        "competing_alternative": "Static endpoints, DNS or a single proxy. Reverse the choice when discovery control-plane cost and stale-state risk exceed the change rate.",
+        "question": "Should Envoy fetch cluster members from a xDS discovery service rather than a static endpoint list?",
+        "competing_alternative": "Static endpoint configuration when membership changes are rare.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1574,7 +1573,7 @@
         "heading": "Client-Side Discovery",
         "anchor": "client-side-discovery",
         "level": 3,
-        "line": 229,
+        "line": 224,
         "unit_kind": "dedicated",
         "unit_terms": [
           "caller obtains",
@@ -1648,7 +1647,7 @@
         "heading": "Server-Side Discovery",
         "anchor": "server-side-discovery",
         "level": 3,
-        "line": 244,
+        "line": 239,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy, gateway",
@@ -7815,7 +7814,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 259,
+        "line": 254,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",

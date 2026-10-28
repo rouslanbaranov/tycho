@@ -211,20 +211,15 @@ reasoning.
 
 ### Service Discovery
 
-Service discovery may publish addresses plus eligibility metadata to a proxy or client. The
-registry is a control-plane view; it does not prove that an address is currently writable or that a
-caller may commit an effect there.
-
-Service discovery assumes hosts come and go in an eventually consistent way. Stale membership
-can outlive the registry update. Document who observes updates and how stale membership
-is detected. Distinguish the discovery control path from data-plane requests that can continue
-against a last-known usable set. A discovery outage, stale
-health signal or fast-error attraction can defeat the last-known set; define the fallback and the
-freshness bound in the caller's contract, not in the registry's update interval.
-
-Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
-are rare. Discovery is justified when membership changes faster than configuration can be
-republished and the consumer can act on eligibility metadata.
+Envoy fetches cluster members from a xDS management server through the endpoint discovery service.
+The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the
+discovery service. EDS carries per-host attributes such as load-balancing weight, canary status
+and zone. Envoy assumes hosts come and go in an eventually consistent way. Active health checking
+determines cluster health. Static endpoint configuration is the simplest alternative when
+membership changes are rare. Envoy supports static, strict DNS, logical DNS, endpoint discovery service
+and original destination service discovery. With EDS, Envoy has explicit knowledge of each upstream
+host and can make more intelligent load-balancing decisions. Extra attributes carried in the
+discovery response inform Envoy of load-balancing weight, canary status and zone.
 
 ### Client-Side Discovery
 
