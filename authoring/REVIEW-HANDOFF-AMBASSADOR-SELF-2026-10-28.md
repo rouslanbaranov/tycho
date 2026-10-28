@@ -2,7 +2,7 @@
 
 Use this while Codex is rate-limited. Reviewer must be read-only and independent.
 
-- HEAD: 63301736
+- HEAD: 0b7d91b8
 - Owner units SHA-256: 8b960a3a15edd819a85c7a3f9e6f5fb871d41ff90f4b8fd1c29fe7a9737c4a68
 - Source plan SHA-256: 6a669730505a3912669c495e58f97f9d14f1d8bdd401329798ff91db602fa381
 
