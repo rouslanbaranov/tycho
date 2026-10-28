@@ -84,3 +84,5 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar after page change | pass | `2026-10-28-sidecar-review-codex.md` | `3a5ab63edb52224287ff15b3e7d4fe349a5854c15da2d516e9d1e447ee3fa361` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar after Ambassador page | pass | `2026-10-28-sidecar-review9-codex.md` | `78ada626bd8ca6fa274e5e24bc1050cb070fa06842427ec65ee8f43ff3839e47` |
 | 2026-10-28 | DeepSeek Reviewer | #540 self-contained service | pass | `2026-10-28-self-contained-service-review-deepseek.md` | `d6ebe907bf78974c6d2331d6314ea9a2aef024e3536f62062b0f85f5aa44597a` |
+| 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 ambassador retry binding | pass | `2026-10-28-ambassador-review3-codex.md` | `7b77ae47d2130fec8e44000533c53397d3c64717e8dbf5df7a4e4be88ec58860` |
+| 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 sidecar after Ambassador fix | pass | `2026-10-28-sidecar-review10-codex.md` | `445018565323f0b68e19bc14a9da744e55db3055ceac4a160d87cd8a56c8fed6` |
