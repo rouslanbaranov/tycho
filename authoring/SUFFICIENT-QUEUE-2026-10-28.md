@@ -3,9 +3,9 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **15 sufficient / 145**, **14 owner-accepted**, **1 pending owner decision**.
+Current: **16 sufficient / 145**, **14 owner-accepted**, **2 pending owner decisions**.
 Pilot six: **all six sufficient**.
-Owner accepted 14 entries on 2026-10-28; Federated Identity awaits a new owner decision.
+Owner accepted 14 entries on 2026-10-28; Federated Identity and Ambassador await decisions.
 
 ## Sufficient and accepted
 
@@ -31,6 +31,7 @@ Owner accepted 14 entries on 2026-10-28; Federated Identity awaits a new owner d
 | Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | no |
 | Request-Reply Messaging | `2026-10-28-request-reply-messaging-review-codex.md` | no |
 | Federated Identity | `2026-10-28-federated-identity-review2-codex.md` | no |
+| Ambassador | `2026-10-28-ambassador-review-codex.md` | no |
 
 ## Pilot six
 
