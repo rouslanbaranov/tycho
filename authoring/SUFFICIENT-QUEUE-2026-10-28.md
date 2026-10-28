@@ -23,6 +23,7 @@ and a promotion record; owner acceptance is separate.
 | Dark Launching / Shadow Traffic | `2026-10-27-dark-launching-review2-codex.md` | no |
 | Async Request-Reply | `2026-10-27-async-request-reply-review3-codex.md` | no |
 | RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | no |
+| Service Discovery | `2026-10-28-service-discovery-review-codex.md` | no |
 
 ## Pilot six
 
