@@ -1,7 +1,8 @@
 # Batch remaining plan — 2026-10-28
 
 Status: planning only. `sufficient` requires a saved external pass and promotion;
-owner acceptance is separate. Current: 15 sufficient, 14 accepted.
+owner acceptance is separate. Current: 16 sufficient, 16 accepted; two c03 entries
+are suspended pending fresh review of their split cards.
 
 ## Remaining by volume
 
@@ -68,10 +69,10 @@ and re-reviewed.
   packet, scope and B15-RESULT provenance must be regenerated in one commit before
   a fresh review.
 
-## c03 README coupling
+## c03 split completed
 
-c03 now carries two promotion-bound cards: Request-Reply Messaging and Message Filter.
-Every remaining c03 card edit (Aggregator, Scatter-Gather, Splitter, Pipes and Filters,
-Claim Check, Resequencer) invalidates both promotions. The efficient path is a single
-c03 split batch: move the remaining cards to dedicated pages, then run one Request-Reply
-review and one Message Filter review against the new page hashes.
+Request-Reply Messaging and Message Filter now live on dedicated pages under c03.
+Both promotions and the Request-Reply owner-acceptance entry are suspended, and both
+entries are `partial-bounded`. Fresh reviews of the two new page/card hashes remain
+pending. Remaining c03 cards can be edited without invalidating a promotion until a
+new pass restores one.

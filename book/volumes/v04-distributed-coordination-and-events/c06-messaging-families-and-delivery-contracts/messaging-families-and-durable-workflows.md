@@ -55,7 +55,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/README.md#request-reply-messaging) — decision conditions and contraindications.
+> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) — decision conditions and contraindications.
 > [Splitter](../../v11-pattern-atlas/c03-messaging-integration/README.md#splitter) — decision conditions and contraindications.
 > [Aggregator](../../v11-pattern-atlas/c03-messaging-integration/README.md#aggregator) — decision conditions and contraindications.
 > [Scatter-Gather](../../v11-pattern-atlas/c03-messaging-integration/README.md#scatter-gather) — decision conditions and contraindications.

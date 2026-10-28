@@ -208,37 +208,7 @@ Subscriber.
 
 ### Request-Reply Messaging
 
-**Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should a request and response travel as a pair of messages on separate
-channels rather than one blocking call?
-
-**Good-fit conditions.** A requestor can wait for a reply; separate request and reply channels
-exist.
-
-**Hard contraindications.** Reject when the caller must block on a Remote Procedure Invocation
-or no reply channel exists.
-
-**Competing alternative.** A synchronous Remote Procedure Invocation blocks the caller's thread
-while it waits for the response.
-
-**Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
-re-establish the caller's context.
-
-**Technical owner.** [Request-reply messaging and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-request-reply.2026-10-21: Problem and Solution are
-unheaded; the page is publisher-abridged and has no Example
-section. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Correlation Identifier; Asynchronous Request-Reply; API Gateway;
-Timeout.
+See the [dedicated Request-Reply Messaging card](request-reply-messaging.md).
 
 ### Correlation Identifier
 
@@ -309,31 +279,7 @@ unit, not a benchmark.
 
 ### Message Filter
 
-**Identity.** Message Filter; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should messages be discarded when they do not match explicit criteria?
-
-**Good-fit conditions.** The filter has a single output channel; the predicate is testable; filtering
-is cheaper than downstream handling.
-
-**Hard contraindications.** Reject when messages need multiple destinations or every message has a
-required effect.
-
-**Competing alternative.** A content-based router sends each message to a different channel based on
-content.
-
-**Failure and recovery.** A non-matching message is discarded and produces no output.
-
-**Technical owner.** [Message selection: filters and routing](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — bounded to predicate filtering, not every router.
-
-**Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read records read.batch2-filter.2026-10-21 and read.batch2-content-router.2026-10-28.
-The source is public documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Content-Based Router; Selective Consumer; Publish-Subscribe.
+See the [dedicated Message Filter card](message-filter.md).
 
 ### Pipes and Filters
 

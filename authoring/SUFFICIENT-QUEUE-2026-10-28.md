@@ -3,9 +3,9 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **18 sufficient / 145**, **17 owner-accepted**, **1 pending owner decision**.
-Pilot six: **all six sufficient**.
-Owner accepted all 16 sufficient entries on 2026-10-28.
+Current: **16 sufficient / 145**, **16 owner-accepted**, **2 suspended pending split
+review**. Pilot six: **all six sufficient**. Owner accepted all 16 currently promoted
+entries on 2026-10-28.
 
 ## Sufficient and accepted
 
@@ -15,7 +15,7 @@ Owner accepted all 16 sufficient entries on 2026-10-28.
 | Transactional Outbox | `2026-10-27-transactional-outbox-review4-codex.md` | yes |
 | Cache Invalidation | `2026-10-27-cache-invalidation-review-codex.md` | yes |
 
-## Sufficient, pending owner acceptance
+## Sufficient and owner-accepted (batch rows)
 
 | Entry | External report | Owner accepted |
 |---|---|---|
@@ -29,9 +29,18 @@ Owner accepted all 16 sufficient entries on 2026-10-28.
 | RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | yes |
 | Service Discovery | `2026-10-28-service-discovery-review-codex.md` | yes |
 | Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | yes |
-| Request-Reply Messaging | `2026-10-28-request-reply-messaging-review-codex.md` | yes |
 | Federated Identity | `2026-10-28-federated-identity-review2-codex.md` | yes |
 | Ambassador | `2026-10-28-ambassador-review-codex.md` | yes |
+
+## Suspended pending split review
+
+Both c03 cards moved to dedicated pages on 2026-10-28. Coverage is
+`partial-bounded`; neither entry is promoted or counted as sufficient.
+
+| Entry | Prior report | State |
+|---|---|---|
+| Request-Reply Messaging | `2026-10-28-request-reply-review4-codex.md` | suspended |
+| Message Filter | `2026-10-28-message-filter-review-codex.md` | suspended |
 
 ## Pilot six
 
@@ -51,7 +60,8 @@ Owner accepted all 16 sufficient entries on 2026-10-28.
 - c05 README — Cache Invalidation promotion;
 - c09 README — Static Content Hosting promotion;
 - c10 README — Dark card moved to its own page, promotion restored;
-- c04 README — Transactional Outbox promotion.
+- c04 README — Transactional Outbox promotion;
+- c03 README — both c03 cards moved to dedicated pages; both promotions suspended.
 
 Editing these pages requires a split and fresh review before promotion can remain valid.
 

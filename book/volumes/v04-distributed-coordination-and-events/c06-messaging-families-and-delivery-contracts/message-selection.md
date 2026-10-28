@@ -152,7 +152,7 @@ Text alternative: Pulsar brokers serve publishers/subscribers while separate man
 > [Durable Subscriber](../../v11-pattern-atlas/c03-messaging-integration/README.md#durable-subscriber) — decision conditions and contraindications.
 > [Message Broker / Messaging Bridge](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-broker--messaging-bridge) — decision conditions and contraindications.
 > [Content-Based Router](../../v11-pattern-atlas/c03-messaging-integration/README.md#content-based-router) — decision conditions and contraindications.
-> [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-filter) — decision conditions and contraindications.
+> [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/message-filter.md#message-filter) — decision conditions and contraindications.
 > [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/README.md#pipes-and-filters) — decision conditions and contraindications.
 > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/README.md#resequencer) — decision conditions and contraindications.
 > [Canonical Data Model](../../v11-pattern-atlas/c03-messaging-integration/README.md#canonical-data-model) — decision conditions and contraindications.

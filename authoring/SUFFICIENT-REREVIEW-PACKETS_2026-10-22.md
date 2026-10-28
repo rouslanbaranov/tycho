@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 124 |
+| Reviewed by independent agent | 123 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 21, "reviewed-by-independent-agent": 124}.
+Packet statuses: {"page-changed-since-review": 22, "reviewed-by-independent-agent": 123}.
 
 ## Review procedure
 
@@ -534,7 +534,7 @@ blank verdict template in the machine-readable file.
 
 - **Splitter**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Stale-While-Revalidate**
   Current: pass; re-review: pass; report: pass-with-findings.
