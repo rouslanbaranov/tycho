@@ -84,3 +84,23 @@ existing acceptance record:
 ```
 
 Until then the owner acceptance count remains 14 of 15 sufficient entries.
+
+## Two-entry decision
+
+Federated Identity and Ambassador both have a fresh external pass and promotion.
+To accept both, add:
+
+```json
+{
+  "accepted_entries": [
+    "tycho.pattern.federated-identity",
+    "tycho.pattern.ambassador"
+  ],
+  "review_reports": [
+    "authoring/ai-reviews/2026-10-28-federated-identity-review2-codex.md",
+    "authoring/ai-reviews/2026-10-28-ambassador-review-codex.md"
+  ]
+}
+```
+
+Until then the owner acceptance count remains 14 of 16 sufficient entries.
