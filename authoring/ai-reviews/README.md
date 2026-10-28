@@ -91,3 +91,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI | #540 tycho.pattern.request-reply-messaging | pass | `2026-10-28-request-reply-split-review2-codex.json` | `103a6d41d0bdcb20a36ef502e6813bd58dd7b1dcca998d40565342286d5ceba3` |
 | 2026-10-28 | Codex / OpenAI | #540 tycho.pattern.message-filter | pass | `2026-10-28-message-filter-split-review2-codex.json` | `69b8e804d8b687af50b41ea4c30cb452d4344d96b8f073020fc126d619befb0c` |
 | 2026-10-28 | DeepSeek Reviewer | #540 aggregator/scatter-gather | pass | `2026-10-28-aggregator-scatter-deepseek.md` | `20a17a26bf0c7b1bd2bbf21c43ed9105d04bf01c696de78cef2d15bd3613d234` |
+| 2026-10-28 | DeepSeek Reviewer | #540 splitter set final | pass | `2026-10-28-splitter-set-final-deepseek.md` | `af101290b583fab947064423c386451926ba1a67cfd0589a95f3eb3a1d497668` |
