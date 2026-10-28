@@ -223,8 +223,8 @@ durable reply path exists, or when correlation state has no owner.
 **Competing alternative.** Synchronous request-reply with a bounded deadline. Reverse the
 choice when asynchronous coordination adds more failure modes than latency benefit.
 
-**Failure and recovery.** Lost replies and duplicate requests are normal; verify
-correlation and timeout handling in the owner section.
+**Failure and recovery.** A crashed requestor can restart the reply thread; the callback
+must re-establish the caller context.
 
 **Technical owner.** [Request-reply messaging and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
 
