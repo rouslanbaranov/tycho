@@ -210,14 +210,15 @@ policy should also state who may approve an emergency exception and for how long
 
 ### Throttling
 
-When a client detects that a significant portion of its recent requests were rejected for out-of-quota
-errors, it caps outgoing traffic; requests above the cap fail locally before reaching the network.
-Quick rejection is cheaper only when rejection consumes materially fewer resources; this does not hold
-for every service. A rejected request can then be retried immediately on a different backend task that
+When a client detects that a significant portion of its recent requests were rejected for
+out-of-quota errors, it caps outgoing traffic; requests above the cap fail locally before
+reaching the network.
+Quick rejection is cheaper only when rejection consumes materially fewer resources; this does
+not hold for every service. A rejected request can then be retried immediately on a different backend task that
 may have spare resources. If a large subset of backend tasks is overloaded, requests should not be
 retried and errors should bubble up to the caller. The client keeps recent request and acceptance
-counts to decide when to self-regulate. The client compares attempted requests with accepted requests
-over a recent window, and a cap ratio determines when local rejection starts.
+counts to decide when to self-regulate. The client compares attempted requests with accepted
+requests over a recent window, and a cap ratio determines when local rejection starts.
 
 ### Rate Limiting
 
