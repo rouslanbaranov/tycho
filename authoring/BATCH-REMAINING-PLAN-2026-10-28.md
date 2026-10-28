@@ -67,3 +67,11 @@ and re-reviewed.
 - **Throttling** — the client-side rewrite passed technical/decision checks, but
   packet, scope and B15-RESULT provenance must be regenerated in one commit before
   a fresh review.
+
+## c03 README coupling
+
+c03 now carries two promotion-bound cards: Request-Reply Messaging and Message Filter.
+Every remaining c03 card edit (Aggregator, Scatter-Gather, Splitter, Pipes and Filters,
+Claim Check, Resequencer) invalidates both promotions. The efficient path is a single
+c03 split batch: move the remaining cards to dedicated pages, then run one Request-Reply
+review and one Message Filter review against the new page hashes.
