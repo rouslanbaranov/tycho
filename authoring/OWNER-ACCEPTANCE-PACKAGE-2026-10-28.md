@@ -1,7 +1,7 @@
-# Owner acceptance record — 14 sufficient entries
+# Owner acceptance record — 15 sufficient entries
 
-Status: **accepted by owner on 2026-10-28**.
-All fourteen have a fresh external `pass` and a promotion record.
+Status: **14 accepted; Federated Identity pending owner decision**.
+All fifteen have a fresh external `pass` and a promotion record.
 
 ## Already accepted
 
@@ -24,6 +24,7 @@ All fourteen have a fresh external `pass` and a promotion record.
 | 9 | Service Discovery | `authoring/ai-reviews/2026-10-28-service-discovery-review-codex.md` | yes |
 | 10 | Controlled Cutover | `authoring/ai-reviews/2026-10-28-controlled-cutover-review-codex.md` | yes |
 | 11 | Request-Reply Messaging | `authoring/ai-reviews/2026-10-28-request-reply-messaging-review-codex.md` | yes |
+| 12 | Federated Identity | `authoring/ai-reviews/2026-10-28-federated-identity-review2-codex.md` | no |
 
 ## Evidence limits
 

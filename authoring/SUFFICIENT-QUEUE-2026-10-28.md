@@ -3,9 +3,9 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **14 sufficient / 145**, **14 owner-accepted**, **0 pending owner decision**.
-Pilot six: five sufficient, Federated Identity remains remediation.
-Owner accepted all 14 sufficient entries on 2026-10-28.
+Current: **15 sufficient / 145**, **14 owner-accepted**, **1 pending owner decision**.
+Pilot six: **all six sufficient**.
+Owner accepted 14 entries on 2026-10-28; Federated Identity awaits a new owner decision.
 
 ## Sufficient and accepted
 
@@ -30,6 +30,7 @@ Owner accepted all 14 sufficient entries on 2026-10-28.
 | Service Discovery | `2026-10-28-service-discovery-review-codex.md` | no |
 | Controlled Cutover | `2026-10-28-controlled-cutover-review-codex.md` | no |
 | Request-Reply Messaging | `2026-10-28-request-reply-messaging-review-codex.md` | no |
+| Federated Identity | `2026-10-28-federated-identity-review2-codex.md` | no |
 
 ## Pilot six
 
@@ -39,7 +40,7 @@ Owner accepted all 14 sufficient entries on 2026-10-28.
 | Workload Identity | sufficient | owner acceptance pending |
 | Dark Launching | sufficient | owner acceptance pending |
 | RBAC/ABAC | sufficient | owner acceptance pending |
-| Federated Identity | remediation | local-account alternative unsupported |
+| Federated Identity | sufficient | owner acceptance pending |
 | Controlled Cutover | sufficient | owner acceptance pending |
 
 ## Frozen by page-bound promotion
