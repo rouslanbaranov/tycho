@@ -55,8 +55,8 @@ integration-pattern; priority core.
 parts?
 
 **Good-fit conditions.** The parts are independently actionable; each part can carry a part
-identity and a position; a completion or compensation rule has an owner; the fan-out is
-bounded; errors can be correlated to the parent.
+identity and a position; a completion or compensation rule has an owner; errors can be
+correlated to the parent. Tycho guidance, not a source claim: the fan-out is bounded.
 
 **Hard contraindications.** Reject when the parts must be processed atomically, when
 ordering across parts is mandatory and no sequencer reconstructs it, when the split loses
@@ -64,13 +64,15 @@ required context, or when no one owns completion and orphan cleanup.
 
 **Competing alternative.** Aggregation is the mirror-image decision: "Basically a
 mirror-image of the splitter, the aggregator is a type of message handler that receives
-multiple messages and combines them into a single message." Choose aggregation when related
-messages must be combined rather than one composite divided; choose single-unit processing
-when atomicity dominates.
+multiple messages and combines them into a single message." Tycho synthesis: choose
+aggregation when related messages must be combined rather than one composite divided;
+choose single-unit processing when atomicity dominates.
 
 **Failure and recovery.** A split that aborts does not advance a successful-completion
-watermark, so retry the failed batch and keep completed effects idempotent. An unknown part
-count leaves the aggregate incomplete; a custom release rule or expiry must close it.
+watermark, so the failed batch can be retried. Tycho guidance, not a source claim: keep
+completed effects idempotent or deduplicated because a retry can re-deliver parts. An
+unknown part count leaves the aggregate incomplete; a custom release rule or expiry must
+close it.
 
 **Technical owner.** [Splitter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — bounded split decision, part identity and completion; not a channel implementation.
 

@@ -379,14 +379,14 @@ responses are not comparable, when the aggregate must be globally consistent, or
 tail latency would exceed the caller's budget. Tycho guidance: fan-out that can exhaust
 the caller is also a contraindication.
 
-**Competing alternative.** Tycho synthesis: a standalone aggregator, when responses
-already exist and no broadcast is needed. Reverse the choice when one request must reach
-several recipients and their responses must be combined.
+**Competing alternative.** Tycho synthesis: a standalone aggregator fits when responses
+already exist and no broadcast is needed. Reverse the choice when only already-produced
+responses must be combined.
 
 **Failure and recovery.** Slow or missing recipients dominate tail latency; verify
 deadlines and partial results in the owner section.
 
-**Technical owner.** [Scatter-Gather](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; partial-response handling is Tycho guidance.
+**Technical owner.** [Scatter-Gather](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; the source states incomplete-response and timeout-ignore behavior; partial-result, failure and cancellation policy is Tycho guidance.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

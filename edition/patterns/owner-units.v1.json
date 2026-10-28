@@ -2572,7 +2572,8 @@
         "unit_terms": [
           "one input into several independently processable messages",
           "part identity",
-          "completion or compensation rule"
+          "completion or compensation rule",
+          "ordering across parts"
         ]
       },
       "technical_evidence": {
@@ -2628,7 +2629,7 @@
       "decision_evidence": {
         "atlas_section": "splitter",
         "question": "Should a composite message be divided into independently processed parts?",
-        "competing_alternative": "Aggregation is the mirror-image decision: \"Basically a mirror-image of the splitter, the aggregator is a type of message handler that receives multiple messages and combines them into a single message.\" Choose aggregation when related messages must be combined rather than one composite divided; choose single-unit processing when atomicity dominates.",
+        "competing_alternative": "Aggregation is the mirror-image decision: \"Basically a mirror-image of the splitter, the aggregator is a type of message handler that receives multiple messages and combines them into a single message.\" Tycho synthesis: choose aggregation when related messages must be combined rather than one composite divided; choose single-unit processing when atomicity dominates.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2642,7 +2643,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded decision note; all four technical dimensions have public source bindings; idempotency/re-delivery and the decision framing are Tycho guidance; coverage remains partial-bounded; no promotion."
+      "notes": "Bounded decision note; all four technical dimensions have public source bindings; bounded fan-out, ordering/sequencer and lost-context contraindications, idempotency/re-delivery and the decision framing are Tycho guidance; coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -2742,7 +2743,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 173,
+        "line": 175,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -2778,8 +2779,8 @@
         },
         "failure_recovery": {
           "state": "partial",
-          "quote": "The source states that timed-out responses should be communicated as an incomplete response and can be ignored. Tycho guidance, not a source claim: gather should return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
-          "reason": "Partial-response handling is source-stated; cancellation and a general failure rule are Tycho guidance, not bound to the cited passage.",
+          "quote": "The source states that timed-out responses should be communicated as an incomplete response and that the aggregator can ignore timed-out responses. Tycho guidance, not a source claim: gather should return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
+          "reason": "Incomplete-response and timeout-ignore behavior are source-stated; bounded partial result, failure rule and cancellation are Tycho guidance, not bound to the cited passage.",
           "binding": {
             "source_id": "src.aws-scatter-gather",
             "ledger_record": "read.aws-scatter-gather.2026-10-28",
@@ -2804,7 +2805,7 @@
       "decision_evidence": {
         "atlas_section": "scatter-gather",
         "question": "Should one request be broadcast to several recipients and their responses combined?",
-        "competing_alternative": "Tycho synthesis: a standalone aggregator, when responses already exist and no broadcast is needed. Reverse the choice when one request must reach several recipients and their responses must be combined.",
+        "competing_alternative": "Tycho synthesis: a standalone aggregator fits when responses already exist and no broadcast is needed. Reverse the choice when only already-produced responses must be combined.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2818,7 +2819,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Mechanism and invariant are source-bound; failure recovery is partial because partial-result and cancellation are Tycho guidance; alternative is Tycho synthesis; coverage remains partial-bounded; no promotion."
+      "notes": "Mechanism and invariant are source-bound; failure recovery is partial and separates source-stated incomplete-response/timeout-ignore behavior from Tycho partial-result, failure and cancellation policy; alternative is Tycho synthesis; coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.dead-letter-channel-dlq",

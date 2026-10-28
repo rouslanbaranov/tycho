@@ -139,7 +139,9 @@ aggregates their responses through an aggregator.
 
 **Decision.** Split a composite message only when its parts can make progress
 independently and completion is observable. If the parts must succeed atomically, keep the
-composite whole; if the work is to combine related messages, use an aggregator.
+composite whole; if the work is to combine related messages, use an aggregator. Tycho
+guidance, not a source claim: reject the split when ordering across parts is mandatory and
+no sequencer reconstructs it, or when the split loses required context.
 
 **Mechanism.** A splitter turns one input into several independently processable messages.
 Apache Camel's splitter breaks a composite into one message per item and processes each
@@ -182,11 +184,11 @@ useful. Tycho guidance: do not use it when one authority must answer, when respo
 not comparable, or when tail latency would exceed the caller's budget.
 
 The source states that timed-out responses should be communicated as an incomplete
-response and can be ignored. Tycho guidance, not a source claim: gather should return a
-bounded partial result or fail under a declared rule, and cancel outstanding work. Tycho
-synthesis: an aggregator alone is the alternative when responses already exist; the source
-describes the aggregator as another messaging pattern that collects and distills
-responses, while scatter-gather adds the broadcast.
+response and that the aggregator can ignore timed-out responses. Tycho guidance, not a
+source claim: gather should return a bounded partial result or fail under a declared rule,
+and cancel outstanding work. Tycho synthesis: an aggregator alone is the alternative when
+responses already exist; the source describes the aggregator as another messaging pattern
+that collects and distills responses, while scatter-gather adds the broadcast.
 
 **Limits.** Fan-out cost and tail latency grow with participants; a quorum result must name
 which participants answered and which did not.
