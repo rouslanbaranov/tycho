@@ -210,14 +210,24 @@ policy should also state who may approve an emergency exception and for how long
 
 ### Throttling
 
-When a client detects that a significant portion of its recent requests were rejected for out-of-quota
-errors, it caps outgoing traffic; requests above the cap fail locally before reaching the network.
-Quick rejection is cheaper only when rejection consumes materially fewer resources; this does not hold
-for every service. A rejected request can then be retried immediately on a different backend task that
-may have spare resources. If a large subset of backend tasks is overloaded, requests should not be
-retried and errors should bubble up to the caller. The client keeps recent request and acceptance
-counts to decide when to self-regulate. The client compares attempted requests with accepted requests
-over a recent window, and a cap ratio determines when local rejection starts.
+Throttling slows work that has already been admitted; it does not decide who deserves service.
+The invariant is that every admitted class has a bounded wait and a declared rejection point;
+no class waits without a deadline. The owner must state which dependency is protected and which
+class waits. That declaration
+belongs with the operational policy, not only in a dashboard.
+
+A finite buffer and an upstream backpressure signal make pacing enforceable. Without them,
+pacing shifts latency and memory pressure downstream. That buffer converts overload into an
+explicit decision rather than a growing delay. Sizing should follow observed service time, not
+an arbitrary request count.
+
+When capacity is exhausted, reject requests quickly rather than processing them; callers may
+retry when appropriate. Publish the limit, measurement window and retry guidance so callers can
+pace themselves.
+
+Rejecting excess work or adding capacity may be cheaper than delaying everyone. Review the
+policy when the protected dependency, traffic shape or deadline changes. Emergency work needs an
+exception path with an owner and an expiry.
 
 ### Rate Limiting
 

@@ -472,26 +472,26 @@
       "dimensions": {
         "mechanism": {
           "state": "supported",
-          "owner_quote": "When a client detects that a significant portion of its recent requests were rejected for out-of-quota errors, it caps outgoing traffic; requests above the cap fail locally before reaching the network.",
-          "reason": "SRE describes client-side self-regulation and local rejection.",
+          "owner_quote": "Throttling slows work that has already been admitted; it does not decide who deserves service.",
+          "reason": "Bounded owner statement from the current section.",
           "has_binding": true
         },
         "invariant": {
           "state": "supported",
-          "owner_quote": "Quick rejection is cheaper only when rejection consumes materially fewer resources; this does not hold for every service.",
-          "reason": "SRE makes the resource saving conditional and gives a countercase.",
+          "owner_quote": "The invariant is that every admitted class has a bounded wait and a declared rejection point; no class waits without a deadline.",
+          "reason": "Bounded owner statement from the current section.",
           "has_binding": true
         },
         "failure_recovery": {
-          "state": "supported",
-          "owner_quote": "A rejected request can then be retried immediately on a different backend task that may have spare resources.",
-          "reason": "SRE says a rejected request can be retried on a backend that may have spare capacity.",
-          "has_binding": true
+          "state": "partial",
+          "owner_quote": "A finite buffer and an upstream backpressure signal make pacing enforceable.",
+          "reason": "SRE overload chapter has no buffer/backpressure failure rule.",
+          "has_binding": false
         },
         "alternative": {
           "state": "supported",
-          "owner_quote": "If a large subset of backend tasks is overloaded, requests should not be retried and errors should bubble up to the caller.",
-          "reason": "SRE says errors should bubble up when a large subset is overloaded.",
+          "owner_quote": "Rejecting excess work or adding capacity may be cheaper than delaying everyone.",
+          "reason": "Bounded owner statement from the current section.",
           "has_binding": true
         }
       }
