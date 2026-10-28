@@ -312,34 +312,28 @@ unit, not a benchmark.
 **Identity.** Message Filter; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
 
-**Decision question.** Should messages be removed when they do not meet explicit criteria?
+**Decision question.** Should messages be discarded when they do not match explicit criteria?
 
-**Good-fit conditions.** Filter criteria are stable and testable; rejected messages have a
-defined disposition; filtering is cheaper than downstream handling.
+**Good-fit conditions.** The filter has a single output channel; the predicate is testable; filtering
+is cheaper than downstream handling.
 
-**Hard contraindications.** Reject when every message has a required effect, when rejected
-messages need durable audit without an owner, or when criteria depend on mutable domain
-state.
+**Hard contraindications.** Reject when messages need multiple destinations or every message has a
+required effect.
 
-**Competing alternative.** Route all messages and let the consumer decide. Reverse the
-choice when downstream cost dominates and rejection is safe.
+**Competing alternative.** A content-based router sends each message to a different channel based on
+content.
 
-**Failure and recovery.** Silent loss is the main risk; verify rejected-message policy in
-the owner section.
+**Failure and recovery.** A non-matching message is discarded and produces no output.
 
-**Technical owner.** [Message Filter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — predicate scope and rejected-message disposition are bounded, not every EIP mechanism.
+**Technical owner.** [Message selection: filters and routing](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — bounded to predicate filtering, not every router.
 
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-filter.2026-10-21: only the RabbitMQ example is an H2;
-Problem and Solution are unheaded, and the page is publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
+**Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
+read records read.batch2-filter.2026-10-21 and read.batch2-content-router.2026-10-28.
+The source is public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Content-Based Router; Dead Letter Channel; Pipes and Filters; Audit
-Trail.
+**Related entries.** Content-Based Router; Selective Consumer; Publish-Subscribe.
 
 ### Pipes and Filters
 

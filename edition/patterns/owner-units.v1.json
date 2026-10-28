@@ -1903,7 +1903,7 @@
         "heading": "Publish-Subscribe",
         "anchor": "publish-subscribe",
         "level": 3,
-        "line": 294,
+        "line": 289,
         "unit_kind": "dedicated",
         "unit_terms": [
           "topic",
@@ -1970,7 +1970,7 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 310,
+        "line": 305,
         "unit_kind": "dedicated",
         "unit_terms": [
           "eligible worker",
@@ -2108,7 +2108,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 324,
+        "line": 319,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2253,8 +2253,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
       "notes": "Section-level owner unit audited against the page text; coverage remains partial."
     },
     {
@@ -2424,37 +2424,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding the rest by policy.",
-          "reason": "Defines predicate-based forwarding and policy discard.",
-          "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-filter.2026-10-21",
-            "section": "Message Filter",
-            "quote": "If the message content matches the criteria specified by the Message Filter , the message is routed to the output channel. If the message content does not match the criteria, the message is discarded.",
-            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
-          }
-        },
-        "invariant": {
-          "state": "supported",
-          "quote": "Every discarded message must be an intentional drop under a versioned predicate, not an unobserved loss.",
-          "reason": "Requires intentional drops under a versioned predicate rather than unobserved loss.",
-          "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-filter.2026-10-21",
-            "section": "Message Filter",
-            "quote": "Use a special kind of Message Router, a Message Filter , to eliminate undesired messages from a channel based on a set of criteria.",
-            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
-          }
-        },
-        "failure_recovery": {
-          "state": "partial",
-          "quote": "Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a declared fallback for unmatched messages.",
-          "reason": "Page has no drift, filter-rate monitoring or unmatched fallback."
-        },
-        "alternative": {
-          "state": "supported",
-          "quote": "A content-based router sends different subsets to different destinations; prefer filtering when the destination is the same and only selection changes.",
-          "reason": "Contrasts a router that sends subsets to different destinations.",
+          "quote": "A message filter has a single output channel. If content matches the criteria, the message is routed to the output channel.",
+          "reason": "Filter routes matching messages to its single output channel.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-filter.2026-10-21",
@@ -2462,12 +2433,48 @@
             "quote": "The Message Filter has only a single output channel.",
             "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
           }
+        },
+        "invariant": {
+          "state": "supported",
+          "quote": "If content does not match, the message is discarded",
+          "reason": "Non-matching messages are discarded.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-filter.2026-10-21",
+            "section": "Message Filter",
+            "quote": "If the message content does not match the criteria, the message is discarded.",
+            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
+          }
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "quote": "A discarded message produces no output.",
+          "reason": "A discarded message has no downstream output.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-filter.2026-10-21",
+            "section": "Message Filter",
+            "quote": "If the message content does not match the criteria, the message is discarded.",
+            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
+          }
+        },
+        "alternative": {
+          "state": "supported",
+          "quote": "A content-based router examines message content and routes each message to a different channel.",
+          "reason": "Router sends messages to different channels based on content.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-content-router.2026-10-28",
+            "section": "Content-Based Router",
+            "quote": "The Content-Based Router examines the message content and routes the message onto a different channel based on data contained in the message.",
+            "revision": "4e8a2b5cc937de7a1e5b8b024e637435154999cd31c03845945def4bc42a1b30"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "message-filter",
-        "question": "Should messages be removed when they do not meet explicit criteria?",
-        "competing_alternative": "Route all messages and let the consumer decide. Reverse the choice when downstream cost dominates and rejection is safe.",
+        "question": "Should messages be discarded when they do not match explicit criteria?",
+        "competing_alternative": "A content-based router sends each message to a different channel based on content.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2870,7 +2877,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 343,
+        "line": 338,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -3159,7 +3166,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 361,
+        "line": 356,
         "unit_kind": "dedicated",
         "unit_terms": [
           "broker",
@@ -3219,7 +3226,7 @@
         "heading": "Canonical Data Model",
         "anchor": "canonical-data-model",
         "level": 3,
-        "line": 278,
+        "line": 273,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Canonical Data Model"
@@ -10697,7 +10704,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "DLQ, claim check, correlation, request-reply and workflow-failure gates now have five dedicated units."
     },
@@ -11008,16 +11015,16 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 57,
-    "failure_recovery_supported": 44,
+    "failure_recovery_supported": 45,
     "alternative_supported": 53,
-    "technical_partial_bounded": 35,
+    "technical_partial_bounded": 36,
     "technical_partial": 93,
     "technical_name_only": 0,
-    "technical_sufficient": 17,
-    "decision_partial_bounded": 128,
+    "technical_sufficient": 16,
+    "decision_partial_bounded": 129,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 17,
+    "decision_sufficient": 16,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

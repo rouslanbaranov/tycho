@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "acb225632856bd993c7eb5b799d2a8a52c23f3f9f761d7dafe37b983dc1c9f56",
-    "ledger_sha256": "a71376199ffff701d9dd1c73f78a3344760b5dd9af4852eb17e57b8d35d15150",
+    "registry_sha256": "c6baa366784dfa1e0c2a8cd1ca27753d43edd0ea976e4d2d0914879a5046ef18",
+    "ledger_sha256": "aba9f6d9033402e6576fcdf90be8c16bd567d0a16ae9cea340099d9e784f5d92",
     "card_batches_sha256": "9d9d88f2781608f074a27f9931d33c3604226c7938e440e75dc620b21e6e2067",
-    "route_index_sha256": "c061c3bfdf781ba5bb04ce651a2f50eba305fca01af012427ce05628bc898a40",
-    "coverage_sha256": "5d8c017613240a97266a1e130039a0a1a4a9846595b5868cbc285452c049d17f"
+    "route_index_sha256": "05ca684de412e022207c17b9ea77dc1838b8e5fcfa09284834fe68813d466333",
+    "coverage_sha256": "1aeb12d29c71a7ac318c4223671446851ce12c515982dd0a5720198308ee1c7b"
   },
   "dimensions": [
     "identity",
@@ -27,9 +27,9 @@
     "pages": 442,
     "entries": 145,
     "cards": 145,
-    "routes": 479,
-    "related_labels": 24,
-    "non_routes": 24,
+    "routes": 477,
+    "related_labels": 25,
+    "non_routes": 25,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -5287,7 +5287,7 @@
         "decision-partial-bounded",
         "independent-review-missing"
       ],
-      "question": "Should messages be removed when they do not meet explicit criteria?"
+      "question": "Should messages be discarded when they do not match explicit criteria?"
     },
     {
       "pattern_id": "tycho.pattern.microservices-architecture",
@@ -5871,18 +5871,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
@@ -8270,14 +8270,14 @@
     },
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -10177,22 +10177,12 @@
     },
     {
       "from": "tycho.pattern.message-filter",
-      "to": "tycho.pattern.audit-trail",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.message-filter",
       "to": "tycho.pattern.content-based-router",
       "basis": "card-related-entry"
     },
     {
       "from": "tycho.pattern.message-filter",
-      "to": "tycho.pattern.dead-letter-channel-dlq",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.message-filter",
-      "to": "tycho.pattern.pipes-and-filters",
+      "to": "tycho.pattern.publish-subscribe",
       "basis": "card-related-entry"
     },
     {
@@ -11293,6 +11283,13 @@
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
+      "from": "tycho.pattern.message-filter",
+      "label": "Selective Consumer",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
       "from": "tycho.pattern.multi-leader-replication",
       "label": "Conflict Resolution.",
       "disposition": "non-route",
@@ -11770,7 +11767,7 @@
     {
       "pattern_id": "tycho.pattern.message-filter",
       "atlas_section": "message-filter",
-      "question": "Should messages be removed when they do not meet explicit criteria?"
+      "question": "Should messages be discarded when they do not match explicit criteria?"
     },
     {
       "pattern_id": "tycho.pattern.microservices-architecture",

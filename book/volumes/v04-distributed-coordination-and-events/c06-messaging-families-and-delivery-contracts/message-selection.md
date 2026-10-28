@@ -261,19 +261,14 @@ pool preserves order only when partition assignment is stable.
 
 ### Message Filter
 
-A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding
-the rest by policy. Every discarded message must be an intentional drop under a versioned predicate,
-not an unobserved loss.
-
-Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a
-declared fallback for unmatched messages. A rejected message needs a declared disposition:
-discard with audit, fallback, or dead-letter queue, each with a retention owner. A
-content-based router sends different subsets to different destinations; prefer filtering when
-the destination is the same and only selection changes.
-
-**Limits.** Silent drops are data loss; count filter rates, version the predicate and keep a
-declared fallback. A filter that silently drops unmatched traffic is a data-loss path; count
-drops, alert on rate changes and test the fallback with a representative unmatched message.
+A message filter has a single output channel. If content matches the criteria, the message is routed
+to the output channel. If content does not match, the message is discarded; a discarded message
+produces no output. A content-based router examines message content and routes each message to a
+different channel. Routing can be based on field existence, specific field values or configurable
+rules. The filter's predicate is the only selection criterion. Filtering removes messages from a
+channel; it does not choose among destinations. A router can become a point of frequent maintenance
+and may take the form of a rules engine. The filter has one output and no destination choice. A
+non-matching message is removed. The filter evaluates each message.
 
 ### Canonical Data Model
 
