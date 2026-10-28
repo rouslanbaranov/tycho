@@ -3,13 +3,15 @@ metadata_version: 1
 id: "tycho.page.43c706143e9208cbcb1770bcc62e9695"
 kind: "page"
 parent_id: "tycho.chapter.419769c372ccaa569796954878e3bef9"
-canonical_path: "book/volumes/v11-pattern-atlas/c11-security-operations/health-readiness-and-liveness-checks.md"
+canonical_path: >-
+  book/volumes/v11-pattern-atlas/c11-security-operations/health-readiness-and-liveness-checks.md
 title: "Health, Readiness and Liveness Checks"
 topic_ids:
   - "security-architecture"
 perspectives:
   - "architecture"
-summary: "Decision card for Health, Readiness and Liveness Checks; bounded owner evidence and explicit limits."
+summary: "Decision card for Health, Readiness and Liveness Checks; bounded owner
+evidence and explicit limits."
 route_hints:
   questions:
     - "Should the runtime distinguish process liveness, traffic readiness"

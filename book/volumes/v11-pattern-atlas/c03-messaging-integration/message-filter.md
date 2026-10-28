@@ -55,15 +55,20 @@ filtering is cheaper than downstream handling.
 required effect.
 
 **Competing alternative.** A content-based router sends each message to a different channel based on
-content.
+content. Prefer the router when messages require different destinations or routing must choose
+among channels; the filter fits only a single-output pass-or-discard decision.
 
-**Failure and recovery.** A non-matching message is discarded and produces no output.
+**Failure and recovery.** A non-matching message is discarded and produces no downstream
+output. The public page is publisher-abridged: it does not state a rejected-message disposition,
+audit record or recovery path, so those remain unknown and out of scope for this card.
 
 **Technical owner.** [Message selection: filters and routing](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — bounded to predicate filtering, not every router.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read records read.batch2-filter.2026-10-21 and read.batch2-content-router.2026-10-28.
-The source is public documentation, not a benchmark.
+read.batch2-filter.2026-10-21 is publisher-abridged: it serves no rejected-message disposition
+or audit text, so those remain unknown and out of scope. The source is public documentation,
+not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

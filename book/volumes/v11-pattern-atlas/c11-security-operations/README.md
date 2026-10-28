@@ -117,7 +117,9 @@ See the [dedicated SLI / SLO and Error Budgets card](sli-slo-and-error-budgets.m
 See the [dedicated Synthetic Monitoring card](synthetic-monitoring.md).
 ### Health, Readiness and Liveness Checks
 
-See the [dedicated Health, Readiness and Liveness Checks card](health-readiness-and-liveness-checks.md).
+See the [dedicated Health, Readiness and Liveness Checks
+card](health-readiness-and-liveness-checks.md).
+
 ## Chapter result and counterexample
 
 Thirteen cards establish a conditional decision route. Owner sections are bounded; none

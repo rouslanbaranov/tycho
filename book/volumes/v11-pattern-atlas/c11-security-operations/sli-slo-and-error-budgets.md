@@ -3,13 +3,15 @@ metadata_version: 1
 id: "tycho.page.b8f80e03e8346a4ba26e9d692a38945d"
 kind: "page"
 parent_id: "tycho.chapter.419769c372ccaa569796954878e3bef9"
-canonical_path: "book/volumes/v11-pattern-atlas/c11-security-operations/sli-slo-and-error-budgets.md"
+canonical_path: >-
+  book/volumes/v11-pattern-atlas/c11-security-operations/sli-slo-and-error-budgets.md
 title: "SLI / SLO and Error Budgets"
 topic_ids:
   - "security-architecture"
 perspectives:
   - "architecture"
-summary: "Decision card for SLI / SLO and Error Budgets; bounded owner evidence and explicit limits."
+summary: "Decision card for SLI / SLO and Error Budgets; bounded owner evidence and
+explicit limits."
 route_hints:
   questions:
     - "Should service health be governed by user-visible indicators,"

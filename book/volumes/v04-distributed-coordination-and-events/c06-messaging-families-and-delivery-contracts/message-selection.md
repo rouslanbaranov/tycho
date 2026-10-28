@@ -188,7 +188,10 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+measured evidence, and they do not create a new source claim. The Pipes and
+Filters note is the exception: it is source-bound, with quotations and an
+Evidence paragraph tied to the Chapter 3 record named in its card and owner
+unit.
 
 ### Resequencer
 
@@ -292,14 +295,17 @@ pool preserves order only when partition assignment is stable.
 
 ### Message Filter
 
-A message filter has a single output channel. If content matches the criteria, the message is routed
-to the output channel. If content does not match, the message is discarded; a discarded message
-produces no output. A content-based router examines message content and routes each message to a
-different channel. Routing can be based on field existence, specific field values or configurable
-rules. The filter's predicate is the only selection criterion. Filtering removes messages from a
-channel; it does not choose among destinations. A router can become a point of frequent maintenance
-and may take the form of a rules engine. The filter has one output and no destination choice. A
-non-matching message is removed. The filter evaluates each message.
+A message filter has a single output channel. If content matches the criteria, the message is
+routed to the output channel. If content does not match, the message is discarded and produces
+no downstream output. The public pattern page is publisher-abridged and does not state a
+rejected-message disposition, audit record or recovery path, so those remain unknown and out of
+scope for this note. A content-based router examines message content and routes each message to
+a different channel. Prefer the router when messages require different destinations or routing
+must choose among channels. Routing can be based on field existence, specific field values or
+configurable rules. The filter's predicate is the only selection criterion. Filtering removes
+messages from a channel; it does not choose among destinations. A router can become a point of
+frequent maintenance and may take the form of a rules engine. The filter has one output and no
+destination choice. A non-matching message is removed. The filter evaluates each message.
 
 ### Canonical Data Model
 
