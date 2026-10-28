@@ -76,3 +76,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 service discovery | pass | `2026-10-28-service-discovery-review-codex.md` | `b0f08b230e052109eef51c2f4b0876234d2b7046417906675d3dbb4b1771447f` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 controlled cutover | pass | `2026-10-28-controlled-cutover-review-codex.md` | `68573a3f0373de47d0e84674fc8c70ffb8ffb3140801f3c154cf8b5c8cd8af30` |
 | 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 federated identity | reject | `2026-10-28-federated-identity-review-codex.md` | `cbec07e52ae5916242e9f875c20317fe963bb73af1132cd5845ef63e8ddcc5d0` |
+| 2026-10-28 | Codex / OpenAI (gpt-5.6-sol) | #540 request-reply messaging | pass | `2026-10-28-request-reply-messaging-review-codex.md` | `0b87ff932e6ae8287ac6ac710eddad46e743031d064215c4d870dad525bc8dfe` |
