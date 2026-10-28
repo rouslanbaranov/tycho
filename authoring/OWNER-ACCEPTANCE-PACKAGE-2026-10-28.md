@@ -1,6 +1,6 @@
-# Owner acceptance record — 16 sufficient entries
+# Owner acceptance record — 17 sufficient entries
 
-Status: **15 accepted; Self-Contained Service pending owner decision; Ambassador review pending**.
+Status: **16 accepted; Ambassador pending owner decision**.
 All entries with a promotion have a fresh external pass; Self-Contained and Ambassador await owner decisions.
 
 ## Already accepted
@@ -83,7 +83,7 @@ existing acceptance record:
 }
 ```
 
-Until then the owner acceptance count remains 15 of 16 sufficient entries.
+Until then the owner acceptance count remains 16 of 17 sufficient entries.
 
 ## Two-entry decision
 
@@ -103,4 +103,4 @@ To accept both, add:
 }
 ```
 
-Self-Contained Service awaits an owner decision; acceptance is 15 of 16 sufficient entries.
+Ambassador awaits an owner decision; acceptance is 16 of 17 sufficient entries.
