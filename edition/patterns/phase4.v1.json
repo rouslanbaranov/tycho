@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "c214a0ccb9fcff972000871e7a2f8c7f2eee6cd9c9ca7ca48d67755930a71031",
-    "ledger_sha256": "a31e532de94ed2255cea9ef1fea93e520268da8843df6d0fc7b9f19ba4c3c1e4",
-    "card_batches_sha256": "abca8030ec06dafeb9e66be6342f9e12d77217c6d79fb9cc8a0190fe1f24925e",
-    "route_index_sha256": "9c9d3131d94de274d0ef833133ddc6ae8664a7942342be2e2af95e7196c8d9ca",
-    "coverage_sha256": "a3a5c5edfd7944a9681f716d873187ed97f3e2d1e81f53ce49ac8e178e9a0546"
+    "registry_sha256": "42be9758ffe5261b280371c2fc086d955b31dff1b58cf81a3451878940b281c0",
+    "ledger_sha256": "70a610204565802241144c5ba2a0f89549fff7d51c830b140bb5a908cfb049d5",
+    "card_batches_sha256": "8acc05ad666af95ff51f65ed4935243b6a4cfee690a54d63970f771623bf296f",
+    "route_index_sha256": "e7de98e205b14ec70527245c2bb8210daf97d48afc2673324c28e0e242f0beea",
+    "coverage_sha256": "c3825bcaee57e7d5a3c6680f955649d25cb80401cf39ff2d8962b7ce9c228881"
   },
   "dimensions": [
     "identity",
@@ -24,10 +24,10 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 445,
+    "pages": 446,
     "entries": 145,
     "cards": 145,
-    "routes": 467,
+    "routes": 463,
     "related_labels": 24,
     "non_routes": 24,
     "unresolved_related": 0,
@@ -2976,6 +2976,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.7082c6b84e0f4d04bec339b06fe600fc",
+      "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/pipes-and-filters.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.b21078a397214496a24305a2f016b021",
       "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md",
       "kind": "page",
@@ -5294,18 +5301,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should messages be discarded when they do not match explicit criteria?"
@@ -5560,15 +5567,15 @@
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ],
-      "question": "Should processing be composed as independent stages connected by channels?"
+      "question": "Should processing be composed as independent stages connected by a message contract?"
     },
     {
       "pattern_id": "tycho.pattern.point-to-point-queue",
@@ -6412,18 +6419,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should a composite message be divided into independently processed parts?"
@@ -7992,14 +7999,14 @@
     },
     {
       "pattern_id": "tycho.pattern.message-filter",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8122,13 +8129,13 @@
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ]
@@ -8551,14 +8558,14 @@
     },
     {
       "pattern_id": "tycho.pattern.splitter",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -10332,26 +10339,6 @@
       "basis": "card-related-entry"
     },
     {
-      "from": "tycho.pattern.pipes-and-filters",
-      "to": "tycho.pattern.aggregator",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.pipes-and-filters",
-      "to": "tycho.pattern.content-based-router",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.pipes-and-filters",
-      "to": "tycho.pattern.process-manager-routing-slip",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.pipes-and-filters",
-      "to": "tycho.pattern.splitter",
-      "basis": "card-related-entry"
-    },
-    {
       "from": "tycho.pattern.point-to-point-queue",
       "to": "tycho.pattern.competing-consumers",
       "basis": "card-related-entry"
@@ -11781,7 +11768,7 @@
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
       "atlas_section": "pipes-and-filters",
-      "question": "Should processing be composed as independent stages connected by channels?"
+      "question": "Should processing be composed as independent stages connected by a message contract?"
     },
     {
       "pattern_id": "tycho.pattern.point-to-point-queue",

@@ -60,9 +60,10 @@ or workflow page may own the delivery contract without owning every EIP mechanis
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages for entries prepared for independent review; a later split is an editorial change, not
+a plan failure. Start with the card, check its conditions and contraindications, then read the
+exact owner section.
 
 ## Entry inventory
 
@@ -284,38 +285,7 @@ See the [dedicated Message Filter card](message-filter.md).
 
 ### Pipes and Filters
 
-**Identity.** Pipes and Filters; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should processing be composed as independent stages connected by
-channels?
-
-**Good-fit conditions.** Stages have distinct responsibilities; intermediate messages can
-be observed; each stage can fail and retry independently; ordering requirements are
-explicit.
-
-**Hard contraindications.** Reject when one stage needs global transaction state, when
-intermediate latency is unacceptable, or when the pipeline becomes an unowned distributed
-workflow.
-
-**Competing alternative.** One cohesive consumer with internal functions. Reverse the
-choice when stage isolation and reuse no longer justify message hops.
-
-**Failure and recovery.** Partial failure and duplicate processing grow with stages;
-verify stage contracts in the owner section.
-
-**Technical owner.** [Pipes and Filters](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — stage contracts, ordering and observability are bounded, not every EIP mechanism.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pipes.2026-10-21: the page is publisher-abridged and
-has no Example; it has no article headings at all. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Splitter; Aggregator; Content-Based Router; Process Manager.
+See the [dedicated Pipes and Filters card](pipes-and-filters.md).
 
 ### Splitter
 

@@ -1,8 +1,9 @@
 # c03 split batch — execution record
 
-Status: split complete on 2026-10-28. Both cards are dedicated pages; both
-promotions are suspended pending fresh external review. No external review was run
-in this batch and neither entry is promoted or sufficient.
+Status: split complete on 2026-10-28. Request-Reply Messaging and Message Filter
+were the first pair. The Pipes and Filters update below records the later split and
+the re-suspended Message Filter promotion. No external review was run for Pipes and
+Filters and it is not promoted or sufficient.
 
 ## Order
 
@@ -28,3 +29,16 @@ in this batch and neither entry is promoted or sufficient.
 - Every c03 edit invalidates both promotion-bound cards until split.
 - No promotion without a saved external pass.
 - Owner acceptance is recorded only after the batch is complete.
+
+## Update - Pipes and Filters, 2026-10-28
+
+Pipes and Filters moved to `c03-messaging-integration/pipes-and-filters.md` while
+preparing the entry for sufficient review. The c03 landing keeps an index link only.
+The owner section in `message-selection.md` was rewritten decision-first, so the
+Message Filter promotion is suspended: its owner-page hash changed even though its
+card page did not. Message Filter remains `partial-bounded` and review-ready; its
+four dimensions are still supported and a fresh external review is required before
+restoration.
+
+Pipes and Filters remains `partial-bounded` with four source-bound dimensions and no
+promotion. No external review was run in this batch.

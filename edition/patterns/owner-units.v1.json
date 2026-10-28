@@ -1903,7 +1903,7 @@
         "heading": "Publish-Subscribe",
         "anchor": "publish-subscribe",
         "level": 3,
-        "line": 289,
+        "line": 320,
         "unit_kind": "dedicated",
         "unit_terms": [
           "topic",
@@ -1970,7 +1970,7 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 305,
+        "line": 336,
         "unit_kind": "dedicated",
         "unit_terms": [
           "eligible worker",
@@ -2037,7 +2037,7 @@
         "heading": "Competing Consumers",
         "anchor": "competing-consumers",
         "level": 3,
-        "line": 247,
+        "line": 278,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Competing Consumers"
@@ -2108,7 +2108,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 319,
+        "line": 350,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2415,7 +2415,7 @@
         "heading": "Message Filter",
         "anchor": "message-filter",
         "level": 3,
-        "line": 262,
+        "line": 293,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Message Filter"
@@ -2486,9 +2486,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Promotion suspended after the shared message-selection.md owner page changed; all four dimensions remain supported; fresh external review required."
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
@@ -2503,7 +2503,7 @@
         "line": 229,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "ordered, replaceable stages",
+          "ordered stages",
           "message contract",
           "backpressure",
           "declared checkpoint"
@@ -2516,46 +2516,67 @@
           "reason": "Defines ordered replaceable stages connected by a message contract.",
           "binding": {
             "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-pipes.2026-10-21",
-            "section": "Solution (unheaded)",
-            "quote": "Use the Pipes and Filters architectural style to divide a larger processing task into a sequence of smaller, independent processing steps (Filters) that are connected by channels (Pipes).",
-            "revision": "850988a7f88fc170ad5d90f5791040fff4bc4b42643ce851466db4b4f6fb1d90"
+            "ledger_record": "read.pipes-ch03.2026-10-28",
+            "section": "Solution (p.71)",
+            "quote": "Use the Pipes and Filters architectural style to divide a larger processing task into a sequence of smaller, independent processing steps (filters) that are connected by channels (pipes).",
+            "revision": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66"
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Each stage needs its own failure and retry policy, and the pipeline needs backpressure, a rule for partial completion and a declared ordering scope.",
-          "reason": "Page has no per-stage failure, backpressure or partial-completion rule."
+          "state": "supported",
+          "quote": "Each stage has one inbound and one outbound port in the basic form, and a parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer.",
+          "reason": "Binds the stage ports to an explicit ordering scope; a single instance or resequencer preserves order.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.pipes-ch03.2026-10-28",
+            "section": "Parallel Processing (p.74)",
+            "quote": "If the sequence of messages is critical, we can run only one instance of each component or we must use a Resequencer (283).",
+            "revision": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a failed middle stage with earlier effects already applied; record stage identity and compensate or replay from a declared checkpoint.",
-          "reason": "Page has no failed-middle-stage or checkpoint recovery."
+          "state": "supported",
+          "quote": "A failed middle stage leaves earlier effects applied; record stage identity and recover through a transactional client or a declared checkpoint.",
+          "reason": "The source states non-transactional loss and names Transactional Client; the checkpoint and replay boundary are Tycho guidance.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.pipes-ch03.2026-10-28",
+            "section": "Example: Simple Filter in C# and MSMQ (pp.76-77)",
+            "quote": "This simple filter example is not transactional. If an error occurs while processing the message (before it is sent to the output channel), the message is lost. This is generally not desirable in a production environment. See Transactional Client (484) for a solution to this problem.",
+            "revision": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66"
+          }
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A single in-process transformation is the alternative when the stages are small and cannot be operated independently.",
-          "reason": "Page names no single in-process transformation alternative."
+          "reason": "The source contrasts the comprehensive in-process module as inflexible and difficult to test.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.pipes-ch03.2026-10-28",
+            "section": "Problem (p.70)",
+            "quote": "One possible solution would be to write a comprehensive “incoming message massaging module” that performs all the necessary functions. However, such an approach would be inflexible and difficult to test.",
+            "revision": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "pipes-and-filters",
-        "question": "Should processing be composed as independent stages connected by channels?",
+        "question": "Should processing be composed as independent stages connected by a message contract?",
         "competing_alternative": "One cohesive consumer with internal functions. Reverse the choice when stage isolation and reuse no longer justify message hops.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch2-pipes.2026-10-21",
+        "ledger_record": "read.pipes-ch03.2026-10-28",
         "source_id": "src.enterprise-integration",
-        "unit_type": "pattern-page",
+        "unit_type": "book-chapter",
         "status": "read",
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note; includes stages, failure handling, backpressure and alternative."
+      "notes": "Dedicated owner section and card rewritten decision-first; all four dimensions bind to the Chapter 3 PDF section and the public pattern page. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.splitter",
@@ -2905,7 +2926,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 338,
+        "line": 369,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -3194,7 +3215,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 356,
+        "line": 387,
         "unit_kind": "dedicated",
         "unit_terms": [
           "broker",
@@ -3254,7 +3275,7 @@
         "heading": "Canonical Data Model",
         "anchor": "canonical-data-model",
         "level": 3,
-        "line": 273,
+        "line": 304,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Canonical Data Model"
@@ -10701,7 +10722,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 1,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -11042,17 +11063,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 58,
-    "failure_recovery_supported": 43,
-    "alternative_supported": 54,
-    "technical_partial_bounded": 34,
-    "technical_partial": 92,
+    "invariant_supported": 59,
+    "failure_recovery_supported": 44,
+    "alternative_supported": 55,
+    "technical_partial_bounded": 36,
+    "technical_partial": 91,
     "technical_name_only": 0,
-    "technical_sufficient": 19,
-    "decision_partial_bounded": 126,
+    "technical_sufficient": 18,
+    "decision_partial_bounded": 127,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 19,
+    "decision_sufficient": 18,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

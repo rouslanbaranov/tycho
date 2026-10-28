@@ -13,7 +13,7 @@ without a new owner decision.
 | c09 README | Static Content Hosting | yes (accepted) | 5 |
 | c10 README | Dark Launching — **done** | no | 3 |
 | c04 README | Transactional Outbox | yes (accepted) | 6 |
-| c03 README | Request-Reply Messaging; Message Filter — **done** | yes | 7 |
+| c03 README | Request-Reply Messaging; Message Filter; Pipes and Filters — **done** | yes | 7 |
 
 ## Per-page procedure
 
@@ -39,5 +39,6 @@ promotion/review evidence stays attributable to one page hash.
 - c10 Parallel Run split;
 - c04/c05/c09/c01 still carry promotion-bound cards listed above;
 - c02 and c10 are split, with Async and Dark on their own pages and promotions restored;
-- c03 is split, with Request-Reply Messaging and Message Filter on their own pages and
-  both promotions suspended pending fresh review.
+- c03 is split, with Request-Reply Messaging, Message Filter and Pipes and Filters on their
+  own pages. Request-Reply Messaging is promoted; Message Filter is suspended again after
+  the shared owner page changed; Pipes and Filters is partial-bounded pending review.

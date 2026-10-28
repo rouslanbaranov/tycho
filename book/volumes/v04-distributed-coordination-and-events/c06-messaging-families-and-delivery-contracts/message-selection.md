@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-28"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -153,7 +153,7 @@ Text alternative: Pulsar brokers serve publishers/subscribers while separate man
 > [Message Broker / Messaging Bridge](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-broker--messaging-bridge) — decision conditions and contraindications.
 > [Content-Based Router](../../v11-pattern-atlas/c03-messaging-integration/README.md#content-based-router) — decision conditions and contraindications.
 > [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/message-filter.md#message-filter) — decision conditions and contraindications.
-> [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/README.md#pipes-and-filters) — decision conditions and contraindications.
+> [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/pipes-and-filters.md#pipes-and-filters) — decision conditions and contraindications.
 > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/README.md#resequencer) — decision conditions and contraindications.
 > [Canonical Data Model](../../v11-pattern-atlas/c03-messaging-integration/README.md#canonical-data-model) — decision conditions and contraindications.
 
@@ -228,21 +228,52 @@ rollback path.
 
 ### Pipes and Filters
 
-Pipes and filters decompose processing into ordered, replaceable stages connected by a
-message contract. Each stage needs its own failure and retry policy, and the pipeline
-needs backpressure, a rule for partial completion and a declared ordering scope. Each stage
-needs an effect identity for deduplication and its own lag or queue-depth signal, not only an
-end-to-end completion metric. Use it when stages can be developed, scaled or replaced
-independently. Do not use it when the work must be one atomic
-transaction or when per-stage latency would exceed the budget.
+**Decision.** Compose processing as ordered stages only when each stage has an independent
+contract and the pipeline owns ordering, partial completion and recovery. If one stage needs
+the whole transaction, or per-stage latency and coordination exceed the value of isolation,
+keep one cohesive transformation.
 
-The failure path is a failed middle stage with earlier effects already applied; record
-stage identity and compensate or replay from a declared checkpoint. A single in-process
-transformation is the alternative when the stages are small and cannot be operated
-independently.
+**Mechanism.** Pipes and filters decompose processing into ordered, replaceable stages
+connected by a message contract. The source defines the style as dividing "a larger
+processing task into a sequence of smaller, independent processing steps (filters) that are
+connected by channels (pipes)." The pipe carries one filter's output to the next; a filter
+receives on its inbound pipe, processes the message, and publishes the result to its
+outbound pipe. The source states: "Each filter exposes a very simple interface: It receives
+messages on the inbound pipe, processes the message, and publishes the results to the
+outbound pipe."
 
-**Limits.** Distributed stages add message contracts and partial-failure states; an in-process
-pipeline cannot be scaled independently.
+**Invariant.** Each stage has one inbound and one outbound port in the basic form, and a
+parallel or multi-instance stage can reorder messages unless the pipeline declares an
+ordering scope and a resequencer. The source states: "If the sequence of messages is
+critical, we can run only one instance of each component or we must use a Resequencer
+(283)." Tycho guidance, not a source claim: give each stage an effect identity for
+deduplication, expose per-stage lag or queue depth, and define backpressure and a
+partial-completion rule before adding a stage.
+
+**Failure and recovery.** A failed middle stage leaves earlier effects applied; record stage
+identity and recover through a transactional client or a declared checkpoint. The source is
+explicit about the simple case: "This simple filter example is not transactional. If an
+error occurs while processing the message (before it is sent to the output channel), the
+message is lost. This is generally not desirable in a production environment. See
+Transactional Client (484) for a solution to this problem." Tycho guidance: retries and
+replays must be idempotent per stage, and the operator needs the failed stage, its input
+identity and the last completed stage.
+
+**Alternative.** A single in-process transformation is the alternative when the stages are
+small and cannot be operated independently. The source names a comprehensive "incoming
+message massaging module" as the alternative and calls that approach "inflexible and
+difficult to test"; an in-memory queue is a lighter pipe when all components share one
+machine. Use the pipeline when independent development, scaling or replacement pays for the
+message contract and partial-failure states.
+
+**Limits.** Channels consume memory and CPU cycles for buffering, and repeated message
+conversion lowers throughput on long chains; the slowest stage bounds pipeline throughput,
+and stateful filters are poor parallel candidates.
+
+**Evidence.** The 2003 Chapter 3 section, printed pp.70-77, supports the mechanism, ordering,
+non-transactional loss and the in-process alternative; the public pattern page is
+publisher-abridged. Backpressure, checkpoint and idempotency guidance is Tycho synthesis,
+not a source claim.
 
 ### Competing Consumers
 

@@ -13,10 +13,10 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 69 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 123 |
+| Reviewed by independent agent | 121 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 22, "reviewed-by-independent-agent": 123}.
+Packet statuses: {"page-changed-since-review": 24, "reviewed-by-independent-agent": 121}.
 
 ## Review procedure
 
@@ -362,7 +362,7 @@ blank verdict template in the machine-readable file.
 
 - **Message Filter**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Microservices Architecture**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -402,7 +402,7 @@ blank verdict template in the machine-readable file.
 
 - **Pipes and Filters**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Point-to-Point Queue**
   Current: pass; re-review: pass; report: pass.
