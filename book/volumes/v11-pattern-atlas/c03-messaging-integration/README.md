@@ -211,20 +211,20 @@ Subscriber.
 **Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
 
-**Decision question.** Should a request and its response travel as correlated messages
-rather than one synchronous call?
+**Decision question.** Should a request and response travel as a pair of messages on separate
+channels rather than one blocking call?
 
-**Good-fit conditions.** The caller can tolerate asynchronous completion; a reply channel
-and correlation are available; timeouts and lost replies are handled.
+**Good-fit conditions.** A requestor can wait for a reply; separate request and reply channels
+exist.
 
-**Hard contraindications.** Reject when the caller needs an immediate answer, when no
-durable reply path exists, or when correlation state has no owner.
+**Hard contraindications.** Reject when the caller must block on a Remote Procedure Invocation
+or no reply channel exists.
 
-**Competing alternative.** A synchronous Remote Procedure Invocation blocks the caller thread
+**Competing alternative.** A synchronous Remote Procedure Invocation blocks the caller's thread
 while it waits for the response.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
-re-establish the caller context.
+re-establish the caller's context.
 
 **Technical owner.** [Request-reply messaging and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
 

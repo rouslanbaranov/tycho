@@ -2203,7 +2203,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller context.",
+          "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller's context.",
           "reason": "Request-Reply supports restarting the reply thread and re-establishing caller context.",
           "binding": {
             "source_id": "src.enterprise-integration",
@@ -2215,21 +2215,21 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "When a caller performs a Remote Procedure Invocation, the caller thread must block while it waits for the response.",
+          "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
           "reason": "Synchronous RPC blocks the caller thread.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
             "section": "Solution (unheaded)",
-            "quote": "When a caller performs a Remote Procedure Invocation , the caller's thread must block while it waits for the response.",
+            "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
           }
         }
       },
       "decision_evidence": {
         "atlas_section": "request-reply-messaging",
-        "question": "Should a request and its response travel as correlated messages rather than one synchronous call?",
-        "competing_alternative": "A synchronous Remote Procedure Invocation blocks the caller thread while it waits for the response.",
+        "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?",
+        "competing_alternative": "A synchronous Remote Procedure Invocation blocks the caller's thread while it waits for the response.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

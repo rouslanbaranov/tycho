@@ -211,9 +211,9 @@ The request thread awaiting the response implies that there is only one outstand
 the reply channel for this request is private for this thread.
 
 If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity,
-however, is the callback mechanism that must re-establish the caller context.
+however, is the callback mechanism that must re-establish the caller's context.
 
-When a caller performs a Remote Procedure Invocation, the caller thread must block while it waits
+When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits
 for the response.
 
 ### Dead Letter Channel-DLQ
