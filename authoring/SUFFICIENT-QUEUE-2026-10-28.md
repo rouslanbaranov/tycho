@@ -22,6 +22,7 @@ and a promotion record; owner acceptance is separate.
 | Sidecar | `2026-10-27-sidecar-review5-codex.md` | no |
 | Dark Launching / Shadow Traffic | `2026-10-27-dark-launching-review2-codex.md` | no |
 | Async Request-Reply | `2026-10-27-async-request-reply-review3-codex.md` | no |
+| RBAC / ABAC | `2026-10-28-rbac-abac-review-codex.md` | no |
 
 ## Pilot six
 
@@ -30,7 +31,7 @@ and a promotion record; owner acceptance is separate.
 | Parallel Run | sufficient | owner acceptance pending |
 | Workload Identity | sufficient | owner acceptance pending |
 | Dark Launching | sufficient | owner acceptance pending |
-| RBAC/ABAC | remediation | decision conditions and source section gaps |
+| RBAC/ABAC | sufficient | owner acceptance pending |
 | Federated Identity | remediation | local-account alternative unsupported |
 | Controlled Cutover | remediation | all four dimensions synthetic |
 

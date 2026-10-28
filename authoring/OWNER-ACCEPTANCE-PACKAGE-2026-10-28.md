@@ -1,7 +1,7 @@
-# Owner acceptance package — seven additional sufficient entries
+# Owner acceptance package — eight additional sufficient entries
 
 Status: **pending owner decision**. Three entries were accepted on 2026-10-27.
-These seven have a fresh external `pass` and a promotion record, but are **not**
+These eight have a fresh external `pass` and a promotion record, but are **not**
 owner-accepted until the owner records a decision.
 
 ## Already accepted
@@ -21,6 +21,7 @@ owner-accepted until the owner records a decision.
 | 5 | Sidecar | `authoring/ai-reviews/2026-10-27-sidecar-review5-codex.md` | yes |
 | 6 | Dark Launching / Shadow Traffic | `authoring/ai-reviews/2026-10-27-dark-launching-review2-codex.md` | yes |
 | 7 | Async Request-Reply | `authoring/ai-reviews/2026-10-27-async-request-reply-review3-codex.md` | yes |
+| 8 | RBAC / ABAC | `authoring/ai-reviews/2026-10-28-rbac-abac-review-codex.md` | yes |
 
 ## Evidence limits
 
