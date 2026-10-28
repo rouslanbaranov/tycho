@@ -2567,7 +2567,7 @@
         "heading": "Splitter",
         "anchor": "splitter",
         "level": 3,
-        "line": 133,
+        "line": 134,
         "unit_kind": "dedicated",
         "unit_terms": [
           "one input into several independently processable messages",
@@ -2647,7 +2647,7 @@
           "fans in related results",
           "per-participant timeout",
           "partial-failure policy",
-          "Client-side composition"
+          "Scatter-gather is the alternative"
         ]
       },
       "technical_evidence": {
@@ -2688,15 +2688,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Client-side composition is the alternative when the caller can tolerate multiple responses.",
-          "reason": "Page lists completeness strategies, not client-side composition."
+          "state": "supported",
+          "quote": "Scatter-gather is the alternative when one request must reach several recipients: it broadcasts similar or related requests and aggregates their responses through an aggregator.",
+          "reason": "Page defines scatter-gather as broadcasting requests to several recipients and aggregating responses through an aggregator; the alternative framing follows from that relationship.",
+          "binding": {
+            "source_id": "src.aws-scatter-gather",
+            "ledger_record": "read.aws-scatter-gather.2026-10-28",
+            "section": "Intent",
+            "quote": "The scatter-gather pattern is a message routing pattern that involves broadcasting similar or related requests to multiple recipients, and aggregating their responses back into a single message by using a component called an aggregator.",
+            "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "aggregator",
         "question": "Should related messages be combined using completion and timeout rules?",
-        "competing_alternative": "Process each response independently. Reverse the choice when aggregation state and timeout complexity exceed the combined result benefit.",
+        "competing_alternative": "Scatter-gather, which broadcasts one request to several recipients and aggregates their responses through an aggregator. Reverse the choice when the request must reach several recipients rather than fan in already-correlated messages.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2722,13 +2729,13 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 150,
+        "line": 151,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
           "quorum or completeness rule",
           "policy for stragglers",
-          "single authoritative call"
+          "aggregator alone is the alternative"
         ]
       },
       "technical_evidence": {
@@ -2769,15 +2776,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A single authoritative call is the alternative when consistency matters more than coverage.",
-          "reason": "Page has no single authoritative call or coverage comparison."
+          "state": "supported",
+          "quote": "An aggregator alone is the alternative when responses already exist: the page describes the aggregator as another messaging pattern that collects and distills responses, while scatter-gather adds the broadcast.",
+          "reason": "Page describes the aggregator as another messaging pattern for collecting and distilling responses, separate from the scatter phase.",
+          "binding": {
+            "source_id": "src.aws-scatter-gather",
+            "ledger_record": "read.aws-scatter-gather.2026-10-28",
+            "section": "Scatter by auction (overview)",
+            "quote": "Because the root controller isn't aware of the recipients, the gathering process uses an aggregator (another messaging pattern) to collect the responses and distill them into a single response message.",
+            "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "scatter-gather",
         "question": "Should one request be broadcast to several recipients and their responses combined?",
-        "competing_alternative": "Single recipient or sequential calls. Reverse the choice when latency benefit is outweighed by fan-out and partial-failure cost.",
+        "competing_alternative": "A standalone aggregator, when responses already exist and no broadcast is needed. Reverse the choice when one request must reach several recipients and their responses must be combined.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -11016,7 +11030,7 @@
     "mechanism_supported": 109,
     "invariant_supported": 57,
     "failure_recovery_supported": 45,
-    "alternative_supported": 53,
+    "alternative_supported": 55,
     "technical_partial_bounded": 34,
     "technical_partial": 93,
     "technical_name_only": 0,

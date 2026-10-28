@@ -31,6 +31,7 @@ evidence_scope:
   source_ids:
     - "src.enterprise-integration"
     - "src.camel"
+    - "src.aws-scatter-gather"
   claim_ids: []
   status: "source-linked"
   notes: "All 20 cards cite read units; owner links are bounded sections, not dedicated EIP pages."
@@ -40,7 +41,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
+updated_at: "2026-10-28"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -362,8 +363,9 @@ partial results are representable; duplicate and late messages are handled.
 **Hard contraindications.** Reject when responses are independent, when no bounded
 completion rule exists, or when aggregation state has no durable owner.
 
-**Competing alternative.** Process each response independently. Reverse the choice when
-aggregation state and timeout complexity exceed the combined result benefit.
+**Competing alternative.** Scatter-gather, which broadcasts one request to several
+recipients and aggregates their responses through an aggregator. Reverse the choice when
+the request must reach several recipients rather than fan in already-correlated messages.
 
 **Failure and recovery.** Late, missing and duplicate messages are common; verify
 completion and eviction in the owner section.
@@ -374,8 +376,10 @@ completion and eviction in the owner section.
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-aggregator.2026-10-21: two H2 examples; Problem and
 Solution are unheaded, and the page is publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
+[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
+broadcast-and-aggregate pattern and names the aggregator component. The sources are public
+documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -395,8 +399,9 @@ acceptable; per-recipient deadlines exist; the aggregate is bounded.
 **Hard contraindications.** Reject when one authoritative recipient suffices, when all
 responses must be globally consistent, or when fan-out can exhaust the caller.
 
-**Competing alternative.** Single recipient or sequential calls. Reverse the choice when
-latency benefit is outweighed by fan-out and partial-failure cost.
+**Competing alternative.** A standalone aggregator, when responses already exist and no
+broadcast is needed. Reverse the choice when one request must reach several recipients and
+their responses must be combined.
 
 **Failure and recovery.** Slow or missing recipients dominate tail latency; verify
 deadlines and partial results in the owner section.
@@ -406,9 +411,11 @@ deadlines and partial results in the owner section.
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-scatter.2026-10-21: three H2 examples; Problem and
-Solution are unheaded, and the page is publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
+Solution are unheaded, and the page is publisher-abridged.
+[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
+broadcast-and-aggregate pattern and the scatter-by-auction section calls the aggregator
+another messaging pattern. The sources are public documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

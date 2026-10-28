@@ -127,8 +127,9 @@ participant would consume the caller complete budget.
 result needs a versioned schema and a caller-visible completeness marker.
 
 The failure path is a stuck or missing participant; the aggregator must return a declared
-partial result, cancel remaining work or fail as a whole. Client-side composition is the
-alternative when the caller can tolerate multiple responses.
+partial result, cancel remaining work or fail as a whole. Scatter-gather is the alternative
+when one request must reach several recipients: it broadcasts similar or related requests and
+aggregates their responses through an aggregator.
 
 ### Splitter
 
@@ -157,8 +158,9 @@ partial view is useful. Do not use it when one authority must answer, when respo
 not comparable, or when tail latency would exceed the caller budget.
 
 The failure path is a slow or missing participant; gather must return a bounded partial
-result or fail under a declared rule, and cancel outstanding work. A single authoritative
-call is the alternative when consistency matters more than coverage.
+result or fail under a declared rule, and cancel outstanding work. An aggregator alone is the
+alternative when responses already exist: the page describes the aggregator as another
+messaging pattern that collects and distills responses, while scatter-gather adds the broadcast.
 
 **Limits.** Fan-out cost and tail latency grow with participants; a quorum result must name
 which participants answered and which did not.

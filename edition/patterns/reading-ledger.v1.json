@@ -5527,6 +5527,64 @@
       "read_scope": "complete publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.aws-scatter-gather.2026-10-28",
+      "source_id": "src.aws-scatter-gather",
+      "unit_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/scatter-gather.html",
+      "unit_label": "Scatter-gather pattern — AWS Prescriptive Guidance",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Scatter-gather pattern",
+        "Intent",
+        "Motivation",
+        "Applicability",
+        "Issues and considerations",
+        "Implementation",
+        "High-level architecture",
+        "Scatter by distribution (overview)",
+        "Scatter by auction (overview)",
+        "Implementation using AWS services",
+        "Scatter by distribution (AWS implementation)",
+        "Scatter by auction (AWS implementation)",
+        "GitHub repository",
+        "Workshop",
+        "Blog references",
+        "Related content"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation and unrelated chrome (not read as content)",
+        "images and their interiors",
+        "the linked GitHub sample code",
+        "the linked workshop"
+      ],
+      "tables_figures": [
+        "no tables",
+        "four architecture diagrams were present but not read; captions and surrounding prose were read"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The scatter-gather pattern is a message routing pattern that involves broadcasting similar or related requests to multiple recipients, and aggregating their responses back into a single message by using a component called an aggregator.",
+        "Scatter-gather has a scatter phase that sends requests to recipients in parallel and a gather phase that collects responses and filters or combines them into a unified response.",
+        "The root controller can scatter by distribution to a known recipient list or scatter by auction through a publish-subscribe channel.",
+        "Recipient timeouts and partial responses are expected; the implementation should communicate an incomplete response, and the aggregator can ignore timed-out responses.",
+        "The gathering process uses an aggregator, described as another messaging pattern, to collect responses and distill them into a single response message."
+      ],
+      "claims_not_supported": [
+        "an explicit statement that scatter-gather and aggregator are mutually exclusive alternatives; the alternative framing is Tycho's synthesis from the component relationship",
+        "implementation behavior, throughput, latency or production outcomes",
+        "linked pages, the linked GitHub sample code or the workshop",
+        "images and diagram interiors",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "One AWS documentation page; no benchmark, local execution or production observation. The page presents the aggregator as the gather component and a related messaging pattern, not as an explicit alternative; the decision wording is Tycho's synthesis. The canonical digest covers the full extracted page text because AWS markup has no recognized article-body marker; it includes title and navigation chrome.",
+      "content_sha256": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3",
+      "read_scope": "complete article text including Intent, Motivation, Applicability, Issues and considerations, Implementation, both scatter methods, Workshop, Blog references and Related content; linked pages, images and sample code excluded; digest covers full extracted page text",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }
