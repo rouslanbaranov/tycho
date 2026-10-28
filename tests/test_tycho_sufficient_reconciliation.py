@@ -113,8 +113,8 @@ class AuditIntegrationTests(unittest.TestCase):
         phase_a = [r for r in records
                    if (r.get("re_review") or {}).get("report_path") in reports
                    and not (r.get("re_review") or {}).get("pending_delta_review")]
-        self.assertEqual(len(phase_a), 42)
-        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 42)
+        self.assertEqual(len(phase_a), 38)
+        self.assertEqual(sum(1 for r in phase_a if r["verdict"] == "pass"), 38)
         self.assertEqual(sum(1 for r in phase_a
                                if r["verdict"] == "pass-with-findings"), 0)
         for record in phase_a:

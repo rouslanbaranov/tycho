@@ -2179,20 +2179,20 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A requester sends a message with a reply address and a correlation value, and the responder returns a message that the requester matches to the original request.",
-          "reason": "Defines a reply address and correlation value matched to the request.",
+          "quote": "Send a pair of Request-Reply messages, each on its own channel.",
+          "reason": "Request-Reply sends a pair of messages on separate channels.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
             "section": "Solution (unheaded)",
-            "quote": "Send a pair of Request-Reply messages, each on its own channel. Request-Reply has two participants: Requestor – Sends a request message and waits for a reply message. Replier – Receives the request message and responds with a reply message.",
+            "quote": "Send a pair of Request-Reply messages, each on its own channel.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
           }
         },
         "invariant": {
           "state": "supported",
-          "quote": "A reply must correlate to exactly one outstanding request and must not be processed as a new command by another consumer.",
-          "reason": "Requires one outstanding request per correlation value and no command reinterpretation.",
+          "quote": "The request thread awaiting the response implies that there is only one outstanding request, or that the reply channel for this request is private for this thread.",
+          "reason": "A blocking request thread implies one outstanding request or a private reply channel.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
@@ -2202,14 +2202,21 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply a reply deadline and reconcile before retrying.",
-          "reason": "Page has crash/restart but no lost-request record or reply deadline."
+          "state": "supported",
+          "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller context.",
+          "reason": "Request-Reply supports restarting the reply thread and re-establishing caller context.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-request-reply.2026-10-21",
+            "section": "Request-Reply",
+            "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller’s context.",
+            "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
+          }
         },
         "alternative": {
           "state": "supported",
-          "quote": "Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits the request budget; choose messaging when availability or latency requires decoupling.",
-          "reason": "Contrasts synchronous RPC with messaging for availability or latency decoupling.",
+          "quote": "When a caller performs a Remote Procedure Invocation, the caller thread must block while it waits for the response.",
+          "reason": "Synchronous RPC blocks the caller thread.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
@@ -2222,7 +2229,7 @@
       "decision_evidence": {
         "atlas_section": "request-reply-messaging",
         "question": "Should a request and its response travel as correlated messages rather than one synchronous call?",
-        "competing_alternative": "Synchronous request-reply with a bounded deadline. Reverse the choice when asynchronous coordination adds more failure modes than latency benefit.",
+        "competing_alternative": "A synchronous Remote Procedure Invocation blocks the caller thread while it waits for the response.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2777,7 +2784,7 @@
         "heading": "Dead Letter Channel-DLQ",
         "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 222,
+        "line": 219,
         "unit_kind": "dedicated",
         "unit_terms": [
           "quarantine queue",
@@ -10975,7 +10982,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 56,
-    "failure_recovery_supported": 41,
+    "failure_recovery_supported": 42,
     "alternative_supported": 52,
     "technical_partial_bounded": 38,
     "technical_partial": 94,
