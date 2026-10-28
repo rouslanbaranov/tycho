@@ -421,37 +421,7 @@ CQRS.
 
 ### Sidecar
 
-**Identity.** Sidecar; family Application architecture and boundaries; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should auxiliary runtime behavior run in a colocated helper beside
-the main workload rather than inside it?
-
-**Good-fit conditions.** The helper is colocated with the application instance and shares
-its lifecycle; the platform can schedule and manage it.
-
-**Hard contraindications.** Reject when a language-specific library or traditional
-extension's deeper integration and lower network overhead dominate the colocated-helper benefits.
-
-**Competing alternative.** A language-specific library or traditional extension when
-deeper integration and lower network overhead matter.
-
-**Failure and recovery.** Startup and shutdown ordering between the application and
-sidecar must avoid races.
-
-**Technical owner.** [Sidecar](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — sidecar lifecycle, proxy data plane and coupling are bounded, not a service-mesh guide.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-sidecar.2026-10-21: sections "Sidecar pattern", "Context
-and problem", "Solution", "Problems and considerations", "When to use this pattern",
-"Workload design", "Example", "Next steps", "Related resource". This is a vendor
-pattern page, not a comparative study.
-
-**Related entries.** Ambassador; Service Mesh; Immutable Infrastructure.
-
-**Decision state.** `applicable-under-conditions`.
-
+See the [dedicated Sidecar card](sidecar.md).
 ### Ambassador
 
 **Identity.** Ambassador; family Application architecture and boundaries; kind
