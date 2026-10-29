@@ -1841,15 +1841,24 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A gatekeeper is a dedicated request-validation boundary that authenticates the caller and evaluates coarse authorization before forwarding a request to the protected service.",
-          "reason": "Defines a validation boundary before forwarding to the protected service.",
+          "quote": "A gatekeeper is a dedicated request-validation boundary that validates and sanitizes requests before forwarding them to the protected service; it can also centralize authentication initiation and authorization checks.",
+          "reason": "The Solution section defines the validation boundary and says gatekeepers might authorize the request; the Workload design guidance separately names authentication initiation and authorization-check centralization. The claim does not say the gatekeeper authenticates the caller.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
-            "section": "Gatekeeper pattern",
-            "quote": "Protect applications and services by using a dedicated component to broker requests between clients and the application or service. The broker validates and sanitizes the requests, and can provide an extra layer of security and limit the system's attack surface.",
+            "section": "Solution",
+            "quote": "This decision typically requires the gatekeeper to validate and sanitize the request content before it passes it to the trusted host. Gatekeepers might authorize the request, look for unexpected or invalid payload content, perform rate limiting, and perform various other checks.",
             "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
+              "section": "Workload design",
+              "quote": "A gatekeeper in the request flow helps you centralize security functionality like web application firewalls, DDoS protection, bot detection, request manipulation, authentication initiation, and authorization checks.",
+              "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
@@ -1905,7 +1914,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Failure/recovery binding to the Microsoft Learn SPoF and redundant-instance advice added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
+      "notes": "Failure/recovery binding to the Microsoft Learn SPoF and redundant-instance advice and mechanism authorization/authentication-initiation bindings added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
     },
     {
       "pattern_id": "tycho.pattern.publish-subscribe",

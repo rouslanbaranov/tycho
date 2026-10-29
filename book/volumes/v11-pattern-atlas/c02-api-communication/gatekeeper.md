@@ -51,8 +51,9 @@ priority advanced.
 they reach a sensitive backend, rather than exposing the backend directly?
 
 **Good-fit conditions.** A small validation surface can reject malformed or
-unauthorized requests; the gatekeeper can authenticate and forward trusted context;
-the backend retains object-level authorization; the gatekeeper is highly available.
+unauthorized requests; the gatekeeper can centralize authentication initiation and
+authorization checks; the backend retains object-level authorization; the gatekeeper is
+highly available.
 
 **Hard contraindications.** Reject the claim when the gatekeeper would become the only
 authorization check; when it forwards unchecked identity or tenant headers; when its
@@ -73,9 +74,11 @@ conditions.
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-gatekeeper.2026-10-21: all nine served headings
-read. Failure and recovery uses the SPoF and redundant-instance advice
-in "Problems and considerations"; the stale-policy and bypass checks are
-Tycho acceptance conditions. Served page SHA-256
+read. The mechanism's validation and authorization wording is from "Solution";
+authentication initiation and authorization checks use "Workload design".
+Failure and recovery uses the SPoF and redundant-instance advice in "Problems
+and considerations"; the stale-policy and bypass checks are Tycho acceptance
+conditions. Served page SHA-256
 `5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0`. Vendor
 pattern page, not a benchmark.
 
