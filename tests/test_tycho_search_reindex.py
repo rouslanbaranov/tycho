@@ -91,6 +91,26 @@ class SearchReindexTests(unittest.TestCase):
                     with search_reindex.reindex_lock(tmp):
                         pass
 
+    def test_build_forwards_full_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            route = {"snapshot_sha256": "r" * 64, "documents": [],
+                     "coverage": "complete"}
+            result = {"snapshot": "s" * 64, "reused_documents": 3}
+            stats = {"sections": 1, "passages": 0, "bytes": 1}
+            with patch.object(search_reindex, "ROUTE_INDEX",
+                              root / "generated/route.json"), \
+                 patch.object(search_reindex.route_index, "canonical_scan",
+                              return_value=route), \
+                 patch.object(search_reindex.section_fts_index, "publish",
+                              return_value=result) as publish, \
+                 patch.object(search_reindex.section_fts_index, "stats",
+                              return_value=stats):
+                search_reindex.build(root, full=False)
+                self.assertFalse(publish.call_args.kwargs["full"])
+                search_reindex.build(root, full=True)
+                self.assertTrue(publish.call_args.kwargs["full"])
+
     def test_check_reports_missing_or_corrupt_index(self):
         for exc in (RuntimeError("missing"),
                     search_reindex.sqlite3.DatabaseError("corrupt")):
