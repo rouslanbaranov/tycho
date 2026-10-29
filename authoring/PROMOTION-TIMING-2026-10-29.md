@@ -60,11 +60,13 @@ measurements. The chart is regenerated with `scripts/promotion_timing_chart.py`.
 ![Promotion time per entry](promotion-entry-timing-2026-10-29.svg)
 
 Promotion window estimates, minutes: TTL 43, Fencing 6, Gatekeeper 7,
-Health 7, Multi-Leader 8, Message Filter 11. Data:
+Health 7, Multi-Leader 8, Message Filter 11, Least Privilege 15. Data:
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; the
-later bars use the single-entry preflight pipeline. These are timestamp
-estimates, not stopwatch measurements.
+later bars use the single-entry preflight pipeline. Post-optimization mean is
+9.0 minutes (range 6-15); the dashed band forecasts the next single entry at
+that mean, not a promise. These are timestamp estimates, not stopwatch
+measurements.
 
 ## Forecast for remaining entries
 
