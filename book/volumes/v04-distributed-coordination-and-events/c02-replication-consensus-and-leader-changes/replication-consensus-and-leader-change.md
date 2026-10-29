@@ -135,15 +135,30 @@ conflict-resolution rule and preserve every acknowledged effect according to tha
 last-writer-wins is not a convergence proof.
 
 Concurrent writes to one key produce conflicts that surface later during reads or reconciliation;
-record the conflicting versions and expose a deterministic resolution path. Single-leader
-replication avoids write conflicts at the cost of write availability across regions; choose
-multi-leader only when accepting local writes outweighs the conflict contract.
+record the conflicting versions and expose a deterministic resolution path.
+
+**Alternative.** Leader-follower (primary/standby) replication partitions write work to one leader,
+with followers tracking that leader. Synchronous multi-master replication instead lets any server
+accept write requests, but PostgreSQL's comparison rates it best for mostly read workloads and
+notes that heavy write activity can cause excessive locking and commit delays. Asynchronous
+multi-master replication identifies conflicting transactions for users or conflict-resolution
+rules to resolve. Choose multi-leader only when accepting writes on more than one server outweighs
+that conflict and write-throughput contract.
 
 **Limits.** Conflict metadata, per-key convergence and operator reconciliation are costs; a
 multi-leader topology does not remove the need for one authoritative outcome. Reject multi-leader
 when monotonic writes are mandatory or the resolver cannot preserve causal order; quorum writes or
 single-leader replication are the alternatives. The conflict contract must name the resolver and
 its audit trail.
+
+**Source boundary.** PostgreSQL 18 section 26.1 states that synchronous multi-master is best for
+mostly read workloads, that any server can accept write requests without partitioning workloads
+between primary and standby servers, and that heavy write activity can cause excessive locking and
+commit delays; its asynchronous section says conflicting transactions can be resolved by users or
+conflict-resolution rules. The single-writer framing, the decision rule and the resolver/audit
+requirement are Tycho synthesis. Served text, 2026-10-29:
+https://www.postgresql.org/docs/current/different-replication-solutions.html,
+SHA-256 7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9.
 
 ### Read Replicas
 

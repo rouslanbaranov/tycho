@@ -210,7 +210,10 @@ policy is explicit; versioning and reconciliation are owned.
 **Hard contraindications.** Reject when one leader meets availability, when conflicts
 cannot be resolved, or when monotonic writes are mandatory.
 
-**Competing alternative.** Leader-follower or quorum writes. Reverse the choice when
+**Competing alternative.** Leader-follower (primary/standby) replication or quorum/consensus
+writes. PostgreSQL's comparison notes that synchronous multi-master lets any server accept
+writes but is best for mostly read workloads, with locking and commit delays under heavy write
+activity, and that asynchronous multi-master needs conflict resolution. Reverse the choice when
 conflict handling and divergent histories exceed locality benefit.
 
 **Failure and recovery.** Conflicting writes and reconciliation are common; verify
@@ -223,6 +226,11 @@ read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served heading
 read. The source is a public
 pattern/documentation
 unit, not a benchmark.
+Alternative comparison: [PostgreSQL 18, section 26.1 Comparison of Different
+Solutions](https://www.postgresql.org/docs/current/different-replication-solutions.html),
+served 2026-10-29, SHA-256
+7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9.
+The comparison is documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
