@@ -63,7 +63,20 @@ def summarize(sections, passages, limit=20):
     }
 
 
-def load(root, index_path=None):
+def targets(sections, passages, limit=50):
+    h2 = [row for row in sections if row["heading_level"] == 2]
+    with_h3 = {row["parent_section_key"] for row in passages}
+    grouped = defaultdict(list)
+    for row in h2:
+        if row["section_key"] not in with_h3:
+            grouped[row["path"]].append(row["section_id"])
+    rows = [{"path": path, "missing_h2": len(ids),
+             "section_ids": ids} for path, ids in grouped.items()]
+    rows.sort(key=lambda row: (-row["missing_h2"], row["path"]))
+    return rows[:limit]
+
+
+def load(root, index_path=None, include_targets=False):
     target = Path(index_path) if index_path else Path(root) / DEFAULT_INDEX.relative_to(ROOT)
     if not target.is_file():
         raise SystemExit("section index missing: %s" % target)
@@ -76,7 +89,10 @@ def load(root, index_path=None):
         passages = [dict(row) for row in db.execute(
             "select passage_key,parent_section_key,parent_section_id,path"
             " from passages")]
-    return summarize(sections, passages)
+    result = summarize(sections, passages)
+    if include_targets:
+        result["targets"] = targets(sections, passages)
+    return result
 
 
 def main(argv=None):
@@ -84,8 +100,9 @@ def main(argv=None):
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--index", type=Path)
     ap.add_argument("--limit", type=int, default=20)
+    ap.add_argument("--targets", action="store_true")
     args = ap.parse_args(argv)
-    result = load(args.root, args.index)
+    result = load(args.root, args.index, include_targets=args.targets)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 

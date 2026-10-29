@@ -29,6 +29,9 @@ class H3CoverageTests(unittest.TestCase):
         self.assertEqual(report["h2_without_h3"], 2)
         self.assertEqual(report["orphan_h3"], 1)
         self.assertEqual(report["pages_without_h3"], 1)
+        grouped = h3_coverage.targets(sections, passages, limit=5)
+        self.assertEqual(sum(row["missing_h2"] for row in grouped), 2)
+        self.assertEqual(grouped[0]["path"], "a")
 
 
 if __name__ == "__main__":
