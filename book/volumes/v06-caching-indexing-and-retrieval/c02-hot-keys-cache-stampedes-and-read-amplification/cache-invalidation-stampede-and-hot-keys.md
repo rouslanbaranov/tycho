@@ -59,7 +59,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cache-invalidation) — decision conditions and contraindications.
+> [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md#cache-invalidation) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:0 -->
 ## Purpose and mission

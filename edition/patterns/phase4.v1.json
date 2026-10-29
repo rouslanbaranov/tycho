@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "50e580fea728a409d08c80759985d6d0a8d04d20cc78eedea15d827d72d7db4e",
+    "registry_sha256": "645bced8bb42356eb914735d7f92ee99cbfd55983dbdad6ab4ba665d243b839d",
     "ledger_sha256": "183ed7c2ef5f50c7f585a81cf78517257edb2800213fe9bc41248bc9199d083b",
-    "card_batches_sha256": "654d8868222b7f10ee3c35c4350b882e666242ef3fab5844ca9f69c2f1d1f3e1",
-    "route_index_sha256": "91270776bf8a0f21dd64b86f437f58eb6aed486e14edf3527f3057f73ba1b480",
-    "coverage_sha256": "cc20e60ca313fc7228f49e467e738a57607a55948dc9d3d6894bc758dd03335d"
+    "card_batches_sha256": "a568d9e93564a4650b946384340a86392268942ee979f7299dfb45ea160776f9",
+    "route_index_sha256": "1a091857ed208f47c89ecc666517cc06373f85bcee0ff665a6d498a57e0837d7",
+    "coverage_sha256": "cc5d73956f0d895033985f2b64696856e9ec2213af19f306c9eb309a26a2895d"
   },
   "dimensions": [
     "identity",
@@ -24,7 +24,7 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 448,
+    "pages": 449,
     "entries": 145,
     "cards": 145,
     "routes": 538,
@@ -3025,6 +3025,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.0eb276434c29430e99bb17a65bc0ade9",
+      "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9",
       "path": "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
       "kind": "chapter",
@@ -3547,18 +3554,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "sufficient",
+        "technical_owner": "partial",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "sufficient",
-        "decision_coverage": "sufficient"
+        "technical_coverage": "partial-bounded",
+        "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ],
       "question": "Should cached entries be removed or refreshed when the authoritative value changes?"
@@ -5575,18 +5582,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should processing be composed as independent stages connected by a message contract?"
@@ -5939,18 +5946,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should out-of-order messages be buffered and released in an acceptable order?"
@@ -7129,14 +7136,14 @@
     },
     {
       "pattern_id": "tycho.pattern.cache-invalidation",
-      "technical": "sufficient",
-      "decision": "sufficient",
-      "overall": "sufficient",
+      "technical": "partial-bounded",
+      "decision": "partial-bounded",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "sufficient",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-sufficient",
-        "decision-sufficient",
+        "technical-partial-bounded",
+        "decision-partial-bounded",
         "independent-review-missing"
       ]
     },
@@ -8143,14 +8150,14 @@
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8325,14 +8332,14 @@
     },
     {
       "pattern_id": "tycho.pattern.resequencer",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },

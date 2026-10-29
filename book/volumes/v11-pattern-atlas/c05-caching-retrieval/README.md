@@ -271,36 +271,7 @@ unit, not a benchmark.
 
 ### Cache Invalidation
 
-**Identity.** Cache Invalidation; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should cached entries be removed or refreshed when the
-authoritative value changes?
-
-**Good-fit conditions.** The authoritative change can emit an invalidation signal; consumers
-can tolerate a bounded stale window.
-
-**Hard contraindications.** Reject when no reliable invalidation path exists or stale reads
-violate a hard contract.
-
-**Competing alternative.** Expiration after a configured period.
-
-**Failure and recovery.** A reader can miss or briefly see stale data immediately after a
-write.
-
-**Technical owner.** [Cache invalidation, stampedes and hot-key failure modes](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md#cache-invalidation) — invalidation is bounded, not a complete invalidation matrix.
-
-**Sources.**
-[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Keep the cache consistent on
-writes", "Invalidate data in a client-side cache". The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** TTL-Based Expiration; Cache-Aside; Stale-While-Revalidate;
-Write-Around.
+See the [dedicated Cache Invalidation card](cache-invalidation.md).
 
 ### TTL-Based Expiration
 
