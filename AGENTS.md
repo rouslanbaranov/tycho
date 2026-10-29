@@ -211,3 +211,12 @@ tool invocation that retrieves sources, or change.
     External AI reviewers must not run tests at all: give them read-only artifacts
     and hashes, and keep test execution with the authoring parent. A reviewer that
     runs the suite is wasting the batch window and must be told to stop.
+
+32. **Accelerated evidence batches.** For a known batch of promotion-bound pages:
+    pre-split all pages before content edits; assign exactly one writer to shared
+    metadata and `owner-units`; review in parallel bounded packet groups; keep full
+    tests for the batch end (rule 31); use delta review for link-only or verbatim
+    moves; and allow promotion on a pass with recorded minor findings. Update
+    regression guards and derived counters once at the batch end. Do not introduce
+    content-addressed promotion hashes or any global evidence migration under this
+    rule; that remains a separate L3 decision.
