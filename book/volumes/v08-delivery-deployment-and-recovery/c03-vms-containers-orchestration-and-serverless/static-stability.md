@@ -33,11 +33,11 @@ evidence_scope:
   notes: "Bounded question from tycho.page.ea94649bfd8c4be183f9114618d7ccaa; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-29"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -142,18 +142,21 @@ The source material keeps its original published/inferred/synthetic/unverified d
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. Where a section names an admitted source, that
 source supports the bounded claims; limits and deployment notes remain synthetic
-and create no new source claim.
+and create no new source claim. Immutable Infrastructure moved to a dedicated
+owner note on 2026-10-29; this page retains the two colocated-helper notes below.
 
 ### Ambassador
 
-An ambassador is an out-of-process proxy colocated with the client. It forwards requests to remote
-services and can offload monitoring, logging, routing, TLS and resilience. Proxy retries are unsafe unless all operations are idempotent. A client library invoked
-directly by the application may be better when overhead outweighs offloading. The proxy can monitor
-performance metrics such as latency or resource usage on the same host. A mechanism can let the client
-pass context, such as an HTTP header to opt out of retry or cap retries. Use the pattern when many
-languages or frameworks need common connectivity features, or a legacy application is hard to modify.
-The proxy can be packaged as a separate container on the same host and can standardize and extend
-instrumentation across languages.
+An ambassador is an out-of-process proxy colocated with the client. It forwards
+requests to remote services and can offload monitoring, logging, routing, TLS and
+resilience. Proxy retries are unsafe unless all operations are idempotent. A
+client library invoked directly by the application may be better when overhead
+outweighs offloading. The proxy can monitor performance metrics such as latency or
+resource usage on the same host. A mechanism can let the client pass context, such
+as an HTTP header to opt out of retry or cap retries. Use the pattern when many
+languages or frameworks need common connectivity features, or a legacy
+application is hard to modify. The proxy can be packaged as a separate container
+on the same host and can standardize and extend instrumentation across languages.
 
 ### Sidecar
 

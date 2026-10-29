@@ -724,7 +724,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 158,
+        "line": 161,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -797,7 +797,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner section unchanged, but the shared static-stability page changed when the Immutable Infrastructure note moved out on 2026-10-29; all four technical dimensions remain supported. Promotion and owner acceptance suspended; coverage partial-bounded; a fresh external review must pass before restoration."
+      "notes": "Shared static-stability page changed on 2026-10-29 when the Immutable Infrastructure note moved out; the Sidecar section is unchanged. All four technical dimensions remain supported, but promotion and owner acceptance are suspended; coverage partial-bounded; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.ambassador",
@@ -809,7 +809,7 @@
         "heading": "Ambassador",
         "anchor": "ambassador",
         "level": 3,
-        "line": 147,
+        "line": 148,
         "unit_kind": "dedicated",
         "unit_terms": [
           "out-of-process proxy",
@@ -824,7 +824,7 @@
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
-            "section": "Solution",
+            "section": "Ambassador pattern",
             "quote": "Think of an ambassador service as an out-of-process proxy that's colocated with the client.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
@@ -832,12 +832,12 @@
         "invariant": {
           "state": "supported",
           "quote": "It forwards requests to remote services and can offload monitoring, logging, routing, TLS and resilience.",
-          "reason": "The proxy mediates requests and responses.",
+          "reason": "The introduction defines the colocated proxy and the connectivity capabilities it offloads.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
-            "section": "Solution",
-            "quote": "The client application sends requests to the ambassador instead of calling external services directly. The ambassador forwards those requests to the remote service. Responses from the remote service return through the ambassador and back to the client application.",
+            "section": "Ambassador pattern",
+            "quote": "Create helper services that send network requests on behalf of a consumer service or application. Think of an ambassador service as an out-of-process proxy that's colocated with the client. Use the Ambassador pattern to offload common client connectivity tasks like monitoring, logging, routing, security like Transport Layer Security (TLS), and resiliency patterns in a language-agnostic way.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         },
@@ -883,7 +883,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner section unchanged, but the shared static-stability page changed when the Immutable Infrastructure note moved out on 2026-10-29; all four technical dimensions remain supported. Promotion and owner acceptance suspended; coverage partial-bounded; a fresh external review must pass before restoration."
+      "notes": "Shared static-stability page changed on 2026-10-29 when the Immutable Infrastructure note moved out and the Ambassador paragraph was rewrapped; bindings corrected to the page introduction. All four technical dimensions remain supported, but promotion and owner acceptance are suspended; coverage partial-bounded; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",
@@ -8520,7 +8520,7 @@
         "invariant": {
           "state": "supported",
           "quote": "A retained version is the rollback path",
-          "reason": "Requires cache key, freshness and authorization to agree for served static assets.",
+          "reason": "Retained older assets keep the rollback path available while cached pages and supported versions still depend on them.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.static-content-hosting.2026-10-26",
@@ -8543,13 +8543,13 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "The application must process or personalize content for each request before delivering it.",
-          "reason": "Names the per-request processing condition that defeats static hosting.",
+          "quote": "The alternative is to serve static content dynamically from the application origin.",
+          "reason": "Names the application-origin alternative to dedicated static hosting.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.static-content-hosting.2026-10-26",
-            "section": "When to use this pattern",
-            "quote": "The application must process or personalize content for each request before delivering it. For example, it might need to insert user-specific data into a document.",
+            "section": "Workload design",
+            "quote": "Generally, using an application platform to deliver static content isn't cost-effective.",
             "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
           }
         }
@@ -10618,7 +10618,7 @@
       "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "keep",
-      "rationale": "Three control-plane patterns have three distinct units, two dedicated bounded notes, on a coherent static-stability page."
+      "rationale": "Two colocated-helper patterns have two distinct dedicated bounded notes on a coherent static-stability page. The Immutable Infrastructure owner note moved out to a dedicated page on 2026-10-29."
     },
     {
       "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",

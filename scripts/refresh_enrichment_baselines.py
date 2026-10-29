@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Refresh enrichment baselines for changed pages in one authorized revision."""
+import datetime
 import json
 import subprocess
 import sys
@@ -39,8 +40,8 @@ def main():
     revisions = json.loads((ROOT / REVISIONS).read_text())
     revisions["revisions"].append({
         "issue": 540,
-        "authorized_at": "2026-10-27",
-        "authorization": "Refresh enrichment baselines after atlas card split.",
+        "authorized_at": datetime.date.today().isoformat(),
+        "authorization": "Refresh enrichment baselines for changed book pages.",
         "directory_documents": [],
         "source_blocks": [],
         "enrichment_documents": edits,

@@ -23,6 +23,12 @@ guard is not yet possible. The guard is part of closing the finding.
   payload-lifecycle wording in the card and owner, limits the owner-unit notes to the
   Microsoft bindings plus the stored-payload-only EIP role, and requires the failure quote
   and binding to cover all five named cases.
+- **B4 review remediation 2026-10-29:** `tests/test_tycho_b4_review_remediation.py`
+  requires Self-Contained Service, Sidecar and Ambassador to stay
+  `awaiting-current-external-review` with pinned historical passes, no
+  `promoted-after-remediation` row or packet, no promotion record and
+  `partial-bounded` coverage. It also guards the Ambassador priority and binding
+  labels and the static-stability two-pattern rationale and 2026-10-29 metadata.
 
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.

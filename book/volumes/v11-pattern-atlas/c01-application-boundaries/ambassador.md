@@ -30,11 +30,11 @@ evidence_scope:
   notes: "Moved card page; source binding remains in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-28"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-28"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -42,7 +42,7 @@ content_verified_at: null
 # Ambassador
 
 **Identity.** Ambassador; family Application architecture and boundaries; kind
-deployment-pattern; priority core.
+deployment-pattern; priority advanced.
 
 **Decision question.** Should client connectivity be offloaded to a colocated out-of-process proxy?
 
