@@ -125,11 +125,22 @@ coarse authorization before forwarding a request to the protected service. The p
 must reject calls that bypass the gatekeeper, or repeat the security-relevant checks, so the
 boundary cannot be sidestepped by an alternate route.
 
-A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine
-network policy, denial logs and a bypass test in the acceptance evidence. A gatekeeper is a trust
-boundary only when it exposes a limited operation and credential surface; otherwise it is another
-proxy. Enforce authorization inside the service at each effect boundary; use a gatekeeper when it
+**Failure and recovery.** The admitted Microsoft Learn page states: "The gatekeeper can be a
+single point of failure (SPoF). To minimize the impact of a failure, consider deploying redundant
+instances and using an autoscaling mechanism to ensure capacity and maintain availability."
+Redundancy and autoscaling address the gatekeeper's own availability; they do not repair a stale
+policy or an undeclared direct path. As Tycho synthesis, combine network policy, denial logs and a
+bypass test in the acceptance evidence. A gatekeeper is a trust boundary only when it exposes a
+limited operation and credential surface; otherwise it is another proxy.
+
+Enforce authorization inside the service at each effect boundary; use a gatekeeper when it
 centralizes a policy that every route must apply and the bypass surface is closed.
 
 **Limits.** Gatekeeper availability, policy freshness and bypass routes are costs; a gatekeeper
 that only authenticates without resource authorization shifts the decision.
+
+**Source boundary.** The quote is from "Problems and considerations" in ledger record
+`read.microsoft-gatekeeper.2026-10-21`; served page SHA-256
+`5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0`. Stale-policy and
+direct-path detection are Tycho review conditions, not source claims. No gatekeeper deployment or
+failure test was executed.
