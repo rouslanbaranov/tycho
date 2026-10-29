@@ -118,7 +118,7 @@ The V12 screen enforces the second condition by construction: the total-order sh
 the fitted interaction variance. A screen that reports a total index below a first-order
 index is rejected as incoherent.
 
-The candidate B screen reports arrival 0.297/0.444 and service 0.556/0.703. Both pairs satisfy
+The candidate B screen reports arrival 0.345/0.522 and service 0.478/0.655. Both pairs satisfy
 the condition. The screen's 48-row sample is small; the indices are a screen, not a
 precision estimate.
 

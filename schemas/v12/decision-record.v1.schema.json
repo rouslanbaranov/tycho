@@ -19,7 +19,8 @@
     "outcome",
     "reversal_triggers",
     "limitations",
-    "pattern_links"
+    "pattern_links",
+    "constraint_evaluation"
   ],
   "properties": {
     "schema_version": {
@@ -293,6 +294,36 @@
               "mechanism",
               "reversal-trigger"
             ]
+          }
+        }
+      }
+    },
+    "constraint_evaluation": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "constraint_id",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "constraint_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+          },
+          "status": {
+            "enum": [
+              "pass",
+              "fail",
+              "not-tested"
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "minLength": 10
           }
         }
       }

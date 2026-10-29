@@ -81,10 +81,10 @@ The staged run reports:
 
 - success rate 1.0;
 - throughput 10 requests per second;
-- mean dual-write backlog 4,807.1 records;
-- maximum divergence 10,102.8 records (95% CI 7,670.7-12,534.9);
-- rollback completed 0.0;
-- rollback seconds censored at 2,400.
+- mean dual-write backlog 4,242.0 records;
+- maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
+- rollback completed 0.1;
+- rollback seconds 0 for the 10% that completed; non-completions are censored at 2,400.
 
 The baseline reports:
 
@@ -104,7 +104,7 @@ It establishes that, under the declared inputs:
 
 - the target path can serve the synthetic traffic;
 - the dual-write backlog grows when lag times throughput exceeds reconciliation capacity;
-- the rollback does not complete inside the 2,400-second window;
+- the rollback completes in only 10% of replications inside the 2,400-second window;
 - the divergence range is wide enough to cross plausible business thresholds.
 
 It does not establish that the target path is correct, that records reconcile, that the

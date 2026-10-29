@@ -22,7 +22,7 @@ class IndexTests(unittest.TestCase):
 
     def test_index_contains_only_v12_documents(self):
         self.assertEqual(self.index["volume"], "v12")
-        self.assertEqual(len(self.index["documents"]), 54)
+        self.assertEqual(len(self.index["documents"]), 56)
         for document in self.index["documents"]:
             if document["artifact_type"] == "document":
                 self.assertTrue(document["path"].startswith(

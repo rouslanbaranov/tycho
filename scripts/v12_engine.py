@@ -62,6 +62,14 @@ def fnv1a(text: str) -> int:
     return value & 0x7FFFFFFF
 
 
+def display_path(path: str | Path) -> str:
+    candidate = Path(path)
+    try:
+        return candidate.resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(path)
+
+
 def load_json(path: str | Path) -> dict:
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
@@ -255,15 +263,18 @@ class CheckoutSimulation:
             if self._in_window(request):
                 self.attempts_total += 1
             request["attempts"] += 1
+            request["attempt"] += 1
             request["state"] = "service"
             service_time = sample_service(self.rng, self.parameters["service_time"])
             request["service_end"] = self.now + service_time
             self.in_service[request["id"]] = request
+            self.events.schedule(self.now + self.timeout, 0, "timeout",
+                                 {"request_id": request["id"], "attempt": request["attempt"]})
             self.events.schedule(request["service_end"], 0, "service_done",
-                                 {"request_id": request["id"]})
+                                 {"request_id": request["id"], "attempt": request["attempt"]})
 
-    def _timeout(self, request: dict) -> None:
-        if request["done"]:
+    def _timeout(self, request: dict, attempt: int) -> None:
+        if request["done"] or request["attempt"] != attempt:
             return
         request["done"] = True
         request["outcome"] = "timeout"
@@ -289,8 +300,8 @@ class CheckoutSimulation:
                 self.failed += 1
             request["outcome"] = "failed"
 
-    def _complete(self, request: dict) -> None:
-        if request["done"]:
+    def _complete(self, request: dict, attempt: int) -> None:
+        if request["done"] or request["attempt"] != attempt or request["state"] != "service":
             return
         request["done"] = True
         request["outcome"] = "completed"
@@ -317,6 +328,7 @@ class CheckoutSimulation:
                     "id": self._next_request_id,
                     "first_arrival": self.now,
                     "attempts": 0,
+                    "attempt": 0,
                     "done": False,
                     "state": "queued",
                     "outcome": None,
@@ -324,26 +336,27 @@ class CheckoutSimulation:
                 self.requests.append(request)
                 self.by_id[request["id"]] = request
                 self.events.schedule(self.now + self.timeout, 0, "timeout",
-                                     {"request_id": request["id"]})
+                                     {"request_id": request["id"], "attempt": 0})
                 self._enqueue(request)
                 if self.arrival_rate > 0.0:
                     self.events.schedule(self.now + self.rng.expovariate(self.arrival_rate),
                                          1, "arrival")
             elif event.kind == "service_done":
                 request = self.in_service.get(event.payload["request_id"])
-                if request is not None and not request["done"]:
-                    self._complete(request)
+                if request is not None:
+                    self._complete(request, event.payload["attempt"])
             elif event.kind == "timeout":
                 request = self._request(event.payload["request_id"])
-                if request is not None and not request["done"]:
-                    self._timeout(request)
+                if request is not None:
+                    self._timeout(request, event.payload["attempt"])
                     self._dispatch()
             elif event.kind == "retry":
                 request = self._request(event.payload["request_id"])
                 if request is not None and not request["done"]:
                     request["state"] = "queued"
                     self.events.schedule(self.now + self.timeout, 0, "timeout",
-                                         {"request_id": request["id"]})
+                                         {"request_id": request["id"],
+                                          "attempt": request["attempt"]})
                     self._enqueue(request)
         self.now = self.duration
         self._accumulate(self.duration)
@@ -382,7 +395,7 @@ class CheckoutSimulation:
             if self.parameters["servers"] else 0.0,
             "retry_amplification": self.attempts_total / self.offered if self.offered else 0.0,
             "cost_per_1k_success": (self.parameters["servers"] * self.parameters["cost_per_server_hour"]
-                                   * (self.duration / 3600.0) / completed * 1000.0) if completed else 0.0,
+                                   * (measurement / 3600.0) / completed * 1000.0) if completed else 0.0,
             "served": completed + in_system_window,
             "conservation_ok": conservation,
         }
@@ -648,14 +661,78 @@ def get_parameter(parameters: dict, name: str) -> float:
     return float(parameters[name])
 
 
+def _correlation_matrix(scenario: dict, names: list[str]) -> list[list[float]]:
+    size = len(names)
+    index = {name: position for position, name in enumerate(names)}
+    matrix = [[1.0 if row == column else 0.0 for column in range(size)] for row in range(size)]
+    for pair in scenario["uncertainty"].get("correlations", []):
+        left, right = pair["left"], pair["right"]
+        require(left in index and right in index,
+                "correlation names a parameter without a draw: " + left + "/" + right)
+        coefficient = float(pair["coefficient"])
+        require(-1.0 <= coefficient <= 1.0, "correlation coefficient out of range")
+        matrix[index[left]][index[right]] = coefficient
+        matrix[index[right]][index[left]] = coefficient
+    return matrix
+
+
+def _cholesky(matrix: list[list[float]]) -> list[list[float]]:
+    size = len(matrix)
+    lower = [[0.0] * size for _ in range(size)]
+    for row in range(size):
+        for column in range(row + 1):
+            total = matrix[row][column] - sum(lower[row][k] * lower[column][k]
+                                              for k in range(column))
+            if row == column:
+                require(total > 1e-12, "correlation matrix is not positive definite")
+                lower[row][column] = math.sqrt(total)
+            else:
+                lower[row][column] = total / lower[column][column]
+    return lower
+
+
+def _inverse_draw(draw: dict, uniform: float) -> float:
+    kind = draw["distribution"]
+    mean = draw.get("mean")
+    sd = draw.get("sd")
+    low = draw.get("low")
+    high = draw.get("high")
+    require(0.0 < uniform < 1.0, "uniform draw must be strictly between zero and one")
+    if kind == "fixed":
+        require(mean is not None, "fixed draw requires mean")
+        return float(mean)
+    if kind == "uniform":
+        require(low is not None and high is not None, "uniform draw requires low and high")
+        return float(low) + (float(high) - float(low)) * uniform
+    z = statistics.NormalDist().inv_cdf(uniform)
+    if kind == "normal":
+        require(mean is not None and sd is not None, "normal draw requires mean and sd")
+        return float(mean) + float(sd) * z
+    if kind == "lognormal":
+        require(mean is not None and sd is not None, "lognormal draw requires mean and sd")
+        require(float(mean) > 0.0 and float(sd) > 0.0, "lognormal parameters must be positive")
+        cv = float(sd) / float(mean)
+        sigma2 = math.log(1.0 + cv * cv)
+        mu = math.log(float(mean)) - sigma2 / 2.0
+        return math.exp(mu + math.sqrt(sigma2) * z)
+    raise EngineError("unsupported uncertainty distribution: " + str(kind))
+
+
 def sample_row(scenario: dict, rng: random.Random) -> dict:
     parameters = base_parameters(scenario)
     draws = scenario["uncertainty"].get("parameter_draws", [])
-    for draw in draws:
-        value = sample_draw(rng, draw)
+    if not draws:
+        return parameters
+    names = [draw["parameter"] for draw in draws]
+    lower = _cholesky(_correlation_matrix(scenario, names))
+    independent = [rng.gauss(0.0, 1.0) for _ in draws]
+    correlated = [sum(lower[row][column] * independent[column]
+                      for column in range(len(draws))) for row in range(len(draws))]
+    for draw, z in zip(draws, correlated):
+        uniform = statistics.NormalDist().cdf(z)
+        value = _inverse_draw(draw, uniform)
         parameters = apply_parameter(parameters, draw["parameter"], value)
     return parameters
-
 
 def run_replication(model: dict, scenario: dict, parameters: dict, seed: int) -> dict:
     kind = model["dynamics"]["kind"]
@@ -726,10 +803,11 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
         if not values and name == "rollback_seconds":
             values = [float(scenario["workload"]["duration"]) for _ in per_replication]
         mean, se, low, high = aggregate(values)
-        if METRIC_UNITS.get(name) == "ratio":
+        if name in {"success_rate", "rejection_rate", "timeout_rate",
+                    "server_utilization", "rollback_completed"}:
             low, high = max(0.0, low), min(1.0, high)
         elif name in {"latency_mean", "latency_p95", "latency_p99",
-                      "mean_queue_length", "max_queue_length",
+                      "mean_queue_length", "max_queue_length", "retry_amplification",
                       "cost_per_1k_success", "max_divergence", "rollback_seconds"}:
             low, high = max(0.0, low), max(0.0, high)
         metrics[name] = {
@@ -740,6 +818,23 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
             "ci_low": low,
             "ci_high": high,
         }
+    totals = {
+        key: sum(float(result.get(key, 0.0)) for result in per_replication)
+        for key in ("offered", "completed", "rejected", "failed", "in_system_at_end", "backlog_end")
+    }
+    invariants = {
+        "conservation_ok": all(result.get("conservation_ok") is True for result in per_replication),
+        "checks": [{
+            "name": "request-conservation",
+            "status": "pass" if all(result.get("conservation_ok") is True for result in per_replication) else "fail",
+            "detail": ("offered=" + str(round(totals["offered"], 6))
+                       + "; completed=" + str(round(totals["completed"], 6))
+                       + "; rejected=" + str(round(totals["rejected"], 6))
+                       + "; failed=" + str(round(totals["failed"], 6))
+                       + "; in_system=" + str(round(totals["in_system_at_end"], 6))
+                       + "; backlog_end=" + str(round(totals["backlog_end"], 6))),
+        }],
+    }
     primary = metrics["success_rate"]
     relative_error = primary["standard_error"] / abs(primary["value"]) if primary["value"] else 0.0
     convergence = {
@@ -749,17 +844,20 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
         "threshold": 0.02,
         "replications": replications,
     }
+    engine_sha = file_sha256(Path(__file__).resolve())
     provenance = {
         "model_sha256": file_sha256(model_path),
         "scenario_sha256": file_sha256(scenario_path),
+        "engine_sha256": engine_sha,
         "seed_base": base_seed,
         "replications": replications,
         "input_sha256": sha256_json({"model": model, "scenario": scenario,
-                                     "engine_version": ENGINE_VERSION}),
+                                     "engine_version": ENGINE_VERSION,
+                                     "engine_sha256": engine_sha}),
         "python": platform.python_version(),
         "platform": platform.platform(),
-        "invocation": "python3 scripts/v12_engine.py run --model " + str(model_path)
-                      + " --scenario " + str(scenario_path),
+        "invocation": ("python3 scripts/v12_engine.py run --model "
+                       + display_path(model_path) + " --scenario " + display_path(scenario_path)),
     }
     uncertainty = {
         "method": "gaussian-copula" if scenario["uncertainty"].get("correlations") else "replication",
@@ -777,6 +875,7 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
         "provenance": provenance,
         "metrics": metrics,
         "convergence": convergence,
+        "invariants": invariants,
         "uncertainty": uncertainty,
         "sensitivity": [],
         "limitations": [
@@ -802,7 +901,14 @@ def replay(run_path: str | Path, model_path: str | Path, scenario_path: str | Pa
     require(run["scenario_id"] == scenario["id"], "replay scenario mismatch")
     require(run["provenance"]["model_sha256"] == file_sha256(model_path), "model hash changed")
     require(run["provenance"]["scenario_sha256"] == file_sha256(scenario_path), "scenario hash changed")
-    regenerated = finalize_run(run_scenario(model, scenario, str(model_path), str(scenario_path)))
+    require(run["provenance"].get("engine_sha256") == file_sha256(Path(__file__).resolve()),
+            "engine source changed since the run")
+    regenerated = run_scenario(model, scenario, str(model_path), str(scenario_path))
+    if run.get("sensitivity"):
+        draws = run["sensitivity"][0]["replications"]
+        regenerated["sensitivity"] = sensitivity(model, scenario, str(model_path),
+                                                 str(scenario_path), draws=draws)
+    finalize_run(regenerated)
     require(regenerated["result_sha256"] == run["result_sha256"], "replay result hash mismatch")
     return {"status": "replayed", "result_sha256": run["result_sha256"]}
 
@@ -847,7 +953,6 @@ def sensitivity(model: dict, scenario: dict, model_path: str, scenario_path: str
     require(1 <= len(uncertain) <= 2,
             "response-surface sensitivity supports 1-2 uncertain parameters")
     names = [item["parameter"] for item in uncertain]
-    base = base_parameters(scenario)
     rng = random.Random(int(scenario["seed"]["base"]) + 700001)
 
     def run_row(row: dict, seed: int) -> float:
@@ -862,9 +967,7 @@ def sensitivity(model: dict, scenario: dict, model_path: str, scenario_path: str
     rows: list[dict] = []
     outputs: list[float] = []
     for index in range(draws * 2):
-        row = json.loads(json.dumps(base))
-        for item in uncertain:
-            row = apply_parameter(row, item["parameter"], sample_draw(rng, item))
+        row = sample_row(scenario, rng)
         rows.append(row)
         outputs.append(run_row(row, int(scenario["seed"]["base"]) + 800000 + index))
 

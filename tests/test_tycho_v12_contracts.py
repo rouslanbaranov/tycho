@@ -63,6 +63,8 @@ class ContractTests(unittest.TestCase):
                              validate_v12.sha(ROOT / scenarios[data["scenario_id"]]["path"]))
             body = {k: v for k, v in data.items() if k != "result_sha256"}
             self.assertEqual(data["result_sha256"], validate_v12.sha_json(body))
+            self.assertTrue(data["invariants"]["conservation_ok"])
+            self.assertTrue(all(check["status"] == "pass" for check in data["invariants"]["checks"]))
 
     def test_decision_references(self):
         registry = load(ROOT / "edition/v12/registry.json")
@@ -84,8 +86,8 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(result["documents"], 31)
         self.assertEqual(result["chapters"], 7)
         self.assertEqual(result["models"], 3)
-        self.assertEqual(result["scenarios"], 9)
-        self.assertEqual(result["runs"], 9)
+        self.assertEqual(result["scenarios"], 10)
+        self.assertEqual(result["runs"], 10)
         self.assertEqual(result["decisions"], 2)
         self.assertEqual(result["protected"]["changed"], 0)
         self.assertEqual(result["protected"]["leaked"], 0)

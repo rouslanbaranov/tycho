@@ -100,8 +100,10 @@ operational validity.
 
 The run records report seeds, replications, standard errors, confidence intervals and a
 convergence status. The sensitivity run reports a quadratic response-surface screen and is
-marked insufficient-sample. The scenario declares correlated inputs and the run reports the
-method. A run that fails the 0.02 relative-error threshold is not used as converged evidence.
+converged. A separate two-replication convergence-stress run is marked insufficient-sample.
+The modernization scenario declares correlated inputs, and its run reports the Gaussian-copula
+method and correlated_inputs true. A run that fails the 0.02 relative-error threshold is not
+used as converged evidence.
 
 ## V12-D: calibration
 

@@ -120,14 +120,14 @@ reconciliation, with a -0.4 correlation.
 The run reports:
 
 - success rate 1.0 (the modeled traffic is served);
-- maximum divergence 10,102.8 records (95% CI 7,670.7-12,534.9);
-- rollback completed 0.0 in every replication;
-- rollback seconds censored at 2,400.
+- maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
+- rollback completed 0.1: it finishes in only 10% of replications;
+- rollback seconds 0 for the 10% that completed; non-completions are censored at 2,400.
 
 The no-cutover baseline reports zero divergence and no rollback requirement. The staged
-candidate does not produce a decision-supported cutover because the rollback does not
-complete and the divergence is far outside any plausible business threshold. The decision
-record returns insufficient evidence.
+candidate does not produce a decision-supported cutover because rollback completes in
+only 10% of replications and the divergence is far outside any plausible business threshold.
+The decision record returns insufficient evidence.
 
 ## A state diagram
 

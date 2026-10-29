@@ -81,8 +81,8 @@ evidence. The correct outcome is insufficient evidence plus a list of what would
 The staged modernization run reports:
 
 - success rate 1.0 (the model serves the offered traffic);
-- maximum divergence 10,102.8 records (95% CI 7,670.7-12,534.9);
-- rollback completed 0.0 (it does not finish within the 2,400-second horizon);
+- maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
+- rollback completed 0.1 (it finishes within the 2,400-second horizon in only 10% of replications);
 - rollback seconds censored at the horizon, 2,400.
 
 The no-cutover baseline reports zero divergence and no rollback requirement. The staged

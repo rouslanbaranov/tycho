@@ -131,7 +131,7 @@
         "id": "V12-B-SF-01",
         "description": "Deterministic arrivals below service capacity produce zero rejection and non-growing backlog.",
         "expected": "rejected == 0 and backlog_end finite",
-        "observed": "checked in test_stock_flow_capacity",
+        "observed": "checked in test_conservation_below_capacity",
         "status": "pass",
         "test_path": "tests/test_tycho_v12_engine.py"
       },
@@ -139,7 +139,7 @@
         "id": "V12-B-SF-02",
         "description": "Offered load above admission capacity produces rejections and conserves requests.",
         "expected": "rejected > 0 and conservation_ok true",
-        "observed": "checked in test_stock_flow_saturation",
+        "observed": "checked in test_saturation_rejects_and_conserves",
         "status": "pass",
         "test_path": "tests/test_tycho_v12_engine.py"
       },
@@ -147,7 +147,7 @@
         "id": "V12-B-SF-03",
         "description": "Zero arrivals and zero servers leave all stocks at zero.",
         "expected": "offered == 0 and completed == 0 and backlog == 0",
-        "observed": "checked in test_stock_flow_zero_boundary",
+        "observed": "checked in test_zero_boundary",
         "status": "pass",
         "test_path": "tests/test_tycho_v12_engine.py"
       }

@@ -83,10 +83,11 @@ V12's convergence rule compares the standard error with the absolute value of th
 The threshold is 0.02. A run is converged when the relative error is at most 0.02 and
 insufficient-sample otherwise.
 
-For candidate A, the success rate is 0.9218 with a standard error of about 0.00038, giving a
-relative error of 0.00041. For candidate B, the relative error is 0.00004. For the
-sensitivity run, the success rate is 0.897 with a standard error of 0.075, giving 0.084. The
-first two are converged; the third is not.
+For candidate A, the success rate is 0.9360 with a standard error of about 0.00027, giving a
+relative error of 0.00029. For candidate B, the relative error is 0.00003. The sensitivity
+run is converged at 0.00048. The separate two-replication convergence-stress run has a
+success rate of 0.929 and a relative error of 0.026, so it is marked insufficient-sample.
+The first three are converged; the stress run is not.
 
 A relative-error threshold is a decision aid, not a universal rule. A metric near zero can
 have a small absolute error and a large relative error. A metric with a wide business

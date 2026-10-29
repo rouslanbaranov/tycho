@@ -28,8 +28,8 @@ reference V12. The protected baseline is recorded in `edition/v12/protected-base
 |---|---|
 | V12 book pages | 31 Markdown pages: one volume, seven chapters, twenty-three question pages |
 | Model contracts | 3 in `edition/v12/models/` |
-| Scenario contracts | 9 in `edition/v12/scenarios/` |
-| Run records | 9 in `edition/v12/runs/` |
+| Scenario contracts | 10 in `edition/v12/scenarios/` |
+| Run records | 10 in `edition/v12/runs/` |
 | Decision records | 2 in `edition/v12/decisions/` |
 | Source reading ledger | 10 records in `edition/v12/reading-ledger.v1.json` |
 | Source plan | 8 topics and 16 bounded units in `edition/v12/source-plan.v1.json` |
@@ -57,12 +57,12 @@ reading; reading is not independent review.
 
 The comparative experiment uses one synthetic workload, one seed scheme and one metric set
 for three checkout candidates. Candidate B is decision-supported under the declared
-constraints: success 0.9996, p95 1.206 s, cost 1.60 per 1000 successes. Candidate C is
-eliminated by the declared cost and latency constraints. The recommendation is conditional
-on an unverified operability constraint and uncalibrated inputs.
+constraints: success 0.9997, p95 1.204 s, cost 1.34 per 1000 successes. Candidate C is
+eliminated by the declared cost constraint; it meets the p95 constraint. The recommendation
+is conditional on an unverified operability constraint and uncalibrated inputs.
 
 The modernization experiment compares a staged cutover with a no-cutover baseline. The
-staged path produces a maximum divergence of 10,102.8 records and does not complete rollback
+staged path produces a maximum divergence of 8,925.5 records and does not complete rollback
 within 2,400 seconds. The decision record returns `insufficient-evidence`.
 
 The sensitivity screen reports first-order and total-order indices for arrival rate and
@@ -84,7 +84,7 @@ chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 622 tests in 39.974s
+Ran 626 tests in 83.9s
 OK
 
 node tools/mermaid/check.mjs --root .
@@ -97,11 +97,11 @@ V12 Markdown line limit and the protected baseline.
 
 ## Protected baseline
 
-The baseline contains 449 existing book pages and four promotion/atlas records. The
+The baseline contains 449 existing book pages and five promotion/atlas/review records. The
 validator reports:
 
 ```json
-{"protected_pages": 449, "promotion_records": 4, "changed": 0, "missing": 0, "leaked": 0}
+{"protected_pages": 449, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
 ```
 
 No existing page, card, owner page, promotion record or atlas manifest was edited. The only
@@ -125,6 +125,31 @@ Two checks fail at the branch base commit `4f111f25` as well as on this branch:
 
 Neither failure is caused by V12. They are recorded here instead of being hidden or repaired
 inside this issue. The V12 validator checks the V12 line limit independently.
+
+## Independent review round 1
+
+The first OpenAI Codex review (gpt-5.6-sol, read-only, pinned to the initial commit) returned
+reject with three blocking findings: declared input correlations were not applied, stored B
+and C runs were not reproducible from the pinned engine, and a stale completion event could
+complete a later retry attempt. It also found two high, three medium and one low issue.
+
+Corrections applied in this branch:
+
+- Gaussian-copula sampling now applies the declared correlation matrix;
+- every service and timeout event carries an attempt token, so a stale event cannot affect a
+  later attempt;
+- cost uses the measurement window rather than the full horizon;
+- run records store the conservation invariant and the engine source hash;
+- the run schema requires result_sha256 and invariants;
+- source-register labels now match the bounded ledger coverage;
+- model verification records name the actual test methods;
+- the re-review packet is included in the protected baseline;
+- regression tests cover correlation, stale-completion, cost window, invariants and replay
+  of every committed run.
+
+The initial review report is saved verbatim as
+\`authoring/ai-reviews/2026-10-29-v12-isolated-volume-codex.md\` and indexed with verdict
+reject. A delta review of the corrected artifacts is the next gate.
 
 ## Limits
 

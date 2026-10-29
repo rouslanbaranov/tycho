@@ -159,6 +159,43 @@ class DiscreteEventTests(unittest.TestCase):
         result = engine.run_scenario(model("discrete-event"), s, str(MODEL_PATH), str(SCENARIO_PATH))
         self.assertEqual(result["metrics"]["success_rate"]["value"], 0.0)
 
+    def test_stale_completion_does_not_complete_retry(self):
+        s = scenario(configuration={"servers": 1, "service_time": {"kind": "deterministic",
+                                                                  "mean": 1.0, "cv": 0.01},
+                                    "queue_capacity": 10, "timeout": 0.6, "max_attempts": 2,
+                                    "retry_backoff": {"kind": "none", "base": 0.0, "jitter": "none"},
+                                    "bulkhead": 20, "cost_per_server_hour": 10.0},
+                     workload={"duration": 60.0, "warmup": 10.0, "time_unit": "second",
+                               "arrival_process": {"kind": "poisson", "rate": 0.5,
+                                                   "unit": "request/second"}})
+        result = engine.run_scenario(model("discrete-event"), s, str(MODEL_PATH), str(SCENARIO_PATH))
+        self.assertEqual(result["metrics"]["success_rate"]["value"], 0.0)
+        self.assertTrue(result["invariants"]["conservation_ok"])
+
+    def test_cost_uses_measurement_window(self):
+        s = scenario(configuration={"servers": 12, "service_time": {"kind": "deterministic",
+                                                                  "mean": 0.5, "cv": 0.01},
+                                    "queue_capacity": 200, "timeout": 2.0, "max_attempts": 1,
+                                    "retry_backoff": {"kind": "none", "base": 0.0, "jitter": "none"},
+                                    "bulkhead": 240, "cost_per_server_hour": 10.0},
+                     workload={"duration": 900.0, "warmup": 300.0, "time_unit": "second",
+                               "arrival_process": {"kind": "poisson", "rate": 10.0,
+                                                   "unit": "request/second"}})
+        result = engine.run_scenario(model("discrete-event"), s, str(MODEL_PATH), str(SCENARIO_PATH))
+        completed = result["metrics"]["success_rate"]["value"] * 10.0 * 600.0
+        expected = 12 * 10.0 * (600.0 / 3600.0) / completed * 1000.0
+        self.assertAlmostEqual(result["metrics"]["cost_per_1k_success"]["value"], expected,
+                               delta=expected * 0.02)
+
+    def test_committed_runs_replay(self):
+        import glob
+        for path in glob.glob(str(ROOT / "edition/v12/runs/*.json")):
+            run = json.loads(Path(path).read_text())
+            model_path = ROOT / "edition/v12/models" / (run["model_id"].split(".")[-1] + ".json")
+            scenario_path = ROOT / "edition/v12/scenarios" / (run["scenario_id"].split(".")[-1] + ".json")
+            with self.subTest(run=run["id"]):
+                self.assertEqual(engine.replay(path, model_path, scenario_path)["status"], "replayed")
+
     def test_deterministic_replay(self):
         first = engine.finalize_run(engine.run_scenario(model("discrete-event"), scenario(),
                                                         str(MODEL_PATH), str(SCENARIO_PATH)))
@@ -202,6 +239,26 @@ class ModernizationTests(unittest.TestCase):
         result = engine.run_modernization(s, engine.base_parameters(s), 7)
         self.assertEqual(result["rollback_completed"], 1.0)
         self.assertEqual(result["rollback_seconds"], 0.0)
+
+
+class CorrelationTests(unittest.TestCase):
+    def test_declared_correlation_is_applied(self):
+        s = scenario(uncertainty={"parameter_draws": [
+            {"parameter": "arrival_rate", "distribution": "normal", "mean": 10.0,
+             "sd": 2.0, "unit": "request/second"},
+            {"parameter": "service_mean", "distribution": "normal", "mean": 0.3,
+             "sd": 0.05, "unit": "second/request"}],
+            "correlations": [{"left": "arrival_rate", "right": "service_mean",
+                              "coefficient": -0.8}]})
+        rows = [engine.sample_row(s, engine.random.Random(i)) for i in range(300)]
+        arrival = [row["arrival_rate"] for row in rows]
+        service = [row["service_time"]["mean"] for row in rows]
+        import statistics
+        mean_a = statistics.fmean(arrival)
+        mean_s = statistics.fmean(service)
+        covariance = sum((a - mean_a) * (b - mean_s) for a, b in zip(arrival, service)) / len(rows)
+        correlation = covariance / (statistics.pstdev(arrival) * statistics.pstdev(service))
+        self.assertLess(correlation, -0.5)
 
 
 class SensitivityTests(unittest.TestCase):

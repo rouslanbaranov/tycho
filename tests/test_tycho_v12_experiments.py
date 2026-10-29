@@ -43,7 +43,7 @@ class ComparativeExperimentTests(unittest.TestCase):
         self.assertLess(b["cost_per_1k_success"]["value"], a["cost_per_1k_success"]["value"])
         self.assertLess(a["cost_per_1k_success"]["value"], c["cost_per_1k_success"]["value"])
         self.assertGreater(c["cost_per_1k_success"]["value"], 3.0)
-        self.assertGreater(c["latency_p95"]["value"], 1.5)
+        self.assertLessEqual(c["latency_p95"]["value"], 1.5)
         self.assertLessEqual(b["latency_p95"]["value"], 1.5)
 
     def test_all_runs_are_converged(self):
@@ -60,6 +60,8 @@ class ComparativeExperimentTests(unittest.TestCase):
         self.assertTrue(any(c["kind"] == "hard" for c in decision["constraints"]))
         self.assertTrue(any(c["kind"] == "non-quantitative" for c in decision["constraints"]))
         self.assertGreaterEqual(len(decision["reversal_triggers"]), 3)
+        self.assertEqual({item["constraint_id"] for item in decision["constraint_evaluation"]},
+                         {"C1", "C2", "C3", "C4", "C5"})
 
 
 class ModernizationExperimentTests(unittest.TestCase):
@@ -68,7 +70,7 @@ class ModernizationExperimentTests(unittest.TestCase):
         baseline = load("edition/v12/runs/modernization-no-cutover.json")["metrics"]
         self.assertGreater(staged["max_divergence"]["value"], 0.0)
         self.assertEqual(baseline["max_divergence"]["value"], 0.0)
-        self.assertEqual(staged["rollback_completed"]["value"], 0.0)
+        self.assertEqual(staged["rollback_completed"]["value"], 0.1)
         self.assertEqual(baseline["rollback_completed"]["value"], 1.0)
 
     def test_decision_is_insufficient_evidence(self):
@@ -83,7 +85,9 @@ class ModernizationExperimentTests(unittest.TestCase):
 class SensitivityExperimentTests(unittest.TestCase):
     def test_sensitivity_screen_is_explicit(self):
         run = load("edition/v12/runs/checkout-sensitivity.json")
-        self.assertEqual(run["convergence"]["status"], "insufficient-sample")
+        self.assertEqual(run["convergence"]["status"], "converged")
+        stress = load("edition/v12/runs/checkout-convergence-stress.json")
+        self.assertEqual(stress["convergence"]["status"], "insufficient-sample")
         self.assertEqual(len(run["sensitivity"]), 2)
         for row in run["sensitivity"]:
             self.assertEqual(row["method"], "quadratic-response-surface")

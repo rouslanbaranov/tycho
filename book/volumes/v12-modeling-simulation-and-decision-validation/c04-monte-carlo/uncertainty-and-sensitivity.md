@@ -125,24 +125,25 @@ analysis and is labeled as a screening result.
 
 For the candidate B sensitivity run, the fitted screen reports:
 
-- arrival rate: first-order 0.297, total-order 0.444;
-- service mean: first-order 0.556, total-order 0.703.
+- arrival rate: first-order 0.345, total-order 0.522;
+- service mean: first-order 0.478, total-order 0.655.
 
 The service mean has the larger main effect in this sampled range. The arrival rate has a
-substantial interaction share. The two first-order indices sum to 0.853, leaving about 0.147
+substantial interaction share. The two first-order indices sum to 0.823, leaving about 0.177
 for interaction and unexplained variation. The screen does not prove that service time is
 more important in production; it says that, under the declared distributions and the
 quadratic approximation, it explains more of the fitted variance.
 
-## Why the sensitivity run is insufficient-sample
+## A separate insufficient-sample case
 
-The sensitivity scenario uses 10 replications and a 600-second horizon. Its relative error
-for success rate is 0.084, above the 0.02 convergence threshold. The run is therefore marked
-insufficient-sample. The sensitivity indices are still reported as a screen, but they are not
-used to support a production decision.
+The sensitivity scenario itself is converged at a 0.00048 relative error, but it is still a
+screening approximation. A separate two-replication convergence-stress run has a relative
+error of 0.026, above the 0.02 threshold, and is marked insufficient-sample. Its wide input
+draws and small replication budget show the failure mode without pretending that the
+sensitivity screen is precise.
 
-This is deliberate. A sensitivity ranking from an unstable sample can reverse. The record
-shows the instability instead of hiding it.
+This is deliberate. A ranking from an unstable sample can reverse; the stress run records
+the instability instead of hiding it.
 
 ## Failure modes
 

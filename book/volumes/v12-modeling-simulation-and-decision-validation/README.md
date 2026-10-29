@@ -151,16 +151,16 @@ metrics:
 - B: a bounded queue, a two-second deadline and a small retry budget;
 - C: more servers, a slower mean service time and a higher unit cost.
 
-Under the declared assumptions, B succeeds on 0.9996 of offered requests with a
-1.206-second p95 latency and 1.60 relative cost units per 1000 successes. A succeeds on
-0.9218 with a 0.870-second p95 and 2.17 cost units. C succeeds on 0.9834 but exceeds the
-declared 3.0 cost and 1.5-second p95 constraints. The decision record recommends B for the
-synthetic workload, records the non-quantitative operability constraint as unverified and
-lists the measurements that would reverse the choice.
+Under the declared assumptions, B succeeds on 0.9997 of offered requests with a
+1.204-second p95 latency and 1.34 relative cost units per 1000 successes. A succeeds on
+0.9360 with a 0.917-second p95 and 1.78 cost units. C succeeds on 0.9989 but exceeds the
+declared 3.0 cost constraint while meeting the 1.5-second p95 constraint. The decision
+record recommends B for the synthetic workload, records the non-quantitative operability
+constraint as unverified and lists the measurements that would reverse the choice.
 
 A second experiment compares a staged modernization cutover with a no-cutover baseline.
-The staged model's maximum divergence is 10,102.8 records (95% CI 7,670.7-12,534.9), and
-rollback does not complete within the 2,400-second horizon in any replication. Because
+The staged model's maximum divergence is 8,925.5 records (95% CI 5,561.6-12,289.3), and
+rollback completes in only 10% of replications within the 2,400-second horizon. Because
 dual-write lag and reconciliation capacity are assumed rather than measured, the decision
 record returns `insufficient-evidence`, not a recommendation.
 
