@@ -39,8 +39,8 @@ promotion/review evidence stays attributable to one page hash.
 - c10 Parallel Run split;
 - c04/c05/c09/c01 still carry promotion-bound cards listed above;
 - c02 and c10 are split, with Async and Dark on their own pages and promotions restored;
-- c03 is split, with Request-Reply Messaging, Message Filter and Pipes and Filters on their
-  own pages. Pipes and Filters is promoted. Message Filter is suspended after the shared
-  owner page changed, and Request-Reply Messaging is suspended again for the same reason
-  after the Claim Check owner rewrite. Claim Check stays on the c03 landing page and is
-  partial-bounded, review-ready and not promoted.
+- c03 is split, with Request-Reply Messaging, Message Filter, Pipes and Filters and Claim
+  Check on their own pages. Pipes and Filters is promoted. Message Filter is suspended after
+  the shared owner page changed. Request-Reply Messaging is suspended again after the Claim
+  Check owner-page remediation on 2026-10-29. Claim Check is partial-bounded, review-ready
+  and not promoted.

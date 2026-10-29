@@ -2182,7 +2182,7 @@
         "heading": "Request-Reply Messaging",
         "anchor": "request-reply-messaging",
         "level": 3,
-        "line": 232,
+        "line": 237,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Request-Reply Messaging"
@@ -2253,9 +2253,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Promotion suspended 2026-10-28 because the shared workflow-failure.md owner page changed for the Claim Check rewrite; all four dimensions remain supported; coverage partial-bounded; fresh external review required."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Promotion and owner acceptance suspended 2026-10-29 because the shared workflow-failure.md owner page changed during Claim Check review remediation; all four dimensions remain supported and review-ready; coverage partial-bounded; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -2267,7 +2267,7 @@
         "heading": "Correlation Identifier",
         "anchor": "correlation-identifier",
         "level": 3,
-        "line": 212,
+        "line": 217,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ties together messages",
@@ -2845,7 +2845,7 @@
         "heading": "Dead Letter Channel-DLQ",
         "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 248,
+        "line": 253,
         "unit_kind": "dedicated",
         "unit_terms": [
           "quarantine queue",
@@ -3166,7 +3166,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Publish the token only after the payload write succeeds.",
-          "reason": "The source requires publishing the token only after the payload write succeeds; token-to-payload binding, expiry and access rules are Tycho guidance.",
+          "reason": "The source requires publishing the token only after the payload write succeeds and names payload lifecycle and authorization ownership; token-to-payload binding is Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
@@ -3177,13 +3177,13 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "An orphaned payload, an unresolvable token, a store outage, a duplicate claim check or an integrity mismatch are the failure cases.",
-          "reason": "The source states the orphaned-payload and unresolvable-token failure path; expiry, fail-closed and idempotency policy are Tycho guidance.",
+          "quote": "The source names five failure cases: an orphaned payload, an unresolvable token, a duplicate claim check, an integrity mismatch, and a store outage or data loss.",
+          "reason": "The source names the orphaned-payload, unresolvable-token, duplicate-claim-check, integrity-mismatch and store-outage or data-loss cases across its payload consistency, integrity and availability paragraphs; expiry, garbage collection and fail-closed policy are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
             "section": "Problems and considerations",
-            "quote": "A failure after payload write but before token publication can leave a payload orphaned. A token published before its payload is retrievable can mean consumers receive references they can't resolve.",
+            "quote": "A failure after payload write but before token publication can leave a payload orphaned. A token published before its payload is retrievable can mean consumers receive references they can't resolve. Publish the token only after the payload write succeeds. Because retries can deliver the same claim check more than once, use the Idempotent Consumer pattern to process duplicates safely. Payload integrity. When consumers must verify payload integrity, include a content hash or digital signature in the message. Define a protocol for mismatches, such as rejecting the payload, retrying retrieval, or routing the message for investigation. Payload availability and durability. The external data store must remain available and durable for the entire period that receiving applications need to retrieve a payload. If the store experiences an outage or data loss, consumers that hold valid tokens can't retrieve their payloads and their message processing stalls.",
             "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
           }
         },
@@ -3217,7 +3217,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner section and c03 card rewritten decision-first; all four dimensions bind to the Microsoft Learn Claim Check page and the EIP pattern page; coverage partial-bounded; no promotion."
+      "notes": "Dedicated owner section and dedicated c03 card rewritten decision-first; all four dimensions bind to the Microsoft Learn Claim Check page (read.microsoft-claim-check.2026-10-28); the EIP pattern page (read.batch2-claim.2026-10-21) supports only the stored-payload and claim-token description; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
@@ -10767,9 +10767,9 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 2,
+      "bounded_entries": 3,
       "decision": "deepen",
-      "rationale": "Claim Check, correlation, request-reply and workflow-failure gates have four dedicated units; DLQ remains partial."
+      "rationale": "Claim Check, correlation, request-reply and workflow-failure gates have four dedicated units; DLQ and Request-Reply remain partial-bounded."
     },
     {
       "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
@@ -11080,14 +11080,14 @@
     "invariant_supported": 60,
     "failure_recovery_supported": 44,
     "alternative_supported": 56,
-    "technical_partial_bounded": 36,
+    "technical_partial_bounded": 37,
     "technical_partial": 90,
     "technical_name_only": 0,
-    "technical_sufficient": 19,
-    "decision_partial_bounded": 126,
+    "technical_sufficient": 18,
+    "decision_partial_bounded": 127,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 19,
+    "decision_sufficient": 18,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

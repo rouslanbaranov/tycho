@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-22"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -183,31 +183,36 @@ processing.
 **Invariant.** Publish the token only after the payload write succeeds. Payload write and token
 publication occur in separate systems and are not atomic, so a token published before its
 payload is retrievable leaves consumers with references they cannot resolve; a payload
-written without a published token is orphaned. Tycho guidance, not a source claim: keep the
-token bound to the stored payload it names, coordinate message expiration with payload
-retention, and keep a valid claim check from pointing to deleted or unauthorized data.
+written without a published token is orphaned. The source requires a named owner for payload
+deletion and coordination between message expiration and payload retention, and it keeps
+authorization as an independent interaction between producers, consumers and the store.
+Tycho guidance: keep the token bound to the stored payload it names and keep a valid claim
+check from pointing to unauthorized data.
 
-**Failure and recovery.** An orphaned payload, an unresolvable token, a store outage, a
-duplicate claim check or an integrity mismatch are the failure cases. Tycho guidance: expire
-and garbage-collect claims, fail closed when the claim cannot be resolved, and give duplicate
-delivery an idempotent consumer. A store outage stalls every consumer holding a valid token;
-verify durability, retention and restore before relying on the store.
+**Failure and recovery.** The source names five failure cases: an orphaned payload, an
+unresolvable token, a duplicate claim check, an integrity mismatch, and a store outage or data
+loss. Publish the token only after the payload write succeeds, use an idempotent consumer for
+duplicate claim checks, define a disposition for integrity mismatches, and keep the store
+available and durable for the retention period. Tycho guidance: expire and garbage-collect
+claims, and fail closed when retrieval is impossible.
 
 **Alternative.** Inline delivery is the alternative when the payload fits the transport and
 latency budget; compression or a compact serializer is the documented way to reduce inline
 size. Reverse the choice when retrieval and storage complexity exceed the savings.
 
 **Limits.** A claim check adds an external store, a retrieval hop and a second consistency
-boundary; it is not a payload catalogue or a security token. Tycho guidance, not a source
-claim: bind the token to the message and tenant and give the store an owner, a retention
-horizon and a cleanup path.
+boundary; it is not a payload catalogue or a security token. The source requires a named
+owner for payload deletion and a retention rule; Tycho guidance, not a source claim, adds
+tenant binding and a cleanup path for claims.
 
 **Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
 text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the
-mechanism, the write-before-publish invariant, the orphaned and unresolvable-token failure
-path and the inline-compression alternative. The public Enterprise Integration Patterns Claim
-Check page (read.batch2-claim.2026-10-21) supports the stored-payload and claim-token
-description; it is publisher-abridged and does not state the failure or alternative policy.
+mechanism, payload lifecycle ownership, the write-before-publish invariant, the orphaned
+payload, unresolvable token, duplicate claim check, integrity mismatch and store outage or
+data loss failure cases, and the inline-compression alternative. The public Enterprise
+Integration Patterns Claim Check page (read.batch2-claim.2026-10-21) supports the stored-payload
+and claim-token description; it is publisher-abridged and does not state the failure or
+alternative policy.
 
 ### Correlation Identifier
 

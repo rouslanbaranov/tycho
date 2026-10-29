@@ -19,6 +19,10 @@ guard is not yet possible. The guard is part of closing the finding.
   with owner units.
 - **R3-01 shared ASVS citation fan-out:** the card-source-note test rejects the stale
   overview wording on the shared C11 page.
+- **Claim Check review 2026-10-29:** `tests/test_tycho_claim_check_review.py` requires
+  payload-lifecycle wording in the card and owner, limits the owner-unit notes to the
+  Microsoft bindings plus the stored-payload-only EIP role, and requires the failure quote
+  and binding to cover all five named cases.
 
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.

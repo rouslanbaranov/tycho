@@ -35,19 +35,19 @@ Pilot six: **all six sufficient**. Owner accepted 16 of the 18 current promotion
 
 ## Suspended promotions
 
-Both c03 cards moved to dedicated pages on 2026-10-28. Request-Reply Messaging was
-suspended again when the shared `workflow-failure.md` owner page changed for the Claim
-Check rewrite. Coverage is `partial-bounded`; neither entry is promoted or counted as
-sufficient.
+The c03 cards moved to dedicated pages on 2026-10-28. Request-Reply Messaging was
+suspended again on 2026-10-29 when the shared `workflow-failure.md` owner page changed
+for Claim Check review remediation. Coverage is `partial-bounded`; neither entry is
+promoted or counted as sufficient.
 
 | Entry | Prior report | State |
 |---|---|---|
 | Request-Reply Messaging | `2026-10-28-request-reply-review4-codex.md` | suspended |
 | Message Filter | `2026-10-28-message-filter-review-codex.md` | suspended |
 
-Claim Check is not a suspended promotion: no promotion record exists. It is review-ready
-with four source-bound dimensions and `partial-bounded` coverage; a fresh external review
-is required before any promotion decision.
+Claim Check is not a suspended promotion: no promotion record exists. Its dedicated card
+and owner section are review-ready with four source-bound dimensions and `partial-bounded`
+coverage; a fresh external review is required before any promotion decision.
 
 ## Pilot six
 
@@ -68,7 +68,7 @@ is required before any promotion decision.
 - c09 README — Static Content Hosting promotion;
 - c10 README — Dark card moved to its own page, promotion restored;
 - c04 README — Transactional Outbox promotion;
-- c03 README — no active card-page promotion; Claim Check card prepared in place;
+- c03 README — no active card-page promotion; Claim Check card is on its own page;
   Request-Reply Messaging and Message Filter suspensions are tracked above.
 
 Editing these pages requires a split and fresh review before promotion can remain valid.

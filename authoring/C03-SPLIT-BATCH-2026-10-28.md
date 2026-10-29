@@ -43,13 +43,13 @@ restoration.
 Pipes and Filters remains `partial-bounded` with four source-bound dimensions and no
 promotion. No external review was run in this batch.
 
-## Update - Claim Check, 2026-10-28
+## Update - Claim Check, 2026-10-29
 
-Claim Check was prepared for sufficient review without moving its c03 card: the card stays
-on the c03 landing page because that page carries no active promotion. The owner section in
-`workflow-failure.md` was rewritten decision-first and bound to the Microsoft Learn Claim
-Check page for mechanism, invariant, failure/recovery and alternative. Editing that shared
-owner page suspended the Request-Reply Messaging promotion again; Request-Reply remains
-`partial-bounded` and review-ready with its four dimensions supported. Claim Check remains
-`partial-bounded` with no promotion and no sufficient claim. Fresh external reviews are
-required for both.
+Claim Check was split to a dedicated c03 page on 2026-10-28. On 2026-10-29 the owner section
+and card were remediated against review findings: decision wording now uses payload
+lifecycle, the owner-unit notes attribute all four bindings to the Microsoft page and limit
+the EIP page to the stored-payload/claim-token description, and failure cases are explicitly
+source-attributed. Editing the shared owner page suspended Request-Reply Messaging again;
+Request-Reply remains `partial-bounded` and review-ready with its four dimensions supported.
+Claim Check remains `partial-bounded` with no promotion and no sufficient claim. Fresh
+external reviews are required for both.
