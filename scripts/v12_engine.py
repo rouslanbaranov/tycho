@@ -8,9 +8,8 @@ The engine implements three bounded model families used by the V12 volume:
   backpressure;
 * a staged modernization model with dual-write lag, reconciliation and rollback.
 
-It also provides seeded Monte Carlo aggregation, pick-freeze first-order and
-total-order sensitivity estimates, canonical provenance hashes and a replay
-check. It is intentionally small, dependency-free and separate from the book
+It also provides seeded Monte Carlo aggregation, a quadratic response-surface
+sensitivity screen, canonical provenance hashes and a replay check. It is intentionally small, dependency-free and separate from the book
 pages. Passing engine tests proves only the exercised reference cases.
 """
 from __future__ import annotations
@@ -571,7 +570,8 @@ def run_modernization(scenario: dict, parameters: dict, seed: int) -> dict:
         "cost_per_1k_success": 0.0,
         "max_divergence": max_divergence,
         "rollback_seconds": ((rollback_end - rollback_at) if rollback_end is not None
-                             else (0.0 if not rollback_applicable else duration)),
+                             else (0.0 if not rollback_applicable
+                                   else max(0.0, duration - rollback_at))),
         "rollback_completed": 1.0 if (rollback_end is not None or not rollback_applicable) else 0.0,
         "cutover_completed": cutover_done,
         "served": completed,
@@ -882,7 +882,7 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
             "Synthetic workload; no production measurement is claimed.",
             "Metrics are conditional on the declared model and scenario assumptions.",
             "Confidence intervals use a normal approximation across replications.",
-        ] + (["Non-completing rollback durations are censored at the scenario horizon."]
+        ] + (["Non-completing rollback durations are censored at the elapsed time from the trigger to the scenario horizon."]
              if any(name == "rollback_seconds" for name in metric_names) else []),
         "result_sha256": None,
     }

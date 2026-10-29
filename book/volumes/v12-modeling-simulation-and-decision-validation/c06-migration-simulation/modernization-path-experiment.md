@@ -84,7 +84,7 @@ The staged run reports:
 - mean dual-write backlog 4,242.0 records;
 - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
 - rollback completed 0.1;
-- rollback seconds mean 2,160, with non-completions censored at 2,400.
+- rollback seconds mean 1,080, with non-completions censored at 1,200 seconds after the trigger.
 
 The baseline reports:
 
@@ -148,10 +148,10 @@ to an insufficient-evidence outcome and a measurement agenda.
   because it has zero modeled divergence. The baseline does not achieve modernization.
 - **Single-input optimism.** The staged path is run with the best-case lag and capacity only.
   The decision ignores the upper tail.
-- **Correlation omission.** Lag and capacity are drawn independently, producing an
-  unrealistically narrow divergence range.
-- **Horizon censorship.** A rollback that exceeds the horizon is reported as zero seconds
-  rather than censored.
+- **Correlation omission.** If correlation is omitted, lag and capacity are drawn
+  independently, producing an unrealistically narrow divergence range.
+- **Horizon censorship.** A rollback that exceeds the horizon is reported as the elapsed
+  censoring limit, not as an observed completion.
 - **Throughput equivalence.** Both paths serve the synthetic load, so the experiment is
   treated as evidence that the target path adds no value. The model does not include the
   business reason for modernization.

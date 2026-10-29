@@ -122,7 +122,7 @@ The run reports:
 - success rate 1.0 (the modeled traffic is served);
 - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
 - rollback completed 0.1: it finishes in only 10% of replications;
-- rollback seconds mean 2,160, with non-completions censored at 2,400.
+- rollback seconds mean 1,080, with non-completions censored at 1,200 seconds after the trigger.
 
 The no-cutover baseline reports zero divergence and no rollback requirement. The staged
 candidate does not produce a decision-supported cutover because rollback completes in

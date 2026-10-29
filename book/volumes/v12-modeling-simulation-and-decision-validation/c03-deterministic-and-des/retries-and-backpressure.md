@@ -112,7 +112,7 @@ The overload scenario offers 30 requests per second to a 24-request-per-second p
 
 The dominant failure is timeout, not rejection. The queue is large enough to absorb arrivals
 but not large enough to prevent deadline expiry. A report that focuses on rejection alone
-would miss most of the loss: rejection is 16.6% while timeout is 27.9%.
+would miss most of the loss: rejection is 0.05% while timeout is 35.0%.
 
 ## A retry state diagram
 

@@ -184,6 +184,7 @@ class DiscreteEventTests(unittest.TestCase):
         result = engine.run_scenario(model("discrete-event"), s, str(MODEL_PATH), str(SCENARIO_PATH))
         self.assertEqual(result["metrics"]["success_rate"]["value"], 0.0)
         self.assertGreater(result["metrics"]["timeout_rate"]["value"], 0.5)
+        self.assertEqual(result["metrics"]["retry_amplification"]["value"], 1.0)
         self.assertTrue(result["invariants"]["conservation_ok"])
 
     def test_cost_uses_measurement_window(self):
@@ -248,11 +249,33 @@ class ModernizationTests(unittest.TestCase):
         result = engine.run_modernization(s, engine.base_parameters(s), 7)
         self.assertGreater(result["rejection_rate"], 0.0)
 
+    def test_unfinished_rollback_is_censored_at_elapsed_limit(self):
+        s = self.modernization(lag=5.0, reconciliation=0.1)
+        s["workload"]["duration"] = 400.0
+        s["workload"]["warmup"] = 0.0
+        s["configuration"]["rollback_at"] = 100.0
+        result = engine.run_modernization(s, engine.base_parameters(s), 7)
+        self.assertEqual(result["rollback_completed"], 0.0)
+        self.assertEqual(result["rollback_seconds"], 300.0)
+
     def test_rollback_completes_with_high_reconciliation(self):
         s = self.modernization(lag=0.1, reconciliation=100.0)
         result = engine.run_modernization(s, engine.base_parameters(s), 7)
         self.assertEqual(result["rollback_completed"], 1.0)
         self.assertEqual(result["rollback_seconds"], 0.0)
+
+
+class SensitivityDependenceTests(unittest.TestCase):
+    def test_correlated_screen_is_rejected(self):
+        s = scenario(uncertainty={"parameter_draws": [
+            {"parameter": "arrival_rate", "distribution": "normal", "mean": 10.0,
+             "sd": 1.0, "unit": "request/second"},
+            {"parameter": "service_mean", "distribution": "normal", "mean": 0.3,
+             "sd": 0.05, "unit": "second/request"}],
+            "correlations": [{"left": "arrival_rate", "right": "service_mean",
+                              "coefficient": 0.3}]})
+        with self.assertRaises(engine.EngineError):
+            engine.sensitivity(model("discrete-event"), s, str(MODEL_PATH), str(SCENARIO_PATH), draws=4)
 
 
 class CorrelationTests(unittest.TestCase):

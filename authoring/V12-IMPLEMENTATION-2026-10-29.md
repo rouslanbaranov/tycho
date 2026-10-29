@@ -63,7 +63,9 @@ is conditional on an unverified operability constraint and uncalibrated inputs.
 
 The modernization experiment compares a staged cutover with a no-cutover baseline. The
 staged path produces a maximum divergence of 8,925.5 records and completes rollback within
-2,400 seconds in only 10% of replications. The decision record returns `insufficient-evidence`.
+2,400 seconds in only 10% of replications; non-completing rollback durations are censored
+at 1,200 seconds after the trigger, with a mean censored duration of 1,080 seconds. The
+decision record returns `insufficient-evidence`.
 
 The sensitivity screen reports first-order and total-order indices for arrival rate and
 service mean. It is a quadratic response-surface screen, not a full pick-freeze Sobol
@@ -85,7 +87,7 @@ chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 627 tests in 74.0s
+Ran 629 tests in 75.6s
 OK
 
 node tools/mermaid/check.mjs --root .
@@ -173,13 +175,36 @@ Corrections applied:
   timeout consumes the attempt budget;
 - the sensitivity scenario is independent and the engine rejects a correlated screen; the
   correlated-input run remains a separate Monte Carlo propagation;
-- non-completing rollback durations are censored at the horizon and the limitation is stored;
+- non-completing rollback durations are censored at the elapsed time from the trigger to the
+  horizon and the limitation is stored;
 - the decision, review index, implementation record and decision constraint evidence were
   corrected, and the packet baseline limitation is recorded.
 
 The delta review report is saved verbatim as
 \`authoring/ai-reviews/2026-10-29-v12-isolated-volume-delta-codex.md\` and indexed with
 verdict reject. A second delta review of the corrected artifacts is the next gate.
+
+## Independent review round 3
+
+A second delta review returned pass-with-findings. N1 and N2 were resolved. N3 remained
+partially resolved because a non-completing rollback used the full scenario duration instead
+of elapsed time since the trigger; N4 remained partially resolved because corrected prose
+retained stale overload percentages and an outdated pick-freeze engine description. The low
+finding noted missing direct assertions for the attempt budget, censoring and correlated-screen
+rejection.
+
+Corrections applied:
+
+- unfinished rollback durations are censored at duration minus rollback trigger time;
+- overload prose uses the corrected timeout and rejection rates;
+- the engine docstring describes the quadratic response-surface screen;
+- modernization failure bullets are marked as hypothetical failure cases;
+- regression tests assert the attempt budget, elapsed censoring and correlated-screen
+  rejection.
+
+The pass-with-findings report is saved verbatim as
+\`authoring/ai-reviews/2026-10-29-v12-isolated-volume-delta2-codex.md\` and indexed. A final
+delta review of these corrections is the last review gate.
 
 ## Limits
 
