@@ -38,7 +38,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-29"
 updated_at: "2026-10-29"
-source_inspection_date: "2026-10-20"
+source_inspection_date: "2026-10-26"
 content_verified_at: null
 ---
 
@@ -56,9 +56,10 @@ reducing load on the application compute that handles other requests.
 
 The host must own upload validation, origin protection and prewarming for a release. A retained
 version is the rollback path, so garbage collection may delete old objects only after the rollback
-window; a deleted object needs a tombstone or purge proof. The cache key, TTL and authorization
-boundary must agree, especially for private assets signed at the edge. Changing, deleting, or
-restricting access to origin content doesn't invalidate cached copies. Purge caches when you
+window; a deleted object needs a tombstone or purge proof. Configure cache keys and cache
+lifetimes deliberately, and keep the authorization boundary explicit, especially for private
+assets signed at the edge. Changing, deleting, or restricting access to origin content
+doesn't invalidate cached copies. Purge caches when you
 need to, but account for propagation time and remember that CDN purges don't clear browser
 caches.
 
@@ -67,7 +68,8 @@ Source: `read.static-content-hosting.2026-10-26` (Microsoft static content hosti
 Retained versions and edge copies carry storage, egress and purge cost; a second origin or
 duplicated manifest needs one version authority, or the rollback path becomes ambiguous.
 
-The application must process or personalize content for each request before delivering it.
+The alternative is to serve static content dynamically from the application origin. The source
+notes that using an application platform to deliver static content is generally not cost-effective.
 
 ## Navigation
 
