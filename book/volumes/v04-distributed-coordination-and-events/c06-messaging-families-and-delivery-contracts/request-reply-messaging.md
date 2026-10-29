@@ -53,9 +53,7 @@ This page owns the bounded technical note moved from the
 on 2026-10-29. The other ownership notes remain on the chapter page.
 
 Send a pair of Request-Reply messages, each on its own channel. The requestor sends a request and
-waits for a reply; the replier receives the request and responds. The request channel and reply
-channel are separate. The requestor waits for the reply; the replier processes the request and
-sends the response.
+waits for a reply; the replier receives the request, processes it and sends the response.
 
 In the Synchronous Block approach, the requestor sends the request message, blocks to wait for
 the reply, then processes it. The request thread awaiting the response implies that there is only

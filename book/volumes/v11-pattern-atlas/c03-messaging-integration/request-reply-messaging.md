@@ -56,9 +56,9 @@ single reply channel, and a single reply thread to process replies for multiple 
 threads." Tycho synthesis: treat both the Synchronous Block messaging approach and direct RPI as
 blocking the caller's thread; the decision is indirect messaging versus direct
 invocation. Tycho synthesis: carry a Correlation Identifier and match each reply to its
-request, because the bound page does not serve correlation mechanics. Tycho synthesis: prefer
-a direct synchronous Remote Procedure Invocation when the responder is reachable within the
-caller's request budget and blocking is acceptable.
+request, because the bound page does not serve correlation mechanics. Tycho synthesis: prefer a direct synchronous Remote Procedure Invocation only when both parties
+can be available for the request, the call fits the request budget, no broker is justified, and
+blocking is acceptable.
 
 **Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
