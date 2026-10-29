@@ -1,13 +1,16 @@
 # Independent AI review
 
-Status: mandatory. Effective: 2026-10-26. Supersedes the human-review gate for all
-future reviews and acceptance decisions.
+Status: mandatory for book-content and atlas-structure changes. Not required for
+tooling, tests, generated indexes, workflows, scripts or documentation. Effective:
+2026-10-26. Supersedes the human-review gate for applicable future reviews.
 
 ## Purpose
 
-Tycho accepts an independent review performed by a different AI harness from a different
-vendor as the independent review gate. A review by the authoring agent, the same harness,
-the same vendor or a subagent of the authoring session does not satisfy this rule.
+When the gate applies, Tycho accepts an independent review performed by a different AI
+harness from a different vendor. A review by the authoring agent, the same harness, the
+same vendor or a subagent of the authoring session does not satisfy this rule. The gate
+applies to book content and atlas structure; tooling, tests, generated indexes, workflow
+configuration, scripts and documentation do not require it.
 
 Permitted examples when the authoring session is DeepSeek Harness:
 
@@ -114,10 +117,10 @@ separate decisions unless the owner explicitly records otherwise.
 
 ## Failure and unavailability
 
-If no qualifying CLI is available, prepare a manual hand-off through the user using the
-same prompt, scope and report requirements. If the user cannot provide a qualifying review,
-the gate is `blocked`. It is never waived, replaced by self-review or satisfied by the
-authoring agent's own harness. Do not claim a review that did not run.
+For an applicable change, if no qualifying external reviewer is available, the gate is
+`blocked`. It is never waived, replaced by self-review or satisfied by the authoring
+agent's own harness. Do not claim a review that did not run. For a non-applicable change,
+record `ai_review: not-required`; do not call that a review.
 
 ## Historical records
 

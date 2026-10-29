@@ -905,7 +905,7 @@ class TychoMcpServer:
     """A bounded dual-era MCP adapter over one Tycho checkout."""
 
     def __init__(self, root=ROOT, index_path=None, pattern_registry=None,
-                 pattern_cards=None, query_log=None):
+                 pattern_cards=None, query_log=None, query_log_raw=False):
         self.root = Path(root).resolve()
         self.index_path = None if index_path is None else Path(index_path)
         self.pattern_registry = self.root / (
@@ -913,6 +913,7 @@ class TychoMcpServer:
         self.pattern_cards = self.root / (
             pattern_cards or DEFAULT_PATTERN_CARDS)
         self.query_log = None if query_log is None else Path(query_log)
+        self.query_log_raw = query_log_raw
         self.legacy_initialized = False
         self.legacy_version = None
 
@@ -1008,7 +1009,9 @@ class TychoMcpServer:
             "logged_at": datetime.now(timezone.utc).isoformat(
                 timespec="seconds").replace("+00:00", "Z"),
             "tool": "tycho_search",
-            "query": query,
+            ("query" if self.query_log_raw else "query_sha256"):
+                (query if self.query_log_raw
+                 else hashlib.sha256(query.encode("utf-8")).hexdigest()),
             "filters": {
                 "kind": args.get("kind"),
                 "topic": args.get("topic"),
@@ -2333,10 +2336,14 @@ def main(argv=None):
     parser.add_argument(
         "--query-log", type=Path,
         help="Opt-in JSONL search-query log; disabled by default")
+    parser.add_argument(
+        "--query-log-raw", action="store_true",
+        help="Store raw query text in the opt-in log (hash is default)")
     args = parser.parse_args(argv)
     server = TychoMcpServer(
         args.root, args.index, pattern_registry=args.pattern_registry,
-        pattern_cards=args.pattern_cards, query_log=args.query_log)
+        pattern_cards=args.pattern_cards, query_log=args.query_log,
+        query_log_raw=args.query_log_raw)
     try:
         serve(server)
     except BrokenPipeError:

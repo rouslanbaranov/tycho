@@ -11,11 +11,16 @@ select a better parent section within the same document, while cross-document
 order stays anchored to parent-H2 scores. Passage diagnostics never replace the
 parent section key, content or citation.
 
-Every query first recomputes the route snapshot and refuses a stale index. The
-deep structural verifier remains section_fts_index.py check; search performs a
-quick integrity/count check and the route-snapshot comparison.
+Every query validates the persisted index and binds it to the current book.
+A process-local snapshot cache reuses a canonical scan only after hashing every
+book Markdown document and the metadata schema; any content change forces a full
+canonical rescan. The deep structural verifier remains section_fts_index.py
+check; search performs a quick integrity/count check and the route-snapshot
+comparison.
 """
 import argparse
+import copy
+from collections import OrderedDict
 import hashlib
 import json
 import os
@@ -23,6 +28,7 @@ from pathlib import Path
 import re
 import sqlite3
 import sys
+import threading
 
 import answerability as answerability_policy
 import evidence_gate
@@ -39,6 +45,34 @@ SECTION_SEARCH_COLUMNS = (
     "char_end", "content",
 )
 TOKEN = section_fts_index.TOKEN
+_QUERY_CACHE = OrderedDict()
+_QUERY_CACHE_LOCK = threading.Lock()
+_QUERY_CACHE_MAX = 128
+
+
+def _query_cache_key(root, snapshot, query, limit, kind, topic,
+                     evidence_status, path_prefix, index_path, all_sections,
+                     abstain, include_weak, detail, max_chars):
+    return (str(Path(root).resolve()), snapshot, query, limit, kind, topic,
+            evidence_status, path_prefix, str(index_path), all_sections,
+            abstain, include_weak, detail, max_chars)
+
+
+def _cache_get(key):
+    with _QUERY_CACHE_LOCK:
+        value = _QUERY_CACHE.pop(key, None)
+        if value is None:
+            return None
+        _QUERY_CACHE[key] = value
+        return copy.deepcopy(value)
+
+
+def _cache_put(key, value):
+    with _QUERY_CACHE_LOCK:
+        _QUERY_CACHE[key] = value
+        _QUERY_CACHE.move_to_end(key)
+        while len(_QUERY_CACHE) > _QUERY_CACHE_MAX:
+            _QUERY_CACHE.popitem(last=False)
 
 
 def bm25_weights():
@@ -84,6 +118,88 @@ def match_expression(terms):
     return " OR ".join('"' + term + '"' for term in terms)
 
 
+# Process-local validation cache: exact book/schema bytes -> canonical route
+# snapshot. It never spans processes and never replaces the index checks; it only
+# avoids reparsing every document when the complete input state is unchanged.
+_SNAPSHOT_SCAN_CACHE = {}
+_SNAPSHOT_SCAN_CACHE_LIMIT = 4
+_SNAPSHOT_SCAN_CACHE_LOCK = threading.Lock()
+
+
+def _book_state_key(root):
+    """Hash every canonical input of route_index.canonical_scan.
+
+    Content hashes, not timestamps, decide reuse. Any changed, added, removed,
+    renamed or symlinked Markdown page yields a different key, and so does a
+    changed metadata schema. Unsafe paths are left to canonical_scan's stricter
+    checks and are not cached.
+    """
+    root = Path(root).resolve()
+    book = root / "book"
+    if not book.is_dir() or book.is_symlink():
+        raise ValueError("book directory missing or symlink")
+    resolved_book = book.resolve()
+    digest = hashlib.sha256(b"tycho.snapshot-cache.v1\0")
+    for file in sorted(book.rglob("*.md")):
+        if file.is_symlink() or not file.resolve().is_relative_to(resolved_book):
+            raise ValueError("unsafe book file/symlink")
+        text = file.read_text(encoding="utf-8")
+        relative = file.relative_to(root).as_posix()
+        digest.update(relative.encode("utf-8") + b"\0")
+        digest.update(hashlib.sha256(text.encode("utf-8")).digest())
+    schema = root / "schemas/document-metadata.v1.schema.json"
+    try:
+        schema_text = schema.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        schema_digest = hashlib.sha256(b"missing").digest()
+    else:
+        schema_digest = hashlib.sha256(schema_text.encode("utf-8")).digest()
+    digest.update(b"\0schema\0")
+    digest.update(schema_digest)
+    return str(root), digest.hexdigest()
+
+
+def _remember_snapshot_scan(root, key, snapshot_sha256):
+    """Replace stale entries for this root and keep the cache bounded."""
+    root_key = str(root)
+    for existing in [item for item in _SNAPSHOT_SCAN_CACHE
+                     if item[0] == root_key]:
+        _SNAPSHOT_SCAN_CACHE.pop(existing, None)
+    _SNAPSHOT_SCAN_CACHE[key] = snapshot_sha256
+    while len(_SNAPSHOT_SCAN_CACHE) > _SNAPSHOT_SCAN_CACHE_LIMIT:
+        _SNAPSHOT_SCAN_CACHE.pop(next(iter(_SNAPSHOT_SCAN_CACHE)))
+
+
+def _current_route_snapshot(root):
+    """Return the canonical route snapshot for the current book, cached by bytes.
+
+    A cache hit reuses only a scan produced from the identical book and schema
+    bytes. On a miss, canonical_scan runs under a lock so concurrent callers share
+    one scan. The post-scan key is checked before caching so a concurrent book
+    change cannot bind an old key to a newer scan.
+    """
+    root = Path(root).resolve()
+    try:
+        key = _book_state_key(root)
+    except (OSError, ValueError):
+        key = None
+    with _SNAPSHOT_SCAN_CACHE_LOCK:
+        if key is not None:
+            cached = _SNAPSHOT_SCAN_CACHE.get(key)
+            if cached is not None:
+                return cached
+        scan = route_index.canonical_scan(root, allow_partial=True)
+        snapshot = scan["snapshot_sha256"]
+        if key is not None:
+            try:
+                unchanged = _book_state_key(root) == key
+            except (OSError, ValueError):
+                unchanged = False
+            if unchanged:
+                _remember_snapshot_scan(root, key, snapshot)
+        return snapshot
+
+
 def open_snapshot(root, index_path=None):
     """Open a published index and refuse it unless it matches the current book."""
     root = Path(root).resolve()
@@ -117,8 +233,8 @@ def open_snapshot(root, index_path=None):
                  "Section index row counts diverge", "not-available")
         _require(passages == passage_fts == manifest["passage_count"],
                  "H3 passage index row counts diverge", "not-available")
-        scan = route_index.canonical_scan(root, allow_partial=True)
-        if scan["snapshot_sha256"] != manifest["route_snapshot_sha256"]:
+        current = _current_route_snapshot(root)
+        if current != manifest["route_snapshot_sha256"]:
             raise SnapshotMismatch(
                 "Section index snapshot does not match the current book; rebuild it")
     except (sqlite3.DatabaseError, ValueError, TypeError, KeyError) as exc:
@@ -305,6 +421,14 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                  name + " filter must be a non-empty string")
     prefix = None if path_prefix is None else path_prefix_pattern(path_prefix)
     db, manifest = open_snapshot(root, index_path)
+    cache_key = _query_cache_key(
+        root, manifest["snapshot_id"], query, limit, kind, topic,
+        evidence_status, path_prefix, index_path, all_sections, abstain,
+        include_weak, detail, max_chars)
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        db.close()
+        return cached
     metadata = load_document_metadata(root)
     try:
         filters, params = [], []
@@ -575,6 +699,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         response["returned_chars"] = len(json.dumps(
             response, ensure_ascii=False,
             separators=(",", ":")).encode("utf-8"))
+        _cache_put(cache_key, copy.deepcopy(response))
         return response
     finally:
         db.close()
