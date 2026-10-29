@@ -1903,7 +1903,7 @@
         "heading": "Publish-Subscribe",
         "anchor": "publish-subscribe",
         "level": 3,
-        "line": 360,
+        "line": 265,
         "unit_kind": "dedicated",
         "unit_terms": [
           "topic",
@@ -1970,7 +1970,7 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 376,
+        "line": 281,
         "unit_kind": "dedicated",
         "unit_terms": [
           "eligible worker",
@@ -2037,7 +2037,7 @@
         "heading": "Competing Consumers",
         "anchor": "competing-consumers",
         "level": 3,
-        "line": 315,
+        "line": 220,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Competing Consumers"
@@ -2108,7 +2108,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 390,
+        "line": 295,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2177,12 +2177,12 @@
       "catalog_name": "Request-Reply Messaging",
       "family": "messaging-and-event-driven-integration",
       "owner": {
-        "document_id": "tycho.page.148a37ff87ca4e42a2fec625c65319b0",
-        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+        "document_id": "tycho.page.7327a6422143416f8ff012e5c168ed5a",
+        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md",
         "heading": "Request-Reply Messaging",
         "anchor": "request-reply-messaging",
-        "level": 3,
-        "line": 237,
+        "level": 1,
+        "line": 43,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Request-Reply Messaging"
@@ -2204,7 +2204,7 @@
         "invariant": {
           "state": "supported",
           "quote": "The request thread awaiting the response implies that there is only one outstanding request, or that the reply channel for this request is private for this thread.",
-          "reason": "A blocking request thread implies one outstanding request or a private reply channel.",
+          "reason": "The Synchronous Block request thread implies one outstanding request or a reply channel private to the requesting thread.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
@@ -2220,19 +2220,19 @@
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
-            "section": "Request-Reply",
-            "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller’s context.",
+            "section": "Asynchronous Callback",
+            "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller's context.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
           }
         },
         "alternative": {
           "state": "supported",
           "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
-          "reason": "Synchronous RPC blocks the caller thread.",
+          "reason": "The bound page states that an RPC caller's thread blocks while it waits for the response; it does not present RPC as a decision alternative. Framing direct synchronous RPC as the alternative is Tycho synthesis.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
-            "section": "Solution (unheaded)",
+            "section": "Request-Reply",
             "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
           }
@@ -2241,7 +2241,7 @@
       "decision_evidence": {
         "atlas_section": "request-reply-messaging",
         "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?",
-        "competing_alternative": "A synchronous Remote Procedure Invocation blocks the caller's thread while it waits for the response.",
+        "competing_alternative": "Tycho synthesis: a direct synchronous Remote Procedure Invocation is the alternative when the responder is reachable within the request budget and blocking is acceptable. The bound source states only that an RPC caller's thread must block while it waits for the response, not that RPC is the decision alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2253,9 +2253,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Promotion and owner acceptance suspended 2026-10-29 because the shared workflow-failure.md owner page changed during Claim Check review remediation; all four dimensions remain supported and review-ready; coverage partial-bounded; a fresh external review must pass before restoration."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Dedicated owner page split 2026-10-29; all four dimensions bind to the EIP Request-Reply page; the card decision separates the Synchronous Block one-outstanding/private-thread implication from Asynchronous Callback multiple-outstanding sharing and adds a Tycho correlation path; publisher-abridged limits cover correlation, timeout, duplicate replies and the callback contract; partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -2267,7 +2267,7 @@
         "heading": "Correlation Identifier",
         "anchor": "correlation-identifier",
         "level": 3,
-        "line": 217,
+        "line": 172,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ties together messages",
@@ -2341,7 +2341,7 @@
         "heading": "Content-Based Router",
         "anchor": "content-based-router",
         "level": 3,
-        "line": 248,
+        "line": 198,
         "unit_kind": "dedicated",
         "unit_terms": [
           "A content-based router chooses a destination",
@@ -2415,7 +2415,7 @@
         "heading": "Message Filter",
         "anchor": "message-filter",
         "level": 3,
-        "line": 330,
+        "line": 235,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Message Filter"
@@ -2488,12 +2488,12 @@
       "catalog_name": "Pipes and Filters",
       "family": "messaging-and-event-driven-integration",
       "owner": {
-        "document_id": "tycho.page.0eee61f261054af0ad728d791036c5f4",
-        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+        "document_id": "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414",
+        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/pipes-and-filters.md",
         "heading": "Pipes and Filters",
         "anchor": "pipes-and-filters",
-        "level": 3,
-        "line": 266,
+        "level": 1,
+        "line": 43,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ordered stages",
@@ -2517,8 +2517,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each stage has one inbound and one outbound port in the basic form, and a parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer.",
-          "reason": "Binds the stage ports to an explicit ordering scope; a single instance or resequencer preserves order.",
+          "quote": "A parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer.",
+          "reason": "Binds message reordering under parallel or multi-instance execution to an explicit ordering scope; the filter interface is described in Mechanism.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.pipes-ch03.2026-10-28",
@@ -2541,8 +2541,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A single in-process transformation is the alternative when the stages are small and cannot be operated independently.",
-          "reason": "The source contrasts the comprehensive in-process module as inflexible and difficult to test.",
+          "quote": "The source considers a comprehensive \"incoming message massaging module\" as one possible solution but calls that approach \"inflexible and difficult to test\".",
+          "reason": "Source names the comprehensive in-process module as one possible solution while rejecting it as inflexible and difficult to test; the small-stage and isolation fallback conditions are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.pipes-ch03.2026-10-28",
@@ -2555,7 +2555,7 @@
       "decision_evidence": {
         "atlas_section": "pipes-and-filters",
         "question": "Should processing be composed as independent stages connected by a message contract?",
-        "competing_alternative": "One cohesive consumer with internal functions. Reverse the choice when stage isolation and reuse no longer justify message hops.",
+        "competing_alternative": "One cohesive consumer with internal functions. Tycho guidance, not a source claim: reverse the choice when the stages are small and cannot be operated independently, or when stage isolation and reuse no longer justify message hops.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2567,58 +2567,58 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Source-bound owner section inside the page's bounded pattern notes, an explicit exception to its synthetic-guidance preamble; all four dimensions bind to the Chapter 3 PDF section and the public pattern page. Promotion suspended after the shared owner page changed for the 2026-10-29 Resequencer rewrite; coverage partial-bounded and review-ready."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Source-bound dedicated owner page (EIP Chapter 3) split 2026-10-29; all four dimensions supported; promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.splitter",
       "catalog_name": "Splitter",
       "family": "messaging-and-event-driven-integration",
       "owner": {
-        "document_id": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070",
-        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+        "document_id": "tycho.page.46865c9b53984280ac3a15e86f5ae50c",
+        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
         "heading": "Splitter",
         "anchor": "splitter",
-        "level": 3,
-        "line": 138,
+        "level": 1,
+        "line": 44,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "one input into several independently processable messages",
-          "part identity",
-          "completion or compensation rule",
+          "correlation identity",
+          "sequence position",
+          "total size",
           "ordering across parts"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A splitter turns one input into several independently processable messages.",
-          "reason": "Defines one input becoming several independently processable messages.",
+          "quote": "A splitter turns one input into several independently processable messages. Apache Camel's splitter breaks a composite into one message per item and processes each part. Camel states: \"The Splitter will by default return the original input message. You can control this by using a custom AggregationStrategy.\"",
+          "reason": "Camel's Splitter breaks the composite into individual messages and returns the original input message by default unless a custom AggregationStrategy controls the response.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
-            "section": "Split",
-            "quote": "Use a Splitter to break out the composite message into a series of individual messages, each containing data related to one item. The Splitter from the EIP patterns allows you to split a message into a number of pieces and process them individually.",
+            "section": "What is returned from Split EIP when its complete",
+            "quote": "The Splitter will by default return the original input message. You can control this by using a custom AggregationStrategy.",
             "revision": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0"
           }
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each part must carry a part identity and a position so completion is decidable.",
-          "reason": "Spring Integration populates correlation, sequence size and sequence number; an unknown size leaves the aggregate incomplete until a release strategy or expiry closes it.",
+          "quote": "Each part must carry a correlation identity, a sequence position and, when known, the total size; completion is decidable only when the total count is known, or when a custom release strategy or expiry closes the group.",
+          "reason": "Spring Integration populates CORRELATION_ID, SEQUENCE_SIZE and SEQUENCE_NUMBER on produced messages; its Iterators section sets SEQUENCE_SIZE to 0 for an unknown size and states that the aggregate group is not released until a custom release strategy or expiry closes it. Ownership and fan-out limits are Tycho guidance.",
           "binding": {
             "source_id": "src.spring-integration",
             "ledger_record": "read.spring-splitter.2026-10-28",
-            "section": "Programming Model",
-            "quote": "It is a MessageHandler implementation that encapsulates features common to splitters, such as filling in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the messages that are produced.",
+            "section": "Iterators",
+            "quote": "Note, in the case of an Iterator (or Iterable), we don’t have access to the number of underlying items and the SEQUENCE_SIZE header is set to 0. This means that the default SequenceSizeReleaseStrategy of an aggregator won’t work and the group for the CORRELATION_ID from the splitter won’t be released; it will remain as incomplete. In this case you should use an appropriate custom ReleaseStrategy or rely on send-partial-result-on-expiry together with group-timeout or a MessageGroupStoreReaper.",
             "revision": "60507878879812400e92ac71f7a8eeb586cc0dd5744d140bd6fe2860aa4e0b94"
           }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A split that aborts does not advance a successful-completion watermark, so the failed batch can be retried.",
-          "reason": "Camel states that an aborted split leaves the watermark unchanged, so the failed batch can be retried; idempotency and re-delivery are Tycho guidance, not source-stated.",
+          "quote": "Apache Camel's value-based watermark is only updated when the split completes successfully; an aborted split (for example, one that exceeds maxFailedRecords) does not update the watermark, which allows the failed batch to be retried.",
+          "reason": "Camel's value-based watermark section states that the watermark is only updated when the split completes successfully and is not updated on abort, allowing retry; idempotency and re-delivery are Tycho guidance, not source-stated.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
@@ -2655,9 +2655,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Bounded decision note; all four technical dimensions have public source bindings; bounded fan-out, ordering/sequencer and lost-context contraindications, idempotency/re-delivery and the decision framing are Tycho guidance; coverage remains partial-bounded; no promotion."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Dedicated owner page split 2026-10-29; dimensions bind to Camel and Spring Integration documentation; mechanism binds Camel default output; invariant states correlation identity, sequence position and known total size with completion by known count or custom release/expiry; failure binds Camel value-based watermark; limits state the provider boundary and Tycho-only guidance; partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -2757,7 +2757,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 175,
+        "line": 142,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -2845,7 +2845,7 @@
         "heading": "Dead Letter Channel-DLQ",
         "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 253,
+        "line": 196,
         "unit_kind": "dedicated",
         "unit_terms": [
           "quarantine queue",
@@ -2919,7 +2919,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 409,
+        "line": 314,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -3062,12 +3062,12 @@
       "catalog_name": "Resequencer",
       "family": "messaging-and-event-driven-integration",
       "owner": {
-        "document_id": "tycho.page.0eee61f261054af0ad728d791036c5f4",
-        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+        "document_id": "tycho.page.2c928286b62944769a4b0cab9fad6139",
+        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
         "heading": "Resequencer",
         "anchor": "resequencer",
-        "level": 3,
-        "line": 196,
+        "level": 1,
+        "line": 45,
         "unit_kind": "dedicated",
         "unit_terms": [
           "sequence domain",
@@ -3141,21 +3141,21 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Bounded, source-bound owner note; all four dimensions bind to exact public quotes: the EIP pattern page for the mechanism, the Apache Camel 4.22.x LTS Resequence page for the bounded backlog and timeout recovery, and the Microsoft Learn Sequential Convoy page for the partitioned-ordering alternative. Coverage partial-bounded; no promotion and no sufficient claim."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Source-bound dedicated owner page (EIP, Camel 4.22.x LTS and Sequential Convoy) split 2026-10-29; all four dimensions supported; promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.claim-check",
       "catalog_name": "Claim Check",
       "family": "messaging-and-event-driven-integration",
       "owner": {
-        "document_id": "tycho.page.148a37ff87ca4e42a2fec625c65319b0",
-        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+        "document_id": "tycho.page.d44c30621fd941318453e3ff995a3e93",
+        "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md",
         "heading": "Claim Check",
         "anchor": "claim-check",
-        "level": 3,
-        "line": 169,
+        "level": 1,
+        "line": 44,
         "unit_kind": "dedicated",
         "unit_terms": [
           "external data store",
@@ -3167,8 +3167,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "The sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system.",
-          "reason": "The source describes writing the full payload to an external store and sending a reference; the receiver resolves it.",
+          "quote": "A sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system.",
+          "reason": "The source describes writing the full payload to an external store and sending a reference; receiving applications use the reference to retrieve the payload directly from the store.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
@@ -3180,19 +3180,19 @@
         "invariant": {
           "state": "supported",
           "quote": "Publish the token only after the payload write succeeds.",
-          "reason": "The source requires publishing the token only after the payload write succeeds and names payload lifecycle and authorization ownership; token-to-payload binding is Tycho guidance.",
+          "reason": "The source requires publishing the token only after the payload write succeeds, assigns payload deletion to a component owner, coordinates message expiration and payload retention, and leaves authorization as an independent interaction with the data store; token-to-payload binding and non-use as an authorization token are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
             "section": "Problems and considerations",
-            "quote": "Publish the token only after the payload write succeeds.",
+            "quote": "Payload lifecycle ownership. Define which component owns payload deletion and how the component determines that the payload isn't needed. Coordinate message expiration and payload retention so that a valid claim check doesn't point to deleted data. Conditional application. Decide whether to make all messages claim checks or to make the claim-check decision per message. If it's conditional, ensure that the schema defines whether the payload is inline or external. Token and store security. Don't embed security tokens as part of the claim check. Leave authorization as an independent interaction between producer or consumer systems and the data store. If your solution requires consumers to be explicitly granted temporary access, use the Valet Key pattern instead. Payload and token consistency. Payload write and token publication occur in separate systems and aren't in one atomic transaction. A failure after payload write but before token publication can leave a payload orphaned. A token published before its payload is retrievable can mean consumers receive references they can't resolve. Publish the token only after the payload write succeeds. Because retries can deliver the same claim check more than once, use the Idempotent Consumer pattern to process duplicates safely.",
             "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
           }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "The source names five failure cases: an orphaned payload, an unresolvable token, a duplicate claim check, an integrity mismatch, and a store outage or data loss.",
-          "reason": "The source names the orphaned-payload, unresolvable-token, duplicate-claim-check, integrity-mismatch and store-outage or data-loss cases across its payload consistency, integrity and availability paragraphs; expiry, garbage collection and fail-closed policy are Tycho guidance.",
+          "quote": "The source names six failure cases: an orphaned payload, an unresolvable token, a duplicate claim check, an integrity mismatch, a store outage, and data loss.",
+          "reason": "The source names the orphaned-payload, unresolvable-token, duplicate-claim-check, integrity-mismatch, store-outage and data-loss cases across its payload consistency, integrity and availability paragraphs; expiry, garbage collection and fail-closed policy are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
@@ -3203,13 +3203,13 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Inline delivery is the alternative when the payload fits the transport and latency budget; compression or a compact serializer is the documented way to reduce inline size.",
-          "reason": "The source documents reducing inline payload size with compression or a compact serializer.",
+          "quote": "When payloads stay within a transport's supported limit and don't create unacceptable throughput or latency, send them inline to avoid the external-store dependency.",
+          "reason": "The source states when to send a payload inline and documents compression or a compact serializer for reducing inline size; reversal is Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
-            "section": "Alternatives",
-            "quote": "Reduce the inline payload size. Compression can reduce repetitive text or binary payloads, and a more compact serializer can reduce message overhead.",
+            "section": "When to use this pattern",
+            "quote": "When payloads stay within a transport's supported limit and don't create unacceptable throughput or latency, send them inline to avoid the external-store dependency.",
             "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
           }
         }
@@ -3217,7 +3217,7 @@
       "decision_evidence": {
         "atlas_section": "claim-check",
         "question": "Should a large or sensitive payload travel outside the message and be retrieved through a claim check?",
-        "competing_alternative": "Inline payload with compression or a compact serializer. Reverse the choice when retrieval and storage complexity exceed the savings.",
+        "competing_alternative": "Inline payload when it stays within the transport's supported limit and does not create unacceptable throughput or latency; compression or a compact serializer can reduce inline size. Reverse the choice when retrieval and storage complexity exceed the savings.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3229,9 +3229,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Dedicated owner section and dedicated c03 card rewritten decision-first; all four dimensions bind to the Microsoft Learn Claim Check page (read.microsoft-claim-check.2026-10-28); the EIP pattern page (read.batch2-claim.2026-10-21) supports only the stored-payload and claim-token description; coverage partial-bounded; no promotion."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Owner page split 2026-10-29; dimensions bind to Microsoft Claim Check (read.microsoft-claim-check.2026-10-28); invariant binding carries the write-before-publish sentence with lifecycle ownership and independent authorization; alternative binds the inline-delivery sentence; six failure cases; the EIP pattern page supports only the stored-payload and claim-token description; partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
@@ -3243,7 +3243,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 427,
+        "line": 332,
         "unit_kind": "dedicated",
         "unit_terms": [
           "broker",
@@ -3303,7 +3303,7 @@
         "heading": "Canonical Data Model",
         "anchor": "canonical-data-model",
         "level": 3,
-        "line": 344,
+        "line": 249,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Canonical Data Model"
@@ -10682,7 +10682,7 @@
     {
       "document_id": "tycho.page.0eee61f261054af0ad728d791036c5f4",
       "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
-      "pattern_count": 11,
+      "pattern_count": 9,
       "pattern_ids": [
         "tycho.pattern.canonical-data-model",
         "tycho.pattern.competing-consumers",
@@ -10691,47 +10691,42 @@
         "tycho.pattern.event-driven-consumer",
         "tycho.pattern.message-broker-messaging-bridge",
         "tycho.pattern.message-filter",
-        "tycho.pattern.pipes-and-filters",
         "tycho.pattern.point-to-point-queue",
-        "tycho.pattern.publish-subscribe",
-        "tycho.pattern.resequencer"
+        "tycho.pattern.publish-subscribe"
       ],
-      "unit_count": 11,
-      "dedicated_units": 11,
+      "unit_count": 9,
+      "dedicated_units": 9,
       "bounded_entries": 1,
       "decision": "deepen",
-      "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
+      "rationale": "Nine messaging patterns retain dedicated units after Resequencer and Pipes and Filters moved to dedicated owner pages on 2026-10-29."
     },
     {
       "document_id": "tycho.page.148a37ff87ca4e42a2fec625c65319b0",
       "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
-      "pattern_count": 4,
+      "pattern_count": 2,
       "pattern_ids": [
-        "tycho.pattern.claim-check",
         "tycho.pattern.correlation-identifier",
-        "tycho.pattern.dead-letter-channel-dlq",
-        "tycho.pattern.request-reply-messaging"
+        "tycho.pattern.dead-letter-channel-dlq"
       ],
-      "unit_count": 4,
-      "dedicated_units": 4,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 1,
       "decision": "deepen",
-      "rationale": "Claim Check, correlation, request-reply and workflow-failure gates have four dedicated units; DLQ and Request-Reply remain partial-bounded."
+      "rationale": "Correlation and dead-letter policy retain two dedicated units after Claim Check and Request-Reply Messaging moved to dedicated owner pages on 2026-10-29."
     },
     {
       "document_id": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070",
       "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
-      "pattern_count": 3,
+      "pattern_count": 2,
       "pattern_ids": [
         "tycho.pattern.aggregator",
-        "tycho.pattern.scatter-gather",
-        "tycho.pattern.splitter"
+        "tycho.pattern.scatter-gather"
       ],
-      "unit_count": 3,
-      "dedicated_units": 3,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "keep",
-      "rationale": "Three messaging composition patterns have three dedicated bounded notes on one coherent family page."
+      "rationale": "Aggregator and Scatter-Gather retain two dedicated bounded notes after Splitter moved to a dedicated owner page on 2026-10-29."
     },
     {
       "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
@@ -11039,7 +11034,7 @@
   ],
   "summary": {
     "entries": 145,
-    "owner_pages": 76,
+    "owner_pages": 81,
     "shared_pages": 30,
     "owner_units": 145,
     "dedicated_units": 145,
@@ -11048,14 +11043,14 @@
     "invariant_supported": 60,
     "failure_recovery_supported": 45,
     "alternative_supported": 57,
-    "technical_partial_bounded": 34,
+    "technical_partial_bounded": 39,
     "technical_partial": 90,
     "technical_name_only": 0,
-    "technical_sufficient": 21,
-    "decision_partial_bounded": 124,
+    "technical_sufficient": 16,
+    "decision_partial_bounded": 129,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 21,
+    "decision_sufficient": 16,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

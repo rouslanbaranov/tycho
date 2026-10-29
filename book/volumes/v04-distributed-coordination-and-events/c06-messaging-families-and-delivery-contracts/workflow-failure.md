@@ -75,7 +75,7 @@ Use the [saga/isolation research](../c03-consistency-and-distributed-transaction
 > **Pattern atlas:**
 > [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) — decision conditions and contraindications.
 > [Correlation Identifier](../../v11-pattern-atlas/c03-messaging-integration/README.md#correlation-identifier) — decision conditions and contraindications.
-> [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/README.md#claim-check) — decision conditions and contraindications.
+> [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/claim-check.md#claim-check) — decision conditions and contraindications.
 > [Dead Letter Channel / DLQ](../../v11-pattern-atlas/c03-messaging-integration/README.md#dead-letter-channel--dlq) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:4 -->
@@ -162,57 +162,12 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim. The Claim Check
-note is the exception: it is source-bound, with quotations and an Evidence
-paragraph tied to the Microsoft Learn record named in its card and owner unit.
+measured evidence, and they do not create a new source claim. Claim Check and
+Request-Reply Messaging have moved to dedicated source-bound owner pages.
 
 ### Claim Check
 
-**Decision.** Store a large or sensitive payload outside the messaging system and send a
-claim check only when payload size, sensitivity or repeated serialization justifies the
-extra store and retrieval hop, and when payload lifecycle, access control and failure
-handling have owners. Keep the payload inline when it fits the transport and latency budget.
-
-**Mechanism.** The sending application writes the full payload to an external data store and
-sends a reference to that payload through the messaging system. Receiving applications
-resolve the reference against the data store; the broker carries only the claim check. The
-source describes the sequence as saving the payload, generating the reference after a
-successful save, publishing it, and letting the receiver retrieve the payload before
-processing.
-
-**Invariant.** Publish the token only after the payload write succeeds. Payload write and token
-publication occur in separate systems and are not atomic, so a token published before its
-payload is retrievable leaves consumers with references they cannot resolve; a payload
-written without a published token is orphaned. The source requires a named owner for payload
-deletion and coordination between message expiration and payload retention, and it keeps
-authorization as an independent interaction between producers, consumers and the store.
-Tycho guidance: keep the token bound to the stored payload it names and keep a valid claim
-check from pointing to unauthorized data.
-
-**Failure and recovery.** The source names five failure cases: an orphaned payload, an
-unresolvable token, a duplicate claim check, an integrity mismatch, and a store outage or data
-loss. Publish the token only after the payload write succeeds, use an idempotent consumer for
-duplicate claim checks, define a disposition for integrity mismatches, and keep the store
-available and durable for the retention period. Tycho guidance: expire and garbage-collect
-claims, and fail closed when retrieval is impossible.
-
-**Alternative.** Inline delivery is the alternative when the payload fits the transport and
-latency budget; compression or a compact serializer is the documented way to reduce inline
-size. Reverse the choice when retrieval and storage complexity exceed the savings.
-
-**Limits.** A claim check adds an external store, a retrieval hop and a second consistency
-boundary; it is not a payload catalogue or a security token. The source requires a named
-owner for payload deletion and a retention rule; Tycho guidance, not a source claim, adds
-tenant binding and a cleanup path for claims.
-
-**Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
-text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the
-mechanism, payload lifecycle ownership, the write-before-publish invariant, the orphaned
-payload, unresolvable token, duplicate claim check, integrity mismatch and store outage or
-data loss failure cases, and the inline-compression alternative. The public Enterprise
-Integration Patterns Claim Check page (read.batch2-claim.2026-10-21) supports the stored-payload
-and claim-token description; it is publisher-abridged and does not state the failure or
-alternative policy.
+See the [dedicated Claim Check owner note](claim-check.md).
 
 ### Correlation Identifier
 
@@ -236,19 +191,7 @@ identifier retention and trust boundaries need an owner.
 
 ### Request-Reply Messaging
 
-Send a pair of Request-Reply messages, each on its own channel. The requestor sends a request and
-waits for a reply; the replier receives the request and responds. The request channel and reply
-channel are separate. The requestor waits for the reply; the replier processes the request and
-sends the response.
-
-The request thread awaiting the response implies that there is only one outstanding request, or that
-the reply channel for this request is private for this thread.
-
-If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity,
-however, is the callback mechanism that must re-establish the caller's context.
-
-When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits
-for the response.
+See the [dedicated Request-Reply Messaging owner note](request-reply-messaging.md).
 
 ### Dead Letter Channel-DLQ
 

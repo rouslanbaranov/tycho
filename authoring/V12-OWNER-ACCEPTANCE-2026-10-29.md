@@ -24,7 +24,7 @@ It does not:
 - claim CI, deployment or owner acceptance of any other issue;
 - change any existing card, page or promotion record.
 
-## Accepted artifacts
+## Artifacts at the accepted content commit
 
 - edition/v12/manifest.json
   - SHA-256: `767f694235ede64ad378bc56881257d2088a97e1d8d5295fa2e3dc0986bc2c68`
@@ -42,9 +42,9 @@ It does not:
   - SHA-256: `182a8700dbc3b05757f44aa657c0609b3dd8c5803e31a3fab82287ac2952d3d0`
 
 The volume contains 31 pages, 7 chapters, 3 models, 10 scenarios, 10 stored runs and
-2 decision records. The protected baseline contains 461 existing book pages and five
-promotion, atlas and review records; the V12 validator reports changed 0, missing 0 and
-leaked 0.
+2 decision records. At the accepted content commit the protected baseline contained 461
+existing book pages and five promotion, atlas and review records; the V12 validator reported
+changed 0, missing 0 and leaked 0.
 
 ## Accepted review record
 
@@ -61,6 +61,15 @@ leaked 0.
 
 The final review has no blocking, high or medium finding. Its only low finding is the
 verbatim raw-report line length, recorded as a preservation exception.
+
+## Post-acceptance refresh
+
+After acceptance the branch merged the current atlas-promotion target to remain mergeable.
+The V12 book pages, contracts and decision records did not change. The corpus grew to 497
+canonical documents and the protected baseline to 466 existing pages; the manifest, protected
+baseline, route index, inventory, Phase 4 artifact and review-packet binding were regenerated.
+The hashes above bind the accepted content commit, not the later derived refresh. The owner
+acceptance remains valid for the V12 content.
 
 ## Limits
 

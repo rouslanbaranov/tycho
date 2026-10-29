@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-29. Entries: 286.
+Inventory date: 2026-10-29. Entries: 277.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -402,37 +402,3 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
 | src.gcp-spanner-cutover / supporting | [Perform cutover from MySQL (Spanner)](https://docs.cloud.google.com/spanner/docs/mysql-perform-cutover) — Google Cloud | Bounded drain-and-switch cutover checks for a MySQL-to-Spanner migration. | admitted-for-research / public-web-or-author-download |
-
-## Simulation
-
-| ID / priority | Source | Planned use | Admission / access |
-|---|---|---|---|
-| src.simpy / core | [SimPy 4.1 documentation](https://simpy.readthedocs.io/en/latest/) — SimPy authors | Reference semantics for process interaction, events, timeouts, shared resources and queue behavior in the V12 discrete-event engine. | admitted-for-research / public-web-or-author-download |
-| src.owen-monte-carlo / core | [Monte Carlo theory, methods and examples](https://artowen.su.domains/mc/) — Art B. Owen | Sampling error, confidence intervals, convergence limits and variance-based sensitivity indices for the V12 Monte Carlo contract. | admitted-for-research / public-web-or-author-download |
-| src.mit-esd-system-dynamics / core | [ESD.00 Introduction to Engineering Systems - System Dynamics lectures 2-4](https://ocw.mit.edu/courses/esd-00-introduction-to-engineering-systems-spring-2011/pages/lecture-notes/) — MIT OpenCourseWare | Stock, flow, accumulation, feedback, delay and simulation vocabulary for V12 foundations and stock-and-flow reference models. | admitted-for-research / public-web-or-author-download |
-| src.sargent-vv / core | [Verification and Validation of Simulation Models](https://informs-sim.org/wsc11papers/016.pdf) — Robert G. Sargent / Proceedings of the 2011 Winter Simulation Conference | Verification, validation, data validity, conceptual-model validity and operational-validity vocabulary for V12 validation gates. | admitted-for-research / public-web-or-author-download |
-
-## Provenance
-
-| ID / priority | Source | Planned use | Admission / access |
-|---|---|---|---|
-| src.w3c-prov-o / supporting | [PROV-O: The PROV Ontology](https://www.w3.org/TR/prov-o/) — W3C | Entity, activity, agent and derivation vocabulary for V12 run and result provenance records. | admitted-for-research / public-web-or-author-download |
-
-## Decisions
-
-| ID / priority | Source | Planned use | Admission / access |
-|---|---|---|---|
-| src.madr / supporting | [MADR - Markdown Architectural Decision Records](https://adr.github.io/madr/) — MADR project | Context, considered options, decision outcome, status and consequences structure for V12 decision records. | admitted-for-research / public-web-or-author-download |
-| src.nygard-adr / supporting | [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) — Michael Nygard / Cognitect | Short, modular decision-record rationale, context, decision and consequence structure for V12 decision contracts. | admitted-for-research / public-web-or-author-download |
-
-## Reproducibility
-
-| ID / priority | Source | Planned use | Admission / access |
-|---|---|---|---|
-| src.plos-repro / core | [Ten Simple Rules for Reproducible Computational Research](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285) — Geir Kjetil Sandve, Anton Nekrutenko, James Taylor, Eivind Hovig / PLOS Computational Biology | Tracked inputs, versioned scripts, recorded parameters and archived environments for V12 run reproducibility and replay. | admitted-for-research / public-web-or-author-download |
-
-## Measurement
-
-| ID / priority | Source | Planned use | Admission / access |
-|---|---|---|---|
-| src.jcgm-100 / supporting | [JCGM 100:2008 - Evaluation of measurement data: Guide to the expression of uncertainty in measurement](https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf/cb0ef43f-baa5-11cf-3f85-4dcd86f77bd6) — Joint Committee for Guides in Metrology | Measurement-model, combined-standard-uncertainty and coverage-interval vocabulary for V12 calibration and validity limits. | admitted-for-research / public-web-or-author-download |

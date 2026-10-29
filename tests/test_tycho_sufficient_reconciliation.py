@@ -131,10 +131,10 @@ class CommittedLedgerTests(unittest.TestCase):
         summary = ledger["summary"]
         self.assertEqual(summary["records"], 145)
         self.assertEqual(summary["current_verdicts"],
-                         {"awaiting-current-external-review": 5, "pass": 140})
-        self.assertEqual(summary["verdict_mismatches"], 125)
-        self.assertEqual(summary["re_reviewed"], 140)
-        self.assertEqual(summary["re_review_with_separate_report"], 140)
+                         {"awaiting-current-external-review": 10, "pass": 135})
+        self.assertEqual(summary["verdict_mismatches"], 120)
+        self.assertEqual(summary["re_reviewed"], 135)
+        self.assertEqual(summary["re_review_with_separate_report"], 135)
         self.assertEqual(summary["re_review_without_separate_report"], 0)
         self.assertEqual(summary["report_reject_conflicts"], 5)
         self.assertEqual(summary["derived_states"].get("needs-remediation-and-re-review", 0), 0)
@@ -143,10 +143,10 @@ class CommittedLedgerTests(unittest.TestCase):
         self.assertEqual(summary["derived_states"].get("residual-findings-after-re-review", 0), 0)
         self.assertEqual(summary["derived_states"].get("rejected-after-review", 0), 0)
         self.assertEqual(
-            summary["derived_states"]["awaiting-current-external-review"], 5)
-        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 140)
-        self.assertEqual(summary["awaiting_current_external_review"], 5)
-        self.assertEqual(summary["historical_passes_retained"], 5)
+            summary["derived_states"]["awaiting-current-external-review"], 10)
+        self.assertEqual(summary["derived_states"]["promoted-after-remediation"], 135)
+        self.assertEqual(summary["awaiting_current_external_review"], 10)
+        self.assertEqual(summary["historical_passes_retained"], 10)
         self.assertEqual(summary["report_name_matches"]["alias"], 1)
 
     def test_generation_is_deterministic(self):
