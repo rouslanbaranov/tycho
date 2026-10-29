@@ -370,6 +370,16 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["results"][0]["section_id"],
                          "retry-budget")
 
+    def test_best_mode_default_and_filter_guard(self):
+        schema = mcp_server.search_schema()
+        self.assertEqual(
+            schema["properties"]["retrieval_mode"]["default"], "bm25")
+        with self.assertRaises(mcp_server.ProtocolFailure):
+            self.call(self.server(), "tycho_search", {
+                "query": "zebra", "retrieval_mode": "best",
+                "kind": "page",
+            })
+
     def test_h3_match_maps_to_parent_and_is_not_readable(self):
         payload = self.call(self.server(), "tycho_search", {
             "query": "nested text", "limit": 2,
