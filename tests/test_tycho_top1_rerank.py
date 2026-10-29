@@ -10,7 +10,7 @@ import top1_rerank  # noqa: E402
 class RerankTests(unittest.TestCase):
     def test_skip_v12_and_long_queries(self):
         self.assertEqual(top1_rerank.skip_reason(
-            "short query", [{"volume":"v12"}]), "skipped-v12")
+            "V12 short query", [{"volume":"book"}]), "skipped-v12")
         long_query=" ".join("word%d" % i for i in range(20))
         self.assertEqual(top1_rerank.skip_reason(
             long_query,[{"volume":"book"}]), "skipped-long-query")

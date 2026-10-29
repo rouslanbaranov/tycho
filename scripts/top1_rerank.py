@@ -43,7 +43,8 @@ def features(query, result, rank):
 
 
 def skip_reason(query, results):
-    if any(result.get("volume") == "v12" for result in results):
+    if ("v12" in str(query).casefold()
+            or (results and results[0].get("volume") == "v12")):
         return "skipped-v12"
     if len(tokens(query)) > 16:
         return "skipped-long-query"
