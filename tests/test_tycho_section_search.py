@@ -2,12 +2,16 @@
 
 No external corpus, network, YAML/schema dependency or book rewriting.
 """
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
+import json
 import os
 from pathlib import Path
 import sqlite3
 import sys
 import tempfile
+import threading
+import time
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -87,6 +91,24 @@ class SearchTests(unittest.TestCase):
         with patch.object(route_index, "canonical_scan",
                           side_effect=self.fake_scan):
             return section_search.read(self.root, *args, **kwargs)
+
+    def open_manifest(self):
+        db, manifest = section_search.open_snapshot(self.root)
+        db.close()
+        return manifest
+
+    def index_path(self):
+        return self.root / "generated" / section_fts_index.INDEX_NAME
+
+    def tamper_manifest(self, **changes):
+        with sqlite3.connect(self.index_path()) as db:
+            raw = db.execute(
+                "SELECT value FROM meta WHERE key='manifest'").fetchone()[0]
+            manifest = json.loads(raw)
+            manifest.update(changes)
+            db.execute("UPDATE meta SET value=? WHERE key='manifest'",
+                       (json.dumps(manifest),))
+            db.commit()
 
     def test_ranked_search_returns_section_and_citation(self):
         self.build()
@@ -242,6 +264,94 @@ class SearchTests(unittest.TestCase):
         with self.assertRaises(section_search.SnapshotMismatch) as caught:
             self.search("zebra")
         self.assertEqual(caught.exception.status, "snapshot-mismatch")
+
+    def test_snapshot_scan_is_reused_for_unchanged_book(self):
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan) as scan:
+            first = self.open_manifest()
+            second = self.open_manifest()
+            result_a = section_search.search(self.root, "zebra", abstain=False)
+            result_b = section_search.search(self.root, "zebra", abstain=False)
+        self.assertEqual(first, second)
+        self.assertEqual(result_a, result_b)
+        self.assertEqual(result_a["results"], result_b["results"])
+        self.assertEqual(scan.call_count, 1)
+
+    def test_cache_is_invalidated_by_book_change(self):
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan) as scan:
+            self.open_manifest()
+            self.assertEqual(scan.call_count, 1)
+            self.a.write_text(
+                self.a.read_text() + "\n## Later\nNew text.\n",
+                encoding="utf-8")
+            with self.assertRaises(section_search.SnapshotMismatch):
+                self.open_manifest()
+            self.assertEqual(scan.call_count, 2)
+
+    def test_cached_scan_still_refuses_route_snapshot_mismatch(self):
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan) as scan:
+            self.open_manifest()
+            self.tamper_manifest(route_snapshot_sha256="0" * 64)
+            with self.assertRaises(section_search.SnapshotMismatch) as caught:
+                self.open_manifest()
+            self.assertEqual(caught.exception.status, "snapshot-mismatch")
+            self.assertEqual(scan.call_count, 1)
+
+    def test_cached_scan_does_not_mask_missing_or_corrupt_index(self):
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan):
+            self.open_manifest()
+            self.index_path().unlink()
+            with self.assertRaises(section_search.SearchError) as caught:
+                self.open_manifest()
+            self.assertEqual(caught.exception.status, "not-available")
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan):
+            self.open_manifest()
+        with sqlite3.connect(self.index_path()) as db:
+            db.execute("DELETE FROM fts WHERE rowid=1")
+            db.commit()
+        with self.assertRaises(section_search.SearchError) as caught:
+            self.open_manifest()
+        self.assertEqual(caught.exception.status, "not-available")
+
+    def test_cached_scan_does_not_mask_missing_manifest(self):
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan):
+            self.open_manifest()
+        with sqlite3.connect(self.index_path()) as db:
+            db.execute("DELETE FROM meta WHERE key='manifest'")
+            db.commit()
+        with self.assertRaises(section_search.SearchError) as caught:
+            self.open_manifest()
+        self.assertEqual(caught.exception.status, "not-available")
+
+    def test_concurrent_validation_reuses_one_scan(self):
+        self.build()
+        calls = []
+        calls_lock = threading.Lock()
+
+        def slow_scan(root, allow_partial=False):
+            with calls_lock:
+                calls.append(1)
+            time.sleep(0.05)
+            return self.fake_scan(root, allow_partial)
+
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=slow_scan):
+            with ThreadPoolExecutor(max_workers=8) as pool:
+                manifests = list(pool.map(
+                    lambda _: self.open_manifest(), range(8)))
+        self.assertEqual(len(calls), 1)
+        self.assertTrue(all(item == manifests[0] for item in manifests))
 
     def test_missing_or_tampered_index_is_unavailable(self):
         with self.assertRaises(section_search.SearchError) as caught:
