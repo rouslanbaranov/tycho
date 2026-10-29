@@ -701,6 +701,12 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             truncated = len(selected) > limit
             selected = selected[:limit]
         if section_rerank:
+            if ("v12" in query.casefold()
+                    or (selected
+                        and selected[0][3]["row"]["volume"] == "v12")):
+                raise SearchError(
+                    "section_rerank is disabled for V12 results",
+                    "invalid-request")
             selected = section_rerank_candidates(
                 db, terms, selected, limit, filters, params, weight_sql)
         pattern_map = {}
