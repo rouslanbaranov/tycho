@@ -113,8 +113,8 @@ from the originating page. SHA-256 values below cover the moved body only.
 - Full suite at batch end: `python3 -m unittest discover -s tests`, 627 tests, OK
   after updating guards for the new 466-page, 81-owner-page, 16-promotion and
   7-acceptance counts.
-- No test was run during editing; the full suite ran once at the batch end and was
-  repeated only after the two stale count guards it exposed were corrected.
+- Targeted structural validators ran during editing. The batch-end suite first
+  exposed two stale count guards; both were updated and the rerun passed.
 
 ## Review packet needed
 
