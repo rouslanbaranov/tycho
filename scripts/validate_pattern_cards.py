@@ -3,6 +3,7 @@
 import argparse
 import json
 from pathlib import Path
+import posixpath
 import re
 import sys
 
@@ -71,11 +72,35 @@ def check_owner_link(text, chapter_path, owner_path, owner_anchor, root=ROOT):
     require(resolved == expected, "card-owner-link-path")
 
 
-def check_backlink(owner_text, chapter_path, slug):
-    marker = chapter_path.split("book/volumes/", 1)[-1] + "#" + slug
+def chapter_links_card(root, chapter_path, slug, card_path):
+    """True when the chapter section links onward to the dedicated card."""
+    chapter_file = Path(root) / chapter_path
+    if not chapter_file.is_file():
+        return False
+    _, body = split(chapter_file.read_text(encoding="utf-8"))
+    text = section_text(body, slug)
+    if text is None:
+        return False
+    target = posixpath.relpath(card_path, posixpath.dirname(chapter_path))
+    return "](" + target + ")" in text
+
+
+def check_backlink(owner_text, chapter_path, slug, card_path=None, root=ROOT):
+    """Accept a direct card backlink or a chapter anchor that indexes the card.
+
+    A moved card may keep the owner backlink on the owning chapter's stable
+    anchor when that chapter section links onward to the card page.
+    """
+    markers = []
+    if card_path and card_path != chapter_path:
+        markers.append(card_path.split("book/volumes/", 1)[-1] + "#" + slug)
+        if chapter_links_card(root, chapter_path, slug, card_path):
+            markers.append(chapter_path.split("book/volumes/", 1)[-1] + "#" + slug)
+    else:
+        markers.append(chapter_path.split("book/volumes/", 1)[-1] + "#" + slug)
     # GitHub keeps the extra separator when a heading contains " / ".
     normalized = owner_text.replace("--", "-")
-    require(marker in owner_text or marker in normalized,
+    require(any(marker in owner_text or marker in normalized for marker in markers),
             "card-backlink-missing: " + slug)
 
 
@@ -158,7 +183,8 @@ def validate_data(data, root=ROOT):
                 require(owner.is_file() and not owner.is_symlink(), "card-owner-file: " + entry["owner_path"])
                 require(entry["owner_anchor"] in heading_slugs(owner), "card-owner-anchor: " + entry["owner_anchor"])
                 owner_text = owner.read_text(encoding="utf-8")
-                check_backlink(owner_text, card_path, entry["atlas_section"])
+                check_backlink(owner_text, chapter["path"], entry["atlas_section"],
+                               card_path, root)
                 require(pattern["technical_owner"]["path"] == entry["owner_path"], "card-registry-owner-path: " + pattern_id)
                 require(pattern["technical_owner"]["anchor"] == entry["owner_anchor"], "card-registry-owner-anchor: " + pattern_id)
                 require(pattern["technical_owner"]["state"] in EVIDENCE_STATES,

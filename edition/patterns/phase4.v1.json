@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "f28128c8e231297b4fe867c011e1f843ae57c0d1351ef4060fe76d196635f723",
+    "registry_sha256": "ab809a12bf61ad7fe9e1ae99b98edf1f845c80ffe444066e2a8238ac5e9983e2",
     "ledger_sha256": "2f4f156c9de9bae7bdb10981bb68971ac1548db6e2a3a593faa7ca209b0d31c0",
-    "card_batches_sha256": "8acc05ad666af95ff51f65ed4935243b6a4cfee690a54d63970f771623bf296f",
-    "route_index_sha256": "45176a53002bbd8a2d6871f55ca925632dbf3d4618225c91cf61807d8030b625",
-    "coverage_sha256": "00e630cb07892df12d23ff3a8ce694f2d92cd7ae866fb0e877bb977215f086de"
+    "card_batches_sha256": "f39a2386261ac5ee86939ad37a9076e45c85ba6b8b4f75d4e99bd75ba257f0c7",
+    "route_index_sha256": "7278e4061196e2c4e16a6e798744da66c606a4891af0398c519879dfe82842f0",
+    "coverage_sha256": "4013f3997597ed6b827cf4bc97684430b7234b0d733305293b52ce6918e256cf"
   },
   "dimensions": [
     "identity",
@@ -24,12 +24,12 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 446,
+    "pages": 447,
     "entries": 145,
     "cards": 145,
-    "routes": 464,
-    "related_labels": 24,
-    "non_routes": 24,
+    "routes": 537,
+    "related_labels": 41,
+    "non_routes": 41,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -2969,6 +2969,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.a684d25ff3d94fd1930186b57b5d3703",
+      "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.1a7b78e63a294313b93d56eed8cc06c7",
       "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/message-filter.md",
       "kind": "page",
@@ -5899,18 +5906,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
@@ -8298,14 +8305,14 @@
     },
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8839,6 +8846,36 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.ambassador",
+      "to": "tycho.pattern.gateway-routing",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.ambassador",
+      "to": "tycho.pattern.retry-with-jitter",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.ambassador",
+      "to": "tycho.pattern.sidecar",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.anti-corruption-layer",
+      "to": "tycho.pattern.domain-driven-design-bounded-context",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.anti-corruption-layer",
+      "to": "tycho.pattern.hexagonal-architecture-ports-and-adapters",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.anti-corruption-layer",
+      "to": "tycho.pattern.strangler-fig",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.api-composition",
       "to": "tycho.pattern.backend-for-frontend-bff",
       "basis": "card-related-entry"
@@ -8876,6 +8913,36 @@
     {
       "from": "tycho.pattern.api-gateway",
       "to": "tycho.pattern.reverse-proxy",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.asynchronous-request-reply",
+      "to": "tycho.pattern.api-composition",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.asynchronous-request-reply",
+      "to": "tycho.pattern.api-gateway",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.asynchronous-request-reply",
+      "to": "tycho.pattern.deadline-propagation",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.audit-trail",
+      "to": "tycho.pattern.distributed-tracing",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.audit-trail",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.audit-trail",
+      "to": "tycho.pattern.structured-logging",
       "basis": "card-related-entry"
     },
     {
@@ -9434,6 +9501,26 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.dark-launching-shadow-traffic",
+      "to": "tycho.pattern.canary-release",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.dark-launching-shadow-traffic",
+      "to": "tycho.pattern.feature-flags-feature-toggles",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.dark-launching-shadow-traffic",
+      "to": "tycho.pattern.parallel-run",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.dark-launching-shadow-traffic",
+      "to": "tycho.pattern.strangler-fig",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.database-per-service",
       "to": "tycho.pattern.command-query-responsibility-segregation-cqrs",
       "basis": "card-related-entry"
@@ -9541,6 +9628,21 @@
     {
       "from": "tycho.pattern.distributed-lock",
       "to": "tycho.pattern.lease-based-ownership",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.distributed-tracing",
+      "to": "tycho.pattern.audit-trail",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.distributed-tracing",
+      "to": "tycho.pattern.sli-slo-and-error-budgets",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.distributed-tracing",
+      "to": "tycho.pattern.structured-logging",
       "basis": "card-related-entry"
     },
     {
@@ -9744,6 +9846,26 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.federated-identity",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.federated-identity",
+      "to": "tycho.pattern.rbac-abac",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.federated-identity",
+      "to": "tycho.pattern.workload-identity-mtls",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.federated-identity",
+      "to": "tycho.pattern.zero-trust-architecture",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.fencing-tokens",
       "to": "tycho.pattern.distributed-lock",
       "basis": "card-related-entry"
@@ -9910,6 +10032,21 @@
     },
     {
       "from": "tycho.pattern.health-endpoint-monitoring",
+      "to": "tycho.pattern.synthetic-monitoring",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.health-readiness-and-liveness-checks",
+      "to": "tycho.pattern.failover-failback",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.health-readiness-and-liveness-checks",
+      "to": "tycho.pattern.sli-slo-and-error-budgets",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.health-readiness-and-liveness-checks",
       "to": "tycho.pattern.synthetic-monitoring",
       "basis": "card-related-entry"
     },
@@ -10129,6 +10266,26 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.least-privilege",
+      "to": "tycho.pattern.multitenant-isolation",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.least-privilege",
+      "to": "tycho.pattern.rbac-abac",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.least-privilege",
+      "to": "tycho.pattern.valet-key",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.least-privilege",
+      "to": "tycho.pattern.zero-trust-architecture",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.load-balancing",
       "to": "tycho.pattern.autoscaling",
       "basis": "card-related-entry"
@@ -10209,6 +10366,16 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.message-filter",
+      "to": "tycho.pattern.content-based-router",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.message-filter",
+      "to": "tycho.pattern.publish-subscribe",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.microservices-architecture",
       "to": "tycho.pattern.database-per-service",
       "basis": "card-related-entry"
@@ -10284,6 +10451,26 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.multitenant-isolation",
+      "to": "tycho.pattern.cell-based-architecture",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.multitenant-isolation",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.multitenant-isolation",
+      "to": "tycho.pattern.tenant-based-resource-isolation",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.multitenant-isolation",
+      "to": "tycho.pattern.zero-trust-architecture",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.negative-caching",
       "to": "tycho.pattern.cache-invalidation",
       "basis": "card-related-entry"
@@ -10324,6 +10511,21 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.parallel-run",
+      "to": "tycho.pattern.controlled-cutover",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.parallel-run",
+      "to": "tycho.pattern.dark-launching-shadow-traffic",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.parallel-run",
+      "to": "tycho.pattern.strangler-fig",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.partitioning",
       "to": "tycho.pattern.consistent-hashing",
       "basis": "card-related-entry"
@@ -10341,6 +10543,26 @@
     {
       "from": "tycho.pattern.partitioning",
       "to": "tycho.pattern.sharding",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.pipes-and-filters",
+      "to": "tycho.pattern.aggregator",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.pipes-and-filters",
+      "to": "tycho.pattern.content-based-router",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.pipes-and-filters",
+      "to": "tycho.pattern.process-manager-routing-slip",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.pipes-and-filters",
+      "to": "tycho.pattern.splitter",
       "basis": "card-related-entry"
     },
     {
@@ -10519,6 +10741,26 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.rbac-abac",
+      "to": "tycho.pattern.federated-identity",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.rbac-abac",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.rbac-abac",
+      "to": "tycho.pattern.multitenant-isolation",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.rbac-abac",
+      "to": "tycho.pattern.zero-trust-architecture",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.read-replicas",
       "to": "tycho.pattern.command-query-responsibility-segregation-cqrs",
       "basis": "card-related-entry"
@@ -10556,6 +10798,26 @@
     {
       "from": "tycho.pattern.read-through-cache",
       "to": "tycho.pattern.write-through-cache",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.request-reply-messaging",
+      "to": "tycho.pattern.api-gateway",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.request-reply-messaging",
+      "to": "tycho.pattern.asynchronous-request-reply",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.request-reply-messaging",
+      "to": "tycho.pattern.correlation-identifier",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.request-reply-messaging",
+      "to": "tycho.pattern.timeout",
       "basis": "card-related-entry"
     },
     {
@@ -10859,6 +11121,16 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.sidecar",
+      "to": "tycho.pattern.ambassador",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.sidecar",
+      "to": "tycho.pattern.immutable-infrastructure",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.single-flight-request-coalescing",
       "to": "tycho.pattern.cache-aside-lazy-loading",
       "basis": "card-related-entry"
@@ -10876,6 +11148,36 @@
     {
       "from": "tycho.pattern.single-flight-request-coalescing",
       "to": "tycho.pattern.timeout",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.sli-slo-and-error-budgets",
+      "to": "tycho.pattern.health-readiness-and-liveness-checks",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.sli-slo-and-error-budgets",
+      "to": "tycho.pattern.synthetic-monitoring",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.splitter",
+      "to": "tycho.pattern.aggregator",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.splitter",
+      "to": "tycho.pattern.pipes-and-filters",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.splitter",
+      "to": "tycho.pattern.process-manager-routing-slip",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.splitter",
+      "to": "tycho.pattern.scatter-gather",
       "basis": "card-related-entry"
     },
     {
@@ -10936,6 +11238,26 @@
     {
       "from": "tycho.pattern.strangler-fig",
       "to": "tycho.pattern.parallel-run",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.structured-logging",
+      "to": "tycho.pattern.audit-trail",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.structured-logging",
+      "to": "tycho.pattern.distributed-tracing",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.synthetic-monitoring",
+      "to": "tycho.pattern.health-readiness-and-liveness-checks",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.synthetic-monitoring",
+      "to": "tycho.pattern.sli-slo-and-error-budgets",
       "basis": "card-related-entry"
     },
     {
@@ -11069,6 +11391,21 @@
       "basis": "card-related-entry"
     },
     {
+      "from": "tycho.pattern.valet-key",
+      "to": "tycho.pattern.api-gateway",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.valet-key",
+      "to": "tycho.pattern.federated-identity",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.valet-key",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
       "from": "tycho.pattern.vertical-scaling",
       "to": "tycho.pattern.autoscaling",
       "basis": "card-related-entry"
@@ -11076,6 +11413,21 @@
     {
       "from": "tycho.pattern.vertical-scaling",
       "to": "tycho.pattern.horizontal-scaling",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.workload-identity-mtls",
+      "to": "tycho.pattern.federated-identity",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.workload-identity-mtls",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.workload-identity-mtls",
+      "to": "tycho.pattern.zero-trust-architecture",
       "basis": "card-related-entry"
     },
     {
@@ -11137,9 +11489,57 @@
       "from": "tycho.pattern.write-through-cache",
       "to": "tycho.pattern.write-behind-write-back",
       "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.zero-trust-architecture",
+      "to": "tycho.pattern.federated-identity",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.zero-trust-architecture",
+      "to": "tycho.pattern.least-privilege",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.zero-trust-architecture",
+      "to": "tycho.pattern.rbac-abac",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.zero-trust-architecture",
+      "to": "tycho.pattern.workload-identity-mtls",
+      "basis": "card-related-entry"
     }
   ],
   "related_dispositions": [
+    {
+      "from": "tycho.pattern.ambassador",
+      "label": "Service Mesh",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.anti-corruption-layer",
+      "label": "Adapter.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.asynchronous-request-reply",
+      "label": "Retry with Idempotency",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.audit-trail",
+      "label": "Retention.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
     {
       "from": "tycho.pattern.autoscaling",
       "label": "Capacity Planning.",
@@ -11197,6 +11597,13 @@
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
+      "from": "tycho.pattern.distributed-tracing",
+      "label": "Sampling.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
       "from": "tycho.pattern.expand-and-contract",
       "label": "Reader/Writer Compatibility",
       "disposition": "non-route",
@@ -11239,6 +11646,13 @@
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
+      "from": "tycho.pattern.health-readiness-and-liveness-checks",
+      "label": "Incident Response",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
       "from": "tycho.pattern.immutable-infrastructure",
       "label": "Infrastructure as Code.",
       "disposition": "non-route",
@@ -11246,8 +11660,22 @@
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
+      "from": "tycho.pattern.message-filter",
+      "label": "Selective Consumer",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
       "from": "tycho.pattern.multi-leader-replication",
       "label": "Conflict Resolution.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.parallel-run",
+      "label": "Reconciliation.",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
@@ -11281,6 +11709,55 @@
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
+      "from": "tycho.pattern.sidecar",
+      "label": "Service Mesh",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.sli-slo-and-error-budgets",
+      "label": "Alerting",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.sli-slo-and-error-budgets",
+      "label": "Incident Response",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.structured-logging",
+      "label": "OpenLineage",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.structured-logging",
+      "label": "Retention.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.synthetic-monitoring",
+      "label": "Alerting.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.synthetic-monitoring",
+      "label": "Incident Response",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
       "from": "tycho.pattern.transactional-inbox",
       "label": "Deduplication.",
       "disposition": "non-route",
@@ -11295,6 +11772,13 @@
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
     },
     {
+      "from": "tycho.pattern.valet-key",
+      "label": "Object Credentials",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
       "from": "tycho.pattern.vertical-scaling",
       "label": "Capacity Planning",
       "disposition": "non-route",
@@ -11304,6 +11788,13 @@
     {
       "from": "tycho.pattern.vertical-scaling",
       "label": "Contention.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.workload-identity-mtls",
+      "label": "Service Mesh.",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"

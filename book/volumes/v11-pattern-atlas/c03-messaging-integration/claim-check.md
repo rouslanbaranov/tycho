@@ -1,0 +1,92 @@
+---
+metadata_version: 1
+id: "tycho.page.a684d25ff3d94fd1930186b57b5d3703"
+kind: "page"
+parent_id: "tycho.chapter.a4b31346a691566550633efe0cf2693e"
+canonical_path: "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md"
+title: "Claim Check"
+topic_ids:
+  - "integration-architecture"
+  - "architecture-decisions"
+perspectives:
+  - "architecture"
+  - "evaluation"
+summary: "Decision card for Claim Check; bounded owner evidence and limits."
+route_hints:
+  questions:
+    - >-
+      Should a large or sensitive payload travel outside the message and be
+      retrieved through a claim check?
+  prerequisites:
+    - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
+  related_ids:
+    - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
+  excludes:
+    - "payload-store implementations"
+  keywords:
+    - "pattern atlas"
+    - "claim-check"
+evidence_scope:
+  source_ids:
+    - "src.enterprise-integration"
+    - "src.microsoft-cloud-patterns"
+  claim_ids: []
+  status: "source-linked"
+  notes: "Dedicated card page; source bindings remain in the owner unit."
+content_review:
+  status: "self-checked"
+  reviewed_at: "2026-10-28"
+  reviewer: "Automated authoring agent"
+  proof_uri: null
+authored_at: "2026-10-28"
+updated_at: "2026-10-28"
+source_inspection_date: "2026-10-28"
+content_verified_at: null
+---
+
+# Claim Check
+
+**Decision.** Store a large or sensitive payload outside the message and send a claim check
+only when payload size, sensitivity or repeated serialization justifies the extra store and
+retrieval hop, and when token lifecycle, access control and failure handling have owners.
+Keep the payload inline when it fits the transport and latency budget.
+
+**Identity.** Claim Check; family Messaging and event-driven integration; kind
+messaging-pattern; priority advanced.
+
+**Decision question.** Should a large or sensitive payload travel outside the message and be
+retrieved through a claim check?
+
+**Good-fit conditions.** Payloads regularly exceed the transport limit, consume
+disproportionate broker resources, need tighter access control than the messaging path, or
+cross routing hops that repeatedly serialize them. The store has an owner and a lifecycle
+policy; the token is published only after the payload write succeeds; retrieval latency and
+failure disposition are bounded.
+
+**Hard contraindications.** Reject when the inline payload fits the transport and latency
+budget, when the extra retrieval hop cannot meet the latency target, or when payload
+lifecycle, access control and store durability have no owner.
+
+**Competing alternative.** Inline payload with compression or a compact serializer. Reverse
+the choice when retrieval and storage complexity exceed the savings.
+
+**Failure and recovery.** The non-atomic write and publish pair can leave an orphaned payload
+or a token that consumers cannot resolve; store outage, duplicate claim checks and integrity
+mismatches also stall or misdirect processing. Expire and garbage-collect claims, fail closed
+when retrieval is impossible, and make duplicate consumption idempotent.
+
+**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — claim-token ordering, lifecycle, retrieval and failure policy are bounded; this is not a payload-store catalogue.
+
+**Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.batch2-claim.2026-10-21: the public pattern page is publisher-abridged and
+supports the stored-payload and claim-token description, not the failure or alternative
+policy. [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-claim-check.2026-10-28: the Claim Check pattern page supports the
+mechanism, write-before-publish invariant, failure path and inline alternative.
+Canonical text SHA-256: 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe.
+The source is public documentation, not a benchmark.
+
+**Decision state.** applicable-under-conditions.
+
+**Related entries.** Message Broker; Dead Letter Channel; Valet Key; Pipes and Filters;
+Idempotent Receiver.
