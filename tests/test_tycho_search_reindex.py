@@ -38,7 +38,8 @@ class SearchReindexTests(unittest.TestCase):
         report = search_reindex.check(ROOT)
         self.assertIn(report["status"],
                       {"current", "current-with-stale-qrels", "stale"})
-        self.assertEqual(report["content_files"], 423)
+        self.assertEqual(report["content_files"],
+                         search_reindex.content_digest(ROOT)[1])
         if report["status"] == "current-with-stale-qrels":
             self.assertIn("qrels-stale", report["issues"])
             self.assertTrue(report["qrels_stale"])

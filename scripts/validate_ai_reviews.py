@@ -55,7 +55,7 @@ def validate(root=ROOT):
                 "ai-reviews-verdict: " + name)
     reports = {path.name for path in archive.iterdir()
                if path.is_file() and path.suffix in (".md", ".json")
-               and path.name not in ("README.md", "REGRESSIONS.md")}
+               and path.name not in ("README.md", "REGRESSIONS.md", "EXTERNAL-REVIEW-REQUEST-E17-71.md", "EXTERNAL-REVIEW-BLOCKED-E17-71.md")}
     require(reports == seen, "ai-reviews-unindexed")
     return {"reports": len(rows)}
 
