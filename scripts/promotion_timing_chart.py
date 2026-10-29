@@ -7,7 +7,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "authoring/promotion-timing.v1.json"
 SVG = ROOT / "authoring/promotion-timing-2026-10-29.svg"
-PNG = ROOT / "authoring/promotion-timing-2026-10-29.png"
 COLORS = {
     "single_entry_cycle": "#1e5ab4",
     "clean_cycle": "#1e9650",
@@ -59,7 +58,7 @@ def main():
     subprocess.run(["qlmanage", "-t", "-s", "900", "-o", "/tmp", str(SVG)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     tmp = Path("/tmp") / (SVG.name + ".png")
     subprocess.run(["magick", str(tmp), "-crop", "900x500+0+0", "+repage", str(PNG)], check=True)
-    print(PNG)
+    print(SVG)
 
 
 if __name__ == "__main__":

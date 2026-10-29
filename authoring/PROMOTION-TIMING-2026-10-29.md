@@ -49,7 +49,7 @@ owner acceptance.
 
 ## Trend chart
 
-![Promotion timing trend](promotion-timing-2026-10-29.png)
+![Promotion timing trend](promotion-timing-2026-10-29.svg)
 
 Points, left to right: B9 wave, B10 wave, delta. Values are rolling estimates
 in minutes from `authoring/promotion-timing.v1.json`; they are not stopwatch
