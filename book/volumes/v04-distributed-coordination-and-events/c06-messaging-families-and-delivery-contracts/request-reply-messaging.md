@@ -12,7 +12,9 @@ perspectives:
 summary: "Bounded Request-Reply Messaging owner note; separate channels, Synchronous Block and Asynchronous Callback, recovery and limits."
 route_hints:
   questions:
-    - "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
+    - "Should a request and its reply travel as separate messages on separate channels,
+      invoking the responder indirectly rather than directly, when both approaches block
+      the caller?"
   prerequisites:
     - "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928"
   related_ids:
@@ -58,8 +60,10 @@ In the Synchronous Block approach, the request thread awaiting the response impl
 is only one outstanding request, or that the reply channel for this request is private for this
 thread. In the Asynchronous Callback approach, the source states: "This approach enables
 multiple outstanding requests to share a single reply channel, and a single reply thread to
-process replies for multiple request threads." Tycho synthesis: carry a Correlation Identifier
-and match each reply to its request; the bound page does not serve correlation mechanics.
+process replies for multiple request threads." Both the Synchronous Block messaging approach
+and a direct Remote Procedure Invocation block the caller's thread; the choice is indirect
+messaging versus direct invocation. Tycho synthesis: carry a Correlation Identifier and match
+each reply to its request; the bound page does not serve correlation mechanics.
 
 If the requestor crashes, it can recover by simply restarting the reply thread. An added
 complexity, however, is the callback mechanism that must re-establish the caller's context.
@@ -67,12 +71,15 @@ complexity, however, is the callback mechanism that must re-establish the caller
 **Alternative.** The bound page states that when a caller performs a Remote Procedure Invocation,
 the caller's thread must block while it waits for the response. Tycho synthesis: a direct
 synchronous Remote Procedure Invocation is the alternative when the responder is reachable within
-the caller's request budget and blocking is acceptable; the bound page does not present RPC as a
-decision alternative.
+the caller's request budget and blocking is acceptable. Both this direct call and the Synchronous
+Block messaging approach block the caller; the choice is direct versus indirect invocation. The
+bound page does not present RPC as a decision alternative.
 
 **Limits.** The bound page is publisher-abridged. It supports the separate request and reply
 channels, the one-outstanding-request or private-reply-channel implication of the Synchronous
-Block case, and the Synchronous Block and Asynchronous Callback descriptions. It states:
+Block case, and the Synchronous Block and Asynchronous Callback descriptions. It states that
+both Synchronous Block messaging and RPC block the caller, but it does not compare them as
+decision alternatives; that comparison is Tycho synthesis. It also states:
 "This approach enables multiple outstanding requests to share a single reply channel, and a
 single reply thread to process replies for multiple request threads." It does not serve
 correlation-identifier mechanics, reply timeouts, duplicate-reply handling or a complete

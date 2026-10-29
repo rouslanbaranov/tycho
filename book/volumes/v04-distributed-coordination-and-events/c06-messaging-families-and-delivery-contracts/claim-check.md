@@ -54,13 +54,16 @@ on 2026-10-29. The other ownership notes remain on the chapter page.
 claim check only when payload size, sensitivity or repeated serialization justifies the
 extra store and retrieval hop, when payload lifecycle and failure handling have owners, and
 when authorization can remain an independent interaction between producer or consumer systems
-and the store. Keep the payload inline when it fits the transport and latency budget.
+and the store. Sensitivity and repeated serialization are source-stated use conditions. Keep
+the payload inline when it fits the transport and latency budget and no sensitivity, retention
+or repeated-serialization reason applies; the retention reason is Tycho synthesis.
 
 **Mechanism.** A sending application writes the full payload to an external data store and
-sends a reference to that payload through the messaging system. Receiving applications use the
-reference to retrieve the payload directly from the data store. The source describes the
-sequence as saving the payload, generating the reference after a successful save, publishing
-it, and letting the receiver retrieve the payload before processing.
+sends a reference to that payload through the messaging system. The messaging system never
+sees or stores the payload. Receiving applications use the reference to retrieve the payload
+directly from the data store. The source describes the sequence as saving the payload,
+generating the reference after a successful save, publishing it, and letting the receiver
+retrieve the payload before processing.
 
 **Invariant.** Publish the token only after the payload write succeeds. Payload write and token
 publication occur in separate systems and are not atomic, so a token published before its
@@ -83,19 +86,24 @@ claims, and fail closed when retrieval is impossible.
 and don't create unacceptable throughput or latency, send them inline to avoid the
 external-store dependency." It also states: "Compression can reduce repetitive text or binary
 payloads, and a more compact serializer can reduce message overhead." Tycho guidance, not a
-source claim: reverse the choice when retrieval and storage complexity exceed the savings.
+source claim: reverse the choice only when the payload fits inline, no sensitivity, retention
+or repeated-serialization reason applies, and retrieval and storage complexity exceed the
+savings.
 
 **Limits.** A claim check adds an external store, a retrieval hop and a second consistency
 boundary; it is not a payload catalogue or a security token. The source requires defining
 which component owns payload deletion and coordinating message expiration and payload
 retention; Tycho guidance, not a source claim, adds tenant binding (a claim token is usable only
-inside the tenant that wrote the payload) and a cleanup path for claims.
+inside the tenant that wrote the payload) and a cleanup path for claims. The inline-fit
+preference is conditional: a payload that fits the transport still warrants a claim check when
+sensitivity, retention or repeated serialization applies.
 
 **Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
 text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the
 mechanism, payload lifecycle ownership, the write-before-publish invariant, the orphaned
 payload, unresolvable token, duplicate claim check, integrity mismatch, store outage and data
-loss failure cases, the inline alternative, and compression or compact-serializer guidance.
+loss failure cases, the sensitive-payload and repeated-serialization use conditions, the
+inline alternative, and compression or compact-serializer guidance.
 The public Enterprise Integration Patterns Claim Check page (read.batch2-claim.2026-10-21)
 supports the stored-payload and claim-token description; it is publisher-abridged and does not
 state the failure or alternative policy.

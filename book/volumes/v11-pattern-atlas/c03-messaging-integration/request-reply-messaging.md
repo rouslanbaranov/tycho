@@ -15,8 +15,9 @@ perspectives:
 summary: "Decision card for Request-Reply Messaging; bounded owner evidence and limits."
 route_hints:
   questions:
-    - "Should a request and response travel as a pair of messages on
-      separate channels rather than one blocking call?"
+    - "Should a request and its reply travel as separate messages on separate
+      channels, invoking the responder indirectly rather than directly, when both
+      approaches block the caller?"
   prerequisites:
     - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
   related_ids:
@@ -46,21 +47,24 @@ content_verified_at: null
 # Request-Reply Messaging
 
 **Decision.** Use messaging Request-Reply when a request and its reply travel as separate
-messages and the requestor can wait or handle a callback. In the Synchronous Block case, the
-request thread waits for the reply, which implies one outstanding request or a reply channel
-private to the requesting thread. In the Asynchronous Callback case, the source states: "This
-approach enables multiple outstanding requests to share a single reply channel, and a single
-reply thread to process replies for multiple request threads." Tycho synthesis: carry a
-Correlation Identifier and match each reply to its request, because the bound page does not
-serve correlation mechanics. Tycho synthesis: prefer a direct synchronous Remote Procedure
-Invocation when the responder is reachable within the caller's request budget and blocking is
-acceptable.
+messages on separate channels and the requestor can wait or handle a callback. In the
+Synchronous Block case, the request thread waits for the reply, which implies one outstanding
+request or a reply channel private to the requesting thread. In the Asynchronous Callback
+case, the source states: "This approach enables multiple outstanding requests to share a
+single reply channel, and a single reply thread to process replies for multiple request
+threads." Both the Synchronous Block messaging approach and a direct Remote Procedure
+Invocation block the caller's thread; the decision is indirect messaging versus direct
+invocation. Tycho synthesis: carry a Correlation Identifier and match each reply to its
+request, because the bound page does not serve correlation mechanics. Tycho synthesis: prefer
+a direct synchronous Remote Procedure Invocation when the responder is reachable within the
+caller's request budget and blocking is acceptable.
 
 **Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
 
-**Decision question.** Should a request and response travel as a pair of messages on separate
-channels rather than one blocking call?
+**Decision question.** Should a request and its reply travel as separate messages on separate
+channels, invoking the responder indirectly rather than directly, when both approaches block
+the caller?
 
 **Good-fit conditions.** A requestor can wait for a reply; separate request and reply channels
 exist; in the Synchronous Block case, at most one request is outstanding or the reply channel
@@ -72,13 +76,15 @@ correlation mechanics.
 
 **Hard contraindications.** Reject when a direct synchronous Remote Procedure Invocation meets
 the availability and latency target and the caller can block, or when no reply channel can be
-established. Tycho synthesis: a blocking caller thread alone is not a contraindication,
-because the source's Synchronous Block approach also waits for a reply.
+established. Both Synchronous Block messaging and a Remote Procedure Invocation block the
+caller, so a blocking caller thread alone is not a contraindication.
 
 **Competing alternative.** Tycho synthesis: a direct synchronous Remote Procedure Invocation
 is the alternative when the responder is reachable within the request budget and blocking is
-acceptable. The bound source states only that an RPC caller's thread must block while it waits
-for the response, not that RPC is the decision alternative.
+acceptable. Both this direct call and the Synchronous Block messaging approach block the
+caller; the difference is direct versus indirect invocation. The bound source states only that
+an RPC caller's thread must block while it waits for the response, not that RPC is the decision
+alternative.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
 re-establish the caller's context. Tycho guidance, not a served source claim: bound retries,

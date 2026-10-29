@@ -67,7 +67,7 @@ Begin with the integrated decision, then open the independent question that matc
 | [Resequencer owner note](resequencer.md) | Should out-of-order messages be buffered and released in an acceptable order? |
 | [Pipes and Filters owner note](pipes-and-filters.md) | Should processing be composed as independent stages connected by a message contract? |
 | [Claim Check owner note](claim-check.md) | Should a large or sensitive payload travel outside the message and be retrieved through a claim check? |
-| [Request-Reply Messaging owner note](request-reply-messaging.md) | Should a request and response travel as a pair of messages on separate channels? |
+| [Request-Reply Messaging owner note](request-reply-messaging.md) | Should a request and reply use separate channels and indirect invocation? |
 | [Splitter owner note](splitter.md) | Should a composite message be divided into independently processed parts? |
 
 ## Boundaries and further reading
