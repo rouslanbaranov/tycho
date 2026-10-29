@@ -217,6 +217,16 @@ review validator now parses that form. The report is saved verbatim as
 \`authoring/ai-reviews/2026-10-29-v12-isolated-volume-delta3-codex.md\` and indexed. A focused
 final delta review of this editorial correction is the last review gate.
 
+## Independent review round 5
+
+The focused final review returned pass-with-findings. The prior index-row finding was
+resolved. The only remaining finding was low severity: the saved raw reviewer report contains
+two lines over 100 characters because the report is preserved verbatim.
+
+That finding is recorded as a preservation exception, not edited away: raw external reviewer
+output must remain verbatim, while authored Markdown remains within the line limit. There are
+no blocking, high or medium findings in the final review.
+
 ## Limits
 
 - Every V12 model is uncalibrated.

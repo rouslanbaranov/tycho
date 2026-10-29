@@ -4,6 +4,11 @@ This directory preserves verbatim reports from independent external AI reviewers
 Every completed review must be saved here; a review without a saved report is not a
 completed review.
 
+## Preservation exception
+
+Raw reviewer output is preserved verbatim. Its line lengths are not editorially wrapped;
+authored Markdown remains subject to the 100-character rule.
+
 ## Naming
 
 `YYYY-MM-DD-<scope-slug>-<reviewer-slug>.md`
@@ -116,3 +121,7 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
   #587 V12 delta review 3 | pass-with-findings |
   `2026-10-29-v12-isolated-volume-delta3-codex.md` |
   `84282ebdf539e6d0ab36dedb16b8db19c65e4fc60923b3dcede196e562ecda30` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 focused final review | pass-with-findings |
+  `2026-10-29-v12-isolated-volume-delta4-codex.md` |
+  `6118b60e5b19a13479ea2932d2067cbe6e6c11e83b4eca2decfca179ea14fcdd`

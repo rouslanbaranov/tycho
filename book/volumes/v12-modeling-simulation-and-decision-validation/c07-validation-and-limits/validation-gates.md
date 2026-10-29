@@ -132,7 +132,10 @@ session. It checks the V12 artifacts and does not rerun the test suite. Its repo
 verbatim, indexed with a SHA-256 and linked from the review record. A pass is not owner
 acceptance and does not promote a pattern.
 
-The review status is recorded in the V12 review record, not inferred from this page.
+Five external reports are saved and indexed. The final verdict is pass-with-findings with one
+recorded raw-report line-length exception and no blocking, high or medium finding. Owner
+acceptance remains open. The review status is recorded in the V12 review record, not inferred
+from this page.
 
 ## What the gates do not establish
 
