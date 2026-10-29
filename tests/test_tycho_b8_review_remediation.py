@@ -114,14 +114,14 @@ class B8ReviewRemediationTests(unittest.TestCase):
         self.assertIn('reviewed_at: "2026-10-29"', self.pipes_card)
         self.assertIn('updated_at: "2026-10-29"', self.pipes_card)
 
-    def test_both_entries_remain_partial_bounded(self):
+    def test_both_entries_are_promoted_and_sufficient(self):
         for pattern_id, unit in (
             ("tycho.pattern.resequencer", self.resequencer_unit),
             ("tycho.pattern.pipes-and-filters", self.pipes_unit),
         ):
-            self.assertNotIn(pattern_id, self.promoted)
-            self.assertEqual(unit["technical_coverage"], "partial-bounded")
-            self.assertEqual(unit["decision_coverage"], "partial-bounded")
+            self.assertIn(pattern_id, self.promoted)
+            self.assertEqual(unit["technical_coverage"], "sufficient")
+            self.assertEqual(unit["decision_coverage"], "sufficient")
 
 
 class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
@@ -382,15 +382,17 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn("private to the requesting thread", good)
         self.assertIn("single reply thread", good)
 
-    def test_three_entries_remain_partial_bounded_and_unpromoted(self):
-        for pattern_id in (
-                "tycho.pattern.claim-check",
-                "tycho.pattern.request-reply-messaging",
-                "tycho.pattern.splitter"):
-            self.assertNotIn(pattern_id, self.promoted)
+    def test_request_reply_partial_and_other_entries_promoted(self):
+        self.assertEqual(len(self.promoted), 20)
+        request = self.units["tycho.pattern.request-reply-messaging"]
+        self.assertNotIn("tycho.pattern.request-reply-messaging", self.promoted)
+        self.assertEqual(request["technical_coverage"], "partial-bounded")
+        self.assertEqual(request["decision_coverage"], "partial-bounded")
+        for pattern_id in ("tycho.pattern.claim-check", "tycho.pattern.splitter"):
             unit = self.units[pattern_id]
-            self.assertEqual(unit["technical_coverage"], "partial-bounded")
-            self.assertEqual(unit["decision_coverage"], "partial-bounded")
+            self.assertIn(pattern_id, self.promoted)
+            self.assertEqual(unit["technical_coverage"], "sufficient")
+            self.assertEqual(unit["decision_coverage"], "sufficient")
 
 
 class B8FinalClaimRequestSplitterReviewTests(unittest.TestCase):
