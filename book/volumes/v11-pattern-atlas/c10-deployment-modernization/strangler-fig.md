@@ -54,16 +54,17 @@ modernization-pattern; priority core.
 routing seam rather than by a rewrite?
 
 **Good-fit conditions.** A seam can intercept and route old/new; coexistence is funded;
-one authoritative writer per invariant; routing and data compatibility are explicit; rollback is possible
+Tycho synthesis: one authoritative writer per invariant; routing and data compatibility are explicit;
+rollback is possible
 until a no-return point.
 
 **Hard contraindications.** Reject when the legacy has no seam, when dual-running data
 cannot be reconciled, or when the team cannot own two paths.
 
-**Competing alternative.** Branch by abstraction, parallel run or a big-bang replacement.
+**Competing alternative.** Tycho synthesis: branch by abstraction, parallel run or a big-bang replacement.
 Reverse the choice when coexistence cost exceeds incremental replacement benefit.
 
-**Failure and recovery.** Interception may be impossible, callers may bypass the façade,
+**Failure and recovery.** Interception may be impossible, internal callers may bypass the façade,
 and old/new state can diverge. AWS Prescriptive Guidance states the conditions directly:
 
 > Cannot be used in systems where requests to the backend system cannot be intercepted and
