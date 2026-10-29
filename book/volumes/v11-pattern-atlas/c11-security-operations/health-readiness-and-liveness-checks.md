@@ -14,7 +14,7 @@ summary: "Decision card for Health, Readiness and Liveness Checks; bounded owner
 evidence and explicit limits."
 route_hints:
   questions:
-    - "Should the runtime distinguish process liveness, traffic readiness"
+    - "Should the runtime distinguish process liveness, traffic readiness and startup completion?"
   prerequisites:
     - "tycho.chapter.419769c372ccaa569796954878e3bef9"
   related_ids:
@@ -27,17 +27,18 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.kubernetes"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
-  notes: "Moved card page; source binding remains in the owner unit."
+  notes: "Moved card page; Kubernetes and Microsoft source bindings remain in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-27"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-27"
-updated_at: "2026-10-27"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 # Health, Readiness and Liveness Checks
@@ -61,15 +62,18 @@ probe, or existing platform metrics, log-based alerts or internal heartbeats, in
 dedicated application health endpoints. Reverse the choice when application-specific
 logic, a dependency chain or functional behavior must be verified.
 
-**Failure and recovery.** False positives and shared-dependency coupling are common;
-verify semantics in the owner section.
+**Failure and recovery.** A false restart or traffic sent to an unready instance is the
+failure path; false positives and shared-dependency coupling remain costs. Bound probe
+timeouts, require consecutive failures and keep shared-dependency checks out of liveness.
+Verify semantics in the owner section.
 
 **Technical owner.** [Practice response before production failure](../../v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md#health-readiness-and-liveness-checks) — health checks are bounded to recovery readiness.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
 The transport-level and telemetry alternative is bound in the owner section to the public
-Health Endpoint Monitoring pattern (`src.microsoft-cloud-patterns`), canonical text SHA-256
+Health Endpoint Monitoring pattern (`src.microsoft-cloud-patterns`, read record
+`read.microsoft-health-endpoint.2026-10-29`), canonical text SHA-256
 `b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61`
 (accessed 2026-10-29). Both sources are public documentation or pattern units, not
 benchmarks.

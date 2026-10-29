@@ -32,11 +32,11 @@ evidence_scope:
   notes: "Bounded question from tycho.page.d87f9ba3852b49ee8188d150bb679716; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-29"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-20"
 content_verified_at: null
 ---
@@ -119,7 +119,8 @@ application-specific logic, a dependency chain or functional behavior must be ve
 **Source boundary.** The transport-level and telemetry alternative is bound to Microsoft's
 public Azure Architecture Center, "Health Endpoint Monitoring pattern",
 <https://learn.microsoft.com/en-us/azure/architecture/patterns/health-endpoint-monitoring>,
-page updated 2026-09-26, accessed 2026-10-29; canonical text SHA-256
+page updated 2026-09-26, accessed 2026-10-29; read record
+`read.microsoft-health-endpoint.2026-10-29`; canonical text SHA-256
 `b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61`. The Kubernetes
 documentation remains the source for the liveness, readiness and startup probe semantics.
 The transport-level probe does not establish readiness or startup behavior; the

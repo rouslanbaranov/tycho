@@ -10584,7 +10584,16 @@
             "section": "When to use this pattern",
             "quote": "A platform-managed transport-level probe can be sufficient when there's no application-specific logic, dependency chain, or functional behavior to verify.",
             "revision": "b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-health-endpoint.2026-10-29",
+              "section": "When to use this pattern",
+              "quote": "The components you need to monitor don't expose a compatible health interface that a monitoring tool can reach. In these cases, use platform-level metrics, log-based alerts, or internal heartbeat mechanisms instead.",
+              "revision": "b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61"
+            }
+          ]
         }
       },
       "decision_evidence": {
@@ -10599,12 +10608,19 @@
         "source_id": "src.kubernetes",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-health-endpoint.2026-10-29",
+            "revision": "b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Alternative binding to the Microsoft Health Endpoint Monitoring pattern added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
+      "notes": "Primary Kubernetes record supports mechanism, invariant and failure/recovery; auxiliary Microsoft record read.microsoft-health-endpoint.2026-10-29 supports the transport-level and telemetry alternative. All four dimensions supported; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.polyglot-persistence",
