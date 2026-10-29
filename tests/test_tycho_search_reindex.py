@@ -74,14 +74,19 @@ class SearchReindexTests(unittest.TestCase):
     def test_diff_reports_page_and_qrels_changes(self):
         old = {"content": {"files_sha256": {"a": "1", "b": "2"}},
                "qrels": [{"path": "q", "sha256": "x"}],
-               "section_index": {"sections": 2, "passages": 1}}
+               "section_index": {"sections": 2, "passages": 1,
+                                 "sections_by_path": {"a": ["a#1"]}}}
         new = {"content": {"files_sha256": {"a": "1", "c": "3"}},
                "qrels": [{"path": "q", "sha256": "y"}],
-               "section_index": {"sections": 3, "passages": 2}}
+               "section_index": {"sections": 3, "passages": 2,
+                                 "sections_by_path": {
+                                     "a": ["a#1", "a#2"]}}}
         report = search_reindex.diff_manifests(old, new)
         self.assertEqual(report["added_pages"], ["c"])
         self.assertEqual(report["removed_pages"], ["b"])
         self.assertEqual(report["qrels_changed"], ["q"])
+        self.assertEqual(report["added_sections"], ["a#2"])
+        self.assertEqual(report["section_changed_pages"], ["a"])
         self.assertEqual(report["status"], "changed")
 
     def test_reindex_lock_excludes_concurrent_build(self):
