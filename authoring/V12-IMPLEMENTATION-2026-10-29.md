@@ -244,5 +244,16 @@ no blocking, high or medium findings in the final review.
 
 ## Review gate
 
-The independent read-only review is recorded under `authoring/ai-reviews/` when it runs.
-Its verdict is evidence, not owner acceptance.
+Five independent read-only reviews are saved under `authoring/ai-reviews/` and indexed with
+their SHA-256 values. The final focused review is pass-with-findings, with one recorded
+raw-report line-length exception and no blocking, high or medium finding. A review verdict is
+evidence, not owner acceptance.
+
+## Owner acceptance
+
+Ruslan Baranov accepted the V12 delivery on 2026-10-29 at 15:34 Europe/Zurich. The record is
+`authoring/V12-OWNER-ACCEPTANCE-2026-10-29.md`; it binds the accepted content commit
+`6c60ffabe1e5a3ab7158612691cca47bd89aff3a`, artifact hashes, review hashes, scope and limits.
+The acceptance covers V12 content only and does not assert production, security, compliance
+or migration safety. The pull request remains stacked on the atlas-promotion branch and must
+be retargeted to main after that branch merges.
