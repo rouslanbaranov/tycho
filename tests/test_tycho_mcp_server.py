@@ -413,6 +413,17 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(v12["structuredContent"]["result_scope"],
                          "best-section-per-document")
 
+    def test_default_fallbacks_for_all_sections_and_v12(self):
+        all_sections = self.call(self.server(), "tycho_search", {
+            "query": "nested text", "all_sections": True,
+        })["structuredContent"]
+        self.assertEqual(all_sections["result_scope"], "all-sections")
+        v12 = self.call(self.server(), "tycho_search", {
+            "query": "v12 model scope",
+        })["structuredContent"]
+        self.assertEqual(v12["result_scope"],
+                         "best-section-per-document")
+
     def test_h3_match_maps_to_parent_and_is_not_readable(self):
         payload = self.call(self.server(), "tycho_search", {
             "query": "nested text", "limit": 2,
