@@ -100,6 +100,7 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 B2-B3 final | pass | `2026-10-29-b2b3-final-deepseek.md` | `7dedac38a51f30ea6458be8a6de5bffe2b4b5a82d51bc13813f493c0d7ee7fc9` |
 | 2026-10-29 | DeepSeek Reviewer | #540 B4 final 2 | pass | `2026-10-29-b4-final2-deepseek.md` | `41057210437a4abc38a0ba4c5b9b94a79d26efe0fe5251288304ccfe8f2a82bb` |
 | 2026-10-29 | DeepSeek Reviewer | #540 B5-B6 final | pass | `2026-10-29-b5b6-final-deepseek.md` | `733b7371049d95581e099e01a61c415cb06f24b7715505d9bef86eaebda878b5` |
+| 2026-10-29 | DeepSeek Reviewer | #540 service-discovery split | pass | `2026-10-29-service-discovery-split-deepseek.md` | `736e1f51adead6bfd4867cafe0d2f1d564cce62b2251ea0381e139ace646093e` |
 
 ## V12 review records
 
