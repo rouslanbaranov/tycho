@@ -13,6 +13,11 @@ is isolated in the worktree branch:
 feature/TYCHO-587-v12-architecture-modeling-simulation-decision-validation-isolated-volume
 ```
 
+The branch was later merged with the current atlas-promotion branch head
+`f73e4ef816abe1a89023cbb3b47f2b3af0e8131a`; the V12 book pages are unchanged, while the
+manifest, route index, inventory and review-packet source binding were regenerated for the
+expanded corpus.
+
 The V12 volume lives at:
 
 ```text
@@ -81,13 +86,13 @@ python3 scripts/validate_v12.py
 PASS: V12 structure, hashes, reverse index and iron rule
 
 python3 scripts/validate_edition.py
-canonical_documents: 480
+canonical_documents: 490
 volumes: 12
 chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 629 tests in 75.6s
+Ran 648 tests in 76.3s
 OK
 
 node tools/mermaid/check.mjs --root .
@@ -100,11 +105,11 @@ V12 Markdown line limit and the protected baseline.
 
 ## Protected baseline
 
-The baseline contains 449 existing book pages and five promotion/atlas/review records. The
+The baseline contains 459 existing book pages and five promotion/atlas/review records. The
 validator reports:
 
 ```json
-{"protected_pages": 449, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
+{"protected_pages": 459, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
 ```
 
 No existing page, card, owner page, sufficient-promotion record or atlas
