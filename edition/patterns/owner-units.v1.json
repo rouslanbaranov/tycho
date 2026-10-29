@@ -9872,15 +9872,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Coarse roles are simpler to administer for small stable systems; narrow them once measured access reviews or incident impact justify the overhead.",
-          "reason": "ASVS Appendix D only recommends role allocation; no coarse-vs-narrow trade-off."
+          "state": "supported",
+          "quote": "When no narrow role can express the task, keep a task-capable identity and require independent approval by more than one principal before a high-value action executes, instead of splitting the entitlement.",
+          "reason": "Binds ASVS 5.0.0 requirement 2.3.5: high-value business logic flows require multi-user approval to prevent unauthorized or accidental actions. Using approval in place of narrower entitlements is a Tycho decision inference; ASVS does not compare the controls or define approver independence or approval evidence.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V2 Validation and Business Logic",
+            "quote": "Verify that high‑value business logic flows require multi‑user approval to prevent unauthorized or accidental actions. This could include but is not limited to large monetary transfers, contract approvals, access to classified information, or safety overrides in manufacturing.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "least-privilege",
         "question": "Should each identity and workload hold only the permissions needed for its current task?",
-        "competing_alternative": "Role-based broad access with monitoring. Reverse the choice when permission granularity creates unmanageable operational overhead.",
+        "competing_alternative": "Dual control: when no narrow role can express the task, keep a task-capable identity and require independent approval by more than one principal before a high-value action executes, instead of splitting the entitlement. ASVS 5.0.0 requirement 2.3.5 names multi-user approval for high-value business logic flows; using it in place of narrower entitlements is a Tycho decision inference, not an ASVS comparison. Reverse the choice when approval latency or approver availability would block a time-critical or automated action, or when approvals become routine.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9894,7 +9901,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Alternative bound 2026-10-29 to ASVS 5.0.0 requirement 2.3.5; all four dimensions supported, coverage partial-bounded, no promotion; approver independence and approval evidence remain outside the source."
     },
     {
       "pattern_id": "tycho.pattern.rbac-abac",
@@ -11186,7 +11193,7 @@
     "mechanism_supported": 109,
     "invariant_supported": 60,
     "failure_recovery_supported": 48,
-    "alternative_supported": 60,
+    "alternative_supported": 61,
     "technical_partial_bounded": 29,
     "technical_partial": 90,
     "technical_name_only": 0,
