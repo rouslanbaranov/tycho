@@ -54,7 +54,7 @@ python3 scripts/section_search.py search --query "queue timeout" \
 
 ## Local verification
 
-- Full unit suite: 715 tests, OK.
+- Full unit suite: 716 tests, OK.
 - V12 qrels: 15 items, 28 accepted pages; page hit@5 0.929, MRR 0.598 (author-labelled).
 - V12, edition, source, metadata, AI-review and Phase 4 validators: pass.
 - Section index: 498 documents, 3,075 sections, 268 V12 sections.
