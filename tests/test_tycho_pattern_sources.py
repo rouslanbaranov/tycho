@@ -37,7 +37,7 @@ class PatternSourceTests(unittest.TestCase):
         result = validate_data(self.plan, self.ledger, self.registry,
                                self.route, self.sources, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["read_units"], 169)
+        self.assertEqual(result["read_units"], 170)
         self.assertEqual(result["planned_units"], 0)
         self.assertEqual(result["blocked_units"], 1)
         self.assertEqual(result["ledger_records"], 140)

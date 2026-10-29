@@ -46,7 +46,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-29"
-source_inspection_date: "2026-10-29"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:-1 -->

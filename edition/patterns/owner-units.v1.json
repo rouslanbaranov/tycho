@@ -10394,14 +10394,67 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Field names, meaning and redaction rules must be versioned, and sensitive values must be excluded before emission.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "When sensitive data is logged, the application enforces the data's protection level: data that may not be logged is excluded, and allowed sensitive values are hashed or masked, in full or partially. Events also follow a consistent, machine-readable schema so the log processor can read and correlate them.",
+          "reason": "Binds ASVS 5.0.0 requirement 16.2.5: when sensitive data is logged, the application enforces the data's protection level, excluding data that may not be logged and hashing or masking allowed sensitive values. Requirement 16.2.4 and the OpenTelemetry Logs page support the common-format/correlation and stable-schema clauses. ASVS defines no schema-version or compatibility-window rule; those are Tycho design guidance.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V16 Security Logging and Error Handling",
+            "quote": "Verify that when logging sensitive data, the application enforces logging based on the data’s protection level. For example, it may not be allowed to log certain data, such as credentials or payment details. Other data, such as session tokens, may only be logged by being hashed or masked, either in full or partially.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.owasp-asvs",
+              "ledger_record": "read.batch6-asvs.2026-10-21",
+              "section": "V16 Security Logging and Error Handling",
+              "quote": "Verify that logs can be read and correlated by the log processor that is in use, preferably by using a common logging format.",
+              "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.batch6-otel-logs.2026-10-21",
+              "section": "Structured logs",
+              "quote": "A structured log is a log with a defined, consistent schema or typed fields that downstream systems can reliably parse and interpret.",
+              "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter and review field allowlists when adding events.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Logging sensitive personal data without a legal basis, or failing to protect logs as a high-value asset, can compromise privacy or system security; a schema that varies across emitters also needs normalization before reliable analysis. Protect logs from unauthorized access and modification, and transmit them securely to a separate system for analysis, detection, alerting and escalation.",
+          "reason": "Binds the ASVS V16 control objective: logs must not include sensitive personal data unless legally required and must be protected as a high-value asset; requirements 16.4.2 and 16.4.3 require protection from unauthorized access or modification and secure transmission to a separate system for analysis, detection, alerting and escalation. The OpenTelemetry Logs page supports the schema-variation clause. ASVS prescribes no purge, credential-rotation or notification procedure; those are Tycho recovery guidance.",
+          "binding": {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "section": "V16 Security Logging and Error Handling",
+            "quote": "Logs should not include sensitive personal data unless legally required, and any logged data must be protected as a high‑value asset. Logging must not compromise privacy or system security.",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.owasp-asvs",
+              "ledger_record": "read.batch6-asvs.2026-10-21",
+              "section": "V16 Security Logging and Error Handling",
+              "quote": "Verify that logs are protected from unauthorized access and cannot be modified.",
+              "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+            },
+            {
+              "source_id": "src.owasp-asvs",
+              "ledger_record": "read.batch6-asvs.2026-10-21",
+              "section": "V16 Security Logging and Error Handling",
+              "quote": "Verify that logs are securely transmitted to a logically separate system for analysis, detection, alerting, and escalation. The aim is to ensure that if the application is breached, the logs are not compromised.",
+              "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.batch6-otel-logs.2026-10-21",
+              "section": "Semistructured logs",
+              "quote": "Semistructured logs include machine-readable key/value pairs or delimited fields but do not guarantee a stable schema across emitters.",
+              "revision": "c9e3b0c7ae0ba7e58fbc14898159199a683edbfbc5474fd43e2fc1b07e2d98bb"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -10428,12 +10481,19 @@
         "source_id": "src.otel",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.owasp-asvs",
+            "ledger_record": "read.batch6-asvs.2026-10-21",
+            "revision": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Invariant and failure/recovery bound 2026-10-29 to ASVS 5.0.0 V16 requirements 16.2.4, 16.2.5, 16.4.2 and 16.4.3, with the OTel logs page retained for the mechanism, alternative and stable-schema context; all four dimensions supported, technical coverage partial-bounded, no promotion; schema versioning and incident purge/rotation/notification remain Tycho synthesis."
     },
     {
       "pattern_id": "tycho.pattern.audit-trail",
@@ -10445,7 +10505,7 @@
         "heading": "Audit Trail",
         "anchor": "audit-trail",
         "level": 3,
-        "line": 136,
+        "line": 157,
         "unit_kind": "dedicated",
         "unit_terms": [
           "durable business audit",
@@ -11245,7 +11305,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Structured logging and audit trail now have separate dedicated units with distinct retention and atomicity contracts."
     }
@@ -11258,11 +11318,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 60,
-    "failure_recovery_supported": 49,
+    "invariant_supported": 61,
+    "failure_recovery_supported": 50,
     "alternative_supported": 63,
-    "technical_partial_bounded": 27,
-    "technical_partial": 90,
+    "technical_partial_bounded": 28,
+    "technical_partial": 89,
     "technical_name_only": 0,
     "technical_sufficient": 28,
     "decision_partial_bounded": 117,
