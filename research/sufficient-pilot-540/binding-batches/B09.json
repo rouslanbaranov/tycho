@@ -1,0 +1,520 @@
+{
+  "batch": "B09",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.sharding",
+      "catalog_name": "Sharding",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+      "owner_heading": "Sharding",
+      "source_id": "src.citus",
+      "ledger_record": "read.batch3-citus.2026-10-21",
+      "url": "https://docs.citusdata.com/en/stable/get_started/concepts.html",
+      "unit": "Citus concepts — sharding",
+      "sections": [
+        "Concepts"
+      ],
+      "revision": "87d1d3adb45a32bf25ba35d499abca20e5231fcedd5bd40e9003a988d527864c",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Sharding is an application-level routing contract: a versioned shard map assigns each key to a shard, the request carries the shard key, and the store enforces one owner per key.",
+          "reason": "Defines the mechanism.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "One authoritative owner must exist per key, and a resharding move must fence writes or preserve a verifiable handoff.",
+          "reason": "States the invariant.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Hotspots, map drift, split brain and a failed migration are common; detect skew, throttle the hot key and dual-read/verify during movement.",
+          "reason": "Citus Concepts has no hotspot, map drift or failed-migration recovery procedure.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Partitioning inside one database, read replicas or vertical scaling may be preferable when distribution would add cross-shard coordination without relieving the measured constraint.",
+          "reason": "Citus Concepts does not compare intra-database partitioning, replicas or vertical scaling.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.partitioning",
+      "catalog_name": "Partitioning",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+      "owner_heading": "Partitioning",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch3-pg-partition.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/ddl-partitioning.html",
+      "unit": "Table Partitioning — PostgreSQL documentation",
+      "sections": [
+        "5.12. Table Partitioning",
+        "5.12.1. Overview",
+        "5.12.2. Declarative Partitioning",
+        "5.12.2.1. Example",
+        "5.12.2.2. Partition Maintenance",
+        "5.12.2.3. Limitations",
+        "5.12.3. Partitioning Using Inheritance",
+        "5.12.3.1. Example",
+        "5.12.3.2. Maintenance for Inheritance Partitioning",
+        "5.12.3.3. Caveats",
+        "5.12.4. Partition Pruning",
+        "5.12.5. Partitioning and Constraint Exclusion",
+        "5.12.6. Best Practices for Declarative Partitioning"
+      ],
+      "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "Partitioning splits one logical data set into key ranges or lists inside a store so the planner can prune unrelated partitions for a query.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Each row belongs to exactly one partition, and the main query must name a partition key so pruning is possible.",
+          "reason": "Requires one partition per row and a named partition key for pruning.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A query without the partition key fans out across every partition; inspect plans and measure fan-out when access paths or keys change.",
+          "reason": "Names fan-out without the key and requires plan and fan-out checks.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Keep one table and add an index when the main query already prunes; partition only when the data volume, retention or maintenance benefit is measured.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.consistent-hashing",
+      "catalog_name": "Consistent Hashing",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+      "owner_heading": "Consistent Hashing",
+      "source_id": "src.cassandra",
+      "ledger_record": "read.batch3-cassandra-arch.2026-10-21",
+      "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/overview.html",
+      "unit": "Cassandra Architecture Overview",
+      "sections": [
+        "Overview",
+        "Features",
+        "Operating"
+      ],
+      "revision": "53c36bff1a2152563143c4be01c9302ea682445f314b8e0769a70b8219904336",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share of keys instead of remapping the whole keyspace.",
+          "reason": "Local Cassandra Architecture Overview has no consistent-hashing ring or key-movement text.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Clients and owners must agree on a versioned mapping, and a key must retain one authoritative owner at any mapping epoch.",
+          "reason": "Local text has no versioned mapping or authoritative owner per key.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or version-check during the transition and record the epoch.",
+          "reason": "Local text has no ring-change, wrong-owner or dual-read transition.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Explicit key-range assignment gives direct control of hot ranges; choose consistent hashing when node membership changes often and manual range planning is impractical.",
+          "reason": "Local text does not compare consistent hashing with explicit key ranges.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.leader-follower-replication",
+      "catalog_name": "Leader-Follower Replication",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+      "owner_heading": "Leader-Follower Replication",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch3-pg-warm.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/warm-standby.html",
+      "unit": "Log-Shipping Standby Servers — PostgreSQL documentation",
+      "sections": [
+        "26.2. Log-Shipping Standby Servers",
+        "26.2.1. Planning",
+        "26.2.2. Standby Server Operation",
+        "26.2.3. Preparing the Primary for Standby Servers",
+        "26.2.4. Setting Up a Standby Server",
+        "26.2.5. Streaming Replication",
+        "26.2.5.1. Authentication",
+        "26.2.5.2. Monitoring",
+        "26.2.6. Replication Slots",
+        "26.2.6.1. Querying and Manipulating Replication Slots",
+        "26.2.6.2. Configuration Example",
+        "26.2.7. Cascading Replication",
+        "26.2.8. Synchronous Replication",
+        "26.2.8.1. Basic Configuration",
+        "26.2.8.2. Multiple Synchronous Standbys",
+        "26.2.8.3. Planning for Performance",
+        "26.2.8.4. Planning for High Availability",
+        "26.2.9. Continuous Archiving in Standby",
+        "26.3. Failover",
+        "26.4. Hot Standby"
+      ],
+      "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "One leader accepts writes and appends a replicated log; followers apply it in order.",
+          "reason": "Defines the leader/follower replication path.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "A stale leader can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract.",
+          "reason": "Local text lacks 26.3 Failover and any quorum/term or fencing contract.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Promotion requires a quorum/term check and a fencing token; the old leader must be rejected, and the follower log must catch up before it serves authoritative reads.",
+          "reason": "Local text lacks 26.3 Failover and old-leader rejection; 26.2.2 is procedure only.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Quorum-replicated consensus, multi-leader replication or asynchronous read replicas may be preferable depending on the required write availability, read freshness and conflict model.",
+          "reason": "Text contrasts sync/async shipping, not consensus, multi-leader or read replicas.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.multi-leader-replication",
+      "catalog_name": "Multi-Leader Replication",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+      "owner_heading": "Multi-Leader Replication",
+      "source_id": "src.cassandra",
+      "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+      "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+      "unit": "Dynamo — multi-master replication and tunable consistency",
+      "sections": [
+        "Dynamo",
+        "Dataset Partitioning: Consistent Hashing",
+        "Consistent Hashing using a Token Ring",
+        "Multiple Tokens per Physical Node (vnodes)",
+        "Multi-master Replication: Versioned Data and Tunable Consistency",
+        "Replication Strategy",
+        "NetworkTopologyStrategy",
+        "SimpleStrategy",
+        "Transient Replication",
+        "Data Versioning",
+        "Replica Synchronization",
+        "Tunable Consistency",
+        "Picking Consistency Levels",
+        "Distributed Cluster Membership and Failure Detection",
+        "Gossip",
+        "Ring Membership and Failure Detection",
+        "Incremental Scale-out on Commodity Hardware",
+        "Simple Query Model",
+        "Simple Interface for Storing Records"
+      ],
+      "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Several nodes accept writes for the same logical data and replicate them to each other, so every accepted write must eventually converge to one declared outcome.",
+          "reason": "Defines multiple write acceptors with eventual convergence.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The system must define a conflict-resolution rule and preserve every acknowledged effect according to that rule; silent last-writer-wins is not a convergence proof.",
+          "reason": "Requires a conflict rule and preservation of every acknowledged effect.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Concurrent writes to one key produce conflicts that surface later during reads or reconciliation; record the conflicting versions and expose a deterministic resolution path.",
+          "reason": "Requires recording conflicting versions and a deterministic resolution path.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Single-leader replication avoids write conflicts at the cost of write availability across regions; choose multi-leader only when accepting local writes outweighs the conflict contract.",
+          "reason": "Cassandra text has no single-leader comparison or write-availability conflict tradeoff.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.read-replicas",
+      "catalog_name": "Read Replicas",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+      "owner_heading": "Read Replicas",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch3-pg-warm.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/warm-standby.html",
+      "unit": "Log-Shipping Standby Servers — PostgreSQL documentation",
+      "sections": [
+        "26.2. Log-Shipping Standby Servers",
+        "26.2.1. Planning",
+        "26.2.2. Standby Server Operation",
+        "26.2.3. Preparing the Primary for Standby Servers",
+        "26.2.4. Setting Up a Standby Server",
+        "26.2.5. Streaming Replication",
+        "26.2.5.1. Authentication",
+        "26.2.5.2. Monitoring",
+        "26.2.6. Replication Slots",
+        "26.2.6.1. Querying and Manipulating Replication Slots",
+        "26.2.6.2. Configuration Example",
+        "26.2.7. Cascading Replication",
+        "26.2.8. Synchronous Replication",
+        "26.2.8.1. Basic Configuration",
+        "26.2.8.2. Multiple Synchronous Standbys",
+        "26.2.8.3. Planning for Performance",
+        "26.2.8.4. Planning for High Availability",
+        "26.2.9. Continuous Archiving in Standby",
+        "26.3. Failover",
+        "26.4. Hot Standby"
+      ],
+      "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Read replicas serve read-only traffic from followers, reducing load on the leader while accepting that a replica can lag behind the latest committed write.",
+          "reason": "Defines follower read serving with bounded lag.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A read must state the freshness it requires, and read-your-writes or monotonic guarantees must be enforced by routing, a position wait or an authority read.",
+          "reason": "Requires a freshness statement and routing, wait or authority read for stronger guarantees.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A lag spike serves stale data even though replication is healthy; monitor applied position and lag, and route freshness-critical reads away from a lagging replica.",
+          "reason": "Requires applied-position and lag monitoring with freshness-critical routing.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies.",
+          "reason": "Text does not compare leader reads or quorum reads when freshness dominates.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.quorum-based-reads-writes",
+      "catalog_name": "Quorum-Based Reads/Writes",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+      "owner_heading": "Quorum-Based Reads-Writes",
+      "source_id": "src.cassandra",
+      "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+      "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+      "unit": "Dynamo — multi-master replication and tunable consistency",
+      "sections": [
+        "Dynamo",
+        "Dataset Partitioning: Consistent Hashing",
+        "Consistent Hashing using a Token Ring",
+        "Multiple Tokens per Physical Node (vnodes)",
+        "Multi-master Replication: Versioned Data and Tunable Consistency",
+        "Replication Strategy",
+        "NetworkTopologyStrategy",
+        "SimpleStrategy",
+        "Transient Replication",
+        "Data Versioning",
+        "Replica Synchronization",
+        "Tunable Consistency",
+        "Picking Consistency Levels",
+        "Distributed Cluster Membership and Failure Detection",
+        "Gossip",
+        "Ring Membership and Failure Detection",
+        "Incremental Scale-out on Commodity Hardware",
+        "Simple Query Model",
+        "Simple Interface for Storing Records"
+      ],
+      "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Let N be the replica count, W the acknowledgements required for a write and R the responses required for a read.",
+          "reason": "Defines the mechanism.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "During a membership change, require the old and new quorums to overlap",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Overlap is necessary but not sufficient for freshness: choose the response with the highest version and repair replicas behind it.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Use this when the chosen W/R latency fits and the membership service is trustworthy.",
+          "reason": "Names the alternative and reversal.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.index-table",
+      "catalog_name": "Index Table",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/plan-lifecycle.md",
+      "owner_heading": "Index Table",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch3-pg-indexes.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/indexes.html",
+      "unit": "Indexes — PostgreSQL documentation",
+      "sections": [
+        "Chapter 11. Indexes",
+        "11.1. Introduction",
+        "11.2. Index Types",
+        "11.2.1. B-Tree",
+        "11.2.2. Hash",
+        "11.2.3. GiST",
+        "11.2.4. SP-GiST",
+        "11.2.5. GIN",
+        "11.2.6. BRIN",
+        "11.3. Multicolumn Indexes",
+        "11.4. Indexes and ORDER BY",
+        "11.5. Combining Multiple Indexes",
+        "11.6. Unique Indexes",
+        "11.7. Indexes on Expressions",
+        "11.8. Partial Indexes",
+        "11.9. Index-Only Scans and Covering Indexes",
+        "11.10. Operator Classes and Operator Families",
+        "11.11. Indexes and Collations",
+        "11.12. Examining Index Usage"
+      ],
+      "revision": "fd1f107eb6b915766606ee3b63159bcd052fb71901f7c6ec3516fdfb42d1304b",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "An index table is an application-owned lookup table that maps a query key to a primary key or row locator.",
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Every lookup row must resolve to the current base row",
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows are common design-time failure modes",
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A native secondary index, a materialized view or a query-time join may be preferable when the primary store already serves the access path.",
+          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.polyglot-persistence",
+      "catalog_name": "Polyglot Persistence",
+      "owner_path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+      "owner_heading": "Polyglot Persistence",
+      "source_id": "src.fowler-polyglot",
+      "ledger_record": "read.batch3-fowler-polyglot.2026-10-22",
+      "url": "https://martinfowler.com/bliki/PolyglotPersistence.html",
+      "unit": "Polyglot Persistence — public bliki article",
+      "sections": [
+        "Polyglot Persistence",
+        "Notes"
+      ],
+      "revision": "2053ac45731c4b3002b606c9ad3eb38fde5a2081b405b58932c0972e2283d29a",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A single authoritative registration database plus a graph/search/OLAP projection is a valid possible design—but then there are *two data representations*, not two automatically consistent sources of truth.",
+          "reason": "Describes the multi-store design and its duplicate representation.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly.",
+          "reason": "Fowler page has no freshness, rebuild, dedup or schema-migration invariant.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Dual-write ambiguity and partial migration need an explicit reconciliation owner; a half-migrated projection is not a valid serving state.",
+          "reason": "Fowler page names no failure mode or recovery step.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A single store with derived projections or query-time joins may be preferable when one engine can meet the query shapes and the team cannot operate a second consistency contract.",
+          "reason": "Names the single-store alternative and reversal.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.cqrs-read-projections",
+      "catalog_name": "CQRS Read Projections",
+      "owner_path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "owner_heading": "CQRS Read Projections",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch3-ms-cqrs.2026-10-21",
+      "url": "https://microservices.io/patterns/data/cqrs.html",
+      "unit": "CQRS — pattern page",
+      "sections": [
+        "Pattern: Command Query Responsibility Segregation (CQRS)",
+        "Context",
+        "Problem",
+        "Solution",
+        "Examples",
+        "Resulting context",
+        "Related patterns",
+        "See also",
+        "Learn more"
+      ],
+      "revision": "592b31fe177a9522f8c3c863e79f9cae0ac17e8a1dff2d89ed0690e40696b9ac",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "The projection owner publishes the event schema it accepts, the position it has applied and the staleness callers should expect.",
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Those commitments belong in the read contract, not in an operator's memory.",
+          "reason": "Page names replication lag but no source version, offset or freshness contract.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Apply events idempotently and reject a position that would move the projection backwards; a duplicate must not create a second effect.",
+          "reason": "Page names replication lag but no recovery step.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "An authority read or simpler cache may serve the journey with fewer contracts",
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
+        }
+      }
+    }
+  ]
+}

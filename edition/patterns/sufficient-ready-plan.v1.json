@@ -3,7 +3,7 @@
   "issue": 532,
   "created_at": "2026-10-26",
   "scope": "pilot-six",
-  "status": "sufficient-ready-145-of-145",
+  "status": "sufficient-ready-0-of-145",
   "entries": [
     {
       "pattern_id": "tycho.pattern.federated-identity",
@@ -21,20 +21,20 @@
         "OpenID Federation specification",
         "OIDC Core"
       ],
-      "status": "sufficient-ready",
-      "finding": "OpenID Federation 1.0 integrated and reviewed; trust chains, metadata and key rollover supported. Revocation and federation-specific replay remain synthetic.",
+      "status": "promoted",
+      "finding": "Review passed; promotion recorded.",
       "sources": [
         "src.openid-federation",
         "src.oauth-security"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-federation-section11.json",
       "next": "Admit and ledger the OpenID Federation source before claiming support.",
-      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
+      "sufficiency_note": "Not sufficient-ready; the four technical dimensions are not all bound to source support."
     },
     {
       "pattern_id": "tycho.pattern.rbac-abac",
       "catalog_name": "RBAC/ABAC",
-      "owner_path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
+      "owner_path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/rbac-abac.md",
       "owner_heading": "RBAC-ABAC",
       "gap_class": "source",
       "required_evidence": [
@@ -47,15 +47,15 @@
         "NIST SP 800-162",
         "OWASP Authorization Cheat Sheet"
       ],
-      "status": "sufficient-ready",
-      "finding": "NIST SP 800-162 integrated and re-reviewed; section unchanged and rebound. Revocation, role explosion and attribute freshness remain synthetic.",
+      "status": "awaiting-external-review",
+      "finding": "Dedicated owner page created 2026-10-29; the owner hash changed. Promotion and owner acceptance suspended; fresh external review required before restoration.",
       "sources": [
         "src.owasp-asvs",
         "src.nist-sp-800-162"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-nist-abac.json",
       "next": "Add revocation evidence or keep revocation synthetic.",
-      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes."
     },
     {
       "pattern_id": "tycho.pattern.workload-identity-mtls",
@@ -72,8 +72,8 @@
       "candidate_sources": [
         "Istio security documentation (full page or mTLS section)"
       ],
-      "status": "sufficient-ready",
-      "finding": "Reviewer PASS at 62f83642; section unchanged and rebound to current page. Revocation/lifecycle remain synthetic.",
+      "status": "promoted",
+      "finding": "Review passed; promotion recorded.",
       "sources": [
         "src.istio"
       ],
@@ -84,12 +84,12 @@
         "source_plan": "updated",
         "semantic_audit": "hash-updated"
       },
-      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
+      "sufficiency_note": "All four dimensions bound; coverage partial-bounded; awaiting external review."
     },
     {
       "pattern_id": "tycho.pattern.dark-launching-shadow-traffic",
       "catalog_name": "Dark Launching / Shadow Traffic",
-      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/dark-launching-shadow-traffic.md",
       "owner_heading": "Dark Launching-Shadow Traffic",
       "gap_class": "source",
       "required_evidence": [
@@ -101,8 +101,8 @@
       "candidate_sources": [
         "Martin Fowler, Dark Launching"
       ],
-      "status": "sufficient-ready",
-      "finding": "Fowler and Istio sources integrated; reviewer decision pending after owner/card rewrite.",
+      "status": "awaiting-external-review",
+      "finding": "Dedicated owner page created 2026-10-29; the owner hash changed. Promotion and owner acceptance suspended; fresh external review required before restoration.",
       "sources": [
         "src.fowler-dark-launching",
         "src.istio-traffic-mirroring"
@@ -110,14 +110,14 @@
       "record": "authoring/sufficient-ready/2026-10-26-dark-launching.json",
       "integration": {
         "card": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/README.md",
-        "owner": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md"
+        "owner": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/dark-launching-shadow-traffic.md"
       },
-      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; measurement, side-effect suppression and capacity bounds remain synthetic; decision coverage partial-bounded."
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes."
     },
     {
       "pattern_id": "tycho.pattern.controlled-cutover",
       "catalog_name": "Controlled Cutover",
-      "owner_path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+      "owner_path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/controlled-cutover.md",
       "owner_heading": "Controlled Cutover",
       "gap_class": "source",
       "required_evidence": [
@@ -129,14 +129,14 @@
       "candidate_sources": [
         "Google SRE, graceful degradation/cutover material"
       ],
-      "status": "sufficient-ready",
-      "finding": "Spanner bounded example integrated and reviewed; general no-return, fallback and RTO guarantees remain synthetic.",
+      "status": "awaiting-external-review",
+      "finding": "Dedicated card and owner pages created 2026-10-29; both bound hashes changed. Promotion and owner acceptance suspended; fresh external review required before restoration.",
       "sources": [
         "src.gcp-spanner-cutover",
         "src.fowler-strangler"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-cutover.json",
-      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes."
     },
     {
       "pattern_id": "tycho.pattern.parallel-run",
@@ -145,23 +145,23 @@
       "owner_heading": "Parallel Run",
       "gap_class": "source",
       "required_evidence": [
-        "old/new comparison",
+        "dual execution",
         "side-effect boundary",
-        "divergence owner",
-        "commit rule"
+        "candidate failure isolation",
+        "branch by abstraction alternative"
       ],
       "candidate_sources": [
-        "Martin Fowler, ParallelChange / ParallelRun material"
+        "MinimumCD Parallel Run"
       ],
-      "status": "sufficient-ready",
-      "finding": "MinimumCD integrated and reviewed; dual execution, background comparison and harness removal supported. Mismatch thresholds, sampling and cost bounds remain synthetic.",
+      "status": "promoted",
+      "finding": "Split review passed; promotion restored.",
       "sources": [
         "src.minimumcd-parallel-run",
         "src.fowler-strangler"
       ],
       "record": "authoring/sufficient-ready/2026-10-26-parallel-handbook.json",
-      "next": "Seek a primary or independent source before sufficient-ready.",
-      "sufficiency_note": "All four technical dimensions supported; decision card complete; Reviewer PASS; decision coverage remains partial-bounded."
+      "next": "Fresh external review of the current page and bindings.",
+      "sufficiency_note": "All four dimensions bound to MinimumCD passages; coverage partial-bounded; awaiting external review."
     },
     {
       "pattern_id": "tycho.pattern.service-oriented-architecture-soa",
@@ -178,8 +178,9 @@
       "candidate_sources": [
         "src.microservices"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: single bounded comparison; no OASIS reference; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: single bounded comparison; no OASIS reference; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.api-composition",
@@ -196,13 +197,14 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: no snapshot and query-shape limits beyond the cited page; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: no snapshot and query-shape limits beyond the cited page; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions; see binding-batches/B01.json."
     },
     {
       "pattern_id": "tycho.pattern.transactional-outbox",
       "catalog_name": "Transactional Outbox",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
       "owner_heading": "Transactional Outbox",
       "gap_class": "batch-2-assessment",
       "required_evidence": [
@@ -214,8 +216,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: relay scheduling and ordering details remain synthetic; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes.",
+      "finding": "Dedicated card and owner pages created 2026-10-29; both bound hashes changed. Promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.quorum-based-reads-writes",
@@ -232,8 +235,9 @@
       "candidate_sources": [
         "src.cassandra"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: membership and minority rules partly synthetic; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: membership and minority rules partly synthetic; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.timeout",
@@ -250,8 +254,9 @@
       "candidate_sources": [
         "src.resilience4j"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: cancellation semantics remain synthetic; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: cancellation semantics remain synthetic; decision coverage partial-bounded.",
+      "finding": "B15-A representation revision drift."
     },
     {
       "pattern_id": "tycho.pattern.branch-by-abstraction",
@@ -268,8 +273,9 @@
       "candidate_sources": [
         "src.fowler-branch"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: removal owner and reversibility guidance partly synthetic; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: removal owner and reversibility guidance partly synthetic; decision coverage partial-bounded.",
+      "finding": "B11-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.layered-architecture",
@@ -286,8 +292,9 @@
       "candidate_sources": [
         "src.fowler-layering"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: logical layers are not deployment units; enforcement remains architectural; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: logical layers are not deployment units; enforcement remains architectural; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.modular-monolith",
@@ -304,8 +311,9 @@
       "candidate_sources": [
         "src.monolith-first"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: module boundary enforcement remains a build/review discipline; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: module boundary enforcement remains a build/review discipline; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.hexagonal-architecture-ports-and-adapters",
@@ -322,8 +330,9 @@
       "candidate_sources": [
         "src.aws-hexagonal"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: adapter mapping overhead remains an operational cost; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: adapter mapping overhead remains an operational cost; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.clean-onion-architecture",
@@ -340,8 +349,9 @@
       "candidate_sources": [
         "src.clean-architecture"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: DTO boundaries and static-check limits remain architectural; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: DTO boundaries and static-check limits remain architectural; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.domain-driven-design-bounded-context",
@@ -358,8 +368,9 @@
       "candidate_sources": [
         "src.fowler-bounded-context"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: ubiquitous language and context overlap need ongoing ownership; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: ubiquitous language and context overlap need ongoing ownership; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.database-per-service",
@@ -376,8 +387,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: cross-service queries and consistency remain application concerns; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: cross-service queries and consistency remain application concerns; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.api-gateway",
@@ -394,8 +406,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: gateway becomes an edge bottleneck and policy owner; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: gateway becomes an edge bottleneck and policy owner; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.backend-for-frontend-bff",
@@ -412,13 +425,14 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: per-client duplication and ownership cost; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: per-client duplication and ownership cost; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.service-discovery",
       "catalog_name": "Service Discovery",
-      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/service-discovery.md",
       "owner_heading": "Service Discovery",
       "gap_class": "batch-4-assessment",
       "required_evidence": [
@@ -430,8 +444,9 @@
       "candidate_sources": [
         "src.envoy"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: registry availability and stale instances; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions are supported by the source-bound owner unit; the card and owner note moved to dedicated pages; coverage partial-bounded pending independent review of the new card and owner hashes.",
+      "finding": "Promotion and owner acceptance suspended 2026-10-29 after the Service Discovery card and owner note split changed both hashes; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.client-side-discovery",
@@ -448,8 +463,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: client complexity and per-language support; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: client complexity and per-language support; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions; see binding-batches/B01.json."
     },
     {
       "pattern_id": "tycho.pattern.server-side-discovery",
@@ -466,8 +482,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: load-balancer dependency and extra hop; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: load-balancer dependency and extra hop; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions; see binding-batches/B01.json."
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",
@@ -484,8 +501,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: translation ownership and mapping drift; decision coverage partial-bounded."
+      "status": "promoted",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete. Current page and bindings await fresh external review; no promotion or owner acceptance. Decision coverage partial-bounded.",
+      "finding": "Split review passed; promotion restored."
     },
     {
       "pattern_id": "tycho.pattern.event-sourcing",
@@ -502,8 +520,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: snapshot/versioning and replay cost remain operational; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: snapshot/versioning and replay cost remain operational; decision coverage partial-bounded.",
+      "finding": "B07 A/B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.saga",
@@ -520,8 +539,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: compensation failure and isolation remain application-specific; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: compensation failure and isolation remain application-specific; decision coverage partial-bounded.",
+      "finding": "B07 A/B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.command-query-responsibility-segregation-cqrs",
@@ -538,8 +558,9 @@
       "candidate_sources": [
         "src.fowler-cqrs"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: projection lag and dual-write boundary; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: projection lag and dual-write boundary; decision coverage partial-bounded.",
+      "finding": "B07 A/B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.cqrs-read-projections",
@@ -556,8 +577,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: rebuild time and read-model ownership; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: rebuild time and read-model ownership; decision coverage partial-bounded.",
+      "finding": "B09-D binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.cache-invalidation",
@@ -574,8 +596,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: invalidation ordering and stale reads; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions are supported by the source-bound owner unit; the dedicated card moved to its own c05 page; coverage partial-bounded pending independent review of the new card and owner backlink hashes.",
+      "finding": "Promotion and owner acceptance suspended 2026-10-29 after the Cache Invalidation card split changed the card and owner backlink hashes; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.cache-stampede-protection",
@@ -592,8 +615,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: lock/lease failure and thundering herd under partition; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; decision card complete; Reviewer PASS. Remaining limit: lock/lease failure and thundering herd under partition; decision coverage partial-bounded.",
+      "finding": "B05-D binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.microservices-architecture",
@@ -610,8 +634,9 @@
       "candidate_sources": [
         "src.microservices"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B03 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.self-contained-service",
@@ -628,8 +653,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes.",
+      "finding": "Dedicated card created 2026-10-29; the card hash changed. Promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.sidecar",
@@ -646,8 +672,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes.",
+      "finding": "Shared static-stability page changed 2026-10-29 when the Immutable Infrastructure note moved out. Promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.ambassador",
@@ -664,8 +691,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes.",
+      "finding": "Shared static-stability page changed 2026-10-29 when the Immutable Infrastructure note moved out. Promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.gateway-routing",
@@ -682,8 +710,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.gateway-aggregation",
@@ -700,8 +729,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.gateway-offloading",
@@ -718,8 +748,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.reverse-proxy",
@@ -736,8 +767,9 @@
       "candidate_sources": [
         "src.envoy"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B01 binding audit found unsupported dimensions; see binding-batches/B01.json."
     },
     {
       "pattern_id": "tycho.pattern.asynchronous-request-reply",
@@ -754,8 +786,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "promoted",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "Review passed after split; promotion restored."
     },
     {
       "pattern_id": "tycho.pattern.gatekeeper",
@@ -772,8 +805,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B02 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.publish-subscribe",
@@ -790,8 +824,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B13-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.point-to-point-queue",
@@ -808,8 +843,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B13-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.competing-consumers",
@@ -826,8 +862,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B13-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.event-driven-consumer",
@@ -844,13 +881,14 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B13-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
       "catalog_name": "Request-Reply Messaging",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md",
       "owner_heading": "Request-Reply Messaging",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -862,8 +900,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "Dedicated owner page split from the shared chapter page on 2026-10-29; promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -880,8 +919,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B13-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.content-based-router",
@@ -898,8 +938,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B13-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.message-filter",
@@ -916,13 +957,14 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "Mechanism, invariant and alternative source-backed; failure recovery partial because the publisher-abridged page states no rejected-message disposition, audit or recovery; coverage partial-bounded; no promotion.",
+      "finding": "Promotion suspended after the shared owner page changed for the Pipes and Filters rewrite; fresh external review still required."
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
       "catalog_name": "Pipes and Filters",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/pipes-and-filters.md",
       "owner_heading": "Pipes and Filters",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -934,13 +976,14 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions supported by the source-bound note, an explicit exception to the page's synthetic-guidance preamble; two admitted units from one source; coverage partial-bounded pending independent review.",
+      "finding": "Dedicated owner page split from the shared chapter page on 2026-10-29; promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.splitter",
       "catalog_name": "Splitter",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
       "owner_heading": "Splitter",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -950,10 +993,12 @@
         "alternative"
       ],
       "candidate_sources": [
-        "src.camel"
+        "src.camel",
+        "src.spring-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions have public bindings; idempotency/re-delivery and decision framing are Tycho guidance; coverage partial-bounded pending independent review.",
+      "finding": "Dedicated owner page split from the shared chapter page on 2026-10-29; promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -970,8 +1015,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "Mechanism and invariant are source-bound; failure recovery is partial; alternative is Tycho synthesis; coverage partial-bounded; no promotion.",
+      "finding": "External review found overclaimed invariant and failure recovery; remediated, fresh review required."
     },
     {
       "pattern_id": "tycho.pattern.scatter-gather",
@@ -988,8 +1034,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "Mechanism and invariant are source-bound; failure recovery is partial; alternative is Tycho synthesis; coverage partial-bounded; no promotion.",
+      "finding": "External review found overclaimed invariant and failure recovery; remediated, fresh review required."
     },
     {
       "pattern_id": "tycho.pattern.dead-letter-channel-dlq",
@@ -1006,8 +1053,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B14-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.durable-subscriber",
@@ -1024,8 +1072,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B14-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.idempotent-receiver",
@@ -1042,13 +1091,14 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B14-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.resequencer",
       "catalog_name": "Resequencer",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
       "owner_heading": "Resequencer",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -1058,15 +1108,18 @@
         "alternative"
       ],
       "candidate_sources": [
-        "src.enterprise-integration"
+        "src.enterprise-integration",
+        "src.camel",
+        "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions bound to exact public quotes: EIP for the mechanism, Apache Camel 4.22.x LTS for the bounded backlog and timeout recovery, and the Microsoft Learn Sequential Convoy page for the partitioned-ordering alternative; coverage partial-bounded pending independent review.",
+      "finding": "Dedicated owner page split from the shared chapter page on 2026-10-29; promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.claim-check",
       "catalog_name": "Claim Check",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md",
       "owner_heading": "Claim Check",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -1076,10 +1129,12 @@
         "alternative"
       ],
       "candidate_sources": [
-        "src.enterprise-integration"
+        "src.enterprise-integration",
+        "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions supported by two admitted source units: the Microsoft Learn Claim Check pattern page supports mechanism, invariant, failure/recovery and alternative; the EIP pattern page supports the bounded stored-payload description.",
+      "finding": "Dedicated owner page split from the shared chapter page on 2026-10-29; promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
@@ -1096,8 +1151,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B14-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.canonical-data-model",
@@ -1114,8 +1170,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B14-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.process-manager-routing-slip",
@@ -1132,8 +1189,9 @@
       "candidate_sources": [
         "src.enterprise-integration"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B14-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.domain-events",
@@ -1150,8 +1208,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B07 A/B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.saga-choreography",
@@ -1168,8 +1227,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B07 A/B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.saga-orchestration",
@@ -1186,8 +1246,9 @@
       "candidate_sources": [
         "src.temporal"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B07 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.compensating-transaction",
@@ -1204,8 +1265,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B07 A/B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.transactional-inbox",
@@ -1222,8 +1284,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B07 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.idempotency-key",
@@ -1240,8 +1303,9 @@
       "candidate_sources": [
         "src.ietf-idempotency-key"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B07 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.change-data-capture-cdc",
@@ -1258,8 +1322,9 @@
       "candidate_sources": [
         "src.postgres-logical"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B08-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.materialized-view",
@@ -1276,8 +1341,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B08-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.command-side-replica",
@@ -1294,8 +1360,9 @@
       "candidate_sources": [
         "src.microservices-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B08 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.two-phase-commit-2pc",
@@ -1312,8 +1379,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B08 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.distributed-cache",
@@ -1330,8 +1398,9 @@
       "candidate_sources": [
         "src.hazelcast"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.read-through-cache",
@@ -1348,8 +1417,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.write-through-cache",
@@ -1366,8 +1436,9 @@
       "candidate_sources": [
         "src.aws-caching-strategies"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05 source representation gap."
     },
     {
       "pattern_id": "tycho.pattern.write-behind-write-back",
@@ -1384,8 +1455,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05 source representation gap."
     },
     {
       "pattern_id": "tycho.pattern.write-around",
@@ -1402,8 +1474,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05 source representation gap."
     },
     {
       "pattern_id": "tycho.pattern.ttl-based-expiration",
@@ -1420,8 +1493,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "remediation",
+      "sufficiency_note": "Failure/recovery and alternative exceed bindings; TTL condition needs duration-to-duration comparison.",
+      "finding": "Review reject: eviction consequence, alternative and duration comparison gaps."
     },
     {
       "pattern_id": "tycho.pattern.single-flight-request-coalescing",
@@ -1438,8 +1512,9 @@
       "candidate_sources": [
         "src.microsoft-caching-guidance"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B06 binding audit found no source support."
     },
     {
       "pattern_id": "tycho.pattern.stale-while-revalidate",
@@ -1456,8 +1531,9 @@
       "candidate_sources": [
         "src.rfc5861"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.multi-level-caching",
@@ -1474,8 +1550,9 @@
       "candidate_sources": [
         "src.hazelcast"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B06 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.cdn-edge-caching",
@@ -1492,8 +1569,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B06 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.sharding",
@@ -1510,8 +1588,9 @@
       "candidate_sources": [
         "src.citus"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.partitioning",
@@ -1528,8 +1607,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.consistent-hashing",
@@ -1546,8 +1626,9 @@
       "candidate_sources": [
         "src.cassandra"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.leader-follower-replication",
@@ -1564,8 +1645,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.multi-leader-replication",
@@ -1582,8 +1664,9 @@
       "candidate_sources": [
         "src.cassandra"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.read-replicas",
@@ -1600,8 +1683,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.index-table",
@@ -1618,8 +1702,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09 representation gap; local text incomplete."
     },
     {
       "pattern_id": "tycho.pattern.expand-and-contract-schema",
@@ -1636,8 +1721,9 @@
       "candidate_sources": [
         "src.flyway"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B10-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.online-data-migration",
@@ -1654,8 +1740,9 @@
       "candidate_sources": [
         "src.gh-ost"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B10-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.backup-pitr-and-restore",
@@ -1672,8 +1759,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.circuit-breaker",
@@ -1690,8 +1778,9 @@
       "candidate_sources": [
         "src.resilience4j"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B15-A representation revision drift."
     },
     {
       "pattern_id": "tycho.pattern.bulkhead",
@@ -1708,8 +1797,9 @@
       "candidate_sources": [
         "src.resilience4j"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B15-A representation revision drift."
     },
     {
       "pattern_id": "tycho.pattern.retry-with-exponential-backoff",
@@ -1726,8 +1816,9 @@
       "candidate_sources": [
         "src.resilience4j"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B15-B binding audit found only mechanism support."
     },
     {
       "pattern_id": "tycho.pattern.retry-with-jitter",
@@ -1744,8 +1835,9 @@
       "candidate_sources": [
         "src.resilience4j"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B15-B binding audit found only mechanism support."
     },
     {
       "pattern_id": "tycho.pattern.deadline-propagation",
@@ -1762,8 +1854,9 @@
       "candidate_sources": [
         "src.sre-cascading"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.fallback",
@@ -1780,8 +1873,9 @@
       "candidate_sources": [
         "src.sre-cascading"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B15-C binding audit found no fallback passage."
     },
     {
       "pattern_id": "tycho.pattern.graceful-degradation",
@@ -1798,8 +1892,9 @@
       "candidate_sources": [
         "src.sre-cascading"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.load-shedding",
@@ -1816,8 +1911,9 @@
       "candidate_sources": [
         "src.sre-overload"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.throttling",
@@ -1834,8 +1930,9 @@
       "candidate_sources": [
         "src.sre-overload"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "remediation",
+      "sufficiency_note": "Mechanism, invariant and alternative partial; requires admitted pacing evidence.",
+      "finding": "Mechanism/invariant/alternative exceed SRE rejection binding."
     },
     {
       "pattern_id": "tycho.pattern.rate-limiting",
@@ -1852,8 +1949,9 @@
       "candidate_sources": [
         "src.sre-overload"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.queue-based-load-leveling",
@@ -1870,8 +1968,9 @@
       "candidate_sources": [
         "src.rabbitmq"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B16 Cloudflare representation gap."
     },
     {
       "pattern_id": "tycho.pattern.priority-queue",
@@ -1888,8 +1987,9 @@
       "candidate_sources": [
         "src.rabbitmq"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B16 representation gap; Cloudflare challenge page."
     },
     {
       "pattern_id": "tycho.pattern.hedged-requests",
@@ -1906,8 +2006,9 @@
       "candidate_sources": [
         "src.morning-paper-tail-at-scale"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.health-endpoint-monitoring",
@@ -1924,8 +2025,9 @@
       "candidate_sources": [
         "src.kubernetes"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B16-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.failover-failback",
@@ -1942,8 +2044,9 @@
       "candidate_sources": [
         "src.postgresql"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B16-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.leader-election",
@@ -1960,8 +2063,9 @@
       "candidate_sources": [
         "src.raft"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-A source sections omit the consensus prose."
     },
     {
       "pattern_id": "tycho.pattern.distributed-lock",
@@ -1978,8 +2082,9 @@
       "candidate_sources": [
         "src.kubernetes"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.lease-based-ownership",
@@ -1996,8 +2101,9 @@
       "candidate_sources": [
         "src.kubernetes"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.fencing-tokens",
@@ -2014,8 +2120,9 @@
       "candidate_sources": [
         "src.kleppmann-distributed-locking"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.quorum-coordination",
@@ -2032,8 +2139,9 @@
       "candidate_sources": [
         "src.raft"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-A source sections omit the consensus prose."
     },
     {
       "pattern_id": "tycho.pattern.causal-ordering",
@@ -2050,8 +2158,9 @@
       "candidate_sources": [
         "src.jepsen-consistency"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.session-consistency",
@@ -2068,8 +2177,9 @@
       "candidate_sources": [
         "src.jepsen-consistency"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.distributed-workflow-orchestration",
@@ -2086,8 +2196,9 @@
       "candidate_sources": [
         "src.temporal"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.load-balancing",
@@ -2104,8 +2215,9 @@
       "candidate_sources": [
         "src.sre-frontend-enrichment"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B17-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.horizontal-scaling",
@@ -2122,8 +2234,9 @@
       "candidate_sources": [
         "src.k8s-hpa"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B17-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.vertical-scaling",
@@ -2140,8 +2253,9 @@
       "candidate_sources": [
         "src.kubernetes"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B17-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.cell-based-architecture",
@@ -2158,8 +2272,9 @@
       "candidate_sources": [
         "src.cell-boundaries"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.shuffle-sharding",
@@ -2176,8 +2291,9 @@
       "candidate_sources": [
         "src.cortex-shuffle-sharding"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "Focused external review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.deployment-stamps",
@@ -2194,8 +2310,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.geode",
@@ -2212,13 +2329,14 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.static-content-hosting",
       "catalog_name": "Static Content Hosting",
-      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
       "owner_heading": "Static Content Hosting",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -2230,8 +2348,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "awaiting-external-review",
+      "sufficiency_note": "All four technical dimensions remain supported and review-ready; coverage partial-bounded pending independent review of the new card and/or owner hashes.",
+      "finding": "Dedicated card and owner pages created 2026-10-29; both bound hashes changed. Promotion and owner acceptance suspended; fresh external review required before restoration."
     },
     {
       "pattern_id": "tycho.pattern.tenant-based-resource-isolation",
@@ -2248,8 +2367,9 @@
       "candidate_sources": [
         "src.microsoft-multitenant"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.rolling-deployment",
@@ -2266,8 +2386,9 @@
       "candidate_sources": [
         "src.k8s-deployments"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-A binding audit found unsupported dimensions or representation drift."
     },
     {
       "pattern_id": "tycho.pattern.blue-green-deployment",
@@ -2284,8 +2405,9 @@
       "candidate_sources": [
         "src.argo-rollouts"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-A binding audit found unsupported dimensions or representation drift."
     },
     {
       "pattern_id": "tycho.pattern.canary-release",
@@ -2302,8 +2424,9 @@
       "candidate_sources": [
         "src.argo-rollouts"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-A binding audit found unsupported dimensions or representation drift."
     },
     {
       "pattern_id": "tycho.pattern.feature-flags-feature-toggles",
@@ -2320,8 +2443,9 @@
       "candidate_sources": [
         "src.fowler-feature-toggles"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.gitops",
@@ -2338,13 +2462,14 @@
       "candidate_sources": [
         "src.opengitops"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-B binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.immutable-infrastructure",
       "catalog_name": "Immutable Infrastructure",
-      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md",
       "owner_heading": "Immutable Infrastructure",
       "gap_class": "full-assessment",
       "required_evidence": [
@@ -2356,8 +2481,9 @@
       "candidate_sources": [
         "src.ibm-immutable-infrastructure"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "Owner section moved to a dedicated page on 2026-10-29; coverage remains partial and no promotion is claimed."
     },
     {
       "pattern_id": "tycho.pattern.strangler-fig",
@@ -2374,8 +2500,9 @@
       "candidate_sources": [
         "src.fowler-strangler"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.expand-and-contract",
@@ -2392,8 +2519,9 @@
       "candidate_sources": [
         "src.flyway"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B11-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.zero-trust-architecture",
@@ -2410,8 +2538,9 @@
       "candidate_sources": [
         "src.owasp-asvs"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.least-privilege",
@@ -2428,8 +2557,9 @@
       "candidate_sources": [
         "src.owasp-asvs"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B18-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.valet-key",
@@ -2446,8 +2576,9 @@
       "candidate_sources": [
         "src.microsoft-cloud-patterns"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "promoted",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "Card split external review passed; promotion restored."
     },
     {
       "pattern_id": "tycho.pattern.multitenant-isolation",
@@ -2464,8 +2595,9 @@
       "candidate_sources": [
         "src.owasp-asvs"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B18-A binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.distributed-tracing",
@@ -2482,8 +2614,9 @@
       "candidate_sources": [
         "src.otel"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B18-B binding audit found only mechanism support."
     },
     {
       "pattern_id": "tycho.pattern.structured-logging",
@@ -2500,8 +2633,9 @@
       "candidate_sources": [
         "src.otel"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "External review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.audit-trail",
@@ -2518,8 +2652,9 @@
       "candidate_sources": [
         "src.openlineage"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B18-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.sli-slo-and-error-budgets",
@@ -2536,8 +2671,9 @@
       "candidate_sources": [
         "src.sre"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "Focused external review 2026-10-27 major finding."
     },
     {
       "pattern_id": "tycho.pattern.synthetic-monitoring",
@@ -2554,8 +2690,9 @@
       "candidate_sources": [
         "src.sre-workbook"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B18-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.health-readiness-and-liveness-checks",
@@ -2572,8 +2709,9 @@
       "candidate_sources": [
         "src.kubernetes"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B18-C binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.polyglot-persistence",
@@ -2590,8 +2728,9 @@
       "candidate_sources": [
         "src.fowler-polyglot"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B09-D binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.cache-aside-lazy-loading",
@@ -2608,8 +2747,9 @@
       "candidate_sources": [
         "src.aws-caching-strategies"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05 binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.negative-caching",
@@ -2626,8 +2766,9 @@
       "candidate_sources": [
         "src.google-cdn-negative-caching"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B05-D binding audit found unsupported dimensions."
     },
     {
       "pattern_id": "tycho.pattern.consensus",
@@ -2644,8 +2785,9 @@
       "candidate_sources": [
         "src.raft"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B12-A source sections omit the consensus prose."
     },
     {
       "pattern_id": "tycho.pattern.autoscaling",
@@ -2662,13 +2804,13 @@
       "candidate_sources": [
         "src.keda"
       ],
-      "status": "sufficient-ready",
-      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded."
+      "status": "rejected-technical-support",
+      "sufficiency_note": "All four technical dimensions supported; dedicated admitted source; reviewed binding; decision coverage partial-bounded.",
+      "finding": "B17-B KEDA landing-page representation gap."
     }
   ],
   "limits": [
-    "Plan only; no source unit is claimed read unless a ledger record exists.",
-    "No sufficient coverage is claimed.",
-    "Human review and owner acceptance are separate gates."
+    "Six pilot entries are rejected pending evidence remediation.",
+    "No sufficient coverage is claimed."
   ]
 }

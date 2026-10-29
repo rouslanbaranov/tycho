@@ -16,7 +16,7 @@ A generally available technology may be explained using its own public specifica
 
 Only general authoring techniques may be reused. Do not copy another book's prose, scripts, schemas, graphs, source inventories, examples, internal terminology, or metadata records. Implement generic tooling independently. Restricted context from prior conversations, memory, attachments, retrieval, or tools is not a source for Tycho.
 
-Use only public, independently accessible sources and original synthetic examples. Do not search internal systems or load employer repositories. Do not follow links to restricted resources. Admit a source before using it: record public origin, author/publisher, version or revision, access date, scope, and reuse/licensing constraints. Unknown admissibility means do not use.
+Use only public, independently accessible sources and original synthetic examples. Do not search internal systems or load employer repositories. Do not follow links to restricted resources. Admit a source before using it: record public origin, author/publisher, version or revision, access date, scope, and reuse/licensing constraints. Unknown admissibility means do not use. Adding a new public source unit is automatically authorized once these admission and record requirements are met; no separate owner confirmation is required. This does not authorize restricted material or waive independent review, promotion, sufficient-state, scope-change or owner-acceptance decisions.
 
 ## Scope of enforcement
 

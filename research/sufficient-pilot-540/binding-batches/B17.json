@@ -1,0 +1,516 @@
+{
+  "batch": "B17",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.load-balancing",
+      "catalog_name": "Load Balancing",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "owner_heading": "Load Balancing",
+      "source_id": "src.sre-frontend-enrichment",
+      "ledger_record": "read.batch5-sre-frontend.2026-10-21",
+      "url": "https://sre.google/sre-book/load-balancing-frontend/",
+      "unit": "Load Balancing at the Frontend — public chapter",
+      "sections": [
+        "Load Balancing at the Frontend",
+        "Power Isn't the Answer",
+        "Load Balancing Using DNS",
+        "Load Balancing at the Virtual IP Address"
+      ],
+      "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Load balancing chooses among eligible backends. The invariant is that no request reaches an ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and retry-safe callers.",
+          "reason": "Explains selection signals as the basis for distributing requests and that they are not equivalent.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Cap request cost at the interface where one request can dominate a backend, and test the selector under the real cost distribution.",
+          "reason": "SRE page has no per-request cost cap or selector test under real distribution.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A least-loaded or active-request selector assumes that a backend with spare capacity will do useful work. A seriously unhealthy backend can instead return an error in milliseconds, so its active-request count falls and the selector sends it more traffic. The backend becomes a sinkhole.",
+          "reason": "Describes fast-error attraction and the sinkhole failure it produces.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Compare round-robin, random choice, least-active requests and affinity against request cost, stale load signals and state placement.",
+          "reason": "Names competing selection policies but gives no condition that reverses the choice.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.horizontal-scaling",
+      "catalog_name": "Horizontal Scaling",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+      "owner_heading": "Horizontal Scaling",
+      "source_id": "src.k8s-hpa",
+      "ledger_record": "read.batch5-k8s-hpa.2026-10-21",
+      "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/",
+      "unit": "Horizontal Pod Autoscaling — Kubernetes documentation",
+      "sections": [
+        "Horizontal Pod Autoscaling",
+        "How does a HorizontalPodAutoscaler work?",
+        "Algorithm details",
+        "Pod readiness and autoscaling metrics",
+        "Key behaviors for pod readiness",
+        "Good practice for pod readiness",
+        "API object",
+        "Stability of workload scale",
+        "Autoscaling during rolling update",
+        "Support for resource metrics",
+        "Note: summed container usage can hide one container high usage",
+        "Container resource metrics",
+        "Note: container-name change ordering",
+        "Scaling on custom metrics",
+        "Scaling on multiple metrics",
+        "Support for metrics APIs",
+        "Note: HPA supports metrics.k8s.io/v1beta1 not v1",
+        "Configurable scaling behavior",
+        "Scaling policies",
+        "Stabilization window",
+        "Tolerance",
+        "Default behavior",
+        "Example: change downscale stabilization window",
+        "Example: limit scale down rate",
+        "Example: disable scale down",
+        "Support for HorizontalPodAutoscaler in kubectl",
+        "Scaling to and from zero",
+        "Implicit maintenance-mode deactivation",
+        "Migrating Deployments and StatefulSets to horizontal autoscaling",
+        "What's next"
+      ],
+      "revision": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Horizontal scaling multiplies processing replicas; vertical scaling changes resources available to existing replicas.",
+          "reason": "States the scaling mechanism (adding replicas) directly.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Neither can increase throughput past a serial or externally fixed bottleneck.",
+          "reason": "K8s HPA page has no serial-bottleneck throughput ceiling.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A new replica may start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst and bound the work each replica can claim.",
+          "reason": "Names scale-out failure modes and the required test/bound.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Vertical scaling or a queue/backpressure policy may be preferable when the bottleneck is per-replica resource or the workload cannot partition.",
+          "reason": "Page does not compare vertical scaling or queue backpressure.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.vertical-scaling",
+      "catalog_name": "Vertical Scaling",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+      "owner_heading": "Vertical Scaling",
+      "source_id": "src.kubernetes",
+      "ledger_record": "read.batch5-k8s-resources.2026-10-21",
+      "url": "https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+      "unit": "Resource Management for Pods and Containers — Kubernetes documentation",
+      "sections": [
+        "Resource Management for Pods and Containers",
+        "Requests and limits",
+        "Resource types",
+        "Huge pages",
+        "Resource requests and limits of Pod and container",
+        "Pod-level resource specification",
+        "Resource units in Kubernetes",
+        "CPU resource units",
+        "Memory resource units",
+        "Container resources example",
+        "Pod resources example",
+        "How Pods with resource requests are scheduled",
+        "How Kubernetes applies resource requests and limits",
+        "Resizing container resources",
+        "In-place resize",
+        "Resizing by launching replacement Pods",
+        "Monitoring compute & memory resource usage",
+        "Considerations for memory backed emptyDir volumes",
+        "Local ephemeral storage",
+        "Resource monitoring for local ephemeral storage",
+        "Extended resources",
+        "Managing extended resources",
+        "Node-level extended resources",
+        "Device plugin managed resources",
+        "Other resources",
+        "Cluster-level extended resources",
+        "Extended resources allocation by DRA",
+        "Consuming extended resources",
+        "PID limiting",
+        "Troubleshooting",
+        "My Pods are pending with event message FailedScheduling",
+        "My container is terminated",
+        "What's next"
+      ],
+      "revision": "8eee4a66c18acfd2ad9798686ad1bec7831deaae5f71691e33217bc06e2c870e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "vertical scaling changes resources available to existing replicas",
+          "reason": "States the vertical mechanism: enlarge the resources of existing replicas.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed bottleneck.",
+          "reason": "States the capacity ceiling that vertical scaling cannot exceed.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A resize usually needs a restart or migration, so the old capacity is unavailable during the change; bound the maintenance window and keep a fallback.",
+          "reason": "Names resize unavailability and the required fallback.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Horizontal scaling or sharding may be preferable when the workload partitions and a single node is an unacceptable failure domain.",
+          "reason": "K8s page does not compare horizontal scaling or sharding.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.autoscaling",
+      "catalog_name": "Autoscaling",
+      "owner_path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+      "owner_heading": "Autoscaling",
+      "source_id": "src.keda",
+      "ledger_record": "read.batch5-keda.2026-10-21",
+      "url": "https://keda.sh/docs/latest/",
+      "unit": "KEDA — event-driven autoscaling",
+      "sections": [
+        "Where to go"
+      ],
+      "revision": "8c704134e53dcad3b724345ae03898697b0825380417decaa3cbf7656f7baa1f",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "Autoscaling is a **feedback-control mechanism**, not a promise of immediate extra capacity. A signal must be collected, interpreted, acted on, and followed by resource provisioning, application readiness and dependent-service capacity.",
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "A signal must be collected, interpreted, acted on, and followed by resource provisioning, application readiness and dependent-service capacity.",
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "During that delay, new demand still reaches the old infrastructure.",
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Scheduled capacity or static headroom may be simpler when demand is predictable or the scale-out path is slower than the burst.",
+          "reason": "KEDA local text is only the landing page; no control-loop or capacity content.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.cell-based-architecture",
+      "catalog_name": "Cell-Based Architecture",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+      "owner_heading": "Cell-Based Architecture",
+      "source_id": "src.cell-boundaries",
+      "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+      "url": "https://docs.aws.amazon.com/wellarchitected/latest/reducing-scope-of-impact-with-cell-based-architecture/what-is-a-cell-based-architecture.html",
+      "unit": "What is a cell-based architecture?",
+      "sections": [
+        "What is a cell-based architecture?",
+        "A typical workload",
+        "A workload with cell-based architecture"
+      ],
+      "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A cell-based architecture runs multiple copies of the serving stack, each with a routing key and a data partition",
+          "reason": "Defines the cell as a bounded population with independent capacity and failure domain.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The boundary is only real if every dependency is cell-scoped.",
+          "reason": "States that shared dependencies defeat a nominal cell boundary.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A shared database, queue, cache, control plane or configuration publisher can make all cells fail together",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A single deployment with failure-domain isolation may be preferable when the population is small and cell duplication cannot be justified.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.shuffle-sharding",
+      "catalog_name": "Shuffle Sharding",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+      "owner_heading": "Shuffle Sharding",
+      "source_id": "src.cortex-shuffle-sharding",
+      "ledger_record": "read.batch5-cortex-shuffle.2026-10-21",
+      "url": "https://cortexmetrics.io/docs/guides/shuffle-sharding/",
+      "unit": "Shuffle Sharding — Cortex documentation",
+      "sections": [
+        "Shuffle Sharding",
+        "Background",
+        "What is shuffle sharding?",
+        "Low overlapping instances probability",
+        "Cortex shuffle sharding",
+        "Guaranteed properties",
+        "Ingesters shuffle sharding",
+        "Ingesters write path",
+        "Ingesters read path",
+        "Rollout strategy",
+        "Limitation: decreasing the tenant shard size",
+        "Query-frontend and Query-scheduler shuffle sharding",
+        "The impact of “query of death”",
+        "Store-gateway shuffle sharding",
+        "Ruler shuffle sharding",
+        "Compactor shuffle sharding",
+        "FAQ",
+        "Does shuffle sharding add additional overhead to the KV store?"
+      ],
+      "revision": "6b895c9acc47cbe24ff4989a5115539b70ea145158b97e70c4417329e3484633",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A shuffle shard selects a random subset of workers for each tenant",
+          "reason": "Explains the subset selection and partial tenant overlap.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Hash-based assignment alone does not prove statistical independence.",
+          "reason": "Safety rule against assuming hash-based independence.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A failed worker affects every tenant whose subset includes it",
+          "reason": "Names shared-dependency and assignment-stability tests.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A fixed cell anchors one tenant to a known home and population boundary.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.deployment-stamps",
+      "catalog_name": "Deployment Stamps",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+      "owner_heading": "Deployment Stamps",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/deployment-stamp",
+      "unit": "Deployment Stamps — pattern page",
+      "sections": [
+        "Deployment Stamps pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Deployment",
+        "Capacity planning",
+        "Traffic routing",
+        "Next steps",
+        "Contributors",
+        "Related resources"
+      ],
+      "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A deployment stamp is an independently operated deployment unit used for scale, isolation or locality.",
+          "reason": "Defines the independent deployment unit and its purposes.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is configuration drift or split state across stamps; version the stamp definition, route by an explicit key and reconcile state at the authority.",
+          "reason": "Names drift and split state, with versioning, routing and reconciliation controls.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.geode",
+      "catalog_name": "Geode",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+      "owner_heading": "Geode",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.batch5-geode.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/geodes",
+      "unit": "Geode — pattern page",
+      "sections": [
+        "Geode pattern",
+        "Context and problem",
+        "Solution",
+        "Issues and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Examples"
+      ],
+      "revision": "b543566b65aa0fd4b4a0620253a67e6fae1c1427e347bb37f5e80e9775baf364",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Geode places identical regional nodes behind a global routing layer so clients can use a nearby healthy region.",
+          "reason": "States the nodes-plus-routing mechanism.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority.",
+          "reason": "Lists the replication, health, routing and authority preconditions.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "The failure path is a route to a stale or isolated region; the router must use an authoritative health and data-freshness signal, and failover must fence the old writer.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Active-passive recovery is the alternative when cross-region consistency is not worth the routing complexity.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.static-content-hosting",
+      "catalog_name": "Static Content Hosting",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "owner_heading": "Static Content Hosting",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.batch3-ms-static.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/static-content-hosting",
+      "unit": "Static Content Hosting — pattern page",
+      "sections": [
+        "Static Content Hosting pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next step",
+        "Related resource"
+      ],
+      "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Static content hosting publishes immutable objects to an object store or CDN origin and serves them by URL without per-request application compute.",
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A retained version is the rollback path",
+          "reason": "Requires cache key, freshness and authorization to agree for served static assets.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Cold-cache miss storms and incomplete purges are common; exercise origin failover and a known purge.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A dynamic origin or edge compute may be preferable when content changes per request or publication cannot be governed.",
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.tenant-based-resource-isolation",
+      "catalog_name": "Tenant-Based Resource Isolation",
+      "owner_path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+      "owner_heading": "Tenant-Based Resource Isolation",
+      "source_id": "src.microsoft-multitenant",
+      "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview",
+      "unit": "Architectural Approaches for a Multitenant Solution — Microsoft Learn",
+      "sections": [
+        "Deployment Stamps pattern",
+        "Intended audience",
+        "Related resource"
+      ],
+      "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A shared pool with tenant-scoped predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance risk dominates.",
+          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources.",
+          "has_binding": true
+        }
+      }
+    }
+  ]
+}

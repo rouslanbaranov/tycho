@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-22"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -73,9 +73,9 @@ Use the [saga/isolation research](../c03-consistency-and-distributed-transaction
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/README.md#request-reply-messaging) — decision conditions and contraindications.
+> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) — decision conditions and contraindications.
 > [Correlation Identifier](../../v11-pattern-atlas/c03-messaging-integration/README.md#correlation-identifier) — decision conditions and contraindications.
-> [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/README.md#claim-check) — decision conditions and contraindications.
+> [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/claim-check.md#claim-check) — decision conditions and contraindications.
 > [Dead Letter Channel / DLQ](../../v11-pattern-atlas/c03-messaging-integration/README.md#dead-letter-channel--dlq) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:4 -->
@@ -162,23 +162,12 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+measured evidence, and they do not create a new source claim. Claim Check and
+Request-Reply Messaging have moved to dedicated source-bound owner pages.
 
 ### Claim Check
 
-A claim check stores a large or sensitive payload outside the message and sends a claim
-token instead. It needs payload lifecycle, authorization, expiry, integrity and a cleanup
-rule for abandoned claims. Use it when message size, retention or access boundaries make
-an inline payload unsafe. Do not use it when the payload is small enough to inline or when
-an external store would create an unacceptable consistency dependency. An untracked
-claim store becomes a data-retention liability. Bind the claim token to the message and
-tenant and to a payload digest; a token must not resolve to another payload. The retrieval
-hop needs a latency budget and bounded retries.
-
-The failure path is an orphaned payload or a token that outlives its authorization; expire
-and garbage-collect claims, and make the consumer fail closed when the claim cannot be
-resolved. An inline payload with encryption and size limits is the alternative when the
-transport can carry it safely.
+See the [dedicated Claim Check owner note](claim-check.md).
 
 ### Correlation Identifier
 
@@ -202,22 +191,7 @@ identifier retention and trust boundaries need an owner.
 
 ### Request-Reply Messaging
 
-A requester sends a message with a reply address and a correlation value, and the responder returns
-a message that the requester matches to the original request. The reply channel is durable, has an
-owner and is cleaned after its retention window. A reply must correlate to exactly one
-outstanding request and must not be processed as a new command by another consumer.
-
-A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply
-a reply deadline and reconcile before retrying. A reply after the deadline is late, not valid for
-a new operation: detect it from the request state and quarantine or audit it. A duplicate reply is
-deduplicated by request and responder identity; only the first accepted reply is applied. Request
-state and dedup records must outlive the reply deadline, or a late reply becomes an orphan with no
-route. Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits
-the request budget; choose messaging when availability or
-latency requires decoupling.
-
-**Limits.** Reply queues, correlation state and orphaned replies are operational costs; a lost
-reply must be distinguishable from a slow one, and the requester needs idempotent effects.
+See the [dedicated Request-Reply Messaging owner note](request-reply-messaging.md).
 
 ### Dead Letter Channel-DLQ
 

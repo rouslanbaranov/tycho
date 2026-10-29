@@ -324,39 +324,7 @@ documentation, not a benchmark.
 
 ### Service Discovery
 
-**Identity.** Service Discovery; family API and service communication; kind
-infrastructure pattern; priority core.
-
-**Decision question.** Should callers resolve backend instances through a discovery
-mechanism rather than static addresses?
-
-**Good-fit conditions.** Instances change frequently; membership and health are
-observable; stale membership can be detected; callers can handle resolution failure and
-backoff; the routing contract is owned.
-
-**Hard contraindications.** Reject the claim when a small static endpoint is stable;
-when discovery would publish stale or unauthorized endpoints; when clients cannot
-maintain backoff and observability; when discovery is treated as authorization.
-
-**Competing alternative.** Static endpoints, DNS or a single proxy. Reverse the choice
-when discovery control-plane cost and stale-state risk exceed the change rate.
-
-**Failure and recovery.** Stale membership, discovery outage and fast-error attraction
-are common. Recovery requires last-known-good policy and health checks; verify the
-routing contract in the owner section.
-
-**Technical owner.** [Service Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#service-discovery) — discovery and selection; not a full control-plane implementation.
-
-**Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.envoy-service-discovery.2026-10-21: Service discovery, sections
-"Supported service discovery types", "Static", "Strict DNS", "Logical DNS", "Original
-destination", "Endpoint discovery service (EDS)", "Custom cluster", "On eventually
-consistent service discovery". Vendor documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Client-Side Discovery; Server-Side Discovery; Gateway Routing;
-Reverse Proxy.
+See the [dedicated Service Discovery card](service-discovery.md).
 
 ### Client-Side Discovery
 
@@ -432,41 +400,7 @@ Gateway.
 
 ### Asynchronous Request-Reply
 
-**Identity.** Asynchronous Request-Reply; family API and service communication; kind
-integration pattern; priority core.
-
-**Decision question.** Should a client submit work and later fetch a result, rather than
-hold one synchronous request open?
-
-**Good-fit conditions.** Work exceeds a request deadline; durable acceptance and
-recovery are required; clients can poll or receive a callback; operation identity and
-cleanup are defined.
-
-**Hard contraindications.** Reject the claim when a synchronous call reliably meets the
-deadline; when the client cannot handle pending state; when result retention and
-cleanup have no owner; when duplicate submission cannot be made safe by an idempotency
-key or reconciliation.
-
-**Competing alternative.** Synchronous request-reply with a bounded deadline. Reverse
-the choice when durable work and client polling add more complexity than the latency
-benefit.
-
-**Failure and recovery.** Lost replies, duplicate submissions and orphaned jobs are
-common. Recovery requires stable operation IDs and status cleanup; verify the async
-contract in the owner section.
-
-**Technical owner.** [Asynchronous APIs and streaming: demand, deadlines and cancellation](../../v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md#asynchronous-request-reply) — async demand and cancellation; not a full request-reply implementation.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-async-request-reply.2026-10-21: all twelve served
-headings read. Vendor pattern page, not a
-benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; API Composition; Retry with Idempotency; Deadline
-Propagation.
+See the [dedicated Asynchronous Request-Reply card](async-request-reply.md).
 
 ### Gatekeeper
 

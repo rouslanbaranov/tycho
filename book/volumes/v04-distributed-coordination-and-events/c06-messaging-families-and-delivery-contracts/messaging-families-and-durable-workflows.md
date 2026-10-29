@@ -42,7 +42,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-28"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -55,8 +55,8 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/README.md#request-reply-messaging) — decision conditions and contraindications.
-> [Splitter](../../v11-pattern-atlas/c03-messaging-integration/README.md#splitter) — decision conditions and contraindications.
+> [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) — decision conditions and contraindications.
+> [Splitter](../../v11-pattern-atlas/c03-messaging-integration/splitter.md#splitter) — decision conditions and contraindications.
 > [Aggregator](../../v11-pattern-atlas/c03-messaging-integration/README.md#aggregator) — decision conditions and contraindications.
 > [Scatter-Gather](../../v11-pattern-atlas/c03-messaging-integration/README.md#scatter-gather) — decision conditions and contraindications.
 
@@ -111,54 +111,51 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+measured evidence; the Aggregator and Scatter-Gather alternatives carry
+separate source bindings recorded in their cards and owner units.
 
 ### Aggregator
 
 An aggregator fans in related results from multiple participants and returns one composed
-result. It needs correlation, a per-participant timeout, a partial-failure policy and a
-rule for late or duplicate responses. Define the expected participant set, a completion rule (all
-or quorum), and eviction of late responses. Use it when callers need one response and the
-participants can be queried independently. Do not use it when one participant is
-authoritative, when atomicity across participants is required, or when one slow
-participant would consume the caller complete budget.
+result. It needs correlation, a completeness condition and an aggregation algorithm.
+Tycho guidance, not a source claim: add a per-participant timeout, a partial-failure
+policy and a rule for late or duplicate responses. Define the expected participant set, a
+completion rule (all or quorum), and eviction of late responses. Use it when callers need
+one response and the participants can be queried independently. Tycho guidance: do not use
+it when one participant is authoritative, when atomicity across participants is required,
+or when one slow participant would consume the caller's complete budget.
 
-**Limits.** Per-participant state, duplicate responses and cancellation are costs; a partial
-result needs a versioned schema and a caller-visible completeness marker.
+**Limits.** Per-participant state, duplicate responses and cancellation are costs; a
+partial result needs a versioned schema and a caller-visible completeness marker.
 
-The failure path is a stuck or missing participant; the aggregator must return a declared
-partial result, cancel remaining work or fail as a whole. Client-side composition is the
-alternative when the caller can tolerate multiple responses.
+The source states that a missing or delayed message can prevent further processing and
+that an incomplete set should raise an error after a timeout. Tycho guidance, not a source
+claim: an implementation should also return a declared partial result, cancel remaining
+work or fail as a whole. Tycho synthesis: scatter-gather is the alternative when one
+request must reach several recipients; it broadcasts similar or related requests and
+aggregates their responses through an aggregator.
 
 ### Splitter
 
-A splitter turns one input into several independently processable messages. It needs
-part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out. Carry a parent correlation key and an expected-part set; a coordinator owns
-completion and decides how missing parts are retried; completion tracking does not establish
-ordering, so a sequencer is still needed when causal order matters. Use it when downstream steps can make progress independently and partial
-completion is meaningful. Do not use it when the whole input must succeed atomically or
-when downstream ordering cannot be reconstructed.
-
-**Limits.** Fan-out multiplies message volume, tracking state and partial-failure cleanup; a
-split with no completion marker leaks orphaned work and needs an owner.
-
-The failure path is a split that produces only some parts; record part identity and
-completion, then retry missing parts without duplicating completed effects. A single
-consumer with internal fan-out is the alternative when the parts are small and atomicity
-is required.
+See the [dedicated Splitter owner note](splitter.md).
 
 ### Scatter-Gather
 
 Scatter-gather sends one request to several participants and gathers their responses. It
-needs a response contract, a quorum or completeness rule, a deadline and a policy for
-stragglers. Assign a per-recipient deadline and a correlation key; accept at most one reply per
-recipient. Use it when independent participants can answer the same question and a
-partial view is useful. Do not use it when one authority must answer, when responses are
-not comparable, or when tail latency would exceed the caller budget.
+needs a completeness condition and a deadline; the source names wait-for-all, first-best
+and fixed-timeout strategies. Tycho guidance, not a source claim: define a response
+contract, a quorum or completeness rule, a deadline and a policy for stragglers. Assign a
+per-recipient deadline and a correlation key; accept at most one reply per recipient. Use
+it when independent participants can answer the same question and a partial view is
+useful. Tycho guidance: do not use it when one authority must answer, when responses are
+not comparable, or when tail latency would exceed the caller's budget.
 
-The failure path is a slow or missing participant; gather must return a bounded partial
-result or fail under a declared rule, and cancel outstanding work. A single authoritative
-call is the alternative when consistency matters more than coverage.
+The source states that timed-out responses should be communicated as an incomplete
+response and that the aggregator can ignore timed-out responses. Tycho guidance, not a
+source claim: gather should return a bounded partial result or fail under a declared rule,
+and cancel outstanding work. Tycho synthesis: an aggregator alone is the alternative when
+responses already exist; the source describes the aggregator as another messaging pattern
+that collects and distills responses, while scatter-gather adds the broadcast.
 
 **Limits.** Fan-out cost and tail latency grow with participants; a quorum result must name
 which participants answered and which did not.

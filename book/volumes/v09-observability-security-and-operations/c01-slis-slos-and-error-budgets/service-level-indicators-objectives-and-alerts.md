@@ -61,7 +61,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [SLI/SLO and Error Budgets](../../v11-pattern-atlas/c11-security-operations/README.md#sli--slo-and-error-budgets) — decision conditions and contraindications.
+> [SLI/SLO and Error Budgets](../../v11-pattern-atlas/c11-security-operations/sli-slo-and-error-budgets.md#sli--slo-and-error-budgets) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.c987c475cc5340bcb967f4b6f963b295:0 -->
 ## Purpose and mission

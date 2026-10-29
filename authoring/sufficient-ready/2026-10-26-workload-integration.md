@@ -34,5 +34,5 @@ Full suite: 583 tests, one pre-existing failure in the Phase 2 qrels quote for
 ## Residual
 
 Two packets are now `page-changed-since-review` (Workload Identity and Federated Identity,
-which shares the owner page). Both need a fresh Reviewer decision before rebinding. No
-sufficient coverage is claimed.
+which shares the owner page). Both need a fresh external AI review before rebinding; this
+is tracked in #540. No sufficient coverage is claimed.

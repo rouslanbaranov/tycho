@@ -59,7 +59,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cache-invalidation) — decision conditions and contraindications.
+> [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md#cache-invalidation) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:0 -->
 ## Purpose and mission
@@ -92,17 +92,17 @@ source claim.
 
 ### Cache Invalidation
 
-Cache invalidation removes or versions a cached entry when the authoritative value changes, so a
-later read cannot reuse the superseded copy. The invalidation must be ordered with the write or
-guarded by a version, and a failed invalidation must remain visible rather than silently skipped.
+Cache invalidation removes a cached entry when the authoritative value changes, so a later read
+cannot reuse the superseded copy.
 
-A reader can miss, read V1, let a writer commit V2 and invalidate, then fill V1 back with a
-fresh TTL. The fill must carry the source revision it read; compare that revision under the
-shared key and discard or retry on mismatch. A lost invalidation or in-flight fill resurrects
-stale data; bound the TTL, record failed invalidations and keep a durable retry path. A short
-TTL accepts bounded staleness without a purge path.
+On a write, write the change to the data store, then remove the affected cache entry. The next
+read repopulates the cache from the data store. This keeps the write path simple.
+
+A reader can experience a cache miss or briefly see stale data immediately after a write.
+
+Many caching systems let you configure the cache to expire data, which reduces the period during
+which data might be out of date.
 
 **Limits.** Invalidation couples every writer to every cache and region: fan-out, multi-cache
-coherence and partial purge are architectural costs, and a purge that times out is an unverified
-revocation. Prefer TTL-only when bounded staleness is acceptable, or versioned keys when every
-reader can carry the version.
+coherence and partial purge are architectural costs. A short expiration period accepts bounded
+staleness without a purge path.

@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -152,9 +152,9 @@ Text alternative: Pulsar brokers serve publishers/subscribers while separate man
 > [Durable Subscriber](../../v11-pattern-atlas/c03-messaging-integration/README.md#durable-subscriber) — decision conditions and contraindications.
 > [Message Broker / Messaging Bridge](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-broker--messaging-bridge) — decision conditions and contraindications.
 > [Content-Based Router](../../v11-pattern-atlas/c03-messaging-integration/README.md#content-based-router) — decision conditions and contraindications.
-> [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/README.md#message-filter) — decision conditions and contraindications.
-> [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/README.md#pipes-and-filters) — decision conditions and contraindications.
-> [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/README.md#resequencer) — decision conditions and contraindications.
+> [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/message-filter.md#message-filter) — decision conditions and contraindications.
+> [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/pipes-and-filters.md#pipes-and-filters) — decision conditions and contraindications.
+> [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) — decision conditions and contraindications.
 > [Canonical Data Model](../../v11-pattern-atlas/c03-messaging-integration/README.md#canonical-data-model) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:2 -->
@@ -188,25 +188,12 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+measured evidence, and they do not create a new source claim. The Pipes and
+Filters and Resequencer notes have moved to dedicated source-bound owner pages.
 
 ### Resequencer
 
-A resequencer restores an intended order from messages that arrive out of order. It needs
-a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate
-sequence numbers. Use it when order is a business invariant and the stream has a reliable
-sequence. Do not use it when order is irrelevant or when an unbounded gap would stall the
-stream.
-
-The failure path is a missing sequence that blocks later messages; release the buffer
-after a declared timeout or fail the affected partition. At the buffer cap, reject or spill
-with evidence rather than dropping silently; a message that arrives after its slot was
-released needs a declared late disposition: discard with evidence, reconcile or route to
-a repair queue. A partitioned consumer that
-preserves order within a key is the alternative when global order is unnecessary.
-
-**Limits.** Buffer memory, gap timeout and ordering scope are costs; a global resequencer can
-become a throughput bottleneck.
+See the [dedicated Resequencer owner note](resequencer.md).
 
 ### Content-Based Router
 
@@ -228,21 +215,7 @@ rollback path.
 
 ### Pipes and Filters
 
-Pipes and filters decompose processing into ordered, replaceable stages connected by a
-message contract. Each stage needs its own failure and retry policy, and the pipeline
-needs backpressure, a rule for partial completion and a declared ordering scope. Each stage
-needs an effect identity for deduplication and its own lag or queue-depth signal, not only an
-end-to-end completion metric. Use it when stages can be developed, scaled or replaced
-independently. Do not use it when the work must be one atomic
-transaction or when per-stage latency would exceed the budget.
-
-The failure path is a failed middle stage with earlier effects already applied; record
-stage identity and compensate or replay from a declared checkpoint. A single in-process
-transformation is the alternative when the stages are small and cannot be operated
-independently.
-
-**Limits.** Distributed stages add message contracts and partial-failure states; an in-process
-pipeline cannot be scaled independently.
+See the [dedicated Pipes and Filters owner note](pipes-and-filters.md).
 
 ### Competing Consumers
 
@@ -261,19 +234,17 @@ pool preserves order only when partition assignment is stable.
 
 ### Message Filter
 
-A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding
-the rest by policy. Every discarded message must be an intentional drop under a versioned predicate,
-not an unobserved loss.
-
-Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a
-declared fallback for unmatched messages. A rejected message needs a declared disposition:
-discard with audit, fallback, or dead-letter queue, each with a retention owner. A
-content-based router sends different subsets to different destinations; prefer filtering when
-the destination is the same and only selection changes.
-
-**Limits.** Silent drops are data loss; count filter rates, version the predicate and keep a
-declared fallback. A filter that silently drops unmatched traffic is a data-loss path; count
-drops, alert on rate changes and test the fallback with a representative unmatched message.
+A message filter has a single output channel. If content matches the criteria, the message is
+routed to the output channel. If content does not match, the message is discarded and produces
+no downstream output. The public pattern page is publisher-abridged and does not state a
+rejected-message disposition, audit record or recovery path, so those remain unknown and out of
+scope for this note. A content-based router examines message content and routes each message to
+a different channel. Prefer the router when messages require different destinations or routing
+must choose among channels. Routing can be based on field existence, specific field values or
+configurable rules. The filter's predicate is the only selection criterion. Filtering removes
+messages from a channel; it does not choose among destinations. A router can become a point of
+frequent maintenance and may take the form of a rules engine. The filter has one output and no
+destination choice. A non-matching message is removed. The filter evaluates each message.
 
 ### Canonical Data Model
 

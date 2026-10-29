@@ -271,71 +271,11 @@ unit, not a benchmark.
 
 ### Cache Invalidation
 
-**Identity.** Cache Invalidation; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should cached entries be removed or refreshed when the
-authoritative value changes?
-
-**Good-fit conditions.** The authoritative change can emit an invalidation signal;
-consumers can tolerate a bounded stale window; failure is observable.
-
-**Hard contraindications.** Reject when no reliable invalidation path exists, when stale
-reads violate a hard contract, or when every writer must know every cache.
-
-**Competing alternative.** TTL-only expiry or versioned cache keys. Reverse the choice
-when invalidation fan-out and coupling exceed staleness cost.
-
-**Failure and recovery.** Lost invalidations and races with fills are common; verify
-invalidation semantics in the owner section.
-
-**Technical owner.** [Cache invalidation, stampedes and hot-key failure modes](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md#cache-invalidation) — invalidation is bounded, not a complete invalidation matrix.
-
-**Sources.**
-[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Keep the cache consistent on
-writes", "Invalidate data in a client-side cache". The source is a public
-pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** TTL-Based Expiration; Cache-Aside; Stale-While-Revalidate;
-Write-Around.
+See the [dedicated Cache Invalidation card](cache-invalidation.md).
 
 ### TTL-Based Expiration
 
-**Identity.** TTL-Based Expiration; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should entries expire after a bounded time even without an explicit
-invalidation?
-
-**Good-fit conditions.** Staleness is bounded by time; refresh cost is acceptable; the TTL
-is shorter than the business freshness requirement.
-
-**Hard contraindications.** Reject when a hard read-after-write contract exists, when
-synchronized expiry would stampede the source, or when TTL is longer than the acceptable
-stale window.
-
-**Competing alternative.** Explicit invalidation or versioned keys. Reverse the choice
-when TTL expiry causes unacceptable misses or stale decisions.
-
-**Failure and recovery.** Synchronized expiry and stale reads are common; verify
-eviction/refresh in the owner section.
-
-**Technical owner.** [TTL-Based Expiration](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#ttl-based-expiration) — eviction/refresh is bounded, not a universal TTL policy.
-
-**Sources.**
-[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage data expiration in a
-cache", "Manage concurrency in a cache". The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cache Invalidation; Cache Stampede Protection; Negative Caching;
-Stale-While-Revalidate.
+See the [dedicated TTL-Based Expiration card](ttl-based-expiration.md).
 
 ### Negative Caching
 

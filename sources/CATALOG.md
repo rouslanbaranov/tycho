@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-26. Entries: 275.
+Inventory date: 2026-10-29. Entries: 277.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -63,6 +63,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.clean-architecture / core | [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin (Clean Coder Blog) | Primary article for clean/onion dependency direction and boundary crossing. | admitted-for-research / public-web-or-author-download |
 | src.aws-hexagonal / core | [Hexagonal architecture pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/hexagonal-architecture.html) — AWS Prescriptive Guidance | Primary public page for ports-and-adapters intent, applicability and trade-offs. | admitted-for-research / public-web-or-author-download |
 | src.fowler-polyglot / core | [Polyglot Persistence](https://martinfowler.com/bliki/PolyglotPersistence.html) — Martin Fowler | Bounded public article supporting the polyglot-persistence decision card. | admitted-for-research / public-web-or-author-download |
+| src.aws-scatter-gather / core | [Scatter-gather pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/scatter-gather.html) — AWS Prescriptive Guidance | Bounded public page for scatter-gather intent, the aggregator component relationship, applicability and failure considerations. | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 
@@ -101,6 +102,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.quarkus / supporting | [Quarkus Virtual Thread Support](https://quarkus.io/guides/virtual-threads) — Quarkus | Execution model, blocking dispatch and reactive interoperability. | admitted-for-research / public-web-or-author-download |
 | src.jdk24-release-notes / supporting | [JDK 24 Release Notes](https://www.oracle.com/java/technologies/javase/24all-relnotes.html) — Oracle Java documentation | Accessible release evidence for version-specific virtual-thread changes, including JEP 491. | admitted-for-research / public-web-or-author-download |
 | src.jdk25-virtual-threads / core | [Java 25 Virtual Threads Guide](https://docs.oracle.com/en/java/javase/25/core/virtual-threads.html) — Oracle Java documentation | Accessible operational guidance on virtual threads and their limitations. | admitted-for-research / public-web-or-author-download |
+| src.spring-integration / supporting | [Spring Integration Reference](https://docs.spring.io/spring-integration/reference/) — Spring | Bounded public reference for splitter part identity/completion invariants and the aggregator as the inverse operation. | admitted-for-research / public-web-or-author-download |
 
 ## Streaming
 
@@ -189,7 +191,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.kubernetes / supporting | [Kubernetes Concepts](https://kubernetes.io/docs/concepts/) — Kubernetes | Scheduling, lifecycle, probes, configuration and service networking. | admitted-for-research / public-web-or-author-download |
 | src.envoy / supporting | [Envoy Architecture Overview](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/arch_overview) — Envoy | Traffic management, timeouts and observability boundaries. | admitted-for-research / public-web-or-author-download |
-| src.istio / supporting | [Istio Security](https://istio.io/latest/docs/concepts/security/) — Istio | Workload identity, certificate rotation, mTLS and authorization policy. | admitted-for-research / public-web-or-author-download |
+| src.istio / supporting | [Istio Security](https://istio.io/v1.28/docs/concepts/security/) — Istio | Workload identity, certificate rotation, mTLS and authorization policy. | admitted-for-research / public-web-or-author-download |
 | src.etcd / supporting | [etcd Documentation](https://etcd.io/docs/) — etcd | Coordination APIs, watches, leases and operational guarantees. | admitted-for-research / public-web-or-author-download |
 | src.helm / supporting | [Helm Documentation](https://helm.sh/docs/) — Helm | Package templating and release lifecycle; distinguish from reconciliation. | admitted-for-research / public-web-or-author-download |
 | src.opentofu / supporting | [OpenTofu Documentation](https://opentofu.org/docs/) — OpenTofu | Infrastructure state, planning and change execution boundaries. | admitted-for-research / public-web-or-author-download |
@@ -201,7 +203,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
-| src.owasp-asvs / supporting | [Application Security Verification Standard](https://owasp.org/www-project-application-security-verification-standard/) — OWASP | Security verification requirements and scope. | admitted-for-research / public-web-or-author-download |
+| src.owasp-asvs / supporting | [Application Security Verification Standard](https://github.com/OWASP/ASVS/raw/v5.0.0/5.0/OWASP_Application_Security_Verification_Standard_5.0.0_en.pdf) — OWASP | Security verification requirements and scope. | admitted-for-research / public-web-or-author-download |
 | src.oauth-security / supporting | [Best Current Practice for OAuth 2.0 Security — RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) — IETF | OAuth threat models and security guidance. | admitted-for-research / public-web-or-author-download |
 | src.nist-sp-800-162 / supporting | [Guide to Attribute Based Access Control (ABAC) Definition and Considerations](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf) — NIST | ABAC policy decision/enforcement points, policy administration and implementation considerations. | admitted-for-research / public-web-or-author-download |
 | src.openid-federation / supporting | [OpenID Federation 1.0](https://openid.net/specs/openid-federation-1_0.html) — OpenID Foundation | Federation trust anchors, Entity Statements, trust chains, metadata and key rollover. | admitted-for-research / public-web-or-author-download |

@@ -64,7 +64,7 @@ The [Google SRE Workbook on alerting based on SLOs](https://sre.google/workbook/
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Synthetic Monitoring](../../v11-pattern-atlas/c11-security-operations/README.md#synthetic-monitoring) — decision conditions and contraindications.
+> [Synthetic Monitoring](../../v11-pattern-atlas/c11-security-operations/synthetic-monitoring.md#synthetic-monitoring) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.c987c475cc5340bcb967f4b6f963b295:5 -->
 ## 5. An original synthetic error-budget decision

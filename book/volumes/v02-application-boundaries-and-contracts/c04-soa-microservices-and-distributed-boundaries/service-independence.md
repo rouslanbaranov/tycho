@@ -32,11 +32,11 @@ evidence_scope:
   notes: "Bounded question from tycho.page.acb452608a8b42898aae7482c27f5f04; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-29"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -63,7 +63,9 @@ Some service-oriented systems use large-grained capabilities and centrally gover
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Self-Contained Service](../../v11-pattern-atlas/c01-application-boundaries/README.md#self-contained-service) — decision conditions and contraindications.
+> **Pattern atlas:**
+> [Self-Contained Service](../../v11-pattern-atlas/c01-application-boundaries/self-contained-service.md#self-contained-service)
+> — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:2 -->
 ## 2. Independence is not proved by a separate container
 
@@ -115,18 +117,20 @@ source claim.
 
 ### Self-Contained Service
 
-A self-contained service completes a request using its own state and a bounded set of dependencies,
-instead of requiring a caller to coordinate several owners for one user-visible outcome. The service
-contract must state which dependencies are required, which are optional, and what response is valid
-when an optional dependency is unavailable.
+The pattern rule is to design a service so that it can respond to a synchronous
+request without waiting for the response from any other service. A
+self-contained service uses the Saga pattern to asynchronously maintain data
+consistency. It uses the CQRS pattern to maintain a replica of data owned by other
+services.
 
-Hidden shared state or a chatty dependency chain turns an apparently local request into a
-multi-owner transaction; dependency and latency traces reveal the undeclared coupling. A local
-read model is justified only when the service can own duplication and reconciliation: state
-which copy is authoritative, how stale data is detected and repaired, and why strong consistency
-is not required. Otherwise API composition is preferable. An orchestrating service or backend
-for frontend can coordinate owners explicitly; accept that composition when the workflow
-genuinely spans separate authorities and the coordinator's failure behaviour is designed.
+The baseline problem is that a synchronous call to an unavailable collaborator
+cannot complete and must return an error. A service can retry a request to a
+failed collaborator but this increases response time. Synchronous
+request/response reduces availability. The pattern's recovery design is a local
+read model plus asynchronous reconciliation, which lets the service respond
+while a collaborator is unavailable. The trade-off is duplication, reconciliation
+and staleness.
 
-**Limits.** Dependency budget, fallback contract and coordination latency are costs; a
-self-contained service can still hide a shared database or synchronous chain.
+A self-contained service still exposes a synchronous contract to its caller. It
+reduces runtime coupling, not the service boundary. The pattern is about response
+independence and availability.

@@ -66,9 +66,9 @@ explained and denied safely. OWASP REST guidance calls for endpoint access contr
 validated claims; it does not prescribe this policy design.
 
 > **Pattern atlas:**
-> [Zero Trust Architecture](../../v11-pattern-atlas/c11-security-operations/README.md#zero-trust-architecture) — decision conditions and contraindications.
-> [Least Privilege](../../v11-pattern-atlas/c11-security-operations/README.md#least-privilege) — decision conditions and contraindications.
-> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/README.md#rbac--abac) — decision conditions and contraindications.
+> [Zero Trust Architecture](../../v11-pattern-atlas/c11-security-operations/zero-trust-architecture.md#zero-trust-architecture) — decision conditions and contraindications.
+> [Least Privilege](../../v11-pattern-atlas/c11-security-operations/least-privilege.md#least-privilege) — decision conditions and contraindications.
+> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/rbac-abac.md#rbac--abac) — decision conditions and contraindications.
 
 ## Zero Trust Architecture
 
@@ -106,28 +106,7 @@ audited path with revocation tests and logging rather than a permanent broad rol
 
 ## RBAC-ABAC
 
-Role-based access control maps roles to permissions, while attribute-based control evaluates
-principal, resource and context attributes to reach a decision. Policy evaluation must be
-deterministic and deny by default, and every decision must be explainable from versioned
-policy and attributes.
-
-Policy decision and enforcement can be separate components: a policy decision point evaluates
-policy and attributes, a policy enforcement point applies the decision, a policy information
-point supplies attributes and a policy administration point manages policy. Distributed
-placement makes attribute freshness and audit harder.
-
-Role explosion or stale attributes grants unintended access; test policy changes against
-denied and allowed cases and record policy provenance. Explicit object access lists are
-transparent at small scale; move to roles or attributes when the number of objects and
-principals makes per-object grants unmaintainable.
-
-**Limits.** Policy/attribute freshness and decision logging are costs; an unexplainable deny or
-allow is a production incident, not a policy detail. Attribute sources need freshness SLAs; a
-stale attribute is an authorization failure, not a cache miss.
-
-**Source boundary.** The NIST SP 800-162 record supports the PDP/PEP/PIP/PAP separation and
-policy administration. Revocation mechanics, role explosion and attribute-freshness guidance
-above remain synthetic.
+See the [dedicated RBAC-ABAC owner note](rbac-abac.md).
 
 ## Navigation
 

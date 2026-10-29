@@ -6,7 +6,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from validate_pattern_owner_units import load, validate_data
+from validate_pattern_owner_units import expected_coverage, load, validate_data
 
 
 class PatternOwnerUnitTests(unittest.TestCase):
@@ -25,9 +25,10 @@ class PatternOwnerUnitTests(unittest.TestCase):
     def test_every_card_has_one_owner_unit(self):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["entries"], 145)
-        self.assertEqual(result["owner_pages"], 69)
-        self.assertEqual(result["shared_pages"], 33)
-        self.assertEqual(result["bounded"] + result["partial"], 145)
+        self.assertEqual(result["owner_pages"], 81)
+        self.assertEqual(result["shared_pages"], 30)
+        self.assertEqual(result["sufficient"], 20)
+        self.assertEqual(result["bounded"] + result["partial"] + result["sufficient"], 145)
         self.assertGreater(result["units"], 30)
 
     def test_missing_entry_is_rejected(self):
@@ -63,6 +64,13 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["entries"][0]["technical_evidence"]["mechanism"]["reason"] = "test"
         self.check_error(data, "owner-units-name-only")
 
+    def test_supported_reason_is_required(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if entry["technical_evidence"]["mechanism"]["state"] == "supported")
+        item["technical_evidence"]["mechanism"]["reason"] = ""
+        self.check_error(data, "owner-units-reason-missing-supported")
+
     def test_invariant_without_evidence_is_rejected(self):
         data = self.copy()
         item = next(entry for entry in data["entries"]
@@ -96,10 +104,42 @@ class PatternOwnerUnitTests(unittest.TestCase):
         data["shared_pages"][0]["pattern_ids"].pop()
         self.check_error(data, "owner-units-shared-patterns")
 
+    def test_binding_section_must_be_read(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if any(value.get("binding")
+                           for value in entry["technical_evidence"].values()))
+        binding = next(value["binding"]
+                       for value in item["technical_evidence"].values()
+                       if value.get("binding"))
+        binding["section"] = "Not a recorded section"
+        self.check_error(data, "owner-units-binding-section")
+
+    def test_supporting_binding_section_must_be_read(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if any(value.get("supporting_bindings")
+                           for value in entry["technical_evidence"].values()))
+        binding = next(value["supporting_bindings"][0]
+                       for value in item["technical_evidence"].values()
+                       if value.get("supporting_bindings"))
+        binding["section"] = "Not a recorded section"
+        self.check_error(data, "owner-units-binding-section")
+
+    def test_sufficient_needs_a_promotion(self):
+        evidence = {name: {"state": "supported"}
+                    for name in ("mechanism", "invariant", "failure_recovery",
+                                 "alternative")}
+        self.assertEqual(expected_coverage(evidence, "test"), "partial-bounded")
+        self.assertEqual(
+            expected_coverage(evidence, "test", {"technical": "pass"}),
+            "sufficient")
+
     def test_sufficient_claim_is_rejected(self):
         data = self.copy()
         data["entries"][0]["technical_coverage"] = "sufficient"
-        self.check_error(data, "owner-units-schema")
+        with self.assertRaises(ValueError):
+            validate_data(data, ROOT)
 
     def test_reviewed_claim_is_rejected(self):
         data = self.copy()

@@ -333,35 +333,7 @@ CDN.
 
 ### Static Content Hosting
 
-**Identity.** Static Content Hosting; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should static content be served from a dedicated store or edge
-rather than the application origin?
-
-**Good-fit conditions.** Content is static/versioned; cacheability and purge are
-controlled; origin protection is owned.
-
-**Hard contraindications.** Reject when content is personalized/uncacheable, when
-versioning/purge cannot meet freshness, or when edge configuration is unowned.
-
-**Competing alternative.** Serve from origin or a cache with explicit TTL. Reverse the
-choice when edge complexity exceeds origin offload benefit.
-
-**Failure and recovery.** Origin outage, incomplete purge, stale deletion and a cold-cache
-miss storm are common; prewarm, verify propagation and keep versioned rollback.
-
-**Technical owner.** [Static Content Hosting](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#static-content-hosting) — static hosting is bounded to edge/origin behavior.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-static.2026-10-21: all nine served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CDN / Edge Caching; Cache Invalidation; TTL-Based Expiration; Geode.
+See the [dedicated Static Content Hosting card](static-content-hosting.md).
 
 ### Tenant-Based Resource Isolation
 

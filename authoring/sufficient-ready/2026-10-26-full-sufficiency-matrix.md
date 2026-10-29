@@ -2,6 +2,9 @@
 
 Date: 2026-10-26. Refs #532. This is not sufficient coverage and not human review.
 
+> **Partly superseded (2026-10-26).** External review rejected the six pilot entries;
+> 139 remain sufficient-ready. See #540 and the saved review report.
+
 ## Scope
 
 111 remaining entries with all four technical dimensions supported and an admitted source.

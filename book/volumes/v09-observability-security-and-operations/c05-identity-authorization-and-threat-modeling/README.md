@@ -64,6 +64,7 @@ Begin with the integrated decision, then open the independent question that matc
 |---|---|
 | [Identity and workload trust](identity-authorization-and-isolation.md) | Which identity does each workload or external issuer actually establish? |
 | [Authorization policy and least privilege](authorization-policy-and-least-privilege.md) | Where is authorization decided, and how is each principal limited? |
+| [RBAC-ABAC owner note](rbac-abac.md) | How do role and attribute decisions stay explainable and revocable? |
 | [Multitenant isolation](multitenant-isolation.md) | How are tenant data and effects kept separate across every path? |
 | [Threat models and authenticated identity](threat-identity.md) | Which asset and principal are protected and what does authentication establish? |
 | [Object permission, credentials and isolation](object-credentials.md) | Where must resource authorization be enforced across direct and indirect paths? |

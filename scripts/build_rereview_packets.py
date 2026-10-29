@@ -11,6 +11,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 import reconcile_sufficient_reviews as reconciliation
@@ -24,8 +25,13 @@ BATCH = ROOT / "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md"
 SUFFICIENT = ROOT / (
     "authoring/INDEPENDENT-AGENT-REVIEW-SUFFICIENT-CANDIDATES_2026-10-22.md")
 REBINDS = ROOT / "edition/patterns/section-rebinds.v1.json"
+CARDS = ROOT / "edition/patterns/card-batches.v1.json"
 OUTPUT_JSON = ROOT / "edition/patterns/sufficient-rereview-packets.v1.json"
 OUTPUT_MD = ROOT / "authoring/SUFFICIENT-REREVIEW-PACKETS_2026-10-22.md"
+
+def card_paths():
+    data=json.loads(CARDS.read_text())
+    return {e["pattern_id"]: e.get("card_path") for b in data["batches"] for e in b["entries"] if e.get("card_path")}
 
 CHECKS = [
     "Read the exact owner section and atlas card; do not rely on the summary.",
@@ -103,13 +109,19 @@ def find_section(name, sections):
 
 
 def build_packet(candidate, record, recon_row, sections, route_docs, sections_source=None, rebind=None):
+    current_state = record.get("current_state")
     if sections_source is None:
-        sections_source = record["report_path"]
+        sections_source = record.get("report_path")
     page = route_docs.get(candidate["owner_path"])
     page_sha = page["sha256"] if page else None
     re_review = record.get("re_review") or {}
+    delta = record.get("delta_review") or {}
     rebind = rebind or {}
     reviewed_sha = re_review.get("reviewed_page_sha256") or page_sha
+    if current_state:
+        reviewed_sha = page_sha
+    if delta.get("verdict") == "pass" and delta.get("page_sha256"):
+        reviewed_sha = delta["page_sha256"]
     disk_sha = None
     if page is not None:
         path = ROOT / candidate["owner_path"]
@@ -127,7 +139,9 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
             if alternate_section is not None:
                 section = alternate_section
                 section_source = re_review["report_path"]
-    if page is None:
+    if current_state == "awaiting-current-external-review":
+        status = current_state
+    elif page is None:
         status = "owner-page-missing"
     elif disk_sha is None or disk_sha != page_sha:
         status = "hash-mismatch"
@@ -139,33 +153,45 @@ def build_packet(candidate, record, recon_row, sections, route_docs, sections_so
         status = "reviewed-by-independent-agent"
     else:
         status = "ready-for-independent-rereview"
+    current_verdict = current_state or delta.get("verdict") or record["verdict"]
     return {
         "pattern_id": candidate["pattern_id"],
         "catalog_name": candidate["catalog_name"],
         "owner_path": candidate["owner_path"],
         "owner_heading": candidate["owner_heading"],
+        "card_path": card_paths().get(candidate["pattern_id"]),
+        "card_sha256": (hashlib.sha256((ROOT / card_paths()[candidate["pattern_id"]]).read_bytes()).hexdigest()
+                        if candidate["pattern_id"] in card_paths() else None),
+        "owner_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
         "source_read": candidate["source_read"],
         "page_sha256": reviewed_sha,
         "current_page_sha256": page_sha,
         "disk_sha256": disk_sha,
         "packet_status": status,
-        "current_verdict": record["verdict"],
+        "current_verdict": current_verdict,
+        "current_state": current_state,
+        "historical_verdict": record.get("historical_verdict"),
+        "historical_reviews": record.get("historical_reviews", []),
         "original_findings": record.get("findings", 0),
         "remediated": record.get("remediated", False),
         "re_reviewed": record.get("re_reviewed", False),
         "re_review_verdict": re_review.get("verdict"),
         "re_review_findings": re_review.get("findings"),
         "derived_state": recon_row["derived_state"],
-        "report_path": record["report_path"],
+        "report_path": record.get("report_path"),
         "report_section_source": section_source,
-        "report_section_inherited": section_source != record["report_path"],
+        "report_section_inherited": (section_source is not None
+                                     and section_source != record.get("report_path")),
         "report_verdict": recon_row["report_verdict"],
         "report_match": recon_row["report_match"],
         "report_section": section,
         "rebind_report_path": rebind.get("report_path"),
         "review_checklist": CHECKS,
         "verdict_template": {**TEMPLATE,
-                             "page_sha256": reviewed_sha,
+                             "page_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
+                             "owner_sha256": hashlib.sha256((ROOT / candidate["owner_path"]).read_bytes()).hexdigest(),
+                             "card_sha256": (hashlib.sha256((ROOT / card_paths()[candidate["pattern_id"]]).read_bytes()).hexdigest()
+                                             if candidate["pattern_id"] in card_paths() else None),
                              "checks": dict(TEMPLATE["checks"])},
     }
 
@@ -186,12 +212,16 @@ def build_packets():
         SUFFICIENT.read_text(encoding="utf-8"))
     packets = []
     for record in records:
-        if not record.get("re_reviewed"):
+        current_state = record.get("current_state")
+        if not record.get("re_reviewed") and not current_state:
             continue
         candidate = by_id[record["pattern_id"]]
-        use_sufficient = "SUFFICIENT-CANDIDATES" in record["report_path"]
-        sections = sufficient_sections if use_sufficient else batch_sections
-        sections_source = (SUFFICIENT if use_sufficient else BATCH).relative_to(ROOT).as_posix()
+        if current_state:
+            sections, sections_source = {}, None
+        else:
+            use_sufficient = "SUFFICIENT-CANDIDATES" in record["report_path"]
+            sections = sufficient_sections if use_sufficient else batch_sections
+            sections_source = (SUFFICIENT if use_sufficient else BATCH).relative_to(ROOT).as_posix()
         packets.append(build_packet(
             candidate, record, recon_rows[record["pattern_id"]],
             sections, route_docs, sections_source, rebinds.get(record["pattern_id"])))
@@ -214,14 +244,21 @@ def build_packets():
         "reviewed": status_counts.get("reviewed-by-independent-agent", 0),
         "rejected": sum(1 for p in packets
                         if p["derived_state"] == "rejected-after-review"),
+        "awaiting_current_external_review": sum(
+            1 for p in packets
+            if p["derived_state"] == "awaiting-current-external-review"),
     }
     sources = [
         {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
         for path in (CANDIDATES, RECORDS, RECON, ROUTE, BATCH, SUFFICIENT)
     ]
     return {"schema_version": 1, "scope": (
-        "Independent re-review packets for records that claim a re-review. "
-        "Evidence only; no reviewer or verdict is filled."),
+        "Independent re-review packets for records that claim a re-review or "
+        "await a current external review. Historical passes are pinned evidence "
+        "only; no reviewer or current verdict is filled."),
+        "state_note": ("'promoted-after-remediation' is a historical agent-review "
+                       "state, not a current promotion record. Promotions live only "
+                       "in sufficient-promotions.v1.json."),
         "sources": sources, "summary": summary, "packets": packets}
 
 
@@ -245,6 +282,8 @@ def render_markdown(payload):
         "| Ready for independent re-review | " + str(summary["ready"]) + " |",
         "| Reviewed by independent agent | " + str(summary.get("reviewed", 0)) + " |",
         "| Rejected after review | " + str(summary.get("rejected", 0)) + " |",
+        "| Awaiting current external review | "
+        + str(summary.get("awaiting_current_external_review", 0)) + " |",
         "",
         "Packet statuses: " + json.dumps(summary["packet_statuses"], sort_keys=True) + ".",
         "",
@@ -266,7 +305,8 @@ def render_markdown(payload):
         lines.extend([
             "",
             "- **" + packet["catalog_name"] + "**",
-            "  Current: " + packet["current_verdict"] + "; re-review: "
+            "  Current: " + packet["current_verdict"] + "; historical: "
+            + str(packet["historical_verdict"]) + "; re-review: "
             + str(packet["re_review_verdict"]) + "; report: "
             + str(packet["report_verdict"]) + ".",
             "  Status: " + packet["packet_status"] + ".",

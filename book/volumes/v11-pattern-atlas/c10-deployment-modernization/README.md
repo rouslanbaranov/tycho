@@ -256,7 +256,7 @@ choice when replacement cost exceeds drift/recovery benefit.
 **Failure and recovery.** Orphaned state and image drift are common; verify lifecycle in
 the owner section.
 
-**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
+**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
 
 **Sources.**
 [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
@@ -333,75 +333,11 @@ unit, not a benchmark.
 
 ### Parallel Run
 
-**Identity.** Parallel Run; family Deployment and legacy modernization; kind
-modernization-pattern; priority core.
-
-**Decision question.** Should old and new implementations process the same work
-concurrently for comparison?
-
-**Good-fit conditions.** Outputs can be compared safely; side effects are controlled; the
-old path remains authoritative until cutover.
-
-**Hard contraindications.** Reject when duplicate side effects cannot be suppressed, when
-comparison is meaningless, or when cost is prohibitive.
-
-**Competing alternative.** Shadow traffic or canary. Reverse the choice when comparison
-cost exceeds confidence benefit.
-
-**Failure and recovery.** Divergent outputs and doubled cost are common; verify authority
-in the owner section.
-
-**Technical owner.** [Parallel Run](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md#parallel-run) — parallel run is bounded to coexistence/authority states.
-
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
-context for the transition narrative.
-[src.minimumcd-parallel-run](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.minimumcd-parallel-run.2026-10-26: all eight served
-headings read. MinimumCD supports dual execution, background
-comparison and harness removal. Mismatch thresholds, sampling and cost bounds are synthetic.
-The sources are public articles, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Dark Launching; Strangler Fig; Controlled Cutover; Reconciliation.
+See the [dedicated Parallel Run card](parallel-run.md).
 
 ### Dark Launching / Shadow Traffic
 
-**Identity.** Dark Launching / Shadow Traffic; family Deployment and legacy modernization;
-kind modernization-pattern; priority advanced.
-
-**Decision question.** Should new code receive real or shadow traffic before it is
-authoritative?
-
-**Good-fit conditions.** Traffic can be mirrored without side effects;
-comparison/observability exists; the old path remains authoritative.
-
-**Hard contraindications.** Reject when shadow requests cause writes, when traffic cannot
-be mirrored safely, or when load cost is prohibitive.
-
-**Competing alternative.** Canary release or feature flags. Reverse the choice when shadow
-load/cost exceeds confidence benefit.
-
-**Failure and recovery.** Hidden side effects and load amplification are common; verify
-isolation in the owner section.
-
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
-
-**Sources.** [src.fowler-dark-launching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-dark-launching.2026-10-26: section "Dark Launching".
-[src.istio-traffic-mirroring](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch7-istio-mirroring.2026-10-26: sections "Mirroring", "Before you begin",
-"Creating a default routing policy", "Mirroring traffic to httpbin-v2", "Cleaning up",
-"See also". The first supports hidden invocation, load assessment, feature-flag rollback and
-old/new comparison; the second supports request mirroring, fire-and-forget responses and fractional
-mirroring. Measurement method, side-effect
-suppression and capacity bounds are synthetic. The sources are public
-articles/documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Canary Release; Parallel Run; Feature Flags; Strangler Fig.
+See the [dedicated Dark Launching card](dark-launching.md).
 
 ### Expand-and-Contract
 
@@ -437,39 +373,7 @@ Compatibility; Backup/PITR.
 
 ### Controlled Cutover
 
-**Identity.** Controlled Cutover; family Deployment and legacy modernization; kind
-modernization-pattern; priority core.
-
-**Decision question.** Should the final authority switch be gated by explicit go/no-go
-evidence and a no-return contract?
-
-**Good-fit conditions.** Cutover criteria are measurable; rollback limits are known;
-authority transfer is explicit.
-
-**Hard contraindications.** Reject when no measurable gate exists, when rollback is
-assumed but not possible, or when the switch can be partial without detection.
-
-**Competing alternative.** Rolling/blue-green deployment, a reversible canary gate or
-scheduled maintenance. Reverse when no-return evidence cannot be obtained or the change is
-small enough to reverse.
-
-**Failure and recovery.** No-return points and partial cutovers are common; verify gates
-in the owner section.
-
-**Technical owner.** [Controlled Cutover](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — controlled cutover is bounded to gate/reversal reasoning.
-
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading";
-context for the transition narrative.
-[src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.gcp-spanner-cutover.2026-10-26: all ten served headings read.
-Spanner supports a bounded drain-and-switch example. General
-no-return gates, fallback execution, RTO and zero-loss guarantees are synthetic. The sources
-are public articles/documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Strangler Fig; Expand-and-Contract; Blue/Green; Rollback Limits.
+See the [dedicated Controlled Cutover card](controlled-cutover.md).
 
 ## Chapter result and counterexample
 

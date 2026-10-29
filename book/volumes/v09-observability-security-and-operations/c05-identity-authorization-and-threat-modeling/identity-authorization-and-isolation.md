@@ -55,8 +55,8 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Federated Identity](../../v11-pattern-atlas/c11-security-operations/README.md#federated-identity) — decision conditions and contraindications.
-> [Workload Identity / mTLS](../../v11-pattern-atlas/c11-security-operations/README.md#workload-identity--mtls) — decision conditions and contraindications.
+> [Federated Identity](../../v11-pattern-atlas/c11-security-operations/federated-identity.md#federated-identity) — decision conditions and contraindications.
+> [Workload Identity / mTLS](../../v11-pattern-atlas/c11-security-operations/workload-identity-mtls.md#workload-identity--mtls) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.dde63373c50f4f4a80e727b6e160def5:0 -->
 ## Purpose and mission
@@ -92,40 +92,24 @@ evidence and do not create a new source claim by themselves.
 
 ### Federated Identity
 
-Federated identity accepts an identity asserted by an external issuer through a configured trust
-relationship, such as a signed token exchange. The receiver must validate the issuer, audience,
-signature, expiry and intended use before accepting any claim from the federation.
-
-A stale signing key or an over-broad trust configuration accepts the wrong issuer; rotate keys
-deliberately and test rejection of an unexpected audience. Local accounts avoid external trust but
-duplicate identity lifecycle; federate when many services or partners need one governed identity
-source.
-
-**Limits.** Federation concentrates trust in the issuer and metadata; key rotation, audience
-restriction and issuer compromise are ongoing costs, not one-time setup. Metadata caching and
-issuer discovery need their own availability, rollback plan, audit evidence and an owner.
-Federation-specific token-replay and revocation guidance is not covered by the cited
-[read.batch6-rfc9700.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json)
-sections; the cited record covers OAuth token handling, not federation metadata replay. That part
-remains synthetic.
-
-**Source boundary.** The
-[read.openid-federation.2026-10-26](../../../../edition/patterns/reading-ledger.v1.json)
-record supports trust anchors, signed Entity Statements, trust chains, metadata refresh and
-Trust Anchor key rollover. It defines no revocation process; federation-specific replay and
-revocation remain synthetic.
-
+A federation Entity publishes a signed Entity Statement: a JWT whose subject is the Entity and
+whose issuer is the party that issued it. A resource server verifies that an access token was meant
+for it and refuses otherwise. Entity Configuration expiration controls how often federation keys are
+refetched; expired metadata must be refreshed. Entity Statements can be resolved through a trust
+chain, and a Trust Anchor signs subordinate statements about its immediate subordinates. Federation
+key rollover updates the jwks member before old keys are removed. Bilateral direct trust between two organizations is
+the alternative when multilateral third-party mediation is impractical. A trust chain starts with the
+Entity Configuration and ends at a Trust Anchor; metadata policies are applied along the chain.
 ### Workload Identity-mTLS
 
-Workload identity gives each running workload a verifiable identity, and mutual TLS authenticates
-both ends of a service connection with automatically rotated credentials. The identity must
-bind to the workload, not to a network location, and authorization must still check the
-operation rather than assuming trust from the connection.
+Workload identity gives each running workload a verifiable identity. Mutual TLS authenticates
+both ends of a service connection with automatically rotated credentials. Secure naming verifies that the service account in the server certificate is authorized to run
+the target service.
 
-Expired or shared credentials break authentication or erase the distinction between workloads;
-rotate, isolate and test an unauthorized peer. Network policy with shared secrets is easier when PKI
-operations are unavailable; choose workload identity when lateral movement and credential reuse are
-the dominant risk.
+Expired or shared credentials break authentication. Istio monitors workload certificate expiry and
+periodically rotates certificates and keys. Permissive mTLS mode accepts both mutual TLS and plain text traffic; it is most useful
+during migrations when workloads without a sidecar cannot use mutual TLS, and should switch
+to STRICT once workloads are migrated with sidecar injection.
 
 **Limits.** PKI, certificate rotation and revocation are operational costs; a valid certificate
 authenticates the workload, not every operation it requests. Certificate issuance availability
@@ -134,8 +118,8 @@ but synthetic, and the cited page does not measure them.
 
 **Source boundary.** Only the following claims are supported by the cited
 [read.batch6-istio.2026-10-21](../../../../edition/patterns/reading-ledger.v1.json) record:
-workload identity binding, certificate issuance and rotation, mTLS authentication and
-authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
+workload identity binding, certificate issuance and rotation, mTLS authentication,
+permissive mode and authorization policy. Certificate revocation, trust-root bootstrap, key storage, lifetime
 policy and rotation-failure impact are not in the cited sections; all other guidance in this
 section remains synthetic.
 

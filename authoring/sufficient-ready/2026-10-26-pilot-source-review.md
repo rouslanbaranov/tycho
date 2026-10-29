@@ -1,5 +1,10 @@
 # Sufficient-ready pilot — source review
 
+> **Historical (2026-10-26).** This file records the earlier source-review stage. Later
+> artifacts supersede its status: the pilot matrix records 6/6 sufficient-ready and the
+> full matrix records 145/145. The five `evidence-partial` entries and the Parallel Run
+> `insufficient-evidence` result below are not current. See #540 for the promotion work.
+
 Date: 2026-10-26. Refs #532. Status: source extraction complete; no entry promoted.
 
 ## Delegation

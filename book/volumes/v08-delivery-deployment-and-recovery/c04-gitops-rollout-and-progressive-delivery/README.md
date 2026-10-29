@@ -63,6 +63,7 @@ Begin with the integrated decision, then open the independent question that matc
 | Page | Independent question and role |
 |---|---|
 | [Integrated decision and original walkthrough](gitops-canary-and-progressive-rollout.md) | How do rolling, blue/green, canary, rollback and analysis gates differ? |
+| [Dark Launching-Shadow Traffic owner note](dark-launching-shadow-traffic.md) | How does mirrored traffic stay non-authoritative and side-effect bounded? |
 | [Desired state, release identity and exposure](desired-state-exposure.md) | Which state does a reconciler control and which outcome remains outside it? |
 | [Canary acceptance and shared-state damage](canary-compatibility.md) | How can a small rollout create effects that a binary rollback cannot undo? |
 

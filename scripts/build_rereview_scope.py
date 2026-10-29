@@ -67,7 +67,7 @@ def build():
         chapter = batch["chapter"]
         directory = chapters.get(chapter)
         for entry in batch["entries"]:
-            card_path = str(V11 / directory / "README.md") if directory else None
+            card_path = entry.get("card_path") or (str(V11 / directory / "README.md") if directory else None)
             anchor = entry["atlas_section"]
             if card_path:
                 card_text = (ROOT / card_path).read_text(encoding="utf-8")
@@ -116,9 +116,10 @@ def build():
             "owner_line": owner["owner"]["line"],
             "card_path": card["card_path"],
             "card_anchor": card["card_anchor"],
-            "record_verdict": record["verdict"],
-            "record_findings": record["findings"],
-            "record_report_path": record["report_path"],
+            "record_verdict": record.get("current_state") or record["verdict"],
+            "record_historical_verdict": record.get("historical_verdict"),
+            "record_findings": record.get("findings", 0),
+            "record_report_path": record.get("report_path"),
             "re_review_verdict": (record.get("re_review") or {}).get("verdict"),
             "re_review_report_path": (record.get("re_review") or {}).get("report_path"),
             "source_units": units,
@@ -144,10 +145,11 @@ def build():
         phase_b.append({
             "pattern_id": pid,
             "catalog_name": registry[pid]["catalog_name"],
-            "record_verdict": record["verdict"],
-            "record_findings": record["findings"],
-            "remediated": record["remediated"],
-            "re_reviewed": record["re_reviewed"],
+            "record_verdict": record.get("current_state") or record["verdict"],
+            "record_historical_verdict": record.get("historical_verdict"),
+            "record_findings": record.get("findings", 0),
+            "remediated": record.get("remediated", False),
+            "re_reviewed": record.get("re_reviewed", False),
             "derived_state": state,
             "current_page_sha256": sha(owner["owner"]["path"]),
             "current_page_path": owner["owner"]["path"],

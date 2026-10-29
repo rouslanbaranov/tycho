@@ -41,7 +41,8 @@
   "evidence_scope": {
     "source_ids": [
       "src.rfc9111-enrichment",
-      "src.sre-frontend-enrichment"
+      "src.sre-frontend-enrichment",
+      "src.microsoft-cloud-patterns"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -145,19 +146,4 @@ authorization boundary are explicit.
 
 ### Static Content Hosting
 
-Static content hosting publishes immutable objects to an object store or CDN origin and serves them
-by URL without per-request application compute. The URL carries a version or content hash; a small
-manifest maps a stable alias to the current version.
-
-The host must own upload validation, origin protection and prewarming for a release. A retained
-version is the rollback path, so garbage collection may delete old objects only after the rollback
-window; a deleted object needs a tombstone or purge proof. The cache key, TTL and authorization
-boundary must agree, especially for private assets signed at the edge. Cold-cache miss storms and
-incomplete purges are common; exercise origin failover and a known purge.
-
-Retained versions and edge copies carry storage, egress and purge cost; a second origin or
-duplicated manifest needs one version authority, or the rollback path becomes ambiguous.
-
-A dynamic origin or edge compute may be preferable when content changes per request or publication
-cannot be governed. Static hosting is a fit when assets are immutable, versioned and the publisher
-can prove upload, prewarm and purge.
+See the [dedicated Static Content Hosting owner note](static-content-hosting.md).

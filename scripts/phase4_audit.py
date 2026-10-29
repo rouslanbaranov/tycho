@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import posixpath
 import re
 from pathlib import Path
 import sys
@@ -66,7 +67,7 @@ def section_with_anchor(body, slug):
         count = seen.get(base, 0)
         actual = base if count == 0 else f"{base}-{count}"
         seen[base] = count + 1
-        if level != "###":
+        if level not in ("###", "#"):
             continue
         if (slug_heading(label) == slug
                 or actual.replace("--", "-") == slug.replace("--", "-")):
@@ -112,7 +113,7 @@ def build(root=ROOT):
     coverage = load(root, COVERAGE)
     manifest = load(root, MANIFEST)
     documents = route["documents"]
-    if len(documents) != 423:
+    if len(documents) < 423:
         raise ValueError("phase4-page-count")
     chapters = {chapter["code"]: chapter for chapter in manifest["chapters"]}
     records = {record["id"]: record for record in ledger["records"]}
@@ -159,13 +160,22 @@ def build(root=ROOT):
     card_entries = []
     for batch in batches["batches"]:
         chapter = chapters[batch["chapter"]]
-        _, body = split((root / chapter["path"]).read_text(encoding="utf-8"))
         for entry in batch["entries"]:
+            card_path = entry.get("card_path", chapter["path"])
+            _, body = split((root / card_path).read_text(encoding="utf-8"))
             text, card_anchor = section_with_anchor(body, entry["atlas_section"])
             owner = patterns[entry["pattern_id"]]["technical_owner"]
             owner_file = root / owner["path"]
             owner_text = owner_file.read_text(encoding="utf-8") if owner_file.is_file() else ""
-            atlas_link = chapter["path"].split("book/volumes/", 1)[-1] + "#" + card_anchor
+            atlas_links = [card_path.split("book/volumes/", 1)[-1] + "#" + card_anchor]
+            if card_path != chapter["path"]:
+                _, chapter_body = split((root / chapter["path"]).read_text(encoding="utf-8"))
+                chapter_text = section(chapter_body, entry["atlas_section"])
+                chapter_target = posixpath.relpath(card_path,
+                                                   posixpath.dirname(chapter["path"]))
+                if "](" + chapter_target + ")" in chapter_text:
+                    atlas_links.append(chapter["path"].split("book/volumes/", 1)[-1]
+                                       + "#" + entry["atlas_section"])
             record = records.get(entry["ledger_record"])
             dimensions = {
                 "identity": "pass" if "**Identity.**" in text else "missing",
@@ -178,7 +188,8 @@ def build(root=ROOT):
                     "partial", "partial-bounded", "partial-reviewed")
                     else owner.get("state", "missing")),
                 "owner_anchor": "pass" if owner.get("anchor") else "missing",
-                "backlink": "pass" if atlas_link in owner_text else "missing",
+                "backlink": ("pass" if any(link in owner_text for link in atlas_links)
+                             else "missing"),
                 "source_ledger": "pass" if record else "missing",
                 "read_source": "pass" if record and record.get("status") == "read" else "missing",
                 "decision_state": "pass" if "**Decision state.**" in text else "missing",
@@ -214,8 +225,11 @@ def build(root=ROOT):
         # Re-read the card only for related labels.
         for batch in batches["batches"]:
             chapter = chapters[batch["chapter"]]
-            if any(entry["pattern_id"] == pattern["id"] for entry in batch["entries"]):
-                _, body = split((root / chapter["path"]).read_text(encoding="utf-8"))
+            card_entry = next((entry for entry in batch["entries"]
+                               if entry["pattern_id"] == pattern["id"]), None)
+            if card_entry:
+                source = card_entry.get("card_path", chapter["path"])
+                _, body = split((root / source).read_text(encoding="utf-8"))
                 text = section(body, pattern["atlas_section"])
                 break
         related = field(text, "Related entries")

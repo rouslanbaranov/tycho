@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-26",
+  "updated": "2026-10-29",
   "scope": "Foundation reading batch for E17 Phase 2. Complete public units inspected; no child pages or independent review claimed.",
   "records": [
     {
@@ -1582,7 +1582,7 @@
       "unit_url": "https://camel.apache.org/components/next/eips/split-eip.html",
       "unit_label": "Split — Camel EIP documentation",
       "unit_type": "documentation-page",
-      "access_date": "2026-10-21",
+      "access_date": "2026-10-26",
       "access_method": "public HTTP fetch; served text/html inspected",
       "sections_read": [
         "Split",
@@ -1635,9 +1635,9 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Full Next (pre-release) page read 2026-10-26; prior record was truncated after Options. Canonical 4.22.x LTS page was not compared.",
+      "limitations": "Full Next (pre-release) page read 2026-10-26; the earlier 2026-10-21 record was truncated after Options. Canonical 4.22.x LTS page was not compared.",
       "content_sha256": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0",
-      "read_scope": "main splitter description and options inspected; page was returned truncated after the options section",
+      "read_scope": "complete public Next (pre-release) page read 2026-10-26, including all listed sections; linked pages, navigation chrome and unrelated examples excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
@@ -1903,6 +1903,56 @@
       "limitations": "Re-read 2026-10-26. Publisher-abridged; Example absent. Prior large-payload/storage-lifetime/access-control claim removed.",
       "content_sha256": "96395638cbc1165642bdff681ec21a2862359e68f88f59cb7a2b5b2ad4753fb5",
       "read_scope": "complete publicly served page as returned by fetch, excluding navigation, linked pages and the publisher-abridged book remainder",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.microsoft-claim-check.2026-10-28",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/claim-check",
+      "unit_label": "Claim Check pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe",
+      "sections_read": [
+        "Claim Check pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Alternatives",
+        "Workload design",
+        "Examples",
+        "Next steps",
+        "Related resources"
+      ],
+      "sections_not_read": [
+        "linked child pages and sample code",
+        "navigation and unrelated chrome (not read as content)",
+        "images and their interiors",
+        "the linked canonical Enterprise Integration Patterns description"
+      ],
+      "tables_figures": [
+        "the workload-design table was read in extracted text form; diagram interiors and sample code were not inspected"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The Claim Check pattern separates payload storage from message delivery: the sender writes the full payload to an external data store and sends a reference through the messaging system.",
+        "Receiving applications resolve the reference against the data store; the messaging system carries only the claim check.",
+        "Payload write and token publication are not atomic; publish the token only after the payload write succeeds.",
+        "A failure after payload write but before token publication can orphan a payload; a token published before its payload is retrievable leaves consumers with unresolvable references.",
+        "Store outage or data loss prevents holders of valid tokens from retrieving payloads; duplicate delivery needs an idempotent consumer, and integrity mismatches need a disposition.",
+        "Inline delivery with compression or a compact serializer is an alternative when the reduced payload fits the transport and every producer and consumer can use the same format."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, throughput, latency or production outcomes",
+        "linked sample code, linked pages or images",
+        "independent reproduction, benchmark or local execution",
+        "the complete book treatment of Claim Check"
+      ],
+      "limitations": "One living Microsoft Learn page, last updated 2026-09-25; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including title and navigation chrome because the page has no recognized article-body marker; quoted sentences were checked against that extraction. Linked sample code, images and the canonical Enterprise Integration Patterns description were not read.",
+      "content_sha256": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe",
+      "read_scope": "complete publicly served article text including Context and problem, Solution, Problems and considerations, When to use this pattern, Alternatives, Workload design, Examples, Next steps and Related resources; linked pages, images and sample code excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
@@ -4535,8 +4585,8 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Full RFC 9700 text read 2026-10-26: all 78 numbered sections; prior record was truncated at 100,000 characters.",
-      "content_sha256": "9919d061d40a97886ca866b51c69389b6c81c65cd4b979056c14fdbebfcf622a",
+      "limitations": "Full RFC 9700 text read 2026-10-26: all 78 numbered sections; hash domain is the current served HTML representation.",
+      "content_sha256": "c00e2234fcd79581bc29669c60d693afaa42f67d9205bddee848f757ae975419",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -4544,11 +4594,11 @@
     {
       "id": "read.batch6-asvs.2026-10-21",
       "source_id": "src.owasp-asvs",
-      "unit_url": "https://owasp.org/www-project-application-security-verification-standard/",
-      "unit_label": "OWASP ASVS — application security verification",
+      "unit_url": "https://github.com/OWASP/ASVS/raw/v5.0.0/5.0/OWASP_Application_Security_Verification_Standard_5.0.0_en.pdf",
+      "unit_label": "OWASP ASVS 5.0.0 — application security verification",
       "unit_type": "specification",
       "access_date": "2026-10-21",
-      "access_method": "public HTTP fetch; served text/html inspected",
+      "access_method": "public HTTPS GET; PDF text extracted with pdftotext",
       "sections_read": [
         "V1 Encoding and Sanitization",
         "V2 Validation and Business Logic",
@@ -4585,7 +4635,6 @@
       "claims_supported": [
         "ASVS is an OWASP framework of security requirements for designing, developing and testing web applications and web services.",
         "ASVS 5.0.0, published 30 May 2025, is the latest stable version; requirements use chapter.section.requirement identifiers.",
-        "The page is an overview landing page, not the requirement catalogue; it does not define verification levels.",
         "The complete 5.0.0 document contains 345 requirements across 17 chapters and defines levels L1/L2/L3 with 70/183/92 requirements."
       ],
       "claims_not_supported": [
@@ -4593,20 +4642,20 @@
         "implementation behavior",
         "independent reproduction or benchmark"
       ],
-      "limitations": "Full 120-page ASVS 5.0.0 document read 2026-10-26: 345 requirements, 17 chapters, appendices A-E. Prior record covered the landing page only.",
-      "content_sha256": "34fcc53aa30ea62fbc75c0ad5473d1284b6f6f0653feffefb20abfa00367355a",
-      "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
+      "limitations": "Full 120-page ASVS 5.0.0 PDF read 2026-10-26: 345 requirements, 17 chapters, appendices A-E; no local reproduction.",
+      "content_sha256": "a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5",
+      "read_scope": "full 120-page PDF; V1-V17 and appendices A-E",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
     {
       "id": "read.batch6-istio.2026-10-21",
       "source_id": "src.istio",
-      "unit_url": "https://istio.io/latest/docs/concepts/security/",
+      "unit_url": "https://istio.io/v1.28/docs/concepts/security/",
       "unit_label": "Istio Security — workload identity and mTLS",
       "unit_type": "documentation-page",
-      "access_date": "2026-10-26",
-      "access_method": "public HTTPS GET; full article text inspected; content hash pins the 2026-10-26 retrieval",
+      "access_date": "2026-10-27",
+      "access_method": "public HTTPS GET; canonical text hash via scripts/source_content_hash.py",
       "sections_read": [
         "Security",
         "High-level architecture",
@@ -4656,7 +4705,8 @@
       "claims_supported": [
         "Istio assigns X.509 identities to workloads and rotates certificates through istiod and the agent.",
         "mTLS authenticates service-to-service traffic and secure naming binds identity to service.",
-        "AuthorizationPolicy supports ALLOW, DENY and CUSTOM with deny precedence and mTLS-dependent principal rules."
+        "AuthorizationPolicy supports ALLOW, DENY and CUSTOM with deny precedence and mTLS-dependent principal rules.",
+        "Istio mutual TLS permissive mode accepts plaintext and mutual TLS traffic simultaneously."
       ],
       "claims_not_supported": [
         "certificate revocation",
@@ -4666,8 +4716,8 @@
         "SPIFFE semantics",
         "runtime enforcement or security outcome"
       ],
-      "limitations": "Unversioned latest documentation; six SVG figure interiors not read; YAML examples not executed; source register URL was corrected to this page.",
-      "content_sha256": "0291fb8211b0215a91fe1c2bf389db7b3cdb6fffd57605f13fb4e6b402eb66e4",
+      "limitations": "Versioned Istio v1.28 documentation; six SVG figure interiors not read; YAML examples not executed; source register URL was corrected to this page.",
+      "content_sha256": "4de8eab801c37d68c6863b013669c4fad9fd044e5167873103852a6b7438d1b0",
       "read_scope": "publicly served HTML article; all 34 headings and prose read; linked pages and figure interiors excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
@@ -5266,9 +5316,8 @@
         "Appendix B. References"
       ],
       "sections_not_read": [
-        "4. Conclusion",
-        "Appendices A-B",
-        "references"
+        "linked pages",
+        "external references not reproduced"
       ],
       "tables_figures": [
         "eight figures visually inspected; no tables used as evidence"
@@ -5287,9 +5336,9 @@
         "centralization required",
         "revocation mechanics"
       ],
-      "limitations": "Full 47-page PDF read 2026-10-26; prior record covered sections 2-3 only.",
+      "limitations": "Full 47-page PDF read 2026-10-26; appendices A-B included; figures visually inspected; no local reproduction.",
       "content_sha256": "ea90ee967a7011c8de5cfaffe0820d157167edefdea5fc2a84af730af4295cd7",
-      "read_scope": "printed pp. i-33; sections 2-3 complete; appendices excluded",
+      "read_scope": "full 47-page PDF; printed pp. i-ix, 1-33; appendices A-B included",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
@@ -5302,6 +5351,7 @@
       "access_date": "2026-10-26",
       "access_method": "public HTTPS GET; served HTML inspected",
       "sections_read": [
+        "Abstract",
         "1. Introduction",
         "2. Overall Architecture",
         "3. Entity Statement",
@@ -5329,13 +5379,8 @@
         "Authors' Addresses"
       ],
       "sections_not_read": [
-        "2. Overall Architecture",
-        "6. Federation Policy",
-        "7. Trust Marks",
-        "8. Federation Endpoints",
-        "9-10",
-        "12-21",
-        "Appendices"
+        "linked pages",
+        "examples not reproduced"
       ],
       "tables_figures": [
         "ASCII figures read as text; JWT examples not decoded"
@@ -5358,7 +5403,7 @@
       ],
       "limitations": "Full specification read 2026-10-26: 21 numbered sections, appendices A-B, 199 headings, 42,240 words. Prior record covered five sections only.",
       "content_sha256": "4a71afdfbed5755d6704d6a089f450f10aa9914204b283eae5fadee2897d1911",
-      "read_scope": "sections 1,3,4,5,11 of the live specification",
+      "read_scope": "full specification: 21 numbered sections, appendices A-B, 199 headings",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
@@ -5369,7 +5414,7 @@
       "unit_label": "Perform cutover from MySQL (Spanner)",
       "unit_type": "documentation-page",
       "access_date": "2026-10-26",
-      "access_method": "public HTTPS GET; served HTML inspected",
+      "access_method": "public HTTPS GET; canonical visible article text via scripts/source_content_hash.py",
       "sections_read": [
         "Before you begin",
         "Required roles",
@@ -5384,7 +5429,6 @@
       ],
       "sections_not_read": [
         "page preamble",
-        "What's next",
         "linked pages"
       ],
       "tables_figures": [
@@ -5405,9 +5449,9 @@
         "formal no-return point or fallback execution",
         "independent verification"
       ],
-      "limitations": "Product-specific vendor documentation; only three sections read; no immutable version selector; no local reproduction.",
-      "content_sha256": "7770d4c9e13b041d68bb4f211e619d05ae3878d2d352c95ed1e09e1190e67390",
-      "read_scope": "three named sections; site chrome and linked pages excluded",
+      "limitations": "Product-specific vendor documentation; ten headings read; hash is canonical article text, reproducible with scripts/source_content_hash.py; raw HTML chrome is mutable; no local reproduction.",
+      "content_sha256": "aa3be8892206c03c58a52f97a163a7f6dd23e30a3715ccdd88c062cba5cc75dc",
+      "read_scope": "ten named headings including What's next; site chrome and linked pages excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
     },
@@ -5425,14 +5469,11 @@
         "Running the comparison",
         "When a parallel run is not enough",
         "Key pitfalls",
-        "Measuring success",
-        "Next step",
-        "Related content"
+        "Measuring success"
       ],
       "sections_not_read": [
-        "Next step",
-        "Related content",
-        "linked pages"
+        "linked pages",
+        "examples not reproduced"
       ],
       "tables_figures": [
         "tables and code read as text"
@@ -5454,9 +5495,381 @@
         "cost measurement",
         "Scientist provenance"
       ],
-      "limitations": "Practice guide, not a measurement study; six sections read; no local execution or independent verification.",
+      "limitations": "Practice guide, not a measurement study; eight sections read; no local execution or independent verification.",
       "content_sha256": "e8cf036da19b3f03456a0eb2aa735d1f8d6a738a46449f451a509395d95fc832",
-      "read_scope": "six named H2 sections; next-step and related content excluded",
+      "read_scope": "eight named H2 sections including Next step and Related content",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.static-content-hosting.2026-10-26",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/static-content-hosting",
+      "unit_label": "Static Content Hosting — pattern page",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-26",
+      "access_method": "public HTTP fetch; served text/html inspected",
+      "sections_read": [
+        "Static Content Hosting pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next step",
+        "Related resource"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation and unrelated chrome",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables and figures in inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Static content hosting serves immutable or prebuilt content from a dedicated store or edge service, reducing application load and adding cache/versioning policy."
+      ],
+      "claims_not_supported": [
+        "linked pages",
+        "implementation behavior",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "Full served text re-read on 2026-10-26; Azure examples and linked resources were not read.",
+      "content_sha256": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3",
+      "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.batch2-content-router.2026-10-28",
+      "source_id": "src.enterprise-integration",
+      "unit_url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/ContentBasedRouter.html",
+      "unit_label": "Content-Based Router — pattern page",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTP fetch; served text/html inspected",
+      "sections_read": [
+        "Content-Based Router"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation and unrelated chrome",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables and figures in inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A Content-Based Router examines message content and routes each message to a different channel based on data contained in the message.",
+        "Routing can use field existence, field values or configurable rules."
+      ],
+      "claims_not_supported": [
+        "linked pages",
+        "implementation behavior",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "Read 2026-10-28; publisher-abridged page; linked pages not read.",
+      "content_sha256": "4e8a2b5cc937de7a1e5b8b024e637435154999cd31c03845945def4bc42a1b30",
+      "read_scope": "complete publicly served page as returned by fetch, excluding navigation and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-scatter-gather.2026-10-28",
+      "source_id": "src.aws-scatter-gather",
+      "unit_url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/scatter-gather.html",
+      "unit_label": "Scatter-gather pattern — AWS Prescriptive Guidance",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Scatter-gather pattern",
+        "Intent",
+        "Motivation",
+        "Applicability",
+        "Issues and considerations",
+        "Implementation",
+        "High-level architecture",
+        "Scatter by distribution (overview)",
+        "Scatter by auction (overview)",
+        "Implementation using AWS services",
+        "Scatter by distribution (AWS implementation)",
+        "Scatter by auction (AWS implementation)",
+        "GitHub repository",
+        "Workshop",
+        "Blog references",
+        "Related content"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation and unrelated chrome (not read as content)",
+        "images and their interiors",
+        "the linked GitHub sample code",
+        "the linked workshop"
+      ],
+      "tables_figures": [
+        "no tables",
+        "four architecture diagrams were present but not read; captions and surrounding prose were read"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The scatter-gather pattern is a message routing pattern that involves broadcasting similar or related requests to multiple recipients, and aggregating their responses back into a single message by using a component called an aggregator.",
+        "Scatter-gather has a scatter phase that sends requests to recipients in parallel and a gather phase that collects responses and filters or combines them into a unified response.",
+        "The root controller can scatter by distribution to a known recipient list or scatter by auction through a publish-subscribe channel.",
+        "Recipient timeouts and partial responses are expected; the implementation should communicate an incomplete response, and the aggregator can ignore timed-out responses.",
+        "The gathering process uses an aggregator, described as another messaging pattern, to collect responses and distill them into a single response message."
+      ],
+      "claims_not_supported": [
+        "an explicit statement that scatter-gather and aggregator are mutually exclusive alternatives; the alternative framing is Tycho's synthesis from the component relationship",
+        "implementation behavior, throughput, latency or production outcomes",
+        "linked pages, the linked GitHub sample code or the workshop",
+        "images and diagram interiors",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "One AWS documentation page; no benchmark, local execution or production observation. The page presents the aggregator as the gather component and a related messaging pattern, not as an explicit alternative; the decision wording is Tycho's synthesis. Duplicate H3 headings are disambiguated with (overview) and (AWS implementation). The canonical digest covers the full extracted page text because AWS markup has no recognized article-body marker; it includes title and navigation chrome, and its extraction inserts a space before the period after the italic 'aggregator' in the Intent sentence, so exact-quote matching must use the rendered page or the Markdown alternate.",
+      "content_sha256": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3",
+      "read_scope": "complete article text including Intent, Motivation, Applicability, Issues and considerations, Implementation, both scatter methods, Workshop, Blog references and Related content; linked pages, images and sample code excluded; digest covers full extracted page text",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.spring-splitter.2026-10-28",
+      "source_id": "src.spring-integration",
+      "unit_url": "https://docs.spring.io/spring-integration/reference/splitter.html",
+      "unit_label": "Splitter — Spring Integration reference",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS GET; article text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Splitter",
+        "Programming Model",
+        "Iterators",
+        "Stream and Flux",
+        "Configuring a Splitter with Java, Groovy and Kotlin DSLs",
+        "Configuring a Splitter with XML",
+        "Configuring a Splitter with Annotations"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation and page chrome",
+        "complete code samples not reproduced"
+      ],
+      "tables_figures": [
+        "no figures; code examples were read but not reproduced"
+      ],
+      "license_notes": "Public Spring documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The splitter partitions a message into parts that are processed independently.",
+        "The base splitter fills CORRELATION_ID, SEQUENCE_SIZE and SEQUENCE_NUMBER on produced messages.",
+        "When an iterator has no known size, SEQUENCE_SIZE is set to 0 and the aggregate group remains incomplete unless a custom release strategy or expiry handles it.",
+        "A discardChannel can route request messages whose split function returned an empty container.",
+        "The splitter can emit a Flux and apply back-pressure when its output channel is reactive."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, production outcomes or performance",
+        "linked pages and complete code samples",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "One public reference page; no benchmark or local execution. The digest covers the full extracted page text because the page has no recognized article-body marker; navigation chrome is included.",
+      "content_sha256": "60507878879812400e92ac71f7a8eeb586cc0dd5744d140bd6fe2860aa4e0b94",
+      "read_scope": "complete Splitter article including Programming Model, Iterators, Stream and Flux and all configuration sections; linked pages and full code samples excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.spring-aggregator.2026-10-28",
+      "source_id": "src.spring-integration",
+      "unit_url": "https://docs.spring.io/spring-integration/reference/aggregator.html",
+      "unit_label": "Aggregator — Spring Integration reference",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS GET; article text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Aggregator (opening definition)",
+        "Functionality"
+      ],
+      "sections_not_read": [
+        "Programming Model",
+        "AggregatingMessageHandler",
+        "ReleaseStrategy",
+        "Aggregating Large Groups",
+        "Correlation Strategy",
+        "Lock Registry",
+        "Avoiding Deadlocks",
+        "Configuring an Aggregator in Java DSL",
+        "Configuring an Aggregator with XML",
+        "Managing State in an Aggregator: MessageGroupStore",
+        "Flux Aggregator",
+        "Condition on the Message Group",
+        "linked child pages and complete code samples"
+      ],
+      "tables_figures": [
+        "no figures in the read sections; code examples were not reproduced"
+      ],
+      "license_notes": "Public Spring documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The aggregator is described as a mirror-image of the splitter: it receives multiple messages and combines them into a single message.",
+        "An aggregator is often a downstream consumer in a pipeline that includes a splitter.",
+        "The aggregator is stateful: it stores related messages until the group is complete, then creates one aggregated message."
+      ],
+      "claims_not_supported": [
+        "a statement that a splitter must always be paired with an aggregator",
+        "implementation behavior, production outcomes or performance",
+        "the later programming-model, correlation, release-strategy and configuration sections",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "Bounded read of one public reference page: opening definition and Functionality only; later sections were not read. The digest covers the full extracted page text because the page has no recognized article-body marker; navigation chrome is included. The alternative framing is Tycho’s synthesis from the mirror-image statement.",
+      "content_sha256": "c6055542da52e10d65129c4adaf1e6dd2b312aaa0e5a2b7f4629a582074635cf",
+      "read_scope": "bounded Aggregator read: opening definition and Functionality; the programming-model, correlation, release-strategy, state-store, Flux and configuration sections were not read",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.pipes-ch03.2026-10-28",
+      "source_id": "src.enterprise-integration",
+      "unit_url": "https://www.enterpriseintegrationpatterns.com/docs/EnterpriseIntegrationPatterns_HohpeWoolf_ch03.pdf",
+      "unit_label": "Pipes and Filters — Chapter 3, pp.70-77",
+      "unit_type": "book-chapter",
+      "access_date": "2026-10-28",
+      "access_method": "public HTTPS fetch; PDF SHA-256 verified as c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66; printed pp.70-77 (PDF pages 14-21) extracted with pdftotext -layout; line-end hyphenation joined; running headers and page numbers excluded",
+      "sections_read": [
+        "Problem (p.70)",
+        "Solution (p.71)",
+        "Pipeline Processing (p.73)",
+        "Parallel Processing (p.74)",
+        "History of Pipes and Filters (pp.74-76)",
+        "Example: Simple Filter in C# and MSMQ (pp.76-77)"
+      ],
+      "sections_not_read": [
+        "Chapter 4 and later patterns",
+        "linked pattern pages",
+        "complete code listings not reproduced",
+        "figure interiors not inspected"
+      ],
+      "tables_figures": [
+        "figures were read through captions and surrounding prose; diagram interiors were not reproduced"
+      ],
+      "license_notes": "Author-hosted public PDF; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Pipes and Filters divides a processing task into independent filters connected by channels (pipes).",
+        "Each filter receives on an inbound pipe and publishes to an outbound pipe; basic filters have one input and one output port.",
+        "Parallel or multiple filter instances can process messages out of order; a single instance per stage or a Resequencer preserves order.",
+        "Channels provide buffering that consumes memory and CPU cycles, and long chains pay repeated message conversion costs.",
+        "The simple C#/MSMQ filter example is not transactional: an error before the output channel loses the message; Transactional Client is the stated remedy.",
+        "A comprehensive in-process module is the inflexible, hard-to-test alternative; an in-memory queue can replace a channel when components share a machine."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, production outcomes or performance measurements",
+        "Chapter 4 and later patterns and linked pages",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "One 2003 chapter section; no runtime test, benchmark or current-edition comparison. The PDF is author-hosted and the public pattern page is publisher-abridged. The extracted text joins line-end hyphenation and removes running headers; quoted sentences were checked against that normalized extraction.",
+      "content_sha256": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66",
+      "read_scope": "complete Pipes and Filters section, printed pp.70-77 (PDF pages 14-21), including Problem, Solution, Pipeline Processing, Parallel Processing, History and the Simple Filter example; later chapters, linked pages and complete code listings excluded; PDF SHA-256 c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.camel-resequence.2026-10-29",
+      "source_id": "src.camel",
+      "unit_url": "https://camel.apache.org/components/4.22.x/eips/resequence-eip.html",
+      "unit_label": "Resequence — Apache Camel 4.22.x LTS EIP documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-29",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e",
+      "sections_read": [
+        "Resequence",
+        "Options",
+        "Exchange properties",
+        "Batch Resequencing",
+        "Allow Duplicates",
+        "Reverse Ordering",
+        "Ignoring invalid messages",
+        "Resequence JMS messages based on JMSPriority",
+        "Stream Resequencing",
+        "How streaming mode works?",
+        "Using custom streaming mode sequence expression",
+        "Rejecting old messages"
+      ],
+      "sections_not_read": [
+        "linked pages, the source repository and the issue tracker",
+        "other Camel EIP pages",
+        "the pre-release 'next' version of this page",
+        "navigation and version-selector chrome was included only in the digest, not read as content"
+      ],
+      "tables_figures": [
+        "the Resequence options table was read in extracted text form; no figures"
+      ],
+      "license_notes": "Apache Camel documentation published by the Apache Software Foundation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Camel supports batch resequencing, which collects messages into a batch, sorts them and sends them to the output, and stream resequencing, which re-orders continuous streams by detecting gaps between messages.",
+        "The implementation uses an Expression as the comparator, so messages can be re-ordered by a message header or another part of the message.",
+        "By default, duplicate messages are not supported and only the last message is kept; batch mode can allow duplicates.",
+        "Stream mode sends a message as soon as the next expected sequence number arrives, requires integer sequence numbers ordered 1,2,3...N, and keeps a backlog with a default capacity of 1000 elements that can be configured.",
+        "In case of a timeout, the resequencer disregards the current expected sequence number and moves to the next expected number; large timeout values should be supported by sufficiently high capacity values.",
+        "Old-message rejection makes the resequencer throw a MessageRejectedException when an incoming Exchange is older than the last delivered message; invalid exchanges can be skipped explicitly with the invalid-message option."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, performance, throughput or production outcomes",
+        "the pre-release 'next' documentation tree or other Camel versions",
+        "linked pages, complete source code and the issue tracker",
+        "applicability of Camel defaults to other products or to a specific deployment"
+      ],
+      "limitations": "One Apache Camel 4.22.x LTS documentation page; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including version-navigation chrome because the page has no recognized article-body marker. The pre-release 'next' page differs on duplicate retention (it describes keeping the first message, while the pinned 4.22.x page describes keeping the last); only the pinned 4.22.x wording is cited.",
+      "content_sha256": "e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e",
+      "read_scope": "complete Resequence EIP article for 4.22.x LTS, including options, batch and stream resequencing, duplicate, reverse and invalid-message options, backlog capacity, timeout behavior and old-message rejection; linked pages, source code and other versions excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.microsoft-sequential-convoy.2026-10-29",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/sequential-convoy",
+      "unit_label": "Sequential Convoy pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-29",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as 89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d",
+      "sections_read": [
+        "Sequential Convoy pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Supporting technologies",
+        "Related resources"
+      ],
+      "sections_not_read": [
+        "linked child pages and sample code",
+        "navigation and unrelated chrome (included only in the digest)",
+        "images and their interiors",
+        "the linked Competing Consumers pattern page"
+      ],
+      "tables_figures": [
+        "diagrams were read through their surrounding prose; diagram interiors and images were not inspected"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The Sequential Convoy pattern groups related messages by a category key and processes each category sequentially while different categories are processed in parallel.",
+        "The category key defines the unit of parallelism, and per-category throughput is bounded by the time to process a single message.",
+        "Competing consumers alone lose per-group ordering; the broker must support one-at-a-time processing or FIFO ordering within a group.",
+        "Messages can arrive out of order because of network latency before broker ordering takes effect; sequence numbers and an end-of-sequence flag can verify and complete a sequence.",
+        "A poison message blocks later messages in the same group because of strict sequential ordering; it should move to a dead-letter queue after a defined retry threshold."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, throughput, latency or production outcomes",
+        "broker-specific session features or their availability in a given tier",
+        "linked pages, sample code and images",
+        "that partitioning by key is preferable when global ordering is required"
+      ],
+      "limitations": "One living Microsoft Learn page with no published version identifier; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including navigation chrome because the page has no recognized article-body marker. Session-based implementation details are product-specific and were not exercised.",
+      "content_sha256": "89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d",
+      "read_scope": "complete Sequential Convoy article including context, solution, problems and considerations, when to use, workload design, example and supporting technologies; linked pages, images and sample code excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }

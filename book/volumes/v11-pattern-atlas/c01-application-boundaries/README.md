@@ -383,152 +383,19 @@ Transactional Outbox; CQRS.
 
 ### Self-Contained Service
 
-**Identity.** Self-Contained Service; family Application architecture and boundaries;
-kind service-decomposition-pattern; priority advanced.
-
-**Decision question.** Should a service reduce synchronous dependencies by owning or
-duplicating the data and behavior it needs, rather than calling other services on every
-request?
-
-**Good-fit conditions.** Latency and availability coupling are material; the capability
-can own a local read model; duplication and reconciliation are acceptable; the service
-boundary is stable enough to absorb change.
-
-**Hard contraindications.** Reject the claim when strong consistency is mandatory, when
-data cannot be duplicated for legal or ownership reasons, or when the "self-contained"
-service still hides synchronous calls behind a local cache.
-
-**Competing alternative.** API composition or orchestration with explicit latency
-budgets. Reverse the choice when duplication and invalidation cost exceed the coupling
-benefit.
-
-**Failure and recovery.** Stale local data, hidden coupling and complex invalidation are
-common. Recovery requires reconciliation and clear ownership; the bounded owner section
-describes hidden shared state and orchestration/BFF alternatives.
-
-**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — The section owns dependency budgets, fallback contracts and orchestration/BFF alternatives.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-self-contained.2026-10-21: Self-contained service,
-sections "Context", "Problem", "Forces", "Solution", "Example", "Resulting Context",
-"Related patterns". This is a pattern page, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Microservices Architecture; API Composition; Database per Service;
-CQRS.
+See the [dedicated Self-Contained Service card](self-contained-service.md).
 
 ### Sidecar
 
-**Identity.** Sidecar; family Application architecture and boundaries; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should auxiliary runtime behavior run in a colocated
-process/container beside the main workload, rather than inside it or in a separate
-remote service?
-
-**Good-fit conditions.** Cross-cutting behavior is reusable across heterogeneous
-runtimes; the platform can schedule and manage sidecars; independent lifecycle and
-failure isolation are useful; resource overhead is acceptable.
-
-**Hard contraindications.** Reject the claim for a simple application without a
-sidecar-capable platform, when startup ordering and resource limits cannot be managed,
-or when the sidecar becomes a hidden monolith with tightly coupled lifecycle.
-
-**Competing alternative.** An in-process library, an ambassador proxy or a node agent.
-Reverse the choice when sidecar overhead and operational complexity exceed reuse.
-
-**Failure and recovery.** Resource contention, startup ordering and version skew are
-common. Recovery requires health checks and explicit lifecycle ownership; the technical
-owner section states the remaining limits.
-
-**Technical owner.** [Sidecar](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#sidecar) — sidecar lifecycle, proxy data plane and coupling are bounded, not a service-mesh guide.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-sidecar.2026-10-21: sections "Sidecar pattern", "Context
-and problem", "Solution", "Problems and considerations", "When to use this pattern",
-"Workload design", "Example", "Next steps", "Related resource". This is a vendor
-pattern page, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Ambassador; Service Mesh; Modular Monolith; Deployment Stamps.
+See the [dedicated Sidecar card](sidecar.md).
 
 ### Ambassador
 
-**Identity.** Ambassador; family Application architecture and boundaries; kind
-deployment-pattern; priority advanced.
-
-**Decision question.** Should a local proxy mediate a client's network capabilities,
-rather than embedding connectivity logic in the client or centralizing it remotely?
-
-**Good-fit conditions.** A legacy client cannot be changed easily; connectivity behavior
-such as retries, TLS or routing is shared; the proxy lifecycle can be owned; an extra
-network hop is acceptable.
-
-**Hard contraindications.** Reject the claim when the client can use a library, when no
-operational owner exists for the proxy, when latency or resource constraints forbid an
-extra hop, or when the proxy becomes a single point of failure.
-
-**Competing alternative.** A shared ingress gateway when the concern is ingress rather than
-per-client egress, or an in-process client library. Reverse the choice when the proxy adds a
-hop without providing a needed capability.
-
-**Failure and recovery.** Proxy outage, configuration drift and control-plane divergence are
-common. Recovery requires configuration rollback and a direct-path recovery; the bounded owner
-section covers per-client egress, not an ingress gateway.
-
-**Technical owner.** [Ambassador](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — per-client egress proxy ownership is bounded, not a shared ingress gateway.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-ambassador.2026-10-21: all eight served headings read.
-This is a vendor pattern page, not a comparative
-study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Sidecar; Service Mesh; Gateway Routing; Anti-Corruption Layer.
+See the [dedicated Ambassador card](ambassador.md).
 
 ### Anti-Corruption Layer
 
-**Identity.** Anti-Corruption Layer; alias ACL, translation layer; family Application
-architecture and boundaries; kind integration-pattern; priority core.
-
-**Decision question.** Should a translation layer protect the domain model from a
-legacy or external model with different semantics?
-
-**Good-fit conditions.** The external model has different meanings or invariants; the
-domain must remain independent of vendor or legacy types; coexistence is transitional;
-the mapping and its errors can be owned and tested.
-
-**Hard contraindications.** Reject the claim when the models already align; when the
-layer adds no semantic translation; when latency or data duplication violates a hard
-constraint; when the mapping has no owner; or when the ACL would become a second domain
-model.
-
-**Competing alternative.** Direct integration against a shared contract. Reverse the
-choice when the external model stabilizes and aligns semantically, or when the ACL
-becomes a permanent duplicate domain.
-
-**Failure and recovery.** Lossy translation, dual writes and stale mappings are the
-main failure modes. Recovery requires contract tests, versioned mappings and an
-explicit cutover path; verify those mechanics in the technical owner.
-
-**Technical owner.** [Anti-Corruption Layer](../../v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md#anti-corruption-layer).
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-acl.2026-10-21`: all nine served headings read. This is a
-vendor pattern page, not a comparative study.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Domain-Driven Design / Bounded Context; Hexagonal Architecture;
-Strangler Fig; Adapter.
-
+See the [dedicated Anti-Corruption Layer card](anti-corruption-layer.md).
 ## Chapter result and counterexample
 
 Twelve cards establish a conditional decision route. Four have dedicated owners and

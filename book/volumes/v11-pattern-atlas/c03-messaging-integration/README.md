@@ -31,6 +31,7 @@ evidence_scope:
   source_ids:
     - "src.enterprise-integration"
     - "src.camel"
+    - "src.aws-scatter-gather"
   claim_ids: []
   status: "source-linked"
   notes: "All 20 cards cite read units; owner links are bounded sections, not dedicated EIP pages."
@@ -40,7 +41,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -59,9 +60,10 @@ or workflow page may own the delivery contract without owning every EIP mechanis
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages for entries prepared for independent review; a later split is an editorial change, not
+a plan failure. Start with the card, check its conditions and contraindications, then read the
+exact owner section.
 
 ## Entry inventory
 
@@ -208,37 +210,7 @@ Subscriber.
 
 ### Request-Reply Messaging
 
-**Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should a request and its response travel as correlated messages
-rather than one synchronous call?
-
-**Good-fit conditions.** The caller can tolerate asynchronous completion; a reply channel
-and correlation are available; timeouts and lost replies are handled.
-
-**Hard contraindications.** Reject when the caller needs an immediate answer, when no
-durable reply path exists, or when correlation state has no owner.
-
-**Competing alternative.** Synchronous request-reply with a bounded deadline. Reverse the
-choice when asynchronous coordination adds more failure modes than latency benefit.
-
-**Failure and recovery.** Lost replies and duplicate requests are normal; verify
-correlation and timeout handling in the owner section.
-
-**Technical owner.** [Request-reply messaging and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-request-reply.2026-10-21: Problem and Solution are
-unheaded; the page is publisher-abridged and has no Example
-section. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Correlation Identifier; Asynchronous Request-Reply; API Gateway;
-Timeout.
+See the [dedicated Request-Reply Messaging card](request-reply-messaging.md).
 
 ### Correlation Identifier
 
@@ -309,104 +281,15 @@ unit, not a benchmark.
 
 ### Message Filter
 
-**Identity.** Message Filter; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should messages be removed when they do not meet explicit criteria?
-
-**Good-fit conditions.** Filter criteria are stable and testable; rejected messages have a
-defined disposition; filtering is cheaper than downstream handling.
-
-**Hard contraindications.** Reject when every message has a required effect, when rejected
-messages need durable audit without an owner, or when criteria depend on mutable domain
-state.
-
-**Competing alternative.** Route all messages and let the consumer decide. Reverse the
-choice when downstream cost dominates and rejection is safe.
-
-**Failure and recovery.** Silent loss is the main risk; verify rejected-message policy in
-the owner section.
-
-**Technical owner.** [Message Filter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#message-filter) — predicate scope and rejected-message disposition are bounded, not every EIP mechanism.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-filter.2026-10-21: only the RabbitMQ example is an H2;
-Problem and Solution are unheaded, and the page is publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Content-Based Router; Dead Letter Channel; Pipes and Filters; Audit
-Trail.
+See the [dedicated Message Filter card](message-filter.md).
 
 ### Pipes and Filters
 
-**Identity.** Pipes and Filters; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should processing be composed as independent stages connected by
-channels?
-
-**Good-fit conditions.** Stages have distinct responsibilities; intermediate messages can
-be observed; each stage can fail and retry independently; ordering requirements are
-explicit.
-
-**Hard contraindications.** Reject when one stage needs global transaction state, when
-intermediate latency is unacceptable, or when the pipeline becomes an unowned distributed
-workflow.
-
-**Competing alternative.** One cohesive consumer with internal functions. Reverse the
-choice when stage isolation and reuse no longer justify message hops.
-
-**Failure and recovery.** Partial failure and duplicate processing grow with stages;
-verify stage contracts in the owner section.
-
-**Technical owner.** [Pipes and Filters](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — stage contracts, ordering and observability are bounded, not every EIP mechanism.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pipes.2026-10-21: the page is publisher-abridged and
-has no Example; it has no article headings at all. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Splitter; Aggregator; Content-Based Router; Process Manager.
+See the [dedicated Pipes and Filters card](pipes-and-filters.md).
 
 ### Splitter
 
-**Identity.** Splitter; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should a composite message be divided into independently processed
-parts?
-
-**Good-fit conditions.** The parts are independently actionable; aggregation or completion
-policy is defined; each part has an identity; errors can be correlated.
-
-**Hard contraindications.** Reject when the parts must be processed atomically, when
-ordering across parts is mandatory and no sequencer reconstructs it, or when the split loses
-required context.
-
-**Competing alternative.** Process the composite as one unit. Reverse the choice when
-independent processing creates more coordination than value.
-
-**Failure and recovery.** Partial completion and orphaned parts are common; verify
-aggregation and error policy in the owner section.
-
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — split policy and completeness marker are bounded; durable fan-out is owner-specific.
-
-**Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-splitter.2026-10-21: all thirty served headings read. The source is a
-public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Aggregator; Scatter-Gather; Pipes and Filters; Process Manager.
+See the [dedicated Splitter card](splitter.md).
 
 ### Aggregator
 
@@ -416,26 +299,33 @@ integration-pattern; priority core.
 **Decision question.** Should related messages be combined using completion and timeout
 rules?
 
-**Good-fit conditions.** Correlation is stable; completion conditions are explicit;
-partial results are representable; duplicate and late messages are handled.
+**Good-fit conditions.** Correlation is stable; completion conditions are explicit.
+Tycho guidance, not a source claim: partial results are representable, duplicate and late
+messages are handled, and a per-participant timeout is available.
 
-**Hard contraindications.** Reject when responses are independent, when no bounded
-completion rule exists, or when aggregation state has no durable owner.
+**Hard contraindications.** Reject when responses are unrelated, when one participant is
+authoritative, when atomicity across participants is required, when one slow participant
+would consume the caller's budget, when no bounded completion rule exists, or when
+aggregation state has no durable owner.
 
-**Competing alternative.** Process each response independently. Reverse the choice when
-aggregation state and timeout complexity exceed the combined result benefit.
+**Competing alternative.** Tycho synthesis: scatter-gather broadcasts one request to
+several recipients and aggregates their responses through an aggregator. Reverse the
+choice when the request must reach several recipients rather than fan in
+already-correlated messages.
 
 **Failure and recovery.** Late, missing and duplicate messages are common; verify
 completion and eviction in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is owner-specific.
+**Technical owner.** [Aggregator](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is Tycho guidance.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-aggregator.2026-10-21: two H2 examples; Problem and
 Solution are unheaded, and the page is publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
+[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
+broadcast-and-aggregate pattern and names the aggregator component. The sources are public
+documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -450,25 +340,32 @@ integration-pattern; priority core.
 responses combined?
 
 **Good-fit conditions.** Recipients are known or discoverable; partial responses are
-acceptable; per-recipient deadlines exist; the aggregate is bounded.
+acceptable; per-recipient deadlines exist; the aggregate is bounded. Tycho guidance, not
+a source claim: define a response contract and a quorum or completeness rule, and assign
+a straggler policy to an owner.
 
-**Hard contraindications.** Reject when one authoritative recipient suffices, when all
-responses must be globally consistent, or when fan-out can exhaust the caller.
+**Hard contraindications.** Reject when one authoritative recipient suffices, when
+responses are not comparable, when the aggregate must be globally consistent, or when
+tail latency would exceed the caller's budget. Tycho guidance: fan-out that can exhaust
+the caller is also a contraindication.
 
-**Competing alternative.** Single recipient or sequential calls. Reverse the choice when
-latency benefit is outweighed by fan-out and partial-failure cost.
+**Competing alternative.** Tycho synthesis: a standalone aggregator fits when responses
+already exist and no broadcast is needed. Reverse the choice when only already-produced
+responses must be combined.
 
 **Failure and recovery.** Slow or missing recipients dominate tail latency; verify
 deadlines and partial results in the owner section.
 
-**Technical owner.** [Work queue versus ephemeral fan-out versus replayable history](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; partial-response handling is owner-specific.
+**Technical owner.** [Scatter-Gather](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; the source states incomplete-response and timeout-ignore behavior; partial-result, failure and cancellation policy is Tycho guidance.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-scatter.2026-10-21: three H2 examples; Problem and
-Solution are unheaded, and the page is publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
+Solution are unheaded, and the page is publisher-abridged.
+[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
+broadcast-and-aggregate pattern and the scatter-by-auction section calls the aggregator
+another messaging pattern. The sources are public documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -574,70 +471,11 @@ with Exponential Backoff.
 
 ### Resequencer
 
-**Identity.** Resequencer; family Messaging and event-driven integration; kind
-messaging-pattern; priority advanced.
-
-**Decision question.** Should out-of-order messages be buffered and released in an
-acceptable order?
-
-**Good-fit conditions.** Ordering key and expected sequence are explicit; missing-message
-policy is bounded; buffer limits are known; late messages have a disposition.
-
-**Hard contraindications.** Reject when order is irrelevant, when the buffer can grow
-without bound, or when one missing message blocks the stream indefinitely.
-
-**Competing alternative.** A partitioned consumer that preserves per-key order. Reverse
-the choice when buffering delays and missing-message risk exceed ordering value.
-
-**Failure and recovery.** Head-of-line blocking and buffer growth are common; verify
-timeout and missing policy in the owner section.
-
-**Technical owner.** [Resequencer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — resequencing buffer, gap and ordering scope are bounded, not every EIP mechanism.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-resequencer.2026-10-21: no article headings; Example
-is absent and the page is publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Competing Consumers; Aggregator; Correlation Identifier; Message
-Sequence.
+See the [dedicated Resequencer card](resequencer.md).
 
 ### Claim Check
 
-**Identity.** Claim Check; family Messaging and event-driven integration; kind
-messaging-pattern; priority advanced.
-
-**Decision question.** Should large or sensitive payloads be stored separately and
-referenced by a claim check?
-
-**Good-fit conditions.** Payload size or sensitivity warrants separation; storage lifetime
-and access control are owned; the reference is stable; retrieval failure is handled.
-
-**Hard contraindications.** Reject when payloads are small, when the extra retrieval hop
-violates latency, or when the store cannot enforce access and retention.
-
-**Competing alternative.** Inline payload with transport compression/encryption. Reverse
-the choice when retrieval and storage complexity exceed transport savings.
-
-**Failure and recovery.** Orphaned claims and access leaks are common; verify storage and
-retrieval policy in the owner section.
-
-**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — claim-token binding, lifecycle and retrieval are bounded, not a payload store catalog.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-claim.2026-10-21: no article headings; Example is
-absent and the page is publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Message Broker; Dead Letter Channel; Valet Key; Pipes and Filters.
+See the [dedicated Claim Check card](claim-check.md).
 
 ### Message Broker / Messaging Bridge
 

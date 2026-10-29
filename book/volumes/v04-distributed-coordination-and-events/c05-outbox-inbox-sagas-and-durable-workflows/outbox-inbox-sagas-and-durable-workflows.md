@@ -128,19 +128,7 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### Transactional Outbox
 
-An outbox is a durable publication queue inside the state store. The business row and an intent row
-commit together; a relay leases rows, publishes them and records completion. The broker sees
-at-least-once attempts, not a distributed transaction.
-
-The relay needs bounded attempts and age, a publication key, per-aggregate ordering and a terminal
-quarantine for poison rows. A crash after publish before completion duplicates; after commit before
-publish retries. A consumer still deduplicates by effect identity, and a repair operator needs the
-row, payload digest and attempt history retained for the declared window.
-
-Use an outbox when the lost-publication and duplicate-effect risk justifies relay
-complexity. Reverse to
-direct publish with reconciliation only when relay complexity exceeds the risk it removes; CDC or
-transactional messaging may fit when the log is accessible.
+See the [dedicated Transactional Outbox owner note](transactional-outbox.md).
 
 ### Distributed Workflow Orchestration
 

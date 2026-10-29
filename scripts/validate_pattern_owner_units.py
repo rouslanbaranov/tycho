@@ -7,6 +7,7 @@ registry. Structural and textual checks only: this is not independent review,
 sufficient coverage or technical truth.
 """
 import argparse
+import hashlib
 import json
 from pathlib import Path
 import re
@@ -24,7 +25,9 @@ SCHEMA = Path("schemas/pattern-owner-units.v1.schema.json")
 REGISTRY = Path("edition/patterns/registry.v1.json")
 BATCHES = Path("edition/patterns/card-batches.v1.json")
 LEDGER = Path("edition/patterns/reading-ledger.v1.json")
+SOURCE_PLAN = Path("edition/patterns/source-plan.v1.json")
 MANIFEST = Path("edition/atlas-manifest.json")
+PROMOTIONS = Path("edition/patterns/sufficient-promotions.v1.json")
 TICK = chr(96)
 HEAD = re.compile(r"^\s{0,3}(#{1,6})\s+(.+?)\s*$")
 FENCE = re.compile(r"^\s*(?:" + TICK + r"{3,}|~{3,})[^\r\n]*$")
@@ -40,6 +43,7 @@ CARD_MARKERS = (
     "**Related entries.**",
 )
 STATES = ("supported", "partial", "absent")
+COVERAGE_STATES = EVIDENCE_STATES + ("sufficient",)
 DIMENSIONS = ("mechanism", "invariant", "failure_recovery", "alternative")
 
 
@@ -126,13 +130,14 @@ def card_section_text(chapter_text, slug):
     lines = body.splitlines()
     start = None
     for index, line in enumerate(lines):
-        if line.startswith("### ") and slug_heading(line[4:].strip()) == slug:
+        if any(line.startswith(prefix) and slug_heading(line[len(prefix):].strip()) == slug
+               for prefix in ("### ", "## ", "# ")):
             start = index + 1
             break
     require(start is not None, "owner-units-card-section: " + slug)
     end = len(lines)
     for index in range(start, len(lines)):
-        if lines[index].startswith("### ") or lines[index].startswith("## "):
+        if any(lines[index].startswith(prefix) for prefix in ("### ", "## ", "# ")):
             end = index
             break
     return "\n".join(lines[start:end])
@@ -154,16 +159,44 @@ def card_state(text):
     return value
 
 
-def expected_coverage(evidence, pattern_id):
+def expected_coverage(evidence, pattern_id, promotion=None):
     for name in DIMENSIONS:
         require(evidence[name]["state"] in STATES,
                 "owner-units-dimension-state: " + pattern_id + ": " + name)
     require(evidence["mechanism"]["state"] != "absent",
             "owner-units-name-only: " + pattern_id)
+    if promotion and all(evidence[name]["state"] == "supported"
+                         for name in DIMENSIONS):
+        return "sufficient"
     return ("partial-bounded"
             if (evidence["mechanism"]["state"] == "supported"
                 and evidence["invariant"]["state"] == "supported")
             else "partial")
+
+
+def check_binding(entry, name, binding, plan_units, records):
+    pattern_id = entry["pattern_id"]
+    units = plan_units.get(binding["source_id"], [])
+    unit = next((item for item in units
+                 if item.get("read_record_id") == binding["ledger_record"]),
+                None)
+    if unit is None:
+        unit = next(iter(units), None)
+    require(unit is not None,
+            "owner-units-binding-source: " + pattern_id + ": " + name)
+    require(unit.get("read_record_id") == binding["ledger_record"],
+            "owner-units-binding-record: " + pattern_id + ": " + name)
+    record = records.get(binding["ledger_record"])
+    require(record is not None,
+            "owner-units-binding-record-missing: " + pattern_id + ": " + name)
+    require(record["status"] == "read",
+            "owner-units-binding-record-status: " + pattern_id + ": " + name)
+    require(record["source_id"] == binding["source_id"],
+            "owner-units-binding-record-source: " + pattern_id + ": " + name)
+    require(binding["section"] in record.get("sections_read", []),
+            "owner-units-binding-section: " + pattern_id + ": " + name)
+    require(binding["revision"] == record.get("content_sha256"),
+            "owner-units-binding-revision: " + pattern_id + ": " + name)
 
 
 def expected_overall(technical, decision):
@@ -192,7 +225,16 @@ def validate_data(data, root=ROOT):
     registry = load(root / REGISTRY)
     batches = load(root / BATCHES)
     ledger = load(root / LEDGER)
+    source_plan = load(root / SOURCE_PLAN)
+    plan_units = {item["pattern_id"]: {
+        source_id: [unit for unit in item["required_units"]
+                    if unit["source_id"] == source_id]
+        for source_id in {unit["source_id"] for unit in item["required_units"]}}
+        for item in source_plan["entries"]}
     manifest = load(root / MANIFEST)
+    promotion_data = load(root / PROMOTIONS)
+    promotions = {item["pattern_id"]: item
+                  for item in promotion_data["promotions"]}
     patterns = {item["id"]: item for item in registry["patterns"]}
     records = {item["id"]: item for item in ledger["records"]}
     chapters = {item["code"]: item for item in manifest["chapters"]}
@@ -225,9 +267,9 @@ def validate_data(data, root=ROOT):
                 "owner-units-owner-document: " + pattern_id)
         require(owner["anchor"] == technical["anchor"],
                 "owner-units-owner-anchor: " + pattern_id)
-        require(item["technical_coverage"] in EVIDENCE_STATES,
+        require(item["technical_coverage"] in COVERAGE_STATES,
                 "owner-units-coverage-state: " + pattern_id)
-        require(item["decision_coverage"] in EVIDENCE_STATES,
+        require(item["decision_coverage"] in COVERAGE_STATES,
                 "owner-units-decision-state: " + pattern_id)
         require(item["review_state"] in ("self-checked", "independent-reviewed"),
                 "owner-units-review-state: " + pattern_id)
@@ -273,6 +315,8 @@ def validate_data(data, root=ROOT):
                         "owner-units-quote-missing: " + pattern_id + ": " + name)
                 require(quote.lower() in flat,
                         "owner-units-quote-not-verbatim: " + pattern_id + ": " + name)
+                require(record.get("reason", "").strip(),
+                        "owner-units-reason-missing-supported: " + pattern_id + ": " + name)
             else:
                 if record["state"] == "absent":
                     require(record.get("reason", "").strip(),
@@ -280,16 +324,47 @@ def validate_data(data, root=ROOT):
                 if quote:
                     require(quote.lower() in flat,
                             "owner-units-quote-not-verbatim: " + pattern_id + ": " + name)
-        computed = expected_coverage(evidence, pattern_id)
+        promotion = promotions.get(pattern_id)
+        if promotion:
+            require(promotion["technical"] == "pass"
+                    and promotion["decision"] == "pass",
+                    "owner-units-promotion-not-pass: " + pattern_id)
+            require(promotion["owner_page_sha256"]
+                    == hashlib.sha256(page.read_bytes()).hexdigest(),
+                    "owner-units-promotion-owner-hash: " + pattern_id)
+            card_path = card.get("card_path", chapter["path"])
+            require(promotion["card_sha256"]
+                    == hashlib.sha256((root / card_path).read_bytes()).hexdigest(),
+                    "owner-units-promotion-card-hash: " + pattern_id)
+        for name in DIMENSIONS:
+            record = evidence[name]
+            binding = record.get("binding")
+            if binding:
+                check_binding(item, name, binding,
+                              plan_units.get(pattern_id, {}), records)
+            for index, supporting in enumerate(
+                    record.get("supporting_bindings", []), start=1):
+                check_binding(item, name + " supporting " + str(index),
+                              supporting, plan_units.get(pattern_id, {}),
+                              records)
+            if (item["technical_coverage"] == "sufficient" or promotion):
+                require(record["state"] != "supported" or binding,
+                        "owner-units-binding-missing: " + pattern_id + ": " + name)
+        computed = expected_coverage(evidence, pattern_id, promotion)
         require(item["technical_coverage"] == computed,
                 "owner-units-technical-derivation: " + pattern_id)
+        if item["technical_coverage"] == "sufficient" and not promotion:
+            raise ValueError("owner-units-sufficient-without-promotion: " + pattern_id)
 
         decision = item["decision_evidence"]
         require(decision["atlas_section"] == pattern["atlas_section"],
                 "owner-units-atlas-section: " + pattern_id)
         require(decision["atlas_section"] == card["atlas_section"],
                 "owner-units-card-section-id: " + pattern_id)
-        card_text = card_section_text(chapter_text, card["atlas_section"])
+        card_source = (root / card["card_path"]) if card.get("card_path") else None
+        card_text = card_section_text(
+            card_source.read_text(encoding="utf-8") if card_source else chapter_text,
+            card["atlas_section"])
         require(decision["question"] == card_field(card_text, "Decision question"),
                 "owner-units-question: " + pattern_id)
         require(decision["competing_alternative"]
@@ -322,8 +397,11 @@ def validate_data(data, root=ROOT):
         require(support["card_citation"] is True,
                 "owner-units-card-citation: " + pattern_id)
 
-        require(item["decision_coverage"] == "partial-bounded",
+        computed_decision = "sufficient" if promotion else "partial-bounded"
+        require(item["decision_coverage"] == computed_decision,
                 "owner-units-decision-derivation: " + pattern_id)
+        if item["decision_coverage"] == "sufficient" and not promotion:
+            raise ValueError("owner-units-sufficient-without-promotion: " + pattern_id)
 
         coverage = pattern["coverage"]
         require(coverage["technical"] == item["technical_coverage"],
@@ -352,9 +430,9 @@ def validate_data(data, root=ROOT):
 
     expected_shared = {path: sorted(item["pattern_id"] for item in items)
                        for path, items in by_page.items() if len(items) > 1}
-    require(len(expected_shared) == 33, "owner-units-shared-page-count")
+    require(len(expected_shared) == 30, "owner-units-shared-page-count")
     shared = data["shared_pages"]
-    require(len(shared) == 33, "owner-units-shared-list")
+    require(len(shared) == 30, "owner-units-shared-list")
     seen_pages = set()
     decisions = {"keep": 0, "deepen": 0, "split": 0}
     for page in shared:
@@ -448,8 +526,10 @@ def validate_data(data, root=ROOT):
     }
     require(summary == counts, "owner-units-summary-mismatch")
     require(counts["technical_name_only"] == 0, "owner-units-name-only-remaining")
-    require(counts["technical_sufficient"] == 0, "owner-units-sufficient-technical")
-    require(counts["decision_sufficient"] == 0, "owner-units-sufficient-decision")
+    require(counts["technical_sufficient"] == len(promotions),
+            "owner-units-sufficient-technical")
+    require(counts["decision_sufficient"] == len(promotions),
+            "owner-units-sufficient-decision")
     require(counts["partial_reviewed"] == 0, "owner-units-reviewed-claim")
     require(counts["independent_reviews"] == 0, "owner-units-independent-review-claim")
 
@@ -457,6 +537,7 @@ def validate_data(data, root=ROOT):
             "units": counts["owner_units"], "shared_pages": counts["shared_pages"],
             "bounded": counts["technical_partial_bounded"],
             "partial": counts["technical_partial"],
+            "sufficient": counts["technical_sufficient"],
             "decisions": decisions,
             "scope": "section-level ownership evidence; not independent review"}
 

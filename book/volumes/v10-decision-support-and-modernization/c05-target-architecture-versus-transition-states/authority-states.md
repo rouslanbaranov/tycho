@@ -62,7 +62,7 @@ A target architecture might consist of one improved modular application; a trans
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Parallel Run](../../v11-pattern-atlas/c10-deployment-modernization/README.md#parallel-run) — decision conditions and contraindications.
+> [Parallel Run](../../v11-pattern-atlas/c10-deployment-modernization/parallel-run.md#parallel-run) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:2 -->
 ## 2. The fictional migration: moving a public catalogue read model
@@ -130,14 +130,13 @@ measured evidence, and they do not create a new source claim.
 ### Parallel Run
 
 Parallel run processes the same work in old and new implementations and compares the
-results while the old path remains authoritative. It needs a comparison key, a side-effect
-boundary, a divergence owner and a rule for which path may commit. Use it when output
-equality can be checked and duplicate effects can be suppressed. Do not use it when
-comparison is meaningless or when the doubled cost dominates the decision.
+results while the old path remains authoritative. Parallel run must not execute both
+implementations when the operation has side effects, such as sending an email or charging a
+card. Use it for side-effect-free logic when output equality can be checked.
 
-The failure path is a silent divergence or a duplicate effect; halt promotion, reconcile
-the difference and keep the old authority until the cause is understood. A canary or
-shadow traffic is the alternative when full parallel processing is unnecessary.
+A candidate failure must never affect the response. Keep the old authority until cutover.
+For operations with side effects, use branch by abstraction with a smaller, monitored rollout
+instead.
 
 **Limits.** Doubled compute and comparison storage are costs; a comparison that ignores
 nondeterminism or side effects produces false confidence.

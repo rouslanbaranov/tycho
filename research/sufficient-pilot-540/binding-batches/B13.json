@@ -1,0 +1,457 @@
+{
+  "batch": "B13",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.publish-subscribe",
+      "catalog_name": "Publish/Subscribe",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Publish-Subscribe",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-pubsub.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/PublishSubscribeChannel.html",
+      "unit": "Publish-Subscribe Channel — pattern page",
+      "sections": [
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Example: Google Cloud Pub/Sub",
+        "Related patterns",
+        "Further reading"
+      ],
+      "revision": "ecc6aeec40253b2dba2f326af9fce678bb110a0d26902339f2184db7129196b4",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Publish-subscribe is a delivery contract, not a fire-and-forget call.",
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Record whether it is ephemeral or durable before claiming a guarantee.",
+          "reason": "Abridged page has no durability or delivery-guarantee prose.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Redelivery follows an effect that committed before its acknowledgement; the opposite order loses work.",
+          "reason": "Page has no ack-ordering or redelivery recovery text.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Use ephemeral pub/sub only when losing a signal with no listener is acceptable; a durable business task needs a persisted consumer or queue.",
+          "reason": "Page has no comparison or selection guidance.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.point-to-point-queue",
+      "catalog_name": "Point-to-Point Queue",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Point-to-Point Queue",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-p2p.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/PointToPointChannel.html",
+      "unit": "Point-to-Point Channel — pattern page",
+      "sections": [
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Related patterns"
+      ],
+      "revision": "d49b1e29621d358d9132f88cf051f320778547c1136a5e97c5a9467dd9631291",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "One message has one eligible worker at a time",
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "The queue contract must state its ordering scope and terminal path for poison messages.",
+          "reason": "Page states single-receiver delivery only, no ordering or terminal rule.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A worker crash after the effect but before acknowledgement can cause redelivery",
+          "reason": "Page has no crash, ack, redelivery or duplicate text.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "When one task has one natural owner, direct request/response or a shared log may avoid brokered indirection; fan-out fits when several independent subscribers need a copy.",
+          "reason": "Page links related patterns without comparison.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.competing-consumers",
+      "catalog_name": "Competing Consumers",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Competing Consumers",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-competing.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/CompetingConsumers.html",
+      "unit": "Competing Consumers — pattern page",
+      "sections": [
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Example: Apache Kafka",
+        "Related patterns"
+      ],
+      "revision": "4e7aeddaaaf41076903f75e647af7990dcdb940fb5c13c1da0793261f33f003d",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Several consumers read from one queue, and each message is delivered to one of them so the work is processed in parallel.",
+          "reason": "Defines multiple consumers sharing one queue with one delivery per message.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Acknowledgment must follow the durable business effect, and redelivery after a missing acknowledgment must not duplicate that effect.",
+          "reason": "Page has no ack, dedup or idempotency requirement.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery; bound attempts and route permanently failing work to a declared terminal path.",
+          "reason": "Page has no visibility-timeout, poison or terminal path.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Partitioned consumers own a stable key range and preserve per-key order; prefer competing consumers when order is not required and pool parallelism is the goal.",
+          "reason": "Contrasts partitioned consumers that preserve per-key order.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.event-driven-consumer",
+      "catalog_name": "Event-Driven Consumer",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Event-Driven Consumer",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-event-consumer.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventDrivenConsumer.html",
+      "unit": "Event-Driven Consumer — pattern page",
+      "sections": [
+        "Event-Driven Consumer",
+        "Example: RabbitMQ Consumer"
+      ],
+      "revision": "bdd22eb6db0ea6606a9ff53c93d17750b2977ec7f0a25120467a49c532c446d0",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A push subscription hands each message to the consumer; the handler, not a polling loop, decides when work is acknowledged.",
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "It must own effect identity, deduplication and acknowledgement ordering",
+          "reason": "Page defines delivery/callback but not consumer-owned dedup or ack ordering.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A crash between effect and acknowledgement leaves the outcome unknown; acknowledging before the effect can lose work.",
+          "reason": "States the mechanism, invariant, failure or alternative.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Polling a queue or a scheduled batch job may be preferable when volume is low, batch control matters or the consumer cannot own a cursor.",
+          "reason": "Page links Polling Consumer without comparison.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.request-reply-messaging",
+      "catalog_name": "Request-Reply Messaging",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+      "owner_heading": "Request-Reply Messaging",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-request-reply.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/RequestReply.html",
+      "unit": "Request-Reply — pattern page",
+      "sections": [
+        "Request-Reply",
+        "Problem (unheaded)",
+        "Solution (unheaded)",
+        "Synchronous Block",
+        "Asynchronous Callback",
+        "Related patterns",
+        "Further reading"
+      ],
+      "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A requester sends a message with a reply address and a correlation value, and the responder returns a message that the requester matches to the original request.",
+          "reason": "Defines a reply address and correlation value matched to the request.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "A reply must correlate to exactly one outstanding request and must not be processed as a new command by another consumer.",
+          "reason": "Requires one outstanding request per correlation value and no command reinterpretation.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A lost request or reply leaves an unresolved operation; expose the outstanding request record, apply a reply deadline and reconcile before retrying.",
+          "reason": "Page has crash/restart but no lost-request record or reply deadline.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Synchronous RPC with a deadline is simpler when the responder is reachable and the work fits the request budget; choose messaging when availability or latency requires decoupling.",
+          "reason": "Contrasts synchronous RPC with messaging for availability or latency decoupling.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.correlation-identifier",
+      "catalog_name": "Correlation Identifier",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
+      "owner_heading": "Correlation Identifier",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-correlation.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/CorrelationIdentifier.html",
+      "unit": "Correlation Identifier — pattern page",
+      "sections": [
+        "Problem (unlabelled)",
+        "Solution (unlabelled)",
+        "Related patterns"
+      ],
+      "revision": "d388f9c3f4b82638a3d57033e9e8e779ab919370c13af8a5fd79c76219e327e1",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A correlation identifier ties together messages that belong to one request, workflow or conversation.",
+          "reason": "Defines an identifier tying messages to one request, workflow or conversation.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "It needs a generation rule, propagation across asynchronous boundaries, a retention window and a collision check.",
+          "reason": "Requires generation, propagation, retention and collision rules.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "The failure path is a lost or duplicated identifier; carry it in the message contract and record it at every boundary.",
+          "reason": "Page defines IDs only; no lost/duplicate or failure path.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A transport-native message identity is the alternative when the broker guarantees the needed scope and lifetime.",
+          "reason": "Page lists related patterns without alternative comparison.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.content-based-router",
+      "catalog_name": "Content-Based Router",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Content-Based Router",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-cbr.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/ContentBasedRouter.html",
+      "unit": "Content-Based Router — pattern page",
+      "sections": [
+        "Content-Based Router",
+        "Example: Apache Camel"
+      ],
+      "revision": "2e1bcb059062a373d4a86319925c989b73ec891cebffe089608b4e48bc69256c",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A content-based router chooses a destination from message content.",
+          "reason": "Defines destination selection from message content.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "It needs a versioned predicate set, a default or dead-letter path and an owner for rule changes.",
+          "reason": "Page has maintainability prose but no versioned predicate set or rule owner.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is an unmatched or misrouted message; route to a declared fallback and record the predicate version.",
+          "reason": "Names unmatched or misrouted messages and requires fallback plus predicate version recording.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A workflow/orchestrator is the alternative when routing needs multiple steps or compensations; do not hide a process engine inside the router.",
+          "reason": "Page has no workflow or process-engine alternative.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.message-filter",
+      "catalog_name": "Message Filter",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Message Filter",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-filter.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/Filter.html",
+      "unit": "Message Filter — pattern page",
+      "sections": [
+        "Message Filter",
+        "Example: RabbitMQ Bindings"
+      ],
+      "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A message filter evaluates a predicate and forwards only matching messages to a consumer, discarding the rest by policy.",
+          "reason": "Defines predicate-based forwarding and policy discard.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Every discarded message must be an intentional drop under a versioned predicate, not an unobserved loss.",
+          "reason": "Requires intentional drops under a versioned predicate rather than unobserved loss.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Predicate drift or a missing default path silently removes traffic; monitor filter rates and keep a declared fallback for unmatched messages.",
+          "reason": "Page has no drift, filter-rate monitoring or unmatched fallback.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A content-based router sends different subsets to different destinations; prefer filtering when the destination is the same and only selection changes.",
+          "reason": "Contrasts a router that sends subsets to different destinations.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.pipes-and-filters",
+      "catalog_name": "Pipes and Filters",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "owner_heading": "Pipes and Filters",
+      "source_id": "src.enterprise-integration",
+      "ledger_record": "read.batch2-pipes.2026-10-21",
+      "url": "https://www.enterpriseintegrationpatterns.com/patterns/messaging/PipesAndFilters.html",
+      "unit": "Pipes and Filters — pattern page",
+      "sections": [
+        "Pipes and Filters",
+        "Problem (unheaded)",
+        "Solution (unheaded)",
+        "Filter/pipe discussion"
+      ],
+      "revision": "850988a7f88fc170ad5d90f5791040fff4bc4b42643ce851466db4b4f6fb1d90",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Pipes and filters decompose processing into ordered, replaceable stages connected by a message contract.",
+          "reason": "Defines ordered replaceable stages connected by a message contract.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Each stage needs its own failure and retry policy, and the pipeline needs backpressure, a rule for partial completion and a declared ordering scope.",
+          "reason": "Page has no per-stage failure, backpressure or partial-completion rule.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "The failure path is a failed middle stage with earlier effects already applied; record stage identity and compensate or replay from a declared checkpoint.",
+          "reason": "Page has no failed-middle-stage or checkpoint recovery.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A single in-process transformation is the alternative when the stages are small and cannot be operated independently.",
+          "reason": "Page names no single in-process transformation alternative.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.splitter",
+      "catalog_name": "Splitter",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+      "owner_heading": "Splitter",
+      "source_id": "src.camel",
+      "ledger_record": "read.batch2-splitter.2026-10-21",
+      "url": "https://camel.apache.org/components/next/eips/split-eip.html",
+      "unit": "Split — Camel EIP documentation",
+      "sections": [
+        "Split",
+        "Options",
+        "Message Body",
+        "Exchange properties",
+        "Using Split",
+        "Splitting the message body",
+        "Splitting with a delimiter",
+        "Splitting with an expression",
+        "Splitting with parallel processing",
+        "Ending a Split block",
+        "What is returned from Split EIP when its complete",
+        "Aggregating",
+        "Splitting modes",
+        "Using streaming mode",
+        "Streaming big XML payloads",
+        "Streaming big XML payloads using Tokenize language",
+        "Streaming big XML payloads using XML Tokenize language",
+        "Splitting files by grouping N lines together",
+        "Split and aggregate example",
+        "Chunking with group",
+        "Error handling with maxFailedRecords and errorThreshold",
+        "maxFailedRecords",
+        "errorThreshold",
+        "SplitResult",
+        "Watermark tracking",
+        "Index-based watermark",
+        "Value-based watermark",
+        "Stop processing in case of exception",
+        "Sharing unit of work",
+        "See Also"
+      ],
+      "revision": "9c0895e00caf441e3666ba3633df0a00f3a641ba92d51b4b916f8b8c6f9856f0",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A splitter turns one input into several independently processable messages.",
+          "reason": "Defines one input becoming several processable messages.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "It needs part identity, per-part idempotency, a completion or compensation rule and a bounded fan-out.",
+          "reason": "Camel documents part index/complete/size but not per-part idempotency or fan-out bound.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "The failure path is a split that produces only some parts; record part identity and completion, then retry missing parts without duplicating completed effects.",
+          "reason": "Requires partial-split recording and retry of missing parts without duplicating completed effects.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A single consumer with internal fan-out is the alternative when the parts are small and atomicity is required.",
+          "reason": "Page does not compare single-unit processing or single-consumer fan-out.",
+          "has_binding": false
+        }
+      }
+    }
+  ]
+}

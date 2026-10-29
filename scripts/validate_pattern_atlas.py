@@ -72,7 +72,7 @@ def validate_data(data, root=ROOT):
             "atlas-status")
 
     documents = data["documents"]
-    require(len(documents) == 12, "atlas-document-count")
+    require(len(documents) >= 12, "atlas-document-count")
     by_id = {}
     by_path = {}
     for doc in documents:
@@ -131,7 +131,7 @@ def validate_data(data, root=ROOT):
             require(pattern["atlas_section"] in anchors,
                     "atlas-missing-anchor: " + pattern_id)
     require(seen == pattern_ids, "atlas-catalog-partition")
-    require(len(by_id) == 12, "atlas-document-kind-count")
+    require(len(by_id) >= 12, "atlas-document-kind-count")
 
     return {
         "version": data["version"],

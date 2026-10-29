@@ -1,0 +1,201 @@
+{
+  "batch": "B06",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.single-flight-request-coalescing",
+      "catalog_name": "Single Flight / Request Coalescing",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+      "owner_heading": "Single Flight-Request Coalescing",
+      "source_id": "src.microsoft-caching-guidance",
+      "ledger_record": "read.batch3-ms-caching.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/caching",
+      "unit": "Caching guidance — consistency, expiry and concurrency",
+      "sections": [
+        "Caching in distributed applications",
+        "Considerations for using caching",
+        "Manage concurrency in a cache",
+        "Caching and eventual consistency",
+        "Implement caching by using Azure Managed Redis",
+        "Related resources",
+        "Subsections: 16 H3, 12 H4, 4 H5"
+      ],
+      "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "Single-flight may deduplicate only loads triggered inside one process.",
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "That does not, by itself, provide global cross-replica coalescing or make the stale value safe for sensitive decisions.",
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A coalesced call can fail after the leader has committed an external effect; the followers need the same outcome record, not a fresh retry.",
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A distributed refresh lease is preferable when duplicate concurrent refreshes across instances matter, with its lease-expiry and fencing costs.",
+          "reason": "Source unit contains no coalescing/request-deduplication passage.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.stale-while-revalidate",
+      "catalog_name": "Stale-While-Revalidate",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+      "owner_heading": "Stale-While-Revalidate",
+      "source_id": "src.rfc5861",
+      "ledger_record": "read.batch3-rfc5861.2026-10-21",
+      "url": "https://www.rfc-editor.org/rfc/rfc5861.txt",
+      "unit": "RFC 5861 — stale-while-revalidate",
+      "sections": [
+        "1. Introduction",
+        "2. Notational Conventions",
+        "3. The stale-while-revalidate Cache-Control Extension",
+        "3.1. Example",
+        "4. The stale-if-error Cache-Control Extension",
+        "4.1. Example",
+        "5. Security Considerations",
+        "6. Normative References",
+        "Appendix A. Acknowledgements"
+      ],
+      "revision": "1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Stale-while-revalidate serves the current stale value while one owner refreshes it in the background, within a bounded stale window.",
+          "reason": "Defines serving stale data during one bounded background refresh.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "A blocking refresh guarantees freshness at the cost of latency; choose stale-while-revalidate only when the declared stale window is acceptable to the reader.",
+          "reason": "Contrasts blocking refresh for stronger freshness.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.multi-level-caching",
+      "catalog_name": "Multi-Level Caching",
+      "owner_path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+      "owner_heading": "Multi-Level Caching",
+      "source_id": "src.hazelcast",
+      "ledger_record": "read.batch3-hazelcast-near.2026-10-21",
+      "url": "https://docs.hazelcast.com/hazelcast/5.6/cluster-performance/near-cache",
+      "unit": "Near Cache — Hazelcast documentation",
+      "sections": [
+        "Near Cache",
+        "Hazelcast Data Structures with Near Cache Support",
+        "Configuring Near Cache",
+        "Near Cache Configuration Examples",
+        "Near Cache Example for IMap",
+        "Near Cache Example for JCache Clients",
+        "Example for Near Cache with High-Density Memory Store",
+        "Near Cache Eviction",
+        "Near Cache Expiration",
+        "Caching of null values",
+        "Near Cache Invalidation",
+        "Near Cache Consistency",
+        "Eventual Consistency",
+        "Locally Initiated Changes",
+        "Near Cache Preloader"
+      ],
+      "revision": "7b005e21be9446a60b04cd62f4c49357cc43af78d35fce610c32d0e8942de4b9",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A multi-level cache keeps a fast local tier in front of a shared tier, trading fewer remote reads for more places that can hold a stale copy.",
+          "reason": "Defines a local tier in front of a shared tier.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Every tier must receive the invalidation, or each tier must carry a bounded staleness contract and a version check.",
+          "reason": "Source names invalidation-event loss but not a per-tier version check; event loss detection is the stated remedy.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Tier divergence serves different values from different processes; version keys and measure the propagation delay of each invalidation path.",
+          "reason": "Names tier divergence and requires version keys and propagation-delay measurement.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "One shared cache keeps a single copy but pays remote latency; add a local tier when the measured remote-read cost exceeds the staleness and invalidation effort.",
+          "reason": "Source names local Near Cache for read-heavy data, not a single shared-tier comparator or measurement rule.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.cdn-edge-caching",
+      "catalog_name": "CDN / Edge Caching",
+      "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "owner_heading": "CDN-Edge Caching",
+      "source_id": "src.microsoft-cloud-patterns",
+      "ledger_record": "read.batch3-ms-static.2026-10-21",
+      "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/static-content-hosting",
+      "unit": "Static Content Hosting — pattern page",
+      "sections": [
+        "Static Content Hosting pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next step",
+        "Related resource"
+      ],
+      "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "An edge can reduce distance and origin work, but only for responses it may reuse.",
+          "reason": "Explains edge reuse as the mechanism and its cacheability precondition.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "The cache key, freshness policy and authorization boundary must agree.",
+          "reason": "Source binds cache keys and lifetimes but states protected-download authorization separately.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "A misclassified response can serve one user's private data to another, and a purge can lag the origin.",
+          "reason": "Names privacy and purge failure and the required test.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A direct origin or a private cache may be preferable when every response is user-specific or the purge contract cannot be enforced.",
+          "reason": "Source states a per-request personalization exclusion, not a private-cache or purge-contract alternative.",
+          "has_binding": false
+        }
+      }
+    }
+  ]
+}

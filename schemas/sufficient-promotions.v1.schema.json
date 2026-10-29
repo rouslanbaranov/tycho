@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.dev/schemas/sufficient-promotions.v1.schema.json",
+  "title": "Tycho sufficient promotions v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "issue", "policy", "promotions"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "issue": {"const": 540},
+    "policy": {"const": "governance/SUFFICIENT-COVERAGE.md"},
+    "promotions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["pattern_id", "technical", "decision", "reviewed_at", "reviewed_head", "owner_page_sha256", "card_sha256", "reviewer", "report_path", "report_sha256"],
+        "properties": {
+          "pattern_id": {"type": "string", "minLength": 1},
+          "technical": {"const": "pass"},
+          "decision": {"const": "pass"},
+          "reviewed_at": {"type": "string", "format": "date"},
+          "reviewed_head": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+          "owner_page_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "card_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "reviewer": {"type": "string", "minLength": 1},
+          "report_path": {"type": "string", "minLength": 1},
+          "report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

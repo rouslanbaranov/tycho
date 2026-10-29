@@ -68,7 +68,7 @@
 
 
 > **Pattern atlas:**
-> [Service Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#service-discovery) — decision conditions and contraindications.
+> [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) — decision conditions and contraindications.
 > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) — decision conditions and contraindications.
 > [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) — decision conditions and contraindications.
 
@@ -211,20 +211,7 @@ reasoning.
 
 ### Service Discovery
 
-Service discovery may publish addresses plus eligibility metadata to a proxy or client. The
-registry is a control-plane view; it does not prove that an address is currently writable or that a
-caller may commit an effect there.
-
-If membership is stale, continued reachability still cannot establish write authority. Stale
-membership can outlive the registry update. Document who observes updates and how stale membership
-is detected. Distinguish the discovery control path from data-plane requests that can continue
-against a last-known usable set. A discovery outage, stale
-health signal or fast-error attraction can defeat the last-known set; define the fallback and the
-freshness bound in the caller's contract, not in the registry's update interval.
-
-Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
-are rare. Discovery is justified when membership changes faster than configuration can be
-republished and the consumer can act on eligibility metadata.
+See the [dedicated Service Discovery owner note](service-discovery.md).
 
 ### Client-Side Discovery
 

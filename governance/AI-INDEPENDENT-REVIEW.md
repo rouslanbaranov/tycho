@@ -18,8 +18,34 @@ Permitted examples when the authoring session is DeepSeek Harness:
 - Claude Code (Anthropic) in a fresh checkout;
 - another external harness from a third vendor, used read-only.
 
-A DeepSeek `reviewer` subagent does **not** qualify. The reviewer must be a separate
-product and a separate vendor from the authoring harness.
+A fresh read-only DeepSeek Reviewer agent is an accepted external reviewer, with the same
+authority as a different-vendor harness, when no different-vendor harness is available or
+the selected one is unavailable. It must be a separate agent, not a fork of the authoring
+conversation, and must receive the same bounded prompt, schema, HEAD and artifact hashes.
+Its report is saved and indexed normally; a pass satisfies the independent review gate and
+may support promotion and owner acceptance.
+
+## Reviewer discovery and selection
+
+The authoring agent must locate a qualifying local CLI before preparing a hand-off.
+
+1. Search `PATH` and installed application bundles for CLIs from vendors other than the
+   authoring vendor, for example `codex` (OpenAI), `claude` (Anthropic) or `gemini`
+   (Google). Verify that the CLI starts, is authenticated and offers a non-interactive
+   read-only mode.
+2. If more than one qualifying CLI is available, ask the user which CLI to use. Do not
+   choose silently.
+3. If the selected CLI supports model selection, obtain its available model list, give
+   that list to the user, and ask which model to use. Record the chosen model. Once the
+   user has selected a CLI and/or model, remember the choice for the current session and
+   reuse it for later reviews; ask again only if it becomes unavailable, fails, or the
+   user requests a change.
+4. If no qualifying CLI is available, use a manual hand-off through the user: provide the
+   exact self-contained prompt and receive the reviewer's raw report. If the user cannot
+   supply a qualifying review, mark the gate blocked; never substitute a same-vendor
+   model, a subagent or a self-review.
+5. Record the discovered CLI, selection source (the user), vendor, model, version,
+   session and read-only invocation in the review record.
 
 ## Independence requirements
 

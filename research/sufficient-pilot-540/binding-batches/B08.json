@@ -1,0 +1,180 @@
+{
+  "batch": "B08",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.change-data-capture-cdc",
+      "catalog_name": "Change Data Capture (CDC)",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+      "owner_heading": "Change Data Capture (CDC)",
+      "source_id": "src.postgres-logical",
+      "ledger_record": "read.batch8-postgres-logical.2026-10-22",
+      "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+      "unit": "Chapter 29. Logical Replication",
+      "sections": [
+        "Chapter 29. Logical Replication"
+      ],
+      "revision": "cc529913e4400bf21371fbf6f5c74aa7c21b9b6380725f319a6d287028a49065",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Change data capture reads the database's own change log and turns committed row changes into a replayable stream.",
+          "reason": "Defines reading the database change log as a replayable stream.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "The stream must preserve per-key order and transaction grouping",
+          "reason": "Source states order/transactional consistency, not a durable capture offset/resume invariant.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Connector lag, slot retention, schema changes and a snapshot-to-stream gap are common.",
+          "reason": "Source names conflict possibility but no gap recovery or reconciliation rule.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be preferable when log access is unavailable or the team cannot operate a connector.",
+          "reason": "Source does not name outbox, dual-write or scheduled extraction alternatives.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.materialized-view",
+      "catalog_name": "Materialized View",
+      "owner_path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "owner_heading": "Materialized View",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch9-pg-matview-refresh.2026-10-22",
+      "url": "https://www.postgresql.org/docs/current/sql-refreshmaterializedview.html",
+      "unit": "REFRESH MATERIALIZED VIEW — PostgreSQL 18",
+      "sections": [
+        "REFRESH MATERIALIZED VIEW",
+        "Synopsis",
+        "Description",
+        "Parameters",
+        "Notes",
+        "Examples",
+        "Compatibility",
+        "See Also"
+      ],
+      "revision": "68f246e884ac043c72ac06086401e4eab0a63903908b206ff0adf450a0d518d6",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A materialized view stores the result of a query so repeated reads avoid recomputing it.",
+          "reason": "Describes the event-fed read store and its freshness limit, which is the materialized-view mechanism.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Refresh is a separate write operation with an owner and a mode.",
+          "reason": "Source states MAINTAIN privilege, not a read-consistency or refresh-atomicity invariant.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "An on-demand refresh can block reads while it rebuilds",
+          "reason": "Source discusses refresh blocking/resources, not failed-refresh stale-view recovery.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A native query, cache-aside or a synchronous read may be preferable when the required freshness exceeds the view benefit.",
+          "reason": "Source does not compare native query, cache-aside or synchronous read.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.command-side-replica",
+      "catalog_name": "Command-Side Replica",
+      "owner_path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "owner_heading": "Command-Side Replica",
+      "source_id": "src.microservices-patterns",
+      "ledger_record": "read.batch2-command-side.2026-10-21",
+      "url": "https://microservices.io/patterns/data/command-side-replica.html",
+      "unit": "Command-side Replica — pattern page",
+      "sections": [
+        "Context",
+        "Problem",
+        "Solution",
+        "Resulting context",
+        "Benefits",
+        "Drawbacks",
+        "Related patterns",
+        "See also",
+        "Learn more"
+      ],
+      "revision": "ef4d815712f4a5e31ac94966fccf20dc434bd4d320380d8ef7e47184b348c306",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A command-side replica serves reads that must observe the latest accepted command state while the read projections still lag. The query is routed to a replica of the command-side store, and the reply reports the applied position it observed.",
+          "reason": "Routes reads to a command-store replica and reports the applied position.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "The replica must apply a committed command before it answers a query that claims to include that command; otherwise the result is stale.",
+          "reason": "Source does not require the replica to apply a committed command before answering.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Replication delay or failover can serve an older position, so the client must check the reported position or wait for the required one before treating a read as current.",
+          "reason": "Source does not address replication delay, failover or position checks.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "supported",
+          "owner_quote": "Serve the same read from the authoritative command store or block until the projection catches up; reverse the choice when replica lag is bounded and read load would otherwise overload the authority.",
+          "reason": "Names the authoritative store or waiting for the projection.",
+          "has_binding": true
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.two-phase-commit-2pc",
+      "catalog_name": "Two-Phase Commit (2PC)",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+      "owner_heading": "Two-Phase Commit (2PC)",
+      "source_id": "src.postgresql",
+      "ledger_record": "read.batch2-pg-2pc.2026-10-21",
+      "url": "https://www.postgresql.org/docs/current/two-phase.html",
+      "unit": "Two-Phase Transactions — PostgreSQL documentation",
+      "sections": [
+        "67.4. Two-Phase Transactions"
+      ],
+      "revision": "94713ca9be2f8b8b45be69e8f15febc7d9bef4df43e97d28cacdbb63d6c32b8f",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A coordinator asks every participant to prepare, collects the votes, then records one commit or abort decision that the participants apply while holding prepared state.",
+          "reason": "Defines prepare, vote and a single durable commit or abort decision.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "No participant may commit before the coordinator's durable decision, and the decision must survive coordinator failure for prepared participants to recover.",
+          "reason": "Forbids commit before the durable coordinator decision.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A coordinator crash after prepare leaves participants holding locks with an unknown outcome; recovery depends on a durable decision log and an explicit resolution procedure.",
+          "reason": "Source does not address coordinator crash recovery or a durable decision log.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A saga with compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic business outcomes; prefer 2PC when participants can hold locks and atomic durability is required. A single local transaction is preferable when every resource shares one database.",
+          "reason": "Source does not name saga, compensating actions or a single local transaction as alternatives.",
+          "has_binding": false
+        }
+      }
+    }
+  ]
+}

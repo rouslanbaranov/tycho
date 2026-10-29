@@ -130,21 +130,4 @@ incremental change benefit, and remove the seam once the old path is gone.
 
 ### Controlled Cutover
 
-A controlled cutover moves authority at a declared point with evidence that the target is ready. A
-transition state should end with **an observed gate**, not a calendar milestone.
-
-Before a transition changes authoritative state or retirements become irreversible, require evidence
-for: target correctness, data reconciliation, rollback or forward-repair readiness and the owner who
-accepts the residual risk. A failure after the no-return point must use an approved forward-repair
-path rather than fictional rollback. Publish the no-return point and the abort criteria before the
-change starts. Detect a partial switch by reconciling the routing inventory against observed
-authority; a half-completed cutover uses the forward-repair path and does not claim rollback.
-
-Rolling or blue/green deployment, a canary with a reversible gate, or scheduled maintenance may be
-preferable when the no-return evidence cannot be obtained or the change is small enough to reverse.
-Controlled cutover is a fit when a real authority switch is unavoidable and the evidence gate is
-observable.
-
-**Source boundary.** The Google Spanner record supports a bounded drain-and-switch sequence:
-pre-cutover checks, pause writes, drain CDC, verify zero lag and switch. It is product-specific;
-general no-return gates, fallback execution, RTO and zero-loss guarantees remain synthetic.
+See the [dedicated Controlled Cutover owner note](controlled-cutover.md).

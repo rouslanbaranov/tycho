@@ -1,0 +1,390 @@
+{
+  "batch": "B12",
+  "entries": [
+    {
+      "pattern_id": "tycho.pattern.leader-election",
+      "catalog_name": "Leader Election",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+      "owner_heading": "4. Leader elections, logs and client observations",
+      "source_id": "src.raft",
+      "ledger_record": "read.batch4-raft.2026-10-21",
+      "url": "https://raft.github.io/",
+      "unit": "Raft Consensus Algorithm — public overview",
+      "sections": [
+        "The Raft Consensus Algorithm",
+        "What is Raft?"
+      ],
+      "revision": "15706c04a748f182964896c0e105ebea75212fee99a29a224ddaf5c211b3748c",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "At a time, a node believes itself a leader for a given term, but other nodes can still be unaware because messages are delayed.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "An acknowledged committed log entry has a protocol-specific durability/leader-completeness guarantee, contingent on correct stable storage and membership behavior.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "A leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Leaderless quorum coordination, static primary assignment or single-writer partitioning may be simpler when elections add latency without a real failover requirement.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.consensus",
+      "catalog_name": "Consensus",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+      "owner_heading": "Consensus",
+      "source_id": "src.raft",
+      "ledger_record": "read.batch4-raft.2026-10-21",
+      "url": "https://raft.github.io/",
+      "unit": "Raft Consensus Algorithm — public overview",
+      "sections": [
+        "The Raft Consensus Algorithm",
+        "What is Raft?"
+      ],
+      "revision": "15706c04a748f182964896c0e105ebea75212fee99a29a224ddaf5c211b3748c",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "nodes A, B and C replicate one state machine. A was leader. A's network connection to B and C fails; B and C may form a quorum and eventually select a new leader.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Safety means no two leaders commit conflicting decisions; progress means a quorum can eventually decide.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "reject stale leader commands and catch up the log",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "For read-mostly telemetry where temporary staleness is acceptable, simpler asynchronous replicas may avoid quorum overhead; if single-key linearizable authority is mandatory, that alternative may fail the requirement.",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.distributed-lock",
+      "catalog_name": "Distributed Lock",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+      "owner_heading": "Distributed Lock",
+      "source_id": "src.kubernetes",
+      "ledger_record": "read.batch4-k8s-leases.2026-10-21",
+      "url": "https://kubernetes.io/docs/concepts/architecture/leases/",
+      "unit": "Leases — Kubernetes documentation",
+      "sections": [
+        "Leases",
+        "Node heartbeats",
+        "Leader election",
+        "Kube controller manager lock release on exit",
+        "API server identity",
+        "Workloads"
+      ],
+      "revision": "77f6bf59d75e25c480ef7499e97d4325c7180e6df5cfc0e0b9f2c49030409747",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A distributed lock needs a named coordinator owner and a register of protected resources.",
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "The register states each resource's tolerated pause and the destination check that rejects a former holder.",
+          "reason": "Bounded owner statement from the current section.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Without enforcement at the destination, the design offers a coordination signal rather than mutual exclusion.",
+          "reason": "Kubernetes page has no destination enforcement or coordination-signal fallback.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "A resource that cannot check an epoch should not rely on this lock for exclusion; use a conditional write or single-writer route instead.",
+          "reason": "Page has no conditional-write or single-writer alternative.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.lease-based-ownership",
+      "catalog_name": "Lease-Based Ownership",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+      "owner_heading": "Lease-Based Ownership",
+      "source_id": "src.kubernetes",
+      "ledger_record": "read.batch4-k8s-leases.2026-10-21",
+      "url": "https://kubernetes.io/docs/concepts/architecture/leases/",
+      "unit": "Leases — Kubernetes documentation",
+      "sections": [
+        "Leases",
+        "Node heartbeats",
+        "Leader election",
+        "Kube controller manager lock release on exit",
+        "API server identity",
+        "Workloads"
+      ],
+      "revision": "77f6bf59d75e25c480ef7499e97d4325c7180e6df5cfc0e0b9f2c49030409747",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A lease grants ownership for a bounded interval.",
+          "reason": "Explains lease expiry reassignment and its limit on a paused former owner.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "Lease duration must cover maximum clock skew, renewal round-trip and process pause, with a margin.",
+          "reason": "Page mentions TTL but no skew/pause margin rule.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "On timeout, ownership is unknown, not failed.",
+          "reason": "Page does not state ownership is unknown after timeout.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Static or quorum-backed ownership avoids renewal but risks a stale owner",
+          "reason": "Page has no static or quorum-backed ownership comparison.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.fencing-tokens",
+      "catalog_name": "Fencing Tokens",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+      "owner_heading": "Fencing Tokens",
+      "source_id": "src.kleppmann-distributed-locking",
+      "ledger_record": "read.batch4-fencing.2026-10-21",
+      "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html",
+      "unit": "How to do distributed locking — article",
+      "sections": [
+        "How to do distributed locking",
+        "What are you using that lock for?",
+        "Protecting a resource with a lock",
+        "Making the lock safe with fencing",
+        "Using time to solve consensus",
+        "Breaking Redlock with bad timings",
+        "The synchrony assumptions of Redlock",
+        "Conclusion",
+        "References"
+      ],
+      "revision": "8cf7f237e65cdbbaea54578bbf1f08e7d716462a35b645a8b6b85d9233a380ea",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A fencing token is a monotonic epoch issued with ownership",
+          "reason": "Explains destination-side token comparison that rejects stale epochs.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "the destination stores the highest token it has accepted and rejects a lower one.",
+          "reason": "Bounds what a token comparison proves before the new epoch is established at the destination.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "supported",
+          "owner_quote": "Token or epoch reuse breaks monotonicity",
+          "reason": "Shows atomic rejection of a delayed write carrying an old epoch.",
+          "has_binding": true
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Reverse to lease-only ownership or single-writer routing when destination enforcement cost exceeds the stale-write risk it removes",
+          "reason": "Article does not compare lease-only or single-writer routing.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.quorum-coordination",
+      "catalog_name": "Quorum Coordination",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+      "owner_heading": "Quorum Coordination",
+      "source_id": "src.raft",
+      "ledger_record": "read.batch4-raft.2026-10-21",
+      "url": "https://raft.github.io/",
+      "unit": "Raft Consensus Algorithm — public overview",
+      "sections": [
+        "The Raft Consensus Algorithm",
+        "What is Raft?"
+      ],
+      "revision": "15706c04a748f182964896c0e105ebea75212fee99a29a224ddaf5c211b3748c",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "Compute the voting threshold from the configured replica set",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "On a membership change, require joint or overlapping agreement",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "behind the current term cannot confirm the current term's entry",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Choose quorum coordination when a stable majority can be maintained",
+          "reason": "Declared sections_read omit the page section that contains the consensus prose; no in-scope quote supports the clause.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.causal-ordering",
+      "catalog_name": "Causal Ordering",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md",
+      "owner_heading": "Causal Ordering",
+      "source_id": "src.jepsen-consistency",
+      "ledger_record": "read.batch4-causal.2026-10-21",
+      "url": "https://jepsen.io/consistency/models/causal",
+      "unit": "Causal Consistency — Jepsen",
+      "sections": [
+        "Causal Consistency",
+        "Formally"
+      ],
+      "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "Causal ordering delivers operations so no effect is observed before its cause.",
+          "reason": "Explains the three happens-before generating rules and Lamport-clock advancement.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "can distinguish concurrent updates from causally ordered ones",
+          "reason": "States the core causal-order invariant.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "If total order is mandatory, use consensus and accept its coordination cost.",
+          "reason": "External review 2026-10-27: binding does not support the full owner claim.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.session-consistency",
+      "catalog_name": "Session Consistency",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+      "owner_heading": "Session Consistency",
+      "source_id": "src.jepsen-consistency",
+      "ledger_record": "read.batch4-jepsen.2026-10-21",
+      "url": "https://jepsen.io/consistency/models",
+      "unit": "Consistency Models — Jepsen",
+      "sections": [
+        "Consistency Models"
+      ],
+      "revision": "85f79b18698cc55da52178ee26e9f3cd75d9be05491b1537971d95e65ad28910",
+      "dimensions": {
+        "mechanism": {
+          "state": "partial",
+          "owner_quote": "The product owner defines what counts as one session and which observations its users must retain.",
+          "reason": "Jepsen Consistency Models does not define a session or owner scope.",
+          "has_binding": false
+        },
+        "invariant": {
+          "state": "partial",
+          "owner_quote": "That choice sets the guarantee; no infrastructure default should supply it implicitly.",
+          "reason": "Text defines model implication but not product-owner guarantee choice.",
+          "has_binding": false
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "must not collapse a concurrent frontier into one scalar",
+          "reason": "Text has no session frontier or rejection rule.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "The routing layer owns the wait, reroute and rejection policy.",
+          "reason": "Text relates models by implication, not session routing or reroute.",
+          "has_binding": false
+        }
+      }
+    },
+    {
+      "pattern_id": "tycho.pattern.distributed-workflow-orchestration",
+      "catalog_name": "Distributed Workflow Orchestration",
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+      "owner_heading": "Distributed Workflow Orchestration",
+      "source_id": "src.temporal",
+      "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+      "url": "https://docs.temporal.io/workflows",
+      "unit": "Temporal Workflow — durable orchestration",
+      "sections": [
+        "Temporal Workflow",
+        "Intro to Workflows",
+        "How Workflow replay works",
+        "Resuming a Workflow"
+      ],
+      "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2",
+      "dimensions": {
+        "mechanism": {
+          "state": "supported",
+          "owner_quote": "A durable workflow records progress as a state machine, not as an in-memory coroutine.",
+          "reason": "Defines the durable state machine and replay model.",
+          "has_binding": true
+        },
+        "invariant": {
+          "state": "supported",
+          "owner_quote": "Recovery replays durable history, so activities need stable identities and explicit retry, cancel and compensation outcomes.",
+          "reason": "States the recovery invariants.",
+          "has_binding": true
+        },
+        "failure_recovery": {
+          "state": "partial",
+          "owner_quote": "Keep a repair state for an unknown external effect; a completed flag is not proof that the effect committed.",
+          "reason": "Temporal text has no unknown external-effect repair state.",
+          "has_binding": false
+        },
+        "alternative": {
+          "state": "partial",
+          "owner_quote": "Use choreography, a job table or a simple queue when steps are few, timers are short, or no engine can be operated.",
+          "reason": "Text does not compare choreography, job table or simple queue.",
+          "has_binding": false
+        }
+      }
+    }
+  ]
+}

@@ -27,16 +27,17 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.aws-static-stability"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.ea94649bfd8c4be183f9114618d7ccaa; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-29"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -84,8 +85,11 @@ Assume three zones, each can demonstrably serve 60 *identical invented* units/s 
 > **Pattern atlas:**
 > [Immutable Infrastructure](../../v11-pattern-atlas/c10-deployment-modernization/README.md#immutable-infrastructure) — decision conditions and contraindications.
 
-> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/README.md#sidecar) — decision conditions and contraindications.
-> [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/README.md#ambassador) — decision conditions and contraindications.
+> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/sidecar.md#sidecar) — decision conditions and
+> contraindications.
+
+> **Pattern atlas:** [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/ambassador.md#ambassador) — decision conditions and
+> contraindications.
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:3 -->
 ## Placement and topology constraints
 
@@ -139,55 +143,44 @@ The source material keeps its original published/inferred/synthetic/unverified d
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is
-not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+not the main subject of this page. Where a section names an admitted source, that
+source supports the bounded claims; limits and deployment notes remain synthetic
+and create no new source claim. Immutable Infrastructure moved to a dedicated
+owner note on 2026-10-29; this page retains the two colocated-helper notes below.
 
 ### Ambassador
 
-An ambassador is a proxy or sidecar that brokers a service outbound calls. It can own
-discovery, TLS identity, retries, timeouts and telemetry away from the application. It
-needs a clear data-plane owner, a configuration path and a failure policy for the proxy
-itself. Use it when many clients need the same remote-access contract. Do not use it when
-a client library is simpler or when the proxy would become an unobserved single point of
-failure.
-
-The failure path is a stale proxy configuration or a proxy that outlives its control
-plane; test configuration rollback and keep a direct-path recovery. A shared gateway is
-the alternative when the concern is ingress rather than per-client egress.
-
-**Limits.** An ambassador cannot grant authority the remote peer does not recognize, and
-it adds a data-plane hop whose latency and outage must be budgeted.
+The source describes an ambassador service, by analogy, as follows: "Think of an
+ambassador service as an out-of-process proxy that's colocated with the client."
+It can send network requests on behalf of a consumer service or application and
+offload monitoring, logging, routing, TLS and resilience. For example, the
+ambassador could handle retries, but that approach might not be safe unless all
+operations are idempotent. Other offload uses remain viable. A client library
+invoked directly by the application may be better when overhead outweighs
+offloading. The proxy can monitor performance metrics such as latency or resource
+usage on the same host. A mechanism can let the client pass context, such
+as an HTTP header to opt out of retry or cap retries. Use the pattern when many
+languages or frameworks need common connectivity features, or a legacy
+application is hard to modify. The proxy can be packaged as a separate container
+on the same host and can standardize and extend instrumentation across languages.
 
 ### Sidecar
 
-A sidecar runs as a helper process or container beside each service instance and supplies
-networking, policy or telemetry behaviour without changing the application image. The sidecar's
-failure policy must be explicit, and its lifecycle and configuration must have an owner. Coupling
-to the instance is one choice; independent upgrade is another when the sidecar has its own release
-boundary.
+A sidecar is a colocated helper service beside the application instance, is not part of the
+application, and can supply proxying or logging behaviour. Each application instance gets its
+own sidecar instance that shares its life cycle. Startup and shutdown ordering between the
+application and its sidecar must avoid races.
 
-A missing or misconfigured sidecar silently removes a control or opens a bypass; readiness must
-include it, and the fail-open or fail-closed choice must be tested. A shared proxy or an in-process
-library provides the same control without per-instance overhead; choose a sidecar when per-instance
-isolation or independent upgrade matters.
+A language-specific library or traditional extension offers deeper integration and less network
+overhead; consider it when those trade-offs dominate. **Source.** The
+[Microsoft Sidecar pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/sidecar)
+supports the colocated helper, shared lifecycle, startup/shutdown ordering and library/extension
+trade-off claims. The deployment compatibility note below is synthetic.
 
-**Limits.** A sidecar cannot isolate a compromised shared kernel, replace host-level policy or
-remove the per-instance resource and upgrade cost. Its failure mode must include
-control-plane unavailability.
+**Limits.** A sidecar cannot isolate a compromised shared kernel or replace host-level policy.
+Synthetic deployment note: record the application and sidecar images as one tested compatibility
+pair, and include both in the rollback plan.
 
 ### Immutable Infrastructure
 
-Immutable infrastructure replaces instances from a versioned image or definition instead of mutating
-running hosts, so each instance is reproducible from a recorded artifact. Every running instance
-must be reproducible from a recorded artifact digest, and drift must be detected rather than
-tolerated.
-
-A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled
-change; record digests and test the rebuild path. Configuration management on long-lived hosts is
-cheaper when state locality dominates; choose immutable replacement when reproducibility, an
-automated replacement path and artifact rollback speed matter.
-
-**Limits.** Immutable replacement is not a backup: data, secrets and external effects still need
-lifecycle ownership, toolchain and base-image provenance must be reproducible, and a rollback
-restores an artifact, not necessarily compatible data. Rebuild time and image size are
-operational costs, not proofs of reproducibility.
+See the [dedicated Immutable Infrastructure owner note](immutable-infrastructure.md).
