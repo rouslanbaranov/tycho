@@ -91,9 +91,9 @@ class DerivedArtifactTests(unittest.TestCase):
             self.assertTrue(row["historical_reviews"])
         self.assertEqual(
             ledger["summary"]["derived_states"].get(
-                "awaiting-current-external-review"), 3)
+                "awaiting-current-external-review"), 5)
         self.assertEqual(
-            ledger["summary"]["awaiting_current_external_review"], 3)
+            ledger["summary"]["awaiting_current_external_review"], 5)
 
     def test_packets_await_review_with_blank_templates(self):
         payload = load("edition/patterns/sufficient-rereview-packets.v1.json")
@@ -113,7 +113,7 @@ class DerivedArtifactTests(unittest.TestCase):
             self.assertIsNone(template["verdict"])
             self.assertEqual(template["findings"], [])
         self.assertEqual(
-            payload["summary"]["awaiting_current_external_review"], 3)
+            payload["summary"]["awaiting_current_external_review"], 5)
 
 
 class AmbassadorTests(unittest.TestCase):

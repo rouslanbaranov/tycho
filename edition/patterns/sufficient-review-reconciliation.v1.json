@@ -5,11 +5,11 @@
   "sources": [
     {
       "path": "edition/patterns/sufficient-candidates.v1.json",
-      "sha256": "0fad9df7ac75f06a43c02c060368c0d017cd8407299b0e5b32c099f590a24f33"
+      "sha256": "2b8b555aea9531deb9212574b0c656e1b6d366b3ddf1285f9fdd4cb1f36f202d"
     },
     {
       "path": "edition/patterns/sufficient-review-records.v1.json",
-      "sha256": "0c5313833492a2b840de8ff02ea899a69e6d0fde0257304b74a77dd4ef004c5f"
+      "sha256": "9b922ad64ad6e72d481336d21baf6efe2edcf9569a8b9f3f825b3da4903481c6"
     },
     {
       "path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
@@ -27,33 +27,33 @@
   "summary": {
     "records": 145,
     "current_verdicts": {
-      "awaiting-current-external-review": 3,
-      "pass": 142
+      "awaiting-current-external-review": 5,
+      "pass": 140
     },
     "derived_states": {
-      "awaiting-current-external-review": 3,
-      "promoted-after-remediation": 142
+      "awaiting-current-external-review": 5,
+      "promoted-after-remediation": 140
     },
     "report_matches": {
       "exact": 9,
       "missing": 6,
-      "not-applicable": 3,
-      "verdict-mismatch": 127
+      "not-applicable": 5,
+      "verdict-mismatch": 125
     },
     "report_name_matches": {
       "alias": 1,
-      "exact": 135,
+      "exact": 133,
       "missing": 6,
-      "not-applicable": 3
+      "not-applicable": 5
     },
     "current_verdicts_supported_by_cited_report": 9,
-    "verdict_mismatches": 127,
-    "promoted_from_findings": 121,
-    "awaiting_current_external_review": 3,
-    "historical_passes_retained": 3,
-    "report_reject_conflicts": 6,
-    "re_reviewed": 142,
-    "re_review_with_separate_report": 142,
+    "verdict_mismatches": 125,
+    "promoted_from_findings": 120,
+    "awaiting_current_external_review": 5,
+    "historical_passes_retained": 5,
+    "report_reject_conflicts": 5,
+    "re_reviewed": 140,
+    "re_review_with_separate_report": 140,
     "re_review_without_separate_report": 0,
     "protocol_counts": {
       "pass": 11,
@@ -61,7 +61,7 @@
       "reject": 0
     },
     "protocol_divergence": {
-      "pass_delta": 131,
+      "pass_delta": 129,
       "pass_with_findings_delta": -134,
       "reject_delta": 0
     }
@@ -1685,26 +1685,60 @@
       "pattern_id": "tycho.pattern.transactional-outbox",
       "catalog_name": "Transactional Outbox",
       "owner_path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
-      "findings": 2,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
-      "re_review_page_sha256": "2163ec007df66857ce8727c4219faf059f3d023b9b756b611c115ff6194feada",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
-      "report_verdict": "pass-with-findings",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass",
+          "reviewer": "Codex / OpenAI gpt-5.6-sol",
+          "kind": "external-ai",
+          "reviewed_at": "2026-10-27",
+          "reviewed_head": "8ce7c4c51a67c3834a537279da90a97f9f07ed03",
+          "report_path": "authoring/ai-reviews/2026-10-27-transactional-outbox-review4-codex.md",
+          "report_sha256": "e7d894774c096dcb54a5d1dbdd4817f8d88671c91e6e1f42e88032765b8408db",
+          "page_sha256": "02ae83f4803f3ca5431c4e9f2e9fe59380ee69f00dff3562e409e0b380ce4316",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Delta review pass before the 2026-10-29 dedicated-page split."
+        },
+        {
+          "verdict": "pass",
+          "reviewer": "independent-reviewer-agent-2026-10-22-phase-a",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
+          "report_sha256": "b1d5590135083a2faf2faa49328872e95b8c79250fb780f60d0fb5ba007d0569",
+          "page_sha256": "2163ec007df66857ce8727c4219faf059f3d023b9b756b611c115ff6194feada",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Phase-A re-review pass; the page hash is pinned to that review."
+        },
+        {
+          "verdict": "pass-with-findings",
+          "reviewer": "independent-review-agent-batch-2026-10-22",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
+          "report_sha256": "f74b417b9fa6e74e632ca492d5b427c90c4e14165feb1660dd5523563aaa10f5",
+          "findings": 2,
+          "status": "historical-pinned-not-current",
+          "note": "Initial batch findings; superseded by the phase-A re-review and later delta pass."
+        }
+      ],
+      "findings": 0,
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.distributed-cache",
@@ -2934,26 +2968,60 @@
       "pattern_id": "tycho.pattern.static-content-hosting",
       "catalog_name": "Static Content Hosting",
       "owner_path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
-      "findings": 2,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-23-phase-a-gap-v6.md",
-      "re_review_page_sha256": "50289ddf7d620ecf47534cfda0f8f953aca8eb5e2734525a5b7ea229c930c602",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
-      "report_verdict": "reject",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass",
+          "reviewer": "Codex / OpenAI gpt-5.6-sol",
+          "kind": "external-ai",
+          "reviewed_at": "2026-10-27",
+          "reviewed_head": "6dd6cc2d1209d59bd9b8911065eda2a9c443b879",
+          "report_path": "authoring/ai-reviews/2026-10-27-static-content-hosting-review6-codex.md",
+          "report_sha256": "e4b818e42ba61bc09040b4e9290a7935b32b0dbe47ceaa3a46b93962ee80a814",
+          "page_sha256": "70762b2e47a2c395bce14594b590612f5918beb9c3f49bb25428e452235964c2",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Delta review pass before the 2026-10-29 dedicated-page split."
+        },
+        {
+          "verdict": "pass",
+          "reviewer": "independent-reviewer-agent-2026-10-22-gap",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-23",
+          "report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-23-phase-a-gap-v6.md",
+          "report_sha256": "7eaf2fcc7120131fd45a4e022e4d03804f5c3266efadaa2cc35e7789a28a1fde",
+          "page_sha256": "50289ddf7d620ecf47534cfda0f8f953aca8eb5e2734525a5b7ea229c930c602",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Phase-A gap re-review pass; the page hash is pinned to that review."
+        },
+        {
+          "verdict": "pass-with-findings",
+          "reviewer": "independent-review-agent-batch-2026-10-22",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
+          "report_sha256": "f74b417b9fa6e74e632ca492d5b427c90c4e14165feb1660dd5523563aaa10f5",
+          "findings": 2,
+          "status": "historical-pinned-not-current",
+          "note": "Initial batch findings; superseded by the phase-A re-review and later delta pass."
+        }
+      ],
+      "findings": 0,
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.tenant-based-resource-isolation",

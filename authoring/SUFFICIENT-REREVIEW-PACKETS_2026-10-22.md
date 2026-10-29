@@ -9,15 +9,15 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 142 |
+| Promoted after remediation | 140 |
 | Residual findings after re-review | 0 |
 | Unique owner pages | 75 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 113 |
 | Rejected after review | 0 |
-| Awaiting current external review | 3 |
+| Awaiting current external review | 5 |
 
-Packet statuses: {"awaiting-current-external-review": 3, "page-changed-since-review": 29, "reviewed-by-independent-agent": 113}.
+Packet statuses: {"awaiting-current-external-review": 5, "page-changed-since-review": 27, "reviewed-by-independent-agent": 113}.
 
 ## Review procedure
 
@@ -542,8 +542,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Static Content Hosting**
-  Current: pass; historical: None; re-review: pass; report: reject.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **Strangler Fig**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -574,8 +574,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Transactional Outbox**
-  Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **TTL-Based Expiration**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.

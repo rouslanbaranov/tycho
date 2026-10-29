@@ -42,18 +42,18 @@ claim, CI result or merge permission is implied.
 ### Transactional Outbox (B2)
 
 - Card: `v11/c04/transactional-outbox.md`
-- Card SHA-256: `d0e15060bb5d3a18abac64d8c784ca68c457bdcea52632f497194ad6f39317ca`
+- Card SHA-256: `04bc22af2bf7758a3e1fe147c6da1d4cfa9b94ae4d733e362b46db0cc13ac583`
 - Owner: `v04/c05/transactional-outbox.md`
-- Owner SHA-256: `97be1479721f6492ef182a5bdbd08c5a5c6dcac2029b329b9c22f4bff94bc7ae`
+- Owner SHA-256: `7a92fabcfc2688f1d9aa34257ce8dfca44aaa81c2339b354b7c579e6241cce14`
 - Moved card-body SHA-256: `d438fc70a32c3ff10b9afcb671687711848ff48ed07b698a800bdfc4c80e341f`
 - Moved owner-body SHA-256: `5a6b0e30aab50ec8da29a9b910413a09881524b4281cd82d7511b407e29a71c9`
 
 ### Static Content Hosting (B3)
 
 - Card: `v11/c09/static-content-hosting.md`
-- Card SHA-256: `23a362f212f996b619fdac41b7b679653af9557e21bb6f3677d302b389207984`
+- Card SHA-256: `72aa035e81babfc7efff0c63b11ab59db7f4f6a30371eba08008d7672f7be9d2`
 - Owner: `v08/c08/static-content-hosting.md`
-- Owner SHA-256: `1f3d9ebeb1aba3a23ddb19650e75fb8611c34d3e4c484a9dacef9955277f9c06`
+- Owner SHA-256: `a6dda9e4828c77f324351a49da43fb6656bee7681190d7d107c555fac384eb00`
 - Moved card-body SHA-256: `dee73e557357188f73979c8b9a255e5c4f911e8ec7360b73829cb5187c969383`
 - Moved owner-body SHA-256: `99fcdc1bcfa8b12a494da69c7112c5bfab7d046fd87a3741b08ec17bc7167949`
 
@@ -117,7 +117,10 @@ claim, CI result or merge permission is implied.
 - The source plan, coverage, reverse map, phase 4, route index, delivery evidence,
   inventory, qrels snapshots and rereview packets were refreshed once.
 
-## Moved-body hashes
+## Moved-body hashes at the split (historical)
+
+The B2/B3 card and owner hashes above are the post-remediation values at 2026-10-29.
+The moved-body hashes below record the original split and are retained as history.
 
 - B2 card: `d438fc70a32c3ff10b9afcb671687711848ff48ed07b698a800bdfc4c80e341f`
 - B2 owner: `5a6b0e30aab50ec8da29a9b910413a09881524b4281cd82d7511b407e29a71c9`

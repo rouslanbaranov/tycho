@@ -14,7 +14,8 @@ perspectives:
 summary: "Decision card for Static Content Hosting with bounded owner evidence."
 route_hints:
   questions:
-    - "Should static content be served from a dedicated store or edge?"
+    - "Should static content be served from a dedicated store or edge rather than the
+      application origin?"
   prerequisites:
     - "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142"
   related_ids:
@@ -50,13 +51,13 @@ scalability-pattern; priority core.
 **Decision question.** Should static content be served from a dedicated store or edge
 rather than the application origin?
 
-**Good-fit conditions.** Content is static/versioned; cacheability and purge are
-controlled; origin protection is owned.
+**Good-fit conditions.** Content is static/versioned; a retained version covers the
+rollback window; cacheability and purge are controlled; origin protection is owned.
 
 **Hard contraindications.** Reject when content is personalized/uncacheable, when
 versioning/purge cannot meet freshness, or when edge configuration is unowned.
 
-**Competing alternative.** Process or personalize content for each request before delivery.
+**Competing alternative.** Serve static content dynamically from the application origin.
 
 **Failure and recovery.** Changing, deleting, or restricting access to origin content doesn't
 invalidate cached copies. Purge caches and account for propagation time; CDN purges don't
