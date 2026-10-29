@@ -224,8 +224,8 @@ monotonically; stale owners may still run but cannot commit.
 **Hard contraindications.** Reject when the resource cannot enforce tokens, when tokens
 can be reused, or when the lock is only an efficiency optimization.
 
-**Competing alternative.** Lease-only ownership or single-writer routing. Reverse the
-choice when destination enforcement cost exceeds the stale-write risk it removes.
+**Competing alternative.** A best-effort single-node lock is sufficient when duplicate work is
+only an efficiency cost; use fencing when a stale write could corrupt state.
 
 **Failure and recovery.** Token bypass and epoch reuse are common; verify destination
 enforcement in the owner section.
@@ -235,8 +235,8 @@ enforcement in the owner section.
 **Sources.**
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-fencing.2026-10-21: all nine served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
+The Conclusion recommends a best-effort single-node lock for efficiency-only
+work and fencing for correctness. The source is a public article, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

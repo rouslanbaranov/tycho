@@ -235,8 +235,17 @@ only with a new authority. If the destination cannot enforce tokens, serialize t
 authoritative effect owner or use a stable idempotent operation identity; do not claim mutual
 exclusion from a token the destination ignores.
 
-Reverse to lease-only ownership or single-writer routing when destination enforcement cost
-exceeds the stale-write risk it removes, or retain an explicit unresolved-safety boundary.
+**Alternative.** When the lock only avoids duplicate work, a best-effort single-node lock is
+sufficient; use fencing tokens when a stale write could corrupt state. The admitted article
+recommends a conditional set-if-not-exists lock for that case and says such locks are
+approximate and may occasionally fail; if the destination cannot enforce tokens, serialize
+through an authoritative effect owner or retain an explicit unresolved-safety boundary.
+
+**Source boundary.** The admitted article supports the efficiency-only single-node comparison
+and the token mechanism; the takeover linearization, epoch-reset and fallback rules are Tycho
+synthesis. The served page SHA-256 is
+8cf7f237e65cdbbaea54578bbf1f08e7d716462a35b645a8b6b85d9233a380ea.
+No lock service or failure test was executed.
 
 ## Navigation, prerequisites and source scope
 
