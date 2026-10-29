@@ -55,9 +55,6 @@ def main():
         legend_y += 18
     parts.append('</svg>')
     SVG.write_text("\n".join(parts), encoding="utf-8")
-    subprocess.run(["qlmanage", "-t", "-s", "900", "-o", "/tmp", str(SVG)], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    tmp = Path("/tmp") / (SVG.name + ".png")
-    subprocess.run(["magick", str(tmp), "-crop", "900x500+0+0", "+repage", str(PNG)], check=True)
     print(SVG)
 
 
