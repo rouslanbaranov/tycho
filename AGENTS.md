@@ -226,3 +226,10 @@ tool invocation that retrieves sources, or change.
     state in response to review findings. Fix forward: add corrections, rebind hashes,
     preserve historical evidence and keep the batch moving. A rollback is allowed only
     by an explicit owner instruction that names the exact commit or state to restore.
+
+34. **Do not split a promotion-bound page speculatively.** A page that carries a
+    valid promotion is frozen by default. Split it only when a concrete planned entry
+    must edit that page, or when a promotion-bound card must move off a shared chapter
+    page before a planned promotion. Decoupling for a hypothetical future batch is not
+    sufficient reason. Prefer coverage work on independent pages over maintenance
+    splits of already sufficient entries.
