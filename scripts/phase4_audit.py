@@ -270,7 +270,7 @@ def build(root=ROOT):
             "registry_sha256": sha(root / REGISTRY),
             "ledger_sha256": sha(root / LEDGER),
             "card_batches_sha256": sha(root / BATCHES),
-            "route_index_sha256": sha(root / ROUTE),
+            "route_index_sha256": hashlib.sha256(json.dumps(route, indent=2, ensure_ascii=False).encode()).hexdigest(),
             "coverage_sha256": sha(root / COVERAGE),
         },
         "dimensions": DIMENSIONS,

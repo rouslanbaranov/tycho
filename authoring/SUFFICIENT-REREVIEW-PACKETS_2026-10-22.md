@@ -11,7 +11,7 @@
 | Packets | 145 |
 | Promoted after remediation | 140 |
 | Residual findings after re-review | 0 |
-| Unique owner pages | 75 |
+| Unique owner pages | 76 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 113 |
 | Rejected after review | 0 |

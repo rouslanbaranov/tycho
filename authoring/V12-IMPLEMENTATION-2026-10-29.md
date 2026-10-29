@@ -86,13 +86,13 @@ python3 scripts/validate_v12.py
 PASS: V12 structure, hashes, reverse index and iron rule
 
 python3 scripts/validate_edition.py
-canonical_documents: 490
+canonical_documents: 492
 volumes: 12
 chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 648 tests in 76.3s
+Ran 648 tests in 88.0s
 OK
 
 node tools/mermaid/check.mjs --root .
@@ -105,37 +105,37 @@ V12 Markdown line limit and the protected baseline.
 
 ## Protected baseline
 
-The baseline contains 459 existing book pages and five promotion/atlas/review records. The
+The baseline contains 461 existing book pages and five promotion/atlas/review records. The
 validator reports:
 
 ```json
-{"protected_pages": 459, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
+{"protected_pages": 461, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
 ```
 
 No existing page, card, owner page, sufficient-promotion record or atlas
 manifest was edited. The only new files under book/ are the V12 volume pages.
 One existing re-review packet had its route-source binding refreshed as
 recorded below.
-new files under `book/` are the V12 volume pages.
 
 ## Derived artifacts refreshed
 
 The route index, edition inventory, edition outline, V12 index and reverse index were
 regenerated from the expanded corpus. The existing re-review packet record had one source
 binding refreshed from the full route hash to the V1-V11 legacy route snapshot
-(`0ba9ebd...`); no packet content, verdict template or reviewer field changed. The legacy
-binding keeps the existing pattern evidence stable when V12 pages change.
+(`4903632b...`); no packet content, verdict template or reviewer field changed. The legacy
+binding keeps the existing pattern evidence stable when V12 pages change. The Phase 4
+artifact route hash was refreshed in the same way.
 
 ## Pre-existing local check failures
 
-Two checks fail at the branch base commit `4f111f25` as well as on this branch:
+One check fails at the target branch head and on this branch:
 
-- `scripts/phase4_audit.py --check` reports `phase4-artifact-stale` because the committed
-  Phase 4 artifact predates recent sufficient promotions in the pattern registry.
-- `scripts/check_markdown_line_length.py` reports three V11 lines over 100 characters.
+- scripts/check_markdown_line_length.py reports two V11 lines over 100 characters.
 
-Neither failure is caused by V12. They are recorded here instead of being hidden or repaired
-inside this issue. The V12 validator checks the V12 line limit independently.
+The failure is not caused by V12. It is recorded here instead of being hidden or repaired
+inside this issue. The V12 validator checks the V12 line limit independently. The Phase 4
+artifact now passes after its legacy route-hash refresh. validate_book_navigation.py reports
+four pre-existing anchor issues in two V11 pages at the target head; V12 pages add none.
 
 ## Independent review round 1
 
