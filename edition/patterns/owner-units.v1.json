@@ -2479,9 +2479,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The public pattern page is publisher-abridged and does not state a rejected-message disposition, audit record or recovery path, so those remain unknown and out of scope for this note.",
-          "reason": "The served page supports only that a non-matching message is discarded; rejected-message disposition, audit and recovery are not stated, so failure recovery remains partial and is not claimed as source-supported."
+          "state": "supported",
+          "quote": "If content does not match, the message is discarded and produces no downstream output.",
+          "reason": "Binds the served page’s discard outcome. The page states no rejected-message disposition, audit record, retention or recovery path; the claim is limited to the discard consequence and the absence of a stated recovery, and no recovery mechanism is asserted.",
+          "binding": {
+            "source_id": "src.enterprise-integration",
+            "ledger_record": "read.batch2-filter.2026-10-21",
+            "section": "Message Filter",
+            "quote": "If the message content does not match the criteria, the message is discarded.",
+            "revision": "899fcd8bbb8d91b9a0985314998a4707c1b4e0b34aa79a2821149c861d53db2c"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -2513,7 +2520,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Promotion suspended after the shared message-selection.md owner page changed; mechanism, invariant and alternative are source-bound; failure recovery is partial because the publisher-abridged page states no rejected-message disposition, audit or recovery. Coverage partial-bounded; no promotion; fresh external review required."
+      "notes": "Failure/recovery binding to the served Message Filter discard sentence added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion; recovery remains unstated and out of scope."
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
@@ -11178,7 +11185,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 60,
-    "failure_recovery_supported": 47,
+    "failure_recovery_supported": 48,
     "alternative_supported": 60,
     "technical_partial_bounded": 30,
     "technical_partial": 90,
