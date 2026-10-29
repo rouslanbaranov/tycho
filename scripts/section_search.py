@@ -553,6 +553,8 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
              "section_rerank must be boolean")
     _require(not (all_sections and section_rerank),
              "section_rerank cannot be combined with all_sections")
+    _require(not (section_rerank and volume == "v12"),
+             "section_rerank is disabled for volume v12")
     _require(isinstance(include_weak, bool), "include_weak must be boolean")
     _require(isinstance(include_artifacts, bool), "include_artifacts must be boolean")
     pattern_ids = pattern_ids or []

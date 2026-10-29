@@ -392,6 +392,11 @@ class McpServerTests(unittest.TestCase):
         })["structuredContent"]
         self.assertEqual(default["result_scope"],
                          "best-section-per-document")
+        with self.assertRaises(mcp_server.ProtocolFailure):
+            self.call(self.server(), "tycho_search", {
+                "query": "nested text", "volume": "v12",
+                "section_rerank": True,
+            })
 
     def test_h3_match_maps_to_parent_and_is_not_readable(self):
         payload = self.call(self.server(), "tycho_search", {
