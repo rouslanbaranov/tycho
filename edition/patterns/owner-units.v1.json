@@ -9294,9 +9294,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge.",
-          "reason": "Fowler article has no interception/bypass failure or recovery path."
+          "state": "supported",
+          "quote": "Interception may be impossible, internal callers may bypass the façade, and old/new state can diverge. Add a bypass detector, a routing inventory and a data reconciliation check before retiring the old path. Fund coexistence and name owners for both paths. Rollback remains possible until a recorded no-return point, where routing inventory and reconciliation evidence authorize retirement.",
+          "reason": "Binds the AWS Prescriptive Guidance 'Strangler fig pattern' page: interception and routing are prerequisites, the proxy or facade can become a single point of failure or performance bottleneck, and each refactored service needs a rollback plan. Bypass detection, routing inventory, data reconciliation and the recorded no-return point remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-strangler",
+            "ledger_record": "read.aws-strangler.2026-10-29",
+            "section": "Strangler fig pattern",
+            "quote": "Cannot be used in systems where requests to the backend system cannot be intercepted and routed. The proxy or facade layer can become a single point of failure or a performance bottleneck if it isn't designed properly. Requires a rollback plan for each refactored service to revert to the old way of doing things quickly and safely if things go wrong.",
+            "revision": "787962ad56fbc52feb9e3198749ceb7e3b9cea44bca6f9c2bb50530e30c66044"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -9323,12 +9330,19 @@
         "source_id": "src.fowler-strangler",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-strangler",
+            "ledger_record": "read.aws-strangler.2026-10-29",
+            "revision": "787962ad56fbc52feb9e3198749ceb7e3b9cea44bca6f9c2bb50530e30c66044"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Strangler Fig appears in prose, not a heading; the section summarizes cited guidance without routing mechanics."
+      "notes": "Failure/recovery bound 2026-10-29 to the AWS Prescriptive Guidance 'Strangler fig pattern' page: interception and routing are prerequisites, the proxy or facade can become a single point of failure, and each refactored service needs a rollback plan. Coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.branch-by-abstraction",
@@ -11333,7 +11347,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 62,
-    "failure_recovery_supported": 50,
+    "failure_recovery_supported": 51,
     "alternative_supported": 63,
     "technical_partial_bounded": 28,
     "technical_partial": 88,

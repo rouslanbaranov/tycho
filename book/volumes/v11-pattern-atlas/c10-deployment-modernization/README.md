@@ -38,6 +38,7 @@ evidence_scope:
     - "src.opengitops"
     - "src.ibm-immutable-infrastructure"
     - "src.fowler-strangler"
+    - "src.aws-strangler"
     - "src.fowler-branch"
     - "src.flyway"
   claim_ids: []
@@ -45,12 +46,12 @@ evidence_scope:
   notes: "12 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-26"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 # V11/C10 — Deployment and legacy modernization
@@ -270,35 +271,7 @@ unit, not a benchmark.
 
 ### Strangler Fig
 
-**Identity.** Strangler Fig; family Deployment and legacy modernization; kind
-modernization-pattern; priority core.
-
-**Decision question.** Should a legacy capability be replaced incrementally behind a
-routing seam rather than by a rewrite?
-
-**Good-fit conditions.** A seam can intercept and route old/new; coexistence is funded;
-routing and data compatibility are explicit; rollback is possible until a no-return point.
-
-**Hard contraindications.** Reject when the legacy has no seam, when dual-running data
-cannot be reconciled, or when the team cannot own two paths.
-
-**Competing alternative.** Branch by abstraction, parallel run or a big-bang replacement.
-Reverse the choice when coexistence cost exceeds incremental replacement benefit.
-
-**Failure and recovery.** Interception may be impossible, callers may bypass the façade,
-and old/new state can diverge; detect bypass, hold and route back until proven.
-
-**Technical owner.** [Strangler Fig](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#strangler-fig) — strangler is bounded to transition-state reasoning.
-
-**Sources.** [src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: sections "Strangler Fig", "Further Reading".
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Branch by Abstraction; Parallel Run; Dark Launching; Controlled
-Cutover.
+See the [dedicated Strangler Fig card](strangler-fig.md).
 
 ### Branch by Abstraction
 
