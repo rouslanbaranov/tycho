@@ -230,9 +230,23 @@ tool invocation that retrieves sources, or change.
 
 35. **Format-only promotion rebind.** A promotion hash may be updated without a new
     external content review only when the change is proven to be formatting-only:
-    `git diff -w --exit-code <old> <new>` is empty, no frontmatter, code block, table,
+    `git diff -w --exit-code <old> <new>` is empty or canonical text (soft wraps joined)
+    is byte-identical, no frontmatter, code block, table,
     link target, heading or list structure changed, and the canonical text hash is
     unchanged. Record old/new file SHA-256, canonical hash and the diff command result
     in a format-rebind record, and have a second read-only verifier confirm it. A raw
     hash update without that proof is prohibited. Anything beyond whitespace/reflow
     requires the normal review gate.
+
+36. **Canonical content and structure are read-only during index/search work.**
+    This rule applies only when the task is index, search or evidence tooling,
+    including work in an isolated index/search checkout. It does not govern book,
+    atlas or card authoring performed in other checkouts. During such work, do not
+    edit, move, rename, split, merge or reflow `book/**`,
+    `edition/atlas-manifest.json`, `edition/outline.json`, atlas
+    registry/card-batches/owner-units/coverage-map/reverse-map/source-plan, or any
+    pattern or atlas card. Do not update hashes, counts, promotion records or
+    derived metadata to mask a content or structure change. Rebuilding a derived
+    index is allowed; changing its canonical source is not. If a task requires a
+    content or structure change, stop and return it to the owner; do not implement
+    it here.
