@@ -110,7 +110,7 @@ class reindex_lock:
         return False
 
 
-def build(root, allow_partial=False):
+def build(root, allow_partial=False, full=True):
     root = Path(root).resolve()
     with reindex_lock(root):
         route = route_index.canonical_scan(root, allow_partial=allow_partial)
@@ -121,7 +121,7 @@ def build(root, allow_partial=False):
             + "\n", encoding="utf-8")
         os.replace(temp, ROUTE_INDEX)
         result = section_fts_index.publish(
-            root, full=True, allow_partial=allow_partial)
+            root, full=full, allow_partial=allow_partial)
         stats = section_fts_index.stats(root)
         return route, result, stats
 
@@ -268,9 +268,12 @@ def main(argv=None):
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     ap.add_argument("--allow-partial", action="store_true")
+    ap.add_argument("--full", action="store_true",
+                    help="reparse every document (snapshot is always full)")
     args = ap.parse_args(argv)
     if args.action == "snapshot":
-        route, result, stats = build(args.root, args.allow_partial)
+        route, result, stats = build(
+            args.root, args.allow_partial, full=True)
         manifest = make_manifest(args.root, route, result, stats)
         args.manifest.parent.mkdir(parents=True, exist_ok=True)
         args.manifest.write_text(
@@ -286,9 +289,12 @@ def main(argv=None):
         report = diff_current(args.root, args.manifest)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0 if report["status"] == "unchanged" else 1
-    route, result, stats = build(args.root, args.allow_partial)
+    route, result, stats = build(
+        args.root, args.allow_partial, full=args.full)
     report = {
         "status": "rebuilt",
+        "mode": "full" if args.full else "incremental",
+        "reused_documents": result.get("reused_documents"),
         "route": route["snapshot_sha256"],
         "section_index": result["snapshot"],
         "sections": stats["sections"],
