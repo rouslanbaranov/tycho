@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""Render per-entry promotion time bars as SVG."""
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "authoring/promotion-entry-timing-2026-10-29.json"
+OUT = ROOT / "authoring/promotion-entry-timing-2026-10-29.svg"
+
+
+def main():
+    data = json.loads(SRC.read_text(encoding="utf-8"))
+    entries = data["entries"]
+    width, height = 1000, 460
+    left, top, right, bottom = 80, 60, 40, 100
+    plot_w = width - left - right
+    plot_h = height - top - bottom
+    max_v = 50
+    n = len(entries)
+    slot = plot_w / n
+    bar_w = slot * 0.55
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">',
+             '<rect width="100%" height="100%" fill="white"/>']
+    for v in range(0, max_v + 1, 10):
+        y = top + plot_h - plot_h * v / max_v
+        parts.append(f'<line x1="{left}" y1="{y:.1f}" x2="{left+plot_w}" y2="{y:.1f}" stroke="#e1e1e1"/>')
+        parts.append(f'<text x="{left-32}" y="{y+5:.1f}" font-family="Verdana" font-size="12" fill="#505050">{v}</text>')
+    parts.append(f'<line x1="{left}" y1="{top}" x2="{left}" y2="{top+plot_h}" stroke="#3c3c3c"/>')
+    parts.append(f'<line x1="{left}" y1="{top+plot_h}" x2="{left+plot_w}" y2="{top+plot_h}" stroke="#3c3c3c"/>')
+    for i, item in enumerate(entries):
+        value = item["minutes"]
+        x = left + slot * i + (slot - bar_w) / 2
+        y = top + plot_h - plot_h * value / max_v
+        color = "#c85a1e" if i == 0 else "#1e5ab4"
+        parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w:.1f}" height="{top+plot_h-y:.1f}" fill="{color}" opacity="0.85"/>')
+        parts.append(f'<text x="{x+bar_w/2:.1f}" y="{y-6:.1f}" text-anchor="middle" font-family="Verdana" font-size="12" fill="#323232">{value}</text>')
+        parts.append(f'<text x="{x+bar_w/2:.1f}" y="{top+plot_h+20}" text-anchor="middle" font-family="Verdana" font-size="11" fill="#323232">{item["label"]}</text>')
+    parts.append(f'<text x="{left}" y="25" font-family="Verdana" font-size="16" fill="#141414">Promotion time per entry (minutes, promotion window)</text>')
+    parts.append(f'<text x="{left}" y="44" font-family="Verdana" font-size="11" fill="#606060">orange: pre-optimization; blue: single-entry pipeline</text>')
+    parts.append('</svg>')
+    OUT.write_text("\n".join(parts), encoding="utf-8")
+    print(OUT)
+
+
+if __name__ == "__main__":
+    main()
