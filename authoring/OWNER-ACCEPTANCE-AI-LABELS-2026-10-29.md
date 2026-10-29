@@ -3,6 +3,11 @@
 Status: **owner-accepted evidence for AI labels**. This is not human review,
 independent review, CI or a sufficient-coverage claim.
 
+Update 2026-10-29: the owner approved the MCP production default
+`section_rerank=true, section_rerank_margin=0.15`, with no separate
+section/phase3 review and no production-client benchmark. See
+[MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md).
+
 ## Owner instruction
 
 The owner authorized using AI-adjudicated labels as owner-accepted evidence and
@@ -28,11 +33,12 @@ remains `human_review: not-claimed`.
 
 ## Decision
 
-- BM25 remains the default.
+- MCP default is margin-gated section rerank at .15; core API/CLI remain
+  explicit BM25.
 - Best mode remains optional; its v3 gain is not significant and is
   prior-accepted-page driven.
-- Section rerank remains optional; guarded all/v2 gains are significant, but
-  phase3 page top-1 still regresses .895 -> .842.
+- Global section rerank remains optional; phase3 page top-1 regresses .895 ->
+  .842 without the margin gate.
 - V12 guards remain in force.
 
 ## Limits

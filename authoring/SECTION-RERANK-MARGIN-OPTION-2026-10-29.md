@@ -1,8 +1,8 @@
 # Margin-gated section rerank option — 2026-10-29
 
-Status: opt-in API/MCP option. Default BM25 and default global section_rerank
-are unchanged. AI-adjudicated evidence; not human review, independent review,
-CI or owner acceptance.
+Status: the core option remains opt-in; MCP now defaults to
+`section_rerank=true, section_rerank_margin=0.15`. See
+[MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md).
 
 ## Change
 

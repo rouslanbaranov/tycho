@@ -1,7 +1,8 @@
 # MCP section rerank — 2026-10-29
 
-Status: opt-in MCP surface. Not default. AI-adjudicated quality evidence; not
-human review, independent review, CI or owner acceptance.
+Status: historical opt-in report; superseded by the MCP production default.
+Current default is `section_rerank=true, section_rerank_margin=0.15`. See
+[MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md).
 
 ## Change
 
