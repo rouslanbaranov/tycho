@@ -97,6 +97,22 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 claim/request final | pass | `2026-10-29-claim-request-final-deepseek.md` | `cf87685870bb237846e9dd0b3d3be7be3b860720c715228d327e27e7030de187` |
 | 2026-10-29 | DeepSeek Reviewer | #540 resequencer/pipes | pass | `2026-10-29-resequencer-pipes-deepseek.md` | `d3508b0610505ebf506ee18a8d34a56300facfc6723c38244073b3661db8ccc9` |
 | 2026-10-29 | DeepSeek Reviewer | #540 cache invalidation split | pass | `2026-10-29-cache-invalidation-split-review-deepseek.md` | `146b9cebefb66be12699ffe960e4b9e2ccba4f051ba826fb674a99f49d894dae` |
-| 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) | #587 V12 isolated volume initial review | reject | `2026-10-29-v12-isolated-volume-codex.md` | `0c23513867c8921c66e648857aa561559abfed168e28445d58f4e73991f903db` |
-| 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) | #587 V12 remediation delta review | reject | `2026-10-29-v12-isolated-volume-delta-codex.md` | `f1c4ce40d6dbfe916adf0d0fddc6e41a415733bc041951c6cffd041bb551d106` |
-| 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) | #587 V12 remediation delta review 2 | pass-with-findings | `2026-10-29-v12-isolated-volume-delta2-codex.md` | `b03e32f9e3eea1b2615291d8c263929589de0873cfbc0210a8973fcb811e6754` |
+
+## V12 review records
+
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 initial review | reject |
+  `2026-10-29-v12-isolated-volume-codex.md` |
+  `0c23513867c8921c66e648857aa561559abfed168e28445d58f4e73991f903db` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 delta review 1 | reject |
+  `2026-10-29-v12-isolated-volume-delta-codex.md` |
+  `f1c4ce40d6dbfe916adf0d0fddc6e41a415733bc041951c6cffd041bb551d106` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 delta review 2 | pass-with-findings |
+  `2026-10-29-v12-isolated-volume-delta2-codex.md` |
+  `b03e32f9e3eea1b2615291d8c263929589de0873cfbc0210a8973fcb811e6754` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 delta review 3 | pass-with-findings |
+  `2026-10-29-v12-isolated-volume-delta3-codex.md` |
+  `84282ebdf539e6d0ab36dedb16b8db19c65e4fc60923b3dcede196e562ecda30` |

@@ -19,19 +19,47 @@ def require(ok, message):
         raise ValueError(message)
 
 
+def parse_row(value):
+    cells = [cell.strip() for cell in value.strip().strip("|").split("|")]
+    if len(cells) != 6 or cells[0] in ("Date", ""):
+        return None
+    report = CODE.search(cells[4])
+    digest = CODE.search(cells[5])
+    if report is None or digest is None:
+        return None
+    return (report.group(1), digest.group(1), cells[3])
+
+
 def parse_index(root):
     rows = []
+    bullet = []
     for line in (root / INDEX).read_text(encoding="utf-8").splitlines():
-        if not line.startswith("|") or line.startswith("|---"):
+        if line.startswith("|"):
+            if line.startswith("|---"):
+                continue
+            row = parse_row(line)
+            if row is not None:
+                rows.append(row)
             continue
-        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
-        if len(cells) != 6 or cells[0] == "Date":
+        if line.startswith("- "):
+            if bullet:
+                row = parse_row(" ".join(bullet))
+                if row is not None:
+                    rows.append(row)
+            bullet = [line[2:].strip()]
             continue
-        report = CODE.search(cells[4])
-        digest = CODE.search(cells[5])
-        if report is None or digest is None:
+        if bullet and line.startswith("  ") and line.strip():
+            bullet.append(line.strip())
             continue
-        rows.append((report.group(1), digest.group(1), cells[3]))
+        if bullet:
+            row = parse_row(" ".join(bullet))
+            if row is not None:
+                rows.append(row)
+            bullet = []
+    if bullet:
+        row = parse_row(" ".join(bullet))
+        if row is not None:
+            rows.append(row)
     return rows
 
 

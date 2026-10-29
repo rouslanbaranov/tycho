@@ -206,6 +206,17 @@ The pass-with-findings report is saved verbatim as
 \`authoring/ai-reviews/2026-10-29-v12-isolated-volume-delta2-codex.md\` and indexed. A final
 delta review of these corrections is the last review gate.
 
+## Independent review round 4
+
+The third delta review returned pass-with-findings. N3, N4 and the test-gap finding were
+resolved. The only remaining finding was low severity: the newly added review-index table row
+exceeded the 100-character Markdown line limit.
+
+The V12 review records were moved from long table rows to wrapped bullet records, and the AI
+review validator now parses that form. The report is saved verbatim as
+\`authoring/ai-reviews/2026-10-29-v12-isolated-volume-delta3-codex.md\` and indexed. A focused
+final delta review of this editorial correction is the last review gate.
+
 ## Limits
 
 - Every V12 model is uncalibrated.
