@@ -6,9 +6,11 @@ acceptance was performed in this batch.
 ## Parent and scope
 
 - Batch base HEAD: `fbe9b7899f6b6aab50959c374851003457f0b2d0`.
-- Direct commit parent: `33dc0be964623515c00ae06050dc8b88d907a3df` (a
+- Split commit direct parent: `33dc0be964623515c00ae06050dc8b88d907a3df` (a
   governance-only AGENTS change that landed during the batch; no book or edition
   artifact changed).
+- Two documentation-only follow-up commits corrected this record; use
+  `git rev-parse HEAD` for the review HEAD.
 - One accelerated batch covering five owner sections on three V04/C06 pages.
 - Five dedicated owner pages were added; the five atlas cards were already
   dedicated and only their technical-owner links changed.
