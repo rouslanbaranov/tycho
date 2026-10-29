@@ -38,12 +38,12 @@ evidence_scope:
   notes: "12 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 # V11/C02 — API and service communication
@@ -364,39 +364,7 @@ Proxy.
 
 ### Server-Side Discovery
 
-**Identity.** Server-Side Discovery; family API and service communication; kind
-discovery pattern; priority core.
-
-**Decision question.** Should a proxy or load balancer own service lookup and backend
-selection for the caller?
-
-**Good-fit conditions.** Clients should stay simple; the intermediary can observe
-health and membership; selection policy is centrally owned; the extra hop and proxy
-lifecycle are acceptable.
-
-**Hard contraindications.** Reject the claim when the intermediary becomes an unowned
-single point; when it cannot observe backend health; when clients need a selection
-policy the proxy cannot express; when the extra hop violates a hard latency budget.
-
-**Competing alternative.** Client-side discovery or static endpoints. Reverse the
-choice when proxy blast radius and operational cost exceed the client simplification
-benefit.
-
-**Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
-proxy bottleneck are common. Health-check backends, expose a degraded path and bound retries.
-
-**Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are bounded to the linked section.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-server-discovery.2026-10-21: Server-side service
-discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
-context", "Related patterns". Pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Service Discovery; Client-Side Discovery; Gateway Routing; API
-Gateway.
+See the [dedicated Server-Side Discovery card](server-side-discovery.md).
 
 ### Asynchronous Request-Reply
 

@@ -1705,9 +1705,16 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Stale membership can keep a removed backend in the selection set even when the proxy is healthy.",
-          "reason": "Source has no stale-membership or removed-backend safety rule."
+          "reason": "Envoy documents that a host absent from discovery data can still receive traffic while its health check passes, so a healthy proxy can hold a stale selection set; active health checking is the documented mitigation.",
+          "binding": {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-service-discovery-consistency.2026-10-29",
+            "section": "On eventually consistent service discovery",
+            "quote": "If a host continues to pass health check even after becoming absent from the discovery data, Envoy will still route.",
+            "revision": "f07699d00554ee3b3cf13d6644b115645ba5efe4258cbb5331471bbdd0a59e6e"
+          }
         },
         "failure_recovery": {
           "state": "supported",
@@ -1746,12 +1753,19 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.envoy",
+            "ledger_record": "read.envoy-service-discovery-consistency.2026-10-29",
+            "revision": "f07699d00554ee3b3cf13d6644b115645ba5efe4258cbb5331471bbdd0a59e6e"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "The section names a proxy as a discovery consumer; proxy-owned lookup and selection policy are not explained."
+      "notes": "Invariant bound 2026-10-29 to Envoy's 'On eventually consistent service discovery' section: a host absent from discovery data can still receive traffic while its health check passes. Coverage partial-bounded; no promotion. Propagation bounds, drain procedures and health-check intervals remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.asynchronous-request-reply",
@@ -8084,7 +8098,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 246,
+        "line": 255,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",
@@ -10953,7 +10967,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Client-side discovery, server-side discovery and load balancing retain three distinct dedicated units after the 2026-10-29 Service Discovery split."
     },
@@ -11318,11 +11332,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 61,
+    "invariant_supported": 62,
     "failure_recovery_supported": 50,
     "alternative_supported": 63,
-    "technical_partial_bounded": 27,
-    "technical_partial": 89,
+    "technical_partial_bounded": 28,
+    "technical_partial": 88,
     "technical_name_only": 0,
     "technical_sufficient": 29,
     "decision_partial_bounded": 116,

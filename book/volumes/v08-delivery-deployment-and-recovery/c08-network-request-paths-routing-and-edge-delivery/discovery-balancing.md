@@ -56,7 +56,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-21",
+  "updated_at": "2026-10-29",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -70,7 +70,7 @@
 > **Pattern atlas:**
 > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) — decision conditions and contraindications.
 > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) — decision conditions and contraindications.
-> [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) — decision conditions and contraindications.
+> [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/server-side-discovery.md#server-side-discovery) — decision conditions and contraindications.
 
 
 > **Pattern atlas:**
@@ -235,9 +235,18 @@ name. The client sees one name; the proxy owns the update, health and selection 
 
 The proxy itself becomes a failure domain and must not hide a stale view behind a green health
 check. Stale membership can keep a removed backend in the selection set even when the proxy is
-healthy. Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound
-retries, expose a degraded path and plan the proxy's own failover. Health checks must remove a stale backend
-before it attracts more traffic.
+healthy. Envoy's "On eventually consistent service discovery" section states the limit directly:
+
+> If a host continues to pass health check even after becoming absent from the discovery data,
+> Envoy will still route.
+
+A healthy proxy can therefore route to a backend that discovery has already removed. Active
+health checking is the documented way to determine cluster health; it must remove a stale backend
+before it attracts more traffic. Envoy's page gives no propagation bound, drain procedure or
+health-check interval, so those remain Tycho guidance.
+
+Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose
+a degraded path and plan the proxy's own failover.
 
 Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
 are rare. Server-side discovery is a fit when clients should not carry routing policy and the proxy
