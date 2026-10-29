@@ -62,7 +62,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Gatekeeper](../../v11-pattern-atlas/c02-api-communication/README.md#gatekeeper) — decision conditions and contraindications.
+> [Gatekeeper](../../v11-pattern-atlas/c02-api-communication/gatekeeper.md#gatekeeper) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.31cda61d174248eaa326559d256ce352:0 -->
 ## Purpose and mission

@@ -1864,9 +1864,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A stale policy or an undeclared direct path defeats the check while dashboards remain green; combine network policy, denial logs and a bypass test in the acceptance evidence.",
-          "reason": "Source names SPoF and redundancy, not stale-policy or bypass-detection recovery."
+          "state": "supported",
+          "quote": "The gatekeeper can be a single point of failure (SPoF). To minimize the impact of a failure, consider deploying redundant instances and using an autoscaling mechanism to ensure capacity and maintain availability.",
+          "reason": "Names the gatekeeper's own single point of failure and the redundant-instance and autoscaling advice; stale-policy and direct-path detection remain Tycho acceptance conditions.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gatekeeper.2026-10-21",
+            "section": "Problems and considerations",
+            "quote": "The gatekeeper can be a single point of failure (SPoF). To minimize the impact of a failure, consider deploying redundant instances and using an autoscaling mechanism to ensure capacity and maintain availability.",
+            "revision": "5af11b967b9ffe814df508afa3f4cd4d3797bdb6f280b78d1be61db8a53a28f0"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -1898,7 +1905,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Failure/recovery binding to the Microsoft Learn SPoF and redundant-instance advice added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
     },
     {
       "pattern_id": "tycho.pattern.publish-subscribe",
@@ -5660,7 +5667,7 @@
         "heading": "Leader-Follower Replication",
         "anchor": "leader-follower-replication",
         "level": 3,
-        "line": 163,
+        "line": 178,
         "unit_kind": "dedicated",
         "unit_terms": [
           "One leader accepts writes",
@@ -5771,15 +5778,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Single-leader replication avoids write conflicts at the cost of write availability across regions; choose multi-leader only when accepting local writes outweighs the conflict contract.",
-          "reason": "Cassandra text has no single-leader comparison or write-availability conflict tradeoff."
+          "state": "supported",
+          "quote": "Leader-follower (primary/standby) replication partitions write work to one leader, with followers tracking that leader. Synchronous multi-master replication instead lets any server accept write requests, but PostgreSQL's comparison rates it best for mostly read workloads and notes that heavy write activity can cause excessive locking and commit delays. Asynchronous multi-master replication identifies conflicting transactions for users or conflict-resolution rules to resolve. Choose multi-leader only when accepting writes on more than one server outweighs that conflict and write-throughput contract.",
+          "reason": "Names leader-follower replication and the synchronous and asynchronous multi-master trade-offs from the PostgreSQL comparison; the decision rule is Tycho synthesis.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-replication-solutions.2026-10-29",
+            "section": "26.1. Comparison of Different Solutions",
+            "quote": "Synchronous multimaster replication is best for mostly read workloads, though its big advantage is that any server can accept write requests — there is no need to partition workloads between primary and standby servers",
+            "revision": "7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "multi-leader-replication",
         "question": "Should more than one node accept writes for the same data?",
-        "competing_alternative": "Leader-follower or quorum writes. Reverse the choice when conflict handling and divergent histories exceed locality benefit.",
+        "competing_alternative": "Leader-follower (primary/standby) replication or quorum/consensus writes. PostgreSQL's comparison notes that synchronous multi-master lets any server accept writes but is best for mostly read workloads, with locking and commit delays under heavy write activity, and that asynchronous multi-master needs conflict resolution. Reverse the choice when conflict handling and divergent histories exceed locality benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -5793,7 +5807,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Alternative binding to PostgreSQL 18 section 26.1 added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
     },
     {
       "pattern_id": "tycho.pattern.read-replicas",
@@ -5805,7 +5819,7 @@
         "heading": "Read Replicas",
         "anchor": "read-replicas",
         "level": 3,
-        "line": 148,
+        "line": 163,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Read Replicas"
@@ -7410,7 +7424,7 @@
         "heading": "Consensus",
         "anchor": "consensus",
         "level": 3,
-        "line": 180,
+        "line": 195,
         "unit_kind": "dedicated",
         "unit_terms": [
           "nodes A, B and C",
@@ -10552,15 +10566,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "External journey monitoring is the alternative when process-local probes cannot observe the user-visible contract.",
-          "reason": "Kubernetes page has only container-local probes, no external journey."
+          "state": "supported",
+          "quote": "External journey monitoring is the alternative when process-local probes cannot observe the user-visible contract. It observes the journey but does not by itself establish process health or readiness. For process or host liveness, a dedicated application endpoint is also not the only route. The public Health Endpoint Monitoring pattern states in its \"When to use this pattern\" section: \"A platform-managed transport-level probe can be sufficient when there's no application-specific logic, dependency chain, or functional behavior to verify.\" Where a compatible health interface is unavailable, it also recommends \"platform-level metrics, log-based alerts, or internal heartbeat mechanisms instead.\"",
+          "reason": "Names external journey monitoring, a platform-managed transport-level probe and existing telemetry as alternatives for process or host liveness, and limits them to cases without application-specific verification.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-health-endpoint.2026-10-29",
+            "section": "When to use this pattern",
+            "quote": "A platform-managed transport-level probe can be sufficient when there's no application-specific logic, dependency chain, or functional behavior to verify.",
+            "revision": "b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "health-readiness-and-liveness-checks",
         "question": "Should the runtime distinguish process liveness, traffic readiness and startup completion?",
-        "competing_alternative": "External journey monitoring plus process supervision. Reverse the choice when probe complexity causes false restarts.",
+        "competing_alternative": "External journey monitoring when probes cannot observe the user-visible contract. For process or host liveness, a platform-managed transport-level probe, or existing platform metrics, log-based alerts or internal heartbeats, instead of dedicated application health endpoints. Reverse the choice when application-specific logic, a dependency chain or functional behavior must be verified.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -10574,7 +10595,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated bounded note under 'Bounded pattern ownership notes'; all four dimensions are stated."
+      "notes": "Alternative binding to the Microsoft Health Endpoint Monitoring pattern added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
     },
     {
       "pattern_id": "tycho.pattern.polyglot-persistence",
@@ -11116,8 +11137,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 60,
-    "failure_recovery_supported": 46,
-    "alternative_supported": 58,
+    "failure_recovery_supported": 47,
+    "alternative_supported": 60,
     "technical_partial_bounded": 33,
     "technical_partial": 90,
     "technical_name_only": 0,

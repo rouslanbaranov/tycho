@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-29",
   "registry_version": "0.2.0",
-  "registry_sha256": "0112abd291f7a06ded10dbe605842bcef5ec9390d35486315423116db1906cdd",
-  "route_index_snapshot": "bf02f2aeea579d1cad3bf53747a5cfb64d5fcd7ef9e33b8b7488698e77c81ad9",
+  "registry_sha256": "fcb8f340bbcec909db0d56746f7668c1196ee32accc92f4fdab501435135f7e1",
+  "route_index_snapshot": "199c21c0841a25ef611126880ec2081aca1b9c1b999b708eff667055cb9edcd6",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -731,7 +731,7 @@
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "Batch 1 public page read; the 2026-10-29 failure/recovery binding uses the same record; claims limited to the ledger record."
     },
     {
       "pattern_id": "tycho.pattern.publish-subscribe",
@@ -2328,9 +2328,23 @@
           "status": "read",
           "read_record_id": "read.batch3-cassandra-dynamo.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "26.1. Comparison of Different Solutions — PostgreSQL 18",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/different-replication-solutions.html",
+          "sections": [
+            "26.1. Comparison of Different Solutions",
+            "Asynchronous Multimaster Replication",
+            "Synchronous Multimaster Replication"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-replication-solutions.2026-10-29",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "Batch 3 tail public unit read; the 2026-10-29 PostgreSQL 18 section 26.1 comparison supports the leader-follower and multi-master alternative."
     },
     {
       "pattern_id": "tycho.pattern.read-replicas",
@@ -4574,18 +4588,31 @@
           "status": "read",
           "read_record_id": "read.batch4-k8s-probes.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Health Endpoint Monitoring pattern — Microsoft Learn",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/health-endpoint-monitoring",
+          "sections": [
+            "Health Endpoint Monitoring pattern",
+            "When to use this pattern"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-health-endpoint.2026-10-29",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; the 2026-10-29 Microsoft Health Endpoint Monitoring unit supports the transport-level and telemetry alternative."
     }
   ],
   "summary": {
     "entries": 145,
-    "required_units": 166,
-    "read_units": 165,
+    "required_units": 168,
+    "read_units": 167,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 136
+    "ledger_records": 138
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

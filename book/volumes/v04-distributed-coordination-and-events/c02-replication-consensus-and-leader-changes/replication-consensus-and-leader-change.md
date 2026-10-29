@@ -67,7 +67,7 @@ content_verified_at: null
 
 > **Pattern atlas:**
 > [Leader-Follower Replication](../../v11-pattern-atlas/c06-database-storage/README.md#leader-follower-replication) — decision conditions and contraindications.
-> [Multi-Leader Replication](../../v11-pattern-atlas/c06-database-storage/README.md#multi-leader-replication) — decision conditions and contraindications.
+> [Multi-Leader Replication](../../v11-pattern-atlas/c06-database-storage/multi-leader-replication.md#multi-leader-replication) — decision conditions and contraindications.
 > [Read Replicas](../../v11-pattern-atlas/c06-database-storage/README.md#read-replicas) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:0 -->

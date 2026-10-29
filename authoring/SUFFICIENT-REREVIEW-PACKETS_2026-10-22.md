@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 105 |
+| Reviewed by independent agent | 99 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 30, "reviewed-by-independent-agent": 105}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 36, "reviewed-by-independent-agent": 99}.
 
 ## Review procedure
 
@@ -155,7 +155,7 @@ blank verdict template in the machine-readable file.
 
 - **Consensus**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Consistent Hashing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -263,7 +263,7 @@ blank verdict template in the machine-readable file.
 
 - **Gatekeeper**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gateway Aggregation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -295,7 +295,7 @@ blank verdict template in the machine-readable file.
 
 - **Health, Readiness and Liveness Checks**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Hedged Requests**
   Current: pass; historical: None; re-review: pass; report: pass.
@@ -335,7 +335,7 @@ blank verdict template in the machine-readable file.
 
 - **Leader-Follower Replication**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Lease-Based Ownership**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -375,7 +375,7 @@ blank verdict template in the machine-readable file.
 
 - **Multi-Leader Replication**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Multi-Level Caching**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -447,7 +447,7 @@ blank verdict template in the machine-readable file.
 
 - **Read Replicas**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Read-Through Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
