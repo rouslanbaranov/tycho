@@ -382,7 +382,7 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn("single reply thread", good)
 
     def test_request_reply_partial_and_other_entries_promoted(self):
-        self.assertEqual(len(self.promoted), 28)
+        self.assertEqual(len(self.promoted), 29)
         request = self.units["tycho.pattern.request-reply-messaging"]
         self.assertNotIn("tycho.pattern.request-reply-messaging", self.promoted)
         self.assertEqual(request["technical_coverage"], "partial-bounded")
