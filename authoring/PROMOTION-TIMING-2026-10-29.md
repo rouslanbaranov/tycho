@@ -46,3 +46,11 @@ Every work report includes:
 
 This log is updated when a batch closes; it is not evidence of review, CI or
 owner acceptance.
+
+## Trend chart
+
+![Promotion timing trend](promotion-timing-2026-10-29.png)
+
+Points, left to right: B9 wave, B10 wave, delta. Values are rolling estimates
+in minutes from `authoring/promotion-timing.v1.json`; they are not stopwatch
+measurements. The chart is regenerated with `scripts/promotion_timing_chart.py`.
