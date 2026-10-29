@@ -44,6 +44,13 @@ class BranchNamingTests(unittest.TestCase):
                 "[FUTURE] V12 - Architecture Modeling, Simulation & Decision Validation (isolated volume)"),
             587)
 
+    def test_simulation_child_issue_slug(self):
+        self.assertEqual(
+            mod.validate(
+                "feature/TYCHO-598-integrate-simulation-artifacts-into-search-facets-and-qrels",
+                "[SIM-G] Integrate simulation artifacts into search facets and qrels"),
+            598)
+
     def test_epic_not_executable_subissue(self):
         with self.assertRaises(ValueError):
             mod.validate("feature/TYCHO-2-architecture-decision-models",
