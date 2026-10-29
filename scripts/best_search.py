@@ -14,6 +14,11 @@ import top1_rerank
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def snapshot(root):
+    import section_fts_index
+    return section_fts_index.stats(root)["snapshot"]
+
+
 def is_v12(query, results):
     return ("v12" in str(query).casefold()
             or bool(results and results[0].get("volume") == "v12"))
@@ -28,6 +33,7 @@ def best_search(root, query, limit=5, weight=0.1,
         root, query, limit=20, abstain=False).get("results", [])
     if is_v12(query, bm25):
         return {"status": "ok", "retrieval_mode": "v12-bm25",
+                "snapshot": snapshot(root),
                 "results": bm25[:limit], "rerank": "skipped-v12"}
     if hybrid_search.matched_coverage(query, bm25):
         base = bm25[:limit]
@@ -47,6 +53,7 @@ def best_search(root, query, limit=5, weight=0.1,
         query, base, top1_rerank.load_model())
     return {"status": "ok" if results else "no-results",
             "retrieval_mode": mode, "rerank": reason,
+            "snapshot": snapshot(root),
             "results": results,
             "notice": "Optional composition; BM25 remains default."}
 
