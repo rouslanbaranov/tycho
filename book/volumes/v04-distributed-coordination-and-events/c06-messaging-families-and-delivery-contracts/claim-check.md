@@ -56,12 +56,11 @@ extra store and retrieval hop, when payload lifecycle and failure handling have 
 when authorization can remain an independent interaction between producer or consumer systems
 and the store. Keep the payload inline when it fits the transport and latency budget.
 
-**Mechanism.** The sending application writes the full payload to an external data store and
-sends a reference to that payload through the messaging system. Receiving applications
-resolve the reference against the data store; the broker carries only the claim check. The
-source describes the sequence as saving the payload, generating the reference after a
-successful save, publishing it, and letting the receiver retrieve the payload before
-processing.
+**Mechanism.** A sending application writes the full payload to an external data store and
+sends a reference to that payload through the messaging system. Receiving applications use the
+reference to retrieve the payload directly from the data store. The source describes the
+sequence as saving the payload, generating the reference after a successful save, publishing
+it, and letting the receiver retrieve the payload before processing.
 
 **Invariant.** Publish the token only after the payload write succeeds. Payload write and token
 publication occur in separate systems and are not atomic, so a token published before its
@@ -73,16 +72,17 @@ independent interaction between producer or consumer systems and the data store.
 guidance: keep the token bound to the stored payload it names and do not treat the claim check
 as an authorization token.
 
-**Failure and recovery.** The source names five failure cases: an orphaned payload, an
-unresolvable token, a duplicate claim check, an integrity mismatch, and a store outage or data
+**Failure and recovery.** The source names six failure cases: an orphaned payload, an
+unresolvable token, a duplicate claim check, an integrity mismatch, a store outage, and data
 loss. Publish the token only after the payload write succeeds, use an idempotent consumer for
 duplicate claim checks, define a disposition for integrity mismatches, and keep the store
 available and durable for the retention period. Tycho guidance: expire and garbage-collect
 claims, and fail closed when retrieval is impossible.
 
-**Alternative.** Inline delivery is the alternative when the payload fits the transport and
-latency budget; compression or a compact serializer is the documented way to reduce inline
-size. Reverse the choice when retrieval and storage complexity exceed the savings.
+**Alternative.** The source states: "When payloads stay within a transport's supported limit
+and don't create unacceptable throughput or latency, send them inline to avoid the
+external-store dependency." Compression or a compact serializer can reduce inline size. Reverse
+the choice when retrieval and storage complexity exceed the savings.
 
 **Limits.** A claim check adds an external store, a retrieval hop and a second consistency
 boundary; it is not a payload catalogue or a security token. The source requires defining
@@ -93,11 +93,11 @@ claims.
 **Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
 text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the
 mechanism, payload lifecycle ownership, the write-before-publish invariant, the orphaned
-payload, unresolvable token, duplicate claim check, integrity mismatch and store outage or
-data loss failure cases, and the inline-compression alternative. The public Enterprise
-Integration Patterns Claim Check page (read.batch2-claim.2026-10-21) supports the stored-payload
-and claim-token description; it is publisher-abridged and does not state the failure or
-alternative policy.
+payload, unresolvable token, duplicate claim check, integrity mismatch, store outage and data
+loss failure cases, the inline alternative, and compression or compact-serializer guidance.
+The public Enterprise Integration Patterns Claim Check page (read.batch2-claim.2026-10-21)
+supports the stored-payload and claim-token description; it is publisher-abridged and does not
+state the failure or alternative policy.
 
 ## Navigation
 

@@ -9,7 +9,7 @@ topic_ids:
   - "integration-architecture"
 perspectives:
   - "architecture"
-summary: "Bounded Splitter owner note; part identity, completion rules, fan-out and aggregation alternatives."
+summary: "Bounded Splitter owner note; correlation identity, sequence position, completion rules, fan-out and aggregation alternatives."
 route_hints:
   questions:
     - "Should a composite message be divided into independently processed parts?"
@@ -57,26 +57,28 @@ guidance, not a source claim: reject the split when ordering across parts is man
 no sequencer reconstructs it, or when the split loses required context.
 
 **Mechanism.** A splitter turns one input into several independently processable messages.
-Apache Camel's splitter breaks a composite into one message per item and processes each
-part; the default output is the original input unless an aggregation strategy is supplied.
+Apache Camel's splitter breaks a composite into one message per item and processes each part.
+Camel states: "The Splitter will by default return the original input message. You can control
+this by using a custom AggregationStrategy."
 
-**Invariant.** Each part must carry a part identity and a position so completion is
-decidable. Spring Integration's base splitter populates CORRELATION_ID, SEQUENCE_SIZE, and
-SEQUENCE_NUMBER on produced messages. For an iterator with no known size, Spring
-Integration's Iterators section sets SEQUENCE_SIZE to zero and states that the aggregate
-group remains incomplete until a custom release strategy or expiry closes it. The source
-states: "It is a MessageHandler
-implementation that encapsulates features common to splitters, such as filling in the
-appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the
-messages that are produced." A completion or compensation rule must have an owner; Tycho's
-design guidance adds a bounded fan-out and per-part idempotency, which the source does not
-fix.
+**Invariant.** Each part must carry a correlation identity, a sequence position and, when
+known, the total size; completion is decidable only when the total count is known, or when a
+custom release strategy or expiry closes the group. Spring Integration's base splitter
+populates CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER on produced messages: "It is a
+MessageHandler implementation that encapsulates features common to splitters, such as filling
+in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the
+messages that are produced." For an iterator with no known size, Spring Integration's Iterators
+section sets SEQUENCE_SIZE to zero and states that the aggregate group remains incomplete until
+a custom release strategy or expiry closes it. Tycho guidance, not a source claim: a completion
+or compensation rule must have an owner, and the fan-out is bounded; the source does not fix
+per-part idempotency.
 
-**Failure and recovery.** A split that aborts does not advance a successful-completion
-watermark, so the failed batch can be retried. Tycho guidance, not a source claim:
-completed effects must remain idempotent or be deduplicated because a retry can re-deliver
-parts. An unknown part count leaves the aggregate incomplete rather than silently complete;
-the source requires a custom release strategy or expiry to close it.
+**Failure and recovery.** Apache Camel's value-based watermark is only updated when the split
+completes successfully; an aborted split (for example, one that exceeds maxFailedRecords) does
+not update the watermark, which allows the failed batch to be retried. Tycho guidance, not a
+source claim: completed effects must remain idempotent or be deduplicated because a retry can
+re-deliver parts. An unknown part count leaves the aggregate incomplete rather than silently
+complete; Spring Integration requires a custom release strategy or expiry to close it.
 
 **Alternative.** Aggregation is the mirror-image decision. Spring Integration describes the
 aggregator as "Basically a mirror-image of the splitter, the aggregator is a type of message
@@ -84,8 +86,15 @@ handler that receives multiple messages and combines them into a single message.
 side when the work is to combine related messages, not to divide one composite; the source
 states the relationship, while the decision framing is Tycho's synthesis.
 
-**Limits.** Fan-out multiplies message volume, tracking state and partial-failure cleanup; a
-split with no completion marker leaks orphaned work and needs an owner.
+**Limits.** The evidence boundary is provider documentation: Apache Camel's Split EIP page and
+Spring Integration's Splitter and Aggregator pages are implementation-specific references, not
+an independent evaluation and not a complete Splitter contract. The watermark is an Apache
+Camel value-based resume feature, and the release-strategy and expiry behavior is Spring
+Integration's aggregator mechanism; both are provider-specific and neither is a general
+Splitter requirement. Completion and compensation ownership, bounded fan-out, ordering
+rejection and compensation are Tycho guidance, not source claims. Fan-out multiplies message
+volume, tracking state and partial-failure cleanup; a split with no completion marker leaks
+orphaned work and needs an owner.
 
 ## Navigation
 

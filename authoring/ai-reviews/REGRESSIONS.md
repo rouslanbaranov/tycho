@@ -22,7 +22,7 @@ guard is not yet possible. The guard is part of closing the finding.
 - **Claim Check review 2026-10-29:** `tests/test_tycho_claim_check_review.py` requires
   payload-lifecycle wording in the card and owner, limits the owner-unit notes to the
   Microsoft bindings plus the stored-payload-only EIP role, and requires the failure quote
-  and binding to cover all five named cases.
+  and binding to cover all six named cases.
 - **B4 review remediation 2026-10-29:** `tests/test_tycho_b4_review_remediation.py`
   requires Self-Contained Service, Sidecar and Ambassador to stay
   `awaiting-current-external-review` with pinned historical passes, no
@@ -48,6 +48,12 @@ guard is not yet possible. The guard is part of closing the finding.
   deletion ownership from independent authorization, Splitter's Iterators binding for
   unknown-size release and expiry, and all three entries remaining `partial-bounded`
   without promotion.
+- **B8 Claim/Request-Reply/Splitter majors follow-up 2026-10-29:** the same test module now
+  guards the Claim Check binding's own write-before-publish quote, its six failure cases and
+  inline-alternative binding; the Request-Reply `private to the requesting thread` decision,
+  Synchronous Block attribution and Tycho multiple-outstanding correlation path; and the
+  Splitter identity/position/size invariant, Camel value-based watermark attribution,
+  default-output binding, provider-documentation limits and Tycho ownership label.
 
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.

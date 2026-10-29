@@ -14,7 +14,8 @@ CASES = (
     "unresolvable token",
     "duplicate claim check",
     "integrity mismatch",
-    "store outage or data loss",
+    "store outage",
+    "data loss",
 )
 
 
@@ -55,8 +56,9 @@ class ClaimCheckReviewGuardTests(unittest.TestCase):
             notes,
         )
 
-    def test_failure_cases_are_sourced_across_all_five(self):
+    def test_failure_cases_are_sourced_across_all_six(self):
         failure = self.unit["technical_evidence"]["failure_recovery"]
+        self.assertIn("six failure cases", failure["quote"])
         for case in CASES:
             self.assertIn(case, failure["quote"])
             self.assertIn(case, self.owner)
@@ -64,6 +66,7 @@ class ClaimCheckReviewGuardTests(unittest.TestCase):
         self.assertIn("Payload integrity", binding)
         self.assertIn("Payload availability and durability", binding)
         self.assertIn("Idempotent Consumer", binding)
+        self.assertIn("outage or data loss", binding)
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ topic_ids:
   - "integration-architecture"
 perspectives:
   - "architecture"
-summary: "Bounded Request-Reply Messaging owner note; separate request/reply channels, synchronous blocking and recovery limits."
+summary: "Bounded Request-Reply Messaging owner note; separate channels, Synchronous Block and Asynchronous Callback, recovery and limits."
 route_hints:
   questions:
     - "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
@@ -54,11 +54,15 @@ waits for a reply; the replier receives the request and responds. The request ch
 channel are separate. The requestor waits for the reply; the replier processes the request and
 sends the response.
 
-The request thread awaiting the response implies that there is only one outstanding request, or that
-the reply channel for this request is private for this thread.
+In the Synchronous Block approach, the request thread awaiting the response implies that there
+is only one outstanding request, or that the reply channel for this request is private for this
+thread. In the Asynchronous Callback approach, the source states that multiple outstanding
+requests can share a single reply channel and that a single reply thread can process replies for
+multiple request threads. Tycho synthesis: carry a Correlation Identifier and match each reply
+to its request; the bound page does not serve correlation mechanics.
 
-If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity,
-however, is the callback mechanism that must re-establish the caller's context.
+If the requestor crashes, it can recover by simply restarting the reply thread. An added
+complexity, however, is the callback mechanism that must re-establish the caller's context.
 
 **Alternative.** The bound page states that when a caller performs a Remote Procedure Invocation,
 the caller's thread must block while it waits for the response. Tycho synthesis: a direct
@@ -67,13 +71,14 @@ the caller's request budget and blocking is acceptable; the bound page does not 
 decision alternative.
 
 **Limits.** The bound page is publisher-abridged. It supports the separate request and reply
-channels, the one-outstanding-request or private-reply-channel implication, and the Synchronous
-Block and Asynchronous Callback recovery descriptions. It does not serve correlation-identifier
-mechanics, reply timeouts, duplicate-reply handling or a complete callback contract; matching
-across multiple outstanding requests, deadline enforcement and duplicate suppression are Tycho
-guidance that needs implementation evidence. A callback must re-establish the caller's context,
-but the bound text does not define its contract. This page is not a complete request-reply
-contract.
+channels, the one-outstanding-request or private-reply-channel implication of the Synchronous
+Block case, and the Synchronous Block and Asynchronous Callback descriptions. It states that
+Asynchronous Callback enables multiple outstanding requests to share a single reply channel, but
+it does not serve correlation-identifier mechanics, reply timeouts, duplicate-reply handling or
+a complete callback contract; matching across multiple outstanding requests, deadline
+enforcement and duplicate suppression are Tycho guidance that needs implementation evidence. A
+callback must re-establish the caller's context, but the bound text does not define its
+contract. This page is not a complete request-reply contract.
 
 ## Navigation
 

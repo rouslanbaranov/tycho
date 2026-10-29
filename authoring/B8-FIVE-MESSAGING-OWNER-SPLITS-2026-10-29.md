@@ -1,8 +1,9 @@
 # B8 — five messaging owner splits, 2026-10-29
 
 Status: split complete and review-ready. Review remediation for all five entries was
-applied on 2026-10-29. No promotion or owner acceptance is claimed, and the remediated
-bytes still need a current external review.
+applied on 2026-10-29; a follow-up pass addressed the Claim Check, Request-Reply and
+Splitter majors. No promotion or owner acceptance is claimed, and the remediated bytes
+still need a current external review.
 
 ## Parent and scope
 
@@ -162,6 +163,41 @@ external review, with no promotion or owner acceptance restored.
   - Splitter owner: `4a3d29b1e7cdda3b3a73ef7260ebbfe0dd3d704bab795a90321b0c396687c773`
   - Splitter card: `ca3cb782815465f811aa06b1876094147b13bd1ddf021aa22970cdb7ddd466e1`
 
+### Claim Check, Request-Reply and Splitter majors — follow-up 2026-10-29
+
+A second bounded pass fixed the remaining majors forward under rule 33. The earlier
+remediation bytes were not rolled back.
+
+- Claim Check invariant: the owner-unit binding now carries its own
+  `Publish the token only after the payload write succeeds` sentence together with the
+  payload-lifecycle and independent-authorization paragraphs. The mechanism uses the source's
+  `A sending application writes` wording; failure is counted as six cases, with store outage
+  and data loss separated; the alternative binds the source inline-delivery sentence; the
+  good-fit access-control wording follows the source's dedicated-access-controls phrasing.
+- Request-Reply decision: the card uses `private to the requesting thread`, attributes the
+  one-outstanding or private-channel implication to the Synchronous Block case, and adds a
+  Tycho correlation path for Asynchronous Callback multiple-outstanding sharing while stating
+  that the bound page does not serve correlation mechanics. Owner Limits distinguish
+  source-stated sharing from Tycho matching, timeouts and duplicate suppression.
+- Splitter invariant: states correlation identity, sequence position and, when known, total
+  size, with completion decidable only when the count is known or a custom release or expiry
+  closes the group. Failure attributes the watermark retry to Apache Camel's value-based
+  watermark. Limits record the provider-documentation evidence boundary, provider-specific
+  watermark and release behavior, Tycho-only ownership, fan-out, ordering and compensation,
+  and the fact that this is not a complete Splitter contract. Mechanism binds Camel's
+  default-output sentence; ownership is labeled Tycho guidance.
+- Guard: `tests/test_tycho_b8_review_remediation.py` (new major assertions) and
+  `tests/test_tycho_claim_check_review.py` (six failure cases).
+- Follow-up hashes:
+  - Claim Check owner: `2139ad74281bf67a6ddab55c9517df2dcd9f00833b7c009bd72b38c90d53b890`
+  - Claim Check card: `3aae9584c54d593138da643506d1aa20a8581eff6e465b5b54adeab964c53cc5`
+  - Request-Reply Messaging owner:
+    `cf24cc940be1b875be7e69d6de7cf8df0dba04e45a04405354563b412df62e74`
+  - Request-Reply Messaging card:
+    `29377c91fe23c2ad4e3c045aa79e3f90eb52569ae3a4a2dcf69acbf9c00120c2`
+  - Splitter owner: `ffdbaf06e35ad61cb191f6065dba8bd37500182641c7d5bed2ad5c9efc16c413`
+  - Splitter card: `a2f55cc394669e4f54fcd0e29487f2458c1d5d4e3d1f455a5df56e7712a82eb6`
+
 ## Verification
 
 - `python3 scripts/book_change.py --plan`: clean.
@@ -175,9 +211,13 @@ external review, with no promotion or owner acceptance restored.
 - `python3 scripts/check_boundary.py`: pass.
 - `python3 scripts/check_markdown_line_length.py`: the same two pre-existing V11
   failures remain (c01 anti-corruption-layer line 46 and c11 rbac-abac line 58).
-- Full suite at batch end: `python3 -m unittest discover -s tests`, 639 tests, OK.
-  The pre-remediation baseline was 627 tests; the B8 remediation guard adds 12 tests
-  (five for Resequencer/Pipes and seven for Claim Check/Request-Reply/Splitter).
+- Full suite at follow-up end: `python3 -m unittest discover -s tests`, 651 tests, OK.
+  The pre-remediation baseline was 627 tests; the first B8 remediation guard added 12 tests
+  (five for Resequencer/Pipes and seven for Claim Check/Request-Reply/Splitter), and the
+  follow-up guard added 12 more for the three majors.
+- `sources/CATALOG.md` was regenerated to match the register's 2026-10-29 inventory date;
+  `validate_sources.py` now passes. This is a pre-existing derived-artifact drift, not a
+  content change.
 - Targeted structural validators ran during editing. The batch-end suite first
   exposed two stale count guards; both were updated and the rerun passed.
 
