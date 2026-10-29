@@ -332,7 +332,9 @@ def source_plan_state(root, route):
         return state(artifact, "missing", "source plan is absent",
                      "manual rebind after registry and ledger review", True, "manual")
     reasons = []
-    if plan.get("route_index_snapshot") != route["snapshot_sha256"]:
+    from route_index import legacy_scope
+    legacy = route if "documents" not in route else legacy_scope(route)
+    if plan.get("route_index_snapshot") != legacy["snapshot_sha256"]:
         reasons.append("route snapshot differs")
     if plan.get("registry_sha256") != sha(
             (root / "edition/patterns/registry.v1.json").read_text(encoding="utf-8")):

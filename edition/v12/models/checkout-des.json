@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "id": "tycho.model.checkout-des",
+  "version": "1.0.0",
+  "title": "Checkout discrete-event queue model",
+  "purpose": "Represent individual requests through capacity-bounded servers, a bounded queue, deadlines, retries and backpressure so that latency, rejection and timeout behavior can be compared under a fixed workload.",
+  "scope": {
+    "includes": [
+      "Poisson or deterministic arrivals",
+      "A finite server pool",
+      "A bounded queue and bulkhead",
+      "Per-request timeouts",
+      "Bounded retries with backoff and jitter",
+      "Rejection under backpressure"
+    ],
+    "excludes": [
+      "Multiple request classes and priorities",
+      "Preemption",
+      "Dependency calls inside service",
+      "Network transport and serialization",
+      "Data consistency inside the service"
+    ]
+  },
+  "abstraction": {
+    "time_unit": "second",
+    "state_unit": "request",
+    "boundary": "A request enters at its first arrival, occupies queue or server capacity until completion, timeout or rejection, and leaves after a terminal outcome.",
+    "resolution": "Event-level. Events are ordered by time, then priority, then insertion sequence."
+  },
+  "state_variables": [
+    {
+      "name": "queue_length",
+      "unit": "request",
+      "description": "Requests waiting for a free server.",
+      "non_negative": true
+    },
+    {
+      "name": "in_service",
+      "unit": "request",
+      "description": "Requests currently occupying a server.",
+      "non_negative": true
+    },
+    {
+      "name": "completed",
+      "unit": "request",
+      "description": "Requests that reached a successful terminal outcome.",
+      "non_negative": true
+    },
+    {
+      "name": "failed",
+      "unit": "request",
+      "description": "Requests that exhausted their attempts or timed out terminally.",
+      "non_negative": true
+    }
+  ],
+  "parameters": [
+    {
+      "name": "arrival_rate",
+      "unit": "request/second",
+      "value_type": "number",
+      "default": 20.0,
+      "evidence_status": "assumed",
+      "source_ids": [
+        "src.simpy"
+      ],
+      "note": "Synthetic Poisson arrival rate."
+    },
+    {
+      "name": "service_mean",
+      "unit": "second/request",
+      "value_type": "number",
+      "default": 0.5,
+      "evidence_status": "assumed",
+      "source_ids": [
+        "src.simpy"
+      ],
+      "note": "Synthetic mean service time."
+    },
+    {
+      "name": "service_cv",
+      "unit": "ratio",
+      "value_type": "number",
+      "default": 0.6,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Coefficient of variation for lognormal service time; not measured."
+    },
+    {
+      "name": "servers",
+      "unit": "server",
+      "value_type": "integer",
+      "default": 12,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Configured server count."
+    },
+    {
+      "name": "queue_capacity",
+      "unit": "request",
+      "value_type": "integer",
+      "default": 200,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Maximum waiting requests before rejection."
+    },
+    {
+      "name": "timeout",
+      "unit": "second",
+      "value_type": "number",
+      "default": 2.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Per-attempt deadline; not a measured client timeout."
+    },
+    {
+      "name": "max_attempts",
+      "unit": "attempt",
+      "value_type": "integer",
+      "default": 3,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Maximum attempts per request."
+    },
+    {
+      "name": "bulkhead",
+      "unit": "request",
+      "value_type": "integer",
+      "default": 240,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Maximum total requests in queue and service."
+    },
+    {
+      "name": "cost_per_server_hour",
+      "unit": "cost-unit/server-hour",
+      "value_type": "number",
+      "default": 0.08,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Synthetic relative cost."
+    }
+  ],
+  "dynamics": {
+    "kind": "discrete-event",
+    "equations": [
+      "event order = (time, priority, insertion_sequence)",
+      "arrival(t) = previous_arrival + Exponential(arrival_rate)",
+      "service(t) = Lognormal(mean=service_mean, cv=service_cv)",
+      "timeout(t) = attempt_start + timeout",
+      "retry(t) = timeout_time + backoff(attempt) with optional jitter",
+      "reject(t) when queue_length >= queue_capacity or in_system >= bulkhead"
+    ],
+    "time_step": null
+  },
+  "invariants": [
+    {
+      "name": "request-conservation",
+      "statement": "Every offered request is completed, rejected, failed, or still in the system at the horizon.",
+      "check": "CheckoutSimulation conservation_ok"
+    },
+    {
+      "name": "capacity-bound",
+      "statement": "In-service requests never exceed the configured server count and waiting requests never exceed the queue capacity.",
+      "check": "tests assert peak occupancy"
+    },
+    {
+      "name": "deadline-monotonic",
+      "statement": "A timeout cannot complete a request after a successful completion at the same or an earlier timestamp.",
+      "check": "event ordering test"
+    }
+  ],
+  "verification": {
+    "status": "model-verified",
+    "cases": [
+      {
+        "id": "V12-B-DES-01",
+        "description": "Same seed and inputs reproduce identical metrics and result hash.",
+        "expected": "identical result_sha256",
+        "observed": "checked in test_deterministic_replay",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-DES-02",
+        "description": "Queue capacity zero rejects every request that cannot start service immediately.",
+        "expected": "success_rate == 0 with positive arrivals",
+        "observed": "checked in test_zero_capacity_boundary",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-DES-03",
+        "description": "Zero arrival rate produces no requests and no fabricated completions.",
+        "expected": "offered == 0 and completed == 0",
+        "observed": "checked in test_zero_arrivals",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-DES-04",
+        "description": "Request conservation holds across timeout, retry and rejection paths.",
+        "expected": "conservation_ok true",
+        "observed": "checked in test_conservation_under_retries",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      }
+    ],
+    "notes": "Verification covers the implemented event rules and boundary cases, not agreement with a production queue."
+  },
+  "calibration": {
+    "status": "uncalibrated",
+    "evidence": [
+      {
+        "parameter": "arrival_rate",
+        "status": "assumed",
+        "source_ids": [
+          "src.simpy"
+        ],
+        "note": "Synthetic rate."
+      },
+      {
+        "parameter": "service_mean",
+        "status": "assumed",
+        "source_ids": [
+          "src.simpy"
+        ],
+        "note": "Synthetic mean."
+      },
+      {
+        "parameter": "timeout",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "Synthetic deadline."
+      },
+      {
+        "parameter": "servers",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "Candidate capacity, not a measured pool."
+      }
+    ],
+    "notes": "All inputs are synthetic. No production trace, queue measurement or service-time sample was used."
+  },
+  "validity_limits": [
+    "Valid only for the synthetic arrivals, service distribution, timeout and capacity recorded in a scenario.",
+    "The model does not represent dependency calls, network retries or data consistency.",
+    "Results do not establish production latency, capacity or cost."
+  ],
+  "assumptions": [
+    "Service times are independent across requests.",
+    "Retries re-enter the same queue and do not create a second request identity.",
+    "A timeout frees the server and may trigger a bounded retry."
+  ],
+  "unknowns": [
+    "The real service-time tail and its correlation with load.",
+    "The real timeout distribution and client retry behavior.",
+    "The cost of a failed request versus a delayed successful request."
+  ]
+}

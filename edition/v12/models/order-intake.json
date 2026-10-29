@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "id": "tycho.model.order-intake",
+  "version": "1.0.0",
+  "title": "Order-intake stock-and-flow backlog model",
+  "purpose": "Represent a bounded intake queue as a stock with admission, service and rejection flows so that conservation, capacity and backlog behavior can be checked before a discrete-event model is attempted.",
+  "scope": {
+    "includes": [
+      "A single request class arriving at a declared rate",
+      "A finite admission capacity",
+      "A service capacity derived from servers and mean service time",
+      "Exact request conservation across completed, rejected and backlog states"
+    ],
+    "excludes": [
+      "Individual request latency distributions",
+      "Retries and timeouts",
+      "Priority classes and preemption",
+      "Network, database and dependency behavior"
+    ]
+  },
+  "abstraction": {
+    "time_unit": "second",
+    "state_unit": "request",
+    "boundary": "The intake boundary starts when a request is offered and ends when it is completed, rejected or left in backlog at the horizon.",
+    "resolution": "Fixed-step fluid integration. Individual requests are not represented; the model is intentionally coarser than the discrete-event model."
+  },
+  "state_variables": [
+    {
+      "name": "backlog",
+      "unit": "request",
+      "description": "Requests admitted but not yet served.",
+      "non_negative": true
+    },
+    {
+      "name": "completed",
+      "unit": "request",
+      "description": "Cumulative requests served within capacity.",
+      "non_negative": true
+    },
+    {
+      "name": "rejected",
+      "unit": "request",
+      "description": "Cumulative offered requests refused because admission capacity was full.",
+      "non_negative": true
+    }
+  ],
+  "parameters": [
+    {
+      "name": "arrival_rate",
+      "unit": "request/second",
+      "value_type": "number",
+      "default": 20.0,
+      "evidence_status": "assumed",
+      "source_ids": [
+        "src.little-law"
+      ],
+      "note": "Synthetic offered load. It is not a measured arrival rate."
+    },
+    {
+      "name": "service_mean",
+      "unit": "second/request",
+      "value_type": "number",
+      "default": 0.5,
+      "evidence_status": "assumed",
+      "source_ids": [
+        "src.simpy"
+      ],
+      "note": "Synthetic mean service time. It is not a measured service-time distribution."
+    },
+    {
+      "name": "servers",
+      "unit": "server",
+      "value_type": "integer",
+      "default": 12,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Configured service capacity; not a measured deployment size."
+    },
+    {
+      "name": "queue_capacity",
+      "unit": "request",
+      "value_type": "integer",
+      "default": 200,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Admission bound used to model backpressure."
+    },
+    {
+      "name": "cost_per_server_hour",
+      "unit": "cost-unit/server-hour",
+      "value_type": "number",
+      "default": 0.1,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Synthetic relative cost used only for business-comparable comparison."
+    }
+  ],
+  "dynamics": {
+    "kind": "stock-flow",
+    "equations": [
+      "offered(t) = arrival_rate * dt",
+      "admitted(t) = min(offered(t), max(0, queue_capacity - backlog(t)))",
+      "rejected(t) = offered(t) - admitted(t)",
+      "served(t) = min(backlog(t) + admitted(t), servers / service_mean * dt)",
+      "backlog(t+dt) = backlog(t) + admitted(t) - served(t)",
+      "completed(t+dt) = completed(t) + served(t)"
+    ],
+    "time_step": 0.1
+  },
+  "invariants": [
+    {
+      "name": "request-conservation",
+      "statement": "At every step, offered requests equal completed plus rejected plus backlog within floating-point tolerance.",
+      "check": "run_stock_flow conservation_ok"
+    },
+    {
+      "name": "non-negative-backlog",
+      "statement": "Backlog never becomes negative and service never exceeds available work.",
+      "check": "run_stock_flow backlog >= -1e-9"
+    },
+    {
+      "name": "capacity-admission",
+      "statement": "Admission stops when the configured queue capacity is reached.",
+      "check": "rejected > 0 when offered load exceeds capacity"
+    }
+  ],
+  "verification": {
+    "status": "model-verified",
+    "cases": [
+      {
+        "id": "V12-B-SF-01",
+        "description": "Deterministic arrivals below service capacity produce zero rejection and non-growing backlog.",
+        "expected": "rejected == 0 and backlog_end finite",
+        "observed": "checked in test_conservation_below_capacity",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-SF-02",
+        "description": "Offered load above admission capacity produces rejections and conserves requests.",
+        "expected": "rejected > 0 and conservation_ok true",
+        "observed": "checked in test_saturation_rejects_and_conserves",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-SF-03",
+        "description": "Zero arrivals and zero servers leave all stocks at zero.",
+        "expected": "offered == 0 and completed == 0 and backlog == 0",
+        "observed": "checked in test_zero_boundary",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      }
+    ],
+    "notes": "These checks prove only the implemented fluid accounting and the exercised boundary cases. They do not validate the model against a real intake system."
+  },
+  "calibration": {
+    "status": "uncalibrated",
+    "evidence": [
+      {
+        "parameter": "arrival_rate",
+        "status": "assumed",
+        "source_ids": [
+          "src.little-law"
+        ],
+        "note": "Synthetic rate, not a measured arrival process."
+      },
+      {
+        "parameter": "service_mean",
+        "status": "assumed",
+        "source_ids": [
+          "src.simpy"
+        ],
+        "note": "Synthetic mean, not a measured service-time distribution."
+      },
+      {
+        "parameter": "servers",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "Configured candidate capacity, not a measured deployment."
+      },
+      {
+        "parameter": "queue_capacity",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "Configured admission bound, not a measured buffer."
+      }
+    ],
+    "notes": "No production data were used. All numbers are synthetic and exist only to exercise the model contract."
+  },
+  "validity_limits": [
+    "Valid only for the synthetic offered load, service capacity and admission bound recorded in a scenario.",
+    "The fluid approximation ignores individual request latency, retries and timeout ordering.",
+    "No claim is made about a real intake system, capacity plan or service-level objective."
+  ],
+  "assumptions": [
+    "A single request class is sufficient for the bounded comparison.",
+    "Service capacity is constant over the horizon.",
+    "Admission is first-come and rejects when the configured backlog limit is reached."
+  ],
+  "unknowns": [
+    "The real arrival distribution and its correlation with business events.",
+    "The real service-time distribution and its tail behavior.",
+    "The operational cost of queueing and rejection."
+  ]
+}

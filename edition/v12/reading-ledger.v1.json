@@ -1,0 +1,537 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-29",
+  "scope": "Bounded V12 methodological reading batch. Each record names the inspected unit, representation hash and omissions. Registration and reading are not independent review, model validation or permission to reproduce source text.",
+  "records": [
+    {
+      "id": "read.v12-simpy-41",
+      "source_id": "src.simpy",
+      "unit_label": "SimPy 4.1 topical guides: Events, Process Interaction, Shared Resources, Time and Scheduling",
+      "unit_type": "documentation-set",
+      "unit_url": "https://simpy.readthedocs.io/en/latest/",
+      "version": "SimPy 4.1 documentation, build 4.1.2.dev16+gf43816490",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS fetch; HTML text extracted with a script-only/style-only filter and whitespace normalisation",
+      "representation_sha256": "f253cfd67014320c915cc88704fcb3d4d8a74b02249352081dc867e34af98b48",
+      "retrieved_lines": 1268,
+      "retrieved_words": 5816,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "Events: event basics and callbacks",
+        "Events: triggering events and process events",
+        "Events: waiting for multiple events",
+        "Process Interaction: sleep until woken up",
+        "Process Interaction: waiting for another process to terminate",
+        "Process Interaction: interrupting another process",
+        "Shared Resources: the basic concept of resources",
+        "Shared Resources: Resource, PriorityResource and PreemptiveResource",
+        "Shared Resources: Containers and Stores",
+        "Time and Scheduling: event processing order and same-time events"
+      ],
+      "sections_not_read": [
+        "Installation",
+        "API Reference",
+        "Examples",
+        "Monitoring",
+        "Real-time simulations",
+        "Porting guides",
+        "Release notes"
+      ],
+      "omissions": "Only four bounded topical guides were read. The API reference, examples, monitoring and real-time material were excluded. The guides describe a Python library, not a reference architecture or a measured system.",
+      "representation_gap": null,
+      "claims_supported": [
+        "SimPy models time through scheduled events and processes events one after another even when several events share a timestamp.",
+        "Processes can wait for timeouts, other processes, or combinations of events, and can be interrupted.",
+        "Resource objects provide capacity-bounded acquisition with queueing, and priority or preemption variants exist.",
+        "Container and Store objects model level- and item-based shared state."
+      ],
+      "claims_not_supported": [
+        "Any measured latency, throughput or capacity result",
+        "Any claim that SimPy's event order matches a particular production scheduler",
+        "Any claim about versions other than the inspected 4.1 documentation"
+      ],
+      "limitations": "Documentation inspection only; no SimPy code was executed in V12. The V12 engine is independently implemented and does not embed SimPy.",
+      "pages": [
+        {
+          "url": "https://simpy.readthedocs.io/en/latest/topical_guides/events.html",
+          "sha256": "c7f9886c058aa2cbd624582e288a8614f47ff7d90026879df768396505060e35",
+          "lines": 336,
+          "words": 1581
+        },
+        {
+          "url": "https://simpy.readthedocs.io/en/latest/topical_guides/process_interaction.html",
+          "sha256": "6e7c02a2aa71d43ec50b242d34d8432bf83a06f3b6f8483320ee3a88570ab90f",
+          "lines": 243,
+          "words": 1006
+        },
+        {
+          "url": "https://simpy.readthedocs.io/en/latest/topical_guides/resources.html",
+          "sha256": "f4f9b538289251b0e7858091646b7cff0b0534ee235ac4edbac7d6e2146191f1",
+          "lines": 546,
+          "words": 2534
+        },
+        {
+          "url": "https://simpy.readthedocs.io/en/latest/topical_guides/time_and_scheduling.html",
+          "sha256": "4915cd116b34112d9a166eb2f0e2264d95c930a03268b35c0bd1523610c036bb",
+          "lines": 139,
+          "words": 683
+        }
+      ]
+    },
+    {
+      "id": "read.v12-owen-monte-carlo",
+      "source_id": "src.owen-monte-carlo",
+      "unit_label": "Monte Carlo theory, methods and examples: Chapters 1-2 and Appendix A.6",
+      "unit_type": "book-chapters",
+      "unit_url": "https://artowen.su.domains/mc/",
+      "version": "Author-hosted book in progress, copyright 2009-2023",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS PDF fetch; pdftotext -layout text extraction and whitespace normalisation",
+      "representation_sha256": "824558fa38b4bac4a62aa6b573a07b7c95d1e9d518fe48699f18e3671de1dc55",
+      "retrieved_lines": 3572,
+      "retrieved_words": 28968,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "Chapter 1: introduction, traffic-model example, notation and outline",
+        "Chapter 2: accuracy of simple Monte Carlo",
+        "Chapter 2: error estimation and safe standard-error computation",
+        "Chapter 2: estimating probabilities, quantiles, ratios and random sample size",
+        "Chapter 2: when Monte Carlo fails",
+        "Chapter 2: Chebychev and Hoeffding intervals",
+        "Appendix A.6: Sobol' indices, closed and total sensitivity indices, pick-freeze estimation and mean dimension"
+      ],
+      "sections_not_read": [
+        "Chapters 3-18",
+        "Other appendices",
+        "Exercises",
+        "Corrections and linked code"
+      ],
+      "omissions": "The unit is deliberately bounded to Chapters 1-2 and Appendix A.6. Variance-reduction chapters, MCMC, quasi-Monte Carlo and the remaining appendices were not read.",
+      "representation_gap": null,
+      "claims_supported": [
+        "Simple Monte Carlo error decreases with the square root of the sample size under finite-variance assumptions.",
+        "A standard-error estimate supports approximate confidence intervals, but the guarantees depend on assumptions and can fail for heavy tails or dependent samples.",
+        "Sobol' indices decompose output variance by input subsets; first-order and total-effect indices answer different sensitivity questions.",
+        "Pick-freeze estimators use paired evaluations to estimate sensitivity indices."
+      ],
+      "claims_not_supported": [
+        "Any claim that a particular V12 Monte Carlo run has converged without computing its error",
+        "Any coverage guarantee for a finite sample with unknown dependence",
+        "Any measured production distribution"
+      ],
+      "limitations": "Selected chapters only. The book is a methods reference; it does not validate any V12 model or its parameter values.",
+      "pages": [
+        {
+          "url": "https://artowen.su.domains/mc/Ch-intro.pdf",
+          "sha256": "ff84069d88dff9eca7cc98a217f05ca2f34729011d6fa864c315fa15ffe4682d",
+          "lines": 2476,
+          "words": 20968
+        },
+        {
+          "url": "https://artowen.su.domains/mc/A-anova.pdf",
+          "sha256": "d189797737606094e4788863b222d27bf9fab7653ad96d30fb1e85eb29fb61b5",
+          "lines": 1094,
+          "words": 7994
+        }
+      ]
+    },
+    {
+      "id": "read.v12-mit-system-dynamics",
+      "source_id": "src.mit-esd-system-dynamics",
+      "unit_label": "ESD.00 System Dynamics lectures 2-4",
+      "unit_type": "lecture-set",
+      "unit_url": "https://ocw.mit.edu/courses/esd-00-introduction-to-engineering-systems-spring-2011/pages/lecture-notes/",
+      "version": "MIT OpenCourseWare, Spring 2011",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS PDF fetch; pdftotext -layout text extraction and whitespace normalisation",
+      "representation_sha256": "d4691ded23a194133a698b1dfabbb27e509626fce680656670f580a3a47d7515",
+      "retrieved_lines": 2005,
+      "retrieved_words": 6877,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "Lecture 2: systems thinking, system dynamics definition and unintended consequences",
+        "Lecture 3: dynamic complexity, stocks and flows, hydraulic metaphor, integration and feedback",
+        "Lecture 4: negative feedback, exponential decay, explicit goals and adjustment time"
+      ],
+      "sections_not_read": [
+        "Lecture 1",
+        "Lectures 5-9",
+        "Readings, assignments, projects and recitations"
+      ],
+      "omissions": "Three lecture PDFs only. The broader course, its readings and its project material were not read.",
+      "representation_gap": null,
+      "claims_supported": [
+        "Stocks are accumulations over time; inflows and outflows change them and the net flow is the rate of change of the stock.",
+        "Stocks decouple inflows and outflows and provide memory and inertia in a system.",
+        "Feedback loops, delays and nonlinearity can produce counterintuitive dynamics and policy resistance.",
+        "Simulation is used to explore how modeled socio-technical systems may behave under explicit assumptions."
+      ],
+      "claims_not_supported": [
+        "Any empirical calibration of a socio-technical model",
+        "Any claim that a particular stock-and-flow model predicts a real system",
+        "Any organizational or sector-specific performance claim"
+      ],
+      "limitations": "Open courseware lecture slides only; no exercises, datasets or case measurements. The material motivates modeling but does not validate a V12 model.",
+      "pages": [
+        {
+          "url": "https://ocw.mit.edu/courses/esd-00-introduction-to-engineering-systems-spring-2011/816df198baedb3b544ab4148ce86927d_MITESD_00S11_lec02.pdf",
+          "sha256": "13de15844d6b75fefa7515565df59eeb3b4cd3af60f3bc5044434cb8b65e0dfd",
+          "lines": 491,
+          "words": 1800
+        },
+        {
+          "url": "https://ocw.mit.edu/courses/esd-00-introduction-to-engineering-systems-spring-2011/85603d5fc80f4c996a56b29e03460166_MITESD_00S11_lec03.pdf",
+          "sha256": "6736c32c5948b198eccf4739aabc73ca1924cd4268ee4aed4827eb960fca5ed1",
+          "lines": 847,
+          "words": 2679
+        },
+        {
+          "url": "https://ocw.mit.edu/courses/esd-00-introduction-to-engineering-systems-spring-2011/7271d52202426478111d17535e41ad8e_MITESD_00S11_lec04.pdf",
+          "sha256": "957044dfbb16a01e0fe35f47b177dbad79e8a2b374cfb7a5c44d39e2513affa1",
+          "lines": 663,
+          "words": 2389
+        }
+      ]
+    },
+    {
+      "id": "read.v12-sargent-vv",
+      "source_id": "src.sargent-vv",
+      "unit_label": "Verification and Validation of Simulation Models - full paper",
+      "unit_type": "conference-paper",
+      "unit_url": "https://informs-sim.org/wsc11papers/016.pdf",
+      "version": "Proceedings of the 2011 Winter Simulation Conference, paper 016",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS PDF fetch; pdftotext -layout text extraction and whitespace normalisation",
+      "representation_sha256": "a34dbdeca8ac70d31d4f8363d5cc7b36f5bc0703075954dfaaf14d4391ffec26",
+      "retrieved_lines": 835,
+      "retrieved_words": 8760,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "Basic approaches to model validity",
+        "Model-development paradigms and the verification/validation relationship",
+        "Validation techniques including degenerate tests, extreme-condition tests, sensitivity analysis and traces",
+        "Data validity",
+        "Conceptual model validation",
+        "Computerized model verification",
+        "Operational validity",
+        "Documentation, recommended procedure and accreditation"
+      ],
+      "sections_not_read": [],
+      "omissions": "The full paper text was read. The paper's references and the cited methods were not independently inspected.",
+      "representation_gap": null,
+      "claims_supported": [
+        "Model verification concerns whether the computer program of the model is correct; model validation concerns whether the model is adequate for its intended purpose.",
+        "Validity is purpose- and domain-dependent, and a model change requires verification and validation again.",
+        "Validation can combine comparison to other models, degenerate tests, extreme-condition tests, historical data, internal validity, sensitivity analysis, traces and Turing tests.",
+        "Data validity, conceptual-model validity and operational validity are distinct concerns."
+      ],
+      "claims_not_supported": [
+        "Any claim that a V12 model is valid for a real system",
+        "Any measured data quality assessment",
+        "Any certification, accreditation or regulatory acceptance"
+      ],
+      "limitations": "Methodological guidance only. The paper does not inspect any V12 model, dataset or run, and does not establish production readiness.",
+      "pages": [
+        {
+          "url": "https://informs-sim.org/wsc11papers/016.pdf",
+          "sha256": "1c621e3114c29e8433ab413704602a6152ba05c0c9d4d3204eeae688c011e60d",
+          "lines": 835,
+          "words": 8757
+        }
+      ]
+    },
+    {
+      "id": "read.v12-prov-o",
+      "source_id": "src.w3c-prov-o",
+      "unit_label": "PROV-O: The PROV Ontology - sections 1-4",
+      "unit_type": "standard-sections",
+      "unit_url": "https://www.w3.org/TR/prov-o/",
+      "version": "W3C Recommendation 30 April 2013",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS fetch; HTML text extraction and whitespace normalisation",
+      "representation_sha256": "562754073a45a541b256351801b48d389b7f92832d50b56b7ea0e968d6389844",
+      "retrieved_lines": 7102,
+      "retrieved_words": 21626,
+      "coverage": 0.55,
+      "status": "partial-scoped-text-read",
+      "sections_read": [
+        "Introduction and conventions",
+        "Starting-point terms: Entity, Activity, Agent",
+        "Starting-point terms: wasGeneratedBy, used, wasInformedBy, wasStartedBy, wasEndedBy, wasInvalidatedBy, wasDerivedFrom, wasAttributedTo, wasAssociatedWith, actedOnBehalfOf",
+        "Expanded terms: primary and qualified influence relations",
+        "Qualified terms: generation, usage, communication, start, end, invalidation, derivation, attribution, association, delegation"
+      ],
+      "sections_not_read": [
+        "Examples",
+        "Term index",
+        "Linked PROV documents",
+        "Conformance and implementation material"
+      ],
+      "omissions": "Only sections 1-4 were inspected. The complete ontology examples, term index and linked documents were excluded.",
+      "representation_gap": "The page is large and browser-rendered; section text was extracted without executing scripts. Links, diagrams and examples were not represented.",
+      "claims_supported": [
+        "Provenance can be described with entities, activities and agents and with relations such as generation, use, derivation and attribution.",
+        "A qualified relation can carry additional details such as a role, time or plan.",
+        "Provenance descriptions can connect a produced artifact to the activity and inputs that produced it."
+      ],
+      "claims_not_supported": [
+        "That V12 records conform to PROV-O or validate against its ontology",
+        "That PROV-O captures statistical correctness",
+        "That provenance alone establishes reproducibility"
+      ],
+      "limitations": "Vocabulary inspiration only. V12 uses a small subset of PROV-O concepts in its own JSON contract and does not claim conformance.",
+      "pages": [
+        {
+          "url": "https://www.w3.org/TR/prov-o/",
+          "sha256": "575ae829caf8ee0b626884189b5be2c26baa26babb6f9f7690fd6bd83e62083b",
+          "lines": 7101,
+          "words": 21623
+        }
+      ]
+    },
+    {
+      "id": "read.v12-madr",
+      "source_id": "src.madr",
+      "unit_label": "MADR - Markdown Architectural Decision Records landing page and template guidance",
+      "unit_type": "documentation-page",
+      "unit_url": "https://adr.github.io/madr/",
+      "version": "MADR 4.0.0",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS fetch; HTML text extraction and whitespace normalisation",
+      "representation_sha256": "3054b280a5336a2fa864ac6c6423924ff3d8495e63db1d8f495fe719581bbf4f",
+      "retrieved_lines": 320,
+      "retrieved_words": 1960,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "About MADR and the definition of an architectural decision",
+        "Template, example and decision outcome",
+        "Applying MADR: initialization and creation",
+        "Using MADR in large projects and product developments",
+        "Older versions and license pointer"
+      ],
+      "sections_not_read": [
+        "Linked repository",
+        "Release assets",
+        "Examples directory",
+        "Tooling"
+      ],
+      "omissions": "The landing page only. The linked template repository, releases, examples and tooling were not read.",
+      "representation_gap": null,
+      "claims_supported": [
+        "MADR is a structured Markdown template for architectural decision records.",
+        "A record separates context and problem statement, considered options and decision outcome.",
+        "The project treats decision capture as lightweight, versionable documentation."
+      ],
+      "claims_not_supported": [
+        "That MADR is the only valid decision-record format",
+        "That a MADR record proves a decision is correct",
+        "That V12 decision records are MADR-conformant"
+      ],
+      "limitations": "Format guidance only. V12 uses a compatible JSON-first structure and does not claim MADR conformance.",
+      "pages": [
+        {
+          "url": "https://adr.github.io/madr/",
+          "sha256": "d5a9691c1d83454166328689ce2daa997bc7000db537a25a24bf16ddc7a19c35",
+          "lines": 319,
+          "words": 1957
+        }
+      ]
+    },
+    {
+      "id": "read.v12-nygard-adr",
+      "source_id": "src.nygard-adr",
+      "unit_label": "Documenting Architecture Decisions - full article",
+      "unit_type": "article",
+      "unit_url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+      "version": "Article dated 15 November 2011",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS fetch; HTML text extraction and whitespace normalisation",
+      "representation_sha256": "08b5fb5f4c6edacb68798974490be2adf58d190f74a983e7d911d0aa77c18dba",
+      "retrieved_lines": 359,
+      "retrieved_words": 1320,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "Context",
+        "Decision",
+        "Status",
+        "Consequences",
+        "Template rationale"
+      ],
+      "sections_not_read": [
+        "Linked posts and unrelated site material"
+      ],
+      "omissions": "The full article was read. Linked posts and unrelated site pages were excluded.",
+      "representation_gap": null,
+      "claims_supported": [
+        "Architecturally significant decisions can be recorded as short, modular documents.",
+        "A decision record should preserve context, the decision, its status and its consequences.",
+        "Small records are easier to keep current than a single large specification."
+      ],
+      "claims_not_supported": [
+        "That a decision record is a substitute for measurement or review",
+        "That every decision must use one template",
+        "That V12 decision records are Nygard-format records"
+      ],
+      "limitations": "A practice article, not empirical evidence. V12 adapts the structure and states its own status and limits.",
+      "pages": [
+        {
+          "url": "https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions",
+          "sha256": "b570325d4df47ef12782eb033aa8aaf98f3a008e3e71fdc149d2084135d9b5fd",
+          "lines": 358,
+          "words": 1317
+        }
+      ]
+    },
+    {
+      "id": "read.v12-plos-repro",
+      "source_id": "src.plos-repro",
+      "unit_label": "Ten Simple Rules for Reproducible Computational Research - full article",
+      "unit_type": "journal-article",
+      "unit_url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285",
+      "version": "PLOS Computational Biology 9(10): e1003285, 24 October 2013",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS fetch; HTML text extraction and whitespace normalisation",
+      "representation_sha256": "9b781701d2274d9150d310b02d2c46213bd571f8797569e6fbaf189d566ed5a9",
+      "retrieved_lines": 580,
+      "retrieved_words": 4335,
+      "coverage": 1.0,
+      "status": "full-scoped-text-read",
+      "sections_read": [
+        "All ten rules",
+        "Examples and rationale for tracked inputs, versioned scripts, recorded parameters, archived environments and provenance"
+      ],
+      "sections_not_read": [
+        "Supporting information files",
+        "References",
+        "Figures"
+      ],
+      "omissions": "The article text was read; supporting files, references and figures were excluded.",
+      "representation_gap": null,
+      "claims_supported": [
+        "Reproducible computational research benefits from tracking input data, versioning scripts, recording parameters and archiving the computational environment.",
+        "A record should allow another person to rerun the analysis and obtain the same result.",
+        "Manual steps and untracked state are risks to reproducibility."
+      ],
+      "claims_not_supported": [
+        "That following the rules guarantees reproducibility",
+        "That V12 is reproducible on every platform",
+        "That a hash alone proves correctness"
+      ],
+      "limitations": "Guidance article only. V12 implements a bounded subset: canonical inputs, seeds, engine version, hashes and replay tests.",
+      "pages": [
+        {
+          "url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285",
+          "sha256": "443708ad4889eaa0190e1ae604b3194617a1a411855d9c36f5838fd7a7f880ba",
+          "lines": 579,
+          "words": 4332
+        }
+      ]
+    },
+    {
+      "id": "read.v12-jcgm-100",
+      "source_id": "src.jcgm-100",
+      "unit_label": "JCGM 100:2008 - clauses 1-5 and 7",
+      "unit_type": "standard-sections",
+      "unit_url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf/cb0ef43f-baa5-11cf-3f85-4dcd86f77bd6",
+      "version": "JCGM 100:2008 (GUM 1995 with minor corrections)",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS PDF fetch; pdftotext -layout text extraction and whitespace normalisation",
+      "representation_sha256": "fcc57969edab94204fb037be1a9d27c5433a293a3535753eee59f2cbf56aec25",
+      "retrieved_lines": 8218,
+      "retrieved_words": 66166,
+      "coverage": 0.45,
+      "status": "partial-scoped-text-read",
+      "sections_read": [
+        "Clause 1: scope",
+        "Clause 2: terms and definitions",
+        "Clause 3: basic concepts and the measurement model",
+        "Clause 4: evaluating standard uncertainty from Type A and Type B components",
+        "Clause 5: determining combined standard uncertainty and expanded uncertainty",
+        "Clause 7: reporting uncertainty"
+      ],
+      "sections_not_read": [
+        "Clause 6",
+        "Clauses 8 and later",
+        "Annexes A-J",
+        "Examples and detailed numerical procedures"
+      ],
+      "omissions": "Selected clauses only. The annexes, detailed examples and later clauses were excluded.",
+      "representation_gap": "The PDF was extracted as layout text; equations, symbols and figures may be degraded. Clause meaning was read from surrounding prose, not from a symbol-level transcription.",
+      "claims_supported": [
+        "A measurement result includes a measured value and an uncertainty, and the measurement model relates input quantities to the output quantity.",
+        "Standard uncertainty can be combined from components, and an expanded uncertainty defines a coverage interval at a stated coverage probability.",
+        "Reporting uncertainty requires the measured value, the uncertainty, the coverage factor and the coverage probability."
+      ],
+      "claims_not_supported": [
+        "That V12 inputs are metrologically calibrated",
+        "That a synthetic parameter uncertainty is a measured Type A or Type B component",
+        "That V12 conforms to JCGM 100"
+      ],
+      "limitations": "Vocabulary only. V12 uses uncertainty language to separate assumed, measured, derived and unknown inputs; it does not perform a metrological uncertainty budget.",
+      "pages": [
+        {
+          "url": "https://www.bipm.org/documents/20126/2071204/JCGM_100_2008_E.pdf/cb0ef43f-baa5-11cf-3f85-4dcd86f77bd6",
+          "sha256": "d427e86d53f6cefcec668ae4b4e21645605d1e6641d04d20865ee874893bc8d5",
+          "lines": 8218,
+          "words": 66163
+        }
+      ]
+    },
+    {
+      "id": "read.v12-little-law",
+      "source_id": "src.little-law",
+      "unit_label": "Statistical Analysis with Little's Law - selected sections",
+      "unit_type": "journal-article",
+      "unit_url": "https://www.columbia.edu/~ww2040/LL_OR.pdf",
+      "version": "Operations Research 61(4), 2013, pp. 1030-1045",
+      "access_date": "2026-10-29",
+      "access_method": "Public HTTPS PDF fetch; pdftotext -layout text extraction and whitespace normalisation",
+      "representation_sha256": "e63ad0db480436409454f670f7d2229d3564f5a6d9fef8d6030e105129e043a2",
+      "retrieved_lines": 1315,
+      "retrieved_words": 15054,
+      "coverage": 0.5,
+      "status": "partial-scoped-text-read",
+      "sections_read": [
+        "Abstract",
+        "Introduction",
+        "Finite-time Little's Law",
+        "Batch-means confidence intervals",
+        "Edge effects in finite-window measurements",
+        "Conclusions"
+      ],
+      "sections_not_read": [
+        "Mathematical proofs in full",
+        "Call-center case data",
+        "Simulation experiment details",
+        "References"
+      ],
+      "omissions": "Selected sections only. Proofs, case data and simulation details were not independently reproduced.",
+      "representation_gap": "The PDF was extracted as layout text; equations and symbols may be degraded. Prose meaning was used, not symbol-level transcription.",
+      "claims_supported": [
+        "Little's Law relates long-run average number in system, arrival rate and average time in system under stated conditions.",
+        "Finite-window measurements are not the same as long-run averages and can carry edge bias.",
+        "Batch means can support confidence intervals for simulation output."
+      ],
+      "claims_not_supported": [
+        "Any measured V12 queue behavior",
+        "Any claim that a finite sample satisfies the long-run law exactly",
+        "Any production capacity conclusion"
+      ],
+      "limitations": "Selected sections only; the paper is methodological and does not validate the V12 engine or its scenarios.",
+      "pages": [
+        {
+          "url": "https://www.columbia.edu/~ww2040/LL_OR.pdf",
+          "sha256": "e63ad0db480436409454f670f7d2229d3564f5a6d9fef8d6030e105129e043a2",
+          "lines": 1315,
+          "words": 15054
+        }
+      ]
+    }
+  ]
+}

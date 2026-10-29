@@ -1,0 +1,138 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/v12/source-plan.v1.schema.json",
+  "title": "V12 source plan v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "updated",
+    "volume",
+    "policy",
+    "entries",
+    "summary",
+    "scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "volume": {
+      "const": "v12"
+    },
+    "policy": {
+      "type": "string",
+      "minLength": 40
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "topic_id",
+          "question",
+          "required_units"
+        ],
+        "properties": {
+          "topic_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "question": {
+            "type": "string",
+            "minLength": 20
+          },
+          "required_units": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "source_id",
+                "unit_label",
+                "status",
+                "read_record_id",
+                "used_by"
+              ],
+              "properties": {
+                "source_id": {
+                  "type": "string",
+                  "pattern": "^src\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+                },
+                "unit_label": {
+                  "type": "string",
+                  "minLength": 8
+                },
+                "status": {
+                  "enum": [
+                    "read",
+                    "planned",
+                    "blocked"
+                  ]
+                },
+                "read_record_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "used_by": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "type": "string",
+                    "pattern": "^book/volumes/v12-.*\\.md$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "topics",
+        "required_units",
+        "read_units",
+        "planned_units",
+        "blocked_units"
+      ],
+      "properties": {
+        "topics": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "required_units": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "read_units": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "planned_units": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blocked_units": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 40
+    }
+  }
+}

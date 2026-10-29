@@ -33,6 +33,9 @@ CORE = (
     ("strict-json-schemas", ["scripts/validate_metadata_schemas.py", "examples"]),
     ("book-metadata", ["scripts/validate_book_metadata.py"]),
     ("book-navigation", ["scripts/validate_book_navigation.py"]),
+    ("edition-structure", ["scripts/validate_edition.py"]),
+    ("v12-index", ["scripts/build_v12_index.py", "--check"]),
+    ("v12-contracts", ["scripts/validate_v12.py"]),
 )
 
 

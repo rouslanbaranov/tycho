@@ -1,0 +1,176 @@
+{
+  "convergence": {
+    "metric": "success_rate",
+    "relative_error": 0.0,
+    "replications": 20,
+    "status": "converged",
+    "threshold": 0.02
+  },
+  "engine": {
+    "deterministic": true,
+    "name": "tycho-v12-reference-engine",
+    "version": "1.0.0"
+  },
+  "id": "tycho.run.modernization-staged",
+  "invariants": {
+    "checks": [
+      {
+        "detail": "offered=480000.0; completed=480000.0; rejected=0.0; failed=0.0; in_system=0.0; backlog_end=0.0",
+        "name": "request-conservation",
+        "status": "pass"
+      }
+    ],
+    "conservation_ok": true
+  },
+  "limitations": [
+    "Synthetic workload; no production measurement is claimed.",
+    "Metrics are conditional on the declared model and scenario assumptions.",
+    "Confidence intervals use a normal approximation across replications.",
+    "Non-completing rollback durations are censored at the elapsed time from the trigger to the scenario horizon."
+  ],
+  "metrics": {
+    "cost_per_1k_success": {
+      "ci_high": 0.0,
+      "ci_low": 0.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "cost-unit/1000 successes",
+      "value": 0.0
+    },
+    "latency_mean": {
+      "ci_high": 1.7068414057226242,
+      "ci_low": 1.2684435941470324,
+      "replications": 20,
+      "standard_error": 0.11183823147609294,
+      "unit": "second",
+      "value": 1.4876424999348283
+    },
+    "latency_p95": {
+      "ci_high": 1.7068414057226242,
+      "ci_low": 1.2684435941470324,
+      "replications": 20,
+      "standard_error": 0.11183823147609294,
+      "unit": "second",
+      "value": 1.4876424999348283
+    },
+    "latency_p99": {
+      "ci_high": 1.7068414057226242,
+      "ci_low": 1.2684435941470324,
+      "replications": 20,
+      "standard_error": 0.11183823147609294,
+      "unit": "second",
+      "value": 1.4876424999348283
+    },
+    "max_divergence": {
+      "ci_high": 12289.313356312152,
+      "ci_low": 5561.615823150216,
+      "replications": 20,
+      "standard_error": 1716.2809077690092,
+      "unit": "record",
+      "value": 8925.464589731184
+    },
+    "max_queue_length": {
+      "ci_high": 9358.757628647307,
+      "ci_low": 5182.308800390663,
+      "replications": 20,
+      "standard_error": 1065.4401971668715,
+      "unit": "request",
+      "value": 7270.533214518985
+    },
+    "mean_queue_length": {
+      "ci_high": 5837.399719344383,
+      "ci_low": 2646.551706741955,
+      "replications": 20,
+      "standard_error": 814.0067975155232,
+      "unit": "request",
+      "value": 4241.975713043169
+    },
+    "rejection_rate": {
+      "ci_high": 0.0,
+      "ci_low": 0.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "ratio",
+      "value": 0.0
+    },
+    "retry_amplification": {
+      "ci_high": 1.0,
+      "ci_low": 1.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "ratio",
+      "value": 1.0
+    },
+    "rollback_completed": {
+      "ci_high": 0.23489397276193807,
+      "ci_low": 0.0,
+      "replications": 20,
+      "standard_error": 0.06882472016116853,
+      "unit": "ratio",
+      "value": 0.1
+    },
+    "rollback_seconds": {
+      "ci_high": 1241.8727673143258,
+      "ci_low": 918.1272326856744,
+      "replications": 20,
+      "standard_error": 82.58966419340223,
+      "unit": "second",
+      "value": 1080.0
+    },
+    "server_utilization": {
+      "ci_high": 0.0,
+      "ci_low": 0.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "ratio",
+      "value": 0.0
+    },
+    "success_rate": {
+      "ci_high": 1.0,
+      "ci_low": 1.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "ratio",
+      "value": 1.0
+    },
+    "throughput": {
+      "ci_high": 10.0,
+      "ci_low": 10.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "request/second",
+      "value": 10.0
+    },
+    "timeout_rate": {
+      "ci_high": 0.0,
+      "ci_low": 0.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "ratio",
+      "value": 0.0
+    }
+  },
+  "model_id": "tycho.model.modernization-path",
+  "provenance": {
+    "engine_sha256": "659bdb5e60bf13af0dafe7eea5ff0c5214f349f719f49db468088217b4875df1",
+    "input_sha256": "2fbb11a5e6bd4c9c7814bba1f3924f9b7a80e72d36c9096536e997db9c705347",
+    "invocation": "python3 scripts/v12_engine.py run --model edition/v12/models/modernization-path.json --scenario edition/v12/scenarios/modernization-staged.json",
+    "model_sha256": "a4bed223cf2ff75226d4fc49b02163df2eb3702473916458a749c950317870ed",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "python": "3.15.0",
+    "replications": 20,
+    "scenario_sha256": "8cb384c7f6d29a230299bda8b1fe6c88689871f96c433e68f2872964617acd59",
+    "seed_base": 20261029
+  },
+  "result_sha256": "234374c5966d5122277d6bc19a42e19492408916b3aa5a5140c9697cdc22f6c7",
+  "scenario_id": "tycho.scenario.modernization-staged",
+  "schema_version": 1,
+  "sensitivity": [],
+  "uncertainty": {
+    "correlated_inputs": true,
+    "draws": 20,
+    "method": "gaussian-copula",
+    "notes": "Independent replications with seeded parameter draws. Correlations are declared in the scenario and are not inferred from data."
+  },
+  "version": "1.0.0"
+}

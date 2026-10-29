@@ -48,8 +48,14 @@ def validate(root=ROOT):
                 or re.fullmatch(r'book/volumes/v(?:0[1-9]|[1-9][0-9])-[a-z0-9]+(?:-[a-z0-9]+)*/c(?:0[1-9]|[1-9][0-9])-[a-z0-9]+(?:-[a-z0-9]+)*', path) is not None,
                 'directory-post-migration-name')
         require((root / path / 'README.md').is_file(), 'directory-post-migration-landing')
+    v12_root = 'book/volumes/v12-modeling-simulation-and-decision-validation'
+    v12_dirs = {v12_root}
+    for path in (root / v12_root).iterdir():
+        if path.is_dir():
+            v12_dirs.add(path.relative_to(root).as_posix())
     actual_dirs = {p.relative_to(root).as_posix() for p in (root / 'book/volumes').rglob('*') if p.is_dir()}
-    require(actual_dirs == set(view.inverse) | {item['path'] for item in post_dirs}, 'directory-unregistered-directory')
+    require(actual_dirs == set(view.inverse) | {item['path'] for item in post_dirs} | v12_dirs,
+            'directory-unregistered-directory')
     required_history = {'edition/migration.json', 'edition/decomposition-plan.json', 'edition/decomposition-manifest.json', 'edition/enrichment-manifest.json'}
     require(set(m['protected_manifests']) == required_history, 'directory-historical-manifest-coverage')
     for path, digest in m['protected_manifests'].items():
@@ -57,7 +63,8 @@ def validate(root=ROOT):
     records = m['documents']
     require(len(records) == len({r['old_path'] for r in records}) == len({r['new_path'] for r in records}) == len({r['id'] for r in records}) == m['canonical_documents'], 'directory-document-map-uniqueness')
     index = canonical_scan(root)
-    require({(d['id'], d['path']) for d in index['documents']} == {(r['id'], r['new_path']) for r in records}, 'directory-document-membership')
+    require({(d['id'], d['path']) for d in index['documents'] if not d['path'].startswith(v12_root + '/')}
+            == {(r['id'], r['new_path']) for r in records}, 'directory-document-membership')
     for r in records:
         require(view.current(r['old_path']) == r['new_path'], 'directory-document-destination')
         require(not (root / r['new_path']).is_symlink(), 'directory-symlink')
@@ -75,11 +82,11 @@ def validate(root=ROOT):
         if r['old_path'] != r['new_path']:
             require(not (root / r['old_path']).exists(), 'directory-duplicate-old-path')
     outline = json.loads((root / 'edition/outline.json').read_text())
-    registered_dirs = set(view.inverse) | {item['path'] for item in post_dirs}
+    registered_dirs = set(view.inverse) | {item['path'] for item in post_dirs} | v12_dirs
     for r in [*outline['volumes'], *outline['chapters']]:
         require(r['path'].rsplit('/', 1)[0] in registered_dirs, 'directory-outline-path')
-    require(len(outline['volumes']) == 11 and len(outline['chapters']) == 82, 'directory-outline-membership')
-    return {'volumes': 11, 'chapters': 82, 'canonical_documents': len(records), 'moved_documents': sum(r['old_path'] != r['new_path'] for r in records), 'post_migration_directories': len(post_dirs), 'protected_historical_manifests': len(m['protected_manifests']), 'scope': 'reversible path-only edits and retained identities; not substantive acceptance'}
+    require(len(outline['volumes']) == 12 and len(outline['chapters']) == 89, 'directory-outline-membership')
+    return {'volumes': 12, 'chapters': 89, 'canonical_documents': len(records), 'moved_documents': sum(r['old_path'] != r['new_path'] for r in records), 'post_migration_directories': len(post_dirs), 'v12_directories': len(v12_dirs), 'protected_historical_manifests': len(m['protected_manifests']), 'scope': 'reversible path-only edits and retained identities; not substantive acceptance'}
 
 
 if __name__ == '__main__':

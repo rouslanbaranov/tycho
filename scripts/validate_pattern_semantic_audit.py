@@ -10,6 +10,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from validate_pattern_registry import slug_heading
+from route_index import legacy_scope
 
 ARTIFACT = Path("edition/patterns/semantic-audit.v1.json")
 SCHEMA = Path("schemas/pattern-semantic-audit.v1.schema.json")
@@ -133,7 +134,7 @@ def validate_data(data, root=ROOT):
         raise ValueError("semantic-audit-schema: " + str(len(errors)) +
                          " error(s), first at " + path + ": " + first.message)
 
-    route = load(root / ROUTE)
+    route = legacy_scope(load(root / ROUTE))
     documents = {item["path"]: item for item in route["documents"]}
     phase4 = load(root / PHASE4)
     dispositions = {item["path"]: item["disposition"]

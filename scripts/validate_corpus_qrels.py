@@ -8,6 +8,7 @@ import argparse
 import json
 from pathlib import Path
 import sys
+from route_index import legacy_scope
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_QRELS = ROOT / "evaluation/corpus-qrels.v2.json"
@@ -26,6 +27,8 @@ def load(path):
 
 
 def validate(qrels, route, schema, require_snapshot=True):
+    if "unannotated_paths" in route and "coverage" in route:
+        route = legacy_scope(route)
     from jsonschema import Draft202012Validator, FormatChecker
 
     Draft202012Validator.check_schema(schema)

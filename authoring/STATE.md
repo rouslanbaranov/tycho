@@ -14,6 +14,14 @@
 > pattern-atlas candidate (#288); a historical human review is recorded and owner
 > acceptance remains open. The #214/rc.3 status below is historical.
 
+**V12 isolated volume — 2026-10-29 (#587):** an additive twelfth volume is implemented
+with 31 pages, three model contracts, nine scenarios, nine seeded runs and two decision
+records. The current tree has 12 volumes, 89 chapters and 492 canonical documents. V12
+links one way to existing patterns; no existing card, page or promotion record was edited
+(449 protected pages and four protected records unchanged). All V12 models are
+uncalibrated and the workloads are synthetic. Independent review and owner acceptance
+remain separate gates. See [the implementation record](V12-IMPLEMENTATION-2026-10-29.md).
+
 **Owner-unit audit — 2026-10-21 (#286):** 144 carded entries now map to 118
 section-level owner units on the same 65 registered pages: 96 partial-bounded,
 48 partial, 0 name-only and 0 sufficient. Thirty shared pages are classified

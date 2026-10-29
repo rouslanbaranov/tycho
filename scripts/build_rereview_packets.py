@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from route_index import legacy_scope
 import re
 import subprocess
 import sys
@@ -202,7 +203,7 @@ def build_packets():
     records = json.loads(RECORDS.read_text(encoding="utf-8"))["records"]
     recon = json.loads(RECON.read_text(encoding="utf-8"))
     recon_rows = {row["pattern_id"]: row for row in recon["records"]}
-    route = json.loads(ROUTE.read_text(encoding="utf-8"))
+    route = legacy_scope(json.loads(ROUTE.read_text(encoding="utf-8")))
     route_docs = {doc["path"]: doc for doc in route["documents"]}
     rebinds = {}
     if REBINDS.is_file():
@@ -248,10 +249,13 @@ def build_packets():
             1 for p in packets
             if p["derived_state"] == "awaiting-current-external-review"),
     }
-    sources = [
-        {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
-        for path in (CANDIDATES, RECORDS, RECON, ROUTE, BATCH, SUFFICIENT)
-    ]
+    sources = []
+    for path in (CANDIDATES, RECORDS, RECON, ROUTE, BATCH, SUFFICIENT):
+        entry = {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
+        if path == ROUTE:
+            entry["sha256"] = route["snapshot_sha256"]
+            entry["scope"] = "v1-v11"
+        sources.append(entry)
     return {"schema_version": 1, "scope": (
         "Independent re-review packets for records that claim a re-review or "
         "await a current external review. Historical passes are pinned evidence "

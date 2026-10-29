@@ -40,6 +40,9 @@ def main():
         [sys.executable, "scripts/validate_pattern_semantic_audit.py"],
         [sys.executable, "scripts/check_markdown_line_length.py"],
         [sys.executable, "scripts/pattern_census.py", "--check"],
+        [sys.executable, "scripts/validate_edition.py"],
+        [sys.executable, "scripts/build_v12_index.py", "--check"],
+        [sys.executable, "scripts/validate_v12.py"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],
     ]

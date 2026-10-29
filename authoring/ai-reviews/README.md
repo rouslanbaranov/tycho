@@ -103,3 +103,26 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 service-discovery split | pass | `2026-10-29-service-discovery-split-deepseek.md` | `736e1f51adead6bfd4867cafe0d2f1d564cce62b2251ea0381e139ace646093e` |
 | 2026-10-29 | DeepSeek Reviewer | #540 B8 final C/R/S | pass | `2026-10-29-b8-final-crs-deepseek.md` | `84b543a1e932d1369d1c38837f36bcca2ed6c75e8f704c09b20a331aa7917f91` |
 | 2026-10-29 | DeepSeek Reviewer | #540 TTL final | pass | `2026-10-29-ttl-final-deepseek.md` | `785a75a242517dad02c3d6c6c3d8c230f48a1485c451118009d42ccf2a7dee39` |
+
+## V12 review records
+
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 initial review | reject |
+  `2026-10-29-v12-isolated-volume-codex.md` |
+  `0c23513867c8921c66e648857aa561559abfed168e28445d58f4e73991f903db` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 delta review 1 | reject |
+  `2026-10-29-v12-isolated-volume-delta-codex.md` |
+  `f1c4ce40d6dbfe916adf0d0fddc6e41a415733bc041951c6cffd041bb551d106` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 delta review 2 | pass-with-findings |
+  `2026-10-29-v12-isolated-volume-delta2-codex.md` |
+  `b03e32f9e3eea1b2615291d8c263929589de0873cfbc0210a8973fcb811e6754` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 delta review 3 | pass-with-findings |
+  `2026-10-29-v12-isolated-volume-delta3-codex.md` |
+  `84282ebdf539e6d0ab36dedb16b8db19c65e4fc60923b3dcede196e562ecda30` |
+- 2026-10-29 | Codex / OpenAI (GPT-5-based; serving version not exposed) |
+  #587 V12 focused final review | pass-with-findings |
+  `2026-10-29-v12-isolated-volume-delta4-codex.md` |
+  `6118b60e5b19a13479ea2932d2067cbe6e6c11e83b4eca2decfca179ea14fcdd`

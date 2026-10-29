@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+from route_index import legacy_scope
 
 ROOT = Path(__file__).resolve().parents[1]
 PLAN = Path("edition/patterns/source-plan.v1.json")
@@ -58,7 +59,7 @@ def validate_data(plan, ledger, registry, route, sources, root=ROOT):
 
     require(plan["registry_sha256"] == hashlib.sha256(
         (root / REGISTRY).read_bytes()).hexdigest(), "source-registry-hash")
-    require(plan["route_index_snapshot"] == route["snapshot_sha256"],
+    require(plan["route_index_snapshot"] == legacy_scope(route)["snapshot_sha256"],
             "source-route-snapshot")
     patterns = {item["id"]: item for item in registry["patterns"]}
     require(len(plan["entries"]) == 145, "source-plan-entry-count")

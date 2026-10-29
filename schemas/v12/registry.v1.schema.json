@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/v12/registry.v1.schema.json",
+  "title": "V12 artifact registry v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "version",
+    "volume",
+    "artifacts",
+    "reverse_index",
+    "scope"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "volume": {
+      "const": "v12"
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "models",
+        "scenarios",
+        "runs",
+        "decisions"
+      ],
+      "properties": {
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "path",
+              "version",
+              "sha256",
+              "artifact_type",
+              "page_id",
+              "page_path",
+              "pattern_ids",
+              "evidence_status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^tycho\\.model\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^edition/v12/models/.*\\.json$"
+              },
+              "version": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "artifact_type": {
+                "const": "model"
+              },
+              "page_id": {
+                "type": "string",
+                "pattern": "^tycho\\.page\\.[a-z0-9]{6,32}$"
+              },
+              "page_path": {
+                "type": "string",
+                "pattern": "^book/.*\\.md$"
+              },
+              "pattern_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^tycho\\.pattern\\.[a-z0-9-]+$"
+                }
+              },
+              "evidence_status": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "scenarios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "path",
+              "version",
+              "sha256",
+              "artifact_type",
+              "model_id",
+              "page_id",
+              "page_path",
+              "pattern_ids",
+              "evidence_status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^tycho\\.scenario\\.[a-z0-9-]+$"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^edition/v12/scenarios/.*\\.json$"
+              },
+              "version": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "artifact_type": {
+                "const": "scenario"
+              },
+              "model_id": {
+                "type": "string",
+                "pattern": "^tycho\\.model\\.[a-z0-9-]+$"
+              },
+              "page_id": {
+                "type": "string",
+                "pattern": "^tycho\\.page\\.[a-z0-9]{6,32}$"
+              },
+              "page_path": {
+                "type": "string",
+                "pattern": "^book/.*\\.md$"
+              },
+              "pattern_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^tycho\\.pattern\\.[a-z0-9-]+$"
+                }
+              },
+              "evidence_status": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "runs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "path",
+              "version",
+              "sha256",
+              "artifact_type",
+              "model_id",
+              "scenario_id",
+              "page_id",
+              "page_path",
+              "pattern_ids",
+              "evidence_status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^tycho\\.run\\.[a-z0-9-]+$"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^edition/v12/runs/.*\\.json$"
+              },
+              "version": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "artifact_type": {
+                "const": "run"
+              },
+              "model_id": {
+                "type": "string",
+                "pattern": "^tycho\\.model\\.[a-z0-9-]+$"
+              },
+              "scenario_id": {
+                "type": "string",
+                "pattern": "^tycho\\.scenario\\.[a-z0-9-]+$"
+              },
+              "page_id": {
+                "type": "string",
+                "pattern": "^tycho\\.page\\.[a-z0-9]{6,32}$"
+              },
+              "page_path": {
+                "type": "string",
+                "pattern": "^book/.*\\.md$"
+              },
+              "pattern_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^tycho\\.pattern\\.[a-z0-9-]+$"
+                }
+              },
+              "evidence_status": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "path",
+              "version",
+              "sha256",
+              "artifact_type",
+              "status",
+              "page_id",
+              "page_path",
+              "pattern_ids",
+              "evidence_status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^tycho\\.decision\\.v12-[a-z0-9-]+$"
+              },
+              "path": {
+                "type": "string",
+                "pattern": "^edition/v12/decisions/.*\\.json$"
+              },
+              "version": {
+                "type": "string"
+              },
+              "sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "artifact_type": {
+                "const": "decision"
+              },
+              "status": {
+                "enum": [
+                  "proposed",
+                  "decision-supported",
+                  "insufficient-evidence",
+                  "rejected"
+                ]
+              },
+              "page_id": {
+                "type": "string",
+                "pattern": "^tycho\\.page\\.[a-z0-9]{6,32}$"
+              },
+              "page_path": {
+                "type": "string",
+                "pattern": "^book/.*\\.md$"
+              },
+              "pattern_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "pattern": "^tycho\\.pattern\\.[a-z0-9-]+$"
+                }
+              },
+              "evidence_status": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "reverse_index": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "artifact_type",
+            "id",
+            "path"
+          ],
+          "properties": {
+            "artifact_type": {
+              "enum": [
+                "model",
+                "scenario",
+                "run",
+                "decision"
+              ]
+            },
+            "id": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 20
+    }
+  }
+}

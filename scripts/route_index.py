@@ -108,6 +108,26 @@ def canonical_scan(root, allow_partial=False):
     return {**stable, "snapshot_sha256": hashlib.sha256(stable_bytes).hexdigest()}
 
 
+V12_PREFIX = "book/volumes/v12-modeling-simulation-and-decision-validation/"
+
+
+def legacy_scope(index):
+    """Return the V1-V11 view of a route index with its original snapshot.
+
+    V12 is an additive namespace. Existing pattern evidence artifacts were frozen
+    against the pre-V12 corpus, so their validators must compare against this view
+    rather than the expanded full index.
+    """
+    docs = [d for d in index["documents"] if not d["path"].startswith(V12_PREFIX)]
+    stable = {"schema_version": 1, "metadata_version": 1,
+              "coverage": index["coverage"],
+              "unannotated_paths": index["unannotated_paths"],
+              "documents": docs}
+    stable_bytes = json.dumps(stable, sort_keys=True, separators=(",", ":"),
+                              ensure_ascii=False).encode()
+    return {**stable, "snapshot_sha256": hashlib.sha256(stable_bytes).hexdigest()}
+
+
 def load_fresh(root, index_file):
     expected = canonical_scan(root, allow_partial=True)
     actual = json.loads(Path(index_file).read_text(encoding="utf-8"))

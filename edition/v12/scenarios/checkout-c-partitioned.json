@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "tycho.scenario.checkout-c-partitioned",
+  "version": "1.0.0",
+  "title": "Checkout candidate C - partitioned capacity with higher unit cost",
+  "model_id": "tycho.model.checkout-des",
+  "purpose": "Represent a partitioned candidate with more servers, a slower mean service time and a higher unit cost, to test whether higher nominal capacity compensates for coordination cost.",
+  "workload": {
+    "duration": 1800.0,
+    "warmup": 300.0,
+    "time_unit": "second",
+    "arrival_process": {
+      "kind": "poisson",
+      "rate": 20.0,
+      "unit": "request/second"
+    }
+  },
+  "configuration": {
+    "servers": 18,
+    "service_time": {
+      "kind": "lognormal",
+      "mean": 0.75,
+      "cv": 0.4
+    },
+    "queue_capacity": 120,
+    "timeout": 1.5,
+    "max_attempts": 2,
+    "retry_backoff": {
+      "kind": "linear",
+      "base": 0.1,
+      "jitter": "equal"
+    },
+    "bulkhead": 160,
+    "cost_per_server_hour": 14.0
+  },
+  "uncertainty": {
+    "parameter_draws": [],
+    "correlations": []
+  },
+  "replications": 30,
+  "seed": {
+    "base": 20261029,
+    "scheme": "seed = base + replication index"
+  },
+  "metrics": [
+    {
+      "id": "success_rate",
+      "unit": "ratio",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "latency_p95",
+      "unit": "second",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "throughput",
+      "unit": "request/second",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "cost_per_1k_success",
+      "unit": "cost-unit/1000 successes",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "rejection_rate",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "retry_amplification",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C1",
+      "kind": "hard",
+      "statement": "A candidate must not silently drop a request without recording a rejection or failure."
+    },
+    {
+      "id": "C2",
+      "kind": "hard",
+      "statement": "A candidate must preserve request conservation under the synthetic workload."
+    },
+    {
+      "id": "C3",
+      "kind": "non-quantitative",
+      "statement": "A candidate must remain operable by the existing team without a new platform dependency."
+    }
+  ],
+  "evidence_status": "assumed",
+  "validity_limits": [
+    "Synthetic workload only; no production trace or measurement is represented.",
+    "The candidate comparison is conditional on the declared configuration and seeds."
+  ],
+  "run_id": "tycho.run.checkout-c"
+}
