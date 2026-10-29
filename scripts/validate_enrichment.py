@@ -53,11 +53,13 @@ def validate(root=ROOT):
     ledger = json.loads((root/'edition/patterns/reading-ledger.v1.json').read_text())
     ledger_map = {r['id']: r for r in ledger['records']}
     overlay_by_path = {}
+    overlay_by_record = {}
     seen_add = set()
     for add in overlay.get('additions', []):
         path = add['path']
         require(path not in overlay_by_path, 'split-source-additions-duplicate-page')
         overlay_by_path[path] = add
+        overlay_by_record[add['base_record_id']] = add
         require(add['source_id'] in sources, 'split-source-additions-source')
         record = ledger_map.get(add['ledger_record'])
         require(record is not None, 'split-source-additions-ledger')
@@ -71,10 +73,10 @@ def validate(root=ROOT):
     for record in additions:
         path = record['path']
         require(path in documents, 'enrichment-missing-document')
-        text = view.read_text(path)
+        extra = overlay_by_record.get(record['id'])
+        text = (root / extra['path']).read_text() if extra else view.read_text(path)
         meta, body = split(text)
         current_sha = sha(text)
-        extra = overlay_by_path.get(path)
         expected_sha = extra.get('content_sha256') if extra else None
         if expected_sha:
             require(current_sha == expected_sha, 'split-source-additions-content')
@@ -86,7 +88,7 @@ def validate(root=ROOT):
                 'enrichment-document-identity')
         require(meta['route_hints']['questions'] == [record['question']],
                 'enrichment-question-drift')
-        extra = overlay_by_path.get(path)
+        extra = overlay_by_record.get(record['id'])
         allowed_sources = list(record['source_ids'])
         effective_date = record.get('source_inspection_date', '2026-10-20')
         if extra:

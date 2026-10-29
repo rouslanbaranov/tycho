@@ -2205,7 +2205,7 @@
         "heading": "Request-Reply Messaging",
         "anchor": "request-reply-messaging",
         "level": 1,
-        "line": 45,
+        "line": 46,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Request-Reply Messaging"
@@ -2258,22 +2258,52 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
-          "reason": "Only the blocking premise is source-supported: the bound page states that an RPC caller's thread blocks while it waits for the response, but it does not present RPC as the decision alternative. Framing direct synchronous RPC as the alternative is Tycho synthesis.",
+          "state": "supported",
+          "quote": "The bound Messaging page names the RPI pattern as an alternative and records messaging's loose runtime coupling and buffered availability against the added broker complexity and more complex request/reply communication.",
+          "reason": "Binds the Messaging page's Related patterns sentence that names RPI as an alternative, plus its Resulting context record of loose runtime coupling, buffered availability, broker complexity and more complex request/reply communication. The page states no request-budget or blocking rule; preferring direct RPI under a request budget is Tycho synthesis.",
           "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-request-reply.2026-10-21",
-            "section": "Request-Reply",
-            "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
-            "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
-          }
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-communication-messaging.2026-10-29",
+            "section": "Related patterns",
+            "quote": "The RPI pattern is an alternative pattern",
+            "revision": "491719296be7ab61e96cf8c59c35dab87a8d9a6d0f4d5d8641f235e61bf5369d"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-communication-messaging.2026-10-29",
+              "section": "Resulting context",
+              "quote": "Loose runtime coupling since it decouples the message sender from the consumer",
+              "revision": "491719296be7ab61e96cf8c59c35dab87a8d9a6d0f4d5d8641f235e61bf5369d"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-communication-messaging.2026-10-29",
+              "section": "Resulting context",
+              "quote": "Improved availability since the message broker buffers messages until the consumer is able to process them",
+              "revision": "491719296be7ab61e96cf8c59c35dab87a8d9a6d0f4d5d8641f235e61bf5369d"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-communication-messaging.2026-10-29",
+              "section": "Resulting context",
+              "quote": "Additional complexity of message broker, which must be highly available",
+              "revision": "491719296be7ab61e96cf8c59c35dab87a8d9a6d0f4d5d8641f235e61bf5369d"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-communication-messaging.2026-10-29",
+              "section": "Resulting context",
+              "quote": "Request/reply-style communication is more complex",
+              "revision": "491719296be7ab61e96cf8c59c35dab87a8d9a6d0f4d5d8641f235e61bf5369d"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "request-reply-messaging",
         "question": "Should a request and its reply travel as separate messages on separate channels, invoking the responder indirectly rather than directly, when both approaches block the caller?",
-        "competing_alternative": "Tycho synthesis: a direct synchronous Remote Procedure Invocation is the alternative when the responder is reachable within the request budget and blocking is acceptable. Both this direct call and the Synchronous Block messaging approach block the caller; the difference is direct versus indirect invocation. The bound source states only that an RPC caller's thread must block while it waits for the response, not that RPC is the decision alternative.",
+        "competing_alternative": "The bound Messaging page names the RPI pattern as an alternative and records messaging's loose runtime coupling and buffered availability against the added broker complexity and more complex request/reply communication. Tycho synthesis: prefer direct RPI when both parties can be available for the request, the call fits the request budget and no broker is justified; prefer messaging request-reply when loose runtime coupling or buffered availability matters.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2282,12 +2312,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-communication-messaging.2026-10-29",
+            "revision": "491719296be7ab61e96cf8c59c35dab87a8d9a6d0f4d5d8641f235e61bf5369d"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner page split 2026-10-29; four dimensions bind to the EIP page; invariant binds the Asynchronous Callback sharing/thread sentence; card separates one-outstanding from callback sharing, states both Synchronous Block and RPC block, labels correlation and RPC comparison Tycho synthesis; alternative partial because only the blocking premise is source-supported; partial-bounded."
+      "notes": "Alternative bound 2026-10-29 to the microservices.io Messaging page, which names RPI as an alternative and records messaging's loose runtime coupling and buffered availability against broker complexity and more complex request/reply communication; all four dimensions supported, coverage partial-bounded, no promotion; request-budget and blocking selection remain Tycho synthesis."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -11193,7 +11230,7 @@
     "mechanism_supported": 109,
     "invariant_supported": 60,
     "failure_recovery_supported": 48,
-    "alternative_supported": 61,
+    "alternative_supported": 62,
     "technical_partial_bounded": 28,
     "technical_partial": 90,
     "technical_name_only": 0,

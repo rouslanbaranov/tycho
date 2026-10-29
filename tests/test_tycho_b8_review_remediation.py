@@ -168,8 +168,8 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
     def test_request_reply_alternative_binding_and_quote(self):
         unit = self.units["tycho.pattern.request-reply-messaging"]
         alternative = unit["technical_evidence"]["alternative"]
-        self.assertEqual(alternative["binding"]["section"], "Request-Reply")
-        self.assertIn("does not present RPC", alternative["reason"])
+        self.assertEqual(alternative["binding"]["section"], "Related patterns")
+        self.assertIn("Related patterns", alternative["reason"])
         self.assertIn("Tycho synthesis", alternative["reason"])
         self.assertEqual(
             unit["decision_evidence"]["competing_alternative"],
@@ -367,9 +367,8 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
     def test_request_limits_state_source_supports_sharing(self):
         limits = field(self.request_owner, "Limits")
         self.assertIn(
-            "multiple outstanding requests to share a single reply channel",
-            limits)
-        self.assertIn("single reply thread", limits)
+            "matching across multiple outstanding requests", limits)
+        self.assertIn("Asynchronous Callback", limits)
         self.assertIn("matching across multiple outstanding requests", limits)
         self.assertIn("Tycho guidance", limits)
         invariant = self.units[
@@ -521,15 +520,13 @@ class B8FinalClaimRequestSplitterReviewTests(unittest.TestCase):
     def test_request_alternative_state_is_partial_for_blocking_premise(self):
         unit = self.units["tycho.pattern.request-reply-messaging"]
         alternative = unit["technical_evidence"]["alternative"]
-        self.assertEqual(alternative["state"], "partial")
-        self.assertIn("Only the blocking premise is source-supported",
-                      alternative["reason"])
+        self.assertEqual(alternative["state"], "supported")
+        self.assertIn("Messaging page", alternative["reason"])
         self.assertIn("Tycho synthesis", alternative["reason"])
         card_alternative = field(
             self.request_card_raw, "Competing alternative")
         self.assertIn(
-            "Both this direct call and the Synchronous Block messaging approach",
-            card_alternative)
+            "bound Messaging page names the RPI pattern", card_alternative)
         self.assertEqual(
             unit["decision_evidence"]["competing_alternative"],
             card_alternative)
