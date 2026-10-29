@@ -312,20 +312,28 @@ to coexist in one deployable?
 implementations preserve the same contract; removal date and reversible switch are owned.
 
 **Hard contraindications.** Reject when no internal seam exists, when the abstraction adds
-no substitution value, or when the old implementation cannot coexist.
+no substitution value, when the old implementation cannot coexist, or when data consistency
+is involved.
 
 **Competing alternative.** Strangler Fig, a façade or a parallel run. Reverse the choice
 when abstraction cost exceeds incremental change benefit.
 
-**Failure and recovery.** Permanent seams, bypass around the abstraction and divergent
-behavior are common; use contract tests, a bounded switch and a removal owner.
+**Failure and recovery.** Keep each increment reversible and backward compatible, and use an
+easily flipped switch so the team can return to the old functionality if problems appear. An
+intermediate verification step that calls both new and old functionality can implement a
+fallback. A named removal owner and date remain Tycho review conditions, not source claims.
 
 **Technical owner.** [Branch by Abstraction](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#branch-by-abstraction) — branch by abstraction is bounded to internal interface replacement.
 
 **Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction",
-"Further Reading", "Acknowledgements", "Notes". The source is a public pattern/documentation
-unit, not a benchmark.
+"Further Reading", "Acknowledgements", "Notes".
+Failure and recovery also uses the public AWS Prescriptive Guidance page "Branch by
+abstraction pattern", accessed 2026-10-29; canonical text revision
+`618648d7274e985f417915ecd4eeffe83e6c7db8b2ee1d0691293aee04f09d1c`.
+The page supports reversible, backward-compatible increments, fallback verification,
+switch-back recovery and the data-consistency limit.
+The sources are public documentation/articles, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

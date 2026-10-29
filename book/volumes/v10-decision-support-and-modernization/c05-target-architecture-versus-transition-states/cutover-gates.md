@@ -118,10 +118,16 @@ runtime or configuration decision, not a long-lived source branch.
 
 An internal interface can route old/new implementations with one deployable. Old and new
 implementations behind the internal interface must preserve the same contract and observable
-effects; the switch must remain reversible until the old path is removed. Give the seam a removal
-date and owner; a permanent seam is a maintenance failure, and the switch must remain reversible
-until removal. Untested side effects, a bypass around the abstraction and divergent implementations
-can break that contract.
+effects; the switch must remain reversible until the old path is removed. Keep each increment
+reversible and backward compatible, and use an easily flipped switch so the team can return to
+the old functionality if problems appear. An intermediate verification step that calls both
+new and old functionality can implement a fallback. The AWS Prescriptive Guidance page lists
+"Allows for incremental changes that are reversible in case anything goes wrong (backward
+compatible)" as an advantage and advises a "switching mechanism that can be flipped easily
+(such as a feature toggle) so you can switch back to the old functionality easily if you
+encounter any problems." It also rules the pattern out where data consistency is involved.
+As a Tycho review condition, give the seam a removal date and owner; the source requires
+cleanup after cutover but does not assign that ownership.
 
 A strangler facade can route requests by capability when the boundary is external. Branch by
 abstraction is a fit when the switch can stay inside one deployable and the interface is genuinely
