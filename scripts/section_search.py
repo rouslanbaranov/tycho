@@ -19,6 +19,8 @@ check; search performs a quick integrity/count check and the route-snapshot
 comparison.
 """
 import argparse
+import copy
+from collections import OrderedDict
 import hashlib
 import json
 import os
@@ -43,6 +45,34 @@ SECTION_SEARCH_COLUMNS = (
     "char_end", "content",
 )
 TOKEN = section_fts_index.TOKEN
+_QUERY_CACHE = OrderedDict()
+_QUERY_CACHE_LOCK = threading.Lock()
+_QUERY_CACHE_MAX = 128
+
+
+def _query_cache_key(root, snapshot, query, limit, kind, topic,
+                     evidence_status, path_prefix, index_path, all_sections,
+                     abstain, include_weak, detail, max_chars):
+    return (str(Path(root).resolve()), snapshot, query, limit, kind, topic,
+            evidence_status, path_prefix, str(index_path), all_sections,
+            abstain, include_weak, detail, max_chars)
+
+
+def _cache_get(key):
+    with _QUERY_CACHE_LOCK:
+        value = _QUERY_CACHE.pop(key, None)
+        if value is None:
+            return None
+        _QUERY_CACHE[key] = value
+        return copy.deepcopy(value)
+
+
+def _cache_put(key, value):
+    with _QUERY_CACHE_LOCK:
+        _QUERY_CACHE[key] = value
+        _QUERY_CACHE.move_to_end(key)
+        while len(_QUERY_CACHE) > _QUERY_CACHE_MAX:
+            _QUERY_CACHE.popitem(last=False)
 
 
 def bm25_weights():
@@ -391,6 +421,14 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                  name + " filter must be a non-empty string")
     prefix = None if path_prefix is None else path_prefix_pattern(path_prefix)
     db, manifest = open_snapshot(root, index_path)
+    cache_key = _query_cache_key(
+        root, manifest["snapshot_id"], query, limit, kind, topic,
+        evidence_status, path_prefix, index_path, all_sections, abstain,
+        include_weak, detail, max_chars)
+    cached = _cache_get(cache_key)
+    if cached is not None:
+        db.close()
+        return cached
     metadata = load_document_metadata(root)
     try:
         filters, params = [], []
@@ -661,6 +699,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         response["returned_chars"] = len(json.dumps(
             response, ensure_ascii=False,
             separators=(",", ":")).encode("utf-8"))
+        _cache_put(cache_key, copy.deepcopy(response))
         return response
     finally:
         db.close()

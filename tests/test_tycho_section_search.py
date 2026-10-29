@@ -126,6 +126,13 @@ class SearchTests(unittest.TestCase):
         self.assertEqual(result["ranker_version"],
                          section_search.RANKER_VERSION)
 
+    def test_query_cache_returns_defensive_copy(self):
+        self.build()
+        first = self.search("zebra", limit=1)
+        first["results"][0]["heading"] = "mutated"
+        second = self.search("zebra", limit=1)
+        self.assertNotEqual(second["results"][0]["heading"], "mutated")
+
     def test_h3_match_maps_to_parent_h2_with_diagnostics(self):
         self.build()
         top = self.search("quasar", limit=1)["results"][0]
