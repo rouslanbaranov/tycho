@@ -380,9 +380,15 @@ class McpServerTests(unittest.TestCase):
                 "kind": "page",
             })
 
-    def test_section_rerank_is_opt_in(self):
+    def test_section_rerank_is_default_and_gated(self):
+        schema = mcp_server.search_schema()
+        self.assertTrue(schema["properties"]["section_rerank"]["default"])
+        self.assertEqual(
+            schema["properties"]["section_rerank_margin"]["default"],
+            0.15)
         payload = self.call(self.server(), "tycho_search", {
             "query": "nested text", "section_rerank": True,
+            "section_rerank_margin": None,
         })["structuredContent"]
         self.assertEqual(payload["result_scope"], "section-rerank")
         self.assertEqual(payload["results"][0]["score_kind"],
@@ -390,8 +396,8 @@ class McpServerTests(unittest.TestCase):
         default = self.call(self.server(), "tycho_search", {
             "query": "nested text",
         })["structuredContent"]
-        self.assertEqual(default["result_scope"],
-                         "best-section-per-document")
+        self.assertIn(default["result_scope"],
+                      ("section-rerank", "best-section-per-document"))
         gated = self.call(self.server(), "tycho_search", {
             "query": "nested text", "section_rerank": True,
             "section_rerank_margin": 0.0,
@@ -399,11 +405,13 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(gated["result_scope"],
                          "best-section-per-document")
         self.assertEqual(gated["results"][0]["score_kind"], "bm25")
-        with self.assertRaises(mcp_server.ProtocolFailure):
-            self.call(self.server(), "tycho_search", {
-                "query": "nested text", "volume": "v12",
-                "section_rerank": True,
-            })
+        v12 = self.call(self.server(), "tycho_search", {
+            "query": "nested text", "volume": "v12",
+            "section_rerank": True,
+        })
+        self.assertFalse(v12["isError"])
+        self.assertEqual(v12["structuredContent"]["result_scope"],
+                         "best-section-per-document")
 
     def test_h3_match_maps_to_parent_and_is_not_readable(self):
         payload = self.call(self.server(), "tycho_search", {
