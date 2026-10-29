@@ -380,6 +380,19 @@ class McpServerTests(unittest.TestCase):
                 "kind": "page",
             })
 
+    def test_section_rerank_is_opt_in(self):
+        payload = self.call(self.server(), "tycho_search", {
+            "query": "nested text", "section_rerank": True,
+        })["structuredContent"]
+        self.assertEqual(payload["result_scope"], "section-rerank")
+        self.assertEqual(payload["results"][0]["score_kind"],
+                         "section-rerank")
+        default = self.call(self.server(), "tycho_search", {
+            "query": "nested text",
+        })["structuredContent"]
+        self.assertEqual(default["result_scope"],
+                         "best-section-per-document")
+
     def test_h3_match_maps_to_parent_and_is_not_readable(self):
         payload = self.call(self.server(), "tycho_search", {
             "query": "nested text", "limit": 2,
