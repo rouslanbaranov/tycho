@@ -8165,7 +8165,7 @@
         "heading": "Horizontal Scaling",
         "anchor": "horizontal-scaling",
         "level": 3,
-        "line": 103,
+        "line": 104,
         "unit_kind": "dedicated",
         "unit_terms": [
           "multiplies processing replicas",
@@ -8239,7 +8239,7 @@
         "heading": "Vertical Scaling",
         "anchor": "vertical-scaling",
         "level": 3,
-        "line": 120,
+        "line": 121,
         "unit_kind": "dedicated",
         "unit_terms": [
           "changes resources",
@@ -8251,7 +8251,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "vertical scaling changes resources available to existing replicas",
+          "quote": "Vertical scaling changes resources available to existing replicas.",
           "reason": "States the vertical mechanism: enlarge the resources of existing replicas.",
           "binding": {
             "source_id": "src.kubernetes",
@@ -8286,15 +8286,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Horizontal scaling or sharding may be preferable when the workload partitions and a single node is an unacceptable failure domain.",
-          "reason": "K8s page does not compare horizontal scaling or sharding."
+          "state": "supported",
+          "quote": "The Kubernetes autoscaling page frames the same choice as either changing the replica count (horizontal scaling) or adjusting resources in place (vertical scaling).",
+          "reason": "Binds the Kubernetes Autoscaling Workloads page, which frames horizontal scaling (changing the replica count) and vertical scaling (adjusting resources in place) as the two scaling approaches. The page does not state when either is preferable; availability, partition and restart conditions remain Tycho synthesis.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.autoscaling-workloads-vertical.2026-10-29",
+            "section": "Autoscaling Workloads",
+            "quote": "When you scale a workload, you can either increase or decrease the number of replicas managed by the workload, or adjust the resources available to the replicas in-place. The first approach is referred to as horizontal scaling, while the second is referred to as vertical scaling.",
+            "revision": "f653ca7cce9cb752cd41e1fc2d10b335acd8033a186aa324eb499897bb7219ab"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "vertical-scaling",
         "question": "Should capacity be added by increasing CPU/memory/IO on one instance?",
-        "competing_alternative": "Horizontal scaling or partitioning. Reverse the choice when the larger node no longer meets availability/cost constraints.",
+        "competing_alternative": "Horizontal scaling by adding replicas. The Kubernetes page frames the choice as either changing the replica count (horizontal scaling) or adjusting resources in place (vertical scaling); it does not state when either is preferable. Reverse the choice when the larger node no longer meets availability or cost constraints; those conditions are Tycho synthesis.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8303,12 +8310,19 @@
         "source_id": "src.kubernetes",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.autoscaling-workloads-vertical.2026-10-29",
+            "revision": "f653ca7cce9cb752cd41e1fc2d10b335acd8033a186aa324eb499897bb7219ab"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Embedded in the purpose section, shared with horizontal scaling and autoscaling."
+      "notes": "Alternative bound 2026-10-29 to the Kubernetes Autoscaling Workloads page, which frames replica-count scaling and in-place resource scaling as the two approaches; all four dimensions supported, coverage partial-bounded, no promotion; availability, partition and restart conditions remain Tycho synthesis."
     },
     {
       "pattern_id": "tycho.pattern.autoscaling",
@@ -8320,7 +8334,7 @@
         "heading": "Autoscaling",
         "anchor": "autoscaling",
         "level": 3,
-        "line": 137,
+        "line": 147,
         "unit_kind": "dedicated",
         "unit_terms": [
           "feedback-control mechanism",
@@ -11246,7 +11260,7 @@
     "mechanism_supported": 109,
     "invariant_supported": 60,
     "failure_recovery_supported": 49,
-    "alternative_supported": 62,
+    "alternative_supported": 63,
     "technical_partial_bounded": 27,
     "technical_partial": 90,
     "technical_name_only": 0,

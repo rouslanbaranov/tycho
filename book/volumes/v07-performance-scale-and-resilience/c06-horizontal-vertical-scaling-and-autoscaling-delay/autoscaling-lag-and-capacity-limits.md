@@ -52,7 +52,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-29"
-source_inspection_date: "2026-10-29"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:-1 -->
@@ -70,7 +70,7 @@ content_verified_at: null
 
 > **Pattern atlas:**
 > [Horizontal Scaling](../../v11-pattern-atlas/c09-scalability/README.md#horizontal-scaling) — decision conditions and contraindications.
-> [Vertical Scaling](../../v11-pattern-atlas/c09-scalability/README.md#vertical-scaling) — decision conditions and contraindications.
+> [Vertical Scaling](../../v11-pattern-atlas/c09-scalability/vertical-scaling.md#vertical-scaling) — decision conditions and contraindications.
 > [Autoscaling](../../v11-pattern-atlas/c09-scalability/README.md#autoscaling) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:0 -->

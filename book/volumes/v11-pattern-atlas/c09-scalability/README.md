@@ -140,45 +140,7 @@ unit, not a benchmark.
 
 ### Vertical Scaling
 
-**Identity.** Vertical Scaling; family Scalability and load distribution; kind
-scalability-pattern; priority core.
-
-**Decision question.** Should capacity be added by increasing CPU/memory/IO on one
-instance?
-
-**Good-fit conditions.** The workload fits one node; the provider allows a larger size;
-restart/downtime is acceptable.
-
-**Hard contraindications.** Reject when a single-node ceiling is near, when failover
-requires multiple nodes, or when cost grows superlinearly.
-
-**Competing alternative.** Horizontal scaling by adding replicas. The Kubernetes
-page frames the choice as either changing the replica count (horizontal scaling) or
-adjusting resources in place (vertical scaling); it does not state when either is
-preferable. Reverse the choice when the larger node no longer meets availability or cost
-constraints; those conditions are Tycho synthesis.
-
-**Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
-section.
-
-**Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — resource ceiling and restart cost are bounded; instance sizing is platform-specific.
-
-**Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-k8s-resources.2026-10-21: all thirty-three served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark. The competing alternative is bound to the same source's
-Autoscaling Workloads page, read record read.autoscaling-workloads-vertical.2026-10-29,
-section "Autoscaling Workloads", revision
-f653ca7cce9cb752cd41e1fc2d10b335acd8033a186aa324eb499897bb7219ab: "When you scale a
-workload, you can either increase or decrease the number of replicas managed by the
-workload, or adjust the resources available to the replicas in-place. The first approach
-is referred to as horizontal scaling, while the second is referred to as vertical
-scaling." The page defines both approaches but not when either is preferable; the
-reversal conditions remain Tycho synthesis.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Horizontal Scaling; Autoscaling; Capacity Planning; Contention.
+See the [dedicated Vertical Scaling card](vertical-scaling.md).
 
 ### Autoscaling
 
