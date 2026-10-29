@@ -302,6 +302,15 @@ def search_schema():
                     "default BM25 remains best-section-per-document."
                 ),
             },
+            "section_rerank_margin": {
+                "type": ["number", "null"],
+                "default": None,
+                "minimum": 0,
+                "maximum": 1,
+                "description": (
+                    "Optional top1/top2 BM25 margin gate for section rerank."
+                ),
+            },
             "detail": {
                 "type": "string",
                 "enum": ["ids", "snippets"],
@@ -1302,7 +1311,7 @@ class TychoMcpServer:
             "path_prefix", "artifact_type", "volume", "pattern_ids",
             "include_artifacts", "all_sections", "abstain", "snapshot_id",
             "mode", "detail", "max_chars", "retrieval_mode",
-            "section_rerank",
+            "section_rerank", "section_rerank_margin",
         })
         query = arg_string(args, "query", required=True)
         limit = arg_int(args, "limit", DEFAULT_LIMIT, 1, MAX_LIMIT)
@@ -1326,6 +1335,13 @@ class TychoMcpServer:
         include_artifacts = arg_bool(args, "include_artifacts", False)
         all_sections = arg_bool(args, "all_sections", False)
         section_rerank = arg_bool(args, "section_rerank", False)
+        section_rerank_margin = args.get("section_rerank_margin")
+        if section_rerank_margin is not None and (
+                not isinstance(section_rerank_margin, (int, float))
+                or isinstance(section_rerank_margin, bool)
+                or not 0 <= section_rerank_margin <= 1):
+            raise ProtocolFailure(
+                -32602, "section_rerank_margin must be in 0..1 or null")
         if section_rerank and retrieval_mode == "best":
             raise ProtocolFailure(
                 -32602, "section_rerank is not supported with best mode")
@@ -1384,6 +1400,7 @@ class TychoMcpServer:
                     index_path=self.index_path,
                     all_sections=all_sections,
                     section_rerank=section_rerank,
+                    section_rerank_margin=section_rerank_margin,
                     abstain=abstain,
                     include_weak=(mode == "exploratory"),
                     detail=detail,
