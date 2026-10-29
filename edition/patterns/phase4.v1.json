@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "3e1c1f8d3de98cbadbb460c55936810aa3b079a6980007673cf52c59cbff581b",
+    "registry_sha256": "9be0c2c62ee4cfc2e907fb86481f96baebbce8b82779aecbebae9369b87e7125",
     "ledger_sha256": "183ed7c2ef5f50c7f585a81cf78517257edb2800213fe9bc41248bc9199d083b",
-    "card_batches_sha256": "965a769c02d39f8e77acec00cec9afb70aabdb92473b2fe4c51f4ed3d6861c8f",
-    "route_index_sha256": "12d260cc27dee248ec7146bc5c0899439ab9f3d83dabebb887c0963b48857f30",
-    "coverage_sha256": "1fd194bb4676b3d21f86694f2a7a3eef0862f95039c316e925d61f0b2a3689e5"
+    "card_batches_sha256": "19a1a3d1be1e96f11ea54610d2cdaa318717ed7ca4c9d5d15f354ea7faac89fa",
+    "route_index_sha256": "217aba5d6634d8c6979c40f2f7a38547ef6de9a9d3c254ebcdf292f9a196ed0d",
+    "coverage_sha256": "452ba147d8d60d19f3749c73ce0f151e075df803e3ca56665ce90ecfe8798d7d"
   },
   "dimensions": [
     "identity",
@@ -24,7 +24,7 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 466,
+    "pages": 467,
     "entries": 145,
     "cards": 145,
     "routes": 537,
@@ -3137,6 +3137,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.cf5d48a4f68b40f8890649805a798bf4",
+      "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9",
       "path": "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
       "kind": "chapter",
@@ -3907,18 +3914,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should a large or sensitive payload travel outside the message and be retrieved through a claim check?"
@@ -5701,18 +5708,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should processing be composed as independent stages connected by a message contract?"
@@ -6053,7 +6060,7 @@
         "decision-partial-bounded",
         "independent-review-missing"
       ],
-      "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
+      "question": "Should a request and its reply travel as separate messages on separate channels, invoking the responder indirectly rather than directly, when both approaches block the caller?"
     },
     {
       "pattern_id": "tycho.pattern.resequencer",
@@ -6065,18 +6072,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should out-of-order messages be buffered and released in an acceptable order?"
@@ -6559,18 +6566,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should a composite message be divided into independently processed parts?"
@@ -7372,14 +7379,14 @@
     },
     {
       "pattern_id": "tycho.pattern.claim-check",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8269,14 +8276,14 @@
     },
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8451,14 +8458,14 @@
     },
     {
       "pattern_id": "tycho.pattern.resequencer",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8698,14 +8705,14 @@
     },
     {
       "pattern_id": "tycho.pattern.splitter",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -12476,7 +12483,7 @@
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
       "atlas_section": "request-reply-messaging",
-      "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?"
+      "question": "Should a request and its reply travel as separate messages on separate channels, invoking the responder indirectly rather than directly, when both approaches block the caller?"
     },
     {
       "pattern_id": "tycho.pattern.resequencer",

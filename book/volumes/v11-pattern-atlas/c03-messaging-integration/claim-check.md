@@ -50,7 +50,10 @@ content_verified_at: null
 only when payload size, sensitivity or repeated serialization justifies the extra store and
 retrieval hop, when payload lifecycle and failure handling have owners, and when
 authorization can remain an independent interaction between producer or consumer systems and
-the store. Keep the payload inline when it fits the transport and latency budget.
+the store. Sensitivity and repeated serialization are source-stated use conditions. Keep the
+payload inline when it fits the transport and latency budget and no sensitivity, retention or
+repeated-serialization reason applies; the retention reason is Tycho synthesis, not a source
+claim.
 
 **Identity.** Claim Check; family Messaging and event-driven integration; kind
 messaging-pattern; priority advanced.
@@ -66,20 +69,23 @@ after the payload write succeeds; retrieval latency and failure disposition are 
 external store applies access controls independently of the messaging system. Tycho guidance,
 not a source claim: keep the token bound to the stored payload it names.
 
-**Hard contraindications.** Reject when the inline payload fits the transport and latency
-budget, when the extra retrieval hop cannot meet the latency target, when payload lifecycle or
-failure handling has no owner, or when authorization cannot remain an independent interaction
-with the store.
+**Hard contraindications.** Reject when the payload fits the transport and latency budget and
+no sensitivity, retention or repeated-serialization reason applies (sensitivity and repeated
+serialization are source-stated use conditions; retention is Tycho synthesis), when the extra
+retrieval hop cannot meet the latency target, when payload lifecycle or failure handling has
+no owner, or when authorization cannot remain an independent interaction with the store.
 
 **Competing alternative.** Inline payload when it stays within the transport's supported limit
 and does not create unacceptable throughput or latency; compression or a compact serializer can
-reduce inline size. Reverse the choice when retrieval and storage complexity exceed the
-savings.
+reduce inline size. Tycho guidance, not a source claim: reverse the choice only when the
+payload fits inline, no sensitivity, retention or repeated-serialization reason applies, and
+retrieval and storage complexity exceed the savings.
 
 **Failure and recovery.** The non-atomic write and publish pair can leave an orphaned payload
 or a token that consumers cannot resolve; the source also names duplicate claim checks,
-integrity mismatches, store outages and data loss. Expire and garbage-collect claims, fail
-closed when retrieval is impossible, and make duplicate consumption idempotent.
+integrity mismatches, store outages and data loss. Use an idempotent consumer for duplicate
+claim checks. Tycho guidance, not a source claim: expire and garbage-collect claims, and fail
+closed when retrieval is impossible.
 
 **Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md#claim-check) — payload lifecycle, claim-token ordering, retrieval and failure policy are bounded; authorization remains an independent interaction with the store, and this is not a payload-store catalogue.
 
@@ -89,7 +95,8 @@ supports the stored-payload and claim-token description, not the failure or alte
 policy. [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-claim-check.2026-10-28: the Claim Check pattern page supports the
 mechanism, payload lifecycle ownership, write-before-publish invariant, independent
-authorization, the six failure cases and the inline alternative.
+authorization, the six failure cases, the sensitive-payload and repeated-serialization use
+conditions, the inline alternative and compression or compact-serializer guidance.
 Canonical text SHA-256: 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe.
 The source is public documentation, not a benchmark.
 

@@ -64,9 +64,10 @@ verbatim raw-report line length, recorded as a preservation exception.
 
 ## Post-acceptance refresh
 
-After acceptance the branch merged the current atlas-promotion target to remain mergeable.
-The V12 book pages, contracts and decision records did not change. The corpus grew to 497
-canonical documents and the protected baseline to 466 existing pages; the manifest, protected
+After acceptance the branch merged main, including the atlas-promotion branch, so the PR can
+target main directly. The V12 book pages, contracts and decision records did not change. The
+corpus grew to 498
+canonical documents and the protected baseline to 467 existing pages; the manifest, protected
 baseline, route index, inventory, Phase 4 artifact and review-packet binding were regenerated.
 The hashes above bind the accepted content commit, not the later derived refresh. The owner
 acceptance remains valid for the V12 content.
@@ -77,10 +78,9 @@ acceptance remains valid for the V12 content.
 - The decision records are conditional on their declared constraints.
 - The sensitivity screen is an approximation, not a full Sobol analysis.
 - No existing pattern is promoted, demoted or re-reviewed by V12.
-- The pull request is stacked on the atlas-promotion branch and must be retargeted to
-  main after that branch merges.
+- The pull request now targets main; a later main change may require a refresh merge.
 
 ## Record status
 
-This record is the only repository change after the accepted content commit. It does not
-change the accepted V12 pages or artifacts.
+This record documents the owner acceptance. Later merge and derived-artifact refreshes did
+not change the accepted V12 pages, contracts or decision records.

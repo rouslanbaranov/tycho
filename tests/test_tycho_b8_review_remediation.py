@@ -114,14 +114,14 @@ class B8ReviewRemediationTests(unittest.TestCase):
         self.assertIn('reviewed_at: "2026-10-29"', self.pipes_card)
         self.assertIn('updated_at: "2026-10-29"', self.pipes_card)
 
-    def test_both_entries_remain_partial_bounded(self):
+    def test_both_entries_are_promoted_and_sufficient(self):
         for pattern_id, unit in (
             ("tycho.pattern.resequencer", self.resequencer_unit),
             ("tycho.pattern.pipes-and-filters", self.pipes_unit),
         ):
-            self.assertNotIn(pattern_id, self.promoted)
-            self.assertEqual(unit["technical_coverage"], "partial-bounded")
-            self.assertEqual(unit["decision_coverage"], "partial-bounded")
+            self.assertIn(pattern_id, self.promoted)
+            self.assertEqual(unit["technical_coverage"], "sufficient")
+            self.assertEqual(unit["decision_coverage"], "sufficient")
 
 
 class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
@@ -133,6 +133,7 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
             CARDS / "claim-check.md").read_text(encoding="utf-8")
         cls.split_card_raw = (
             CARDS / "splitter.md").read_text(encoding="utf-8")
+        cls.split_card = squash(cls.split_card_raw)
         cls.request_owner = squash(
             (OWNERS / "request-reply-messaging.md").read_text(encoding="utf-8"))
         cls.claim_owner = squash(
@@ -204,6 +205,12 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn("custom ReleaseStrategy", invariant["binding"]["quote"])
         self.assertIn("send-partial-result-on-expiry",
                       invariant["binding"]["quote"])
+        supporting = invariant["supporting_bindings"][0]
+        self.assertEqual(supporting["section"], "Programming Model")
+        self.assertIn("MessageHandler implementation", supporting["quote"])
+        self.assertIn("CORRELATION_ID", supporting["quote"])
+        self.assertIn("SEQUENCE_NUMBER", supporting["quote"])
+        self.assertIn("MessageHandler implementation", self.split_card)
         self.assertIn("Iterators section", self.split_owner)
         self.assertIn("aggregate group remains incomplete", self.split_owner)
 
@@ -213,14 +220,30 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
                 "correlation identity",
                 "sequence position",
                 "total size",
-                "completion is decidable only when",
-                "custom release strategy or expiry"):
+                "when the total count is known",
+                "custom release strategy or",
+                "send-partial-result-on-expiry",
+                "not evidence of successful completion"):
             self.assertIn(needle, invariant)
+        self.assertIn("Tycho guidance, not a source claim", invariant)
         unit = self.units["tycho.pattern.splitter"]["technical_evidence"]["invariant"]
         self.assertIn("correlation identity", unit["quote"])
+        self.assertIn("Tycho guidance, not a source claim", unit["quote"])
         decision = field(self.split_card_raw, "Decision")
-        self.assertIn("total count is known, or a custom release rule or expiry",
+        self.assertIn("total count is known, or an explicit release rule or expiry",
                       decision)
+        self.assertIn("partial result or forced closure rather than silent success",
+                      decision)
+        self.assertIn("Tycho guidance", decision)
+
+    def test_splitter_labels_error_inference_and_contraindications(self):
+        good = field(self.split_card_raw, "Good-fit conditions")
+        self.assertIn("Tycho inference: errors can be correlated to the parent",
+                      good)
+        contraindications = field(
+            self.split_card_raw, "Hard contraindications")
+        self.assertIn("Tycho guidance, not a source claim", contraindications)
+        self.assertIn("ordering across parts is mandatory", contraindications)
 
     def test_splitter_watermark_is_attributed_to_camel(self):
         for text in (
@@ -281,6 +304,9 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         mechanism = unit["technical_evidence"]["mechanism"]
         self.assertTrue(
             mechanism["quote"].startswith("A sending application writes"))
+        self.assertIn(
+            "Receiving applications use the reference to retrieve the payload",
+            mechanism["quote"])
         self.assertEqual(mechanism["quote"], mechanism["binding"]["quote"])
 
     def test_claim_failure_count_is_six(self):
@@ -301,8 +327,26 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
                          "When to use this pattern")
         self.assertIn("send them inline",
                       alternative["binding"]["quote"])
+        supporting = alternative["supporting_bindings"][0]
+        self.assertEqual(supporting["section"], "Alternatives")
+        self.assertIn("Compression can reduce", supporting["quote"])
+        self.assertIn("more compact serializer", supporting["quote"])
         self.assertIn("send them inline", self.claim_owner)
         self.assertNotIn("inline-compression alternative", self.claim_owner)
+        card_alternative = field(
+            self.claim_card_raw, "Competing alternative")
+        self.assertIn("Tycho guidance, not a source claim: reverse",
+                      card_alternative)
+        self.assertEqual(
+            unit["decision_evidence"]["competing_alternative"],
+            card_alternative)
+
+    def test_claim_labels_expiry_and_defines_tenant_binding(self):
+        failure = field(self.claim_card_raw, "Failure and recovery")
+        self.assertIn("Tycho guidance, not a source claim: expire", failure)
+        self.assertIn("idempotent consumer", failure)
+        limits = field(self.claim_owner, "Limits")
+        self.assertIn("tenant binding (a claim token is usable only", limits)
 
     def test_claim_good_fit_access_control_wording(self):
         good = field(self.claim_card_raw, "Good-fit conditions")
@@ -315,7 +359,9 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn("Synchronous Block", decision)
         self.assertIn("Asynchronous Callback", decision)
         self.assertIn("multiple outstanding requests", decision)
+        self.assertIn("single reply thread", decision)
         self.assertIn("Correlation Identifier", decision)
+        self.assertIn("Tycho synthesis: prefer a direct synchronous", decision)
         self.assertIn("does not serve correlation mechanics", decision)
 
     def test_request_limits_state_source_supports_sharing(self):
@@ -323,20 +369,173 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn(
             "multiple outstanding requests to share a single reply channel",
             limits)
+        self.assertIn("single reply thread", limits)
         self.assertIn("matching across multiple outstanding requests", limits)
         self.assertIn("Tycho guidance", limits)
+        invariant = self.units[
+            "tycho.pattern.request-reply-messaging"]["technical_evidence"][
+                "invariant"]
+        supporting = invariant["supporting_bindings"][0]
+        self.assertEqual(supporting["section"], "Asynchronous Callback")
+        self.assertIn("single reply thread", supporting["quote"])
         good = field(self.request_card_raw, "Good-fit conditions")
         self.assertIn("private to the requesting thread", good)
+        self.assertIn("single reply thread", good)
 
-    def test_three_entries_remain_partial_bounded_and_unpromoted(self):
-        for pattern_id in (
-                "tycho.pattern.claim-check",
-                "tycho.pattern.request-reply-messaging",
-                "tycho.pattern.splitter"):
-            self.assertNotIn(pattern_id, self.promoted)
+    def test_request_reply_partial_and_other_entries_promoted(self):
+        self.assertEqual(len(self.promoted), 20)
+        request = self.units["tycho.pattern.request-reply-messaging"]
+        self.assertNotIn("tycho.pattern.request-reply-messaging", self.promoted)
+        self.assertEqual(request["technical_coverage"], "partial-bounded")
+        self.assertEqual(request["decision_coverage"], "partial-bounded")
+        for pattern_id in ("tycho.pattern.claim-check", "tycho.pattern.splitter"):
             unit = self.units[pattern_id]
-            self.assertEqual(unit["technical_coverage"], "partial-bounded")
-            self.assertEqual(unit["decision_coverage"], "partial-bounded")
+            self.assertIn(pattern_id, self.promoted)
+            self.assertEqual(unit["technical_coverage"], "sufficient")
+            self.assertEqual(unit["decision_coverage"], "sufficient")
+
+
+class B8FinalClaimRequestSplitterReviewTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.request_card_raw = (
+            CARDS / "request-reply-messaging.md").read_text(encoding="utf-8")
+        cls.request_owner_raw = (
+            OWNERS / "request-reply-messaging.md").read_text(encoding="utf-8")
+        cls.claim_card_raw = (
+            CARDS / "claim-check.md").read_text(encoding="utf-8")
+        cls.claim_owner_raw = (
+            OWNERS / "claim-check.md").read_text(encoding="utf-8")
+        cls.split_card_raw = (
+            CARDS / "splitter.md").read_text(encoding="utf-8")
+        cls.split_owner_raw = (
+            OWNERS / "splitter.md").read_text(encoding="utf-8")
+        cls.claim_owner = squash(cls.claim_owner_raw)
+        cls.split_owner = squash(cls.split_owner_raw)
+        units = json.loads(OWNER_UNITS.read_text(encoding="utf-8"))
+        cls.units = {item["pattern_id"]: item for item in units["entries"]}
+
+    def test_claim_inline_fit_reject_is_scoped_to_no_other_reason(self):
+        decision = field(self.claim_card_raw, "Decision")
+        self.assertIn(
+            "no sensitivity, retention or repeated-serialization reason applies",
+            decision)
+        self.assertIn("retention reason is Tycho synthesis", decision)
+        self.assertIn("source-stated use conditions", decision)
+        contraindications = field(
+            self.claim_card_raw, "Hard contraindications")
+        self.assertIn(
+            "no sensitivity, retention or repeated-serialization reason applies",
+            contraindications)
+        self.assertIn("retention is Tycho synthesis", contraindications)
+        owner_decision = field(
+            self.claim_owner_raw, "Decision")
+        self.assertIn(
+            "no sensitivity, retention or repeated-serialization reason applies",
+            owner_decision)
+        limits = field(self.claim_owner_raw, "Limits")
+        self.assertIn(
+            "payload that fits the transport still warrants a claim check",
+            limits)
+        self.assertIn("sensitivity, retention or repeated serialization", limits)
+
+    def test_claim_reversal_has_inline_fit_precondition(self):
+        alternative = field(self.claim_card_raw, "Competing alternative")
+        self.assertIn(
+            "reverse the choice only when the payload fits inline", alternative)
+        self.assertEqual(
+            self.units["tycho.pattern.claim-check"]["decision_evidence"][
+                "competing_alternative"],
+            alternative)
+        owner_alternative = field(self.claim_owner_raw, "Alternative")
+        self.assertIn(
+            "reverse the choice only when the payload fits inline",
+            owner_alternative)
+        self.assertIn("Tycho guidance, not a source claim", owner_alternative)
+
+    def test_claim_mechanism_binds_write_and_retrieval(self):
+        mechanism = self.units["tycho.pattern.claim-check"][
+            "technical_evidence"]["mechanism"]
+        for needle in (
+                "writes the full payload",
+                "The messaging system never sees or stores the payload",
+                "Receiving applications use the reference to retrieve"):
+            self.assertIn(needle, mechanism["binding"]["quote"])
+        self.assertIn(
+            "Receiving applications use the reference to retrieve",
+            self.claim_owner)
+
+    def test_splitter_unknown_count_closes_incomplete_not_success(self):
+        failure = field(self.split_card_raw, "Failure and recovery")
+        self.assertIn("unknown part count leaves the aggregate incomplete",
+                      failure)
+        self.assertIn("neither is evidence of successful completion", failure)
+        self.assertIn("Tycho guidance, not a source claim", failure)
+        owner_failure = field(
+            self.split_owner_raw, "Failure and recovery")
+        self.assertIn(
+            "unknown part count leaves the aggregate incomplete", owner_failure)
+        self.assertIn("not evidence of successful completion", owner_failure)
+        limits = field(self.split_owner_raw, "Limits")
+        self.assertIn("partial result or forced closure", limits)
+        self.assertIn("not proof of successful completion", limits)
+        invariant = self.units["tycho.pattern.splitter"][
+            "technical_evidence"]["invariant"]
+        self.assertIn(
+            "release a partial result or force closure", invariant["reason"])
+        self.assertIn(
+            "not evidence of successful completion", invariant["quote"])
+
+    def test_splitter_mechanism_is_narrowed_to_default_output(self):
+        mechanism = self.units["tycho.pattern.splitter"][
+            "technical_evidence"]["mechanism"]
+        self.assertEqual(
+            mechanism["binding"]["section"],
+            "What is returned from Split EIP when its complete")
+        self.assertIn("return the original input message",
+                      mechanism["binding"]["quote"])
+        self.assertNotIn("supporting_bindings", mechanism)
+        self.assertNotIn("Use a Splitter to break out", self.split_owner)
+        self.assertNotIn("Camel defines it", self.split_owner)
+        self.assertIn("by default", mechanism["reason"])
+
+    def test_request_question_separates_channels_and_invocation(self):
+        question = field(self.request_card_raw, "Decision question")
+        self.assertIn("separate messages on separate", question)
+        self.assertIn("invoking the responder indirectly", question)
+        self.assertIn("both approaches block the caller", question)
+        self.assertEqual(
+            self.units["tycho.pattern.request-reply-messaging"][
+                "decision_evidence"]["question"],
+            question)
+        self.assertIn(
+            "Should a request and its reply travel as separate messages",
+            self.request_owner_raw)
+        decision = field(self.request_card_raw, "Decision")
+        self.assertIn(
+            "Both the Synchronous Block messaging approach and a direct Remote",
+            decision)
+        self.assertIn("block the caller's thread", decision)
+        self.assertIn("Tycho synthesis: prefer a direct synchronous", decision)
+
+    def test_request_alternative_state_is_partial_for_blocking_premise(self):
+        unit = self.units["tycho.pattern.request-reply-messaging"]
+        alternative = unit["technical_evidence"]["alternative"]
+        self.assertEqual(alternative["state"], "partial")
+        self.assertIn("Only the blocking premise is source-supported",
+                      alternative["reason"])
+        self.assertIn("Tycho synthesis", alternative["reason"])
+        card_alternative = field(
+            self.request_card_raw, "Competing alternative")
+        self.assertIn(
+            "Both this direct call and the Synchronous Block messaging approach",
+            card_alternative)
+        self.assertEqual(
+            unit["decision_evidence"]["competing_alternative"],
+            card_alternative)
+        limits = field(self.request_owner_raw, "Limits")
+        self.assertIn("Synchronous Block messaging and RPC block the caller", limits)
+        self.assertIn("Tycho synthesis", limits)
 
 
 if __name__ == "__main__":

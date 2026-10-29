@@ -2,8 +2,9 @@
 
 Status: split complete and review-ready. Review remediation for all five entries was
 applied on 2026-10-29; a follow-up pass addressed the Claim Check, Request-Reply and
-Splitter majors. No promotion or owner acceptance is claimed, and the remediated bytes
-still need a current external review.
+Splitter majors, a third pass fixed the remaining C/R/S binding and labeling findings, and a
+fourth pass fixed the final C/R/S decision, failure and binding findings. No promotion or
+owner acceptance is claimed, and the remediated bytes still need a current external review.
 
 ## Parent and scope
 
@@ -198,16 +199,94 @@ remediation bytes were not rolled back.
   - Splitter owner: `ffdbaf06e35ad61cb191f6065dba8bd37500182641c7d5bed2ad5c9efc16c413`
   - Splitter card: `a2f55cc394669e4f54fcd0e29487f2458c1d5d4e3d1f455a5df56e7712a82eb6`
 
+### Claim Check, Request-Reply and Splitter C/R/S review — fix-forward 2026-10-29
+
+A third bounded review of the same three entries returned two binding majors and six minor
+findings. The findings were fixed forward under rule 33; the reviewed bytes were not rolled
+back. All three remain `partial-bounded` and `awaiting-current-external-review`; no promotion
+or owner acceptance is restored.
+
+- Splitter: the invariant keeps its Iterators release/expiry binding and gains a
+  `supporting_bindings` entry at `Programming Model` for the base-splitter header sentence
+  (`CORRELATION_ID`, `SEQUENCE_SIZE`, `SEQUENCE_NUMBER`); the card `Sources` now carries
+  that verbatim sentence. The completion rule is labeled Tycho guidance in the owner invariant
+  and card decision; error correlation is Tycho inference, and ordering, context and
+  completion-ownership contraindications are Tycho guidance.
+- Request-Reply: the invariant keeps its Synchronous Block binding and gains a
+  `supporting_bindings` entry at `Asynchronous Callback` for the exact sentence that multiple
+  outstanding requests can share one reply channel and one reply thread can process replies for
+  multiple request threads. Owner, card and sources use that sentence; the Decision's RPC
+  preference is labeled Tycho synthesis.
+- Claim Check: the alternative keeps its inline-delivery binding and gains a
+  `supporting_bindings` entry at `Alternatives` for compression or a compact serializer.
+  Reversal is Tycho guidance in owner, card and `decision_evidence`; expiry, garbage collection
+  and fail-closed handling are Tycho guidance in the card; Limits define tenant binding.
+- The owner-unit schema gains an optional `supporting_bindings` array; the validator checks
+  every supporting binding's source, record, section and revision. A regression test rejects an
+  unrecorded supporting-binding section.
+- Guard: `tests/test_tycho_b8_review_remediation.py` and
+  `tests/test_tycho_pattern_owner_units.py`.
+- Final hashes:
+  - Claim Check owner: `86603e98e3cd5b82341bad0768777057106338153b9946050ace7a5b4e0056b2`
+  - Claim Check card: `68c50e1cd28efbbd41376538c14855100e6aa3df796e5ec482f59fefae0e4a4e`
+  - Request-Reply Messaging owner:
+    `2437a5a8644534946335a19bf745bda14efb4f8f91471d0899387b382f888ecb`
+  - Request-Reply Messaging card:
+    `c4195f18d46f79b747eb8884ffe1411b6133e73ad168fa3cc78dbe75f3af357d`
+  - Splitter owner: `6e9106a0839c5f2c93bc53f7938a23c77e285d0d25a8b11b6f36ba489a9fc326`
+  - Splitter card: `1f104295cf7434baab513bb9d7e9782fae834d4db2b070176e28091b605fe3df`
+  - Owner-unit schema: `bc7942d545dbf5c9da05eb768614a3c489573ab327becc39a7988d825a313c36`
+  - Owner-unit validator: `8e590280670bf3fa7db5071051e26bfe2419280a128496b45ffce372f56578e0`
+
+### Claim Check, Request-Reply and Splitter final C/R/S review — fix-forward 2026-10-29
+
+A fourth bounded review of the same three entries returned seven findings. The findings were
+fixed forward under rule 33; the reviewed bytes were not rolled back. All three remain
+`partial-bounded` and `awaiting-current-external-review`; no promotion or owner acceptance is
+restored.
+
+- Claim Check: the inline-fit preference and hard contraindication now apply only when the
+  payload fits and no sensitivity, retention or repeated-serialization reason applies. Card and
+  owner label sensitivity and repeated serialization as source-stated use conditions and
+  retention as Tycho synthesis. The reversal carries the same precondition in the card and
+  `decision_evidence`; the mechanism binding covers the source's write, transport and retrieval
+  sentences.
+- Splitter: the source states only that an unknown part count leaves the aggregate incomplete.
+  Tycho guidance now says a release rule or expiry can release a partial result or force
+  closure, not successful completion; the card, owner invariant, failure and Limits use that
+  split. The mechanism claim is narrowed to Camel's bound default-output sentence rather than an
+  unbound split definition.
+- Request-Reply: the decision question separates separate request and reply channels from
+  indirect versus direct invocation and states that both Synchronous Block messaging and RPC
+  block the caller. Card, owner and `decision_evidence` keep the RPC comparison labeled Tycho
+  synthesis. The alternative `state` is `partial`, because only the blocking premise is
+  source-supported.
+- Guard: `tests/test_tycho_b8_review_remediation.py` (new final-review class) and
+  `authoring/ai-reviews/REGRESSIONS.md`.
+- Final hashes:
+  - Claim Check owner: `40476d0da96d46251be294cbb8cf101d4710104a6c0ca351aca9854f886fd93d`
+  - Claim Check card: `cdba10b41235e7c16accb26693ba6b17a41d86f4f7502b5825999fefef3cf353`
+  - Request-Reply Messaging owner:
+    `4f7a84409ed7f782a3e6ba69242388b989face4d4e96226c9eb0db0e04a4d9f6`
+  - Request-Reply Messaging card:
+    `1087801458aea0e844ebe3bd196409903b872c77219eec9b77f16a2fa880bc8e`
+  - Splitter owner: `17eea188231c261feaa4b149e578b33ca717db6ff72b98543113d45eeb4bbbc9`
+  - Splitter card: `d9e91c5a96e21542930ed916e8ce6ddcdc8761da2e75b9422e6a4244a4b4483f`
+  - Owner units: `34c33f1726d784cc6f51c142936ff637f4b3c348ed61f3e3d094158b38ca9741`
+  - Test guard: `47d51aaafd4e9da2cb6d211db7d3b2d1c4a01d8fbff77956d36a303182df87a6`
+
 ## Verification
 
+- `python3 scripts/refresh_atlas_artifacts.py --authorize` ran for the final pass; the
+  follow-up `python3 scripts/book_change.py --plan` was clean.
 - `python3 scripts/book_change.py --plan`: clean.
 - Targeted structural validators pass: atlas, cards, coverage, owner units, phase 4,
   registry, semantic audit, sources, delivery evidence, directory migration,
   edition, enrichment, promotions, acceptance, pilot inputs, book metadata and
   corpus qrels.
 - `python3 scripts/validate_book_navigation.py` reports the same four
-  pre-existing missing-local-anchor issues at the parent HEAD in the B5/B6 pages;
-  it reports no new issue at this HEAD.
+  pre-existing missing-local-anchor issues at the parent HEAD (dark-launching-shadow-traffic
+  and rbac-abac pages); it reports no new issue at this HEAD.
 - `python3 scripts/check_boundary.py`: pass.
 - `python3 scripts/check_markdown_line_length.py`: the same two pre-existing V11
   failures remain (c01 anti-corruption-layer line 46 and c11 rbac-abac line 58).
@@ -215,6 +294,12 @@ remediation bytes were not rolled back.
   The pre-remediation baseline was 627 tests; the first B8 remediation guard added 12 tests
   (five for Resequencer/Pipes and seven for Claim Check/Request-Reply/Splitter), and the
   follow-up guard added 12 more for the three majors.
+- Full suite at C/R/S fix-forward end: `python3 -m unittest discover -s tests`, 654 tests, OK.
+  The first run exposed one stale Claim Check notes guard; the note was restored to the
+  required EIP wording without exceeding the 400-character note limit, and the rerun passed.
+- Full suite at final C/R/S end: `python3 -m unittest discover -s tests`, 661 tests, OK.
+  The first final run exposed one stale Claim Check notes guard; the ledger record id and EIP
+  phrase were restored within the 400-character note limit, and the rerun passed.
 - `sources/CATALOG.md` was regenerated to match the register's 2026-10-29 inventory date;
   `validate_sources.py` now passes. This is a pre-existing derived-artifact drift, not a
   content change.

@@ -89,58 +89,52 @@ tool invocation that retrieves sources, or change.
 
 ## Independent audit and review via external AI
 
-17. **Use an external AI reviewer from a different vendor.** The independent review gate
-    is an AI review performed in a separate harness from a different vendor than the
-    authoring agent: for example ChatGPT (OpenAI) or Claude Code (Anthropic) when the
-    authoring session is DeepSeek Harness. A separate read-only DeepSeek Reviewer agent is
-    also an accepted external reviewer when no different-vendor harness is available or the
-    selected harness is unavailable; it must not be the authoring agent or a fork of this
-    conversation and must use the same bounded prompt, schema, HEAD and artifact hashes.
-    Before hand-off, discover qualifying local CLIs: search `PATH` and installed app
-    bundles, and verify a non-interactive read-only mode and existing authentication.
-    If several CLIs are available, ask the user which to use. If the chosen CLI exposes
-    model selection, list its available models and ask the user which model to use. Do
-    not select a CLI or model silently. Once the user selects a CLI and/or model, record
-    the choice in session state and reuse it for every later review in the same session;
-    do not ask again unless the choice is unavailable, fails, or the user requests a
-    change. If no CLI is available, use a manual hand-off
-    through the user: provide the exact prompt and receive the reviewer's raw report.
-    If the user cannot provide a qualifying review, record the gate as blocked; never
-    waive it.
-
-    **DeepSeek Reviewer (2026-10-27).** A fresh read-only DeepSeek Reviewer agent has the
-    same authority as any other external AI reviewer. It must be a separate agent, not a
-    fork of the authoring conversation, must not see the author's conclusions, and must use
-    the same bounded prompt, schema, HEAD and artifact hashes. Save and index its report
-    normally; a pass satisfies the independent review gate and may support promotion and
-    owner acceptance.
-18. **Keep the reviewer independent.** Use a fresh external session, not a fork of this
-    conversation. Do not pass the author's conclusions, desired verdict or private context.
-    Give the reviewer the repository path, exact HEAD and content commit, bounded scope,
-    artifact paths and hashes, required checks, report schema and explicit limits. For a
-    delta review, pass prior finding IDs and changed artifacts only. Require counts to be
-    derived from artifacts, not supplied as expected values. When the owner asks for a
-    review hand-off, include an exact copy-paste prompt for the external reviewer; a
-    summary or checklist alone is not sufficient.
-19. **One bounded batch per run.** Split a large audit into non-overlapping batches. The
-    reviewer must use read-only repository access, must not write, commit, open a pull
-    request or change configuration, and must receive public sources only. Do not send
-    restricted, employer-specific or private material.
-20. **Treat the output as evidence, not acceptance.** Require a verdict, evidence, findings
-    by severity with exact paths, and limits. Save the raw report verbatim under
-    `authoring/ai-reviews/`, add it to the index with its SHA-256, and verify its
-    metadata, HEAD, hashes and scope. An AI review pass satisfies the independent review
-    gate, but it is not owner acceptance, CI, sufficient coverage or permission to merge.
-    The owner decides whether to apply verdicts; records and acceptance documents change
-    only after that decision.
-21. **Record the review.** State the reviewer harness and vendor, model and version when
-    exposed, session or run id, review timestamp, HEAD, content commit, scope, saved
-    report path and any prior involvement. Use `ai_review` for the new gate;
-    `human_review` is retired for future work. State `sufficient: 0` unless separate
-    evidence exists. After the run, check `git status` and report hashes; if the reviewer
-    wrote to the repository, stop,
-    quarantine the changes and treat the review as contaminated.
-
+17. **Use an external AI reviewer only for book or atlas changes.** The independent
+    review gate applies when a change touches book content or atlas structure:
+    book/**, edition/atlas-manifest.json, edition/outline.json,
+    edition/patterns/registry.v1.json, card-batches.v1.json,
+    owner-units.v1.json, coverage-map.v1.json, reverse-map.v1.json,
+    source-plan.v1.json, or any manifest that changes book or atlas structure.
+    Tooling, tests, generated indexes, workflow configuration, scripts and
+    documentation do not require this gate. A mixed change that includes any
+    applicable path requires it. When the gate applies, use a fresh external
+    harness from a different vendor than the authoring agent (for example ChatGPT
+    when authoring in DeepSeek Harness). A separate read-only DeepSeek Reviewer
+    agent is also accepted when no different-vendor harness is available or the
+    selected harness is unavailable;
+    it must not be the authoring agent or a fork of this conversation and must use
+    the same bounded prompt, schema, HEAD and artifact hashes. If no
+    qualifying reviewer is available, record the gate as blocked; never waive it.
+18. **Keep the reviewer independent when the gate applies.** Use a fresh external
+    session, not a fork of this conversation. Do not pass the author's conclusions,
+    desired verdict or private context. Give the reviewer the repository path,
+    exact HEAD and content commit, bounded scope, artifact paths and hashes,
+    required checks, report schema and explicit limits. For a delta review, pass
+    prior finding IDs and changed artifacts only. Require counts to be derived
+    from artifacts, not supplied as expected values. When the owner asks for a
+    review hand-off, include an exact copy-paste prompt; a summary or checklist
+    alone is not sufficient.
+19. **One bounded batch per applicable run.** Split a large audit into
+    non-overlapping batches. The reviewer must use read-only repository access,
+    must not write, commit, open a pull request or change configuration, and must
+    receive public sources only. Do not send restricted, employer-specific or
+    private material.
+20. **Treat the output as evidence, not acceptance.** For an applicable review,
+    require a verdict, evidence, findings by severity with exact paths, and limits.
+    Save the raw report verbatim under authoring/ai-reviews/, add it to the index
+    with its SHA-256, and verify its metadata, HEAD, hashes and scope. An AI review
+    pass satisfies the independent review gate, but it is not owner acceptance,
+    CI, sufficient coverage or permission to merge. The owner decides whether to
+    apply verdicts; records and acceptance documents change only after that
+    decision.
+21. **Record the review only when the gate applies.** State the reviewer harness,
+    vendor, model and version when exposed, session or run id, review timestamp,
+    HEAD, content commit, scope, saved report path and any prior involvement. Use
+    ai_review for the gate; human_review is retired for future work. State
+    sufficient: 0 unless separate evidence exists. For non-applicable changes,
+    record ai_review: not-required; do not claim a review. After an applicable run,
+    check git status and report hashes; if the reviewer wrote to the repository,
+    stop, quarantine the changes and treat the review as contaminated.
 
 ## Delegated full reading (DeepSeek Harness)
 
@@ -233,3 +227,12 @@ tool invocation that retrieves sources, or change.
     page before a planned promotion. Decoupling for a hypothetical future batch is not
     sufficient reason. Prefer coverage work on independent pages over maintenance
     splits of already sufficient entries.
+
+35. **Format-only promotion rebind.** A promotion hash may be updated without a new
+    external content review only when the change is proven to be formatting-only:
+    `git diff -w --exit-code <old> <new>` is empty, no frontmatter, code block, table,
+    link target, heading or list structure changed, and the canonical text hash is
+    unchanged. Record old/new file SHA-256, canonical hash and the diff command result
+    in a format-rebind record, and have a second read-only verifier confirm it. A raw
+    hash update without that proof is prohibited. Anything beyond whitespace/reflow
+    requires the normal review gate.

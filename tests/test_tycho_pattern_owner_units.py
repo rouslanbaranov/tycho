@@ -27,7 +27,8 @@ class PatternOwnerUnitTests(unittest.TestCase):
         self.assertEqual(result["entries"], 145)
         self.assertEqual(result["owner_pages"], 81)
         self.assertEqual(result["shared_pages"], 30)
-        self.assertEqual(result["bounded"] + result["partial"] + result.get("sufficient", 0), 145)
+        self.assertEqual(result["sufficient"], 20)
+        self.assertEqual(result["bounded"] + result["partial"] + result["sufficient"], 145)
         self.assertGreater(result["units"], 30)
 
     def test_missing_entry_is_rejected(self):
@@ -111,6 +112,17 @@ class PatternOwnerUnitTests(unittest.TestCase):
         binding = next(value["binding"]
                        for value in item["technical_evidence"].values()
                        if value.get("binding"))
+        binding["section"] = "Not a recorded section"
+        self.check_error(data, "owner-units-binding-section")
+
+    def test_supporting_binding_section_must_be_read(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if any(value.get("supporting_bindings")
+                           for value in entry["technical_evidence"].values()))
+        binding = next(value["supporting_bindings"][0]
+                       for value in item["technical_evidence"].values()
+                       if value.get("supporting_bindings"))
         binding["section"] = "Not a recorded section"
         self.check_error(data, "owner-units-binding-section")
 

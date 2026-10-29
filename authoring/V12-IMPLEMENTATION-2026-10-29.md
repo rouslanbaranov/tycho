@@ -14,7 +14,7 @@ feature/TYCHO-587-v12-architecture-modeling-simulation-decision-validation-isola
 ```
 
 The branch was later merged with the current atlas-promotion branch head
-`d47b2b3590be27a1240af2a933c1f4c9dba1fc92`; the V12 book pages are unchanged, while the
+`8649953f186d35b3191d35b9a925866fac87920d`; the V12 book pages are unchanged, while the
 manifest, route index, inventory and review-packet source binding were regenerated for the
 expanded corpus.
 
@@ -86,13 +86,13 @@ python3 scripts/validate_v12.py
 PASS: V12 structure, hashes, reverse index and iron rule
 
 python3 scripts/validate_edition.py
-canonical_documents: 497
+canonical_documents: 498
 volumes: 12
 chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 672 tests in 89.0s
+Ran 709 tests in 81.3s
 OK
 
 node tools/mermaid/check.mjs --root .
@@ -105,11 +105,11 @@ V12 Markdown line limit and the protected baseline.
 
 ## Protected baseline
 
-The baseline contains 466 existing book pages and five promotion/atlas/review records. The
+The baseline contains 467 existing book pages and five promotion/atlas/review records. The
 validator reports:
 
 ```json
-{"protected_pages": 466, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
+{"protected_pages": 467, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
 ```
 
 No existing page, card, owner page, sufficient-promotion record or atlas

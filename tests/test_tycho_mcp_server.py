@@ -4,6 +4,7 @@ The suite builds a synthetic three-page book with valid strict metadata, publish
 a real section index, and exercises the modern and legacy protocol paths. It does
 not test a hosted endpoint, an external SDK, authentication or answer quality.
 """
+import hashlib
 import io
 import json
 import os
@@ -353,6 +354,20 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["content_trust"],
                          mcp_server.CONTENT_TRUST)
 
+    def test_h3_match_maps_to_parent_and_is_not_readable(self):
+        payload = self.call(self.server(), "tycho_search", {
+            "query": "nested text", "limit": 2,
+        })["structuredContent"]
+        top = payload["results"][0]
+        self.assertEqual(top["section_id"], "retry-budget")
+        self.assertEqual(top["matched_passage_heading"], "Nested detail")
+        self.assertIn("~", top["matched_passage_key"])
+        self.assertEqual(top["citation"], "book/alpha.md#retry-budget")
+        read = self.call(self.server(), "tycho_read", {
+            "section_key": top["matched_passage_key"],
+        })
+        self.assertTrue(read["isError"])
+
     def test_no_results_is_not_a_tool_error(self):
         result = self.call(self.server(), "tycho_search", {
             "query": "nothingmatches",
@@ -658,7 +673,9 @@ class McpServerTests(unittest.TestCase):
         ]
         self.assertEqual(len(lines), 2)
         self.assertEqual(lines[0]["tool"], "tycho_search")
-        self.assertEqual(lines[0]["query"], "zebra")
+        self.assertEqual(lines[0]["query_sha256"],
+                         hashlib.sha256(b"zebra").hexdigest())
+        self.assertNotIn("query", lines[0])
         self.assertEqual(lines[1]["status"], "no-results")
         self.assertNotIn("clientInfo", lines[0])
         self.assertNotIn("ip", lines[0])
@@ -667,6 +684,17 @@ class McpServerTests(unittest.TestCase):
             "query": "zebra",
         })["structuredContent"]
         self.assertNotIn("query_log", plain)
+
+    def test_query_log_raw_is_explicit_opt_in(self):
+        log_path = self.log_dir / "raw.jsonl"
+        if log_path.exists():
+            log_path.unlink()
+        server = mcp_server.TychoMcpServer(
+            self.root, query_log=log_path, query_log_raw=True)
+        self.call(server, "tycho_search", {"query": "zebra"})
+        record = json.loads(log_path.read_text(encoding="utf-8"))
+        self.assertEqual(record["query"], "zebra")
+        self.assertNotIn("query_sha256", record)
 
     def test_query_log_failure_does_not_break_search(self):
         log_path = self.log_dir / "missing" / "queries.jsonl"

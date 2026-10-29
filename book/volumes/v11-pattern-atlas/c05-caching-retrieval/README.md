@@ -275,37 +275,7 @@ See the [dedicated Cache Invalidation card](cache-invalidation.md).
 
 ### TTL-Based Expiration
 
-**Identity.** TTL-Based Expiration; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should entries expire after a bounded time even without an explicit
-invalidation?
-
-**Good-fit conditions.** Staleness is bounded by time; refresh cost is acceptable; the TTL
-is shorter than the business freshness requirement.
-
-**Hard contraindications.** Reject when a hard read-after-write contract exists, when
-synchronized expiry would stampede the source, or when TTL is longer than the acceptable
-stale window.
-
-**Competing alternative.** Explicit invalidation or versioned keys. Reverse the choice
-when TTL expiry causes unacceptable misses or stale decisions.
-
-**Failure and recovery.** Synchronized expiry and stale reads are common; verify
-eviction/refresh in the owner section.
-
-**Technical owner.** [TTL-Based Expiration](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#ttl-based-expiration) — eviction/refresh is bounded, not a universal TTL policy.
-
-**Sources.**
-[src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage data expiration in a
-cache", "Manage concurrency in a cache". The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cache Invalidation; Cache Stampede Protection; Negative Caching;
-Stale-While-Revalidate.
+See the [dedicated TTL-Based Expiration card](ttl-based-expiration.md).
 
 ### Negative Caching
 

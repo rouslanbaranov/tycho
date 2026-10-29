@@ -2182,7 +2182,7 @@
         "heading": "Request-Reply Messaging",
         "anchor": "request-reply-messaging",
         "level": 1,
-        "line": 43,
+        "line": 45,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Request-Reply Messaging"
@@ -2204,14 +2204,23 @@
         "invariant": {
           "state": "supported",
           "quote": "The request thread awaiting the response implies that there is only one outstanding request, or that the reply channel for this request is private for this thread.",
-          "reason": "The Synchronous Block request thread implies one outstanding request or a reply channel private to the requesting thread.",
+          "reason": "The Synchronous Block request thread implies one outstanding request or a reply channel private to the requesting thread; the Asynchronous Callback sentence separately supports multiple outstanding requests sharing one reply channel and one reply thread.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
             "section": "Synchronous Block",
             "quote": "The request thread awaiting the response implies that there is only one outstanding request, or that the reply channel for this request is private for this thread.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.enterprise-integration",
+              "ledger_record": "read.batch2-request-reply.2026-10-21",
+              "section": "Asynchronous Callback",
+              "quote": "This approach enables multiple outstanding requests to share a single reply channel, and a single reply thread to process replies for multiple request threads.",
+              "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
@@ -2226,9 +2235,9 @@
           }
         },
         "alternative": {
-          "state": "supported",
+          "state": "partial",
           "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
-          "reason": "The bound page states that an RPC caller's thread blocks while it waits for the response; it does not present RPC as a decision alternative. Framing direct synchronous RPC as the alternative is Tycho synthesis.",
+          "reason": "Only the blocking premise is source-supported: the bound page states that an RPC caller's thread blocks while it waits for the response, but it does not present RPC as the decision alternative. Framing direct synchronous RPC as the alternative is Tycho synthesis.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
@@ -2240,8 +2249,8 @@
       },
       "decision_evidence": {
         "atlas_section": "request-reply-messaging",
-        "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?",
-        "competing_alternative": "Tycho synthesis: a direct synchronous Remote Procedure Invocation is the alternative when the responder is reachable within the request budget and blocking is acceptable. The bound source states only that an RPC caller's thread must block while it waits for the response, not that RPC is the decision alternative.",
+        "question": "Should a request and its reply travel as separate messages on separate channels, invoking the responder indirectly rather than directly, when both approaches block the caller?",
+        "competing_alternative": "Tycho synthesis: a direct synchronous Remote Procedure Invocation is the alternative when the responder is reachable within the request budget and blocking is acceptable. Both this direct call and the Synchronous Block messaging approach block the caller; the difference is direct versus indirect invocation. The bound source states only that an RPC caller's thread must block while it waits for the response, not that RPC is the decision alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2255,7 +2264,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner page split 2026-10-29; all four dimensions bind to the EIP Request-Reply page; the card decision separates the Synchronous Block one-outstanding/private-thread implication from Asynchronous Callback multiple-outstanding sharing and adds a Tycho correlation path; publisher-abridged limits cover correlation, timeout, duplicate replies and the callback contract; partial-bounded."
+      "notes": "Dedicated owner page split 2026-10-29; four dimensions bind to the EIP page; invariant binds the Asynchronous Callback sharing/thread sentence; card separates one-outstanding from callback sharing, states both Synchronous Block and RPC block, labels correlation and RPC comparison Tycho synthesis; alternative partial because only the blocking premise is source-supported; partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -2567,8 +2576,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
       "notes": "Source-bound dedicated owner page (EIP Chapter 3) split 2026-10-29; all four dimensions supported; promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
     },
     {
@@ -2593,8 +2602,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A splitter turns one input into several independently processable messages. Apache Camel's splitter breaks a composite into one message per item and processes each part. Camel states: \"The Splitter will by default return the original input message. You can control this by using a custom AggregationStrategy.\"",
-          "reason": "Camel's Splitter breaks the composite into individual messages and returns the original input message by default unless a custom AggregationStrategy controls the response.",
+          "quote": "A splitter turns one input into several independently processable messages. Camel states: \"The Splitter will by default return the original input message. You can control this by using a custom AggregationStrategy.\"",
+          "reason": "Camel states that the Splitter returns the original input message by default unless a custom AggregationStrategy controls the response; the general description of a splitter as dividing one input is framing, not a Camel-specific claim.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
@@ -2605,20 +2614,29 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each part must carry a correlation identity, a sequence position and, when known, the total size; completion is decidable only when the total count is known, or when a custom release strategy or expiry closes the group.",
-          "reason": "Spring Integration populates CORRELATION_ID, SEQUENCE_SIZE and SEQUENCE_NUMBER on produced messages; its Iterators section sets SEQUENCE_SIZE to 0 for an unknown size and states that the aggregate group is not released until a custom release strategy or expiry closes it. Ownership and fan-out limits are Tycho guidance.",
+          "quote": "Each part must carry a correlation identity, a sequence position and, when known, the total size. Tycho guidance, not a source claim: when the total count is known, completion is decidable; when it is unknown, a custom release strategy or send-partial-result-on-expiry can release a partial result or force closure, and that closure is not evidence of successful completion.",
+          "reason": "Spring Integration's Programming Model states that the base splitter fills CORRELATION_ID, SEQUENCE_SIZE and SEQUENCE_NUMBER on produced messages; its Iterators section sets SEQUENCE_SIZE to 0 for an unknown size, states that the aggregate group remains incomplete, and directs a custom ReleaseStrategy or send-partial-result-on-expiry. The completion decision rule, partial-result disposition and ownership/fan-out limits are Tycho guidance; a release or expiry can release a partial result or force closure, which is not evidence of successful completion.",
           "binding": {
             "source_id": "src.spring-integration",
             "ledger_record": "read.spring-splitter.2026-10-28",
             "section": "Iterators",
             "quote": "Note, in the case of an Iterator (or Iterable), we don’t have access to the number of underlying items and the SEQUENCE_SIZE header is set to 0. This means that the default SequenceSizeReleaseStrategy of an aggregator won’t work and the group for the CORRELATION_ID from the splitter won’t be released; it will remain as incomplete. In this case you should use an appropriate custom ReleaseStrategy or rely on send-partial-result-on-expiry together with group-timeout or a MessageGroupStoreReaper.",
             "revision": "60507878879812400e92ac71f7a8eeb586cc0dd5744d140bd6fe2860aa4e0b94"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.spring-integration",
+              "ledger_record": "read.spring-splitter.2026-10-28",
+              "section": "Programming Model",
+              "quote": "It is a MessageHandler implementation that encapsulates features common to splitters, such as filling in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the messages that are produced.",
+              "revision": "60507878879812400e92ac71f7a8eeb586cc0dd5744d140bd6fe2860aa4e0b94"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
           "quote": "Apache Camel's value-based watermark is only updated when the split completes successfully; an aborted split (for example, one that exceeds maxFailedRecords) does not update the watermark, which allows the failed batch to be retried.",
-          "reason": "Camel's value-based watermark section states that the watermark is only updated when the split completes successfully and is not updated on abort, allowing retry; idempotency and re-delivery are Tycho guidance, not source-stated.",
+          "reason": "Camel's value-based watermark section states that the watermark is only updated when the split completes successfully and is not updated on abort, allowing retry. Spring Integration states that an unknown part count leaves the aggregate incomplete. Tycho guidance adds that release or expiry can release a partial result or force closure, which is not evidence of successful completion; idempotency and re-delivery handling are not source-stated.",
           "binding": {
             "source_id": "src.camel",
             "ledger_record": "read.batch2-splitter.2026-10-21",
@@ -2655,9 +2673,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner page split 2026-10-29; dimensions bind to Camel and Spring Integration documentation; mechanism binds Camel default output; invariant states correlation identity, sequence position and known total size with completion by known count or custom release/expiry; failure binds Camel value-based watermark; limits state the provider boundary and Tycho-only guidance; partial-bounded."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Dedicated owner page split 2026-10-29; Camel and Spring Integration bindings; mechanism narrows the Camel claim to default output; invariant binds Programming Model headers and Iterators incomplete/release, with partial-result disposition Tycho; failure binds Camel watermark; Limits state the provider boundary and that release or expiry is not success; partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -3141,8 +3159,8 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
       "notes": "Source-bound dedicated owner page (EIP, Camel 4.22.x LTS and Sequential Convoy) split 2026-10-29; all four dimensions supported; promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
     },
     {
@@ -3167,13 +3185,13 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system.",
-          "reason": "The source describes writing the full payload to an external store and sending a reference; receiving applications use the reference to retrieve the payload directly from the store.",
+          "quote": "A sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system. The messaging system never sees or stores the payload. Receiving applications use the reference to retrieve the payload directly from the data store.",
+          "reason": "The source describes writing the full payload to an external store, sending a reference through the messaging system, and receiving applications retrieving the payload directly from the store.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
             "section": "Solution",
-            "quote": "A sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system.",
+            "quote": "A sending application writes the full payload to an external data store and sends a reference to that payload through the messaging system. The messaging system never sees or stores the payload. Receiving applications use the reference to retrieve the payload directly from the data store.",
             "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
           }
         },
@@ -3204,20 +3222,29 @@
         "alternative": {
           "state": "supported",
           "quote": "When payloads stay within a transport's supported limit and don't create unacceptable throughput or latency, send them inline to avoid the external-store dependency.",
-          "reason": "The source states when to send a payload inline and documents compression or a compact serializer for reducing inline size; reversal is Tycho guidance.",
+          "reason": "The When to use this pattern section supports inline delivery; the Alternatives section states that compression and a more compact serializer reduce inline size. Reversal is Tycho guidance and is conditional on the payload fitting inline with no sensitivity, retention or repeated-serialization reason.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
             "section": "When to use this pattern",
             "quote": "When payloads stay within a transport's supported limit and don't create unacceptable throughput or latency, send them inline to avoid the external-store dependency.",
             "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-claim-check.2026-10-28",
+              "section": "Alternatives",
+              "quote": "Compression can reduce repetitive text or binary payloads, and a more compact serializer can reduce message overhead.",
+              "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "claim-check",
         "question": "Should a large or sensitive payload travel outside the message and be retrieved through a claim check?",
-        "competing_alternative": "Inline payload when it stays within the transport's supported limit and does not create unacceptable throughput or latency; compression or a compact serializer can reduce inline size. Reverse the choice when retrieval and storage complexity exceed the savings.",
+        "competing_alternative": "Inline payload when it stays within the transport's supported limit and does not create unacceptable throughput or latency; compression or a compact serializer can reduce inline size. Tycho guidance, not a source claim: reverse the choice only when the payload fits inline, no sensitivity, retention or repeated-serialization reason applies, and retrieval and storage complexity exceed the savings.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3229,9 +3256,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Owner page split 2026-10-29; dimensions bind to Microsoft Claim Check (read.microsoft-claim-check.2026-10-28); invariant binding carries the write-before-publish sentence with lifecycle ownership and independent authorization; alternative binds the inline-delivery sentence; six failure cases; the EIP pattern page supports only the stored-payload and claim-token description; partial-bounded."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Split 2026-10-29; read.microsoft-claim-check.2026-10-28; invariant carries write-before-publish and independent authorization; mechanism binds write, transport, retrieval; alternative binds inline/compression; sensitivity/repeated serialization source-stated, retention Tycho; six failure cases; EIP pattern page supports only the stored-payload and claim-token description; partial-bounded."
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
@@ -11042,15 +11069,15 @@
     "mechanism_supported": 109,
     "invariant_supported": 60,
     "failure_recovery_supported": 45,
-    "alternative_supported": 57,
-    "technical_partial_bounded": 39,
+    "alternative_supported": 56,
+    "technical_partial_bounded": 35,
     "technical_partial": 90,
     "technical_name_only": 0,
-    "technical_sufficient": 16,
-    "decision_partial_bounded": 129,
+    "technical_sufficient": 20,
+    "decision_partial_bounded": 125,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 16,
+    "decision_sufficient": 20,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

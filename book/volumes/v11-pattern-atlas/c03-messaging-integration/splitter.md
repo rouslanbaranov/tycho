@@ -44,10 +44,11 @@ content_verified_at: null
 
 # Splitter
 
-**Decision.** Split only when the parts have independent effects and completion is observable:
-the total count is known, or a custom release rule or expiry closes the group. Keep the
-composite whole when the parts must be processed atomically; use an aggregator when the work is
-to combine related messages into one.
+**Decision.** Split only when the parts have independent effects and the outcome is
+observable: the total count is known, or an explicit release rule or expiry records a partial
+result or forced closure rather than silent success (Tycho guidance, not a source claim). Keep
+the composite whole when the parts must be processed atomically; use an aggregator when the
+work is to combine related messages into one.
 
 **Identity.** Splitter; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
@@ -56,13 +57,14 @@ integration-pattern; priority core.
 parts?
 
 **Good-fit conditions.** The parts are independently actionable; each part can carry a
-correlation identity, a sequence position and, when known, a total size; errors can be
-correlated to the parent. Tycho guidance, not a source claim: a completion or compensation rule
-has an owner and the fan-out is bounded.
+correlation identity, a sequence position and, when known, a total size. Tycho inference:
+errors can be correlated to the parent. Tycho guidance, not a source claim: a completion or
+compensation rule has an owner and the fan-out is bounded.
 
-**Hard contraindications.** Reject when the parts must be processed atomically, when
-ordering across parts is mandatory and no sequencer reconstructs it, when the split loses
-required context, or when no one owns completion and orphan cleanup.
+**Hard contraindications.** Reject when the parts must be processed atomically. Tycho
+guidance, not a source claim: reject when ordering across parts is mandatory and no sequencer
+reconstructs it, when the split loses required context, or when no one owns completion and
+orphan cleanup.
 
 **Competing alternative.** Aggregation is the mirror-image decision: "Basically a
 mirror-image of the splitter, the aggregator is a type of message handler that receives
@@ -74,18 +76,22 @@ choose single-unit processing when atomicity dominates.
 completes successfully; an aborted split (for example, one that exceeds `maxFailedRecords`) does
 not update it, so the failed batch can be retried. Tycho guidance, not a source claim: keep
 completed effects idempotent or deduplicated because a retry can re-deliver parts. The source
-states that an unknown part count leaves the aggregate incomplete; a custom release rule or
-expiry must close it.
+states that an unknown part count leaves the aggregate incomplete. Tycho guidance, not a
+source claim: a custom release rule or expiry can release a partial result or force closure,
+and neither is evidence of successful completion.
 
 **Technical owner.** [Splitter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md#splitter) — bounded split decision, correlation identity, sequence position, known total size and completion; provider-specific release and watermark; not a channel implementation.
 
 **Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-splitter.2026-10-21: mechanism, default output and value-based
-watermark retry.
+read record read.batch2-splitter.2026-10-21: default output and value-based watermark
+retry.
 [src.spring-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read records read.spring-splitter.2026-10-28 and read.spring-aggregator.2026-10-28:
-correlation identity, sequence position, completion, unknown-size release or expiry, and the
-aggregator alternative.
+Programming Model base-splitter headers "It is a MessageHandler implementation that
+encapsulates features common to splitters, such as filling in the appropriate message headers
+(CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the messages that are produced.";
+correlation identity, sequence position, the unknown-size incomplete state and partial-result
+release or expiry closure; and the aggregator alternative.
 The sources are public documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.

@@ -54,6 +54,20 @@ guard is not yet possible. The guard is part of closing the finding.
   Synchronous Block attribution and Tycho multiple-outstanding correlation path; and the
   Splitter identity/position/size invariant, Camel value-based watermark attribution,
   default-output binding, provider-documentation limits and Tycho ownership label.
+- **B8 Claim/Request-Reply/Splitter C/R/S review 2026-10-29:** the same test module now
+  guards Splitter's supporting `Programming Model` header binding, card header quote and
+  Tycho inference/contraindication labels; Request-Reply's `Asynchronous Callback` supporting
+  binding and RPC Tycho synthesis label; and Claim Check's `Alternatives` compression binding,
+  Tycho reversal/expiry labels and defined tenant binding.
+  `tests/test_tycho_pattern_owner_units.py` guards supporting-binding sections.
+- **B8 final Claim/Request-Reply/Splitter C/R/S review 2026-10-29:** the same test module now
+  guards Claim Check's inline-fit exception in card and owner, the source-stated
+  sensitivity/repeated-serialization conditions with Tycho retention, the reversal
+  precondition, and the write/transport/retrieval mechanism binding; Splitter's source
+  incomplete-aggregate statement against Tycho partial-result or forced-closure guidance in
+  card, owner and Limits, plus the narrowed Camel default-output mechanism claim; and
+  Request-Reply's separated channel/invocation decision question, both-block statement, RPC
+  synthesis label and partial alternative state.
 
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.
