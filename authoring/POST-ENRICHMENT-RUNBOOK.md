@@ -40,3 +40,14 @@ suspended until the steps complete.
 
 Keep the previous manifest and index version. Rebuild from the prior content
 commit; do not hand-edit qrels or the index.
+
+## One-command diagnostic gate
+
+```sh
+python3 scripts/post_enrichment_check.py --regression
+```
+
+It runs manifest check, section diff, deep index verify and optional retrieval
+fingerprints. Exit code 0 means deep verification passed; changed pages/qrels
+are expected and are not quality acceptance.
+
