@@ -65,3 +65,15 @@ Health 7, Multi-Leader 8, Message Filter 11. Data:
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; the
 later bars use the single-entry preflight pipeline. These are timestamp
 estimates, not stopwatch measurements.
+
+## Forecast for remaining entries
+
+![Promotion forecast](promotion-forecast-2026-10-29.svg)
+
+Remaining tiers at 27 sufficient: 2 entries 4/4, 10 entries 3/4,
+55 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
+scenarios: optimistic **7.9**, base **10.8**, pessimistic **15.4**.
+Base assumes 15/30/90/150/240 minutes by tier. Data:
+`authoring/promotion-forecast-2026-10-29.json`; chart:
+`scripts/promotion_forecast_chart.py`. These are planning estimates,
+not review evidence.
