@@ -28,7 +28,10 @@ Every search and read call:
 1. opens `generated/sections-fts-v4.sqlite` in read-only mode;
 2. runs `PRAGMA quick_check`, validates the manifest and compares stored section, FTS,
    passage and passage-FTS row counts with the manifest;
-3. recomputes `route_index.canonical_scan` and compares its snapshot SHA with the
+3. binds the book to the index: a process-local cache, keyed by SHA-256 of every
+   `book/**/*.md` document and the metadata schema, reuses a canonical scan only
+   for byte-identical inputs; a changed book or schema forces a full
+   `route_index.canonical_scan`, whose snapshot SHA is compared with the
    manifest's pinned route snapshot;
 4. refuses the call when the book or metadata changed after the index was published.
 
@@ -36,7 +39,12 @@ The deep structural verifier remains `section_fts_index.py check`, which reparse
 section and H3 passage and compares parent mappings, offsets, content, topics and both
 FTS payloads. Search deliberately does not reparse all sections per query; the route
 snapshot covers every page byte and every metadata value, so a stale index cannot
-silently answer.
+silently answer. The cache is process-local and never bypasses the index checks: every
+call still opens the SQLite file, runs `quick_check`, validates the manifest and row
+counts, and compares the pinned route snapshot. A changed, added, removed, renamed or
+symlinked page, a changed schema, a stale route snapshot and a corrupt or missing index
+all still fail closed. The first validation after process start pays one full scan;
+later queries reuse it only while the complete input state is byte-identical.
 
 Failure is explicit: a stale snapshot raises `snapshot-mismatch`; a missing, corrupted or
 incompatible index raises `not-available`; unknown section IDs raise `not-found`.
@@ -162,6 +170,23 @@ remaining gaps are not implied to be complete.
 The timings and retrieval measurements are single-machine diagnostics, not a benchmark,
 latency SLO or capacity forecast.
 
+### Snapshot-validation latency diagnostic — 2026-10-29
+
+| Observation | Before | After |
+|---|---:|---:|
+| p50, 20 answerable qrels items, 3 repeats | 593.2 ms | 102.9 ms |
+| p95, same run | 619.1 ms | 143.3 ms |
+
+Both runs used `scripts/search_perf.py` with warmup 3 on the same published snapshot
+and the first 20 answerable items of qrels v2. Before recomputed
+`route_index.canonical_scan` on every query; after reuses the process-local
+byte-keyed scan cache. All 155 answerable qrels items produced identical serialized
+search results before and after the change. Runtime for this diagnostic was Python
+3.15.0 and SQLite 3.54.1. The cache is process-local: a fresh process pays one full
+canonical scan before reuse, and each process validates independently. `quick_check`
+still runs on every call. These are single-machine diagnostics, not a benchmark,
+latency SLO or capacity forecast.
+
 ### H3 parent-H2 retrieval diagnostic
 
 The H3 layer was compared with the same H2-only baseline on qrels v2 (155 answerable
@@ -190,10 +215,13 @@ can shift; no claim is made that retention or false-answer counts are unchanged.
 The tests use synthetic two-page snapshots and mocked route scans. They cover ranking,
 any-term matching, H3 parent mapping and diagnostics, parent read behavior, per-document
 dedupe, filters, validation, stale refusal, tampered section and passage row counts,
-bounded reads and offset continuation. They do not prove relevance on the 423-page
-corpus, answer quality, citation correctness, concurrency behavior or performance under
-load. The 25-question smoke is in-sample against author-created labels, not a held-out
-benchmark or qrels set. No independent review, gold relevance set or CI result is claimed.
+bounded reads and offset continuation. Cache tests cover reuse for unchanged input,
+book-change invalidation, route-snapshot mismatch after a warm cache, missing or corrupt
+indexes, and concurrent single-flight validation. They do not prove relevance on the
+423-page corpus, answer quality, citation correctness, process-level cache behavior or
+performance under production load. The 25-question smoke is in-sample against
+author-created labels, not a held-out benchmark or qrels set. No independent review,
+gold relevance set or CI result is claimed.
 
 Next gates: build a corpus-level qrels set and ranking baseline before claiming search
 quality; add evidence resolution (#51); then MCP envelopes (#57–#60).
