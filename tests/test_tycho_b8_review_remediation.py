@@ -512,9 +512,9 @@ class B8FinalClaimRequestSplitterReviewTests(unittest.TestCase):
             self.request_owner_raw)
         decision = field(self.request_card_raw, "Decision")
         self.assertIn(
-            "Both the Synchronous Block messaging approach and a direct Remote",
+            "Tycho synthesis: treat both the Synchronous Block messaging approach",
             decision)
-        self.assertIn("block the caller's thread", decision)
+        self.assertIn("blocking the caller's thread", decision)
         self.assertIn("Tycho synthesis: prefer a direct synchronous", decision)
 
     def test_request_alternative_state_is_partial_for_blocking_premise(self):

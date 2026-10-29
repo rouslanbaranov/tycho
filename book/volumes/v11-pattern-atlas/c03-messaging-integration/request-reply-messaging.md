@@ -53,8 +53,8 @@ Synchronous Block case, the request thread waits for the reply, which implies on
 request or a reply channel private to the requesting thread. In the Asynchronous Callback
 case, the source states: "This approach enables multiple outstanding requests to share a
 single reply channel, and a single reply thread to process replies for multiple request
-threads." Both the Synchronous Block messaging approach and a direct Remote Procedure
-Invocation block the caller's thread; the decision is indirect messaging versus direct
+threads." Tycho synthesis: treat both the Synchronous Block messaging approach and direct RPI as
+blocking the caller's thread; the decision is indirect messaging versus direct
 invocation. Tycho synthesis: carry a Correlation Identifier and match each reply to its
 request, because the bound page does not serve correlation mechanics. Tycho synthesis: prefer
 a direct synchronous Remote Procedure Invocation when the responder is reachable within the
@@ -89,7 +89,7 @@ matters.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
 re-establish the caller's context. Tycho guidance, not a served source claim: bound retries,
-time out unresolved requests, and treat duplicate replies as idempotent outcomes.
+time out unresolved requests, and suppress duplicate replies and treat repeated delivery as an idempotent outcome.
 
 **Technical owner.** [Request-Reply Messaging](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md#request-reply-messaging) — separate request and reply channels, one-outstanding or private reply channel, callback recovery and limits are bounded; this is not a complete request-reply contract.
 

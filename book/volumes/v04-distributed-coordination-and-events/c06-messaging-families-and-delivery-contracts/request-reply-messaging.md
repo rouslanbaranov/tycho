@@ -62,8 +62,8 @@ the reply, then processes it. The request thread awaiting the response implies t
 one outstanding request, or that the reply channel for this request is private for this thread.
 In the Asynchronous Callback approach, the source states: "This approach enables
 multiple outstanding requests to share a single reply channel, and a single reply thread to
-process replies for multiple request threads." Both the Synchronous Block messaging approach
-and a direct Remote Procedure Invocation block the caller's thread; the choice is indirect
+process replies for multiple request threads." Tycho synthesis: treat both the Synchronous Block messaging approach and direct RPI as
+blocking the caller's thread; the choice is indirect
 messaging versus direct invocation. Tycho synthesis: carry a Correlation Identifier and match
 each reply to its request; the bound page does not serve correlation mechanics.
 
@@ -83,9 +83,8 @@ coupling or buffered availability matters.
 
 **Limits.** The primary bound page is publisher-abridged. It supports the separate request and
 reply channels, the one-outstanding-request or private-reply-channel implication of the
-Synchronous Block case, and the Synchronous Block and Asynchronous Callback descriptions. It
-states that both Synchronous Block messaging and RPC block the caller, but it does not compare
-them as decision alternatives. The alternative binds the microservices.io Messaging page:
+Synchronous Block case, and the Synchronous Block and Asynchronous Callback descriptions. It does not state that both Synchronous Block messaging and RPC block the caller; Tycho
+synthesis treats both as blocking and the page does not compare them as decision alternatives. The alternative binds the microservices.io Messaging page:
 "The RPI pattern is an alternative pattern"; that page records messaging's benefits and costs
 but does not state a request-budget or blocking rule, so the selection conditions are Tycho
 synthesis. The primary page does not serve correlation-identifier mechanics, reply timeouts,
