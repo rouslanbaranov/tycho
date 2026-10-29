@@ -92,7 +92,7 @@ chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 648 tests in 88.0s
+Ran 648 tests in 76.1s
 OK
 
 node tools/mermaid/check.mjs --root .
