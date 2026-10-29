@@ -79,3 +79,10 @@ It is not a quality or capacity claim; per-query route scanning dominates.
 Use [POST-ENRICHMENT-RUNBOOK.md](POST-ENRICHMENT-RUNBOOK.md) for the full
 freeze, diff, re-adjudication, review and merge order.
 
+## Section-level diff
+
+The manifest stores section keys per page. diff reports added and removed H2/H3
+keys and the pages whose section sets changed, in addition to page hashes and
+qrels changes. This makes enrichment impact visible without parsing the book
+again.
+

@@ -46,6 +46,20 @@ def content_files(root):
     }
 
 
+def section_inventory(root):
+    target = Path(root) / DEFAULT_INDEX.relative_to(ROOT)
+    if not target.is_file():
+        return {}
+    with sqlite3.connect("file:" + target.resolve().as_posix() + "?mode=ro",
+                        uri=True) as db:
+        rows = db.execute(
+            "select path,section_key from sections order by path,section_key")
+        grouped = {}
+        for path, key in rows:
+            grouped.setdefault(path, []).append(key)
+    return grouped
+
+
 def content_digest(root):
     rows = sorted(content_files(root).items())
     payload = json.dumps(rows, separators=(",", ":")).encode("utf-8")
@@ -149,6 +163,7 @@ def make_manifest(root, route, result, stats):
             "sections": stats["sections"],
             "passages": stats["passages"],
             "bytes": stats["bytes"],
+            "sections_by_path": section_inventory(root),
         },
         "qrels": qrels,
         "qrels_stale": stale,
@@ -180,17 +195,32 @@ def diff_manifests(old, new):
     new_sections = new.get("section_index", {}).get("sections")
     old_passages = old.get("section_index", {}).get("passages")
     new_passages = new.get("section_index", {}).get("passages")
+    old_map = old.get("section_index", {}).get("sections_by_path", {})
+    new_map = new.get("section_index", {}).get("sections_by_path", {})
+    added_sections = sorted(
+        key for path in new_map for key in new_map[path]
+        if key not in old_map.get(path, []))
+    removed_sections = sorted(
+        key for path in old_map for key in old_map[path]
+        if key not in new_map.get(path, []))
+    section_changed_pages = sorted(
+        path for path in set(old_map) | set(new_map)
+        if old_map.get(path, []) != new_map.get(path, []))
+    changed_all = (added or removed or changed or qrels_changed
+                   or old_sections != new_sections
+                   or old_passages != new_passages
+                   or added_sections or removed_sections)
     return {
-        "status": "changed" if (added or removed or changed or qrels_changed
-                                 or old_sections != new_sections
-                                 or old_passages != new_passages)
-                  else "unchanged",
+        "status": "changed" if changed_all else "unchanged",
         "added_pages": added,
         "removed_pages": removed,
         "changed_pages": changed,
         "qrels_changed": qrels_changed,
         "sections": {"old": old_sections, "new": new_sections},
         "passages": {"old": old_passages, "new": new_passages},
+        "added_sections": added_sections,
+        "removed_sections": removed_sections,
+        "section_changed_pages": section_changed_pages,
     }
 
 
@@ -205,7 +235,8 @@ def diff_current(root, manifest_path=DEFAULT_MANIFEST):
     try:
         stats = section_fts_index.stats(root)
         new["section_index"] = {
-            "sections": stats["sections"], "passages": stats["passages"]}
+            "sections": stats["sections"], "passages": stats["passages"],
+            "sections_by_path": section_inventory(root)}
     except (OSError, ValueError, RuntimeError, sqlite3.DatabaseError):
         pass
     report = diff_manifests(old, new)
