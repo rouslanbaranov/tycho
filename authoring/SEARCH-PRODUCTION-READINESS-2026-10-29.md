@@ -3,6 +3,10 @@
 Status: **not production-certified**. Owner accepted AI labels as evidence on
 2026-10-29; that is not human review, CI or a sufficient-coverage claim.
 
+Update 2026-10-29: MCP `tycho_search` now defaults to
+`section_rerank=true, section_rerank_margin=0.15`. Core API and CLI remain
+explicit. See [MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md).
+
 ## Acceptance
 
 - Owner accepted AI labels for diagnostics in
@@ -11,9 +15,11 @@ Status: **not production-certified**. Owner accepted AI labels as evidence on
 
 ## Defaults
 
-- BM25 remains the default.
+- MCP default: margin-gated section rerank, `section_rerank=true` and
+  `section_rerank_margin=0.15`.
+- Core API/CLI default remains explicit BM25.
 - Best mode is optional and requires semantic artifacts/model cache.
-- Section rerank is optional.
+- Global section rerank remains optional (`section_rerank_margin=null`).
 - V12 explicit/top-page/query guard prevents known section-rerank regression.
 
 ## Evidence
