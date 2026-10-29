@@ -392,6 +392,13 @@ class McpServerTests(unittest.TestCase):
         })["structuredContent"]
         self.assertEqual(default["result_scope"],
                          "best-section-per-document")
+        gated = self.call(self.server(), "tycho_search", {
+            "query": "nested text", "section_rerank": True,
+            "section_rerank_margin": 0.0,
+        })["structuredContent"]
+        self.assertEqual(gated["result_scope"],
+                         "best-section-per-document")
+        self.assertEqual(gated["results"][0]["score_kind"], "bm25")
         with self.assertRaises(mcp_server.ProtocolFailure):
             self.call(self.server(), "tycho_search", {
                 "query": "nested text", "volume": "v12",

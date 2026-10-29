@@ -142,6 +142,11 @@ class SearchTests(unittest.TestCase):
             self.search("zebra", volume="v12", section_rerank=True)
         with self.assertRaises(section_search.SearchError):
             self.search("v12", section_rerank=True)
+        gated = self.search("zebra", section_rerank=True,
+                            section_rerank_margin=0.0)
+        self.assertEqual(gated["result_scope"],
+                         "best-section-per-document")
+        self.assertEqual(gated["results"][0]["score_kind"], "bm25")
 
     def test_query_cache_returns_defensive_copy(self):
         self.build()

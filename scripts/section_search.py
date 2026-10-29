@@ -53,11 +53,12 @@ _QUERY_CACHE_MAX = 128
 def _query_cache_key(root, snapshot, query, limit, kind, topic,
                      evidence_status, path_prefix, index_path, all_sections,
                      abstain, include_weak, detail, max_chars, artifact_type,
-                     volume, pattern_ids, section_rerank):
+                     volume, pattern_ids, section_rerank,
+                     section_rerank_margin):
     return (str(Path(root).resolve()), snapshot, query, limit, kind, topic,
             evidence_status, path_prefix, str(index_path), all_sections,
             abstain, include_weak, detail, max_chars, artifact_type, volume,
-            tuple(pattern_ids or ()), section_rerank)
+            tuple(pattern_ids or ()), section_rerank, section_rerank_margin)
 
 
 def _cache_get(key):
@@ -543,7 +544,8 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
            path_prefix=None, index_path=None, all_sections=False, abstain=True,
            include_weak=False, detail="snippets", max_chars=None,
            artifact_type=None, volume=None, pattern_ids=None,
-           include_artifacts=False, section_rerank=False):
+           include_artifacts=False, section_rerank=False,
+           section_rerank_margin=None):
     terms = normalize_terms(query)
     _require(isinstance(limit, int) and 1 <= limit <= 20,
              "limit must be an integer in 1..20")
@@ -555,6 +557,11 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
              "section_rerank cannot be combined with all_sections")
     _require(not (section_rerank and volume == "v12"),
              "section_rerank is disabled for volume v12")
+    _require(section_rerank_margin is None or (
+        isinstance(section_rerank_margin, (int, float))
+        and not isinstance(section_rerank_margin, bool)
+        and 0 <= section_rerank_margin <= 1),
+        "section_rerank_margin must be null or a number in 0..1")
     _require(isinstance(include_weak, bool), "include_weak must be boolean")
     _require(isinstance(include_artifacts, bool), "include_artifacts must be boolean")
     pattern_ids = pattern_ids or []
@@ -579,7 +586,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         root, manifest["snapshot_id"], query, limit, kind, topic,
         evidence_status, path_prefix, index_path, all_sections, abstain,
         include_weak, detail, max_chars, artifact_type, volume, pattern_ids,
-        section_rerank)
+        section_rerank, section_rerank_margin)
     cached = _cache_get(cache_key)
     if cached is not None:
         db.close()
@@ -700,6 +707,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                     break
             truncated = len(selected) > limit
             selected = selected[:limit]
+        section_rerank_applied = False
         if section_rerank:
             if ("v12" in query.casefold()
                     or (selected
@@ -707,8 +715,16 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 raise SearchError(
                     "section_rerank is disabled for V12 results",
                     "invalid-request")
-            selected = section_rerank_candidates(
-                db, terms, selected, limit, filters, params, weight_sql)
+            apply_rerank = section_rerank_margin is None
+            if not apply_rerank:
+                scores = sorted((item[0] for item in selected), reverse=True)
+                margin = ((scores[0] - scores[1]) / scores[0]
+                          if len(scores) > 1 and scores[0] else 1.0)
+                apply_rerank = margin < section_rerank_margin
+            if apply_rerank:
+                selected = section_rerank_candidates(
+                    db, terms, selected, limit, filters, params, weight_sql)
+                section_rerank_applied = True
         pattern_map = {}
         selected_keys = [candidate["row"]["section_key"]
                          for _, _, _, candidate in selected]
@@ -747,7 +763,8 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "char_start": row["char_start"],
                 "char_end": row["char_end"],
                 "score": round(score, 6),
-                "score_kind": ("section-rerank" if section_rerank else "bm25"),
+                "score_kind": ("section-rerank" if section_rerank_applied
+                               else "bm25"),
                 "matched_terms": [term for term in terms if term in folded],
                 "excerpt": excerpt(body, terms),
                 "citation": row["path"] + "#" + row["section_id"],
@@ -876,7 +893,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "ranker_version": RANKER_VERSION,
             "citation_scheme": CITATION_SCHEME,
             "result_scope": ("all-sections" if all_sections else
-                             "section-rerank" if section_rerank else
+                             "section-rerank" if section_rerank_applied else
                              "best-section-per-document"),
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
@@ -1033,6 +1050,8 @@ def main(argv=None):
                     help="Return every matching section instead of the best per page")
     ap.add_argument("--section-rerank", action="store_true",
                     help="Rank sections across the top pages by coverage")
+    ap.add_argument("--section-rerank-margin", type=float,
+                    help="Apply rerank only below this top1/top2 margin")
     ap.add_argument("--kind")
     ap.add_argument("--topic")
     ap.add_argument("--evidence-status")
@@ -1058,6 +1077,7 @@ def main(argv=None):
                 path_prefix=args.path_prefix, index_path=args.index,
                 all_sections=args.all_sections,
                 section_rerank=args.section_rerank,
+                section_rerank_margin=args.section_rerank_margin,
                 artifact_type=args.artifact_type, volume=args.volume,
                 pattern_ids=args.pattern_id,
                 include_artifacts=args.include_artifacts)
