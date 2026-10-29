@@ -55,7 +55,8 @@ administration costs more than the access-control benefit.
 
 **Competing alternative.** Object ACLs use identity; RBAC uses roles.
 
-**Decision basis.** The good-fit and rejection conditions are original decision inferences from NIST ACL/RBAC/ABAC comparisons, not normative NIST rules.
+**Decision basis.** The good-fit and rejection conditions are original decision
+inferences from NIST ACL/RBAC/ABAC comparisons, not normative NIST rules.
 
 **Failure and recovery.** In ACL/IBAC systems, failure to remove or revoke access over time
 accumulates privileges.
