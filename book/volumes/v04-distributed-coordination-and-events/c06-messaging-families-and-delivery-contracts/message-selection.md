@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -154,7 +154,7 @@ Text alternative: Pulsar brokers serve publishers/subscribers while separate man
 > [Content-Based Router](../../v11-pattern-atlas/c03-messaging-integration/README.md#content-based-router) — decision conditions and contraindications.
 > [Message Filter](../../v11-pattern-atlas/c03-messaging-integration/message-filter.md#message-filter) — decision conditions and contraindications.
 > [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/pipes-and-filters.md#pipes-and-filters) — decision conditions and contraindications.
-> [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/README.md#resequencer) — decision conditions and contraindications.
+> [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) — decision conditions and contraindications.
 > [Canonical Data Model](../../v11-pattern-atlas/c03-messaging-integration/README.md#canonical-data-model) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:2 -->
@@ -189,27 +189,61 @@ The source material keeps its original published/inferred/synthetic/unverified d
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
 measured evidence, and they do not create a new source claim. The Pipes and
-Filters note is the exception: it is source-bound, with quotations and an
-Evidence paragraph tied to the Chapter 3 record named in its card and owner
-unit.
+Filters and Resequencer notes are exceptions: they are source-bound, with
+quotations and an Evidence paragraph tied to the records named in their cards
+and owner units.
 
 ### Resequencer
 
-A resequencer restores an intended order from messages that arrive out of order. It needs
-a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate
-sequence numbers. Use it when order is a business invariant and the stream has a reliable
-sequence. Do not use it when order is irrelevant or when an unbounded gap would stall the
-stream.
+**Decision.** Use a resequencer only when the message contract declares a required order, a
+reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition
+have owners. Partition by key instead when global order is unnecessary or the buffer cannot be
+bounded.
 
-The failure path is a missing sequence that blocks later messages; release the buffer
-after a declared timeout or fail the affected partition. At the buffer cap, reject or spill
-with evidence rather than dropping silently; a message that arrives after its slot was
-released needs a declared late disposition: discard with evidence, reconcile or route to
-a repair queue. A partitioned consumer that
-preserves order within a key is the alternative when global order is unnecessary.
+**Mechanism.** A resequencer holds messages and releases them in a specified order. The
+Enterprise Integration Patterns page defines a "stateful filter" that collects and re-orders
+messages before publishing them to the output channel. Camel's batch mode collects, sorts and
+sends a batch; its stream mode sends a message as soon as the next expected sequence number
+arrives, and requires integer sequence numbers ordered from 1 to N. A stream message must carry
+a unique sequence number with a known predecessor and successor.
+
+**Invariant.** The pending-message backlog is a bounded buffer: the default capacity is 1000
+elements and can be configured. The source states that the capacity parameter prevents the
+resequencer from running out of memory. Duplicate handling is a declared rule, not a broker
+default: by default duplicates are not supported and only the last message is kept, while batch
+mode can allow them. Tycho guidance: the sequence domain, buffer cap, duplicate rule and gap
+timeout belong to the streaming contract.
+
+**Failure and recovery.** The failure path is a missing sequence that blocks later messages. On
+a timeout the resequencer disregards the current expected sequence number and moves to the next
+expected number. Late messages need a declared disposition: with old-message rejection enabled
+the implementation throws for an exchange older than the last delivered message, and invalid
+exchanges can be skipped explicitly. Tycho guidance: release after a declared gap timeout, fail
+the affected ordering scope when continuity is mandatory, and record dropped or rejected
+sequence numbers.
+
+**Alternative.** Partitioning messages by a category key and processing each category
+sequentially, with different categories in parallel, is the alternative when global order is
+unnecessary. The Sequential Convoy pattern partitions related messages that way; its
+considerations add that competing consumers alone lose per-group ordering and that a poison
+message blocks the rest of its session. Reverse the choice when ordering is global or the key
+cannot be made stable.
 
 **Limits.** Buffer memory, gap timeout and ordering scope are costs; a global resequencer can
-become a throughput bottleneck.
+become a throughput bottleneck. The source warns that the lower the timeout relative to the
+out-of-sequence delay, the higher the probability of out-of-order delivery, and that large
+timeouts need sufficiently high capacity.
+
+**Evidence.** The Enterprise Integration Patterns Resequencer page
+(read.batch2-resequencer.2026-10-21) states the collect-and-reorder mechanism. The Apache Camel
+4.22.x LTS Resequence page (read.camel-resequence.2026-10-29, canonical text SHA-256
+e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e) states batch and stream
+modes, the ordered integer sequence requirement, the default backlog capacity, duplicate
+handling, timeout release, old-message rejection and invalid-message skipping. The Microsoft
+Learn Sequential Convoy pattern page (read.microsoft-sequential-convoy.2026-10-29, canonical
+text SHA-256 89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d) states
+per-category partitioning with parallel categories and the per-group FIFO ordering boundary.
+No source is a benchmark.
 
 ### Content-Based Router
 

@@ -13,7 +13,7 @@ without a new owner decision.
 | c09 README | Static Content Hosting | yes (accepted) | 5 |
 | c10 README | Dark Launching — **done** | no | 3 |
 | c04 README | Transactional Outbox | yes (accepted) | 6 |
-| c03 README | Request-Reply Messaging; Message Filter; Pipes and Filters — **done** | yes | 7 |
+| c03 README | all six dedicated c03 cards — **done** | yes | 7 |
 
 ## Per-page procedure
 
@@ -39,8 +39,9 @@ promotion/review evidence stays attributable to one page hash.
 - c10 Parallel Run split;
 - c04/c05/c09/c01 still carry promotion-bound cards listed above;
 - c02 and c10 are split, with Async and Dark on their own pages and promotions restored;
-- c03 is split, with Request-Reply Messaging, Message Filter, Pipes and Filters and Claim
-  Check on their own pages. Pipes and Filters is promoted. Message Filter is suspended after
-  the shared owner page changed. Request-Reply Messaging is suspended again after the Claim
-  Check owner-page remediation on 2026-10-29. Claim Check is partial-bounded, review-ready
-  and not promoted.
+- c03 is split, with Splitter, Request-Reply Messaging, Message Filter, Pipes and Filters,
+  Claim Check and Resequencer on their own pages. Request-Reply Messaging is restored and
+  promoted.
+  Claim Check is promoted and awaits owner acceptance. Pipes and Filters was suspended on
+  2026-10-29 when the shared owner page changed for the Resequencer rewrite; Message Filter
+  remains suspended. Resequencer is partial-bounded, review-ready and not promoted.

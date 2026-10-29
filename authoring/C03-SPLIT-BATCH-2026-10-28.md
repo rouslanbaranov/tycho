@@ -53,3 +53,17 @@ source-attributed. Editing the shared owner page suspended Request-Reply Messagi
 Request-Reply remains `partial-bounded` and review-ready with its four dimensions supported.
 Claim Check remains `partial-bounded` with no promotion and no sufficient claim. Fresh
 external reviews are required for both.
+
+## Update - Resequencer, 2026-10-29
+
+Resequencer moved to `c03-messaging-integration/resequencer.md` and its owner note was
+rewritten decision-first. Both edits are source-bound: the mechanism binds to the Enterprise
+Integration Patterns Resequencer page, the bounded backlog and timeout recovery bind to the
+Apache Camel 4.22.x LTS Resequence page, and the partitioned-ordering alternative binds to the
+Microsoft Learn Sequential Convoy page. The two new public units were read, recorded in the
+ledger, planned in the source plan and registered.
+
+The shared `message-selection.md` owner page changed, so the Pipes and Filters promotion was
+suspended. Pipes and Filters remains `partial-bounded` with four supported dimensions and is
+review-ready; its dedicated card is unchanged. Resequencer remains `partial-bounded` with no
+promotion and no sufficient claim. No external review was run in this batch.

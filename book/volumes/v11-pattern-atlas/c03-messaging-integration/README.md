@@ -41,7 +41,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -471,37 +471,7 @@ with Exponential Backoff.
 
 ### Resequencer
 
-**Identity.** Resequencer; family Messaging and event-driven integration; kind
-messaging-pattern; priority advanced.
-
-**Decision question.** Should out-of-order messages be buffered and released in an
-acceptable order?
-
-**Good-fit conditions.** Ordering key and expected sequence are explicit; missing-message
-policy is bounded; buffer limits are known; late messages have a disposition.
-
-**Hard contraindications.** Reject when order is irrelevant, when the buffer can grow
-without bound, or when one missing message blocks the stream indefinitely.
-
-**Competing alternative.** A partitioned consumer that preserves per-key order. Reverse
-the choice when buffering delays and missing-message risk exceed ordering value.
-
-**Failure and recovery.** Head-of-line blocking and buffer growth are common; verify
-timeout and missing policy in the owner section.
-
-**Technical owner.** [Resequencer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — resequencing buffer, gap and ordering scope are bounded, not every EIP mechanism.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-resequencer.2026-10-21: no article headings; Example
-is absent and the page is publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Competing Consumers; Aggregator; Correlation Identifier; Message
-Sequence.
+See the [dedicated Resequencer card](resequencer.md).
 
 ### Claim Check
 

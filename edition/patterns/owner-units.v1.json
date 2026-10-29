@@ -1903,7 +1903,7 @@
         "heading": "Publish-Subscribe",
         "anchor": "publish-subscribe",
         "level": 3,
-        "line": 326,
+        "line": 360,
         "unit_kind": "dedicated",
         "unit_terms": [
           "topic",
@@ -1970,7 +1970,7 @@
         "heading": "Point-to-Point Queue",
         "anchor": "point-to-point-queue",
         "level": 3,
-        "line": 342,
+        "line": 376,
         "unit_kind": "dedicated",
         "unit_terms": [
           "eligible worker",
@@ -2037,7 +2037,7 @@
         "heading": "Competing Consumers",
         "anchor": "competing-consumers",
         "level": 3,
-        "line": 281,
+        "line": 315,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Competing Consumers"
@@ -2108,7 +2108,7 @@
         "heading": "Event-Driven Consumer",
         "anchor": "event-driven-consumer",
         "level": 3,
-        "line": 356,
+        "line": 390,
         "unit_kind": "dedicated",
         "unit_terms": [
           "push subscription",
@@ -2341,7 +2341,7 @@
         "heading": "Content-Based Router",
         "anchor": "content-based-router",
         "level": 3,
-        "line": 214,
+        "line": 248,
         "unit_kind": "dedicated",
         "unit_terms": [
           "A content-based router chooses a destination",
@@ -2415,7 +2415,7 @@
         "heading": "Message Filter",
         "anchor": "message-filter",
         "level": 3,
-        "line": 296,
+        "line": 330,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Message Filter"
@@ -2493,7 +2493,7 @@
         "heading": "Pipes and Filters",
         "anchor": "pipes-and-filters",
         "level": 3,
-        "line": 232,
+        "line": 266,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ordered stages",
@@ -2567,9 +2567,9 @@
         "card_citation": true
       },
       "review_state": "self-checked",
-      "technical_coverage": "sufficient",
-      "decision_coverage": "sufficient",
-      "notes": "Source-bound owner section inside the page's bounded pattern notes, an explicit exception to its synthetic-guidance preamble; all four dimensions bind to the Chapter 3 PDF section and the public pattern page. Coverage partial-bounded; no promotion."
+      "technical_coverage": "partial-bounded",
+      "decision_coverage": "partial-bounded",
+      "notes": "Source-bound owner section inside the page's bounded pattern notes, an explicit exception to its synthetic-guidance preamble; all four dimensions bind to the Chapter 3 PDF section and the public pattern page. Promotion suspended after the shared owner page changed for the 2026-10-29 Resequencer rewrite; coverage partial-bounded and review-ready."
     },
     {
       "pattern_id": "tycho.pattern.splitter",
@@ -2919,7 +2919,7 @@
         "heading": "Durable Subscriber",
         "anchor": "durable-subscriber",
         "level": 3,
-        "line": 375,
+        "line": 409,
         "unit_kind": "dedicated",
         "unit_terms": [
           "server-side cursor",
@@ -3070,17 +3070,17 @@
         "line": 196,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "restores an intended order",
+          "sequence domain",
           "bounded buffer",
           "gap timeout",
-          "missing or duplicate sequence numbers"
+          "late-message disposition"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A resequencer restores an intended order from messages that arrive out of order.",
-          "reason": "Defines restoring intended order from out-of-order arrivals.",
+          "quote": "A resequencer holds messages and releases them in a specified order.",
+          "reason": "Defines holding messages and releasing them in a specified order.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-resequencer.2026-10-21",
@@ -3091,31 +3091,45 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a sequence domain, a bounded buffer, a gap timeout and a policy for missing or duplicate sequence numbers.",
-          "reason": "Requires sequence domain, bounded buffer, gap timeout and missing/duplicate policy.",
+          "quote": "The pending-message backlog is a bounded buffer: the default capacity is 1000 elements and can be configured.",
+          "reason": "States the bounded pending backlog, its default capacity and its configurability.",
           "binding": {
-            "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-resequencer.2026-10-21",
-            "section": "Solution explanation",
-            "quote": "The Resequencer contains in internal buffer to store out-of-sequence messages until a complete sequence is obtained.",
-            "revision": "cafe3058fa70fe3bda25f83941e1ac604875e172d2388f6a334c7ff84327f42f"
+            "source_id": "src.camel",
+            "ledger_record": "read.camel-resequence.2026-10-29",
+            "section": "Stream Resequencing",
+            "quote": "The Resequencer keeps a backlog of pending messages in a backlog. The default capacity is 1000 elements, which can be configured",
+            "revision": "e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e"
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a missing sequence that blocks later messages; release the buffer after a declared timeout or fail the affected partition.",
-          "reason": "Page has no missing-sequence timeout or partition failure rule."
+          "state": "supported",
+          "quote": "On a timeout the resequencer disregards the current expected sequence number and moves to the next expected number.",
+          "reason": "States the timeout recovery that skips the current expected sequence number.",
+          "binding": {
+            "source_id": "src.camel",
+            "ledger_record": "read.camel-resequence.2026-10-29",
+            "section": "Stream Resequencing",
+            "quote": "In case of a timeout, then the resequencer disregards the current expected sequence number, and moves to the next expected number.",
+            "revision": "e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A partitioned consumer that preserves order within a key is the alternative when global order is unnecessary.",
-          "reason": "Page does not name key-ordered partitioned consumers."
+          "state": "supported",
+          "quote": "Partitioning messages by a category key and processing each category sequentially, with different categories in parallel, is the alternative when global order is unnecessary.",
+          "reason": "Defines category-key partitioning with sequential per-category processing and parallel categories.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-sequential-convoy.2026-10-29",
+            "section": "Solution",
+            "quote": "The Sequential Convoy pattern partitions related messages into categories and processes each category sequentially, one message at a time, while categories are processed in parallel.",
+            "revision": "89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "resequencer",
         "question": "Should out-of-order messages be buffered and released in an acceptable order?",
-        "competing_alternative": "A partitioned consumer that preserves per-key order. Reverse the choice when buffering delays and missing-message risk exceed ordering value.",
+        "competing_alternative": "Partitioning messages by a category key and processing each category sequentially, with different categories in parallel. Reverse the choice when ordering is global or the key cannot be made stable.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3129,7 +3143,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
+      "notes": "Bounded, source-bound owner note; all four dimensions bind to exact public quotes: the EIP pattern page for the mechanism, the Apache Camel 4.22.x LTS Resequence page for the bounded backlog and timeout recovery, and the Microsoft Learn Sequential Convoy page for the partitioned-ordering alternative. Coverage partial-bounded; no promotion and no sufficient claim."
     },
     {
       "pattern_id": "tycho.pattern.claim-check",
@@ -3229,7 +3243,7 @@
         "heading": "Message Broker-Messaging Bridge",
         "anchor": "message-broker-messaging-bridge",
         "level": 3,
-        "line": 393,
+        "line": 427,
         "unit_kind": "dedicated",
         "unit_terms": [
           "broker",
@@ -3289,7 +3303,7 @@
         "heading": "Canonical Data Model",
         "anchor": "canonical-data-model",
         "level": 3,
-        "line": 310,
+        "line": 344,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Canonical Data Model"
@@ -10736,7 +10750,7 @@
       ],
       "unit_count": 11,
       "dedicated_units": 11,
-      "bounded_entries": 2,
+      "bounded_entries": 3,
       "decision": "deepen",
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
@@ -11078,16 +11092,16 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 60,
-    "failure_recovery_supported": 44,
-    "alternative_supported": 56,
-    "technical_partial_bounded": 35,
+    "failure_recovery_supported": 45,
+    "alternative_supported": 57,
+    "technical_partial_bounded": 36,
     "technical_partial": 90,
     "technical_name_only": 0,
-    "technical_sufficient": 20,
-    "decision_partial_bounded": 125,
+    "technical_sufficient": 19,
+    "decision_partial_bounded": 126,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 20,
+    "decision_sufficient": 19,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

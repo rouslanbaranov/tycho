@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-28",
+  "updated": "2026-10-29",
   "scope": "Foundation reading batch for E17 Phase 2. Complete public units inspected; no child pages or independent review claimed.",
   "records": [
     {
@@ -5770,6 +5770,106 @@
       "limitations": "One 2003 chapter section; no runtime test, benchmark or current-edition comparison. The PDF is author-hosted and the public pattern page is publisher-abridged. The extracted text joins line-end hyphenation and removes running headers; quoted sentences were checked against that normalized extraction.",
       "content_sha256": "c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66",
       "read_scope": "complete Pipes and Filters section, printed pp.70-77 (PDF pages 14-21), including Problem, Solution, Pipeline Processing, Parallel Processing, History and the Simple Filter example; later chapters, linked pages and complete code listings excluded; PDF SHA-256 c1e7125dcebfdd9a2b23a922dfbbc9694e5f8048e81e14dc95e2882043ac4f66",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.camel-resequence.2026-10-29",
+      "source_id": "src.camel",
+      "unit_url": "https://camel.apache.org/components/4.22.x/eips/resequence-eip.html",
+      "unit_label": "Resequence — Apache Camel 4.22.x LTS EIP documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-29",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e",
+      "sections_read": [
+        "Resequence",
+        "Options",
+        "Exchange properties",
+        "Batch Resequencing",
+        "Allow Duplicates",
+        "Reverse Ordering",
+        "Ignoring invalid messages",
+        "Resequence JMS messages based on JMSPriority",
+        "Stream Resequencing",
+        "How streaming mode works?",
+        "Using custom streaming mode sequence expression",
+        "Rejecting old messages"
+      ],
+      "sections_not_read": [
+        "linked pages, the source repository and the issue tracker",
+        "other Camel EIP pages",
+        "the pre-release 'next' version of this page",
+        "navigation and version-selector chrome was included only in the digest, not read as content"
+      ],
+      "tables_figures": [
+        "the Resequence options table was read in extracted text form; no figures"
+      ],
+      "license_notes": "Apache Camel documentation published by the Apache Software Foundation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Camel supports batch resequencing, which collects messages into a batch, sorts them and sends them to the output, and stream resequencing, which re-orders continuous streams by detecting gaps between messages.",
+        "The implementation uses an Expression as the comparator, so messages can be re-ordered by a message header or another part of the message.",
+        "By default, duplicate messages are not supported and only the last message is kept; batch mode can allow duplicates.",
+        "Stream mode sends a message as soon as the next expected sequence number arrives, requires integer sequence numbers ordered 1,2,3...N, and keeps a backlog with a default capacity of 1000 elements that can be configured.",
+        "In case of a timeout, the resequencer disregards the current expected sequence number and moves to the next expected number; large timeout values should be supported by sufficiently high capacity values.",
+        "Old-message rejection makes the resequencer throw a MessageRejectedException when an incoming Exchange is older than the last delivered message; invalid exchanges can be skipped explicitly with the invalid-message option."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, performance, throughput or production outcomes",
+        "the pre-release 'next' documentation tree or other Camel versions",
+        "linked pages, complete source code and the issue tracker",
+        "applicability of Camel defaults to other products or to a specific deployment"
+      ],
+      "limitations": "One Apache Camel 4.22.x LTS documentation page; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including version-navigation chrome because the page has no recognized article-body marker. The pre-release 'next' page differs on duplicate retention (it describes keeping the first message, while the pinned 4.22.x page describes keeping the last); only the pinned 4.22.x wording is cited.",
+      "content_sha256": "e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e",
+      "read_scope": "complete Resequence EIP article for 4.22.x LTS, including options, batch and stream resequencing, duplicate, reverse and invalid-message options, backlog capacity, timeout behavior and old-message rejection; linked pages, source code and other versions excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.microsoft-sequential-convoy.2026-10-29",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/sequential-convoy",
+      "unit_label": "Sequential Convoy pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-29",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as 89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d",
+      "sections_read": [
+        "Sequential Convoy pattern",
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Supporting technologies",
+        "Related resources"
+      ],
+      "sections_not_read": [
+        "linked child pages and sample code",
+        "navigation and unrelated chrome (included only in the digest)",
+        "images and their interiors",
+        "the linked Competing Consumers pattern page"
+      ],
+      "tables_figures": [
+        "diagrams were read through their surrounding prose; diagram interiors and images were not inspected"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The Sequential Convoy pattern groups related messages by a category key and processes each category sequentially while different categories are processed in parallel.",
+        "The category key defines the unit of parallelism, and per-category throughput is bounded by the time to process a single message.",
+        "Competing consumers alone lose per-group ordering; the broker must support one-at-a-time processing or FIFO ordering within a group.",
+        "Messages can arrive out of order because of network latency before broker ordering takes effect; sequence numbers and an end-of-sequence flag can verify and complete a sequence.",
+        "A poison message blocks later messages in the same group because of strict sequential ordering; it should move to a dead-letter queue after a defined retry threshold."
+      ],
+      "claims_not_supported": [
+        "implementation behavior, throughput, latency or production outcomes",
+        "broker-specific session features or their availability in a given tier",
+        "linked pages, sample code and images",
+        "that partitioning by key is preferable when global ordering is required"
+      ],
+      "limitations": "One living Microsoft Learn page with no published version identifier; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including navigation chrome because the page has no recognized article-body marker. Session-based implementation details are product-specific and were not exercised.",
+      "content_sha256": "89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d",
+      "read_scope": "complete Sequential Convoy article including context, solution, problems and considerations, when to use, workload design, example and supporting technologies; linked pages, images and sample code excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }

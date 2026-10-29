@@ -3,10 +3,11 @@
 Status: working queue, not acceptance. `sufficient` requires a saved external pass
 and a promotion record; owner acceptance is separate.
 
-Current: **18 sufficient / 145**, **16 owner-accepted**, **2 suspended promotions**
-(Request-Reply Messaging, Message Filter). Claim Check is review-ready but not promoted.
-Pilot six: **all six sufficient**. Owner accepted 16 of the 18 current promotions on
-2026-10-28; Splitter and Pipes and Filters await final acceptance.
+Current: **19 sufficient / 145**, **17 owner-accepted**, **2 suspended promotions**
+(Message Filter, Pipes and Filters). Claim Check is promoted but not owner-accepted;
+Resequencer is review-ready with four source-bound dimensions and no promotion.
+Pilot six: **all six sufficient**. Owner accepted 17 of the 19 current promotions on
+2026-10-28; Splitter and Claim Check await final acceptance.
 
 ## Sufficient and accepted
 
@@ -35,19 +36,22 @@ Pilot six: **all six sufficient**. Owner accepted 16 of the 18 current promotion
 
 ## Suspended promotions
 
-The c03 cards moved to dedicated pages on 2026-10-28. Request-Reply Messaging was
-suspended again on 2026-10-29 when the shared `workflow-failure.md` owner page changed
-for Claim Check review remediation. Coverage is `partial-bounded`; neither entry is
-promoted or counted as sufficient.
+The c03 cards moved to dedicated pages on 2026-10-28. Message Filter remains suspended.
+Pipes and Filters was suspended on 2026-10-29 when the shared `message-selection.md` owner
+page changed for the Resequencer rewrite. Request-Reply Messaging was restored on 2026-10-29
+after its final external pass. Coverage for both suspended entries is `partial-bounded`;
+neither is promoted or counted as sufficient.
 
 | Entry | Prior report | State |
 |---|---|---|
-| Request-Reply Messaging | `2026-10-28-request-reply-review4-codex.md` | suspended |
 | Message Filter | `2026-10-28-message-filter-review-codex.md` | suspended |
+| Pipes and Filters | `2026-10-28-pipes-filter-final-deepseek.md` | suspended |
 
-Claim Check is not a suspended promotion: no promotion record exists. Its dedicated card
-and owner section are review-ready with four source-bound dimensions and `partial-bounded`
-coverage; a fresh external review is required before any promotion decision.
+Claim Check is not a suspended promotion: it has a saved 2026-10-29 pass and awaits owner
+acceptance. Resequencer is review-ready: its owner note and dedicated card bind all four
+dimensions to exact public quotes from three admitted units, coverage is `partial-bounded`,
+and no promotion record exists. Fresh external reviews are required before any promotion
+decision for Resequencer and before restoring Pipes and Filters.
 
 ## Pilot six
 
@@ -68,8 +72,9 @@ coverage; a fresh external review is required before any promotion decision.
 - c09 README — Static Content Hosting promotion;
 - c10 README — Dark card moved to its own page, promotion restored;
 - c04 README — Transactional Outbox promotion;
-- c03 README — no active card-page promotion; Claim Check card is on its own page;
-  Request-Reply Messaging and Message Filter suspensions are tracked above.
+- c03 README — no active card-page promotion; Claim Check and Resequencer cards are on
+  their own pages; Request-Reply Messaging is restored, and the Message Filter and Pipes and
+  Filters suspensions are tracked above.
 
 Editing these pages requires a split and fresh review before promotion can remain valid.
 
