@@ -63,6 +63,7 @@ Begin with the integrated decision, then open the independent question that matc
 | Page | Independent question and role |
 |---|---|
 | [Integrated decision and original walkthrough](outbox-inbox-sagas-and-durable-workflows.md) | How are state changes coordinated without claiming global atomicity? |
+| [Transactional Outbox owner note](transactional-outbox.md) | How is publication intent committed and relayed without a shared atomic transaction? |
 | [Outbox publication and ordering](outbox-publication.md) | Which local atomic record closes a dual-write loss window? |
 | [Inbox processing and atomic consumer effects](inbox-atomicity.md) | When can a receiver commit an effect and its deduplication record together? |
 | [Sagas, workflow recovery and compensation](saga-workflows.md) | What business recovery contract replaces a nonexistent global rollback? |

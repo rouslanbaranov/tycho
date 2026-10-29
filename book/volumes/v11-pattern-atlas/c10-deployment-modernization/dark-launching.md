@@ -61,7 +61,7 @@ be mirrored safely, or when load cost is prohibitive.
 **Failure and recovery.** A worrying performance impact can be switched off with a feature
 flag before users notice.
 
-**Technical owner.** [GitOps, rolling, blue/green and canary release architecture](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
+**Technical owner.** [Dark Launching-Shadow Traffic](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/dark-launching-shadow-traffic.md#dark-launching-shadow-traffic) — dark launch/shadow traffic is bounded to progressive exposure.
 
 **Sources.** [src.fowler-dark-launching](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.fowler-dark-launching.2026-10-26: section "Dark Launching".

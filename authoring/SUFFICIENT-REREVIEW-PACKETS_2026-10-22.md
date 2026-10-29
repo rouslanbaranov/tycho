@@ -11,12 +11,12 @@
 | Packets | 145 |
 | Promoted after remediation | 141 |
 | Residual findings after re-review | 0 |
-| Unique owner pages | 69 |
+| Unique owner pages | 75 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 117 |
+| Reviewed by independent agent | 115 |
 | Rejected after review | 4 |
 
-Packet statuses: {"page-changed-since-review": 28, "reviewed-by-independent-agent": 117}.
+Packet statuses: {"page-changed-since-review": 30, "reviewed-by-independent-agent": 115}.
 
 ## Review procedure
 
@@ -542,7 +542,7 @@ blank verdict template in the machine-readable file.
 
 - **Static Content Hosting**
   Current: pass; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Strangler Fig**
   Current: pass; re-review: pass; report: pass-with-findings.
@@ -574,7 +574,7 @@ blank verdict template in the machine-readable file.
 
 - **Transactional Outbox**
   Current: pass; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **TTL-Based Expiration**
   Current: reject; re-review: pass; report: pass-with-findings.

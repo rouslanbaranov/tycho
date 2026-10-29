@@ -174,17 +174,4 @@ pair, and include both in the rollback plan.
 
 ### Immutable Infrastructure
 
-Immutable infrastructure replaces instances from a versioned image or definition instead of mutating
-running hosts, so each instance is reproducible from a recorded artifact. Every running instance
-must be reproducible from a recorded artifact digest, and drift must be detected rather than
-tolerated.
-
-A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled
-change; record digests and test the rebuild path. Configuration management on long-lived hosts is
-cheaper when state locality dominates; choose immutable replacement when reproducibility, an
-automated replacement path and artifact rollback speed matter.
-
-**Limits.** Immutable replacement is not a backup: data, secrets and external effects still need
-lifecycle ownership, toolchain and base-image provenance must be reproducible, and a rollback
-restores an artifact, not necessarily compatible data. Rebuild time and image size are
-operational costs, not proofs of reproducibility.
+See the [dedicated Immutable Infrastructure owner note](immutable-infrastructure.md).

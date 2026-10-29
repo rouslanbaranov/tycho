@@ -66,6 +66,7 @@ Begin with the integrated decision, then open the independent question that matc
 | [State authority and coexistence transitions](authority-states.md) | Which owner is authoritative in every real intermediate configuration? |
 | [Rollback limits and semantic reconciliation](rollback-data.md) | Which durable differences survive reverting the deployed binary? |
 | [Migration mechanisms and no-return gates](cutover-gates.md) | What evidence permits a transition to cross an irreversible boundary? |
+| [Controlled Cutover owner note](controlled-cutover.md) | Which verified gates bound a planned authority switch? |
 
 ## Boundaries and further reading
 

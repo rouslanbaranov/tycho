@@ -425,9 +425,9 @@ def validate_data(data, root=ROOT):
 
     expected_shared = {path: sorted(item["pattern_id"] for item in items)
                        for path, items in by_page.items() if len(items) > 1}
-    require(len(expected_shared) == 33, "owner-units-shared-page-count")
+    require(len(expected_shared) == 30, "owner-units-shared-page-count")
     shared = data["shared_pages"]
-    require(len(shared) == 33, "owner-units-shared-list")
+    require(len(shared) == 30, "owner-units-shared-list")
     seen_pages = set()
     decisions = {"keep": 0, "deepen": 0, "split": 0}
     for page in shared:
