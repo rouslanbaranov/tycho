@@ -45,8 +45,8 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
-source_inspection_date: null
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:-1 -->
@@ -113,25 +113,46 @@ source claim.
 ### Structured Logging
 
 Structured logging emits events with stable field names and types so records can be queried and
-compared without parsing free text. Field names, meaning and redaction rules must be versioned, and
-sensitive values must be excluded before emission.
+compared without parsing free text. Sensitive values must be excluded, or hashed or masked to
+their protection level, when they are recorded. Unstructured text parsed at query
+time is cheaper to start; adopt structured events when consistent querying, correlation or
+retention obligations justify the schema.
 
-Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter
-and review field allowlists when adding events. Unstructured text parsed at query time is cheaper to
-start; adopt structured events when consistent querying, correlation or retention obligations
-justify the schema.
+**Invariant.** When sensitive data is logged, the application enforces the data's protection
+level: data that may not be logged is excluded, and allowed sensitive values are hashed or
+masked, in full or partially. Events also follow a consistent, machine-readable schema so the
+log processor can read and correlate them. Requirement 16.2.5 states: "Verify that when logging
+sensitive data, the application enforces logging based on the data’s protection level. For
+example, it may not be allowed to log certain data, such as credentials or payment details.
+Other data, such as session tokens, may only be logged by being hashed or masked, either in full
+or partially." A schema-version and compatibility-window policy, and a build-failing redaction
+test, are Tycho design guidance; the bound source states a common format and correlation
+requirement, not a versioning or build-gate policy.
 
-**Invariant.** Each event conforms to a versioned schema with required fields; additive
-changes keep the version, while a breaking change needs a new version and a compatibility
-window. A redaction test or canary must fail the build when a sensitive field appears.
-
-**Failure and recovery.** On a leaked field, stop emission, rotate exposed credentials,
-purge or redact retained records under policy and notify. On drift, migrate/backfill or
-dual-write old and new versions, and keep queries working through the window.
+**Failure and recovery.** Logging sensitive personal data without a legal basis, or failing to
+protect logs as a high-value asset, can compromise privacy or system security; a schema that
+varies across emitters also needs normalization before reliable analysis. Protect logs from
+unauthorized access and modification, and transmit them securely to a separate system for
+analysis, detection, alerting and escalation. The control objective states: "Logs should not
+include sensitive personal data unless legally required, and any logged data must be protected
+as a high‑value asset. Logging must not compromise privacy or system security." Requirement
+16.4.3 states: "Verify that logs are securely transmitted to a logically separate system for
+analysis, detection, alerting, and escalation. The aim is to ensure that if the application is
+breached, the logs are not compromised." Tycho recovery guidance, not an ASVS requirement:
+stop emission, rotate exposed credentials, purge or redact retained records and notify.
 
 **Limits.** A field allowlist, retention policy and redaction owner are costs; structured fields
 can still encode sensitive values, and a schema without a migration path becomes query debt.
 Log volume is not free, and sampling must preserve security events.
+
+**Source boundary.** The invariant and failure/recovery claims are bound to `src.owasp-asvs`,
+ledger record `read.batch6-asvs.2026-10-21`, section "V16 Security Logging and Error Handling",
+requirements 16.2.4, 16.2.5, 16.4.2 and 16.4.3. The pinned PDF SHA-256 is
+`a2fa1bbe38f12cac86d3a0f0023327e9772201f65a7f741f282f5e785d268fc5` (reverified 2026-10-29).
+The mechanism and alternative remain bound to `src.otel`, ledger record
+`read.batch6-otel-logs.2026-10-21`. ASVS is a verification standard: it does not define a schema
+versioning policy or a purge/rotation/notification procedure, and those parts are Tycho
+synthesis.
 
 ### Audit Trail
 
