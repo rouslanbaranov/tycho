@@ -21,7 +21,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "provider-specific replication and reconciliation implementations"
   keywords:
     - "pattern atlas"
     - "self-contained service"
@@ -31,7 +31,7 @@ evidence_scope:
     - "src.microservices-patterns"
   claim_ids: []
   status: "source-linked"
-  notes: "Dedicated card page; source bindings remain in the owner unit."
+  notes: "Moved card page; source binding remains in the owner unit."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-29"
@@ -54,13 +54,15 @@ service?
 **Good-fit conditions.** Runtime availability coupling is material; the service can own a local read
 model; asynchronous reconciliation is acceptable.
 
-**Hard contraindications.** Reject when strong consistency is mandatory or data cannot be replicated.
+**Hard contraindications.** Reject when strong consistency is mandatory or data
+cannot be replicated.
 
 **Competing alternative.** Synchronous request/response or retry; retry increases response time and
 synchronous calls reduce availability.
 
-**Failure and recovery.** An unavailable collaborator blocks a waiting service; retry increases
-response time.
+**Failure and recovery.** A local read replica plus asynchronous reconciliation
+lets the service respond while a collaborator is unavailable; duplication,
+reconciliation and staleness are the costs.
 
 **Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — bounded to response independence.
 

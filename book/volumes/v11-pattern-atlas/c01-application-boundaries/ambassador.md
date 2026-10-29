@@ -49,13 +49,15 @@ deployment-pattern; priority advanced.
 **Good-fit conditions.** Many languages need common connectivity; a legacy application is hard to
 modify; monitoring or resilience belongs outside the client.
 
-**Hard contraindications.** Reject when proxy latency outweighs offloading or when retries are
-needed for non-idempotent operations.
+**Hard contraindications.** Reject ambassador-managed retries on non-idempotent
+operations; other offload uses remain viable. Reject when proxy latency outweighs
+offloading.
 
 **Competing alternative.** A client library invoked directly by the application when proxy overhead
 outweighs offloading.
 
-**Failure and recovery.** Proxy retries are unsafe unless operations are idempotent.
+**Failure and recovery.** Ambassador-managed retries might not be safe unless all
+operations are idempotent; other offload uses remain viable.
 
 **Technical owner.** [Static stability and colocated helpers](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — bounded to the client-side proxy pattern.
 

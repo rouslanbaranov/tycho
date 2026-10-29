@@ -55,7 +55,7 @@ record. Promotions remain only in `edition/patterns/sufficient-promotions.v1.jso
 - The Static Content Hosting alternative quote was rebound to the committed owner page
   only; its coverage remains `partial-bounded`.
 
-## Current hashes
+## Hashes at the B4 state remediation
 
 - Static-stability owner page:
   `2264dc48b01da7eeab3970ce6cf518e8f9a05c5f671fe680f24cb554f229935a`
@@ -68,6 +68,23 @@ record. Promotions remain only in `edition/patterns/sufficient-promotions.v1.jso
 - Self-Contained Service owner page:
   `f343e82b6b2fb24904176c2652dfabfbc4c92aecb3e91feb478d3fc35e07fd48`
 
+## Final review remediation hashes (2026-10-29)
+
+These are the raw page hashes after the final review corrections and refresh.
+Use them for the next bounded review; they do not supersede a fresh review at
+the actual review HEAD.
+
+- Static-stability owner page:
+  `df04214db202ee955cedd9960f76e53d24463e1ea64e7e4ff409f6986d269006`
+- Ambassador card:
+  `92c94ca49e8fdc4b1957426ab54ca4e3031352ddb8c91f83f2ee40f46a4c7414`
+- Sidecar card:
+  `0bda31b15bb32b344b3fd4d93812785509d11dd057c0891e8c1fcbb97a398f62`
+- Self-Contained Service card:
+  `5fa28c2c6898babeae6cb2a7cf731cc0e345a00717e539fddb54c045accea4e0`
+- Self-Contained Service owner page:
+  `078a010f10488fa95087e3f3a6ed775a11828e726dbe23e85ac24808783342a3`
+
 ## Verification
 
 - `python3 scripts/book_change.py --plan`: clean.
@@ -79,6 +96,29 @@ record. Promotions remain only in `edition/patterns/sufficient-promotions.v1.jso
 - `python3 scripts/check_markdown_line_length.py`: the same three pre-existing V11
   failures remain.
 - `python3 -m unittest discover -s tests`: 617 tests, OK (run once at batch end).
+
+## Final review remediation (2026-10-29)
+
+A later read-only DeepSeek review of the same three entries returned two major and
+five minor findings. The raw report remains with the reviewing session. This
+remediation does not promote an entry or restore owner acceptance.
+
+- **Self-Contained Service:** the owner-page link now targets the dedicated card;
+  the chapter README keeps only a pointer and no duplicate body. The mechanism
+  quote uses the exact binding wording, failure/recovery binds the pattern's
+  recovery outcome instead of the baseline problem, and the route exclusion is a
+  scope limit rather than a coverage disclaimer.
+- **Ambassador:** the owner note and card restore the source hedge ("might not be
+  safe", "all operations") and narrow the hard contraindication to
+  ambassador-managed retries on non-idempotent operations; other offload uses
+  remain viable. The definition is attributed as the source's analogy and the
+  invariant uses binding wording instead of "remote services".
+- **Sidecar:** the route question matches the full decision question. The
+  static-stability Ambassador pattern-atlas link is separated from the Sidecar
+  link.
+
+All three remain `partial-bounded` and `awaiting-current-external-review`.
+`tests/test_tycho_b4_review_remediation.py` guards these corrections.
 
 ## Review needs
 

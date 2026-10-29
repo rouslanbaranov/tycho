@@ -3,15 +3,19 @@
 The B4 split suspended promotions for Self-Contained Service, Sidecar and
 Ambassador. This test pins their current state to awaiting external review and
 keeps the earlier passes only as historical evidence. It also pins the Ambassador
-priority/binding fixes and the static-stability shared-page metadata.
+priority/binding fixes, the static-stability shared-page metadata and the later
+final-review wording/link corrections.
 """
 import hashlib
 import json
 from pathlib import Path
 import re
+import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "scripts"))
+from assemble_edition import split
 THREE = (
     "tycho.pattern.self-contained-service",
     "tycho.pattern.sidecar",
@@ -169,6 +173,110 @@ class StaticStabilityTests(unittest.TestCase):
             r'content_review:\n  status: "self-checked"\n'
             r'  reviewed_at: "([0-9-]+)"', self.text)
         self.assertEqual(reviewed.group(1), "2026-10-29")
+
+
+class FinalReviewRemediationTests(unittest.TestCase):
+    def setUp(self):
+        self.owners = {r["pattern_id"]: r for r in load(
+            "edition/patterns/owner-units.v1.json")["entries"]}
+        self.self_text = (ROOT / (
+            "book/volumes/v02-application-boundaries-and-contracts/"
+            "c04-soa-microservices-and-distributed-boundaries/"
+            "service-independence.md")).read_text(encoding="utf-8")
+        self.static_text = (ROOT / (
+            "book/volumes/v08-delivery-deployment-and-recovery/"
+            "c03-vms-containers-orchestration-and-serverless/"
+            "static-stability.md")).read_text(encoding="utf-8")
+        self.readme = (ROOT / (
+            "book/volumes/v11-pattern-atlas/c01-application-boundaries/"
+            "README.md")).read_text(encoding="utf-8")
+        self.self_card = (ROOT / (
+            "book/volumes/v11-pattern-atlas/c01-application-boundaries/"
+            "self-contained-service.md")).read_text(encoding="utf-8")
+        self.amb_card = (ROOT / (
+            "book/volumes/v11-pattern-atlas/c01-application-boundaries/"
+            "ambassador.md")).read_text(encoding="utf-8")
+        self.side_card = (ROOT / (
+            "book/volumes/v11-pattern-atlas/c01-application-boundaries/"
+            "sidecar.md")).read_text(encoding="utf-8")
+
+    def test_self_owner_link_targets_the_dedicated_card(self):
+        self.assertIn("self-contained-service.md#self-contained-service",
+                      self.self_text)
+        self.assertNotIn("README.md#self-contained-service", self.self_text)
+
+    def test_readme_self_section_has_no_duplicate_body(self):
+        section = self.readme.split("### Self-Contained Service", 1)[1]
+        section = section.split("### ", 1)[0]
+        self.assertIn("(self-contained-service.md)", section)
+        self.assertNotIn("**Identity.**", section)
+        self.assertLess(len(section.split()), 30)
+
+    def test_self_mechanism_quote_is_binding_wording(self):
+        evidence = self.owners["tycho.pattern.self-contained-service"][
+            "technical_evidence"]
+        self.assertEqual(evidence["mechanism"]["quote"],
+                         evidence["mechanism"]["binding"]["quote"])
+        self.assertIn("without waiting for the response from any other service",
+                      evidence["mechanism"]["quote"])
+
+    def test_self_failure_recovery_binds_pattern_recovery(self):
+        evidence = self.owners["tycho.pattern.self-contained-service"][
+            "technical_evidence"]["failure_recovery"]
+        self.assertEqual(evidence["binding"]["section"], "Context")
+        self.assertIn("always respond", evidence["binding"]["quote"])
+        self.assertNotIn("will not be able to create the order",
+                         evidence["binding"]["quote"])
+        self.assertIn("local read model", evidence["quote"])
+
+    def test_self_card_recovery_uses_local_replica(self):
+        flat = " ".join(self.self_card.split())
+        self.assertIn("A local read replica plus asynchronous reconciliation", flat)
+        self.assertIn("duplication, reconciliation and staleness", flat)
+
+    def test_self_route_excludes_is_scope_not_coverage(self):
+        meta, _ = split(self.self_card)
+        excludes = " ".join(meta["route_hints"]["excludes"]).lower()
+        for word in ("coverage", "promotion", "owner acceptance"):
+            self.assertNotIn(word, excludes)
+        self.assertIn("provider-specific", excludes)
+        self.assertIn("Moved card page", meta["evidence_scope"]["notes"])
+
+    def test_sidecar_route_question_matches_decision_question(self):
+        meta, _ = split(self.side_card)
+        question = " ".join(meta["route_hints"]["questions"][0].split())
+        decision = re.search(r"\*\*Decision question\.\*\* (.+?)(?:\n\n|\Z)",
+                             self.side_card, re.S).group(1)
+        self.assertEqual(question, " ".join(decision.split()))
+
+    def test_static_page_separates_ambassador_pattern_link(self):
+        lines = self.static_text.splitlines()
+        self.assertTrue(any(line.startswith("> **Pattern atlas:** [Ambassador]")
+                            for line in lines))
+        self.assertFalse(any(line.startswith("> [Ambassador]") for line in lines))
+        self.assertIn("> contraindications.\n\n> **Pattern atlas:** [Ambassador]",
+                      self.static_text)
+
+    def test_ambassador_retry_hedge_and_narrow_contraindication(self):
+        for text in (self.amb_card, self.static_text):
+            flat = " ".join(text.split())
+            self.assertIn("might not be safe", flat)
+            self.assertIn("all operations are idempotent", flat)
+            self.assertNotIn("Proxy retries are unsafe", flat)
+        flat_card = " ".join(self.amb_card.split())
+        self.assertIn("Reject ambassador-managed retries on non-idempotent operations",
+                      flat_card)
+        self.assertIn("other offload uses remain viable", flat_card)
+
+    def test_ambassador_definition_and_invariant_use_binding_wording(self):
+        evidence = self.owners["tycho.pattern.ambassador"]["technical_evidence"]
+        self.assertIn("Think of an ambassador", evidence["mechanism"]["quote"])
+        self.assertEqual(evidence["mechanism"]["quote"],
+                         evidence["mechanism"]["binding"]["quote"])
+        self.assertNotIn("remote services", evidence["invariant"]["quote"])
+        self.assertIn("send network requests on behalf of a consumer service or application",
+                      evidence["invariant"]["quote"])
+        self.assertIn("by analogy", self.static_text)
 
 
 if __name__ == "__main__":

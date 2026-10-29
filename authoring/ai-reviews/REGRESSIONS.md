@@ -29,6 +29,12 @@ guard is not yet possible. The guard is part of closing the finding.
   `promoted-after-remediation` row or packet, no promotion record and
   `partial-bounded` coverage. It also guards the Ambassador priority and binding
   labels and the static-stability two-pattern rationale and 2026-10-29 metadata.
+- **B4 final review remediation 2026-10-29:** the same test module now guards the
+  Self-Contained Service owner link to the dedicated card, the README pointer-only
+  section, exact binding wording for the mechanism and recovery dimensions, a scope
+  exclusion instead of a coverage disclaimer, the Sidecar route question matching its
+  decision question, the separated static-stability Ambassador link, and the
+  Ambassador retry hedge, analogy attribution and binding wording.
 
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.

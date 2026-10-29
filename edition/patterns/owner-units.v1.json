@@ -639,7 +639,7 @@
         "heading": "Self-Contained Service",
         "anchor": "self-contained-service",
         "level": 3,
-        "line": 116,
+        "line": 118,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Self-Contained Service"
@@ -648,8 +648,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A self-contained service is designed to respond to a synchronous request without waiting for another service.",
-          "reason": "The pattern designs a service to respond without waiting for collaborators.",
+          "quote": "Design a service so that it can respond to a synchronous request without waiting for the response from any other service.",
+          "reason": "The pattern rule is to respond without waiting for any collaborator's response.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
@@ -660,8 +660,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It can use CQRS to maintain a replica of data owned by other services and Saga to maintain consistency asynchronously.",
-          "reason": "Self-contained service uses CQRS and Saga for replica and asynchronous consistency.",
+          "quote": "A self-contained service uses the Saga pattern to asynchronously maintain data consistency. It uses the CQRS pattern to maintain a replica of data owned by other services.",
+          "reason": "The pattern uses CQRS for a replica and Saga for asynchronous consistency.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
@@ -672,24 +672,24 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If a collaborator is unavailable, a service that waits cannot complete the request and returns an error.",
-          "reason": "Synchronous collaboration blocks when a collaborator is unavailable.",
+          "quote": "The pattern's recovery design is a local read model plus asynchronous reconciliation, which lets the service respond while a collaborator is unavailable.",
+          "reason": "The source's recovery outcome is that the service responds even when a collaborator is unavailable; the Solution names the CQRS replica and asynchronous Saga reconciliation.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
             "section": "Context",
-            "quote": "However, a key drawback of using synchronous request/response is that it reduces availability. That’s because if any of the Order Sevice’s collaborators are unavailable, it will not be able to create the order and must return an error to the client.",
+            "quote": "The Order Service always respond to a POST /orders request even when one of the other services is unavailable.",
             "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
           }
         },
         "alternative": {
           "state": "supported",
-          "quote": "A service can retry a failed collaborator, but this increases response time.",
+          "quote": "A service can retry a request to a failed collaborator but this increases response time.",
           "reason": "Retry is the alternative and increases response time.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
-            "section": "Context",
+            "section": "Forces",
             "quote": "A service can retry a request to a failed collaborator but this increases response time.",
             "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
           }
@@ -712,7 +712,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated card created 2026-10-29; all four technical dimensions remain supported. Promotion and owner acceptance suspended because the card hash changed; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
+      "notes": "Moved card page created 2026-10-29; all four technical dimensions remain supported after the final review remediation. Promotion and owner acceptance suspended because the card and owner-page hashes changed; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.sidecar",
@@ -724,7 +724,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 161,
+        "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -809,7 +809,7 @@
         "heading": "Ambassador",
         "anchor": "ambassador",
         "level": 3,
-        "line": 148,
+        "line": 151,
         "unit_kind": "dedicated",
         "unit_terms": [
           "out-of-process proxy",
@@ -819,8 +819,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "An ambassador is an out-of-process proxy colocated with the client.",
-          "reason": "Microsoft defines Ambassador as a colocated out-of-process proxy.",
+          "quote": "Think of an ambassador service as an out-of-process proxy that's colocated with the client.",
+          "reason": "The source presents the colocated out-of-process proxy as an analogy, not a formal definition.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
@@ -831,8 +831,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It forwards requests to remote services and can offload monitoring, logging, routing, TLS and resilience.",
-          "reason": "The introduction defines the colocated proxy and the connectivity capabilities it offloads.",
+          "quote": "send network requests on behalf of a consumer service or application",
+          "reason": "The source's introduction describes sending network requests on behalf of a consumer and offloading common connectivity tasks.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
@@ -843,8 +843,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Proxy retries are unsafe unless all operations are idempotent.",
-          "reason": "Microsoft warns that proxy retries are unsafe for non-idempotent operations.",
+          "quote": "The ambassador could handle retries, but that approach might not be safe unless all operations are idempotent.",
+          "reason": "The source warns that ambassador-managed retries might not be safe unless all operations are idempotent; other offload uses remain viable.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
@@ -883,7 +883,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Shared static-stability page changed on 2026-10-29 when the Immutable Infrastructure note moved out and the Ambassador paragraph was rewrapped; bindings corrected to the page introduction. All four technical dimensions remain supported, but promotion and owner acceptance are suspended; coverage partial-bounded; a fresh external review must pass before restoration."
+      "notes": "Shared static-stability page changed on 2026-10-29: the Immutable Infrastructure note moved out and the Ambassador paragraph was rewrapped. The final review remediation restored the retry hedge and analogy attribution. All four dimensions remain supported; promotion and owner acceptance are suspended; coverage partial-bounded; a fresh external review must pass before restoration."
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",

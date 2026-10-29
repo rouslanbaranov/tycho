@@ -85,8 +85,11 @@ Assume three zones, each can demonstrably serve 60 *identical invented* units/s 
 > **Pattern atlas:**
 > [Immutable Infrastructure](../../v11-pattern-atlas/c10-deployment-modernization/README.md#immutable-infrastructure) — decision conditions and contraindications.
 
-> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/sidecar.md#sidecar) — decision conditions and contraindications.
-> [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/ambassador.md#ambassador) — decision conditions and contraindications.
+> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/sidecar.md#sidecar) — decision conditions and
+> contraindications.
+
+> **Pattern atlas:** [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/ambassador.md#ambassador) — decision conditions and
+> contraindications.
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:3 -->
 ## Placement and topology constraints
 
@@ -147,12 +150,15 @@ owner note on 2026-10-29; this page retains the two colocated-helper notes below
 
 ### Ambassador
 
-An ambassador is an out-of-process proxy colocated with the client. It forwards
-requests to remote services and can offload monitoring, logging, routing, TLS and
-resilience. Proxy retries are unsafe unless all operations are idempotent. A
-client library invoked directly by the application may be better when overhead
-outweighs offloading. The proxy can monitor performance metrics such as latency or
-resource usage on the same host. A mechanism can let the client pass context, such
+The source describes an ambassador service, by analogy, as follows: "Think of an
+ambassador service as an out-of-process proxy that's colocated with the client."
+It can send network requests on behalf of a consumer service or application and
+offload monitoring, logging, routing, TLS and resilience. For example, the
+ambassador could handle retries, but that approach might not be safe unless all
+operations are idempotent. Other offload uses remain viable. A client library
+invoked directly by the application may be better when overhead outweighs
+offloading. The proxy can monitor performance metrics such as latency or resource
+usage on the same host. A mechanism can let the client pass context, such
 as an HTTP header to opt out of retry or cap retries. Use the pattern when many
 languages or frameworks need common connectivity features, or a legacy
 application is hard to modify. The proxy can be packaged as a separate container
