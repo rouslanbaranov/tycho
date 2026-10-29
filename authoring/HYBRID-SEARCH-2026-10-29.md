@@ -24,8 +24,10 @@ Page-level RRF combines BM25 top-20 with H2 semantic top-20:
 - Linear score fusion was also tested but measured 0.741 hit@5 in the actual
   evaluator; it is not the selected mode.
 
-Embeddings: model2vec potion-base-8M, 256-dimensional, H2 heading + content,
-snapshot-bound. Rebuild with:
+Embeddings: model2vec potion-base-8M (256-d) or sentence-transformers
+all-MiniLM-L6-v2 (384-d), H2 heading + content, snapshot-bound. The contextual
+backend is stronger but requires torch; model2vec is the lightweight option.
+Rebuild with:
 
 ```sh
 python3 scripts/hybrid_search.py build
@@ -37,14 +39,15 @@ python3 scripts/hybrid_search.py evaluate --weight 0.1
 | Retriever | hit@1 | hit@3 | hit@5 |
 |---|---:|---:|---:|
 | BM25 | 0.351 | 0.580 | 0.724 |
-| Hybrid | 0.391 | 0.644 | **0.753** |
+| Hybrid, model2vec | 0.391 | 0.644 | 0.753 |
+| Hybrid, contextual | 0.379 | 0.632 | **0.764** |
 
 By split:
 
-| Split | BM25 hit@5 | Hybrid hit@5 |
-|---|---:|---:|
-| qrels v2 | 0.742 | 0.768 |
-| phase3 | 0.579 | 0.632 |
+| Split | BM25 hit@5 | model2vec | contextual |
+|---|---:|---:|---:|
+| qrels v2 | 0.742 | 0.768 | 0.774 |
+| phase3 | 0.579 | 0.632 | 0.684 |
 
 The earlier dev/held run selected weight 0.1 with v2 held hit@5 0.808, but that
 was on a different content snapshot; do not transfer the number as a current

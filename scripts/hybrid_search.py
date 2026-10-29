@@ -30,12 +30,18 @@ def h2_rows(root, index_path=None):
     return [dict(row) for row in rows]
 
 
-def build(root, model_name=DEFAULT_MODEL, output=DEFAULT_EMBEDDINGS):
+def default_embeddings(backend, model_name):
+    label = "contextual" if backend == "sentence-transformers" else "model2vec"
+    return Path.home() / ".cache/tycho" / ("semantic-h2-" + label + ".npz")
+
+
+def build(root, model_name=DEFAULT_MODEL, output=None,
+          backend="model2vec"):
     import numpy as np
-    from model2vec import StaticModel
     import section_fts_index
+    output = default_embeddings(backend, model_name) if output is None else output
     rows = h2_rows(root)
-    model = load_model(model_name)
+    model = load_model(model_name, backend)
     matrix = np.asarray(model.encode(
         [row["heading"] + "\n" + row["content"] for row in rows],
         show_progress_bar=False), dtype="float32")
@@ -48,7 +54,7 @@ def build(root, model_name=DEFAULT_MODEL, output=DEFAULT_EMBEDDINGS):
         section_ids=np.asarray([row["section_id"] for row in rows]),
         paths=np.asarray([row["path"] for row in rows]),
         headings=np.asarray([row["heading"] for row in rows]))
-    meta = {"schema_version": 1, "model": model_name,
+    meta = {"schema_version": 1, "model": model_name, "backend": backend,
             "snapshot": section_fts_index.stats(root)["snapshot"],
             "sections": len(rows)}
     Path(str(output) + ".json").write_text(
@@ -56,21 +62,27 @@ def build(root, model_name=DEFAULT_MODEL, output=DEFAULT_EMBEDDINGS):
     return meta
 
 
-def load_embeddings(root, model_name=DEFAULT_MODEL, path=DEFAULT_EMBEDDINGS):
+def load_embeddings(root, model_name=DEFAULT_MODEL, path=None,
+                    backend="model2vec"):
     import numpy as np
     import section_fts_index
-    path = Path(path)
+    path = Path(path or default_embeddings(backend, model_name))
     meta = json.loads(Path(str(path) + ".json").read_text(encoding="utf-8"))
     current = section_fts_index.stats(root)["snapshot"]
     if meta.get("snapshot") != current:
         raise RuntimeError("semantic index is stale; rebuild it")
     if meta.get("model") != model_name:
         raise RuntimeError("semantic index model mismatch")
+    if meta.get("backend", "model2vec") != backend:
+        raise RuntimeError("semantic index backend mismatch")
     data = np.load(path)
     return data["matrix"], data, meta
 
 
-def load_model(model_name=DEFAULT_MODEL):
+def load_model(model_name=DEFAULT_MODEL, backend="model2vec"):
+    if backend == "sentence-transformers":
+        from sentence_transformers import SentenceTransformer
+        return SentenceTransformer(model_name)
     from model2vec import StaticModel
     return StaticModel.from_pretrained(model_name)
 
@@ -171,11 +183,11 @@ def page_linear(bm25_results, semantic_results, weight=DEFAULT_WEIGHT,
 
 
 def search(root, query, limit=5, weight=DEFAULT_WEIGHT,
-           model_name=DEFAULT_MODEL, embeddings=DEFAULT_EMBEDDINGS,
-           index_path=None, fusion="rrf"):
+           model_name=DEFAULT_MODEL, embeddings=None,
+           index_path=None, fusion="rrf", backend="model2vec"):
     import section_search
-    matrix, data, _ = load_embeddings(root, model_name, embeddings)
-    semantic = semantic_results(root, query, load_model(model_name),
+    matrix, data, _ = load_embeddings(root, model_name, embeddings, backend)
+    semantic = semantic_results(root, query, load_model(model_name, backend),
                                 matrix, data)
     bm25 = section_search.search(
         root, query, limit=20, abstain=False, index_path=index_path).get(
@@ -192,7 +204,8 @@ def search(root, query, limit=5, weight=DEFAULT_WEIGHT,
     }
 
 
-def evaluate(root, weight=DEFAULT_WEIGHT, model_name=DEFAULT_MODEL):
+def evaluate(root, weight=DEFAULT_WEIGHT, model_name=DEFAULT_MODEL,
+             backend="model2vec"):
     import section_search
     rows = []
     for split, relative in (("v2", "evaluation/corpus-qrels.v2.json"),
@@ -204,8 +217,8 @@ def evaluate(root, weight=DEFAULT_WEIGHT, model_name=DEFAULT_MODEL):
             if item.get("category") == "unanswerable":
                 continue
             rows.append((split, item))
-    matrix, data, _ = load_embeddings(root, model_name)
-    model = load_model(model_name)
+    matrix, data, _ = load_embeddings(root, model_name, backend=backend)
+    model = load_model(model_name, backend)
     values = []
     for split, item in rows:
         semantic = semantic_results(root, item["question"], model,
@@ -241,15 +254,19 @@ def main(argv=None):
     ap.add_argument("--limit", type=int, default=5)
     ap.add_argument("--weight", type=float, default=DEFAULT_WEIGHT)
     ap.add_argument("--model", default=DEFAULT_MODEL)
-    ap.add_argument("--embeddings", type=Path, default=DEFAULT_EMBEDDINGS)
+    ap.add_argument("--backend", choices=("model2vec", "sentence-transformers"),
+                    default="model2vec")
+    ap.add_argument("--embeddings", type=Path, default=None)
     ap.add_argument("--fusion", choices=("rrf", "linear"), default="rrf")
     args = ap.parse_args(argv)
     if args.action == "build":
-        print(json.dumps(build(args.root, args.model, args.embeddings),
+        print(json.dumps(build(args.root, args.model, args.embeddings,
+                                args.backend),
                          indent=2, sort_keys=True))
         return 0
     if args.action == "evaluate":
-        print(json.dumps(evaluate(args.root, args.weight, args.model),
+        print(json.dumps(evaluate(args.root, args.weight, args.model,
+                                  args.backend),
                          indent=2, sort_keys=True))
         return 0
     if not args.query:
