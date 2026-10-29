@@ -5667,7 +5667,7 @@
         "heading": "Leader-Follower Replication",
         "anchor": "leader-follower-replication",
         "level": 3,
-        "line": 178,
+        "line": 179,
         "unit_kind": "dedicated",
         "unit_terms": [
           "One leader accepts writes",
@@ -5743,8 +5743,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Several nodes accept writes for the same logical data and replicate them to each other, so every accepted write must eventually converge to one declared outcome.",
-          "reason": "Defines multiple write acceptors with eventual convergence.",
+          "quote": "Several nodes accept writes for the same logical data and replicate them to each other.",
+          "reason": "Defines multiple write acceptors for the same logical data that replicate to each other; the convergence requirement is labeled Tycho synthesis under the invariant.",
           "binding": {
             "source_id": "src.cassandra",
             "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
@@ -5755,8 +5755,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "The system must define a conflict-resolution rule and preserve every acknowledged effect according to that rule; silent last-writer-wins is not a convergence proof.",
-          "reason": "Requires a conflict rule and preservation of every acknowledged effect.",
+          "quote": "Cassandra versions every mutation with a timestamp and resolves updates according to the conflict-resolution rule of last write wins. Tycho synthesis, not a source claim: every accepted write must eventually converge to one declared outcome, the system must declare that rule, a convergence proof must preserve every acknowledged effect, and silent last-writer-wins is not sufficient.",
+          "reason": "The Data Versioning passage supports mutation-timestamp versioning and last-write-wins conflict resolution. The convergence outcome, the declaration requirement, preservation of every acknowledged effect and rejection of silent last-writer-wins are labeled Tycho synthesis on the owner page and are not attributed to the source.",
           "binding": {
             "source_id": "src.cassandra",
             "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
@@ -5768,24 +5768,33 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "Concurrent writes to one key produce conflicts that surface later during reads or reconciliation; record the conflicting versions and expose a deterministic resolution path.",
-          "reason": "Requires recording conflicting versions and a deterministic resolution path.",
+          "reason": "Replica Synchronization supports read repair, hinted handoff and anti-entropy repair identifying and reconciling mismatched data; the Data Versioning supporting binding supplies mutation timestamps and deterministic last-write-wins resolution for conflicting versions.",
           "binding": {
             "source_id": "src.cassandra",
             "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
             "section": "Replica Synchronization",
             "quote": "Like the original Dynamo paper Cassandra supports full repairs where replicas hash their entire dataset, create Merkle trees, send them to each other and sync any ranges that don’t match.",
             "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cassandra",
+              "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+              "section": "Data Versioning",
+              "quote": "Cassandra uses mutation timestamp versioning to guarantee eventual consistency of data. Specifically all mutations that enter the system do so with a timestamp provided either from a client clock or, absent a client-provided timestamp, from the coordinator node’s clock. Updates resolve according to the conflict resolution rule of last write wins.",
+              "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
           "quote": "Leader-follower (primary/standby) replication partitions write work to one leader, with followers tracking that leader. Synchronous multi-master replication instead lets any server accept write requests, but PostgreSQL's comparison rates it best for mostly read workloads and notes that heavy write activity can cause excessive locking and commit delays. Asynchronous multi-master replication identifies conflicting transactions for users or conflict-resolution rules to resolve. Choose multi-leader only when accepting writes on more than one server outweighs that conflict and write-throughput contract.",
-          "reason": "Names leader-follower replication and the synchronous and asynchronous multi-master trade-offs from the PostgreSQL comparison; the decision rule is Tycho synthesis.",
+          "reason": "The PostgreSQL comparison supports asynchronous conflict identification and resolution, synchronous multi-master write acceptance, and excessive locking and commit delays under heavy write activity. The leader-follower framing and the reversal rule are Tycho synthesis; the owner page records the same source boundary.",
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.postgresql-replication-solutions.2026-10-29",
             "section": "26.1. Comparison of Different Solutions",
-            "quote": "Synchronous multimaster replication is best for mostly read workloads, though its big advantage is that any server can accept write requests — there is no need to partition workloads between primary and standby servers",
+            "quote": "Using asynchronous multimaster replication, each server works independently, and periodically communicates with the other servers to identify conflicting transactions. The conflicts can be resolved by users or conflict resolution rules. Bucardo is an example of this type of replication. In synchronous multimaster replication, each server can accept write requests, and modified data is transmitted from the original server to every other server before each transaction commits. Heavy write activity can cause excessive locking and commit delays, leading to poor performance. Read requests can be sent to any server. Some implementations use shared disk to reduce the communication overhead. Synchronous multimaster replication is best for mostly read workloads, though its big advantage is that any server can accept write requests — there is no need to partition workloads between primary and standby servers",
             "revision": "7a5bc0622dd4ff65ca5e13a3b449c0e7d2855f3ad875305d1f7df1569d2604f9"
           }
         }
@@ -5807,7 +5816,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Alternative binding to PostgreSQL 18 section 26.1 added 2026-10-29; all four dimensions supported, coverage partial-bounded, no promotion."
+      "notes": "Invariant narrowed 2026-10-29 to Cassandra timestamps/LWW; convergence, preservation and silent-LWW are labeled Tycho synthesis. Failure/recovery cross-references Data Versioning; alternative quote covers locking/commit delay and async conflict resolution. All four dimensions support the narrowed claims; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.read-replicas",
@@ -5819,7 +5828,7 @@
         "heading": "Read Replicas",
         "anchor": "read-replicas",
         "level": 3,
-        "line": 163,
+        "line": 164,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Read Replicas"
@@ -7424,7 +7433,7 @@
         "heading": "Consensus",
         "anchor": "consensus",
         "level": 3,
-        "line": 195,
+        "line": 196,
         "unit_kind": "dedicated",
         "unit_terms": [
           "nodes A, B and C",

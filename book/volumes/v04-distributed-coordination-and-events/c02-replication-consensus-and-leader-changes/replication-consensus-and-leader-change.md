@@ -129,10 +129,11 @@ source claim.
 
 ### Multi-Leader Replication
 
-Several nodes accept writes for the same logical data and replicate them to each other, so every
-accepted write must eventually converge to one declared outcome. The system must define a
-conflict-resolution rule and preserve every acknowledged effect according to that rule; silent
-last-writer-wins is not a convergence proof.
+Several nodes accept writes for the same logical data and replicate them to each other. Cassandra
+versions every mutation with a timestamp and resolves updates according to the conflict-resolution
+rule of last write wins. Tycho synthesis, not a source claim: every accepted write must eventually
+converge to one declared outcome, the system must declare that rule, a convergence proof must
+preserve every acknowledged effect, and silent last-writer-wins is not sufficient.
 
 Concurrent writes to one key produce conflicts that surface later during reads or reconciliation;
 record the conflicting versions and expose a deterministic resolution path.
