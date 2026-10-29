@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import sqlite3
 import sys
+import threading
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INDEX = ROOT / "generated/sections-fts-v4.sqlite"
@@ -17,6 +18,23 @@ DEFAULT_EMBEDDINGS = (Path.home() / ".cache/tycho/"
                        "semantic-h2-index.npz")
 DEFAULT_MODEL = "minishlab/potion-base-8M"
 DEFAULT_WEIGHT = 0.1
+_MODEL_CACHE = {}
+_EMBED_CACHE = {}
+_CACHE_LOCK = threading.Lock()
+_CACHE_MAX = 4
+
+
+def clear_semantic_cache():
+    with _CACHE_LOCK:
+        _MODEL_CACHE.clear()
+        _EMBED_CACHE.clear()
+
+
+def _remember(cache, key, value):
+    with _CACHE_LOCK:
+        cache[key] = value
+        while len(cache) > _CACHE_MAX:
+            cache.pop(next(iter(cache)))
 
 
 def h2_rows(root, index_path=None):
@@ -67,6 +85,13 @@ def load_embeddings(root, model_name=DEFAULT_MODEL, path=None,
     import numpy as np
     import section_fts_index
     path = Path(path or default_embeddings(backend, model_name))
+    stat = Path(path).stat()
+    key = (str(Path(root).resolve()), str(path.resolve()),
+           stat.st_mtime_ns, stat.st_size, model_name, backend)
+    with _CACHE_LOCK:
+        cached = _EMBED_CACHE.get(key)
+    if cached is not None:
+        return cached
     meta = json.loads(Path(str(path) + ".json").read_text(encoding="utf-8"))
     current = section_fts_index.stats(root)["snapshot"]
     if meta.get("snapshot") != current:
@@ -76,15 +101,25 @@ def load_embeddings(root, model_name=DEFAULT_MODEL, path=None,
     if meta.get("backend", "model2vec") != backend:
         raise RuntimeError("semantic index backend mismatch")
     data = np.load(path)
-    return data["matrix"], data, meta
+    result = (data["matrix"], data, meta)
+    _remember(_EMBED_CACHE, key, result)
+    return result
 
 
 def load_model(model_name=DEFAULT_MODEL, backend="model2vec"):
+    key = (model_name, backend)
+    with _CACHE_LOCK:
+        cached = _MODEL_CACHE.get(key)
+    if cached is not None:
+        return cached
     if backend == "sentence-transformers":
         from sentence_transformers import SentenceTransformer
-        return SentenceTransformer(model_name)
-    from model2vec import StaticModel
-    return StaticModel.from_pretrained(model_name)
+        model = SentenceTransformer(model_name)
+    else:
+        from model2vec import StaticModel
+        model = StaticModel.from_pretrained(model_name)
+    _remember(_MODEL_CACHE, key, model)
+    return model
 
 
 def semantic_results(root, query, model, matrix, data, limit=20):
