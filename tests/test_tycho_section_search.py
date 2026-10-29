@@ -126,6 +126,19 @@ class SearchTests(unittest.TestCase):
         self.assertEqual(result["ranker_version"],
                          section_search.RANKER_VERSION)
 
+    def test_section_rerank_is_opt_in(self):
+        self.build()
+        default = self.search("zebra")
+        reranked = self.search("zebra", section_rerank=True)
+        self.assertEqual(default["result_scope"],
+                         "best-section-per-document")
+        self.assertEqual(reranked["result_scope"], "section-rerank")
+        self.assertEqual(default["results"][0]["score_kind"], "bm25")
+        self.assertEqual(reranked["results"][0]["score_kind"],
+                         "section-rerank")
+        with self.assertRaises(section_search.SearchError):
+            self.search("zebra", all_sections=True, section_rerank=True)
+
     def test_query_cache_returns_defensive_copy(self):
         self.build()
         first = self.search("zebra", limit=1)

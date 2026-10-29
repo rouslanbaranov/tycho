@@ -53,11 +53,11 @@ _QUERY_CACHE_MAX = 128
 def _query_cache_key(root, snapshot, query, limit, kind, topic,
                      evidence_status, path_prefix, index_path, all_sections,
                      abstain, include_weak, detail, max_chars, artifact_type,
-                     volume, pattern_ids):
+                     volume, pattern_ids, section_rerank):
     return (str(Path(root).resolve()), snapshot, query, limit, kind, topic,
             evidence_status, path_prefix, str(index_path), all_sections,
             abstain, include_weak, detail, max_chars, artifact_type, volume,
-            tuple(pattern_ids or ()))
+            tuple(pattern_ids or ()), section_rerank)
 
 
 def _cache_get(key):
@@ -505,16 +505,54 @@ def metadata_fallback(db, metadata, query, terms, limit):
     return results
 
 
+def section_rerank_candidates(db, terms, selected, limit, filters, params,
+                              weight_sql):
+    paths = []
+    for _, _, _, candidate in selected:
+        path = candidate["row"]["path"]
+        if path not in paths:
+            paths.append(path)
+    if not paths:
+        return selected
+    placeholders = ",".join("?" * len(paths))
+    sql = ("SELECT " + sections_select() + ",bm25(fts,0.0," + weight_sql
+           + ") AS rank FROM fts JOIN sections s"
+           " ON s.section_key = fts.section_key WHERE fts MATCH ?"
+           " AND s.path IN (" + placeholders + ")")
+    if filters:
+        sql += " AND " + " AND ".join(filters)
+    sql += " ORDER BY rank ASC LIMIT ?"
+    rows = db.execute(
+        sql, [match_expression(terms)] + paths + params
+        + [max(limit * 20, 100)]).fetchall()
+    scored = []
+    for row in rows:
+        text = (row["heading"] + " " + row["content"]).casefold()
+        hits = sum(1 for term in set(terms) if term in text)
+        heading_hits = sum(1 for term in set(terms)
+                           if term in row["heading"].casefold())
+        score = float(hits * 1000 + heading_hits * 10 - row["rank"])
+        candidate = {"section_key": row["section_key"], "row": row,
+                     "h2_score": None, "passage": None}
+        scored.append((score, "section-rerank", None, candidate))
+    scored.sort(key=lambda item: (-item[0], item[3]["row"]["section_key"]))
+    return scored[:limit] or selected
+
+
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
            path_prefix=None, index_path=None, all_sections=False, abstain=True,
            include_weak=False, detail="snippets", max_chars=None,
            artifact_type=None, volume=None, pattern_ids=None,
-           include_artifacts=False):
+           include_artifacts=False, section_rerank=False):
     terms = normalize_terms(query)
     _require(isinstance(limit, int) and 1 <= limit <= 20,
              "limit must be an integer in 1..20")
     _require(isinstance(all_sections, bool), "all_sections must be boolean")
     _require(isinstance(abstain, bool), "abstain must be boolean")
+    _require(isinstance(section_rerank, bool),
+             "section_rerank must be boolean")
+    _require(not (all_sections and section_rerank),
+             "section_rerank cannot be combined with all_sections")
     _require(isinstance(include_weak, bool), "include_weak must be boolean")
     _require(isinstance(include_artifacts, bool), "include_artifacts must be boolean")
     pattern_ids = pattern_ids or []
@@ -538,7 +576,8 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
     cache_key = _query_cache_key(
         root, manifest["snapshot_id"], query, limit, kind, topic,
         evidence_status, path_prefix, index_path, all_sections, abstain,
-        include_weak, detail, max_chars, artifact_type, volume, pattern_ids)
+        include_weak, detail, max_chars, artifact_type, volume, pattern_ids,
+        section_rerank)
     cached = _cache_get(cache_key)
     if cached is not None:
         db.close()
@@ -659,6 +698,9 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                     break
             truncated = len(selected) > limit
             selected = selected[:limit]
+        if section_rerank:
+            selected = section_rerank_candidates(
+                db, terms, selected, limit, filters, params, weight_sql)
         pattern_map = {}
         selected_keys = [candidate["row"]["section_key"]
                          for _, _, _, candidate in selected]
@@ -697,7 +739,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "char_start": row["char_start"],
                 "char_end": row["char_end"],
                 "score": round(score, 6),
-                "score_kind": "bm25",
+                "score_kind": ("section-rerank" if section_rerank else "bm25"),
                 "matched_terms": [term for term in terms if term in folded],
                 "excerpt": excerpt(body, terms),
                 "citation": row["path"] + "#" + row["section_id"],
@@ -825,8 +867,9 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "match_mode": mode,
             "ranker_version": RANKER_VERSION,
             "citation_scheme": CITATION_SCHEME,
-            "result_scope": ("all-sections" if all_sections
-                             else "best-section-per-document"),
+            "result_scope": ("all-sections" if all_sections else
+                             "section-rerank" if section_rerank else
+                             "best-section-per-document"),
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
                         "path_prefix": path_prefix,
@@ -980,6 +1023,8 @@ def main(argv=None):
     ap.add_argument("--limit", type=int, default=5)
     ap.add_argument("--all-sections", action="store_true",
                     help="Return every matching section instead of the best per page")
+    ap.add_argument("--section-rerank", action="store_true",
+                    help="Rank sections across the top pages by coverage")
     ap.add_argument("--kind")
     ap.add_argument("--topic")
     ap.add_argument("--evidence-status")
@@ -1004,6 +1049,7 @@ def main(argv=None):
                 topic=args.topic, evidence_status=args.evidence_status,
                 path_prefix=args.path_prefix, index_path=args.index,
                 all_sections=args.all_sections,
+                section_rerank=args.section_rerank,
                 artifact_type=args.artifact_type, volume=args.volume,
                 pattern_ids=args.pattern_id,
                 include_artifacts=args.include_artifacts)
