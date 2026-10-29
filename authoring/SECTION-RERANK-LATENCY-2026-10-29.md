@@ -12,12 +12,15 @@ independent review, CI or owner acceptance.
 
 ## Result
 
-| Mode | p50 | p95 | mean |
-|---|---:|---:|---:|
-| default BM25 | 99.1 ms | 104.3 ms | 104.0 ms |
-| section_rerank | 103.0 ms | 105.1 ms | 103.0 ms |
+| Mode | n | p50 | p95 | p99 | mean |
+|---|---:|---:|---:|---:|---:|
+| default BM25 | 162 | 98.0 ms | 99.5 ms | 101.1 ms | 101.8 ms |
+| section_rerank | 156 | 103.2 ms | 105.0 ms | 105.5 ms | 102.9 ms |
 
-Delta: p50 **+3.9 ms**, p95 **+0.8 ms**, mean **-1.0 ms**.
+Delta: p50 **+5.2 ms**, p95 **+5.5 ms**, p99 **+4.4 ms**, mean **+1.1 ms**.
+
+Two phase2 queries were skipped for section_rerank because the V12 guard
+rejected them; their six measurements are absent from the rerank sample.
 
 The extra section query is inside the existing snapshot/index cost and is small
 relative to the full search call in this setup. This does not establish
