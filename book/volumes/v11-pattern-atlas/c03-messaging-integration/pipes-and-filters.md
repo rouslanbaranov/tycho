@@ -32,11 +32,11 @@ evidence_scope:
   notes: "Dedicated card page; source bindings remain in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-28"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-28"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-28"
 content_verified_at: null
 ---
@@ -45,7 +45,8 @@ content_verified_at: null
 
 **Decision.** Compose processing as ordered stages only when each stage has an independent
 contract and the pipeline owns ordering, partial completion and recovery. Keep one cohesive
-transformation when the work must be atomic or the stages cannot be operated independently.
+transformation when the work must be atomic or per-stage latency and coordination exceed the
+value of isolation.
 
 **Identity.** Pipes and Filters; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
@@ -64,8 +65,9 @@ intermediate latency or repeated message conversion exceeds the budget, when the
 becomes an unowned distributed workflow, or when no one can recover a failed middle stage
 from a declared checkpoint.
 
-**Competing alternative.** One cohesive consumer with internal functions. Reverse the choice
-when stage isolation and reuse no longer justify message hops.
+**Competing alternative.** One cohesive consumer with internal functions. Tycho guidance, not
+a source claim: reverse the choice when the stages are small and cannot be operated
+independently, or when stage isolation and reuse no longer justify message hops.
 
 **Failure and recovery.** A failed middle stage leaves earlier effects applied; record stage
 identity and recover through a transactional client or a declared checkpoint. The source

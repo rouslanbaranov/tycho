@@ -70,9 +70,9 @@ choose single-unit processing when atomicity dominates.
 
 **Failure and recovery.** A split that aborts does not advance a successful-completion
 watermark, so the failed batch can be retried. Tycho guidance, not a source claim: keep
-completed effects idempotent or deduplicated because a retry can re-deliver parts. An
-unknown part count leaves the aggregate incomplete; a custom release rule or expiry must
-close it.
+completed effects idempotent or deduplicated because a retry can re-deliver parts. The
+source states that an unknown part count leaves the aggregate incomplete; a custom release
+rule or expiry must close it.
 
 **Technical owner.** [Splitter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md#splitter) — bounded split decision, part identity and completion; not a channel implementation.
 
@@ -80,8 +80,8 @@ close it.
 read record read.batch2-splitter.2026-10-21: mechanism and watermark retry.
 [src.spring-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read records read.spring-splitter.2026-10-28 and read.spring-aggregator.2026-10-28:
-part identity/completion and the aggregator alternative. The sources are public
-documentation, not benchmarks.
+part identity/completion, unknown-size release or expiry, and the aggregator alternative.
+The sources are public documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

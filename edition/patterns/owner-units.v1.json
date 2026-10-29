@@ -2220,19 +2220,19 @@
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
-            "section": "Request-Reply",
-            "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller’s context.",
+            "section": "Asynchronous Callback",
+            "quote": "If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity, however, is the callback mechanism that must re-establish the caller's context.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
           }
         },
         "alternative": {
           "state": "supported",
           "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
-          "reason": "Synchronous RPC blocks the caller thread.",
+          "reason": "The bound page states that an RPC caller's thread blocks while it waits for the response; it does not present RPC as a decision alternative. Framing direct synchronous RPC as the alternative is Tycho synthesis.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-request-reply.2026-10-21",
-            "section": "Solution (unheaded)",
+            "section": "Request-Reply",
             "quote": "When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits for the response.",
             "revision": "6d79d9ec15c68a7547682feb84c4adaea407795c64a69c98b6fed273eb2cea5f"
           }
@@ -2241,7 +2241,7 @@
       "decision_evidence": {
         "atlas_section": "request-reply-messaging",
         "question": "Should a request and response travel as a pair of messages on separate channels rather than one blocking call?",
-        "competing_alternative": "A synchronous Remote Procedure Invocation blocks the caller's thread while it waits for the response.",
+        "competing_alternative": "Tycho synthesis: a direct synchronous Remote Procedure Invocation is the alternative when the responder is reachable within the request budget and blocking is acceptable. The bound source states only that an RPC caller's thread must block while it waits for the response, not that RPC is the decision alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2255,7 +2255,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner page split 2026-10-29; all four dimensions bind to the EIP Request-Reply page; promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
+      "notes": "Dedicated owner page split 2026-10-29; all four dimensions bind to the EIP Request-Reply page; publisher-abridged limits cover correlation, timeout, duplicate replies and the callback contract; RPC framing is Tycho synthesis; promotions suspended; coverage partial-bounded and review-ready."
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -2517,8 +2517,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each stage has one inbound and one outbound port in the basic form, and a parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer.",
-          "reason": "Binds the stage ports to an explicit ordering scope; a single instance or resequencer preserves order.",
+          "quote": "A parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer.",
+          "reason": "Binds message reordering under parallel or multi-instance execution to an explicit ordering scope; the filter interface is described in Mechanism.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.pipes-ch03.2026-10-28",
@@ -2541,8 +2541,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A single in-process transformation is the alternative when the stages are small and cannot be operated independently.",
-          "reason": "The source contrasts the comprehensive in-process module as inflexible and difficult to test.",
+          "quote": "The source considers a comprehensive \"incoming message massaging module\" as one possible solution but calls that approach \"inflexible and difficult to test\".",
+          "reason": "Source names the comprehensive in-process module as one possible solution while rejecting it as inflexible and difficult to test; the small-stage and isolation fallback conditions are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.pipes-ch03.2026-10-28",
@@ -2555,7 +2555,7 @@
       "decision_evidence": {
         "atlas_section": "pipes-and-filters",
         "question": "Should processing be composed as independent stages connected by a message contract?",
-        "competing_alternative": "One cohesive consumer with internal functions. Reverse the choice when stage isolation and reuse no longer justify message hops.",
+        "competing_alternative": "One cohesive consumer with internal functions. Tycho guidance, not a source claim: reverse the choice when the stages are small and cannot be operated independently, or when stage isolation and reuse no longer justify message hops.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2605,13 +2605,13 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Each part must carry a part identity and a position so completion is decidable.",
-          "reason": "Spring Integration populates correlation, sequence size and sequence number; an unknown size leaves the aggregate incomplete until a release strategy or expiry closes it.",
+          "quote": "For an iterator with no known size, Spring Integration's Iterators section sets SEQUENCE_SIZE to zero and states that the aggregate group remains incomplete until a custom release strategy or expiry closes it.",
+          "reason": "Spring Integration populates CORRELATION_ID, SEQUENCE_SIZE and SEQUENCE_NUMBER on produced messages; its Iterators section sets SEQUENCE_SIZE to 0 for an unknown size and states that the aggregate group is not released until a custom release strategy or expiry closes it.",
           "binding": {
             "source_id": "src.spring-integration",
             "ledger_record": "read.spring-splitter.2026-10-28",
-            "section": "Programming Model",
-            "quote": "It is a MessageHandler implementation that encapsulates features common to splitters, such as filling in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the messages that are produced.",
+            "section": "Iterators",
+            "quote": "Note, in the case of an Iterator (or Iterable), we don’t have access to the number of underlying items and the SEQUENCE_SIZE header is set to 0. This means that the default SequenceSizeReleaseStrategy of an aggregator won’t work and the group for the CORRELATION_ID from the splitter won’t be released; it will remain as incomplete. In this case you should use an appropriate custom ReleaseStrategy or rely on send-partial-result-on-expiry together with group-timeout or a MessageGroupStoreReaper.",
             "revision": "60507878879812400e92ac71f7a8eeb586cc0dd5744d140bd6fe2860aa4e0b94"
           }
         },
@@ -2657,7 +2657,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner page split 2026-10-29; all four dimensions have public bindings (Camel splitter, Spring Integration splitter and aggregator); promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review is required."
+      "notes": "Dedicated owner page split 2026-10-29; all four dimensions have public bindings (Camel splitter, Spring Integration splitter and aggregator); the invariant also binds the Spring Integration Iterators paragraph for unknown-size, release-strategy and expiry behavior; promotion and owner acceptance suspended; coverage partial-bounded and review-ready; a fresh external review is required."
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -3180,12 +3180,12 @@
         "invariant": {
           "state": "supported",
           "quote": "Publish the token only after the payload write succeeds.",
-          "reason": "The source requires publishing the token only after the payload write succeeds and names payload lifecycle and authorization ownership; token-to-payload binding is Tycho guidance.",
+          "reason": "The source requires publishing the token only after the payload write succeeds, assigns payload deletion to a component owner, coordinates message expiration and payload retention, and leaves authorization as an independent interaction with the data store; token-to-payload binding and non-use as an authorization token are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-claim-check.2026-10-28",
             "section": "Problems and considerations",
-            "quote": "Publish the token only after the payload write succeeds.",
+            "quote": "Payload lifecycle ownership. Define which component owns payload deletion and how the component determines that the payload isn't needed. Coordinate message expiration and payload retention so that a valid claim check doesn't point to deleted data. Conditional application. Decide whether to make all messages claim checks or to make the claim-check decision per message. If it's conditional, ensure that the schema defines whether the payload is inline or external. Token and store security. Don't embed security tokens as part of the claim check. Leave authorization as an independent interaction between producer or consumer systems and the data store.",
             "revision": "391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe"
           }
         },
@@ -3231,7 +3231,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated owner page split 2026-10-29; all four dimensions bind to the Microsoft Learn Claim Check page (read.microsoft-claim-check.2026-10-28); the EIP pattern page supports only the stored-payload and claim-token description; promotion and owner acceptance suspended; coverage partial-bounded and review-ready."
+      "notes": "Dedicated owner page split 2026-10-29; all four dimensions bind to the Microsoft Learn Claim Check page (read.microsoft-claim-check.2026-10-28); the invariant binds payload lifecycle ownership and independent authorization; the EIP pattern page supports only the stored-payload and claim-token description; promotion and owner acceptance suspended; coverage partial-bounded and review-ready."
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",

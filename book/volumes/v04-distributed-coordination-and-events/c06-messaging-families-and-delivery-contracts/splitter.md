@@ -62,19 +62,21 @@ part; the default output is the original input unless an aggregation strategy is
 
 **Invariant.** Each part must carry a part identity and a position so completion is
 decidable. Spring Integration's base splitter populates CORRELATION_ID, SEQUENCE_SIZE, and
-SEQUENCE_NUMBER on produced messages; when the size is unknown, SEQUENCE_SIZE is zero and
-the aggregate remains incomplete until a custom release strategy or expiry closes it. The
-source states: "It is a MessageHandler implementation that encapsulates features common to
-splitters, such as filling in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE,
-and SEQUENCE_NUMBER) on the messages that are produced." A completion or compensation rule
-must have an owner; Tycho's design guidance adds a bounded fan-out and per-part idempotency,
-which the source does not fix.
+SEQUENCE_NUMBER on produced messages. For an iterator with no known size, Spring
+Integration's Iterators section sets SEQUENCE_SIZE to zero and states that the aggregate
+group remains incomplete until a custom release strategy or expiry closes it. The source
+states: "It is a MessageHandler
+implementation that encapsulates features common to splitters, such as filling in the
+appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the
+messages that are produced." A completion or compensation rule must have an owner; Tycho's
+design guidance adds a bounded fan-out and per-part idempotency, which the source does not
+fix.
 
 **Failure and recovery.** A split that aborts does not advance a successful-completion
 watermark, so the failed batch can be retried. Tycho guidance, not a source claim:
 completed effects must remain idempotent or be deduplicated because a retry can re-deliver
-parts. An unknown part count leaves the aggregate incomplete rather than silently
-complete.
+parts. An unknown part count leaves the aggregate incomplete rather than silently complete;
+the source requires a custom release strategy or expiry to close it.
 
 **Alternative.** Aggregation is the mirror-image decision. Spring Integration describes the
 aggregator as "Basically a mirror-image of the splitter, the aggregator is a type of message

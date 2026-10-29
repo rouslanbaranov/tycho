@@ -4,8 +4,8 @@
     "registry_sha256": "3e1c1f8d3de98cbadbb460c55936810aa3b079a6980007673cf52c59cbff581b",
     "ledger_sha256": "183ed7c2ef5f50c7f585a81cf78517257edb2800213fe9bc41248bc9199d083b",
     "card_batches_sha256": "965a769c02d39f8e77acec00cec9afb70aabdb92473b2fe4c51f4ed3d6861c8f",
-    "route_index_sha256": "bee5fe8e9b99f0e84ace3a4f971a3c1961704ab55c3cecbd6f6fcadecb0b9a93",
-    "coverage_sha256": "966f3cd9f1c357dc60b79c366267f5ffdd4965fc69225dad4bd95c9f1518b8be"
+    "route_index_sha256": "ff6ba42ff206b2e49f32c1702d0bfb294af1ec0b219d54ca3d9842af0041009b",
+    "coverage_sha256": "51d4fa3ffe703198ae6edd0369de22e7155a8e6ee6a9dd953ff0ae624a7f2429"
   },
   "dimensions": [
     "identity",
@@ -27,9 +27,9 @@
     "pages": 466,
     "entries": 145,
     "cards": 145,
-    "routes": 538,
-    "related_labels": 41,
-    "non_routes": 41,
+    "routes": 537,
+    "related_labels": 43,
+    "non_routes": 43,
     "unresolved_related": 0,
     "retrieval_questions": 145,
     "blocked_entries": 0
@@ -10945,11 +10945,6 @@
     },
     {
       "from": "tycho.pattern.request-reply-messaging",
-      "to": "tycho.pattern.correlation-identifier",
-      "basis": "card-related-entry"
-    },
-    {
-      "from": "tycho.pattern.request-reply-messaging",
       "to": "tycho.pattern.timeout",
       "basis": "card-related-entry"
     },
@@ -11821,6 +11816,20 @@
     {
       "from": "tycho.pattern.process-manager-routing-slip",
       "label": "Workflow Failure.",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.request-reply-messaging",
+      "label": "Correlation Identifier (scoped to multiple outstanding requests",
+      "disposition": "non-route",
+      "target": null,
+      "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"
+    },
+    {
+      "from": "tycho.pattern.request-reply-messaging",
+      "label": "Tycho guidance)",
       "disposition": "non-route",
       "target": null,
       "reason": "label names a technical concept or owner section outside the 145-entry catalog; no alias is invented"

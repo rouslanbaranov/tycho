@@ -36,5 +36,18 @@ guard is not yet possible. The guard is part of closing the finding.
   decision question, the separated static-stability Ambassador link, and the
   Ambassador retry hedge, analogy attribution and binding wording.
 
+- **B8 review remediation 2026-10-29:** `tests/test_tycho_b8_review_remediation.py`
+  guards the Resequencer alternative trigger and unbounded-buffer failure, the Pipes
+  ordering-only invariant binding, the labeled in-process fallback and card alignment,
+  the 2026-10-29 Pipes card date, and both entries remaining `partial-bounded` without
+  promotion.
+- **B8 Claim/Request-Reply/Splitter remediation 2026-10-29:** the same test module guards
+  the Request-Reply Limits and Decision components, the removed blocking-call
+  contraindication, the scoped Correlation Identifier guidance, the `Request-Reply`
+  alternative binding, the 2026-10-29 card dates, Claim Check's separation of payload
+  deletion ownership from independent authorization, Splitter's Iterators binding for
+  unknown-size release and expiry, and all three entries remaining `partial-bounded`
+  without promotion.
+
 A future finding without a guard is not closed. If the guard cannot be mechanical,
 record the exact manual check and the review that performed it.

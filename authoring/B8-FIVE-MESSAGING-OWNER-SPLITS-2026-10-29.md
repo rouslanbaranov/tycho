@@ -1,7 +1,8 @@
 # B8 — five messaging owner splits, 2026-10-29
 
-Status: split complete and review-ready. No external review, promotion or owner
-acceptance was performed in this batch.
+Status: split complete and review-ready. Review remediation for all five entries was
+applied on 2026-10-29. No promotion or owner acceptance is claimed, and the remediated
+bytes still need a current external review.
 
 ## Parent and scope
 
@@ -46,8 +47,10 @@ remaining notes keep their synthetic-guidance status.
 
 ## Verbatim check
 
-Every moved body is a byte-for-byte substring of its new owner page and is absent
-from the originating page. SHA-256 values below cover the moved body only.
+At the split, every moved body was a byte-for-byte substring of its new owner page and
+was absent from the originating page. SHA-256 values below cover the moved body only
+and describe the split state; the review remediation changed the bodies, so they are
+historical, not current-page checks.
 
 - Resequencer: `6de14005d1777baa4a2e3df2a9e73fcd8a2229833212278c0211deb7a6b9ff58`
 - Pipes and Filters: `41c282bba3cc46b849682a8c2d5b5054e65b8b7012a4a3f946bb797db532ed95`
@@ -82,6 +85,9 @@ from the originating page. SHA-256 values below cover the moved body only.
 
 ## Post-split hashes
 
+These are the hashes at the split state. They are historical after the review
+remediation in the next section.
+
 - Resequencer owner: `a686c031a1a889e397356f9cce9d9854e1c764cb04b68e232c989fc372dbd3c3`
 - Resequencer card: `e23a4c9403153c7a44e64271a11289a6a487a583bcebfc62c8ff272fb72547f6`
 - Pipes and Filters owner: `5626343a2414b52d7c59c5aa5f5d59a27c6f2734fce965698bec87abc0b34e32`
@@ -99,6 +105,63 @@ from the originating page. SHA-256 values below cover the moved body only.
     `e045c5fccb1778afbded8e8faa1b32042504432845ed2a5051b3b60317749881`
 - V04/C06 chapter README: `9ca4498224f32a16c7d3626211b4922fb1ccd590fbde2802253a630f69593443`
 
+## Review remediation — 2026-10-29
+
+A separate read-only DeepSeek review recorded at
+`authoring/ai-reviews/2026-10-29-resequencer-pipes-deepseek.md` returned a pass with
+five minor findings, pinned to `a66d8534`. The findings were rechecked against the
+split pages and fixed forward under rule 33; no promotion or acceptance was restored.
+
+- Resequencer: the owner decision no longer treats an unbounded buffer as a reason to
+  partition by key. An unbounded buffer now rejects the resequencer or fails the
+  ordering scope, and the card failure path names the same disposition. The card and
+  owner decision, alternative and failure now agree.
+- Pipes and Filters: the invariant is bound only to the ordering claim at
+  `Parallel Processing (p.74)`; the filter-interface and port claim moved to
+  Mechanism under the `Solution (p.71)` quote. The in-process fallback is labeled as
+  Tycho guidance in both owner and card, and the card reversal matches the owner
+  wording. The card `content_review.reviewed_at` and `updated_at` are `2026-10-29`.
+- Both entries remain `partial-bounded`; no promotion, owner acceptance or sufficient
+  coverage is claimed.
+- Guard: `tests/test_tycho_b8_review_remediation.py`.
+- Remediated hashes:
+  - Resequencer owner: `731af4b2b51b919b3703e7ef554be0983b5347846a04b1c9f905fc88e24098e4`
+  - Resequencer card: `0c33b4fd1f074ef0d7838216ec32f7d3b67ae521505f032e897ab64227b744d3`
+  - Pipes owner: `45b03be36f7f65cbff3eb28137c5768502716b4b1db8b18170f8564880156059`
+  - Pipes card: `a3b30a356ec6c29780c924e140841343b994830d1bf30f472412741c82c1e929`
+
+### Claim Check, Request-Reply Messaging and Splitter
+
+The same B8 review returned separate findings on these three entries. The raw report is
+retained by the reviewing session and is not reproduced or rewritten here. The findings
+were fixed forward under rule 33; all three remain `partial-bounded`, awaiting a current
+external review, with no promotion or owner acceptance restored.
+
+- Request-Reply: the owner page gained an explicit Limits component for the
+  correlation/private reply channel, one outstanding request, timeouts, duplicate replies,
+  the callback contract and the publisher-abridged source. The card gained a Decision
+  component and distinguishes messaging Request-Reply from direct synchronous RPC; the
+  Correlation Identifier relation is scoped to multiple outstanding requests as Tycho
+  guidance; the blocking-call contraindication is replaced; the RPC alternative is labeled
+  Tycho synthesis; and both card dates are `2026-10-29`. The alternative binding moved from
+  `Solution (unheaded)` to `Request-Reply`: the sentence sits in the Request-Reply body
+  before the Synchronous Block approach, not inside that bullet.
+- Claim Check: the invariant now binds the source's payload-lifecycle ownership and
+  independent-authorization text. Owner and card separate payload-deletion ownership from
+  authorization as an independent interaction with the data store.
+- Splitter: the invariant now binds the Spring Integration Iterators paragraph for
+  unknown-size `SEQUENCE_SIZE`, release strategy and expiry. Card and owner failure text
+  state the source's incomplete-aggregate consequence and the required release or expiry.
+- Guard: `tests/test_tycho_b8_review_remediation.py` (both remediation groups).
+- Remediated hashes:
+  - Claim Check owner: `fa30b4b0d3285011af535070730f72b7092663986baaa32e54bfe4976c8cb552`
+  - Claim Check card: `bbdc786487f100ac64547b5896e5538c9943cd17d321c3a04267290807e0f549`
+  - Request-Reply Messaging owner:
+    `5eca88a08da75da896ff152f059d5d817567dc274e645f1aa58ae267ede4fc85`
+  - Request-Reply Messaging card: `d30687d3215c2d5d2a41b5334bd9ec10519a1a06db323c5a3ab15967eed98299`
+  - Splitter owner: `4a3d29b1e7cdda3b3a73ef7260ebbfe0dd3d704bab795a90321b0c396687c773`
+  - Splitter card: `ca3cb782815465f811aa06b1876094147b13bd1ddf021aa22970cdb7ddd466e1`
+
 ## Verification
 
 - `python3 scripts/book_change.py --plan`: clean.
@@ -112,16 +175,17 @@ from the originating page. SHA-256 values below cover the moved body only.
 - `python3 scripts/check_boundary.py`: pass.
 - `python3 scripts/check_markdown_line_length.py`: the same two pre-existing V11
   failures remain (c01 anti-corruption-layer line 46 and c11 rbac-abac line 58).
-- Full suite at batch end: `python3 -m unittest discover -s tests`, 627 tests, OK
-  after updating guards for the new 466-page, 81-owner-page, 16-promotion and
-  7-acceptance counts.
+- Full suite at batch end: `python3 -m unittest discover -s tests`, 639 tests, OK.
+  The pre-remediation baseline was 627 tests; the B8 remediation guard adds 12 tests
+  (five for Resequencer/Pipes and seven for Claim Check/Request-Reply/Splitter).
 - Targeted structural validators ran during editing. The batch-end suite first
   exposed two stale count guards; both were updated and the rerun passed.
 
 ## Review packet needed
 
 One fresh external AI review per suspended entry at the review HEAD, using the
-card and owner hashes above and the moved-body hashes.
+current card and owner hashes in the review-remediation section. The post-split
+and moved-body hashes are historical and do not describe the remediated bytes.
 
 - Card: `book/volumes/v11-pattern-atlas/c03-messaging-integration/<entry>.md`.
 - Owner: `book/volumes/v04-distributed-coordination-and-events/`

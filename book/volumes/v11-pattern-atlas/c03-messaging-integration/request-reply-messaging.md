@@ -34,16 +34,22 @@ evidence_scope:
   notes: "Moved card page; source binding remains in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-28"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-28"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
 
 # Request-Reply Messaging
+
+**Decision.** Use messaging Request-Reply when a request and its reply travel as separate
+messages, the reply channel carries at most one outstanding request or is private to the
+requestor, and the requestor can wait or handle a callback. Tycho synthesis: prefer a direct
+synchronous Remote Procedure Invocation when the responder is reachable within the caller's
+request budget and blocking is acceptable.
 
 **Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
@@ -52,27 +58,35 @@ integration-pattern; priority core.
 channels rather than one blocking call?
 
 **Good-fit conditions.** A requestor can wait for a reply; separate request and reply channels
-exist.
+exist; the reply channel carries at most one outstanding request or is private to the
+requestor. Tycho guidance, not a served source claim: a Correlation Identifier scopes reply
+matching when multiple requests share a reply channel.
 
-**Hard contraindications.** Reject when the caller must block on a Remote Procedure Invocation
-or no reply channel exists.
+**Hard contraindications.** Reject when a direct synchronous Remote Procedure Invocation meets
+the availability and latency target and the caller can block, or when no reply channel can be
+established. Tycho synthesis: a blocking caller thread alone is not a contraindication,
+because the source's Synchronous Block approach also waits for a reply.
 
-**Competing alternative.** A synchronous Remote Procedure Invocation blocks the caller's thread
-while it waits for the response.
+**Competing alternative.** Tycho synthesis: a direct synchronous Remote Procedure Invocation
+is the alternative when the responder is reachable within the request budget and blocking is
+acceptable. The bound source states only that an RPC caller's thread must block while it waits
+for the response, not that RPC is the decision alternative.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
-re-establish the caller's context.
+re-establish the caller's context. Tycho guidance, not a served source claim: bound retries,
+time out unresolved requests, and treat duplicate replies as idempotent outcomes.
 
-**Technical owner.** [Request-Reply Messaging](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md#request-reply-messaging) — separate request and reply channels and recovery limits are bounded, not a complete request-reply contract.
+**Technical owner.** [Request-Reply Messaging](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md#request-reply-messaging) — separate request and reply channels, one-outstanding or private reply channel, callback recovery and limits are bounded; this is not a complete request-reply contract.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-request-reply.2026-10-21: Problem and Solution are
-unheaded; the page is publisher-abridged and has no Example
-section. The source is a public pattern/documentation
+unheaded; the served page also has Synchronous Block and Asynchronous Callback
+approaches, is publisher-abridged and has no Example section; correlation and
+timeout text are not served. The source is a public pattern/documentation
 unit, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Correlation Identifier; Asynchronous Request-Reply; API Gateway;
-Timeout.
+**Related entries.** Correlation Identifier (scoped to multiple outstanding requests;
+Tycho guidance); Asynchronous Request-Reply; API Gateway; Timeout.

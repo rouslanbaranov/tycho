@@ -60,8 +60,20 @@ the reply channel for this request is private for this thread.
 If the requestor crashes, it can recover by simply restarting the reply thread. An added complexity,
 however, is the callback mechanism that must re-establish the caller's context.
 
-When a caller performs a Remote Procedure Invocation, the caller's thread must block while it waits
-for the response.
+**Alternative.** The bound page states that when a caller performs a Remote Procedure Invocation,
+the caller's thread must block while it waits for the response. Tycho synthesis: a direct
+synchronous Remote Procedure Invocation is the alternative when the responder is reachable within
+the caller's request budget and blocking is acceptable; the bound page does not present RPC as a
+decision alternative.
+
+**Limits.** The bound page is publisher-abridged. It supports the separate request and reply
+channels, the one-outstanding-request or private-reply-channel implication, and the Synchronous
+Block and Asynchronous Callback recovery descriptions. It does not serve correlation-identifier
+mechanics, reply timeouts, duplicate-reply handling or a complete callback contract; matching
+across multiple outstanding requests, deadline enforcement and duplicate suppression are Tycho
+guidance that needs implementation evidence. A callback must re-establish the caller's context,
+but the bound text does not define its contract. This page is not a complete request-reply
+contract.
 
 ## Navigation
 

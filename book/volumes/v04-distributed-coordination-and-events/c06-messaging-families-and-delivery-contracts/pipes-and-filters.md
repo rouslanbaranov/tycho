@@ -59,14 +59,13 @@ connected by a message contract. The source defines the style as dividing "a lar
 processing task into a sequence of smaller, independent processing steps (filters) that are
 connected by channels (pipes)." The pipe carries one filter's output to the next; a filter
 receives on its inbound pipe, processes the message, and publishes the result to its
-outbound pipe. The source states: "Each filter exposes a very simple interface: It receives
-messages on the inbound pipe, processes the message, and publishes the results to the
-outbound pipe."
+outbound pipe. In the basic form each stage has one inbound and one outbound port. The source
+states: "Each filter exposes a very simple interface: It receives messages on the inbound
+pipe, processes the message, and publishes the results to the outbound pipe."
 
-**Invariant.** Each stage has one inbound and one outbound port in the basic form, and a
-parallel or multi-instance stage can reorder messages unless the pipeline declares an
-ordering scope and a resequencer. The source states: "If the sequence of messages is
-critical, we can run only one instance of each component or we must use a Resequencer
+**Invariant.** A parallel or multi-instance stage can reorder messages unless the pipeline
+declares an ordering scope and a resequencer. The source states: "If the sequence of messages
+is critical, we can run only one instance of each component or we must use a Resequencer
 (283)." Tycho guidance, not a source claim: give each stage an effect identity for
 deduplication, expose per-stage lag or queue depth, and define backpressure and a
 partial-completion rule before adding a stage.
@@ -80,12 +79,13 @@ Transactional Client (484) for a solution to this problem." Tycho guidance: retr
 replays must be idempotent per stage, and the operator needs the failed stage, its input
 identity and the last completed stage.
 
-**Alternative.** A single in-process transformation is the alternative when the stages are
-small and cannot be operated independently. The source names a comprehensive "incoming
-message massaging module" as the alternative and calls that approach "inflexible and
-difficult to test"; an in-memory queue is a lighter pipe when all components share one
-machine. Use the pipeline when independent development, scaling or replacement pays for the
-message contract and partial-failure states.
+**Alternative.** Tycho guidance, not a source claim: one cohesive consumer with internal
+functions is the alternative when the stages are small and cannot be operated independently,
+or when stage isolation and reuse no longer justify message hops. The source considers a
+comprehensive "incoming message massaging module" as one possible solution but calls that
+approach "inflexible and difficult to test". An in-memory queue is a lighter pipe when all
+components share one machine. Use the pipeline when independent development, scaling or
+replacement pays for the message contract and partial-failure states.
 
 **Limits.** Channels consume memory and CPU cycles for buffering, and repeated message
 conversion lowers throughput on long chains; the slowest stage bounds pipeline throughput,

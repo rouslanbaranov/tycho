@@ -48,8 +48,9 @@ content_verified_at: null
 
 **Decision.** Store a large or sensitive payload outside the message and send a claim check
 only when payload size, sensitivity or repeated serialization justifies the extra store and
-retrieval hop, and when payload lifecycle, access control and failure handling have owners.
-Keep the payload inline when it fits the transport and latency budget.
+retrieval hop, when payload lifecycle and failure handling have owners, and when
+authorization can remain an independent interaction between producer or consumer systems and
+the store. Keep the payload inline when it fits the transport and latency budget.
 
 **Identity.** Claim Check; family Messaging and event-driven integration; kind
 messaging-pattern; priority advanced.
@@ -60,12 +61,15 @@ retrieved through a claim check?
 **Good-fit conditions.** Payloads regularly exceed the transport limit, consume
 disproportionate broker resources, need tighter access control than the messaging path, or
 cross routing hops that repeatedly serialize them. The payload lifecycle has an owner and a
-retention policy; the token is bound to the stored payload and published only after the
-payload write succeeds; retrieval latency and failure disposition are bounded.
+retention policy; the token is published only after the payload write succeeds; retrieval
+latency and failure disposition are bounded; the external store applies access controls
+independently of the messaging system. Tycho guidance, not a
+source claim: keep the token bound to the stored payload it names.
 
 **Hard contraindications.** Reject when the inline payload fits the transport and latency
-budget, when the extra retrieval hop cannot meet the latency target, or when payload
-lifecycle, access control or failure handling has no owner.
+budget, when the extra retrieval hop cannot meet the latency target, when payload lifecycle or
+failure handling has no owner, or when authorization cannot remain an independent interaction
+with the store.
 
 **Competing alternative.** Inline payload with compression or a compact serializer. Reverse
 the choice when retrieval and storage complexity exceed the savings.
@@ -75,15 +79,15 @@ or a token that consumers cannot resolve; the source also names store outage or 
 duplicate claim checks and integrity mismatches. Expire and garbage-collect claims, fail
 closed when retrieval is impossible, and make duplicate consumption idempotent.
 
-**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md#claim-check) — payload lifecycle, claim-token ordering, access control, retrieval and failure policy are bounded; this is not a payload-store catalogue.
+**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md#claim-check) — payload lifecycle, claim-token ordering, retrieval and failure policy are bounded; authorization remains an independent interaction with the store, and this is not a payload-store catalogue.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-claim.2026-10-21: the public pattern page is publisher-abridged and
 supports the stored-payload and claim-token description, not the failure or alternative
 policy. [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-claim-check.2026-10-28: the Claim Check pattern page supports the
-mechanism, payload lifecycle ownership, write-before-publish invariant, the five failure
-cases and the inline alternative.
+mechanism, payload lifecycle ownership, write-before-publish invariant, independent
+authorization, the five failure cases and the inline alternative.
 Canonical text SHA-256: 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe.
 The source is public documentation, not a benchmark.
 

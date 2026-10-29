@@ -52,8 +52,9 @@ on 2026-10-29. The other ownership notes remain on the chapter page.
 
 **Decision.** Store a large or sensitive payload outside the messaging system and send a
 claim check only when payload size, sensitivity or repeated serialization justifies the
-extra store and retrieval hop, and when payload lifecycle, access control and failure
-handling have owners. Keep the payload inline when it fits the transport and latency budget.
+extra store and retrieval hop, when payload lifecycle and failure handling have owners, and
+when authorization can remain an independent interaction between producer or consumer systems
+and the store. Keep the payload inline when it fits the transport and latency budget.
 
 **Mechanism.** The sending application writes the full payload to an external data store and
 sends a reference to that payload through the messaging system. Receiving applications
@@ -65,11 +66,12 @@ processing.
 **Invariant.** Publish the token only after the payload write succeeds. Payload write and token
 publication occur in separate systems and are not atomic, so a token published before its
 payload is retrievable leaves consumers with references they cannot resolve; a payload
-written without a published token is orphaned. The source requires a named owner for payload
-deletion and coordination between message expiration and payload retention, and it keeps
-authorization as an independent interaction between producers, consumers and the store.
-Tycho guidance: keep the token bound to the stored payload it names and keep a valid claim
-check from pointing to unauthorized data.
+written without a published token is orphaned. The source requires defining which component
+owns payload deletion, requires coordination between message expiration and payload retention
+so a valid claim check does not point to deleted data, and leaves authorization as an
+independent interaction between producer or consumer systems and the data store. Tycho
+guidance: keep the token bound to the stored payload it names and do not treat the claim check
+as an authorization token.
 
 **Failure and recovery.** The source names five failure cases: an orphaned payload, an
 unresolvable token, a duplicate claim check, an integrity mismatch, and a store outage or data
@@ -83,9 +85,10 @@ latency budget; compression or a compact serializer is the documented way to red
 size. Reverse the choice when retrieval and storage complexity exceed the savings.
 
 **Limits.** A claim check adds an external store, a retrieval hop and a second consistency
-boundary; it is not a payload catalogue or a security token. The source requires a named
-owner for payload deletion and a retention rule; Tycho guidance, not a source claim, adds
-tenant binding and a cleanup path for claims.
+boundary; it is not a payload catalogue or a security token. The source requires defining
+which component owns payload deletion and coordinating message expiration and payload
+retention; Tycho guidance, not a source claim, adds tenant binding and a cleanup path for
+claims.
 
 **Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
 text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the

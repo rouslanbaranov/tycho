@@ -53,8 +53,8 @@ on 2026-10-29. The other ownership notes remain on the chapter page.
 
 **Decision.** Use a resequencer only when the message contract declares a required order, a
 reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition
-have owners. Partition by key instead when global order is unnecessary or the buffer cannot be
-bounded.
+have owners. Partition by key instead when global order is unnecessary; when the buffer cannot
+be bounded, reject the resequencer or fail the ordering scope.
 
 **Mechanism.** A resequencer holds messages and releases them in a specified order. The
 Enterprise Integration Patterns page defines a "stateful filter" that collects and re-orders
@@ -74,9 +74,10 @@ timeout belong to the streaming contract.
 a timeout the resequencer disregards the current expected sequence number and moves to the next
 expected number. Late messages need a declared disposition: with old-message rejection enabled
 the implementation throws for an exchange older than the last delivered message, and invalid
-exchanges can be skipped explicitly. Tycho guidance: release after a declared gap timeout, fail
-the affected ordering scope when continuity is mandatory, and record dropped or rejected
-sequence numbers.
+exchanges can be skipped explicitly. Tycho guidance: release after a declared gap timeout; fail
+the affected ordering scope when continuity is mandatory or the buffer cannot be bounded; and
+record dropped or rejected sequence numbers. At the buffer cap, reject, spill or fail the
+ordering scope with evidence rather than dropping silently.
 
 **Alternative.** Partitioning messages by a category key and processing each category
 sequentially, with different categories in parallel, is the alternative when global order is
