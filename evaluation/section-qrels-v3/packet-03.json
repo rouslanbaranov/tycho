@@ -1,0 +1,1728 @@
+{
+  "instructions": "Grade every section 0/1/2; page-level prior labels are not answers.",
+  "level": "section",
+  "packet": 3,
+  "packets": 10,
+  "queries": [
+    {
+      "candidates": [
+        {
+          "excerpt": "| Route | Destination | |---|---| | Parent | [V04 \u2014 Distributed coordination and event integration](../README.md) | | Previous | [V04/C04 \u2014 Retries, idempotency and duplicate effects](../c04-retries-idempotency-and-duplicate-effects/README\u2026",
+          "heading": "Navigation and prerequisites",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/README.md",
+          "section_id": "navigation-and-prerequisites",
+          "section_key": "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b#navigation-and-prerequisites",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "- [V04/C05 \u2014 Outbox, inbox, sagas and durable workflows](../c05-outbox-inbox-sagas-and-durable-workflows/README.md) owns the adjacent question; compare assumptions before transferring the conclusion.",
+          "heading": "Boundaries and further reading",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/README.md",
+          "section_id": "boundaries-and-further-reading",
+          "section_key": "tycho.chapter.a92541ba2fb44cf1a3afef1f9c021fe0#boundaries-and-further-reading",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "\u2026!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:-1 --> # Outbox, inbox, sagas and durable workflow coordination > **Tycho manuscript \u2014 proposed V04/C05**, 2026-10-19. Primary public references: transactional-outbox a\u2026",
+          "heading": "Outbox, inbox, sagas and durable workflow coordination",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#overview",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "A relational database can commit an authoritative state change inside one local transaction. An unrelated message broker or external service is usually *not part of the same atomic commit*. A long-running workflow crossing several independ\u2026",
+          "heading": "Purpose and decision question",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "section_id": "purpose-and-decision-question",
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "| Failure timing | Committed state / outbox | External event / user-visible effect | Recovery contract / evidence required | |---|---|---|---| | Before commit | Neither should commit in the proposed local transaction | No authoritative suc\u2026",
+          "heading": "4. Failure and recovery matrix",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": "4-failure-and-recovery-matrix",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "\u2026tion | Fits when | Risks / evidence before choosing | |---|---|---| | **Local transaction + CDC outbox** | Database owns state; downstream events needed; change capture and connector operations are supported | Logical decoding/connector lag\u2026",
+          "heading": "5. Options and when the extra components are unwarranted",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": "5-options-and-when-the-extra-components-are-unwarranted",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "A user command can commit durable state locally while external notification, event delivery and reply transmission fail independently. This page explains where atomicity ends, how the **transactional outbox** moves the boundary, and why du\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#purpose-and-mission",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "The consumer must decide when to mark its position consumed, often relative to applying an external business effect. ```mermaid sequenceDiagram participant Broker participant C as Consumer participant DB as External effect sto\u2026",
+          "heading": "4. Consumer offset, effect and crash points",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "section_id": "4-consumer-offset-effect-and-crash-points",
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 1
+          }
+        }
+      ],
+      "id": "Q042",
+      "question": "How do idempotency, an outbox and consumer offsets combine into one end-to-end duplicate-safe workflow?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "| Independently reviewed public source | Exact applicable scope | Not established | |---|---|---| | [Grafana k6: open and closed models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) | Iterator/arrival cou\u2026",
+          "heading": "7. Public source ledger and limitations",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/README.md",
+          "section_id": "7-public-source-ledger-and-limitations",
+          "section_key": "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#7-public-source-ledger-and-limitations",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/README.md",
+          "section_id": "pages-and-reasoning-route",
+          "section_key": "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#pages-and-reasoning-route",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "How do open/closed arrivals, warmup and coordinated omission bias conclusions? This chapter owns that question within performance, scale and resilience under load. Read the mechanism together with its stated invariant, failure assumptions\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/README.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#purpose-and-mission",
+          "sources": {
+            "bm25": 5
+          }
+        },
+        {
+          "excerpt": "A controlled rollout needs: 1. immutable artifact digest/source provenance, policy-approved signer and target; 2. explicit old/new API, event and state compatibility matrix; 3. workload and expected client/tenant mix, not merely pod percen\u2026",
+          "heading": "4. Release identity and evidence gates",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "section_id": "4-release-identity-and-evidence-gates",
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#4-release-identity-and-evidence-gates",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "The engine tests cover conservation, non-negativity, zero arrivals, zero capacity, queue saturation, event ordering, timeout interaction, retry conservation and deterministic replay. The model contracts record the cases and test paths. The\u2026",
+          "heading": "V12-B: model correctness",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_id": "v12-b-model-correctness",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "# Dark Launching / Shadow Traffic **Identity.** Dark Launching / Shadow Traffic; family Deployment and legacy modernization; kind modernization-pattern; priority advanced. **Decision question.** Should new code receive real or shadow tra\u2026",
+          "heading": "Dark Launching / Shadow Traffic",
+          "path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "# Dark Launching-Shadow Traffic > **Pattern atlas:** > [Dark Launching / Shadow Traffic](../../v11-pattern-atlas/c10-deployment-modernization/dark-launching.md#dark-launching--shadow-traffic) \u2014 decision conditions and contraindications.\u2026",
+          "heading": "Dark Launching-Shadow Traffic",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/dark-launching-shadow-traffic.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 2
+          }
+        }
+      ],
+      "id": "Q043",
+      "question": "How do SLOs, load-test evidence and capacity models combine into a launch gate?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "| Independently read source | Supported point | Unproven | |---|---|---| | [Danilo Sato \u2014 Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) | Expand/migrate/contract interface coexistence method | Automatic database cons\u2026",
+          "heading": "7. Public sources and nonclaims",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
+          "section_id": "7-public-sources-and-nonclaims",
+          "section_key": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#7-public-sources-and-nonclaims",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "- [V08/C05 \u2014 Backward-compatible database change](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/README.md) owns the adjacent question; compare assumptions before transferring the conclusion. - [V10/C05\u2026",
+          "heading": "Boundaries and further reading",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
+          "section_id": "boundaries-and-further-reading",
+          "section_key": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#boundaries-and-further-reading",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "The following original, synthetic decision flow separates artifact eligibility, application rollout and data recovery. It is a reading guide, not a report of an executed deployment or a complete release policy. ```mermaid flowchart TD\u2026",
+          "heading": "Release and recovery boundaries",
+          "path": "book/delivery/README.md",
+          "section_id": "release-and-recovery-boundaries",
+          "section_key": "tycho.landing.fe2eace7b2df4ae480adbdf844b68100#release-and-recovery-boundaries",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "**Original hypothetical conflict:** a Catalogue team owns a `unit` identity; a Booking team owns reservation decisions but maintains a read projection of unit labels. Catalogue changes `asset_code` from a physical-unit identifier to a mode\u2026",
+          "heading": "Engineering walkthrough \u2014 Two teams change the same concept during a schema transition",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md",
+          "section_id": "engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition",
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "Assign each invariant and authoritative state transition to an owner before dividing storage or deployment. Two teams using the same entity name can disagree on its legal transitions; schema agreement alone does not resolve ownership. Th\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "| Constraint | Safer initial option to evaluate | Dangerous shortcut | |---|---|---| | Old clients cannot upgrade at once | Additive API/schema, feature negotiation, retained old readers | Breaking endpoint and storage change in one canary\u2026",
+          "heading": "6. Compatibility and deployment strategy jointly constrain choice",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "section_id": "6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "A meaningful release review requires: 1. Exact old/new application, database and event schema versions; immutable artifact digests and deployment modes. 2. A fixture matrix with actual old/new client-server and consumer-producer combinati\u2026",
+          "heading": "7. Evidence and acceptance",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "section_id": "7-evidence-and-acceptance",
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#7-evidence-and-acceptance",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.b938ff1a06264492a425f2eff555ae7d:-1 --> # GitOps, rolling, blue/green and canary release architecture > **Independent Tycho V08/C04 manuscript**, 2026-10-19. Public Kubernetes Deployment and Argo Roll\u2026",
+          "heading": "GitOps, rolling, blue/green and canary release architecture",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#overview",
+          "sources": {
+            "bm25": 5
+          }
+        },
+        {
+          "excerpt": "A release mechanism decides which version is **deployed and exposed**. It does not by itself prove which data, users or business effects each version can safely interpret. Progressive deployment can limit a failure's initial blast radius,\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+          "sources": {
+            "section-rerank": 4
+          }
+        }
+      ],
+      "id": "Q044",
+      "question": "How do schema evolution and rolling deployment constrain each other during a semantic change?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/README.md",
+          "section_id": "pages-and-reasoning-route",
+          "section_key": "tycho.chapter.5426707ddf264b758016aafe71f342b7#pages-and-reasoning-route",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "Design tenant identity, authorization, resource sharing and data placement as separate but composing boundaries. A tenant-aware query does not protect a wrongly scoped cache or background task; isolation must hold across the complete effe\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.31cda61d174248eaa326559d256ce352:-1 --> # Authorization boundaries and multitenancy: domain ownership and isolation > **Tycho book chapter draft V02/C07**, 2026-10-19. Original abstract design and hyp\u2026",
+          "heading": "Authorization boundaries and multitenancy: domain ownership and isolation",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#overview",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "The team moved protection into the stateful engine with three complementary mechanisms. **CoDel** initially considered request sojourn time in queues separated by read, write and slow jobs; **Scorecard** provided tenant-specific concurrenc\u2026",
+          "heading": "Revised boundary: storage-local and multi-signal",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_id": "revised-boundary-storage-local-and-multi-signal",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal",
+          "sources": {
+            "bm25": 5
+          }
+        },
+        {
+          "excerpt": "The following design rules require **tests**, not just declarations: 1. Resolve tenant membership and requested object from authenticated context and authoritative policy, never from an unchecked client-supplied tenant string alone. 2. En\u2026",
+          "heading": "4. Object authorization and tenant scoping must compose",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+          "section_id": "4-object-authorization-and-tenant-scoping-must-compose",
+          "section_key": "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose",
+          "sources": {
+            "bm25": 4,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "# Tenant-scoped effects and migration **Owning question:** Which cache, task and data-movement paths can bypass otherwise correct tenant scoping? This page belongs to [V02/C07 \u2014 Authorization boundaries and multitenancy](README.md). Use t\u2026",
+          "heading": "Tenant-scoped effects and migration",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/tenant-effects.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#overview",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Decide responsibilities and system boundaries before distributing them. The outcome of this volume is: Map ownership and interface semantics before splitting deployment: modular monolith, services and adapters are conditional alternatives\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/README.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.volume.7e8f5fd0c9d94504b6dc74b9ae6c30f3#purpose-and-mission",
+          "sources": {
+            "bm25": 2
+          }
+        }
+      ],
+      "id": "Q045",
+      "question": "How do tenancy, authorization and caching interact on a multi-tenant read path?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "- [Leases, stale owners and fencing at the destination](leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) \u2014 source-scoped enrichment; examples and proposed tests are not executed results.",
+          "heading": "Further mechanism and recovery questions",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/README.md",
+          "section_id": "further-mechanism-and-recovery-questions",
+          "section_key": "tycho.chapter.6eba0cf391184a709f2e23e5ecc1c3d2#further-mechanism-and-recovery-questions",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "Under a Raft-style model: 1. At a time, a node believes itself a leader for a given term, but other nodes can still be unaware because messages are delayed. 2. The quorum/term/log rules govern which log entries can be committed without vio\u2026",
+          "heading": "4. Leader elections, logs and client observations",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "4-leader-elections-logs-and-client-observations",
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "### Distributed Lock A distributed lock needs a named coordinator owner and a register of protected resources. The register states each resource's tolerated pause and the destination check that rejects a former holder. An operator also ne\u2026",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "**Enrichment contract:** distinguish who currently owns a lease from which external writes the destination will accept. This section owns application coordination; [region failback](../../v08-delivery-deployment-and-recovery/c07-multi-regi\u2026",
+          "heading": "Leases, stale owners and fencing at the destination",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+          "section_id": "leases-stale-owners-and-fencing-at-the-destination",
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "A fictional tool-booking system runs in region A with a recoverable copy in region B. A network partition disconnects A while clients still send requests. The recovery team cannot tell whether the last booking reply was lost before or afte\u2026",
+          "heading": "3. Original synthetic recovery scenario",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_id": "3-original-synthetic-recovery-scenario",
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "# Recovery state machines, fencing and failback **Owning question:** Which steps prevent two writers and demonstrate recovered user journeys? This page belongs to [V08/C07 \u2014 Multi-region recovery and data reconciliation](README.md). Use t\u2026",
+          "heading": "Recovery state machines, fencing and failback",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#overview",
+          "sources": {
+            "bm25": 5
+          }
+        },
+        {
+          "excerpt": "A replicated scheduler can agree on which launch it intended, while the external job has a different state. Consensus on the scheduler log does not prove that an RPC was sent, a container started or a side effect committed. - Persist sche\u2026",
+          "heading": "3. Scheduler state is not the external effect",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
+          "section_id": "3-scheduler-state-is-not-the-external-effect",
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "A pipeline worker should publish only when it can prove that it still owns the work and is using the intended configuration. Four boundaries are useful: - **Valid lease.** The worker may commit this work unit now. Without it, an orphane\u2026",
+          "heading": "5. Publication correctness: lease, task identity and unique outputs",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
+          "section_id": "5-publication-correctness-lease-task-identity-and-unique-outputs",
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#5-publication-correctness-lease-task-identity-and-unique-outputs",
+          "sources": {
+            "section-rerank": 3
+          }
+        }
+      ],
+      "id": "Q046",
+      "question": "What does a fencing token prevent after a lease or leadership change?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "**RTO** is a business-selected maximum acceptable time to restore defined service capability after disruption. **RPO** is a business-selected bound on tolerated gap/loss of recoverable data relative to the interruption. AWS's public **Disa\u2026",
+          "heading": "5. Recovery domains and two distinct objectives",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "section_id": "5-recovery-domains-and-two-distinct-objectives",
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#5-recovery-domains-and-two-distinct-objectives",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "A successful build pipeline and a healthy deployment controller do not prove that a new software version is safe for users, old binaries remain compatible with new data, or a destroyed failure domain can be recovered without loss. This cha\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#purpose-and-mission",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "**RTO (Recovery Time Objective)**: the approved maximum period a named user capability can be unavailable for the declared disaster class. An operational measurement must say when the incident timer starts (user impact, confirmed failover\u2026",
+          "heading": "RTO, RPO and their measurement boundaries",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_id": "rto-rpo-and-their-measurement-boundaries",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "Fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority. Promoting a second region without exclusive authority can create divergent accepted effects; failback is another tr\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "- **RTO:** the permitted interval from a named disruption/impact start marker until a specified user journey returns *correct usable service*. Starting the clock after human detection hides part of the outage. - **RPO:** the permitted age/\u2026",
+          "heading": "1. Define objectives by meaningful clocks and outcomes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/objectives-strategies.md",
+          "section_id": "1-define-objectives-by-meaningful-clocks-and-outcomes",
+          "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes",
+          "sources": {
+            "bm25": 4,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "- **RPO (recovery point objective):** maximum acceptable loss of acknowledged business state, defined for a specified failure and measurement basis. - **RTO (recovery time objective):** allowed time from a defined disruption/start marker u\u2026",
+          "heading": "1. Recovery objectives have a named failure and clock",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md",
+          "section_id": "1-recovery-objectives-have-a-named-failure-and-clock",
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 5
+          }
+        }
+      ],
+      "id": "Q047",
+      "question": "What is the difference between RTO and RPO, and what evidence turns each into a measured objective?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "The authors distinguish **low coupling** from **high cohesion**. Early work optimized for fewer inter-component calls, but related behavior still changed together across multiple packages. A component could have a neat public interface and\u2026",
+          "heading": "Beyond reference checking: cohesion, contracts, ownership",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "section_id": "beyond-reference-checking-cohesion-contracts-ownership",
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#beyond-reference-checking-cohesion-contracts-ownership",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "Three candidates receive the same Poisson workload at 20 requests per second for 1,800 seconds after a 300-second warmup. Each uses 30 replications with the seed base 20261029. The metrics are success rate, p95 latency, throughput, cost pe\u2026",
+          "heading": "The experiment",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_id": "the-experiment",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "sources": {
+            "bm25": 5
+          }
+        },
+        {
+          "excerpt": "| Control | Primary purpose | Dangerous misuse | |---|---|---| | Admission/rate limit | Bound offered or admitted work before resource exhaustion | Hide rejected attempts from service-level outcomes | | Queue limit/deadline | Bound waiting\u2026",
+          "heading": "4. Bulkheads, circuit breakers and retries have different responsibilities",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "### Circuit Breaker A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The threshold needs a minimum request volume\u2026",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "**Original fictional traffic:** checkout needs an authoritative booking transaction and optionally calls a recommendation service. The optional service stalls for one second. A single shared outbound pool of twenty slots is consumed by rec\u2026",
+          "heading": "Engineering walkthrough \u2014 Optional dependency failure creates core-work starvation",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "section_id": "engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "sources": {
+            "bm25": 4,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "Bound admitted work, queue residence, retry amplification and degraded behavior around protected outcomes. Accepting every request can postpone rejection until after resource exhaustion; useful service may require earlier explicit refusal\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#integrated-decision-and-reading-route",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "A request receives a timeout event when it enters the system. The deadline is the arrival time plus the configured timeout. If the request completes before the deadline, the later timeout event finds a completed request and is ignored. If\u2026",
+          "heading": "Timeout lifecycle",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_id": "timeout-lifecycle",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "sources": {
+            "bm25": 2
+          }
+        }
+      ],
+      "id": "Q048",
+      "question": "What does a circuit breaker add beyond a per-request timeout?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "How do replay, watermarks, state stores and recovery shape correctness? This chapter owns that question within distributed coordination and event integration. Read the mechanism together with its stated invariant, failure assumptions and e\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/README.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.chapter.566e576a945b44628386d520214d6c4a#purpose-and-mission",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "| Question | Page | Public source scope | |---|---|---| | How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](../volumes/v04-distribut\u2026",
+          "heading": "Canonical authored pages",
+          "path": "book/integration/README.md",
+          "section_id": "canonical-authored-pages",
+          "section_key": "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830#canonical-authored-pages",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "- [Ordering and consensus](../volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md) \u2014 what ordering and majority replication mean. - [Saga and local isolation](../volumes/v04-d\u2026",
+          "heading": "Prerequisite and adjacent canonical research",
+          "path": "book/integration/README.md",
+          "section_id": "prerequisite-and-adjacent-canonical-research",
+          "section_key": "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830#prerequisite-and-adjacent-canonical-research",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "# Checkpoints, watermarks and late data **Owning question:** Which state boundary and late-data policy define a corrected result? This page belongs to [V04/C08 \u2014 Stateful/event-time stream processing](README.md). Use the integrated walkth\u2026",
+          "heading": "Checkpoints, watermarks and late data",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/checkpoints-time.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#overview",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "**Original synthetic event-time scenario:** an aggregate computes total reservations per business day from a CDC log. Event E5 reports a booking at event time 10:01 but arrives after the operator has advanced its watermark beyond that wind\u2026",
+          "heading": "Engineering walkthrough \u2014 Late correction after checkpoint and restore",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "section_id": "engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+          "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "Treat event time, watermarks, retained state, checkpointing and replay as one declared processing contract. A consistent processor checkpoint cannot recover an expired input or reverse an independently committed external effect. The deta\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "Processing records in order is not the same as calculating correct, recoverable *state* while inputs arrive late, operators restart, partitions rebalance and external systems change. This page owns the recovery, event-time and CDC boundary\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#purpose-and-mission",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "| Chapter | Owning question | |---|---| | [V04/C01 \u2014 Time, causality and ordering](c01-time-causality-and-ordering/README.md) | Which ordering can a distributed system observe or guarantee? | | [V04/C02 \u2014 Replication, consensus and leader\u2026",
+          "heading": "Questions and chapters",
+          "path": "book/volumes/v04-distributed-coordination-and-events/README.md",
+          "section_id": "questions-and-chapters",
+          "section_key": "tycho.volume.c0927de8450647c49e2d33774eeb60be#questions-and-chapters",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 2
+          }
+        }
+      ],
+      "id": "Q049",
+      "question": "What does a watermark mean in event-time stream processing, and what does it not guarantee?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/README.md",
+          "section_id": "pages-and-reasoning-route",
+          "section_key": "tycho.chapter.5b8edae85f83413997cac0c873919b57#pages-and-reasoning-route",
+          "sources": {
+            "bm25": 4,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Place invariants at their enforcing transaction boundary and state how cross-boundary uncertainty is reconciled. A compensating action can fail or arrive late; a saga is not an atomic transaction across independent owners. The detailed p\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.3c78e2b17ac74973b2ae658977843c2a#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "| Control | Primary purpose | Dangerous misuse | |---|---|---| | Admission/rate limit | Bound offered or admitted work before resource exhaustion | Hide rejected attempts from service-level outcomes | | Queue limit/deadline | Bound waiting\u2026",
+          "heading": "4. Bulkheads, circuit breakers and retries have different responsibilities",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "### Circuit Breaker A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The threshold needs a minimum request volume\u2026",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "Distributed application security is not achieved by choosing a transport protocol or drawing a network perimeter. It depends on **who can act, what is being protected, which boundary evaluates and enforces the decision, and what happens wh\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.dde63373c50f4f4a80e727b6e160def5#purpose-and-mission",
+          "sources": {
+            "bm25": 3
+          }
+        }
+      ],
+      "id": "Q050",
+      "question": "What does a bulkhead isolate, and which failure does it fail to prevent?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "**Original synthetic decision:** product leadership asks for a booking confirmation within 300 ms for 99% of accepted requests; operations can tolerate a clearly signaled temporary refusal during a dependency incident; the resource owner r\u2026",
+          "heading": "Engineering walkthrough \u2014 An apparently faster architecture that fails a hard invariant",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "section_id": "engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant",
+          "section_key": "tycho.page.06b70cb83d4f490ea9ef698a025e7684#engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "Convert a quality preference into a stimulus, environment, observable response and rejection condition, then compare only feasible candidates. A faster candidate remains inadmissible when it loses an integrity or isolation guarantee; a we\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/quality-drivers-and-architecture-views.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.06b70cb83d4f490ea9ef698a025e7684#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "| View | Reader's question | What it must contain | What it cannot prove | |---|---|---|---| | Context | Who uses and surrounds the system? | Actors, external partners, data/effect contracts, scope | Internal modules or runtime availabilit\u2026",
+          "heading": "2. The main views answer separate questions",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "section_id": "2-the-main-views-answer-separate-questions",
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#2-the-main-views-answer-separate-questions",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Imagine a simple equipment booking application. An external client requests a timeslot. A reservation component enforces exclusivity and writes the authoritative record. A notification component later sends optional confirmation. This is a\u2026",
+          "heading": "3. Fictional architecture example: community tool reservations",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "section_id": "3-fictional-architecture-example-community-tool-reservations",
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#3-fictional-architecture-example-community-tool-reservations",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "A quality attribute should have a stimulus, affected boundary, environment, expected response and measurable acceptance criterion. In the fictional booking system, these would be **proposed experiments**: | Scenario | Stimulus and environ\u2026",
+          "heading": "4. Turn qualities into adversarial scenarios",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/evidence-screening.md",
+          "section_id": "4-turn-qualities-into-adversarial-scenarios",
+          "section_key": "tycho.page.4e96abb6d4504ef1b09cbc355485108a#4-turn-qualities-into-adversarial-scenarios",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "Capture outcome, workload, invariant, constraint and evidence inputs before comparing architecture candidates. A complete-looking questionnaire with unknown hot-key behavior or recovery ownership still cannot support a definite recommenda\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.868027aee4884210bea1d8a6542fbfb0#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "The same headline requirement\u2014\"serve more users reliably\"\u2014can justify different designs when one system has a write-contention bottleneck, another has occasional bulk jobs, and a third has a downstream rate limit. An architecture recommend\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.868027aee4884210bea1d8a6542fbfb0#purpose-and-mission",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "**Original synthetic trace:** an equipment reservation commits in the database, but the HTTP response disappears. In the **context view**, Client, Booking System and External Payment are separate actors; in the **building-block view**, Boo\u2026",
+          "heading": "Engineering walkthrough \u2014 Reconciling one failure across architectural views",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "section_id": "engineering-walkthrough-reconciling-one-failure-across-architectural-views",
+          "section_key": "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#engineering-walkthrough-reconciling-one-failure-across-architectural-views",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "Use consistent identities across context, runtime, deployment and decision views so a failure can be followed without changing its meaning. A tidy component view does not establish a working timeout, permission or recovery contract; follo\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 4
+          }
+        }
+      ],
+      "id": "Q051",
+      "question": "A stakeholder asks for a scalable design but cannot name the outcome that matters. Which artifact should turn the concern into testable scenarios and readable views?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Use consistent identities across context, runtime, deployment and decision views so a failure can be followed without changing its meaning. A tidy component view does not establish a working timeout, permission or recovery contract; follo\u2026",
+          "heading": "Decision and worked result",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/README.md",
+          "section_id": "decision-and-worked-result",
+          "section_key": "tycho.chapter.abcbb298887b49e79525ca00fead8926#decision-and-worked-result",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "Before drawing, define: - **System boundary:** what the selected software system owns, which people and neighbors interact with it. - **Responsibility:** what functional result or rule belongs to each logical component. - **Runtime identit\u2026",
+          "heading": "1. Start with concerns and a coherent vocabulary",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "section_id": "1-start-with-concerns-and-a-coherent-vocabulary",
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "| View | Reader's question | What it must contain | What it cannot prove | |---|---|---|---| | Context | Who uses and surrounds the system? | Actors, external partners, data/effect contracts, scope | Internal modules or runtime availabilit\u2026",
+          "heading": "2. The main views answer separate questions",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "section_id": "2-the-main-views-answer-separate-questions",
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#2-the-main-views-answer-separate-questions",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "**Original hypothetical conflict:** a Catalogue team owns a `unit` identity; a Booking team owns reservation decisions but maintains a read projection of unit labels. Catalogue changes `asset_code` from a physical-unit identifier to a mode\u2026",
+          "heading": "Engineering walkthrough \u2014 Two teams change the same concept during a schema transition",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md",
+          "section_id": "engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition",
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "An architecture description is not one diagram. A static module picture cannot show how a timeout becomes a duplicate external effect, and a sequence diagram cannot show which containers share a failure domain. Engineers should select **th\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#purpose-and-mission",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "A single \"architecture diagram\" often combines people, components, build modules, Kubernetes pods and database internals into one uninterpretable picture. A reader needs a consistent abstraction level and clearly labelled relationships. T\u2026",
+          "heading": "3. Different diagrams answer different questions",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "section_id": "3-different-diagrams-answer-different-questions",
+          "section_key": "tycho.page.b5d667aa6dac4a98a7c6ba8b10852897#3-different-diagrams-answer-different-questions",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "Suppose two wholly fictional registration products each see *offered* 120 requests/s during a peak. That number alone does not select an application style. - **System A** has a small cohesive team, a stable single local transaction for ca\u2026",
+          "heading": "4. Decision cases: same traffic, different constraints",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "section_id": "4-decision-cases-same-traffic-different-constraints",
+          "section_key": "tycho.page.b5d667aa6dac4a98a7c6ba8b10852897#4-decision-cases-same-traffic-different-constraints",
+          "sources": {
+            "section-rerank": 5
+          }
+        }
+      ],
+      "id": "Q052",
+      "question": "Two teams draw different diagrams of the same system. What should a description contract require so the views can be compared?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "External systems are outside the team's direct control, even when owned by a friendly organization or accessed on the same private network. Every external edge needs a small contract: - Purpose, actor and direction of the exchanged effect\u2026",
+          "heading": "4. Track neighbors with real failure and trust semantics",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/authority-dependencies.md",
+          "section_id": "4-track-neighbors-with-real-failure-and-trust-semantics",
+          "section_key": "tycho.page.15ffb7535c424b0eac6445cddaeb4a25#4-track-neighbors-with-real-failure-and-trust-semantics",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "| Constraint type | What a design must make explicit | What unknown blocks | |---|---|---| | Runtime/lifecycle | Supported language, framework, operating system and dependency versions | Unsafe unmaintained component or untested runtime up\u2026",
+          "heading": "1. Constraints must be typed and owned",
+          "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/feasibility-gates.md",
+          "section_id": "1-constraints-must-be-typed-and-owned",
+          "section_key": "tycho.page.8284605817fc48dba499425b0d908df0#1-constraints-must-be-typed-and-owned",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "Sharding, async communication, dozens of service owners and decentralized deployments add failure surfaces: network partitions, observability and incident ownership, contract evolution, infrastructure cost, cross-team planning and consiste\u2026",
+          "heading": "Trade-offs / missing facts",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "section_id": "trade-offs-missing-facts",
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#trade-offs-missing-facts",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "Place identity and resource authorization at the actual effect boundary, including object, tenant and credential scope. Network reachability or a valid token does not grant permission to every object; test denied operations through indire\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "Distributed application security is not achieved by choosing a transport protocol or drawing a network perimeter. It depends on **who can act, what is being protected, which boundary evaluates and enforces the decision, and what happens wh\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/identity-authorization-and-isolation.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.dde63373c50f4f4a80e727b6e160def5#purpose-and-mission",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "A conventional layered application might have interface, application orchestration, domain rules and data-access layers. It works if the code controls dependency directions and avoids bypassing required rules. Simply placing files in simil\u2026",
+          "heading": "1. Layered design states a dependency policy",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/dependencies-ports.md",
+          "section_id": "1-layered-design-states-a-dependency-policy",
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#1-layered-design-states-a-dependency-policy",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "An application core must still choose between: - **pure domain rules** (e.g., interval overlap predicate) that can be evaluated deterministically; - **application orchestration** (identity/authorization, repository lookup, command sequence\u2026",
+          "heading": "4. Choose the correct core boundary",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/dependencies-ports.md",
+          "section_id": "4-choose-the-correct-core-boundary",
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 3
+          }
+        }
+      ],
+      "id": "Q053",
+      "question": "A design depends on an external identity provider. What authority and dependency facts must be recorded before calling it a boundary?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Invent a web application that accepts 200 attempted requests/s. The first team hypothesis is \u201cplatform threads are blocking, so switch to virtual threads.\u201d The actual limiting condition is unknown. Suppose a *hypothetical* dependency can e\u2026",
+          "heading": "5. Original synthetic failure: the misleading virtual-thread fix",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/diagnostic-experiments.md",
+          "section_id": "5-original-synthetic-failure-the-misleading-virtual-thread-fix",
+          "section_key": "tycho.page.0d095fa3993a48f0b70ae375cb60c493#5-original-synthetic-failure-the-misleading-virtual-thread-fix",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "Write this in advance: 1. **Claim:** under scenario X, change Y improves user-visible metric Z without violating invariants. 2. **Boundary:** where the clock starts, what counts as a logical request, and which system/resources are include\u2026",
+          "heading": "3. Define the experiment contract before the result",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/experiment-contract.md",
+          "section_id": "3-define-the-experiment-contract-before-the-result",
+          "section_key": "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "# Discriminating architecture experiments **Owning question:** What observation would distinguish cache benefit from query repair? This page belongs to [V01/C04 \u2014 Evidence, hypotheses and architecture experiments](README.md). Use the inte\u2026",
+          "heading": "Discriminating architecture experiments",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/experiment-contract.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#overview",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Suppose a fictional query spends most elapsed time waiting for DB connections. Increasing a connection pool may reduce acquisition delay for a brief period and worsen DB locking under sustained load. Faster CPU processing can make a downst\u2026",
+          "heading": "5. Resource bottlenecks can move after optimization",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
+          "section_id": "5-resource-bottlenecks-can-move-after-optimization",
+          "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "# Contended authority and discriminating scaling experiments **Owning question:** Which observation distinguishes resource saturation from coordination overhead? This page belongs to [V07/C02 \u2014 Contention, saturation and scaling laws](REA\u2026",
+          "heading": "Contended authority and discriminating scaling experiments",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#overview",
+          "sources": {
+            "bm25": 5
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.f05854fcc406435bbf38a192bc7ab2f1#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.f05854fcc406435bbf38a192bc7ab2f1:-1 --> # Architecture alternatives, discriminating experiments and decision records > **Tycho independent book manuscript \u2014 proposed V10/C04, 2026-10-19.** The example\u2026",
+          "heading": "Architecture alternatives, discriminating experiments and decision records",
+          "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.f05854fcc406435bbf38a192bc7ab2f1#overview",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "# Negative caching and discriminating experiments **Owning question:** Which revoked permission or absent value makes cached absence unsafe? This page belongs to [V06/C02 \u2014 Hot keys, cache stampedes and read amplification](README.md). Use\u2026",
+          "heading": "Negative caching and discriminating experiments",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md",
+          "section_id": "overview",
+          "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#overview",
+          "sources": {
+            "bm25": 3
+          }
+        }
+      ],
+      "id": "Q055",
+      "question": "A team wants to prove a design choice with a benchmark. What makes an architecture experiment discriminating rather than decorative?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/README.md",
+          "section_id": "pages-and-reasoning-route",
+          "section_key": "tycho.chapter.5de52a840c14448c946a65c924f28487#pages-and-reasoning-route",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "| Event style | Execution boundary | Failure question | Appropriate use | |---|---|---|---| | Direct synchronous module call | Caller stack/transaction if configured | Can callee failure roll back caller? | Required immediate invariant/dec\u2026",
+          "heading": "3. Internal events have multiple execution and durability contracts",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md",
+          "section_id": "3-internal-events-have-multiple-execution-and-durability-contracts",
+          "section_key": "tycho.page.07bb1f96bdd94195ac8e31644527a217#3-internal-events-have-multiple-execution-and-durability-contracts",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "**Synthetic failure:** reservation state commits but the process crashes before an in-memory notification event reaches its listener. If notification is optional, user booking truth can remain correct; however, the system must disclose wh\u2026",
+          "heading": "4. Transaction boundary determines which outcome is correct",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md",
+          "section_id": "4-transaction-boundary-determines-which-outcome-is-correct",
+          "section_key": "tycho.page.07bb1f96bdd94195ac8e31644527a217#4-transaction-boundary-determines-which-outcome-is-correct",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "**Original fictional workflow:** `BookingModule` reserves a resource and emits `BookingCreated`. `NotificationModule` subscribes. Three superficially similar deliveries have different durability: calling subscribers inside the transaction,\u2026",
+          "heading": "Engineering walkthrough \u2014 An internal event that survives neither process death nor commit",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "engineering-walkthrough-an-internal-event-that-survives-neither-process-death-nor-commit",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#engineering-walkthrough-an-internal-event-that-survives-neither-process-death-nor-commit",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "Use enforced module contracts to retain useful local transactions and make internal event durability explicit. An after-commit callback is not a durable external delivery mechanism; process death can separate a committed change from its n\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#integrated-decision-and-reading-route",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "A modular monolith is a single deployable whose functional responsibilities are divided into explicitly enforced modules. Its goal is neither to hide all coupling nor to simulate microservices inside one process. It preserves appropriate l\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#purpose-and-mission",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "For a synthetic high-volume trip lifecycle, compare create, edit, cancel, recompute, retry, arrival-order change and offline/batch reads under exactly specified identity and time-window rules. An append-only model needs explicit materializ\u2026",
+          "heading": "Failure oracles for a different store",
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "section_id": "failure-oracles-for-a-different-store",
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#failure-oracles-for-a-different-store",
+          "sources": {
+            "bm25": 5
+          }
+        }
+      ],
+      "id": "Q056",
+      "question": "An internal event is published before the database commit. What timing failure does this create, and where should the boundary move?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "### Anti-Corruption Layer An anti-corruption layer is a translation boundary that keeps an external or legacy model from becoming the local authority. It owns mapping, validation and the explicit rejection of meanings that do not translat\u2026",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#bounded-pattern-ownership-notes",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "**Original synthetic migration:** a legacy tool catalogue stores `status=ACTIVE` for a model that can be rented; a new unit-level system stores `status=AVAILABLE` for each physical unit. Mapping ACTIVE directly to AVAILABLE implies stock a\u2026",
+          "heading": "Engineering walkthrough \u2014 Lossy translation behind a seemingly compatible API",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "section_id": "engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api",
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#engineering-walkthrough-lossy-translation-behind-a-seemingly-compatible-api",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "The replacement built a common reading foundation using Cassandra Analytics and S3 backup metadata as the authoritative representation of source schema/topology/data at a point in time. Spark DataFrames supply a reusable intermediate *exec\u2026",
+          "heading": "New stack and where correctness lives",
+          "path": "book/cases/netflix-casspactor-shadow-migration.md",
+          "section_id": "new-stack-and-where-correctness-lives",
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#new-stack-and-where-correctness-lives",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "Two contexts can cooperate through a published language, a translation layer, or agreed upstream/downstream conventions. An explicit **context map** tells readers whose meaning is authoritative and how mappings are enforced. Such a map is\u2026",
+          "heading": "3. Context maps are semantic integration maps, not mandatory graphs",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+          "section_id": "3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "Code image rollback is safe only when old N can correctly read and mutate every persisted state written by N+1 during exposure. Once N+1 commits a genuinely new-only state, restoring N containers may reproduce errors or violate business in\u2026",
+          "heading": "5. Rollback has a no-return boundary",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/no-return-recovery.md",
+          "section_id": "5-rollback-has-a-no-return-boundary",
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Proposed test fixture (not executed): 1. N clients use N API and N+1 API against expanded schema. 2. N+1 clients exercise both API versions where supported. 3. Old queued event consumed by N+1, and new event by N where still supported. 4.\u2026",
+          "heading": "6. Acceptance tests must include failures",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/no-return-recovery.md",
+          "section_id": "6-acceptance-tests-must-include-failures",
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "A fictional community equipment catalogue is being rewritten while clients still query a legacy inventory feed. In the invented legacy feed, a row can have a product-level identity, display status \u201copen\u201d, a last-refresh timestamp and seve\u2026",
+          "heading": "2. Original synthetic case: an equipment catalogue migration",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "section_id": "2-original-synthetic-case-an-equipment-catalogue-migration",
+          "section_key": "tycho.page.e5195a1aafa640359f05aebc08744584#2-original-synthetic-case-an-equipment-catalogue-migration",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 3
+          }
+        }
+      ],
+      "id": "Q057",
+      "question": "A legacy API returns status codes that do not match the new domain model. Where should translation live, and what must not leak across the boundary?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Multitenant isolation keeps tenant data and effects separate inside a shared application by deriving tenant scope from authenticated context at every access path. The tenant identifier must be derived from authentication and authorization,\u2026",
+          "heading": "Multitenant Isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+          "section_id": "multitenant-isolation",
+          "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "**Original synthetic negative test:** Tenant A authenticates and calls an authorized `GET /catalogue`. A joined search result points to Tenant B's maintenance ticket; a shared Redis key stores an unscoped catalogue summary; an internal eve\u2026",
+          "heading": "Engineering walkthrough \u2014 Tenant isolation across four non-equivalent layers",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "section_id": "engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+          "sources": {
+            "bm25": 4,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "OWASP's API Security Top 10 2023 highlights broken object-level and object-property-level authorization risks. [E04] The fact that an API endpoint requires a valid token does not authorize every ID presented in its path or body. For a fic\u2026",
+          "heading": "3. Object-level authorization and multitenancy",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "section_id": "3-object-level-authorization-and-multitenancy",
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "| Control | Intended protection | What it does NOT prove | |---|---|---| | TLS / mutual TLS | Connection confidentiality, integrity and authenticated endpoint depending on configuration | Authorization for a particular business object | |\u2026",
+          "heading": "5. Boundaries of network and service isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "section_id": "5-boundaries-of-network-and-service-isolation",
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+          "sources": {
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "**Enrichment contract:** distinguish data encryption keys, token-signing keys, transport certificates and resource permissions. Their replacement and revocation have different correctness and availability consequences. OWASP key-managemen\u2026",
+          "heading": "Key rotation, revocation and unavailable authorities",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "section_id": "key-rotation-revocation-and-unavailable-authorities",
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "| Dimension | Typical mechanism | What it does not prove | |---|---|---| | Process/host | OS user permissions, VM/process/container isolation | A container boundary is not automatically a separate kernel or tenant-proof guarantee | | Netwo\u2026",
+          "heading": "5. Isolation is multidimensional",
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "section_id": "5-isolation-is-multidimensional",
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "When a popular key expires, thousands of concurrent request handlers can all fall through to a slower database, overwhelming a backend that normally handles only a fraction of the offered read traffic. Possible safeguards, each with separ\u2026",
+          "heading": "4. Stampede, hot keys and failure admission",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "section_id": "4-stampede-hot-keys-and-failure-admission",
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 2
+          }
+        }
+      ],
+      "id": "Q058",
+      "question": "A tenant identifier is present in the request but missing from a cache key. What isolation failure is possible?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "- **Retry storm.** Every client retries immediately. The service sees a load spike just as it is least able to handle it. - **Unbounded retries.** A request can retry forever and consume capacity indefinitely. - **Timeout larger than the\u2026",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_id": "failure-modes",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "If every request is attempted 1.05 times on average, the service load is 5% higher than the offered load. If every request is attempted three times, the load can be three times higher. The retry amplification metric is total attempts divid\u2026",
+          "heading": "Retry amplification",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_id": "retry-amplification",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "A timeout on one socket is not a complete request deadline. The caller has an end-to-end business time budget; proxies, authentication, queueing, internal RPCs and durable state can consume it. An API must define which result is still mean\u2026",
+          "heading": "3. End-to-end deadlines, cancellation and retry budgets",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Retry with Jitter Ji\u2026",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+          "section_id": "bounded-pattern-ownership-notes",
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "**Original compatibility matrix:** legacy client N sends a booking `POST` with no stable key; new N+1 sends `operationId` and accepts a `PENDING` response. Server S1 only understands immediate success/failure; S2 persists operation identit\u2026",
+          "heading": "Engineering walkthrough \u2014 Mixed clients and an unacknowledged committed POST",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "section_id": "engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "Define behavioral compatibility, operation identity, end-to-end budgets and caller-visible unknown outcomes alongside the wire format. A lost response after commit is compatible with transport failure; blindly replaying a state-changing r\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "**Original synthetic budget:** eight application replicas each configure HikariCP maximum 20 connections; PgBouncer mediates 60 server-side database connections. A simplistic calculation of 8\u00d720 = 160 client leases is **not 160 simultaneou\u2026",
+          "heading": "Engineering walkthrough \u2014 Pool capacity is a fleet equation, not a per-replica setting",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
+          "section_id": "engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "A system can have fast median service times and still miss a user-visible latency objective. The architecture question is not merely \"how fast is each component?\" but **how waiting, parallel dependency calls, retry fan-out, queueing and un\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission",
+          "sources": {
+            "bm25": 4
+          }
+        }
+      ],
+      "id": "Q059",
+      "question": "A caller sets a two-second timeout and retries twice. What end-to-end budget must be enforced, and by whom?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "- A measured arrival rate above 22 requests per second or a mean service time above 0.65 seconds changes the utilization boundary. - A measured p95 service time whose tail pushes B above 1.5 seconds. - A cost weight under which B no long\u2026",
+          "heading": "What would reverse the recommendation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_id": "what-would-reverse-the-recommendation",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "sources": {
+            "bm25": 4,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "Possible enforcement mechanisms include module-level build packages, language visibility restrictions, dependency analysis, ArchUnit-like architecture tests, or Spring Modulith's verification APIs. Check that the source structure represent\u2026",
+          "heading": "5. Enforce boundaries rather than only documenting them",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
+          "section_id": "5-enforce-boundaries-rather-than-only-documenting-them",
+          "section_key": "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Use enforced module contracts to retain useful local transactions and make internal event durability explicit. An after-commit callback is not a durable external delivery mechanism; process death can separate a committed change from its n\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#integrated-decision-and-reading-route",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "A modular monolith is a single deployable whose functional responsibilities are divided into explicitly enforced modules. Its goal is neither to hide all coupling nor to simulate microservices inside one process. It preserves appropriate l\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#purpose-and-mission",
+          "sources": {
+            "bm25": 3
+          }
+        },
+        {
+          "excerpt": "| Dimension | Core question | Misleading shortcut to avoid | |---|---|---| | **Business/domain boundary** | Which concepts, rules and invariants belong together, with one consistent language? | Treat every database table or REST endpoint a\u2026",
+          "heading": "1. Separate four different architectural axes",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_id": "1-separate-four-different-architectural-axes",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+          "sources": {
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "A monolithic application can be a single deployment unit and still contain **well-separated functional modules**. The defining cost is shared deployment and often shared process/runtime failure exposure, not an inability to implement inter\u2026",
+          "heading": "2. Monolith does not mean unstructured code",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_id": "2-monolith-does-not-mean-unstructured-code",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#2-monolith-does-not-mean-unstructured-code",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "Appropriate evidence for **exploring** an independently deployed service boundary includes a cohesive business capability with an externally clear contract, an established team able to operate it, materially independent release/change pres\u2026",
+          "heading": "5. What could justify distribution \u2014 and what cannot?",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_id": "5-what-could-justify-distribution-and-what-cannot",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "A useful insufficient-evidence record is actionable. It names: - the measurement; - the range that would support or reject the decision; - the owner of the measurement; - the consequence of staying in the current state; - the next review\u2026",
+          "heading": "What would change the outcome",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "section_id": "what-would-change-the-outcome",
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "sources": {
+            "bm25": 5
+          }
+        }
+      ],
+      "id": "Q060",
+      "question": "A module boundary exists only in documentation. What enforcement evidence would make it real?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "What improves concurrency without creating downstream capacity? This chapter owns that question within execution models, concurrency and flow control. Read the mechanism together with its stated invariant, failure assumptions and evidence\u2026",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/README.md",
+          "section_id": "purpose-and-mission",
+          "section_key": "tycho.chapter.d5b789c9cd7e4cb693c22943423531c2#purpose-and-mission",
+          "sources": {
+            "bm25": 1
+          }
+        },
+        {
+          "excerpt": "- **\"Virtual threads are nonblocking.\"** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU. - **\"Reactive always wins CPU.\"** Zuul's lo\u2026",
+          "heading": "Contradictions, stop conditions and what to refuse",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_id": "contradictions-stop-conditions-and-what-to-refuse",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#contradictions-stop-conditions-and-what-to-refuse",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "| Source-bounded precedent | Resource under pressure | Reported gain or failure | What it does **not** establish | |---|---|---|---| | [Netflix Zuul 2, 2016](../netflix-zuul2-nonblocking-gateway.md) (src.m9-n07) | Many concurrent network c\u2026",
+          "heading": "Four independent concurrency bottlenecks",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_id": "four-independent-concurrency-bottlenecks",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#four-independent-concurrency-bottlenecks",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md",
+          "section_id": "applied-m9-evidence-what-transfers-and-what-does-not",
+          "section_key": "tycho.page.02238832b395417bae63939cd96b9134#applied-m9-evidence-what-transfers-and-what-does-not",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "```mermaid flowchart LR A[Outgoing gRPC client tasks] --> B[CPU-heavy worker pool] B --> C[Bounded platform-thread executor] C --> D[Useful CPU processing] B --> E[Virtual-thread per-task experiment] E --> F[CPU work still needs\u2026",
+          "heading": "Before/after and source-supported outcome",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_id": "before-after-and-source-supported-outcome",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#before-after-and-source-supported-outcome",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "**Synthetic requirement:** a Java service handles high fan-out remote gRPC requests but also spends 70% of its CPU budget on protobuf transformation and authorization. *70% is hypothetical, not Netflix telemetry.* Proposed reversible meth\u2026",
+          "heading": "Migration and test design for a different legacy system",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_id": "migration-and-test-design-for-a-different-legacy-system",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#migration-and-test-design-for-a-different-legacy-system",
+          "sources": {
+            "bm25": 2
+          }
+        },
+        {
+          "excerpt": "The historical src.m9-n02 source gives a **qualitative negative experiment**, not a complete benchmark. An outgoing gRPC client can perform both network waiting and CPU-heavy work, but merely labeling an executor \u201cgRPC\u201d does not establish\u2026",
+          "heading": "Workload decomposition: a scheduling change is not a compute optimization",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_id": "workload-decomposition-a-scheduling-change-is-not-a-compute-optimization",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#workload-decomposition-a-scheduling-change-is-not-a-compute-optimization",
+          "sources": {
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "The proposed adoption strategy is to retain a platform-thread baseline, identify blocking work inside monitors and native calls, inspect tracing/security/metrics filters under load, enable virtual threads on representative I/O-heavy endpoi\u2026",
+          "heading": "Decision and transition safety",
+          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+          "section_id": "decision-and-transition-safety",
+          "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#decision-and-transition-safety",
+          "sources": {
+            "bm25": 5,
+            "section-rerank": 4
+          }
+        }
+      ],
+      "id": "Q061",
+      "question": "Virtual threads improve throughput in one service but not another. What workload property explains the difference?",
+      "split": "v2"
+    },
+    {
+      "candidates": [
+        {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/README.md",
+          "section_id": "pages-and-reasoning-route",
+          "section_key": "tycho.chapter.b9bf60e22dc04878a05aeca98610b5d1#pages-and-reasoning-route",
+          "sources": {
+            "bm25": 3,
+            "section-rerank": 4
+          }
+        },
+        {
+          "excerpt": "- **\"Virtual threads are nonblocking.\"** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU. - **\"Reactive always wins CPU.\"** Zuul's lo\u2026",
+          "heading": "Contradictions, stop conditions and what to refuse",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_id": "contradictions-stop-conditions-and-what-to-refuse",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#contradictions-stop-conditions-and-what-to-refuse",
+          "sources": {
+            "bm25": 4
+          }
+        },
+        {
+          "excerpt": "Reactor `Mono<T>` models zero or one value; `Flux<T>` models zero to many. Their creation does not start a new thread or perform the work: subscription starts a chain. By default, most operators execute on the thread delivering their signa\u2026",
+          "heading": "3. Reactor 3.7.0: scheduler choice and context",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+          "section_id": "3-reactor-3-7-0-scheduler-choice-and-context",
+          "section_key": "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context",
+          "sources": {
+            "section-rerank": 2
+          }
+        },
+        {
+          "excerpt": "R2DBC SPI **1.0.0.RELEASE** (2022-04-25) specifies a Reactive Streams based Java interface for SQL-oriented databases. The spec's *Introduction \u2014 The R2DBC SPI* states that execution is deferred and backpressure-aware. *Compliance \u2014 R2DBC\u2026",
+          "heading": "4. R2DBC 1.0: a reactive SQL SPI, not a database guarantee",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
+          "section_id": "4-r2dbc-1-0-a-reactive-sql-spi-not-a-database-guarantee",
+          "section_key": "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#4-r2dbc-1-0-a-reactive-sql-spi-not-a-database-guarantee",
+          "sources": {
+            "bm25": 1,
+            "section-rerank": 3
+          }
+        },
+        {
+          "excerpt": "**Original fictional streaming endpoint:** a Reactor service subscribes to a database-backed event stream and transforms updates for WebSocket clients. A downstream subscriber requests `n=1` item at a time, but a library callback invokes a\u2026",
+          "heading": "Engineering walkthrough \u2014 Subscriber demand does not protect an unseen blocking queue",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md",
+          "section_id": "engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue",
+          "section_key": "tycho.page.114da51171c2474ebd56ee3bebad3bcb#engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue",
+          "sources": {
+            "section-rerank": 5
+          }
+        },
+        {
+          "excerpt": "Trace demand, queues and blocking work across the complete reactive pipeline, including scheduler boundaries. Subscriber backpressure cannot bound an unrelated blocking queue; an event-loop-friendly API may still hide a bottleneck downstr\u2026",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md",
+          "section_id": "integrated-decision-and-reading-route",
+          "section_key": "tycho.page.114da51171c2474ebd56ee3bebad3bcb#integrated-decision-and-reading-route",
+          "sources": {
+            "bm25": 2,
+            "section-rerank": 1
+          }
+        },
+        {
+          "excerpt": "| Route | Destination | |---|---| | Parent and source ledger | [Chapter introduction and exact source rows](README.md#chapter-source-ledger) | | Previous / prerequisite | [Read preceding context](cpu-memory-gc-and-blocking-diagnostics.md)\u2026",
+          "heading": "Navigation, prerequisites and source scope",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/latency-diagnosis.md",
+          "section_id": "navigation-prerequisites-and-source-scope",
+          "section_key": "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#navigation-prerequisites-and-source-scope",
+          "sources": {
+            "bm25": 5
+          }
+        }
+      ],
+      "id": "Q062",
+      "question": "A reactive pipeline blocks on a database driver and loses its scheduler context. What symptom and fix should be expected?",
+      "split": "v2"
+    }
+  ],
+  "schema_version": 1,
+  "snapshot": "e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa",
+  "status": "unreviewed"
+}
