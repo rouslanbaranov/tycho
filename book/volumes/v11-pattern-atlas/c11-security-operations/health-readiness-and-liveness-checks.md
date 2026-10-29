@@ -55,8 +55,11 @@ conflated; restart/traffic removal are separate.
 liveness probe restarts healthy processes on a shared dependency, or when startup is
 ignored.
 
-**Competing alternative.** External journey monitoring plus process supervision. Reverse
-the choice when probe complexity causes false restarts.
+**Competing alternative.** External journey monitoring when probes cannot observe the
+user-visible contract. For process or host liveness, a platform-managed transport-level
+probe, or existing platform metrics, log-based alerts or internal heartbeats, instead of
+dedicated application health endpoints. Reverse the choice when application-specific
+logic, a dependency chain or functional behavior must be verified.
 
 **Failure and recovery.** False positives and shared-dependency coupling are common;
 verify semantics in the owner section.
@@ -65,7 +68,11 @@ verify semantics in the owner section.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
-The source is a public pattern/specification unit, not a benchmark.
+The transport-level and telemetry alternative is bound in the owner section to the public
+Health Endpoint Monitoring pattern (`src.microsoft-cloud-patterns`), canonical text SHA-256
+`b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61`
+(accessed 2026-10-29). Both sources are public documentation or pattern units, not
+benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

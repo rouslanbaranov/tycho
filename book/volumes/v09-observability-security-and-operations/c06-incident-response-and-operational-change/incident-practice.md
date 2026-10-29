@@ -91,8 +91,8 @@ The source material keeps its original published/inferred/synthetic/unverified d
 ## Bounded pattern ownership notes
 
 These notes define the decision boundary for atlas cards whose mechanism is
-not the main subject of this page. They are synthetic design guidance, not
-measured evidence, and they do not create a new source claim.
+not the main subject of this page. They are synthetic design guidance unless a
+sentence attributes a claim to a cited public source; otherwise no source claim is made.
 
 ### Health, Readiness and Liveness Checks
 
@@ -106,7 +106,24 @@ healthy workers and amplify the failure.
 The failure path is a false restart or traffic sent to an unready instance; bound probe
 timeouts, require consecutive failures and keep shared-dependency checks out of liveness.
 External journey monitoring is the alternative when process-local probes cannot observe
-the user-visible contract.
+the user-visible contract. It observes the journey but does not by itself establish process
+health or readiness. For process or host liveness, a dedicated application endpoint is
+also not the only route. The public Health Endpoint Monitoring pattern states in its
+"When to use this pattern" section: "A platform-managed transport-level probe can be
+sufficient when there's no application-specific logic, dependency chain, or functional
+behavior to verify." Where a compatible health interface is unavailable, it also recommends
+"platform-level metrics, log-based alerts, or internal heartbeat mechanisms instead."
+Those are the alternatives for process or host liveness; reverse the choice when
+application-specific logic, a dependency chain or functional behavior must be verified.
+
+**Source boundary.** The transport-level and telemetry alternative is bound to Microsoft's
+public Azure Architecture Center, "Health Endpoint Monitoring pattern",
+<https://learn.microsoft.com/en-us/azure/architecture/patterns/health-endpoint-monitoring>,
+page updated 2026-09-26, accessed 2026-10-29; canonical text SHA-256
+`b5b302585c4e60a5d696b128b6a03d21c9629848e9fa2be23e6e1bc1751d1d61`. The Kubernetes
+documentation remains the source for the liveness, readiness and startup probe semantics.
+The transport-level probe does not establish readiness or startup behavior; the
+telemetry alternatives detect only what their signals cover.
 
 **Limits.** Probe frequency, false positives and dependency coupling are costs; a green probe
 does not prove a correct user journey.
