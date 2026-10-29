@@ -14,13 +14,15 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 BRANCH_PATTERN = re.compile(r"^feature/TYCHO-(\d+)-([a-z0-9]+(?:-[a-z0-9]+)*)$")
-ISSUE_TITLE_PATTERN = re.compile(r"^\[(?:E\d{2}-\d{2}|FUTURE)\]\s+(.+)$")
+ISSUE_TITLE_PATTERN = re.compile(
+    r"^\[(?:E\d{2}-\d{2}|FUTURE|SIM-[A-Z])\]\s+(.+)$")
 
 
 def title_slug(issue_title):
     match = ISSUE_TITLE_PATTERN.fullmatch(issue_title.strip())
     if not match:
-        raise ValueError("Issue is not an executable [E##-##] sub-issue")
+        raise ValueError(
+            "Issue is not an executable [E##-##], [FUTURE] or [SIM-X] sub-issue")
     slug = re.sub(r"[^a-z0-9]+", "-", match.group(1).lower()).strip("-")
     if not slug:
         raise ValueError("Empty issue title slug")

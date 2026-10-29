@@ -20,13 +20,14 @@ import section_fts_index
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "edition/patterns/search-pre-enrichment.v1.json"
 ROUTE_INDEX = ROOT / "generated/route-index.v1.json"
-DEFAULT_INDEX = ROOT / "generated/sections-fts-v4.sqlite"
+DEFAULT_INDEX = ROOT / "generated/sections-fts-v5.sqlite"
 QRELS = (
     "evaluation/corpus-qrels.v2.json",
     "evaluation/independent-agent-qrels.phase1.json",
     "evaluation/agent-qrels.phase2.json",
     "evaluation/agent-qrels.phase3.json",
     "evaluation/phase3-human-sample.json",
+    "evaluation/v12-simulation-qrels.v1.json",
 )
 
 

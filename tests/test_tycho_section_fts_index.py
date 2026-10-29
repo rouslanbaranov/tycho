@@ -140,7 +140,7 @@ class SectionIndexTests(unittest.TestCase):
         with sqlite3.connect(path) as db:
             manifest = json.loads(db.execute(
                 "SELECT value FROM meta WHERE key='manifest'").fetchone()[0])
-            self.assertEqual(manifest["format_version"], 4)
+            self.assertEqual(manifest["format_version"], 5)
             self.assertEqual(manifest["passage_count"], 2)
             self.assertEqual(manifest["section_count"], 4)
             self.assertEqual(db.execute(
@@ -193,8 +193,8 @@ class SectionIndexTests(unittest.TestCase):
             self.publish()
 
     def test_incompatible_index_format_is_not_reused(self):
-        self.assertEqual(idx.VERSION, 4)
-        self.assertTrue(idx.INDEX_NAME.endswith("v4.sqlite"))
+        self.assertEqual(idx.VERSION, 5)
+        self.assertTrue(idx.INDEX_NAME.endswith("v5.sqlite"))
         self.publish()
         path = self.root / "generated" / idx.INDEX_NAME
         with sqlite3.connect(path) as db:

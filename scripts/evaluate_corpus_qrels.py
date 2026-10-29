@@ -147,6 +147,7 @@ def main(argv=None):
     ap.add_argument("--route-index", type=Path, default=DEFAULT_ROUTE)
     ap.add_argument("--split", choices=("all", "dev", "heldout"), default="all")
     ap.add_argument("--limit", type=int, default=10)
+    ap.add_argument("--volume")
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--index", type=Path)
     args = ap.parse_args(argv)
@@ -176,6 +177,7 @@ def main(argv=None):
 
     def search_fn(question):
         return section_search.search(args.root, question, limit=args.limit,
+                                     volume=args.volume,
                                      index_path=args.index, abstain=False)
 
     result = evaluate(items, search_fn, parent_of)
@@ -187,6 +189,7 @@ def main(argv=None):
         "status": "ok",
         "split": args.split,
         "limit": args.limit,
+        "volume": args.volume,
         "qrels_snapshot": qrels["snapshot"]["route_index_snapshot"],
         "search_snapshot": (result["search_snapshots"][0]
                             if result["search_snapshots"] else None),

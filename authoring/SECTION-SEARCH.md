@@ -14,7 +14,8 @@ index pins. It performs two operations:
 
 - **search** returns ranked parent-H2 section candidates with a bounded excerpt, an
   optional internal H3 passage diagnostic, and a citation;
-- **read** returns an exact codepoint range from one selected parent-H2 section.
+- **read** returns an exact codepoint range from one selected parent-H2 section;
+- **v12** returns the derived V12 model/scenario/run/decision lookup for a pattern.
 
 The canonical Markdown and its frontmatter remain authoritative. The tool never edits the
 book, rebuilds the index implicitly, fetches sources, runs embeddings or writes evidence.
@@ -25,7 +26,7 @@ It is lexical retrieval only: semantic/hybrid retrieval (#52–#55), evidence re
 
 Every search and read call:
 
-1. opens `generated/sections-fts-v4.sqlite` in read-only mode;
+1. opens `generated/sections-fts-v5.sqlite` in read-only mode;
 2. runs `PRAGMA quick_check`, validates the manifest and compares stored section, FTS,
    passage and passage-FTS row counts with the manifest;
 3. binds the book to the index: a process-local cache, keyed by SHA-256 of every
@@ -34,6 +35,10 @@ Every search and read call:
    `route_index.canonical_scan`, whose snapshot SHA is compared with the
    manifest's pinned route snapshot;
 4. refuses the call when the book or metadata changed after the index was published.
+
+The search layer also accepts V12 `artifact_type`, `volume` and `pattern_ids` filters. Book
+sections carry the first two; the derived V12 artifact lookup returns model, scenario, run and
+decision contracts for a pattern even though those JSON contracts are not book sections.
 
 The deep structural verifier remains `section_fts_index.py check`, which reparses every
 section and H3 passage and compares parent mappings, offsets, content, topics and both

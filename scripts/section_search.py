@@ -42,7 +42,7 @@ PASSAGE_SCORE_WEIGHT = 1.0
 SECTION_SEARCH_COLUMNS = (
     "section_key", "document_id", "section_id", "path", "heading",
     "heading_level", "title", "kind", "evidence_status", "char_start",
-    "char_end", "content",
+    "char_end", "content", "artifact_type", "volume",
 )
 TOKEN = section_fts_index.TOKEN
 _QUERY_CACHE = OrderedDict()
@@ -52,10 +52,12 @@ _QUERY_CACHE_MAX = 128
 
 def _query_cache_key(root, snapshot, query, limit, kind, topic,
                      evidence_status, path_prefix, index_path, all_sections,
-                     abstain, include_weak, detail, max_chars):
+                     abstain, include_weak, detail, max_chars, artifact_type,
+                     volume, pattern_ids):
     return (str(Path(root).resolve()), snapshot, query, limit, kind, topic,
             evidence_status, path_prefix, str(index_path), all_sections,
-            abstain, include_weak, detail, max_chars)
+            abstain, include_weak, detail, max_chars, artifact_type, volume,
+            tuple(pattern_ids or ()))
 
 
 def _cache_get(key):
@@ -237,6 +239,10 @@ def open_snapshot(root, index_path=None):
         if current != manifest["route_snapshot_sha256"]:
             raise SnapshotMismatch(
                 "Section index snapshot does not match the current book; rebuild it")
+        facet_current = section_fts_index.facet_input_sha256(root)
+        if facet_current != manifest.get("facet_input_sha256"):
+            raise SnapshotMismatch(
+                "Section index V12 facets do not match the current indexes; rebuild it")
     except (sqlite3.DatabaseError, ValueError, TypeError, KeyError) as exc:
         db.close()
         if isinstance(exc, SearchError):
@@ -347,6 +353,100 @@ def load_document_metadata(root):
     return metadata
 
 
+def load_v12_artifacts(root):
+    """Load V12 model/scenario/run/decision facets from derived indexes.
+
+    The FTS index covers book pages; V12 artifacts are JSON contracts. This
+    lookup keeps them discoverable without pretending they are book sections.
+    """
+    root = Path(root).resolve()
+    index_path = root / "generated/v12-index.v1.json"
+    reverse_path = root / "edition/v12/reverse-index.v1.json"
+    if not index_path.is_file() or index_path.is_symlink():
+        return []
+    try:
+        payload = json.loads(index_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []
+    reverse_patterns = {}
+    if reverse_path.is_file() and not reverse_path.is_symlink():
+        try:
+            reverse = json.loads(reverse_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            reverse = {}
+        for pattern_id, entries in (reverse.get("patterns") or {}).items():
+            if not isinstance(pattern_id, str):
+                continue
+            for entry in entries or []:
+                path = entry.get("path") if isinstance(entry, dict) else None
+                if isinstance(path, str):
+                    reverse_patterns.setdefault(path, set()).add(pattern_id)
+    artifacts = []
+    for document in payload.get("documents", []):
+        if not isinstance(document, dict):
+            continue
+        artifact_type = document.get("artifact_type") or "document"
+        if artifact_type == "document":
+            continue
+        path = document.get("path")
+        if not isinstance(path, str):
+            continue
+        patterns = set(document.get("pattern_ids") or [])
+        patterns.update(reverse_patterns.get(path, set()))
+        artifacts.append({
+            "id": document.get("id"),
+            "path": path,
+            "title": document.get("title"),
+            "artifact_type": artifact_type,
+            "volume": document.get("volume") or "v12",
+            "evidence_status": document.get("evidence_status") or "unknown",
+            "pattern_ids": sorted(patterns),
+            "summary": document.get("summary") or "",
+        })
+    artifacts.sort(key=lambda item: (str(item["artifact_type"]), str(item["id"])))
+    return artifacts
+
+
+def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
+                  limit=50):
+    """Return V12 artifacts filtered by pattern, type and volume."""
+    pattern_ids = pattern_ids or []
+    _require(isinstance(pattern_ids, (list, tuple)),
+             "pattern_ids must be a list")
+    for name, value in (("artifact_type", artifact_type), ("volume", volume)):
+        _require(value is None or (isinstance(value, str) and value),
+                 name + " filter must be a non-empty string")
+    for pattern_id in pattern_ids:
+        _require(isinstance(pattern_id, str) and pattern_id,
+                 "pattern_id filter must be a non-empty string")
+    _require(isinstance(limit, int) and 1 <= limit <= 200,
+             "artifact limit must be an integer in 1..200")
+    artifacts = []
+    for item in load_v12_artifacts(root):
+        if artifact_type is not None and item["artifact_type"] != artifact_type:
+            continue
+        if volume is not None and item["volume"] != volume:
+            continue
+        if pattern_ids and not set(pattern_ids).issubset(set(item["pattern_ids"])):
+            continue
+        artifacts.append(item)
+    return {
+        "status": "ok" if artifacts else "no-results",
+        "filters": {
+            "pattern_ids": list(pattern_ids),
+            "artifact_type": artifact_type,
+            "volume": volume,
+        },
+        "returned": len(artifacts[:limit]),
+        "total": len(artifacts),
+        "artifacts": artifacts[:limit],
+        "scope": (
+            "Derived V12 model, scenario, run and decision lookup. "
+            "Not a semantic graph and not a source of claim truth."
+        ),
+    }
+
+
 def metadata_fallback(db, metadata, query, terms, limit):
     if not metadata:
         return []
@@ -379,6 +479,9 @@ def metadata_fallback(db, metadata, query, terms, limit):
             "title": row["title"],
             "kind": row["kind"],
             "evidence_status": row["evidence_status"],
+            "artifact_type": row["artifact_type"],
+            "volume": row["volume"],
+            "pattern_ids": [],
             "char_start": row["char_start"],
             "char_end": row["char_end"],
             "score": 0.0,
@@ -404,19 +507,30 @@ def metadata_fallback(db, metadata, query, terms, limit):
 
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
            path_prefix=None, index_path=None, all_sections=False, abstain=True,
-           include_weak=False, detail="snippets", max_chars=None):
+           include_weak=False, detail="snippets", max_chars=None,
+           artifact_type=None, volume=None, pattern_ids=None,
+           include_artifacts=False):
     terms = normalize_terms(query)
     _require(isinstance(limit, int) and 1 <= limit <= 20,
              "limit must be an integer in 1..20")
     _require(isinstance(all_sections, bool), "all_sections must be boolean")
     _require(isinstance(abstain, bool), "abstain must be boolean")
     _require(isinstance(include_weak, bool), "include_weak must be boolean")
+    _require(isinstance(include_artifacts, bool), "include_artifacts must be boolean")
+    pattern_ids = pattern_ids or []
+    _require(isinstance(pattern_ids, (list, tuple)),
+             "pattern_ids must be a list")
+    for pattern_id in pattern_ids:
+        _require(isinstance(pattern_id, str) and pattern_id,
+                 "pattern_id filter must be a non-empty string")
     _require(detail in ("ids", "snippets"), "detail must be ids or snippets")
     _require(max_chars is None or (
         isinstance(max_chars, int) and not isinstance(max_chars, bool)
         and max_chars >= 256), "max_chars must be null or an integer >= 256")
     for name, value in (("kind", kind), ("topic", topic),
-                        ("evidence_status", evidence_status)):
+                        ("evidence_status", evidence_status),
+                        ("artifact_type", artifact_type),
+                        ("volume", volume)):
         _require(value is None or (isinstance(value, str) and value),
                  name + " filter must be a non-empty string")
     prefix = None if path_prefix is None else path_prefix_pattern(path_prefix)
@@ -424,7 +538,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
     cache_key = _query_cache_key(
         root, manifest["snapshot_id"], query, limit, kind, topic,
         evidence_status, path_prefix, index_path, all_sections, abstain,
-        include_weak, detail, max_chars)
+        include_weak, detail, max_chars, artifact_type, volume, pattern_ids)
     cached = _cache_get(cache_key)
     if cached is not None:
         db.close()
@@ -438,6 +552,17 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         if evidence_status is not None:
             filters.append("s.evidence_status = ?")
             params.append(evidence_status)
+        if artifact_type is not None:
+            filters.append("s.artifact_type = ?")
+            params.append(artifact_type)
+        if volume is not None:
+            filters.append("s.volume = ?")
+            params.append(volume)
+        for pattern_id in pattern_ids:
+            filters.append("EXISTS (SELECT 1 FROM section_patterns sp"
+                           " WHERE sp.section_key = s.section_key"
+                           " AND sp.pattern_id = ?)")
+            params.append(pattern_id)
         if prefix is not None:
             filters.append("s.path LIKE ? ESCAPE '\\'")
             params.append(prefix)
@@ -534,6 +659,18 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                     break
             truncated = len(selected) > limit
             selected = selected[:limit]
+        pattern_map = {}
+        selected_keys = [candidate["row"]["section_key"]
+                         for _, _, _, candidate in selected]
+        if selected_keys:
+            rows = db.execute(
+                "SELECT section_key,pattern_id FROM section_patterns"
+                " WHERE section_key IN (" + ",".join("?" * len(selected_keys))
+                + ") ORDER BY section_key,pattern_id", selected_keys).fetchall()
+            for pattern_row in rows:
+                pattern_map.setdefault(
+                    pattern_row["section_key"], []).append(
+                        pattern_row["pattern_id"])
         results = []
         for score, source, passage_score, candidate in selected:
             row = candidate["row"]
@@ -554,6 +691,9 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "title": row["title"],
                 "kind": row["kind"],
                 "evidence_status": row["evidence_status"],
+                "artifact_type": row["artifact_type"],
+                "volume": row["volume"],
+                "pattern_ids": pattern_map.get(row["section_key"], []),
                 "char_start": row["char_start"],
                 "char_end": row["char_end"],
                 "score": round(score, 6),
@@ -621,19 +761,47 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             truncated = False
         else:
             status = "ok"
-        facets = {"kind": {}, "evidence_status": {}}
+        artifact_payload = {
+            "artifacts": [], "total": 0, "filters": {
+                "pattern_ids": list(pattern_ids),
+                "artifact_type": artifact_type,
+                "volume": volume,
+            },
+        }
+        if include_artifacts or pattern_ids or artifact_type or volume:
+            artifact_payload = v12_artifacts(
+                root, pattern_ids=pattern_ids, artifact_type=artifact_type,
+                volume=volume, limit=min(max(limit * 5, 50), 200))
+        if not results and artifact_payload["artifacts"]:
+            status = "ok"
+            assessment = dict(assessment)
+            assessment["no_confident_answer"] = False
+            assessment["confident"] = False
+            assessment["state"] = "artifact-lookup"
+            assessment["basis"] = "v12-derived-artifacts"
+        facets = {"kind": {}, "evidence_status": {},
+                  "artifact_type": {}, "volume": {}, "pattern_id": {}}
         for item in results + weak_results:
             kind_value = item.get("kind") or "unknown"
             evidence_value = item.get("evidence_status") or "unknown"
+            artifact_value = item.get("artifact_type") or "unknown"
+            volume_value = item.get("volume") or "unknown"
             facets["kind"][kind_value] = facets["kind"].get(kind_value, 0) + 1
             facets["evidence_status"][evidence_value] = (
                 facets["evidence_status"].get(evidence_value, 0) + 1)
+            facets["artifact_type"][artifact_value] = (
+                facets["artifact_type"].get(artifact_value, 0) + 1)
+            facets["volume"][volume_value] = (
+                facets["volume"].get(volume_value, 0) + 1)
+            for pattern_id in item.get("pattern_ids") or []:
+                facets["pattern_id"][pattern_id] = (
+                    facets["pattern_id"].get(pattern_id, 0) + 1)
         if detail == "ids":
             keep = (
                 "section_key", "document_id", "section_id", "path", "heading",
                 "heading_level", "title", "kind", "evidence_status", "score",
                 "score_kind", "matched_terms", "citation", "anchor", "why",
-                "next_actions",
+                "artifact_type", "volume", "pattern_ids", "next_actions",
             )
             results = [
                 {key: item[key] for key in keep if key in item}
@@ -661,7 +829,10 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                              else "best-section-per-document"),
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
-                        "path_prefix": path_prefix},
+                        "path_prefix": path_prefix,
+                        "artifact_type": artifact_type,
+                        "volume": volume,
+                        "pattern_ids": list(pattern_ids)},
             "detail": detail,
             "max_chars": max_chars,
             "returned": len(results),
@@ -669,6 +840,9 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "metadata_expanded": bool(weak_results),
             "truncated": truncated,
             "facets": facets,
+            "artifacts": artifact_payload["artifacts"],
+            "artifact_total": artifact_payload["total"],
+            "artifact_filters": artifact_payload["filters"],
             "next_actions": next_actions,
             "answerability": assessment,
             "results": results,
@@ -799,7 +973,7 @@ def evidence(root, document_id=None, claim_id=None, source_id=None,
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("action", choices=("search", "read", "evidence"))
+    ap.add_argument("action", choices=("search", "read", "evidence", "v12"))
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--index", type=Path)
     ap.add_argument("--query")
@@ -809,6 +983,10 @@ def main(argv=None):
     ap.add_argument("--kind")
     ap.add_argument("--topic")
     ap.add_argument("--evidence-status")
+    ap.add_argument("--artifact-type")
+    ap.add_argument("--volume")
+    ap.add_argument("--pattern-id", action="append", default=[])
+    ap.add_argument("--include-artifacts", action="store_true")
     ap.add_argument("--path-prefix")
     ap.add_argument("--id")
     ap.add_argument("--offset", type=int, default=0)
@@ -825,7 +1003,15 @@ def main(argv=None):
                 args.root, args.query or "", limit=args.limit, kind=args.kind,
                 topic=args.topic, evidence_status=args.evidence_status,
                 path_prefix=args.path_prefix, index_path=args.index,
-                all_sections=args.all_sections)
+                all_sections=args.all_sections,
+                artifact_type=args.artifact_type, volume=args.volume,
+                pattern_ids=args.pattern_id,
+                include_artifacts=args.include_artifacts)
+        elif args.action == "v12":
+            payload = v12_artifacts(
+                args.root, pattern_ids=args.pattern_id,
+                artifact_type=args.artifact_type,
+                volume=args.volume or "v12", limit=args.limit)
         elif args.action == "read":
             payload = read(
                 args.root, args.id or "", offset=args.offset,
