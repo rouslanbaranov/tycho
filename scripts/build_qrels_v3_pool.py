@@ -48,7 +48,13 @@ def add_candidates(candidates, results, source):
             "sections": [],
             "sources": {},
             "prior": False,
+            "title": "",
+            "heading": "",
+            "excerpt": "",
         })
+        entry["title"] = entry["title"] or str(result.get("title", ""))
+        entry["heading"] = entry["heading"] or str(result.get("heading", ""))
+        entry["excerpt"] = entry["excerpt"] or str(result.get("excerpt", ""))[:600]
         section = result.get("section_id")
         if section and section not in entry["sections"]:
             entry["sections"].append(section)

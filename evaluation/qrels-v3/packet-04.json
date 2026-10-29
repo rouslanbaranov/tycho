@@ -7,6 +7,8 @@
     {
       "candidates": [
         {
+          "excerpt": "```mermaid flowchart LR A[Outgoing gRPC client tasks] --> B[CPU-heavy worker pool] B --> C[Bounded platform-thread executor] C --> D[Useful CPU processing] B --> E[Virtual-thread per-task experiment] E --> F[CPU work still needs\u2026",
+          "heading": "Before/after and source-supported outcome",
           "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
           "prior": false,
           "sections": [
@@ -15,9 +17,12 @@
           "sources": {
             "best": 6,
             "bm25": 10
-          }
+          },
+          "title": "Netflix \u2014 CPU-intensive gRPC worker pools: virtual threads were slower"
         },
         {
+          "excerpt": "An anonymous Java microservice, GS2, performed CPU-intensive work. Netflix moved it from an AWS **m5.4xl 16-vCPU** configuration to **m5.12xl 48-vCPU** and expected roughly triple per-instance capacity. An equal-traffic initial canary appe\u2026",
+          "heading": "The attractive migration that regressed performance",
           "path": "book/cases/netflix-hotspot-false-true-sharing.md",
           "prior": false,
           "sections": [
@@ -26,9 +31,12 @@
           "sources": {
             "best": 7,
             "bm25": 5
-          }
+          },
+          "title": "Netflix \u2014 larger JVM instances exposed false sharing, then true sharing in HotSpot"
         },
         {
+          "excerpt": "**Original preregistered hypothetical study.** The symptom is a p99 increase on item-detail reads. Hypothesis H1 says repeated reads dominate and a bounded-freshness cache helps; rival H2 says PostgreSQL plan regression raises latency even\u2026",
+          "heading": "Engineering walkthrough \u2014 A falsifiable cache-versus-query experiment",
           "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/architecture-evidence-hypotheses-and-experiments.md",
           "prior": false,
           "sections": [
@@ -37,9 +45,12 @@
           "sources": {
             "best": 9,
             "bm25": 7
-          }
+          },
+          "title": "Architecture evidence, competing hypotheses and decision experiments"
         },
         {
+          "excerpt": "Write this in advance: 1. **Claim:** under scenario X, change Y improves user-visible metric Z without violating invariants. 2. **Boundary:** where the clock starts, what counts as a logical request, and which system/resources are include\u2026",
+          "heading": "3. Define the experiment contract before the result",
           "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/experiment-contract.md",
           "prior": false,
           "sections": [
@@ -48,9 +59,12 @@
           "sources": {
             "best": 5,
             "bm25": 3
-          }
+          },
+          "title": "Discriminating architecture experiments"
         },
         {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
           "prior": false,
           "sections": [
@@ -59,9 +73,12 @@
           "sources": {
             "best": 4,
             "bm25": 8
-          }
+          },
+          "title": "Threads, tasks and coordination: cancellation and resource ownership"
         },
         {
+          "excerpt": "| ID | Primary public reference and inspected scope (2026-10-19) | Supports and limits | |---|---|---| | E01 | [HikariCP project README](https://github.com/brettwooldridge/HikariCP), **Configuration: frequently used, maximumPoolSize, minim\u2026",
+          "heading": "Source-to-claim ledger",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/README.md",
           "prior": false,
           "sections": [
@@ -69,9 +86,12 @@
           ],
           "sources": {
             "best": 10
-          }
+          },
+          "title": "V03/C05 \u2014 Thread, connection and buffer pools"
         },
         {
+          "excerpt": "Invent a web application that accepts 200 attempted requests/s. The first team hypothesis is \u201cplatform threads are blocking, so switch to virtual threads.\u201d The actual limiting condition is unknown. Suppose a *hypothetical* dependency can e\u2026",
+          "heading": "5. Original synthetic failure: the misleading virtual-thread fix",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/diagnostic-experiments.md",
           "prior": true,
           "sections": [
@@ -80,9 +100,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Discriminating runtime experiments"
         },
         {
+          "excerpt": "Reproducible candidate tests (not performed): 1. Concurrent source v1 read and v2 write/delete, with delayed fill; detect regression. 2. 300 simultaneous misses across multiple replicas to one hot key; observe source requests and admission\u2026",
+          "heading": "6. A discriminating failure experiment",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md",
           "prior": false,
           "sections": [
@@ -91,9 +114,12 @@
           "sources": {
             "best": 8,
             "bm25": 6
-          }
+          },
+          "title": "Negative caching and discriminating experiments"
         },
         {
+          "excerpt": "Suppose a fictional query spends most elapsed time waiting for DB connections. Increasing a connection pool may reduce acquisition delay for a brief period and worsen DB locking under sustained load. Faster CPU processing can make a downst\u2026",
+          "heading": "5. Resource bottlenecks can move after optimization",
           "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-response.md",
           "prior": false,
           "sections": [
@@ -102,9 +128,12 @@
           "sources": {
             "best": 2,
             "bm25": 4
-          }
+          },
+          "title": "Contended authority and discriminating scaling experiments"
         },
         {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
           "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/architecture-alternatives-experiments-and-adrs.md",
           "prior": false,
           "sections": [
@@ -113,9 +142,12 @@
           "sources": {
             "best": 3,
             "bm25": 2
-          }
+          },
+          "title": "Architecture alternatives, discriminating experiments and decision records"
         },
         {
+          "excerpt": "An original fictional equipment-booking site experiences slow responses during a short opening window. A stakeholder proposes splitting its one deployed application into reservation and catalogue microservices. Known in the invented promp\u2026",
+          "heading": "1. A precise problem statement comes before alternatives",
           "path": "book/volumes/v10-decision-support-and-modernization/c04-alternatives-experiments-and-adrs/decision-discriminators.md",
           "prior": false,
           "sections": [
@@ -123,7 +155,8 @@
           ],
           "sources": {
             "bm25": 9
-          }
+          },
+          "title": "Alternatives and discriminating hypotheses"
         }
       ],
       "id": "Q063",
@@ -136,6 +169,8 @@
     {
       "candidates": [
         {
+          "excerpt": "A user command can commit durable state locally while external notification, event delivery and reply transmission fail independently. This page explains where atomicity ends, how the **transactional outbox** moves the boundary, and why du\u2026",
+          "heading": "Purpose and mission",
           "path": "book/distributed/transactional-outbox-and-idempotency.md",
           "prior": false,
           "sections": [
@@ -143,9 +178,12 @@
           ],
           "sources": {
             "best": 10
-          }
+          },
+          "title": "Local transaction, outbox publication and duplicate side effects"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/README.md",
           "prior": false,
           "sections": [
@@ -154,9 +192,12 @@
           "sources": {
             "best": 2,
             "bm25": 3
-          }
+          },
+          "title": "V03/C01 \u2014 Threads, tasks and coordination"
         },
         {
+          "excerpt": "**Original fictional case:** two threads reserve the last available device from a workshop catalogue. Both read an availability counter of one and attempt to decrement it. A concurrent collection or atomic increment alone may not protect a\u2026",
+          "heading": "4. Concurrency-safe classes do not enforce business invariants automatically",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/shared-state-effects.md",
           "prior": true,
           "sections": [
@@ -165,9 +206,12 @@
           "sources": {
             "best": 5,
             "bm25": 1
-          }
+          },
+          "title": "Shared invariants and irreversible effects"
         },
         {
+          "excerpt": "A thread is an execution mechanism, not a unit of business demand. An executor schedules tasks, but architecture still must specify who owns each task, which result the parent requires, how long work may live, and what happens if the calle\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
           "prior": false,
           "sections": [
@@ -176,9 +220,12 @@
           "sources": {
             "best": 6,
             "bm25": 8
-          }
+          },
+          "title": "Threads, tasks and coordination: cancellation and resource ownership"
         },
         {
+          "excerpt": "These independently scoped pages extend the chapter without replacing its original walkthrough or source ledger. | Page | Owning question | | --- | --- | | [Multiple writers and offline conflicts](multiwriter-conflicts.md) | Which concurr\u2026",
+          "heading": "Additional mechanism and project routes",
           "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/README.md",
           "prior": false,
           "sections": [
@@ -187,9 +234,12 @@
           "sources": {
             "best": 3,
             "bm25": 5
-          }
+          },
+          "title": "V04/C03 \u2014 Consistency and distributed transactions"
         },
         {
+          "excerpt": "Imagine a wholly synthetic booking system with one workshop of ten seats. The invariant is not \"use ACID\"; it is **number of confirmed allocations must not exceed configured capacity**, under concurrency, retry and failure. Other requireme\u2026",
+          "heading": "1. Define the invariant before naming consistency",
           "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
           "prior": false,
           "sections": [
@@ -198,9 +248,12 @@
           "sources": {
             "best": 1,
             "bm25": 2
-          }
+          },
+          "title": "Invariants and local transaction isolation"
         },
         {
+          "excerpt": "Business invariants survive only when the enforcing mechanism covers **every concurrent operation that can violate them**. A local transaction, serializable isolation, an event publication and a compensating action solve different problems\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md",
           "prior": false,
           "sections": [
@@ -209,9 +262,12 @@
           "sources": {
             "best": 7,
             "bm25": 10
-          }
+          },
+          "title": "Consistency, transaction isolation and sagas across service boundaries"
         },
         {
+          "excerpt": "Kafka **4.1** Streams Architecture and 4.1 Processor API describe stateful tasks tied to stream partitions, local state stores, and fault-tolerant changelog topics that can restore processing state when tasks migrate or restart. They descr\u2026",
+          "heading": "2. Kafka Streams: tasks, state stores and changelogs",
           "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
           "prior": false,
           "sections": [
@@ -220,9 +276,12 @@
           "sources": {
             "best": 9,
             "bm25": 7
-          }
+          },
+          "title": "CDC, task state and changelog replay"
         },
         {
+          "excerpt": "PostgreSQL uses MVCC (multiversion concurrency control) so readers can observe committed snapshots without treating every concurrent writer as a global reader-blocking lock. [PostgreSQL 17 MVCC Introduction, \u00a713.1](https://www.postgresql.o\u2026",
+          "heading": "2. A snapshot is not an invariant",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
           "prior": false,
           "sections": [
@@ -231,9 +290,12 @@
           "sources": {
             "best": 4,
             "bm25": 6
-          }
+          },
+          "title": "Relational identities, constraints and snapshots"
         },
         {
+          "excerpt": "A relational model defines identities and integrity, while a transaction isolation contract constrains which concurrent operations can produce a committed state. The schema must encode invariants where the database can enforce them and mak\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md",
           "prior": false,
           "sections": [
@@ -242,9 +304,12 @@
           "sources": {
             "best": 8,
             "bm25": 4
-          }
+          },
+          "title": "Relational modeling, business constraints and transaction isolation"
         },
         {
+          "excerpt": "- **Rolling** may be suitable for additive stateless changes where compatible version overlap is proven. - **Blue/green** can reduce some deployment cutover risk if states and client contracts remain compatible, at higher resource cost. -\u2026",
+          "heading": "5. Deciding which exposure mode fits",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
           "prior": false,
           "sections": [
@@ -252,7 +317,8 @@
           ],
           "sources": {
             "bm25": 9
-          }
+          },
+          "title": "Canary acceptance and shared-state damage"
         }
       ],
       "id": "Q064",
@@ -265,6 +331,8 @@
     {
       "candidates": [
         {
+          "excerpt": "Categorize I/O waits vs CPU work *separately for outgoing gRPC worker pools, inbound REST handlers and event-loop callbacks* \u2192 trace blocking library calls \u2192 pin JDK/runtime and HTTP implementation \u2192 introduce reversible canary per endpoin\u2026",
+          "heading": "Modernization plan",
           "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
           "prior": false,
           "sections": [
@@ -273,9 +341,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Decision Playbook \u2014 Reactive event loops, virtual threads and queued I/O"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/README.md",
           "prior": false,
           "sections": [
@@ -284,9 +355,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "V03/C03 \u2014 Reactive streams, demand and cancellation"
         },
         {
+          "excerpt": "The Reactive Streams protocol links a `Publisher` and `Subscriber` through a `Subscription`. A subscriber signals demand with `request(n)`; signals include item, completion and failure. This is a flow-control boundary **only if the produce\u2026",
+          "heading": "2. Reactive Streams is demand coordination, not a magic queue",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/demand-blocking.md",
           "prior": false,
           "sections": [
@@ -295,9 +369,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "Nonblocking execution and demand"
         },
         {
+          "excerpt": "Begin with actual request and stream semantics: unary vs streaming, independent vs ordered items, peak arrival, maximum buffering, DB transactions, client cancellation, and dependency quotas. Keep MVC/imperative if its measured capacity an\u2026",
+          "heading": "6. Decision procedure",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactive-recovery.md",
           "prior": false,
           "sections": [
@@ -306,9 +383,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "Reactive failure and decision limits"
         },
         {
+          "excerpt": "**Original fictional streaming endpoint:** a Reactor service subscribes to a database-backed event stream and transforms updates for WebSocket clients. A downstream subscriber requests `n=1` item at a time, but a library callback invokes a\u2026",
+          "heading": "Engineering walkthrough \u2014 Subscriber demand does not protect an unseen blocking queue",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md",
           "prior": true,
           "sections": [
@@ -317,9 +397,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Reactive execution, WebFlux, R2DBC and backpressure"
         },
         {
+          "excerpt": "# Schedulers, context and reactive database access **Owning question:** Which scheduling and context assumptions must hold at a reactive-to-database boundary? This page belongs to [V03/C03 \u2014 Reactive streams, demand and cancellation](READ\u2026",
+          "heading": "Schedulers, context and reactive database access",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/scheduler-context.md",
           "prior": false,
           "sections": [
@@ -327,9 +410,12 @@
           ],
           "sources": {
             "bm25": 10
-          }
+          },
+          "title": "Schedulers, context and reactive database access"
         },
         {
+          "excerpt": "| Route | Destination | |---|---| | Parent | [V03 \u2014 Execution models, concurrency and flow control](../README.md) | | Previous | [V03/C03 \u2014 Reactive streams, demand and cancellation](../c03-reactive-streams-demand-and-cancellation/README.m\u2026",
+          "heading": "Navigation and prerequisites",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/README.md",
           "prior": false,
           "sections": [
@@ -337,9 +423,12 @@
           ],
           "sources": {
             "best": 10
-          }
+          },
+          "title": "V03/C04 \u2014 Asynchronous APIs and streaming"
         },
         {
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Asynchronous Request-\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
           "prior": false,
           "sections": [
@@ -348,9 +437,12 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "Asynchronous APIs and streaming: demand, deadlines and cancellation"
         },
         {
+          "excerpt": "[Reactive Streams](https://github.com/reactive-streams/reactive-streams-jvm) define Publisher/Subscriber and Subscription demand semantics; a Subscriber signals how many elements it is prepared to receive. This supports bounded in-memory p\u2026",
+          "heading": "2. Backpressure is a contract between producers and consumers",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/stream-contracts.md",
           "prior": false,
           "sections": [
@@ -359,9 +451,12 @@
           "sources": {
             "best": 5,
             "bm25": 6
-          }
+          },
+          "title": "Stream interaction and buffer ownership"
         },
         {
+          "excerpt": "### Expand-and-Contract Schema Expand-and-contract is a staged change protocol: add a tolerant new representation, migrate readers and writers, then remove the old shape only after a reader inventory proves no consumer remains. Each phas\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
           "prior": false,
           "sections": [
@@ -370,9 +465,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Migration stages, retention and no-return points"
         },
         {
+          "excerpt": "| Policy | Advantage | Limitation | |---|---|---| | Head sampling | Can limit collection near request start | Later severe error may be missed | | Tail sampling | Can prefer slow/error traces using fuller context | Requires buffered state\u2026",
+          "heading": "4. Sampling limits what the trace can support",
           "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
           "prior": false,
           "sections": [
@@ -381,7 +479,8 @@
           "sources": {
             "best": 6,
             "bm25": 5
-          }
+          },
+          "title": "Propagation, sampling and untrusted context"
         }
       ],
       "id": "Q065",
@@ -394,6 +493,8 @@
     {
       "candidates": [
         {
+          "excerpt": "LinkedIn handled varied data categories over large Kafka fleets. A single healthy broker cluster did not guarantee that every producer event traversed local clusters, MirrorMaker copies, aggregate clusters and critical downstream consumers\u2026",
+          "heading": "Pressure, legacy baseline and actual chosen direction",
           "path": "book/cases/linkedin-kafka-tiered-completeness.md",
           "prior": false,
           "sections": [
@@ -402,9 +503,12 @@
           "sources": {
             "best": 5,
             "bm25": 4
-          }
+          },
+          "title": "LinkedIn \u2014 tiered Kafka transport needs end-to-end completeness audits"
         },
         {
+          "excerpt": "- [Queueing and capacity](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) \u2014 arrival rate, residence time, in-flight work and overload. - [Kafka ordering and consu\u2026",
+          "heading": "Adjacent canonical research",
           "path": "book/execution/README.md",
           "prior": false,
           "sections": [
@@ -413,9 +517,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Java concurrency and execution models"
         },
         {
+          "excerpt": "| Question | Page | Public source scope | |---|---|---| | How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](../volumes/v04-distribut\u2026",
+          "heading": "Canonical authored pages",
           "path": "book/integration/README.md",
           "prior": false,
           "sections": [
@@ -424,9 +531,12 @@
           "sources": {
             "best": 9,
             "bm25": 8
-          }
+          },
+          "title": "Integration, messaging and stream processing"
         },
         {
+          "excerpt": "| Chapter | Owning question | |---|---| | [V04/C01 \u2014 Time, causality and ordering](c01-time-causality-and-ordering/README.md) | Which ordering can a distributed system observe or guarantee? | | [V04/C02 \u2014 Replication, consensus and leader\u2026",
+          "heading": "Questions and chapters",
           "path": "book/volumes/v04-distributed-coordination-and-events/README.md",
           "prior": false,
           "sections": [
@@ -435,9 +545,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "V04 \u2014 Distributed coordination and event integration"
         },
         {
+          "excerpt": "| Question | RabbitMQ quorum queue | NATS Core / JetStream | Pulsar 4.1 | Kafka 4.1 (related chapter) | |---|---|---|---|---| | Primary reader model | Consumer acks durable queue deliveries | Core transient pub/sub; JetStream persistent st\u2026",
+          "heading": "2. Requirement-driven comparison, not a ranking",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
           "prior": false,
           "sections": [
@@ -446,9 +559,12 @@
           "sources": {
             "best": 6,
             "bm25": 5
-          }
+          },
+          "title": "Consumer requirements and messaging families"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/README.md",
           "prior": false,
           "sections": [
@@ -457,9 +573,12 @@
           "sources": {
             "best": 4,
             "bm25": 3
-          }
+          },
+          "title": "V04/C07 \u2014 Kafka logs, partitions and transactions"
         },
         {
+          "excerpt": "Locate Kafka ordering and transaction guarantees within their actual partition, producer and consumer boundaries. A transactional log operation does not automatically include a remote database or external API effect. The detailed pages s\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md",
           "prior": true,
           "sections": [
@@ -468,9 +587,12 @@
           "sources": {
             "best": 3,
             "bm25": 2
-          }
+          },
+          "title": "Integration contracts, Kafka partitions and delivery boundaries"
         },
         {
+          "excerpt": "The consumer must decide when to mark its position consumed, often relative to applying an external business effect. ```mermaid sequenceDiagram participant Broker participant C as Consumer participant DB as External effect sto\u2026",
+          "heading": "4. Consumer offset, effect and crash points",
           "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
           "prior": false,
           "sections": [
@@ -479,9 +601,12 @@
           "sources": {
             "best": 2,
             "bm25": 6
-          }
+          },
+          "title": "Offsets, effects and recovery"
         },
         {
+          "excerpt": "Apache Kafka 4.1 Design sections **The Producer \u2014 Load balancing**, **The Consumer \u2014 Consumer Position**, **Message Delivery Semantics** and **Replication** describe how a topic is partitioned, records have positions in a partition, and co\u2026",
+          "heading": "2. Kafka's partition is an ordering and load unit",
           "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/partitions-producers.md",
           "prior": false,
           "sections": [
@@ -490,9 +615,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Kafka interaction contracts and partitioning"
         },
         {
+          "excerpt": "Processing records in order is not the same as calculating correct, recoverable *state* while inputs arrive late, operators restart, partitions rebalance and external systems change. This page owns the recovery, event-time and CDC boundary\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
           "prior": false,
           "sections": [
@@ -501,7 +629,8 @@
           "sources": {
             "best": 8,
             "bm25": 9
-          }
+          },
+          "title": "Stateful stream processing, Kafka Streams, Flink and CDC"
         }
       ],
       "id": "Q066",
@@ -514,6 +643,8 @@
     {
       "candidates": [
         {
+          "excerpt": "| Question | Page | Public source scope | |---|---|---| | How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](../volumes/v04-distribut\u2026",
+          "heading": "Canonical authored pages",
           "path": "book/integration/README.md",
           "prior": false,
           "sections": [
@@ -522,9 +653,12 @@
           "sources": {
             "best": 5,
             "bm25": 8
-          }
+          },
+          "title": "Integration, messaging and stream processing"
         },
         {
+          "excerpt": "| Option | Often justified by | Additional questions / contraindications | |---|---|---| | HTTP resource API | Broad client ecosystem, caching or resource-oriented semantics, independently documented HTTP contracts | Does a command have du\u2026",
+          "heading": "5. Which interface approach fits the decision?",
           "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
           "prior": false,
           "sections": [
@@ -533,9 +667,12 @@
           "sources": {
             "best": 9,
             "bm25": 7
-          }
+          },
+          "title": "Behavioral compatibility and interface choice"
         },
         {
+          "excerpt": "| Chapter | Owning question | |---|---| | [V04/C01 \u2014 Time, causality and ordering](c01-time-causality-and-ordering/README.md) | Which ordering can a distributed system observe or guarantee? | | [V04/C02 \u2014 Replication, consensus and leader\u2026",
+          "heading": "Questions and chapters",
           "path": "book/volumes/v04-distributed-coordination-and-events/README.md",
           "prior": false,
           "sections": [
@@ -544,9 +681,12 @@
           "sources": {
             "best": 7,
             "bm25": 6
-          }
+          },
+          "title": "V04 \u2014 Distributed coordination and event integration"
         },
         {
+          "excerpt": "| Route | Destination | |---|---| | Parent | [V04 \u2014 Distributed coordination and event integration](../README.md) | | Previous | [V04/C04 \u2014 Retries, idempotency and duplicate effects](../c04-retries-idempotency-and-duplicate-effects/README\u2026",
+          "heading": "Navigation and prerequisites",
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/README.md",
           "prior": false,
           "sections": [
@@ -555,9 +695,12 @@
           "sources": {
             "best": 6,
             "bm25": 5
-          }
+          },
+          "title": "V04/C05 \u2014 Outbox, inbox, sagas and durable workflows"
         },
         {
+          "excerpt": "### Transactional Outbox See the [dedicated Transactional Outbox owner note](transactional-outbox.md). ### Distributed Workflow Orchestration A durable workflow records progress as a state machine, not as an in-memory coroutine. Steps,\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
           "prior": false,
           "sections": [
@@ -565,9 +708,12 @@
           ],
           "sources": {
             "best": 8
-          }
+          },
+          "title": "Outbox, inbox, sagas and durable workflow coordination"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
           "prior": false,
           "sections": [
@@ -576,9 +722,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "V04/C06 \u2014 Messaging families and delivery contracts"
         },
         {
+          "excerpt": "# Consumer requirements and messaging families **Owning question:** Which ownership, retention and replay contract selects a messaging family? This page belongs to [V04/C06 \u2014 Messaging families and delivery contracts](README.md). Use the\u2026",
+          "heading": "Consumer requirements and messaging families",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
           "prior": true,
           "sections": [
@@ -587,9 +736,12 @@
           "sources": {
             "best": 4,
             "bm25": 3
-          }
+          },
+          "title": "Consumer requirements and messaging families"
         },
         {
+          "excerpt": "Compare messaging mechanisms by acknowledgment, retention, ordering scope, consumer state and recovery behavior. Acknowledging receipt can precede a durable application effect; delivery terminology cannot substitute for the consumer's com\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
           "prior": false,
           "sections": [
@@ -598,9 +750,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Messaging families: RabbitMQ, Pulsar, NATS and durable workflows"
         },
         {
+          "excerpt": "| Route | Destination | |---|---| | Parent chapter | [V04/C06 \u2014 Messaging families and delivery contracts](README.md) | | Originating page | [Workflow state and messaging failure gates](workflow-failure.md#request-reply-messaging) | | Sour\u2026",
+          "heading": "Navigation",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md",
           "prior": false,
           "sections": [
@@ -608,9 +763,12 @@
           ],
           "sources": {
             "bm25": 10
-          }
+          },
+          "title": "Request-Reply Messaging"
         },
         {
+          "excerpt": "| Route | Destination | |---|---| | Parent chapter | [V04/C06 \u2014 Messaging families and delivery contracts](README.md) | | Originating page | [Messaging families and durable workflows](messaging-families-and-durable-workflows.md#splitter) |\u2026",
+          "heading": "Navigation",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
           "prior": false,
           "sections": [
@@ -619,9 +777,12 @@
           "sources": {
             "best": 10,
             "bm25": 9
-          }
+          },
+          "title": "Splitter"
         },
         {
+          "excerpt": "# Workflow state and messaging failure gates **Owning question:** When does a queue need an additional durable business-state protocol? This page belongs to [V04/C06 \u2014 Messaging families and delivery contracts](README.md). Use the integra\u2026",
+          "heading": "Workflow state and messaging failure gates",
           "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
           "prior": false,
           "sections": [
@@ -630,7 +791,8 @@
           "sources": {
             "best": 3,
             "bm25": 4
-          }
+          },
+          "title": "Workflow state and messaging failure gates"
         }
       ],
       "id": "Q067",
@@ -643,6 +805,8 @@
     {
       "candidates": [
         {
+          "excerpt": "The [June 3, 2026 first-party report](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (src.m9-n12, **Picking the Partitioning Strategy**, **The Problem with the\u2026",
+          "heading": "Why over-partitioning and wide partitions can both harm the same system",
           "path": "book/cases/netflix-cassandra-dynamic-time-series-splits.md",
           "prior": false,
           "sections": [
@@ -651,9 +815,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Netflix \u2014 evolving Cassandra partition keys without destabilizing Time Series readers"
         },
         {
+          "excerpt": "A secondary region can serve read-only degraded traffic before it can safely become a writer. Promoting writers requires a policy for **in-flight acknowledgments**, replica lag, ordering, globally unique identifiers, replay idempotency and\u2026",
+          "heading": "Write authority and the recovery contradiction",
           "path": "book/cases/netflix-chaos-kong-regional-failover.md",
           "prior": false,
           "sections": [
@@ -662,9 +829,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Netflix \u2014 Chaos Kong: testing application-level regional failure, not shutting down AWS"
         },
         {
+          "excerpt": "The authors insist that migration ownership should cover the remaining non-upgraded consumers, rather than celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden. The source discusses track\u2026",
+          "heading": "The explicit incompleteness trap: the last few percent",
           "path": "book/cases/spotify-tech-migration-long-tail.md",
           "prior": false,
           "sections": [
@@ -673,9 +843,12 @@
           "sources": {
             "best": 5,
             "bm25": 5
-          }
+          },
+          "title": "Spotify \u2014 removing long-tail platform migrations through ownership and Backstage"
         },
         {
+          "excerpt": "The target organized JSON-style cell data by **trip UUID**, column name and optional timestamp. Its fixed initial logical shard count was typically **4,096**, with shards movable among MySQL hosts for online capacity balancing. The model w\u2026",
+          "heading": "The data semantics made the cutover tractable",
           "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
           "prior": false,
           "sections": [
@@ -684,9 +857,12 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "Uber \u2014 Project Mezzanine: moving trip data behind a compatibility seam"
         },
         {
+          "excerpt": "Each edit carries a stable operation identifier, replica identity and the causal context required by its merge rule. A reconnect protocol exchanges missing changes or a compact state. It acknowledges durable receipt separately from approva\u2026",
+          "heading": "Normal operation, failure and recovery",
           "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
           "prior": true,
           "sections": [
@@ -695,9 +871,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Multiple writers and offline conflicts"
         },
         {
+          "excerpt": "Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker t\u2026",
+          "heading": "1. Two unsafe dual-write orders",
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
           "prior": false,
           "sections": [
@@ -706,9 +885,12 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "Outbox publication and ordering"
         },
         {
+          "excerpt": "PostgreSQL 17 \u00a728.3 **Write-Ahead Logging (WAL)** explains the durability approach: record modifications into a log before the affected data pages must be written to their permanent table/index files. WAL records and commit policies permit\u2026",
+          "heading": "1. Why write-ahead logging exists",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
           "prior": false,
           "sections": [
@@ -717,9 +899,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "WAL ordering and acknowledgment"
         },
         {
+          "excerpt": "In a fictional tool catalogue the original field asset_code conflates a public model description and a unique physical unit. A new model separates model_id (shared by identical units) and unit_id (physical item). Simply copying asset_code\u2026",
+          "heading": "2. Original synthetic scenario: two equipment identities",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
           "prior": false,
           "sections": [
@@ -728,9 +913,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "Schema shape and preserved meaning"
         },
         {
+          "excerpt": "Every edit identifies workspace, document incarnation, device incarnation, operation identifier, causal context and merge-semantics version. The server validates current permission before durable admission. A receipt says which edits were\u2026",
+          "heading": "Normal operation and a worked conflict",
           "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/collaboration-project.md",
           "prior": false,
           "sections": [
@@ -739,9 +927,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Offline collaboration project"
         },
         {
+          "excerpt": "A hard constraint is a condition a candidate must satisfy. If candidate C exceeds a declared cost ceiling, C is eliminated even if it has the highest success rate. A soft constraint is a preference that can be traded. A non-quantitative co\u2026",
+          "heading": "Hard constraints versus preferences",
           "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
           "prior": false,
           "sections": [
@@ -750,7 +941,8 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Decision record contract"
         }
       ],
       "id": "Q069",
@@ -763,6 +955,8 @@
     {
       "candidates": [
         {
+          "excerpt": "**Original synthetic budget:** eight application replicas each configure HikariCP maximum 20 connections; PgBouncer mediates 60 server-side database connections. A simplistic calculation of 8\u00d720 = 160 client leases is **not 160 simultaneou\u2026",
+          "heading": "Engineering walkthrough \u2014 Pool capacity is a fleet equation, not a per-replica setting",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c05-thread-connection-and-buffer-pools/connection-pools-hikaricp-pgbouncer.md",
           "prior": false,
           "sections": [
@@ -771,9 +965,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Connection pools: HikariCP, PgBouncer and end-to-end database budgets"
         },
         {
+          "excerpt": "- [Leases, stale owners and fencing at the destination](leader-recovery.md#leases-stale-owners-and-fencing-at-the-destination) \u2014 source-scoped enrichment; examples and proposed tests are not executed results.",
+          "heading": "Further mechanism and recovery questions",
           "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/README.md",
           "prior": false,
           "sections": [
@@ -782,9 +979,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "V04/C02 \u2014 Replication, consensus and leader changes"
         },
         {
+          "excerpt": "Under a Raft-style model: 1. At a time, a node believes itself a leader for a given term, but other nodes can still be unaware because messages are delayed. 2. The quorum/term/log rules govern which log entries can be committed without vio\u2026",
+          "heading": "4. Leader elections, logs and client observations",
           "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
           "prior": false,
           "sections": [
@@ -793,9 +993,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "Leader changes, reconfiguration and restoration"
         },
         {
+          "excerpt": "**Original three-node quorum illustration:** nodes A, B and C replicate one state machine. A was leader. A's network connection to B and C fails; B and C may form a quorum and eventually select a new leader. A can remain reachable to some\u2026",
+          "heading": "Engineering walkthrough \u2014 New leader, old client and a lost acknowledgment",
           "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
           "prior": true,
           "sections": [
@@ -804,9 +1007,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Replication, consensus and leader change: safety and progress under failures"
         },
         {
+          "excerpt": "- Parent: [V04/C02 \u2014 replication, consensus and leader changes](README.md). - Integrated page: [replication, consensus and leader change][integrated]. - Adjacent pages: [quorum-envelope.md](quorum-envelope.md) and [leader-recovery.md](le\u2026",
+          "heading": "Navigation and prerequisites",
           "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
           "prior": false,
           "sections": [
@@ -815,9 +1021,12 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "Session-visible consistency"
         },
         {
+          "excerpt": "A pipeline worker should publish only when it can prove that it still owns the work and is using the intended configuration. Four boundaries are useful: - **Valid lease.** The worker may commit this work unit now. Without it, an orphane\u2026",
+          "heading": "5. Publication correctness: lease, task identity and unique outputs",
           "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
           "prior": false,
           "sections": [
@@ -826,9 +1035,12 @@
           "sources": {
             "best": 5,
             "bm25": 5
-          }
+          },
+          "title": "Periodic work, leases and exactly-once publication"
         },
         {
+          "excerpt": "Imagine worker A acquires a distributed refresh lock, then pauses. Its lease expires and worker B acquires a new lease, fetches v2 and publishes it. Worker A resumes with stale v1 and writes it to cache. The lock allowed two overlapping ac\u2026",
+          "heading": "3. A refresh lock is not automatically a correctness lock",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
           "prior": false,
           "sections": [
@@ -837,9 +1049,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "Stale fills and regeneration ownership"
         },
         {
+          "excerpt": "### Cache Stampede Protection A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads. The problem is synchronized work amplification, not\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
           "prior": false,
           "sections": [
@@ -848,9 +1063,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Stampedes and source protection"
         },
         {
+          "excerpt": "Each level-three heading is a stable atlas anchor. Owner links are bounded sections; none claims sufficient technical or decision coverage. ### Leader Election **Identity.** Leader Election; family Distributed coordination; kind coordina\u2026",
+          "heading": "Entry inventory",
           "path": "book/volumes/v11-pattern-atlas/c08-coordination/README.md",
           "prior": false,
           "sections": [
@@ -859,9 +1077,12 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "V11/C08 \u2014 Distributed coordination"
         },
         {
+          "excerpt": "A stale event is an event that was scheduled before a state change and is no longer valid. The completion event after a timeout is stale. The timeout event after a completion is stale. The engine does not delete stale events from the heap;\u2026",
+          "heading": "Stale events",
           "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
           "prior": false,
           "sections": [
@@ -870,7 +1091,8 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Event ordering and timeouts"
         }
       ],
       "id": "Q070",
@@ -883,6 +1105,8 @@
     {
       "candidates": [
         {
+          "excerpt": "The article explicitly identifies workloads with volatile allocation, long-lived objects and unpredictable task duration where G1 performed better. The *Parallel collector* helped a particular throughput-oriented precompute job more than G\u2026",
+          "heading": "Genuine counterexample: spiky allocation and long-running batch",
           "path": "book/cases/netflix-generational-zgc-workloads.md",
           "prior": false,
           "sections": [
@@ -891,9 +1115,12 @@
           "sources": {
             "best": 4,
             "bm25": 7
-          }
+          },
+          "title": "Netflix \u2014 Generational ZGC as a workload-shaped latency choice, not a universal default"
         },
         {
+          "excerpt": "The 2020 source describes three pillars: prioritization with estimated cost and affected teams; treating migration as an internal product with training, quality and ownership; then automating repetitive changes. A new platform should also\u2026",
+          "heading": "Migration mechanics and reliability",
           "path": "book/cases/spotify-tech-migration-long-tail.md",
           "prior": false,
           "sections": [
@@ -902,9 +1129,12 @@
           "sources": {
             "best": 8,
             "bm25": 5
-          }
+          },
+          "title": "Spotify \u2014 removing long-tail platform migrations through ownership and Backstage"
         },
         {
+          "excerpt": "Source details matter: Stripe copied missing records with offline Hadoop/MapReduce snapshots rather than loading live databases with full table scans, and used GitHub Scientist to run production-read comparisons while serving the old path\u2026",
+          "heading": "Execution stages, validation and reversibility",
           "path": "book/cases/stripe-online-subscriptions-migration.md",
           "prior": false,
           "sections": [
@@ -912,9 +1142,12 @@
           ],
           "sources": {
             "best": 9
-          }
+          },
+          "title": "Stripe \u2014 four-stage online migration of subscription data ownership"
         },
         {
+          "excerpt": "PostgreSQL 17 \u00a713.1 explains how each statement can read a suitable version of data while concurrent transactions maintain row versions. Reads and writes generally do not need to block each other merely to preserve a snapshot; this does **\u2026",
+          "heading": "2. MVCC is about snapshot visibility, not a replacement for reasoning about writes",
           "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
           "prior": false,
           "sections": [
@@ -923,9 +1156,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "PostgreSQL 17: MVCC, indexing, query plans and relational invariants"
         },
         {
+          "excerpt": "| Boundary | Question | Typical limitation | |---|---|---| | Business operation | What is one durable user intent, across retries? | Duplicate/unknown outcomes | | Logical task | Which subcomputations belong to one parent? | Cancellation,\u2026",
+          "heading": "1. Four distinct concurrency boundaries",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/task-lifetime.md",
           "prior": false,
           "sections": [
@@ -934,9 +1170,12 @@
           "sources": {
             "best": 7,
             "bm25": 4
-          }
+          },
+          "title": "Task ownership, lifetimes and cancellation"
         },
         {
+          "excerpt": "PostgreSQL uses MVCC (multiversion concurrency control) so readers can observe committed snapshots without treating every concurrent writer as a global reader-blocking lock. [PostgreSQL 17 MVCC Introduction, \u00a713.1](https://www.postgresql.o\u2026",
+          "heading": "2. A snapshot is not an invariant",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-invariants.md",
           "prior": false,
           "sections": [
@@ -945,9 +1184,12 @@
           "sources": {
             "best": 10,
             "bm25": 6
-          }
+          },
+          "title": "Relational identities, constraints and snapshots"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/README.md",
           "prior": false,
           "sections": [
@@ -956,9 +1198,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "V05/C02 \u2014 PostgreSQL MVCC, WAL and recovery"
         },
         {
+          "excerpt": "[PostgreSQL 17 section 13.1](https://www.postgresql.org/docs/17/mvcc-intro.html) describes a multiversion model in which statements observe a snapshot. A committed update therefore does not mean every concurrent reader must immediately int\u2026",
+          "heading": "Visibility is a question about a reader",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
           "prior": true,
           "sections": [
@@ -967,9 +1212,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "MVCC snapshots and the lifetime of row versions"
         },
         {
+          "excerpt": "Trace acknowledged writes through transaction state, WAL, replication and recovery before assigning a durability promise. A reachable replica may lag, and a replication setting alone does not establish a successful restore or the applicat\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
           "prior": false,
           "sections": [
@@ -978,9 +1226,12 @@
           "sources": {
             "best": 6,
             "bm25": 10
-          }
+          },
+          "title": "PostgreSQL 17 WAL, physical/logical replication and recovery evidence"
         },
         {
+          "excerpt": "**Enrichment contract:** connect a database symptom to the transaction or maintenance boundary that can explain it. PostgreSQL 17 is the reference; no live server was exercised. ### Original deadlock interleaving A fictional reservation\u2026",
+          "heading": "Long transactions, deadlocks and online index work",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/storage-workload.md",
           "prior": false,
           "sections": [
@@ -989,9 +1240,12 @@
           "sources": {
             "best": 5,
             "bm25": 8
-          }
+          },
+          "title": "Workload costs of durable state"
         },
         {
+          "excerpt": "# Connection lifetimes, HTTP/2 shutdown and retry outcomes **Owning question:** What does a transport shutdown establish about an in-flight application operation?",
+          "heading": "Connection lifetimes, HTTP/2 shutdown and retry outcomes",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/connections-draining.md",
           "prior": false,
           "sections": [
@@ -999,7 +1253,8 @@
           ],
           "sources": {
             "bm25": 9
-          }
+          },
+          "title": "Connection lifetimes, HTTP/2 shutdown and retry outcomes"
         }
       ],
       "id": "Q071",
@@ -1012,6 +1267,8 @@
     {
       "candidates": [
         {
+          "excerpt": "An acceptable experiment compares **the same synthetic or independently measured workload and user objectives** before and after the candidate change: | Hypothesis | Measure or test | Falsifying evidence | |---|---|---| | Separate prefere\u2026",
+          "heading": "5. How to test whether decomposition helped",
           "path": "book/application/architecture-evolution-and-extraction.md",
           "prior": false,
           "sections": [
@@ -1020,9 +1277,12 @@
           "sources": {
             "best": 7,
             "bm25": 2
-          }
+          },
+          "title": "Architecture evolution: when to keep, modularize or extract a service"
         },
         {
+          "excerpt": "PostgreSQL 17's [Indexes](https://www.postgresql.org/docs/17/indexes.html) documents multiple families: B-tree, hash, GiST, SP-GiST, GIN and BRIN, plus multicolumn, expression and partial indexes. The existence of an index does **not** for\u2026",
+          "heading": "3. Indexes trade read access against writes, storage and maintenance",
           "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
           "prior": false,
           "sections": [
@@ -1031,9 +1291,12 @@
           "sources": {
             "best": 4,
             "bm25": 6
-          }
+          },
+          "title": "PostgreSQL 17: MVCC, indexing, query plans and relational invariants"
         },
         {
+          "excerpt": "A unique or exclusion constraint may add write/index cost while protecting a mandatory invariant. Removing it to improve throughput is not equivalent to a valid architecture optimization. Adding an index can speed a predicate but does not\u2026",
+          "heading": "5. Correctness and query performance must be evaluated together",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/serializable-retry.md",
           "prior": false,
           "sections": [
@@ -1042,9 +1305,12 @@
           "sources": {
             "best": 5,
             "bm25": 7
-          }
+          },
+          "title": "Isolation anomalies, retries and workload trade-offs"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/README.md",
           "prior": false,
           "sections": [
@@ -1053,9 +1319,12 @@
           "sources": {
             "best": 2,
             "bm25": 4
-          }
+          },
+          "title": "V05/C03 \u2014 Query planning, indexes and access paths"
         },
         {
+          "excerpt": "Interpret a query plan against row estimates, selectivity, write cost and workload rather than assuming an index is always beneficial. A faster isolated read can increase update cost or fail under skew; compare plans and resource use on t\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
           "prior": false,
           "sections": [
@@ -1064,9 +1333,12 @@
           "sources": {
             "best": 3,
             "bm25": 5
-          }
+          },
+          "title": "PostgreSQL indexing, planner statistics and query access paths"
         },
         {
+          "excerpt": "# Negative query cases and controlled validation **Owning question:** Which workload change can reverse an apparently successful index decision? This page belongs to [V05/C03 \u2014 Query planning, indexes and access paths](README.md). Use the\u2026",
+          "heading": "Negative query cases and controlled validation",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/query-counterexamples.md",
           "prior": true,
           "sections": [
@@ -1075,9 +1347,12 @@
           "sources": {
             "best": 1,
             "bm25": 3
-          }
+          },
+          "title": "Negative query cases and controlled validation"
         },
         {
+          "excerpt": "A performance benchmark can produce precise-looking numbers while measuring the wrong population. A system that slows its *load generator* may appear more responsive than one that actually serves its intended traffic. A synthetic workload\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
           "prior": false,
           "sections": [
@@ -1086,9 +1361,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Load-test methodology, generator validity and defensible benchmark evidence"
         },
         {
+          "excerpt": "- **Rolling** may be suitable for additive stateless changes where compatible version overlap is proven. - **Blue/green** can reduce some deployment cutover risk if states and client contracts remain compatible, at higher resource cost. -\u2026",
+          "heading": "5. Deciding which exposure mode fits",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/canary-compatibility.md",
           "prior": false,
           "sections": [
@@ -1097,9 +1375,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Canary acceptance and shared-state damage"
         },
         {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
           "prior": false,
           "sections": [
@@ -1108,9 +1389,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Backward-compatible database change: mixed-version reads, writes and online DDL"
         },
         {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
           "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
           "prior": false,
           "sections": [
@@ -1119,7 +1403,8 @@
           "sources": {
             "best": 6,
             "bm25": 1
-          }
+          },
+          "title": "Legacy system baseline and modernization evidence: deciding what to keep"
         }
       ],
       "id": "Q072",
@@ -1132,6 +1417,8 @@
     {
       "candidates": [
         {
+          "excerpt": "PostgreSQL 17 \u00a714.1 **Using EXPLAIN** states that the planner creates a tree of scan/join/aggregation nodes. Its `cost` fields use internal cost units; they are not latency predictions in ms. Row count estimates depend on sampled statistic\u2026",
+          "heading": "4. EXPLAIN: estimated plan costs are not milliseconds",
           "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
           "prior": false,
           "sections": [
@@ -1140,9 +1427,12 @@
           "sources": {
             "best": 4,
             "bm25": 7
-          }
+          },
+          "title": "PostgreSQL 17: MVCC, indexing, query plans and relational invariants"
         },
         {
+          "excerpt": "For a limited self-contained application with an authoritative PostgreSQL store, in-DB constraints and local transactions may be a simpler and stronger choice than moving the reservation decision across services. Another store/consistency\u2026",
+          "heading": "6. Architecture alternatives and limits",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/serializable-retry.md",
           "prior": false,
           "sections": [
@@ -1150,9 +1440,12 @@
           ],
           "sources": {
             "best": 10
-          }
+          },
+          "title": "Isolation anomalies, retries and workload trade-offs"
         },
         {
+          "excerpt": "| ID | PostgreSQL 17 documentation; actual inspected scope | Supports and boundaries | |---|---|---| | E01 | [\u00a728.3 WAL introduction](https://www.postgresql.org/docs/17/wal-intro.html), recovery and WAL ordering rationale | WAL supports cr\u2026",
+          "heading": "Exact public evidence ledger",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/README.md",
           "prior": false,
           "sections": [
@@ -1161,9 +1454,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "V05/C02 \u2014 PostgreSQL MVCC, WAL and recovery"
         },
         {
+          "excerpt": "Durability and availability depend on **which state has been acknowledged, where it has been persisted, which copies have received it and what was actually restored**. A replica is not automatically a backup. A WAL archive is not automatic\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
           "prior": false,
           "sections": [
@@ -1172,9 +1468,12 @@
           "sources": {
             "best": 6,
             "bm25": 3
-          }
+          },
+          "title": "PostgreSQL 17 WAL, physical/logical replication and recovery evidence"
         },
         {
+          "excerpt": "Index choice is not a contest to add as many lookup structures as possible. A database planner chooses a route through data based on the SQL predicate, available physical access paths, estimated row counts and system cost assumptions. An i\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/postgresql-indexes-statistics-and-query-plans.md",
           "prior": false,
           "sections": [
@@ -1183,9 +1482,12 @@
           "sources": {
             "best": 5,
             "bm25": 2
-          }
+          },
+          "title": "PostgreSQL indexing, planner statistics and query access paths"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/README.md",
           "prior": false,
           "sections": [
@@ -1194,9 +1496,12 @@
           "sources": {
             "best": 2,
             "bm25": 4
-          }
+          },
+          "title": "V05/C04 \u2014 Alternative data models and stores"
         },
         {
+          "excerpt": "### Polyglot Persistence A single authoritative registration database plus a graph/search/OLAP projection is a valid possible design\u2014but then there are *two data representations*, not two automatically consistent sources of truth. Each st\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
           "prior": true,
           "sections": [
@@ -1205,9 +1510,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Cross-model comparison and synchronization"
         },
         {
+          "excerpt": "Choose a storage model from access patterns, invariant scope and operating constraints, keeping migration costs visible. Replacing an engine does not remove a hot logical key or a cross-owner transaction requirement. The detailed pages s\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
           "prior": false,
           "sections": [
@@ -1216,9 +1524,12 @@
           "sources": {
             "best": 3,
             "bm25": 6
-          }
+          },
+          "title": "Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series"
         },
         {
+          "excerpt": "A collector must not delete every unreferenced object it observed at time T: publication could establish a reference after that observation. Use a metadata-owned retirement decision, a grace/state protocol and immutable object identities.\u2026",
+          "heading": "Garbage collection races",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
           "prior": false,
           "sections": [
@@ -1226,9 +1537,12 @@
           ],
           "sources": {
             "bm25": 10
-          }
+          },
+          "title": "Object publication and cross-store reconciliation"
         },
         {
+          "excerpt": "### Feature Flags-Feature Toggles A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment, with a default and kill switch. The flag is runtime policy, not a replacement for a release gate. Flags nev\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
           "prior": false,
           "sections": [
@@ -1237,9 +1551,12 @@
           "sources": {
             "best": 7,
             "bm25": 5
-          }
+          },
+          "title": "Dynamic configuration and feature flags"
         },
         {
+          "excerpt": "- A measured arrival rate above 22 requests per second or a mean service time above 0.65 seconds changes the utilization boundary. - A measured p95 service time whose tail pushes B above 1.5 seconds. - A cost weight under which B no long\u2026",
+          "heading": "What would reverse the recommendation",
           "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
           "prior": false,
           "sections": [
@@ -1248,7 +1565,8 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Comparative decision worked example"
         }
       ],
       "id": "Q073",
@@ -1261,6 +1579,8 @@
     {
       "candidates": [
         {
+          "excerpt": "**Synthetic context:** multitenant ledger serving unpredictable scans and writes, high retry amplification and a few tenant hot keys. Proposed architecture decision: instrument per-key hotness, concurrency, queue wait, follower lag and req\u2026",
+          "heading": "Applicability, migration and rollback ADR for another organization",
           "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
           "prior": false,
           "sections": [
@@ -1269,9 +1589,12 @@
           "sources": {
             "best": 3,
             "bm25": 8
-          }
+          },
+          "title": "Uber \u2014 Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/README.md",
           "prior": false,
           "sections": [
@@ -1280,9 +1603,12 @@
           "sources": {
             "best": 5,
             "bm25": 9
-          }
+          },
+          "title": "V05/C05 \u2014 Partitioning, sharding and rebalancing"
         },
         {
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Consistent Hashing C\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
           "prior": false,
           "sections": [
@@ -1291,9 +1617,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Resharding and alternatives"
         },
         {
+          "excerpt": "Splitting a database into shards is useful only if **resource or operational constraints** justify distributing ownership and the application can tolerate the resulting coordination and migration requirements. More shards cannot automatica\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
           "prior": true,
           "sections": [
@@ -1302,9 +1631,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Sharding, partition keys, hotspots and safe resharding"
         },
         {
+          "excerpt": "| Term | What it controls | Does not guarantee | |---|---|---| | **Shard / partition** | A subset of an authoritative keyspace assigned to storage owners | Independent throughput for every hot key | | **Shard key / routing function** | How\u2026",
+          "heading": "1. Distinguish physical partitions, logical ownership and replicas",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
           "prior": false,
           "sections": [
@@ -1313,9 +1645,12 @@
           "sources": {
             "best": 8,
             "bm25": 6
-          }
+          },
+          "title": "Partition ownership, keys and skew"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/README.md",
           "prior": false,
           "sections": [
@@ -1324,9 +1659,12 @@
           "sources": {
             "best": 4,
             "bm25": 3
-          }
+          },
+          "title": "V06/C02 \u2014 Hot keys, cache stampedes and read amplification"
         },
         {
+          "excerpt": "A cache may perform well under ordinary traffic and become a **load amplifier** precisely during a key expiration, a write burst or an outage. Expiring an entry and asking all waiting clients to refetch it can overload a healthy authoritat\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
           "prior": false,
           "sections": [
@@ -1335,9 +1673,12 @@
           "sources": {
             "best": 6,
             "bm25": 4
-          }
+          },
+          "title": "Cache invalidation, stampedes and hot-key failure modes"
         },
         {
+          "excerpt": "Promotion is a conditional authorization to expose an approved artifact at a **named workload and data-compatibility boundary**, not just a command to scale replicas. Before exposure, prove candidate identity, rollback/forward-repair avail\u2026",
+          "heading": "5. Progressive promotion and stop conditions",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/promotion-rollout.md",
           "prior": false,
           "sections": [
@@ -1346,9 +1687,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Promotion, reconciliation and user-health gates"
         },
         {
+          "excerpt": "A safe isolated drill should create known accepted operations, checkpoint their IDs, simulate one declared failure, restore or promote state, and compare actual business outcomes. It should also inject: - region link partition with old pri\u2026",
+          "heading": "6. Falsifiable drill protocol",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
           "prior": false,
           "sections": [
@@ -1357,9 +1701,12 @@
           "sources": {
             "best": 7,
             "bm25": 5
-          }
+          },
+          "title": "Recovery state machines, fencing and failback"
         },
         {
+          "excerpt": "Fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority. Promoting a second region without exclusive authority can create divergent accepted effects; failback is another tr\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
           "prior": false,
           "sections": [
@@ -1368,7 +1715,8 @@
           "sources": {
             "best": 9,
             "bm25": 7
-          }
+          },
+          "title": "Disaster recovery: measured RTO, RPO, fencing and state reconciliation"
         }
       ],
       "id": "Q074",
@@ -1381,6 +1729,8 @@
     {
       "candidates": [
         {
+          "excerpt": "**Synthetic requirement:** migrate a transactional reporting feed while thousands of dashboards must remain available. Choose a job-level lifecycle with explicit old/new side-by-side materialization, consistent snapshot cuts, row identity\u2026",
+          "heading": "Decision transfer, negative cases and synthetic ADR",
           "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
           "prior": false,
           "sections": [
@@ -1388,9 +1738,12 @@
           ],
           "sources": {
             "best": 9
-          }
+          },
+          "title": "Meta \u2014 Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation"
         },
         {
+          "excerpt": "Include: - recurring compute/storage/network/replication and idle redundancy; - event, audit and trace retention/transfer; - CI, dependency update, security scanning and test environment capacity; - scheduled change/release effort and supp\u2026",
+          "heading": "4. Operating cost is a lifecycle, not a monthly instance fee",
           "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/lifecycle-cost.md",
           "prior": false,
           "sections": [
@@ -1398,9 +1751,12 @@
           ],
           "sources": {
             "bm25": 9
-          }
+          },
+          "title": "Lifecycle cost and sensitivity"
         },
         {
+          "excerpt": "If migration is staged, an ACL can remain for a finite coexistence window, then be removed when old dependencies and clients are gone. Alternatively it may become a stable permanent interface to an uncontrollable partner. The choice affect\u2026",
+          "heading": "5. Change and eventual retirement are part of the pattern",
           "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/coexistence-retirement.md",
           "prior": false,
           "sections": [
@@ -1409,9 +1765,12 @@
           "sources": {
             "best": 5,
             "bm25": 10
-          }
+          },
+          "title": "Coexistence, unknown outcomes and adapter retirement"
         },
         {
+          "excerpt": "| Chapter | Owning question | |---|---| | [V05/C01 \u2014 Relational modeling and transaction isolation](c01-relational-modeling-and-transaction-isolation/README.md) | Which invariants and anomalies are relevant to the data contract? | | [V05/C\u2026",
+          "heading": "Questions and chapters",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/README.md",
           "prior": false,
           "sections": [
@@ -1420,9 +1779,12 @@
           "sources": {
             "best": 7,
             "bm25": 6
-          }
+          },
+          "title": "V05 \u2014 Data models, engines and lifecycle"
         },
         {
+          "excerpt": "[Section 24.1](https://www.postgresql.org/docs/17/routine-vacuuming.html) explains why updated or deleted versions cannot be removed while another transaction may still need to see them. Vacuuming can make obsolete-version space reusable a\u2026",
+          "heading": "Old versions consume a lifecycle budget",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
           "prior": false,
           "sections": [
@@ -1431,9 +1793,12 @@
           "sources": {
             "best": 3,
             "bm25": 4
-          }
+          },
+          "title": "MVCC snapshots and the lifetime of row versions"
         },
         {
+          "excerpt": "**MongoDB's official data modeling** documentation distinguishes embedding related subdocuments from referencing separate documents. Embedding can make related reads and atomic single-document updates simpler; high-cardinality or independe\u2026",
+          "heading": "4. Document and wide-column data models",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
           "prior": false,
           "sections": [
@@ -1442,9 +1807,12 @@
           "sources": {
             "best": 8,
             "bm25": 7
-          }
+          },
+          "title": "Document, wide-column and analytical access"
         },
         {
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026",
+          "heading": "Applied M9 evidence: what transfers and what does not",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
           "prior": false,
           "sections": [
@@ -1453,9 +1821,12 @@
           "sources": {
             "best": 10,
             "bm25": 8
-          }
+          },
+          "title": "Storage model alternatives: embedded SQL, distributed SQL, document, wide-column, OLAP, graph and time series"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
           "prior": false,
           "sections": [
@@ -1464,9 +1835,12 @@
           "sources": {
             "best": 6,
             "bm25": 5
-          }
+          },
+          "title": "V05/C06 \u2014 Schema evolution, data migration and retention"
         },
         {
+          "excerpt": "Deleting a column, archived identifier or legacy event decoder may destroy an old client's ability to read history or replay effects. Contract is safe only after recording: 1. all active and required historical readers/writers; 2. migratio\u2026",
+          "heading": "4. Data retirement has a no-return point",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
           "prior": false,
           "sections": [
@@ -1475,9 +1849,12 @@
           "sources": {
             "best": 1,
             "bm25": 2
-          }
+          },
+          "title": "Migration stages, retention and no-return points"
         },
         {
+          "excerpt": "Treat data evolution as a semantic compatibility and authority transition, not just a successful DDL command. A new value interpreted differently by old readers can break a mixed-version system even when every row passes schema validation\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
           "prior": true,
           "sections": [
@@ -1486,9 +1863,12 @@
           "sources": {
             "best": 4,
             "bm25": 1
-          }
+          },
+          "title": "Schema lifecycle, semantic data migration and data retirement"
         },
         {
+          "excerpt": "Account for current and noncurrent versions, previews, transcodes, temporary parts, replication targets, edge caches, search references and backups. A current-name delete may have different semantics from removal of all retained versions.\u2026",
+          "heading": "What a deletion inventory must contain",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
           "prior": false,
           "sections": [
@@ -1497,7 +1877,8 @@
           "sources": {
             "best": 2,
             "bm25": 3
-          }
+          },
+          "title": "Object capabilities, versions and lifecycle cleanup"
         }
       ],
       "id": "Q075",
@@ -1510,6 +1891,8 @@
     {
       "candidates": [
         {
+          "excerpt": "The public **Caffeine** project wiki's **Eviction** page documents size-bound caching and expiration policies such as `expireAfterWrite`, `expireAfterAccess` and variable expiration. Its **Refresh** page distinguishes refresh from eviction\u2026",
+          "heading": "2. Local in-process cache: fast reads, isolated knowledge",
           "path": "book/scaling/local-distributed-caching-and-invalidation.md",
           "prior": false,
           "sections": [
@@ -1518,9 +1901,12 @@
           "sources": {
             "best": 5,
             "bm25": 5
-          }
+          },
+          "title": "Local and distributed caching: correctness, invalidation and overload boundaries"
         },
         {
+          "excerpt": "| Public source | Narrow support | Does not establish | |---|---|---| | [Caffeine Eviction](https://github.com/ben-manes/caffeine/wiki/Eviction) | Size, weight and expiration choices | Strong coherence across replicas | | [Caffeine Refresh\u2026",
+          "heading": "8. Public source ledger and nonclaims",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/README.md",
           "prior": false,
           "sections": [
@@ -1529,9 +1915,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "V06/C01 \u2014 Local and distributed caching"
         },
         {
+          "excerpt": "Distinguish authoritative state from cached copies and define freshness, eviction and invalidation behavior. A successful cache hit can return an inadmissibly stale value; cache availability is not authoritative correctness. The detailed\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
           "prior": false,
           "sections": [
@@ -1540,9 +1929,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "Local and distributed caching: authority, freshness and placement"
         },
         {
+          "excerpt": "### TTL-Based Expiration TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed merely beca\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "prior": false,
           "sections": [
@@ -1551,9 +1943,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Eviction, refresh and cache-aside races"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/README.md",
           "prior": false,
           "sections": [
@@ -1562,9 +1957,12 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "V06/C02 \u2014 Hot keys, cache stampedes and read amplification"
         },
         {
+          "excerpt": "Bound regeneration, hot-key fan-out and cold-start demand as part of cache recovery. A cache outage or simultaneous expiry can concentrate traffic on the protected origin and amplify the original failure. The detailed pages separate the\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
           "prior": false,
           "sections": [
@@ -1573,9 +1971,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "Cache invalidation, stampedes and hot-key failure modes"
         },
         {
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Stale-While-Revalidat\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
           "prior": true,
           "sections": [
@@ -1584,9 +1985,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Stale fills and regeneration ownership"
         },
         {
+          "excerpt": "### Cache Stampede Protection A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads. The problem is synchronized work amplification, not\u2026",
+          "heading": "Bounded pattern ownership notes",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
           "prior": false,
           "sections": [
@@ -1595,9 +1999,12 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "Stampedes and source protection"
         },
         {
+          "excerpt": "# Cache Invalidation **Identity.** Cache Invalidation; family Caching and retrieval; kind caching-pattern; priority core. **Decision question.** Should cached entries be removed or refreshed when the authoritative value changes? **Good-f\u2026",
+          "heading": "Cache Invalidation",
           "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
           "prior": false,
           "sections": [
@@ -1606,9 +2013,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Cache Invalidation"
         },
         {
+          "excerpt": "# TTL-Based Expiration **Identity.** TTL-Based Expiration; family Caching and retrieval; kind caching-pattern; priority core. **Decision question.** Should entries expire after a bounded time even without an explicit invalidation? **Good\u2026",
+          "heading": "TTL-Based Expiration",
           "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md",
           "prior": false,
           "sections": [
@@ -1617,7 +2027,8 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "TTL-Based Expiration"
         }
       ],
       "id": "Q076",
@@ -1630,6 +2041,8 @@
     {
       "candidates": [
         {
+          "excerpt": "# Discord \u2014 search cells: splitting Elasticsearch clusters and changing shard keys **Case ID:** `case.discord.search-index-cells` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer. **Public primary:\u2026",
+          "heading": "Discord \u2014 search cells: splitting Elasticsearch clusters and changing shard keys",
           "path": "book/cases/discord-search-index-cells.md",
           "prior": false,
           "sections": [
@@ -1638,9 +2051,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Discord \u2014 search cells: splitting Elasticsearch clusters and changing shard keys"
         },
         {
+          "excerpt": "# Search and retrieval architecture > Bounded public-source technical coverage for [Issue #85](https://github.com/rouslanbaranov/tycho/issues/85). These pages explain system-design methods; no production search cluster, vector index, agen\u2026",
+          "heading": "Search and retrieval architecture",
           "path": "book/search/README.md",
           "prior": false,
           "sections": [
@@ -1649,9 +2065,12 @@
           "sources": {
             "best": 5,
             "bm25": 5
-          }
+          },
+          "title": "Search and retrieval architecture"
         },
         {
+          "excerpt": "The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and ve\u2026",
+          "heading": "Chapter source ledger",
           "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/README.md",
           "prior": false,
           "sections": [
@@ -1660,9 +2079,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "V03/C04 \u2014 Asynchronous APIs and streaming"
         },
         {
+          "excerpt": "**MongoDB's official data modeling** documentation distinguishes embedding related subdocuments from referencing separate documents. Embedding can make related reads and atomic single-document updates simpler; high-cardinality or independe\u2026",
+          "heading": "4. Document and wide-column data models",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
           "prior": false,
           "sections": [
@@ -1671,9 +2093,12 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "Document, wide-column and analytical access"
         },
         {
+          "excerpt": "| Option | Appropriate when | Counterexample | |---|---|---| | Simple local migration | Small bounded dataset and well-understood downtime | Long unknown consumers or expensive state copy | | Additive schema with backfill | Old/new readers\u2026",
+          "heading": "5. Alternatives and failure conditions",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
           "prior": false,
           "sections": [
@@ -1682,9 +2107,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "Migration stages, retention and no-return points"
         },
         {
+          "excerpt": "A document page may change title, content, source revision, security status or canonical owner. If an index holds old contents after a source edit, an agent can receive **wrong or stale evidence**. The indexing pipeline must explicitly han\u2026",
+          "heading": "4. Incremental indexing and the stale citation problem",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
           "prior": true,
           "sections": [
@@ -1693,9 +2121,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Search clusters, update visibility and stale citations"
         },
         {
+          "excerpt": "An **inverted index** associates each indexed term with the document IDs (and often positions/frequencies) where that term occurs. This reverses a document-to-words list into term-to-doc lookup, avoiding a full scan of all text for many qu\u2026",
+          "heading": "1. Why inverted indexes work",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
           "prior": false,
           "sections": [
@@ -1704,9 +2135,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Inverted indexes and SQL full-text search"
         },
         {
+          "excerpt": "| Route | Destination | |---|---| | Parent and source ledger | [Chapter introduction and exact source rows](README.md#chapter-source-ledger) | | Previous / prerequisite | [Read preceding context](ddl-events.md) | | Next | [Continue the rea\u2026",
+          "heading": "Navigation, prerequisites and source scope",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/no-return-recovery.md",
           "prior": false,
           "sections": [
@@ -1715,9 +2149,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "No-return points and forward repair"
         },
         {
+          "excerpt": "Consider an invented public index of local hiking trails. The authoritative trail repository is correct, but its asynchronous search index stopped consuming updates after a configuration change. Some searches return outdated trail conditio\u2026",
+          "heading": "4. Original fictional incident: search index diverges from stored truth",
           "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
           "prior": false,
           "sections": [
@@ -1726,9 +2163,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Incident chronology and competing explanations"
         },
         {
+          "excerpt": "The following original citation rows, review limits and earlier topical routes are retained once for this chapter. Each question page points here and retains its inline citations. Evidence coverage must be judged at the actual claim and ve\u2026",
+          "heading": "Chapter source ledger",
           "path": "book/volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/README.md",
           "prior": false,
           "sections": [
@@ -1737,7 +2177,8 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "V10/C06 \u2014 Search and question routes for architecture agents"
         }
       ],
       "id": "Q077",
@@ -1750,6 +2191,8 @@
     {
       "candidates": [
         {
+          "excerpt": "Social data objects and associations were served through MySQL plus client-accessed memcache. Application teams faced graph-specific access, hot objects, distributed cache inconsistency and thundering-herd complexity, while general relatio\u2026",
+          "heading": "Pressure, legacy baseline and actual chosen direction",
           "path": "book/cases/meta-tao-social-graph-serving.md",
           "prior": false,
           "sections": [
@@ -1758,9 +2201,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches"
         },
         {
+          "excerpt": "| Hypothesis for a new service | Initial diagnostic | Evidence that would argue against it | |---|---|---| | Application method uses excessive CPU | Sampling profile by Java method and request class | Similar execution profiles across high\u2026",
+          "heading": "Competing diagnoses and falsifiable tests",
           "path": "book/cases/netflix-hotspot-false-true-sharing.md",
           "prior": false,
           "sections": [
@@ -1769,9 +2215,12 @@
           "sources": {
             "best": 5,
             "bm25": 5
-          }
+          },
+          "title": "Netflix \u2014 larger JVM instances exposed false sharing, then true sharing in HotSpot"
         },
         {
+          "excerpt": "| Reader question | Page | Public evidence | |---|---|---| | Which shard key preserves locality, avoids hot partitions and supports a safe re-shard? | [Shard keys, hotspots and resharding](../volumes/v05-data-models-engines-and-lifecycle/c\u2026",
+          "heading": "Canonical researched pages",
           "path": "book/scaling/README.md",
           "prior": false,
           "sections": [
@@ -1780,9 +2229,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Scaling: sharding, connection pools and caches"
         },
         {
+          "excerpt": "Use a fictional workshop application: - **Registration confirmation and remaining seat allocation** are integrity-critical authority in a database transaction. Cached counts cannot directly authorize additional allocations. - **Workshop t\u2026",
+          "heading": "1. First name the authoritative value",
           "path": "book/scaling/local-distributed-caching-and-invalidation.md",
           "prior": false,
           "sections": [
@@ -1791,9 +2243,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Local and distributed caching: correctness, invalidation and overload boundaries"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/README.md",
           "prior": false,
           "sections": [
@@ -1802,9 +2257,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "V06/C01 \u2014 Local and distributed caching"
         },
         {
+          "excerpt": "| Placement | Can help | Costs and correctness gap | |---|---|---| | No cache | Simplest authority/read path when origin is fast and affordable | Every query reaches origin, possibly expensive | | Per-process local cache | Very low read ov\u2026",
+          "heading": "2. Three basic placements",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
           "prior": false,
           "sections": [
@@ -1813,9 +2271,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "Authority, freshness and cache placement"
         },
         {
+          "excerpt": "**Original synthetic topology:** API replicas A and B cache the same inventory availability record, authoritative database revision v17. A writes v18 and invalidates *its own* local cache. B continues serving v17 until TTL expiry. A succes\u2026",
+          "heading": "Engineering walkthrough \u2014 Local cache update versus cross-instance freshness",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
           "prior": true,
           "sections": [
@@ -1824,9 +2285,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Local and distributed caching: authority, freshness and placement"
         },
         {
+          "excerpt": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes; stampede hazards follow from that sequence. ```mermaid flowchart TD Q[\"Scoped read request\"] --> L{\"Local\u2026",
+          "heading": "4. Cache-aside is a sequence, not a consistency theorem",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "prior": false,
           "sections": [
@@ -1835,9 +2299,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Eviction, refresh and cache-aside races"
         },
         {
+          "excerpt": "A cache may perform well under ordinary traffic and become a **load amplifier** precisely during a key expiration, a write burst or an outage. Expiring an entry and asking all waiting clients to refetch it can overload a healthy authoritat\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
           "prior": false,
           "sections": [
@@ -1846,9 +2313,12 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "Cache invalidation, stampedes and hot-key failure modes"
         },
         {
+          "excerpt": "# Cache Invalidation **Identity.** Cache Invalidation; family Caching and retrieval; kind caching-pattern; priority core. **Decision question.** Should cached entries be removed or refreshed when the authoritative value changes? **Good-f\u2026",
+          "heading": "Cache Invalidation",
           "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
           "prior": false,
           "sections": [
@@ -1857,7 +2327,8 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "Cache Invalidation"
         }
       ],
       "id": "Q078",
@@ -1870,6 +2341,8 @@
     {
       "candidates": [
         {
+          "excerpt": "| Question | Technical page | Evidence | |---|---|---| | How do inverted indexes, BM25, PostgreSQL FTS and Lucene differ? | [Lexical indexing, ranking and SQL FTS](../volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexin\u2026",
+          "heading": "Canonical research pages",
           "path": "book/search/README.md",
           "prior": false,
           "sections": [
@@ -1877,9 +2350,12 @@
           ],
           "sources": {
             "best": 10
-          }
+          },
+          "title": "Search and retrieval architecture"
         },
         {
+          "excerpt": "A bounded experiment should compare: 1. fixed logical workload, key skew and user-success denominator; 2. baseline versus candidate while including equivalent operating resource budgets; 3. old/new client and schema versions under staggere\u2026",
+          "heading": "7. Test a distributed boundary before deciding",
           "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-contracts.md",
           "prior": false,
           "sections": [
@@ -1887,9 +2363,12 @@
           ],
           "sources": {
             "bm25": 7
-          }
+          },
+          "title": "Service contracts and failure evaluation"
         },
         {
+          "excerpt": "- **pgvector:** extension co-locates vector data with PostgreSQL tables/transactions. Attractive when source records and metadata already live in SQL and a single DB's resources suffice. Adds ANN index build/update pressure to that DB. - *\u2026",
+          "heading": "5. pgvector versus Faiss versus a vector database",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-architecture.md",
           "prior": false,
           "sections": [
@@ -1898,9 +2377,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Vector engine selection and failure evaluation"
         },
         {
+          "excerpt": "Suppose an exact hypothetical ranking is A, B, C, D, E. The caller may read only D and E. A candidate stage that retrieves three items and then removes unauthorized results returns nothing. A search over the authorized population can retur\u2026",
+          "heading": "Original ranked-set counterexample \u2014 authorization is not optional relevance",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-filters.md",
           "prior": false,
           "sections": [
@@ -1909,9 +2391,12 @@
           "sources": {
             "best": 5,
             "bm25": 6
-          }
+          },
+          "title": "Filtering, authorization and recall"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/README.md",
           "prior": false,
           "sections": [
@@ -1920,9 +2405,12 @@
           "sources": {
             "best": 3,
             "bm25": 4
-          }
+          },
+          "title": "V06/C05 \u2014 Hybrid retrieval and reranking"
         },
         {
+          "excerpt": "| Dimension | Meaning and measurement | Error if omitted | |---|---|---| | **Recall@k** | Fraction of independently judged relevant items found among top k | Miss key dependency while top result looks similar | | **Precision@k** | Fraction\u2026",
+          "heading": "5. Quality metrics: retrieval is not answer quality",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-evaluation.md",
           "prior": false,
           "sections": [
@@ -1931,9 +2419,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Hybrid evaluation and snapshot consistency"
         },
         {
+          "excerpt": "A good knowledge-search system answers *why*, *under which constraints* and *according to which source*\u2014not merely \"what documents have similar words\". AI agents also have a token budget: returning 30 whole chapters can be less useful than\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-ranking-graph-and-evaluation.md",
           "prior": true,
           "sections": [
@@ -1942,9 +2433,12 @@
           "sources": {
             "best": 2,
             "bm25": 3
-          }
+          },
+          "title": "Hybrid retrieval, graph expansion, reranking and evidence-quality evaluation"
         },
         {
+          "excerpt": "| Public source inspected | Narrow claim supported | Unproven | |---|---|---| | [NIST TREC relevance judgments](https://trec.nist.gov/data/reljudge_eng.html) | qrels, test collections and judged relevance limitations | Complete truth set f\u2026",
+          "heading": "8. Source ledger and explicit Tycho scope",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/README.md",
           "prior": false,
           "sections": [
@@ -1953,9 +2447,12 @@
           "sources": {
             "best": 9,
             "bm25": 10
-          }
+          },
+          "title": "V06/C07 \u2014 Retrieval evaluation and index lifecycle"
         },
         {
+          "excerpt": "A defensible comparison uses the **same source snapshot, chunk/section boundaries, qrels, permission filters and evaluation queries** where possible. Normalize only what the task requires. For each candidate report: - index build/update ti\u2026",
+          "heading": "3. Lexical, vector and hybrid need matched comparisons",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-judgments.md",
           "prior": false,
           "sections": [
@@ -1964,9 +2461,12 @@
           "sources": {
             "best": 4,
             "bm25": 5
-          }
+          },
+          "title": "Judgments, metrics and matched retrieval baselines"
         },
         {
+          "excerpt": "An agent may retrieve one compact entry card and then fetch targeted source spans instead of loading 100 documents. This can reduce cost while preserving quality *if* the end answer is correct and has sufficient cited evidence. A proposed\u2026",
+          "heading": "6. Evaluate the end-to-end information task",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/task-recovery.md",
           "prior": false,
           "sections": [
@@ -1975,9 +2475,12 @@
           "sources": {
             "best": 7,
             "bm25": 9
-          }
+          },
+          "title": "End-to-end evaluation and index recovery"
         },
         {
+          "excerpt": "Modernization starts with a contradiction: engineers need to replace or improve something, but parts of its behavior may be undocumented and still essential to users. An attractive target diagram can therefore be less informative than a ma\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md",
           "prior": false,
           "sections": [
@@ -1986,7 +2489,8 @@
           "sources": {
             "best": 6,
             "bm25": 2
-          }
+          },
+          "title": "Legacy system baseline and modernization evidence: deciding what to keep"
         }
       ],
       "id": "Q079",
@@ -1999,6 +2503,8 @@
     {
       "candidates": [
         {
+          "excerpt": "\u2026ain source message store as source-of-truth, compare search-result completeness and freshness, test rolling-restarter behavior and node outage fan-out, and gate shard routing. These are Tycho's suggested tests. The source documents cell arc\u2026",
+          "heading": "Execution stages, validation and reversibility",
           "path": "book/cases/discord-search-index-cells.md",
           "prior": false,
           "sections": [
@@ -2007,9 +2513,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "Discord \u2014 search cells: splitting Elasticsearch clusters and changing shard keys"
         },
         {
+          "excerpt": "A storage engine choice must preserve **business invariants under concurrent transactions** and meet workload objectives without misinterpreting indexes or optimizer estimates. PostgreSQL's multiversion concurrency control (MVCC), isolatio\u2026",
+          "heading": "Purpose and mission",
           "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
           "prior": false,
           "sections": [
@@ -2018,9 +2527,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "PostgreSQL 17: MVCC, indexing, query plans and relational invariants"
         },
         {
+          "excerpt": "RFC 9700 (BCP 240, January 2025) strengthens OAuth 2.0 security guidance. It requires or recommends protections such as exact redirect URI matching, PKCE for public clients, audience-restricted access tokens, sender-constraining where appr\u2026",
+          "heading": "4. OAuth2, token scope, proof and replay",
           "path": "book/security/identity-authorization-threat-models-and-isolation.md",
           "prior": false,
           "sections": [
@@ -2029,9 +2541,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Security architecture: identity, authorization, trust boundaries and isolation"
         },
         {
+          "excerpt": "Potential reasons to keep a module internal: - transactionally coupled invariants with one consistent authoritative state owner; - insufficient independent team/deployment needs; - operational limits on additional endpoints, service identi\u2026",
+          "heading": "6. When not to split the module into a separate service",
           "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/module-enforcement.md",
           "prior": false,
           "sections": [
@@ -2040,9 +2555,12 @@
           "sources": {
             "best": 4,
             "bm25": 5
-          }
+          },
+          "title": "Module boundaries and deployment choice"
         },
         {
+          "excerpt": "In a fictional tool catalogue the original field asset_code conflates a public model description and a unique physical unit. A new model separates model_id (shared by identical units) and unit_id (physical item). Simply copying asset_code\u2026",
+          "heading": "2. Original synthetic scenario: two equipment identities",
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
           "prior": false,
           "sections": [
@@ -2051,9 +2569,12 @@
           "sources": {
             "best": 5,
             "bm25": 4
-          }
+          },
+          "title": "Schema shape and preserved meaning"
         },
         {
+          "excerpt": "Which queries need tokenization, inverted indexes, BM25 or filtering? This chapter owns that question within caching, indexing and information retrieval. Read the mechanism together with its stated invariant, failure assumptions and eviden\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/README.md",
           "prior": false,
           "sections": [
@@ -2062,9 +2583,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "V06/C03 \u2014 Lexical full-text indexing and ranking"
         },
         {
+          "excerpt": "Technical documents contain precise symbols: class names, APIs, issue IDs, error codes, configuration keys and product versions. A lexical index preserves this exact-token evidence and can answer questions poorly served by paraphrase-only\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-indexing-bm25-and-sql-fts.md",
           "prior": true,
           "sections": [
@@ -2073,9 +2597,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Lexical retrieval: inverted indexes, BM25, PostgreSQL FTS and Lucene"
         },
         {
+          "excerpt": "An **inverted index** associates each indexed term with the document IDs (and often positions/frequencies) where that term occurs. This reverses a document-to-words list into term-to-doc lookup, avoiding a full scan of all text for many qu\u2026",
+          "heading": "1. Why inverted indexes work",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
           "prior": false,
           "sections": [
@@ -2084,9 +2611,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Inverted indexes and SQL full-text search"
         },
         {
+          "excerpt": "A semantic embedding maps text, code or another input to a numerical vector. A distance operation can identify **nearby representations** but says nothing by itself about technical truth, source freshness, ACLs or correctness of a proposed\u2026",
+          "heading": "Purpose and mission",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md",
           "prior": false,
           "sections": [
@@ -2095,9 +2625,12 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "Vector retrieval: exact distance, HNSW, IVF, filtering and pgvector/Faiss"
         },
         {
+          "excerpt": "A search index must be regenerable from the canonical corpus and its versioned source anchors. If the vector index lags after a documentation deletion, the system must not show stale private or withdrawn material. If one lexical shard fail\u2026",
+          "heading": "7. Failure/recovery and indexing consistency",
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-evaluation.md",
           "prior": false,
           "sections": [
@@ -2106,7 +2639,8 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Hybrid evaluation and snapshot consistency"
         }
       ],
       "id": "Q080",
@@ -2119,6 +2653,8 @@
     {
       "candidates": [
         {
+          "excerpt": "1. Preserve one pinned application revision, **JDK patch version**, runtime image, request/record mix and observability contract. Do not simultaneously move to Java 21, switch collector, change compression and tune data access or it become\u2026",
+          "heading": "A reproducible, confounder-resistant decision experiment",
           "path": "book/cases/decisions/gc-and-tail-latency.md",
           "prior": false,
           "sections": [
@@ -2127,9 +2663,12 @@
           "sources": {
             "best": 10,
             "bm25": 9
-          }
+          },
+          "title": "Decision Playbook \u2014 JVM GC choice: pause-sensitive online services vs high-throughput batch"
         },
         {
+          "excerpt": "The official [December 17, 2024 release notice](https://netflix.github.io/dgs/announcements/) (src.m9-n10, **DGS Framework 10.0.0 released!**, **Detailed list of changes**) is stronger evidence than the April schedule because it names remo\u2026",
+          "heading": "Specific module and protocol consequences after the 10.0 release",
           "path": "book/cases/netflix-dgs-spring-graphql-convergence.md",
           "prior": false,
           "sections": [
@@ -2137,9 +2676,12 @@
           ],
           "sources": {
             "best": 9
-          }
+          },
+          "title": "Netflix \u2014 DGS and Spring GraphQL: compatibility before duplicated-framework removal"
         },
         {
+          "excerpt": "```mermaid flowchart LR A[Outgoing gRPC client tasks] --> B[CPU-heavy worker pool] B --> C[Bounded platform-thread executor] C --> D[Useful CPU processing] B --> E[Virtual-thread per-task experiment] E --> F[CPU work still needs\u2026",
+          "heading": "Before/after and source-supported outcome",
           "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
           "prior": false,
           "sections": [
@@ -2148,9 +2690,12 @@
           "sources": {
             "best": 7,
             "bm25": 6
-          }
+          },
+          "title": "Netflix \u2014 CPU-intensive gRPC worker pools: virtual threads were slower"
         },
         {
+          "excerpt": "The authors insist that migration ownership should cover the remaining non-upgraded consumers, rather than celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden. The source discusses track\u2026",
+          "heading": "The explicit incompleteness trap: the last few percent",
           "path": "book/cases/spotify-tech-migration-long-tail.md",
           "prior": false,
           "sections": [
@@ -2159,9 +2704,12 @@
           "sources": {
             "best": 5,
             "bm25": 4
-          }
+          },
+          "title": "Spotify \u2014 removing long-tail platform migrations through ownership and Backstage"
         },
         {
+          "excerpt": "| Source-described version | Admission/queue design | Observed failure that motivated the next stage | |---|---|---| | Query-layer fixed quotas | Redis-backed per-user accounting, request cost from returned bytes | Expensive scans underpri\u2026",
+          "heading": "The load-manager iterations and actual negative outcomes",
           "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
           "prior": false,
           "sections": [
@@ -2170,9 +2718,12 @@
           "sources": {
             "best": 3,
             "bm25": 8
-          }
+          },
+          "title": "Uber \u2014 Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness"
         },
         {
+          "excerpt": "| Constraint type | What a design must make explicit | What unknown blocks | |---|---|---| | Runtime/lifecycle | Supported language, framework, operating system and dependency versions | Unsafe unmaintained component or untested runtime up\u2026",
+          "heading": "1. Constraints must be typed and owned",
           "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/feasibility-gates.md",
           "prior": false,
           "sections": [
@@ -2180,9 +2731,12 @@
           ],
           "sources": {
             "bm25": 10
-          }
+          },
+          "title": "Feasibility before preference scoring"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/README.md",
           "prior": false,
           "sections": [
@@ -2191,9 +2745,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "V07/C03 \u2014 Load-test methods and benchmark validity"
         },
         {
+          "excerpt": "Different failure classes require distinct tests: | Fault | What to observe | What a passing run cannot establish | |---|---|---| | One slow downstream response | Parent deadlines, per-hop waits, cancellation and retry amplification | All\u2026",
+          "heading": "5. Fault injection must preserve the claim being tested",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/benchmark-controls.md",
           "prior": true,
           "sections": [
@@ -2202,9 +2759,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Confounders, fault injection and acceptance"
         },
         {
+          "excerpt": "Choose an arrival model, warm-up policy and outcome accounting that preserve the workload being tested. A closed-loop generator can reduce offered demand when the system slows, masking the backlog an external arrival stream would create.\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
           "prior": false,
           "sections": [
@@ -2213,9 +2773,12 @@
           "sources": {
             "best": 4,
             "bm25": 3
-          }
+          },
+          "title": "Load-test methodology, generator validity and defensible benchmark evidence"
         },
         {
+          "excerpt": "A control plane schedules or configures resources; a data plane carries user operations. Some existing pods may continue handling work when the control plane is unavailable, but new deployments, scaling, secret updates, node repair or repl\u2026",
+          "heading": "4. Data authority and control-plane loss change availability claims",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/authority-availability.md",
           "prior": false,
           "sections": [
@@ -2224,9 +2787,12 @@
           "sources": {
             "best": 6,
             "bm25": 5
-          }
+          },
+          "title": "Authority, control loss and availability tests"
         },
         {
+          "excerpt": "In a typical DNS path, a recursive resolver may answer from a cached record or consult the authoritative naming hierarchy. The application/runtime can also retain resolved addresses or established connections. A DNS TTL governs a DNS recor\u2026",
+          "heading": "DNS and discovery have different update boundaries",
           "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
           "prior": false,
           "sections": [
@@ -2235,7 +2801,8 @@
           "sources": {
             "best": 8,
             "bm25": 7
-          }
+          },
+          "title": "Discovery, load balancing and backend selection"
         }
       ],
       "id": "Q081",
@@ -2248,6 +2815,8 @@
     {
       "candidates": [
         {
+          "excerpt": "1. **Classify execution:** profile runnable CPU, blocking calls, network waits, timed-out downstreams, event-loop tasks, queue ages and hidden monitor wait for one representative workload window. 2. **Keep workload lanes separate:** route\u2026",
+          "heading": "Synthetic migration sequence and fault-injection oracles",
           "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
           "prior": false,
           "sections": [
@@ -2256,9 +2825,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Decision Playbook \u2014 Reactive event loops, virtual threads and queued I/O"
         },
         {
+          "excerpt": "An **open** generator schedules arrivals independently of previous responses. A **closed** generator maintains a fixed number of users that wait for a response and optional think time before submitting more work. Closed models can reduce o\u2026",
+          "heading": "Open versus closed load",
           "path": "book/performance/workload-profiles-and-capacity-experiments.md",
           "prior": false,
           "sections": [
@@ -2267,9 +2839,12 @@
           "sources": {
             "best": 3,
             "bm25": 3
-          }
+          },
+          "title": "Workload profiles and falsifiable capacity experiments"
         },
         {
+          "excerpt": "| Source consulted | Scope | Limitation | |---|---|---| | [Grafana k6 Open and Closed Models](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) | Arrival coupling and generator model semantics | Not a survey o\u2026",
+          "heading": "8. Public evidence and unverified claims",
           "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/README.md",
           "prior": false,
           "sections": [
@@ -2278,9 +2853,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "V01/C02 \u2014 Workload and demand models"
         },
         {
+          "excerpt": "Averages conceal peaks, clustering and correlations. A design must distinguish: - baseline arrivals from short bursts and periodic batch imports; - independent external arrivals from clients waiting for previous responses; - retries after\u2026",
+          "heading": "2. Arrival shape is part of the architecture requirement",
           "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/arrivals-population.md",
           "prior": false,
           "sections": [
@@ -2289,9 +2867,12 @@
           "sources": {
             "best": 4,
             "bm25": 4
-          }
+          },
+          "title": "Population, arrival and admission models"
         },
         {
+          "excerpt": "| Evidence | Candidate action | Why a premature action may be wrong | |---|---|---| | CPU hot path dominates under valid representative load | Reduce CPU cost or increase CPU capacity | Pool/thread changes may only worsen contention | | Da\u2026",
+          "heading": "7. Architecture implications are conditional",
           "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-contract.md",
           "prior": false,
           "sections": [
@@ -2300,9 +2881,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "Workload contracts for architecture choices"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/README.md",
           "prior": false,
           "sections": [
@@ -2311,9 +2895,12 @@
           "sources": {
             "best": 6,
             "bm25": 6
-          }
+          },
+          "title": "V07/C01 \u2014 Queueing, Little's Law and measurement boundaries"
         },
         {
+          "excerpt": "An apparently successful load test may be invalid for its stated demand assumption. The official **Grafana k6 Open and closed models** documentation, viewed in the *v2.2.x* documentation family on 2026-10-18, distinguishes two executor se\u2026",
+          "heading": "Workload generators: closed feedback versus independent arrivals",
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/finite-window.md",
           "prior": false,
           "sections": [
@@ -2322,9 +2909,12 @@
           "sources": {
             "best": 2,
             "bm25": 2
-          }
+          },
+          "title": "Finite windows and load-generator feedback"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/README.md",
           "prior": false,
           "sections": [
@@ -2333,9 +2923,12 @@
           "sources": {
             "best": 7,
             "bm25": 7
-          }
+          },
+          "title": "V07/C03 \u2014 Load-test methods and benchmark validity"
         },
         {
+          "excerpt": "The [Grafana k6 open/closed model documentation](https://grafana.com/docs/k6/latest/using-k6/scenarios/concepts/open-vs-closed/) distinguishes arrivals independent of iteration completion from a fixed-VU loop whose next iteration starts af\u2026",
+          "heading": "2. Open versus closed arrivals: the generator can hide degradation",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/arrival-design.md",
           "prior": false,
           "sections": [
@@ -2344,9 +2937,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Experiment claims, arrival models and denominators"
         },
         {
+          "excerpt": "Choose an arrival model, warm-up policy and outcome accounting that preserve the workload being tested. A closed-loop generator can reduce offered demand when the system slows, masking the backlog an external arrival stream would create.\u2026",
+          "heading": "Integrated decision and reading route",
           "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/load-testing-and-benchmark-validity.md",
           "prior": true,
           "sections": [
@@ -2355,7 +2951,8 @@
           "sources": {
             "best": 5,
             "bm25": 5
-          }
+          },
+          "title": "Load-test methodology, generator validity and defensible benchmark evidence"
         }
       ],
       "id": "Q082",
@@ -2368,6 +2965,8 @@
     {
       "candidates": [
         {
+          "excerpt": "- **\"Virtual threads are nonblocking.\"** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU. - **\"Reactive always wins CPU.\"** Zuul's lo\u2026",
+          "heading": "Contradictions, stop conditions and what to refuse",
           "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
           "prior": false,
           "sections": [
@@ -2376,9 +2975,12 @@
           "sources": {
             "best": 6,
             "bm25": 2
-          }
+          },
+          "title": "Decision Playbook \u2014 Reactive event loops, virtual threads and queued I/O"
         },
         {
+          "excerpt": "A secondary region can serve read-only degraded traffic before it can safely become a writer. Promoting writers requires a policy for **in-flight acknowledgments**, replica lag, ordering, globally unique identifiers, replay idempotency and\u2026",
+          "heading": "Write authority and the recovery contradiction",
           "path": "book/cases/netflix-chaos-kong-regional-failover.md",
           "prior": false,
           "sections": [
@@ -2387,9 +2989,12 @@
           "sources": {
             "best": 7,
             "bm25": 5
-          }
+          },
+          "title": "Netflix \u2014 Chaos Kong: testing application-level regional failure, not shutting down AWS"
         },
         {
+          "excerpt": "For a stable boundary, Little's Law relates mean in-flight work L, admitted throughput \u03bb and mean residence time W: **L = \u03bbW**. This is an accounting relationship under its assumptions, not a saturation prediction. See [the canonical mecha\u2026",
+          "heading": "Measurement model",
           "path": "book/performance/workload-profiles-and-capacity-experiments.md",
           "prior": false,
           "sections": [
@@ -2398,9 +3003,12 @@
           "sources": {
             "best": 4,
             "bm25": 7
-          }
+          },
+          "title": "Workload profiles and falsifiable capacity experiments"
         },
         {
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026",
+          "heading": "Pages and reasoning route",
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/README.md",
           "prior": false,
           "sections": [
@@ -2409,9 +3017,12 @@
           "sources": {
             "best": 2,
             "bm25": 3
-          }
+          },
+          "title": "V07/C01 \u2014 Queueing, Little's Law and measurement boundaries"
         },
         {
+          "excerpt": "In the following fully original toy timeline, **one** request arrives at time `t=0`, remains inside the boundary for **10 seconds**, then exits at `t=10`. Observe only the interval `[0,5)`. | Finite-window observation | Value | |---|---:|\u2026",
+          "heading": "Evidence-based counterexample: a short finite window",
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/finite-window.md",
           "prior": true,
           "sections": [
@@ -2420,9 +3031,12 @@
           "sources": {
             "best": 3,
             "bm25": 4
-          }
+          },
+          "title": "Finite windows and load-generator feedback"
         },
         {
+          "excerpt": "Assume a synthetic 30-second interval: - Clients **offer 200 operations/s**. - Workers **complete 150 operations/s**, and initial in-flight backlog is zero. - No requests are abandoned, shed or retried inside this boundary. Admitted and\u2026",
+          "heading": "Partial failure, saturation and recovery",
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
           "prior": false,
           "sections": [
@@ -2431,9 +3045,12 @@
           "sources": {
             "best": 10,
             "bm25": 10
-          }
+          },
+          "title": "Overload, recovery and alternative measurements"
         },
         {
+          "excerpt": "**Original synthetic arrival trace:** for 20 seconds, 120 new requests per second reach a bounded service capable of 80 correct completions per second. Suppose it rejects none during the first 20 seconds. With no initial backlog, the queue\u2026",
+          "heading": "Engineering walkthrough \u2014 Short-window queue growth is not steady-state Little's Law",
           "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
           "prior": false,
           "sections": [
@@ -2442,9 +3059,12 @@
           "sources": {
             "best": 1,
             "bm25": 1
-          }
+          },
+          "title": "Queueing, Little's Law and workload measurement boundaries"
         },
         {
+          "excerpt": "When sources disagree, preserve the disagreement: - An older protocol guide may apply to a supported old release but not a current one. - Vendor documentation may state a guarantee under settings that are disabled in a particular deployme\u2026",
+          "heading": "6. Contradictions, temporal scope and citation version",
           "path": "book/volumes/v10-decision-support-and-modernization/c06-search-and-question-routes-for-architecture-agents/evidence-safety.md",
           "prior": false,
           "sections": [
@@ -2453,9 +3073,12 @@
           "sources": {
             "best": 9,
             "bm25": 9
-          }
+          },
+          "title": "Attributable synthesis and safe refusal"
         },
         {
+          "excerpt": "| Layer | Question | Owner | |---|---|---| | Source and claim | Does a source support the method? | Ledger and page citations | | Verification | Is the model implemented as specified? | Model spec and tests | | Calibration | Do parameters\u2026",
+          "heading": "Five evidence layers",
           "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
           "prior": false,
           "sections": [
@@ -2464,9 +3087,12 @@
           "sources": {
             "best": 8,
             "bm25": 8
-          }
+          },
+          "title": "V12 - Architecture modeling, simulation and decision validation"
         },
         {
+          "excerpt": "Little's law states that, under its conditions, the long-run average number in system equals the arrival rate times the average time in system: L = lambda * W. It is a relation among averages, not a per-request identity and not a guarantee\u2026",
+          "heading": "Little's law and its finite-window caveat",
           "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
           "prior": false,
           "sections": [
@@ -2475,7 +3101,8 @@
           "sources": {
             "best": 5,
             "bm25": 6
-          }
+          },
+          "title": "Queue and resource models"
         }
       ],
       "id": "Q083",
