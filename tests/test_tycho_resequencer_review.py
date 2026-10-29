@@ -87,13 +87,12 @@ class ResequencerReviewGuardTests(unittest.TestCase):
             self.assertIn(record_id, self.card)
             self.assertIn(record["source_id"], self.card)
 
-    def test_partial_bounded_and_not_promoted(self):
+    def test_sufficient_and_promoted_after_review(self):
         promotions = {item["pattern_id"] for item in json.loads(
             PROMOTIONS.read_text(encoding="utf-8"))["promotions"]}
-        self.assertNotIn("tycho.pattern.resequencer", promotions)
-        self.assertEqual(self.unit["technical_coverage"], "partial-bounded")
-        self.assertEqual(self.unit["decision_coverage"], "partial-bounded")
-        self.assertEqual(self.unit["review_state"], "self-checked")
+        self.assertIn("tycho.pattern.resequencer", promotions)
+        self.assertEqual(self.unit["technical_coverage"], "sufficient")
+        self.assertEqual(self.unit["decision_coverage"], "sufficient")
 
 
 if __name__ == "__main__":
