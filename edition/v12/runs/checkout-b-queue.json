@@ -1,0 +1,140 @@
+{
+  "convergence": {
+    "metric": "success_rate",
+    "relative_error": 3.7409865806012544e-05,
+    "replications": 30,
+    "status": "converged",
+    "threshold": 0.02
+  },
+  "engine": {
+    "deterministic": true,
+    "name": "tycho-v12-reference-engine",
+    "version": "1.0.0"
+  },
+  "id": "tycho.run.checkout-b",
+  "limitations": [
+    "Synthetic workload; no production measurement is claimed.",
+    "Metrics are conditional on the declared model and scenario assumptions.",
+    "Confidence intervals use a normal approximation across replications."
+  ],
+  "metrics": {
+    "cost_per_1k_success": {
+      "ci_high": 1.605787477163575,
+      "ci_low": 1.5988233883144891,
+      "replications": 30,
+      "standard_error": 0.001776585923011309,
+      "unit": "cost-unit/1000 successes",
+      "value": 1.602305432739032
+    },
+    "latency_mean": {
+      "ci_high": 0.5828945412092423,
+      "ci_low": 0.5747925546083388,
+      "replications": 30,
+      "standard_error": 0.0020668712958020912,
+      "unit": "second",
+      "value": 0.5788435479087906
+    },
+    "latency_p95": {
+      "ci_high": 1.2202675437195636,
+      "ci_low": 1.1922045108255006,
+      "replications": 30,
+      "standard_error": 0.007159068512335125,
+      "unit": "second",
+      "value": 1.206236027272532
+    },
+    "latency_p99": {
+      "ci_high": 1.717044328385796,
+      "ci_low": 1.676641429967622,
+      "replications": 30,
+      "standard_error": 0.010307051235856079,
+      "unit": "second",
+      "value": 1.696842879176709
+    },
+    "max_queue_length": {
+      "ci_high": 30.62492275541841,
+      "ci_low": 26.108410577914924,
+      "replications": 30,
+      "standard_error": 1.1521926456631748,
+      "unit": "request",
+      "value": 28.366666666666667
+    },
+    "mean_queue_length": {
+      "ci_high": 1.6411614344890992,
+      "ci_low": 1.4876315571669485,
+      "replications": 30,
+      "standard_error": 0.039166504724876275,
+      "unit": "request",
+      "value": 1.5643964958280239
+    },
+    "rejection_rate": {
+      "ci_high": 0.0,
+      "ci_low": 0.0,
+      "replications": 30,
+      "standard_error": 0.0,
+      "unit": "ratio",
+      "value": 0.0
+    },
+    "retry_amplification": {
+      "ci_high": 1.004276039321762,
+      "ci_low": 1.0036618160284647,
+      "replications": 30,
+      "standard_error": 0.0001566924948983759,
+      "unit": "ratio",
+      "value": 1.0039689276751134
+    },
+    "server_utilization": {
+      "ci_high": 0.8351517192264919,
+      "ci_low": 0.8308783631970258,
+      "replications": 30,
+      "standard_error": 0.0010901618762318487,
+      "unit": "ratio",
+      "value": 0.8330150412117588
+    },
+    "success_rate": {
+      "ci_high": 0.9996406381180065,
+      "ci_low": 0.9994940575845468,
+      "replications": 30,
+      "standard_error": 3.739368034718812e-05,
+      "unit": "ratio",
+      "value": 0.9995673478512767
+    },
+    "throughput": {
+      "ci_high": 20.01519912869393,
+      "ci_low": 19.928667537972736,
+      "replications": 30,
+      "standard_error": 0.022074791017525647,
+      "unit": "request/second",
+      "value": 19.971933333333332
+    },
+    "timeout_rate": {
+      "ci_high": 0.004394189111752616,
+      "ci_low": 0.0037439761514932207,
+      "replications": 30,
+      "standard_error": 0.00016587370109557922,
+      "unit": "ratio",
+      "value": 0.004069082631622918
+    }
+  },
+  "model_id": "tycho.model.checkout-des",
+  "provenance": {
+    "input_sha256": "606888b3de36071a63d5da4588619017a3e5ed0f942a6b6297c937dfcc04a51e",
+    "invocation": "python3 scripts/v12_engine.py run --model edition/v12/models/checkout-des.json --scenario edition/v12/scenarios/checkout-b-queue.json",
+    "model_sha256": "6f3e4bece8f83c04ab49412dd4e3bbdeec6098e7e8be8ecaf5a9807b51eada5b",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "python": "3.15.0",
+    "replications": 30,
+    "scenario_sha256": "9e75592a6c6db7af971ccb96bf312d2f7d741a94ba1668701f23fbe0563df2c5",
+    "seed_base": 20261029
+  },
+  "result_sha256": "0c1fd41e9aa19084905d7584c92eefd01ff52e45c82cd9f050bc4c9d631d6d50",
+  "scenario_id": "tycho.scenario.checkout-b-queue",
+  "schema_version": 1,
+  "sensitivity": [],
+  "uncertainty": {
+    "correlated_inputs": false,
+    "draws": 30,
+    "method": "replication",
+    "notes": "Independent replications with seeded parameter draws. Correlations are declared in the scenario and are not inferred from data."
+  },
+  "version": "1.0.0"
+}

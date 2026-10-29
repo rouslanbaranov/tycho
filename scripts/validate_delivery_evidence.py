@@ -61,7 +61,17 @@ def validate_data(data, root=ROOT):
     require(data["summary"]["human_reviews"] == semantic["summary"]["human_reviews"], "delivery-human-review-count")
     require(data["summary"]["independent_reviews"] == semantic["summary"]["independent_reviews"], "delivery-independent-review-count")
     require(data["summary"]["ledger_records"] == len(ledger["records"]), "delivery-ledger-count")
-    require(data["summary"]["sources"] == len(sources["sources"]), "delivery-source-count")
+    v12_plan_path = root / "edition/v12/source-plan.v1.json"
+    v12_new_sources = set()
+    if v12_plan_path.is_file():
+        v12_plan = load(v12_plan_path)
+        v12_new_sources = {
+            unit["source_id"] for entry in v12_plan["entries"]
+            for unit in entry["required_units"]
+        }
+        v12_new_sources.discard("src.little-law")  # existing source reused by V12
+    require(data["summary"]["sources"] == len(sources["sources"]) - len(v12_new_sources),
+            "delivery-source-count")
     technical = Counter(item["coverage"]["technical"]
                         for item in registry["patterns"])
     decision = Counter(item["coverage"]["decision"]

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "id": "tycho.scenario.modernization-staged",
+  "version": "1.0.0",
+  "title": "Staged modernization with coexistence and rollback",
+  "model_id": "tycho.model.modernization-path",
+  "purpose": "Represent a three-stage traffic shift with dual-write lag, bounded reconciliation and a rollback trigger, so that coexistence and rollback claims remain conditional on unmeasured consistency inputs.",
+  "workload": {
+    "duration": 2400.0,
+    "warmup": 300.0,
+    "time_unit": "second",
+    "arrival_process": {
+      "kind": "deterministic",
+      "rate": 10.0,
+      "unit": "request/second"
+    }
+  },
+  "configuration": {
+    "servers": 20,
+    "service_time": {
+      "kind": "deterministic",
+      "mean": 0.05,
+      "cv": 0.01
+    },
+    "queue_capacity": 100,
+    "timeout": 2.0,
+    "max_attempts": 1,
+    "retry_backoff": {
+      "kind": "none",
+      "base": 0.0,
+      "jitter": "none"
+    },
+    "bulkhead": 1000,
+    "cost_per_server_hour": 10.0,
+    "target_share": 1.0,
+    "target_capacity": 12.0,
+    "legacy_capacity": 20.0,
+    "dual_write_lag": 1.5,
+    "reconciliation_capacity": 4.0,
+    "rollback_at": 1200.0,
+    "rollback_drain": 120.0,
+    "stages": [
+      {
+        "at": 0.0,
+        "target_share": 0.2
+      },
+      {
+        "at": 300.0,
+        "target_share": 0.5
+      },
+      {
+        "at": 600.0,
+        "target_share": 1.0
+      }
+    ]
+  },
+  "uncertainty": {
+    "parameter_draws": [
+      {
+        "parameter": "dual_write_lag",
+        "distribution": "uniform",
+        "low": 0.5,
+        "high": 2.5,
+        "unit": "second"
+      },
+      {
+        "parameter": "reconciliation_capacity",
+        "distribution": "uniform",
+        "low": 2.0,
+        "high": 8.0,
+        "unit": "record/second"
+      }
+    ],
+    "correlations": [
+      {
+        "left": "dual_write_lag",
+        "right": "reconciliation_capacity",
+        "coefficient": -0.4
+      }
+    ]
+  },
+  "replications": 20,
+  "seed": {
+    "base": 20261029,
+    "scheme": "seed = base + replication index"
+  },
+  "metrics": [
+    {
+      "id": "success_rate",
+      "unit": "ratio",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "latency_p95",
+      "unit": "second",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "throughput",
+      "unit": "request/second",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "cost_per_1k_success",
+      "unit": "cost-unit/1000 successes",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "rejection_rate",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "retry_amplification",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C1",
+      "kind": "hard",
+      "statement": "A candidate must not silently drop a request without recording a rejection or failure."
+    },
+    {
+      "id": "C2",
+      "kind": "hard",
+      "statement": "A candidate must preserve request conservation under the synthetic workload."
+    },
+    {
+      "id": "C3",
+      "kind": "non-quantitative",
+      "statement": "A candidate must remain operable by the existing team without a new platform dependency."
+    }
+  ],
+  "evidence_status": "assumed",
+  "validity_limits": [
+    "Synthetic workload only; no production trace or measurement is represented.",
+    "The candidate comparison is conditional on the declared configuration and seeds."
+  ],
+  "run_id": "tycho.run.modernization-staged"
+}

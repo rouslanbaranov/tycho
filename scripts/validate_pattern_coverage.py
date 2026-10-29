@@ -9,6 +9,7 @@ import hashlib
 import json
 from pathlib import Path
 import sys
+from route_index import legacy_scope
 
 ROOT = Path(__file__).resolve().parents[1]
 COVERAGE = Path("edition/patterns/coverage-map.v1.json")
@@ -31,7 +32,7 @@ def load(path):
 def validate_data(coverage, reverse, root=ROOT):
     root = Path(root).resolve()
     registry = load(root / REGISTRY)
-    route = load(root / ROUTE)
+    route = legacy_scope(load(root / ROUTE))
     outline = load(root / OUTLINE)
     patterns = {item["id"]: item for item in registry["patterns"]}
     documents = {item["id"]: item for item in route["documents"]}

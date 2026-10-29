@@ -1,0 +1,728 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "volume": "v12",
+  "artifacts": {
+    "models": [
+      {
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json",
+        "version": "1.0.0",
+        "sha256": "6f3e4bece8f83c04ab49412dd4e3bbdeec6098e7e8be8ecaf5a9807b51eada5b",
+        "artifact_type": "model",
+        "page_id": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "model-verified"
+      },
+      {
+        "id": "tycho.model.modernization-path",
+        "path": "edition/v12/models/modernization-path.json",
+        "version": "1.0.0",
+        "sha256": "85dd17f40892767959554635e641dcab4212a122165f2372db3f09d883d9036f",
+        "artifact_type": "model",
+        "page_id": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+        "pattern_ids": [
+          "tycho.pattern.controlled-cutover",
+          "tycho.pattern.parallel-run",
+          "tycho.pattern.strangler-fig"
+        ],
+        "evidence_status": "model-verified"
+      },
+      {
+        "id": "tycho.model.order-intake",
+        "path": "edition/v12/models/order-intake.json",
+        "version": "1.0.0",
+        "sha256": "d484eb2ff5141fb27486d43ca0053dc12e923833fa640620b520959bfd3f72ef",
+        "artifact_type": "model",
+        "page_id": "tycho.page.870e64da1f925c52109a602440048603",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+        "pattern_ids": [],
+        "evidence_status": "model-verified"
+      }
+    ],
+    "scenarios": [
+      {
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json",
+        "version": "1.0.0",
+        "sha256": "e57b3218fcfd3d1a520b6796dd23df044523397319378a44090f53b9738eb2b0",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.checkout-des",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json",
+        "version": "1.0.0",
+        "sha256": "9e75592a6c6db7af971ccb96bf312d2f7d741a94ba1668701f23fbe0563df2c5",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.checkout-des",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json",
+        "version": "1.0.0",
+        "sha256": "8ebeb3668524d57a5957cdd91d39fcf1bb2745f09b482bec8b94052c162908a5",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.checkout-des",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.checkout-overload",
+        "path": "edition/v12/scenarios/checkout-overload.json",
+        "version": "1.0.0",
+        "sha256": "669eae2165c77c36e277b95e9478221c14314bea249d6ecc659112d91e768c5e",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.checkout-des",
+        "page_id": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+        "pattern_ids": [],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.checkout-sensitivity",
+        "path": "edition/v12/scenarios/checkout-sensitivity.json",
+        "version": "1.0.0",
+        "sha256": "d9f02dcb1376c8b467ff75a1f52210d301c7afc2eb86f398632ed91f2c33c04f",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.checkout-des",
+        "page_id": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+        "pattern_ids": [],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.modernization-no-cutover",
+        "path": "edition/v12/scenarios/modernization-no-cutover.json",
+        "version": "1.0.0",
+        "sha256": "0dc2735905195522d7666e93a8200fbb87f14d67535a6ac1bf3ed2b7a4c656e7",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.modernization-path",
+        "page_id": "tycho.page.7732cad079d3148dd26b24cc1fdef318",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+        "pattern_ids": [
+          "tycho.pattern.controlled-cutover",
+          "tycho.pattern.parallel-run",
+          "tycho.pattern.strangler-fig"
+        ],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.modernization-staged",
+        "path": "edition/v12/scenarios/modernization-staged.json",
+        "version": "1.0.0",
+        "sha256": "8cb384c7f6d29a230299bda8b1fe6c88689871f96c433e68f2872964617acd59",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.modernization-path",
+        "page_id": "tycho.page.7732cad079d3148dd26b24cc1fdef318",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+        "pattern_ids": [
+          "tycho.pattern.controlled-cutover",
+          "tycho.pattern.parallel-run",
+          "tycho.pattern.strangler-fig"
+        ],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.order-intake-baseline",
+        "path": "edition/v12/scenarios/order-intake-baseline.json",
+        "version": "1.0.0",
+        "sha256": "a6eac9c1adefd4f5cfba0d69cda082b2c78f2ab2441f0f819d650441b202d48b",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.order-intake",
+        "page_id": "tycho.page.870e64da1f925c52109a602440048603",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+        "pattern_ids": [],
+        "evidence_status": "assumed"
+      },
+      {
+        "id": "tycho.scenario.order-intake-saturation",
+        "path": "edition/v12/scenarios/order-intake-saturation.json",
+        "version": "1.0.0",
+        "sha256": "23127b7dd72459ba6a80045b8013104618261d53be934249b4e1ed3abf2a2bf9",
+        "artifact_type": "scenario",
+        "model_id": "tycho.model.order-intake",
+        "page_id": "tycho.page.870e64da1f925c52109a602440048603",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+        "pattern_ids": [],
+        "evidence_status": "assumed"
+      }
+    ],
+    "runs": [
+      {
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json",
+        "version": "1.0.0",
+        "sha256": "34f74502ce3ebb451cd72b511f84bf05a0a59c2ac96273b786af166b56b3bfc7",
+        "artifact_type": "run",
+        "model_id": "tycho.model.checkout-des",
+        "scenario_id": "tycho.scenario.checkout-a-synchronous",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json",
+        "version": "1.0.0",
+        "sha256": "296aff4b4e3b6bd452c0520fa856b4cdbfeb9541e9a61ab063c3d742688e82c8",
+        "artifact_type": "run",
+        "model_id": "tycho.model.checkout-des",
+        "scenario_id": "tycho.scenario.checkout-b-queue",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json",
+        "version": "1.0.0",
+        "sha256": "0527d7abfe08f2069ca8cce039003b5f33c702ad5d28aa53ffb28db42dfa4109",
+        "artifact_type": "run",
+        "model_id": "tycho.model.checkout-des",
+        "scenario_id": "tycho.scenario.checkout-c-partitioned",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.checkout-overload",
+        "path": "edition/v12/runs/checkout-overload.json",
+        "version": "1.0.0",
+        "sha256": "7050c5faf48588fbdf62380150526bb7171b1a8b7ce2c5c895aaddef217243ea",
+        "artifact_type": "run",
+        "model_id": "tycho.model.checkout-des",
+        "scenario_id": "tycho.scenario.checkout-overload",
+        "page_id": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+        "pattern_ids": [],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.checkout-sensitivity",
+        "path": "edition/v12/runs/checkout-sensitivity.json",
+        "version": "1.0.0",
+        "sha256": "a98187ad2e5474d0ef792d5c88ac539c58cf482e6054bd30fa6d900052ab9550",
+        "artifact_type": "run",
+        "model_id": "tycho.model.checkout-des",
+        "scenario_id": "tycho.scenario.checkout-sensitivity",
+        "page_id": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+        "pattern_ids": [],
+        "evidence_status": "insufficient-sample"
+      },
+      {
+        "id": "tycho.run.modernization-no-cutover",
+        "path": "edition/v12/runs/modernization-no-cutover.json",
+        "version": "1.0.0",
+        "sha256": "4404415b020fb0c9ee8161cfd6ba3866e35cc4890c608cb9c7386b54d0fbf73d",
+        "artifact_type": "run",
+        "model_id": "tycho.model.modernization-path",
+        "scenario_id": "tycho.scenario.modernization-no-cutover",
+        "page_id": "tycho.page.7732cad079d3148dd26b24cc1fdef318",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+        "pattern_ids": [
+          "tycho.pattern.controlled-cutover",
+          "tycho.pattern.parallel-run",
+          "tycho.pattern.strangler-fig"
+        ],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.modernization-staged",
+        "path": "edition/v12/runs/modernization-staged.json",
+        "version": "1.0.0",
+        "sha256": "bee56fb9aa55c2572963b1ffe7aab3b181904f55871019bebb5c1bbdb33e6dd8",
+        "artifact_type": "run",
+        "model_id": "tycho.model.modernization-path",
+        "scenario_id": "tycho.scenario.modernization-staged",
+        "page_id": "tycho.page.7732cad079d3148dd26b24cc1fdef318",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+        "pattern_ids": [
+          "tycho.pattern.controlled-cutover",
+          "tycho.pattern.parallel-run",
+          "tycho.pattern.strangler-fig"
+        ],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.order-intake-baseline",
+        "path": "edition/v12/runs/order-intake-baseline.json",
+        "version": "1.0.0",
+        "sha256": "3285d700e6dadcbd53664f2c00591c5eb7716861d87e580daea33070b743ebab",
+        "artifact_type": "run",
+        "model_id": "tycho.model.order-intake",
+        "scenario_id": "tycho.scenario.order-intake-baseline",
+        "page_id": "tycho.page.870e64da1f925c52109a602440048603",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+        "pattern_ids": [],
+        "evidence_status": "converged"
+      },
+      {
+        "id": "tycho.run.order-intake-saturation",
+        "path": "edition/v12/runs/order-intake-saturation.json",
+        "version": "1.0.0",
+        "sha256": "daf3eb05a7bab1c739751ec0193d6b7e0a92e38ad842f1011c1b2603598dddd1",
+        "artifact_type": "run",
+        "model_id": "tycho.model.order-intake",
+        "scenario_id": "tycho.scenario.order-intake-saturation",
+        "page_id": "tycho.page.870e64da1f925c52109a602440048603",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+        "pattern_ids": [],
+        "evidence_status": "converged"
+      }
+    ],
+    "decisions": [
+      {
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json",
+        "version": "1.0.0",
+        "sha256": "f8d95ca1d72323feaebf922029e6b8671ddb9eda7f8aab5776f6f8f9523fd810",
+        "artifact_type": "decision",
+        "status": "decision-supported",
+        "page_id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "pattern_ids": [
+          "tycho.pattern.bulkhead",
+          "tycho.pattern.horizontal-scaling",
+          "tycho.pattern.load-shedding",
+          "tycho.pattern.queue-based-load-leveling",
+          "tycho.pattern.retry-with-exponential-backoff",
+          "tycho.pattern.timeout"
+        ],
+        "evidence_status": "decision-supported"
+      },
+      {
+        "id": "tycho.decision.v12-modernization-cutover",
+        "path": "edition/v12/decisions/modernization-cutover.json",
+        "version": "1.0.0",
+        "sha256": "24158f7c63cf0220855b37fe86d60d5d28d3ac5a5d7f7d1331c6e4a0032b357a",
+        "artifact_type": "decision",
+        "status": "insufficient-evidence",
+        "page_id": "tycho.page.7732cad079d3148dd26b24cc1fdef318",
+        "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+        "pattern_ids": [
+          "tycho.pattern.controlled-cutover",
+          "tycho.pattern.parallel-run",
+          "tycho.pattern.strangler-fig"
+        ],
+        "evidence_status": "insufficient-evidence"
+      }
+    ]
+  },
+  "reverse_index": {
+    "tycho.pattern.bulkhead": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json"
+      }
+    ],
+    "tycho.pattern.controlled-cutover": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.modernization-path",
+        "path": "edition/v12/models/modernization-path.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.modernization-no-cutover",
+        "path": "edition/v12/scenarios/modernization-no-cutover.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.modernization-staged",
+        "path": "edition/v12/scenarios/modernization-staged.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.modernization-no-cutover",
+        "path": "edition/v12/runs/modernization-no-cutover.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.modernization-staged",
+        "path": "edition/v12/runs/modernization-staged.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-modernization-cutover",
+        "path": "edition/v12/decisions/modernization-cutover.json"
+      }
+    ],
+    "tycho.pattern.horizontal-scaling": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json"
+      }
+    ],
+    "tycho.pattern.load-shedding": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json"
+      }
+    ],
+    "tycho.pattern.parallel-run": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.modernization-path",
+        "path": "edition/v12/models/modernization-path.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.modernization-no-cutover",
+        "path": "edition/v12/scenarios/modernization-no-cutover.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.modernization-staged",
+        "path": "edition/v12/scenarios/modernization-staged.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.modernization-no-cutover",
+        "path": "edition/v12/runs/modernization-no-cutover.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.modernization-staged",
+        "path": "edition/v12/runs/modernization-staged.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-modernization-cutover",
+        "path": "edition/v12/decisions/modernization-cutover.json"
+      }
+    ],
+    "tycho.pattern.queue-based-load-leveling": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json"
+      }
+    ],
+    "tycho.pattern.retry-with-exponential-backoff": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json"
+      }
+    ],
+    "tycho.pattern.strangler-fig": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.modernization-path",
+        "path": "edition/v12/models/modernization-path.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.modernization-no-cutover",
+        "path": "edition/v12/scenarios/modernization-no-cutover.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.modernization-staged",
+        "path": "edition/v12/scenarios/modernization-staged.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.modernization-no-cutover",
+        "path": "edition/v12/runs/modernization-no-cutover.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.modernization-staged",
+        "path": "edition/v12/runs/modernization-staged.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-modernization-cutover",
+        "path": "edition/v12/decisions/modernization-cutover.json"
+      }
+    ],
+    "tycho.pattern.timeout": [
+      {
+        "artifact_type": "model",
+        "id": "tycho.model.checkout-des",
+        "path": "edition/v12/models/checkout-des.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-a-synchronous",
+        "path": "edition/v12/scenarios/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-b-queue",
+        "path": "edition/v12/scenarios/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "scenario",
+        "id": "tycho.scenario.checkout-c-partitioned",
+        "path": "edition/v12/scenarios/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-a",
+        "path": "edition/v12/runs/checkout-a-synchronous.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-b",
+        "path": "edition/v12/runs/checkout-b-queue.json"
+      },
+      {
+        "artifact_type": "run",
+        "id": "tycho.run.checkout-c",
+        "path": "edition/v12/runs/checkout-c-partitioned.json"
+      },
+      {
+        "artifact_type": "decision",
+        "id": "tycho.decision.v12-checkout-candidate",
+        "path": "edition/v12/decisions/checkout-candidate.json"
+      }
+    ]
+  },
+  "scope": "Derived V12 artifact registry. The reverse index is generated from decision candidates and pattern links; it is not a semantic graph and is never written back to existing pattern cards or owner pages."
+}

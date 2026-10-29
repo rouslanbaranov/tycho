@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "version": "1.0.0",
+  "model_id": "tycho.model.order-intake",
+  "workload": {
+    "duration": 3600.0,
+    "warmup": 300.0,
+    "time_unit": "second",
+    "arrival_process": {
+      "kind": "deterministic",
+      "rate": 30.0,
+      "unit": "request/second"
+    }
+  },
+  "configuration": {
+    "servers": 12,
+    "service_time": {
+      "kind": "deterministic",
+      "mean": 0.5,
+      "cv": 0.01
+    },
+    "queue_capacity": 80,
+    "timeout": 2.0,
+    "max_attempts": 1,
+    "retry_backoff": {
+      "kind": "none",
+      "base": 0.0,
+      "jitter": "none"
+    },
+    "bulkhead": 240,
+    "cost_per_server_hour": 10.0
+  },
+  "uncertainty": {
+    "parameter_draws": [],
+    "correlations": []
+  },
+  "replications": 10,
+  "seed": {
+    "base": 20261029,
+    "scheme": "seed = base + replication index"
+  },
+  "metrics": [
+    {
+      "id": "success_rate",
+      "unit": "ratio",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "throughput",
+      "unit": "request/second",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "rejection_rate",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "mean_queue_length",
+      "unit": "request",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "cost_per_1k_success",
+      "unit": "cost-unit/1000 successes",
+      "direction": "lower",
+      "business_comparable": true
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C1",
+      "kind": "hard",
+      "statement": "The model must conserve offered, completed, rejected and backlogged requests."
+    }
+  ],
+  "evidence_status": "assumed",
+  "validity_limits": [
+    "Synthetic fluid model only; individual request latency is not represented."
+  ],
+  "id": "tycho.scenario.order-intake-saturation",
+  "run_id": "tycho.run.order-intake-saturation",
+  "title": "Order-intake saturation at 30 requests per second",
+  "purpose": "Exercise the stock-and-flow contract above configured service capacity so that rejection and backlog growth are explicit rather than hidden."
+}

@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/v12/reading-ledger.v1.schema.json",
+  "title": "V12 source reading ledger v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "updated",
+    "scope",
+    "records"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "updated": {
+      "type": "string",
+      "format": "date"
+    },
+    "scope": {
+      "type": "string",
+      "minLength": 40
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "source_id",
+          "unit_label",
+          "unit_type",
+          "unit_url",
+          "version",
+          "access_date",
+          "access_method",
+          "representation_sha256",
+          "retrieved_lines",
+          "retrieved_words",
+          "coverage",
+          "status",
+          "sections_read",
+          "sections_not_read",
+          "omissions",
+          "representation_gap",
+          "claims_supported",
+          "claims_not_supported",
+          "limitations",
+          "pages"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^read\\.v12-[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "source_id": {
+            "type": "string",
+            "pattern": "^src\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "unit_label": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 300
+          },
+          "unit_type": {
+            "type": "string",
+            "minLength": 4
+          },
+          "unit_url": {
+            "type": "string",
+            "pattern": "^https://"
+          },
+          "version": {
+            "type": "string",
+            "minLength": 4
+          },
+          "access_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "access_method": {
+            "type": "string",
+            "minLength": 10
+          },
+          "representation_sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "retrieved_lines": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "retrieved_words": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "coverage": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "status": {
+            "enum": [
+              "full-scoped-text-read",
+              "partial-scoped-text-read",
+              "blocked-full-text",
+              "excluded-from-scope"
+            ]
+          },
+          "sections_read": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 2
+            }
+          },
+          "sections_not_read": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 2
+            }
+          },
+          "omissions": {
+            "type": "string",
+            "minLength": 20
+          },
+          "representation_gap": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "claims_supported": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 20
+            }
+          },
+          "claims_not_supported": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "minLength": 15
+            }
+          },
+          "limitations": {
+            "type": "string",
+            "minLength": 20
+          },
+          "pages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "url",
+                "sha256",
+                "lines",
+                "words"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "pattern": "^https://"
+                },
+                "sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "lines": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "words": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

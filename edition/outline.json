@@ -276,6 +276,31 @@
       "prerequisite_codes": [
         "V10/C03"
       ]
+    },
+    {
+      "code": "V12",
+      "title": "Architecture modeling, simulation and decision validation",
+      "id": "tycho.volume.fd0c1a798f9968eed4a679b048deea14",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+      "mission": "Turn a bounded architecture question into reproducible simulation evidence, explicit uncertainty and a decision record with limits.",
+      "prerequisite_description": "V10/C03 pattern applicability and V07/C01 queueing and measurement boundaries.",
+      "synthesis_question": "Which alternative is defensible under declared assumptions, and what would reverse the choice?",
+      "scenario": "A synthetic checkout service receives 20 requests per second; three candidates differ in queue, deadline, retry and cost, and a staged modernization path is compared with a no-cutover baseline.",
+      "synthesis": "Fix one workload, contract and seed scheme; verify the engine on boundary cases; report convergence and sensitivity; apply hard constraints before preferences; link one way to existing pattern owners; return a conditional recommendation or insufficient evidence.",
+      "counterexample": "A converged run with assumed inputs does not prove production behavior, and a pattern link in a decision record does not promote the pattern.",
+      "diagnostic_route": [
+        "V12/C01",
+        "V12/C02",
+        "V12/C03",
+        "V12/C04",
+        "V12/C05",
+        "V12/C06",
+        "V12/C07"
+      ],
+      "prerequisite_codes": [
+        "V07/C01",
+        "V10/C03"
+      ]
     }
   ],
   "chapters": [
@@ -2276,6 +2301,212 @@
       "result": "This chapter inventories 13 catalog entries and routes each to a provisional candidate area; it does not establish technical sufficiency.",
       "counterexample": "A pattern name, a candidate link or a passing structural check is not evidence that the pattern fits a workload.",
       "question_pages": []
+    },
+    {
+      "code": "V12/C01",
+      "title": "Foundations of architecture modeling",
+      "question": "Which concepts and evidence vocabulary must precede a simulated decision?",
+      "id": "tycho.chapter.6006603befaacfc1baadc486a0f7007a",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.1a3833c3b4431428b25fa9896bcdd072",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "question": "Which evidence layer does a V12 result support?"
+        },
+        {
+          "id": "tycho.page.d860bc57cdfe6c6163912819f7679d17",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "question": "How is a model boundary derived from a decision?"
+        },
+        {
+          "id": "tycho.page.870e64da1f925c52109a602440048603",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "question": "What distinguishes a stock from a flow in an architecture model?"
+        }
+      ]
+    },
+    {
+      "code": "V12/C02",
+      "title": "Model, scenario, run and decision contracts",
+      "question": "Which contracts make a model, run and decision reviewable?",
+      "id": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "question": "Which fields make a decision record reviewable?"
+        },
+        {
+          "id": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "question": "Which fields make a model specification reviewable?"
+        },
+        {
+          "id": "tycho.page.201248045fa3cd67e617ce04a1c56feb",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "question": "Which fields make a run replayable?"
+        },
+        {
+          "id": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "question": "Which fields make a scenario reproducible?"
+        }
+      ]
+    },
+    {
+      "code": "V12/C03",
+      "title": "Deterministic and discrete-event models",
+      "question": "Which event and queue semantics make a DES result reproducible?",
+      "id": "tycho.chapter.ad6455916f994c0e22e0df7881857f23",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.f914586e44ea034deaf2710c570328fc",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "question": "Which event-ordering rules are required for reproducibility?"
+        },
+        {
+          "id": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "question": "How are arrival rate, capacity and utilization related?"
+        },
+        {
+          "id": "tycho.page.687d2196433c3b076d00c73144dad431",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "question": "Which components make the reference engine verifiable?"
+        },
+        {
+          "id": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "question": "When do retries amplify overload?"
+        }
+      ]
+    },
+    {
+      "code": "V12/C04",
+      "title": "Monte Carlo uncertainty and sensitivity",
+      "question": "How should sampling error, convergence and sensitivity be reported?",
+      "id": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "question": "When is a Monte Carlo result stable enough to use?"
+        },
+        {
+          "id": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "question": "Which reference cases can catch a broken estimator?"
+        },
+        {
+          "id": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "question": "How is input uncertainty propagated?"
+        }
+      ]
+    },
+    {
+      "code": "V12/C05",
+      "title": "Decision integration and pattern links",
+      "question": "How does a simulation become a bounded decision without editing patterns?",
+      "id": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "question": "How does the A/B/C comparison reach a recommendation?"
+        },
+        {
+          "id": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "question": "How does V12 link to existing patterns without editing them?"
+        },
+        {
+          "id": "tycho.page.ea9adae8cf8a3196a3515d383b075f53",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "question": "When should a decision record return no recommendation?"
+        }
+      ]
+    },
+    {
+      "code": "V12/C06",
+      "title": "Modernization-path simulation",
+      "question": "Which coexistence, reconciliation and rollback conditions must be exposed?",
+      "id": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "question": "Which states must a modernization model expose?"
+        },
+        {
+          "id": "tycho.page.7732cad079d3148dd26b24cc1fdef318",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "question": "How does the staged path compare with no cutover?"
+        }
+      ]
+    },
+    {
+      "code": "V12/C07",
+      "title": "Validation, reproducibility and limits",
+      "question": "Which verification, calibration and decision claims are supported?",
+      "id": "tycho.chapter.77831d9a57067de6faa1da630a83f49b",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+      "old_page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+      "page_path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+      "result": "This chapter routes a bounded modeling question through contracts, execution, validation and explicit limits; it does not establish production validity.",
+      "counterexample": "A simulated result or a passing schema check is not evidence that the model matches a real system.",
+      "question_pages": [
+        {
+          "id": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "question": "Which inputs are measured, assumed, derived or unknown?"
+        },
+        {
+          "id": "tycho.page.621e495fcadc4849d2f21d55be4c52e4",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "question": "Which checks show the engine implements its models?"
+        },
+        {
+          "id": "tycho.page.6c54ed1288a4f0806889865916dc8ccf",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "question": "What makes a V12 result replayable?"
+        },
+        {
+          "id": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "question": "Which validation gates does V12 pass?"
+        }
+      ]
     }
   ]
 }

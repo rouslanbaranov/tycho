@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from route_index import legacy_scope
 import re
 import sys
 import unicodedata
@@ -301,7 +302,7 @@ def page_candidates(pattern, area, index, headings):
 def build(root=ROOT):
     root = Path(root).resolve()
     registry = load(root / "edition/patterns/registry.v1.json")
-    index_doc = load(root / "generated/route-index.v1.json")
+    index_doc = legacy_scope(load(root / "generated/route-index.v1.json"))
     outline = load(root / "edition/outline.json")
     chapters = chapter_index(outline)
     documents = index_doc["documents"]

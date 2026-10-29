@@ -1,0 +1,140 @@
+{
+  "convergence": {
+    "metric": "success_rate",
+    "relative_error": 0.0035661842784751427,
+    "replications": 20,
+    "status": "converged",
+    "threshold": 0.02
+  },
+  "engine": {
+    "deterministic": true,
+    "name": "tycho-v12-reference-engine",
+    "version": "1.0.0"
+  },
+  "id": "tycho.run.checkout-overload",
+  "limitations": [
+    "Synthetic workload; no production measurement is claimed.",
+    "Metrics are conditional on the declared model and scenario assumptions.",
+    "Confidence intervals use a normal approximation across replications."
+  ],
+  "metrics": {
+    "cost_per_1k_success": {
+      "ci_high": 1.9893215695875721,
+      "ci_low": 1.9713468787651554,
+      "replications": 20,
+      "standard_error": 0.0045854645708285425,
+      "unit": "cost-unit/1000 successes",
+      "value": 1.9803342241763637
+    },
+    "latency_mean": {
+      "ci_high": 0.7373266750224592,
+      "ci_low": 0.7303106023390402,
+      "replications": 20,
+      "standard_error": 0.001789847348920924,
+      "unit": "second",
+      "value": 0.7338186386807497
+    },
+    "latency_p95": {
+      "ci_high": 0.9733406063011193,
+      "ci_low": 0.9719997622647595,
+      "replications": 20,
+      "standard_error": 0.0003420583354939979,
+      "unit": "second",
+      "value": 0.9726701842829394
+    },
+    "latency_p99": {
+      "ci_high": 0.9944688272048144,
+      "ci_low": 0.9939628189118749,
+      "replications": 20,
+      "standard_error": 0.00012908612018663876,
+      "unit": "second",
+      "value": 0.9942158230583447
+    },
+    "max_queue_length": {
+      "ci_high": 33.0,
+      "ci_low": 33.0,
+      "replications": 20,
+      "standard_error": 0.0,
+      "unit": "request",
+      "value": 33.0
+    },
+    "mean_queue_length": {
+      "ci_high": 12.956568987630886,
+      "ci_low": 12.625253497148408,
+      "replications": 20,
+      "standard_error": 0.08452081086587593,
+      "unit": "request",
+      "value": 12.790911242389647
+    },
+    "rejection_rate": {
+      "ci_high": 0.0005957591484934248,
+      "ci_low": 0.0003521396225796637,
+      "replications": 20,
+      "standard_error": 6.214898024540266e-05,
+      "unit": "ratio",
+      "value": 0.00047394938553654424
+    },
+    "retry_amplification": {
+      "ci_high": 0.9990225761435069,
+      "ci_low": 0.9987275299176125,
+      "replications": 20,
+      "standard_error": 7.526827743305514e-05,
+      "unit": "ratio",
+      "value": 0.9988750530305597
+    },
+    "server_utilization": {
+      "ci_high": 0.9970350170135722,
+      "ci_low": 0.9960846247067467,
+      "replications": 20,
+      "standard_error": 0.00024245147214998334,
+      "unit": "ratio",
+      "value": 0.9965598208601595
+    },
+    "success_rate": {
+      "ci_high": 0.6533685481849898,
+      "ci_low": 0.6442983848008155,
+      "replications": 20,
+      "standard_error": 0.002313859707555518,
+      "unit": "ratio",
+      "value": 0.6488334664929026
+    },
+    "throughput": {
+      "ci_high": 19.511794655811098,
+      "ci_low": 19.335641241624796,
+      "replications": 20,
+      "standard_error": 0.04493792120053697,
+      "unit": "request/second",
+      "value": 19.423717948717947
+    },
+    "timeout_rate": {
+      "ci_high": 0.3539806643241819,
+      "ci_low": 0.34507473590507504,
+      "replications": 20,
+      "standard_error": 0.0022719622629180235,
+      "unit": "ratio",
+      "value": 0.34952770011462847
+    }
+  },
+  "model_id": "tycho.model.checkout-des",
+  "provenance": {
+    "input_sha256": "f2c0e1b98b7aa4456d0bd255e82afa939278ab415d2506404dea0edfd9b044b1",
+    "invocation": "python3 scripts/v12_engine.py run --model edition/v12/models/checkout-des.json --scenario edition/v12/scenarios/checkout-overload.json",
+    "model_sha256": "6f3e4bece8f83c04ab49412dd4e3bbdeec6098e7e8be8ecaf5a9807b51eada5b",
+    "platform": "macOS-27.0.1-arm64-arm-64bit-Mach-O",
+    "python": "3.15.0",
+    "replications": 20,
+    "scenario_sha256": "669eae2165c77c36e277b95e9478221c14314bea249d6ecc659112d91e768c5e",
+    "seed_base": 20261029
+  },
+  "result_sha256": "5bbdff0425e2e04834326e0b03437aee3deab762d2ad7e3b034190b5c0d154be",
+  "scenario_id": "tycho.scenario.checkout-overload",
+  "schema_version": 1,
+  "sensitivity": [],
+  "uncertainty": {
+    "correlated_inputs": false,
+    "draws": 20,
+    "method": "replication",
+    "notes": "Independent replications with seeded parameter draws. Correlations are declared in the scenario and are not inferred from data."
+  },
+  "version": "1.0.0"
+}

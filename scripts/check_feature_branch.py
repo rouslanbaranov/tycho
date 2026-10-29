@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the feature branch for one GitHub sub-issue.
+"""Validate the feature branch for one GitHub sub-issue or activated parent issue.
 
 A PR head must be feature/TYCHO-<issue-number>-<slug> where the slug exactly
 matches the descriptive portion of the corresponding GitHub sub-issue title.
@@ -14,7 +14,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 BRANCH_PATTERN = re.compile(r"^feature/TYCHO-(\d+)-([a-z0-9]+(?:-[a-z0-9]+)*)$")
-ISSUE_TITLE_PATTERN = re.compile(r"^\[E\d{2}-\d{2}\]\s+(.+)$")
+ISSUE_TITLE_PATTERN = re.compile(r"^\[(?:E\d{2}-\d{2}|FUTURE)\]\s+(.+)$")
 
 
 def title_slug(issue_title):

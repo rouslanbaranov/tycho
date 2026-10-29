@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 from assemble_edition import split
 from validate_pattern_registry import slug_heading
+from route_index import legacy_scope
 
 ARTIFACT = Path("edition/patterns/phase4.v1.json")
 REGISTRY = Path("edition/patterns/registry.v1.json")
@@ -109,7 +110,7 @@ def build(root=ROOT):
     registry = load(root, REGISTRY)
     ledger = load(root, LEDGER)
     batches = load(root, BATCHES)
-    route = load(root, ROUTE)
+    route = legacy_scope(load(root, ROUTE))
     coverage = load(root, COVERAGE)
     manifest = load(root, MANIFEST)
     documents = route["documents"]

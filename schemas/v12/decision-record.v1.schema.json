@@ -1,0 +1,301 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.example.invalid/schemas/v12/decision-record.v1.schema.json",
+  "title": "V12 decision record v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "title",
+    "status",
+    "question",
+    "context",
+    "constraints",
+    "candidates",
+    "metrics",
+    "evidence",
+    "outcome",
+    "reversal_triggers",
+    "limitations",
+    "pattern_links"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^tycho\\.decision\\.v12-[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 160
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "decision-supported",
+        "insufficient-evidence",
+        "rejected"
+      ]
+    },
+    "question": {
+      "type": "string",
+      "minLength": 20,
+      "maxLength": 600
+    },
+    "context": {
+      "type": "string",
+      "minLength": 80,
+      "maxLength": 3000
+    },
+    "constraints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "kind",
+          "statement"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+          },
+          "kind": {
+            "enum": [
+              "hard",
+              "soft",
+              "non-quantitative"
+            ]
+          },
+          "statement": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "scenario_id",
+          "run_ids",
+          "pattern_ids",
+          "owner_pages"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-C]$"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 4
+          },
+          "scenario_id": {
+            "type": "string",
+            "pattern": "^tycho\\.scenario\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "run_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^tycho\\.run\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          },
+          "pattern_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^tycho\\.pattern\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+            }
+          },
+          "owner_pages": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "unit",
+          "direction",
+          "business_comparable"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1
+          },
+          "direction": {
+            "enum": [
+              "higher",
+              "lower",
+              "target"
+            ]
+          },
+          "business_comparable": {
+            "const": true
+          }
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_verification",
+        "calibration",
+        "simulation",
+        "source_ids"
+      ],
+      "properties": {
+        "model_verification": {
+          "enum": [
+            "model-verified",
+            "partially-verified",
+            "unverified"
+          ]
+        },
+        "calibration": {
+          "enum": [
+            "calibrated",
+            "partially-calibrated",
+            "uncalibrated"
+          ]
+        },
+        "simulation": {
+          "enum": [
+            "decision-supported",
+            "insufficient-evidence"
+          ]
+        },
+        "source_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^src\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+          }
+        }
+      }
+    },
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "recommendation",
+        "rationale",
+        "non_quantitative_constraints"
+      ],
+      "properties": {
+        "recommendation": {
+          "enum": [
+            "A",
+            "B",
+            "C",
+            "none"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 60,
+          "maxLength": 3000
+        },
+        "non_quantitative_constraints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 10
+          }
+        }
+      }
+    },
+    "reversal_triggers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 15
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 15
+      }
+    },
+    "pattern_links": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "pattern_id",
+          "owner_document_id",
+          "owner_page",
+          "relation"
+        ],
+        "properties": {
+          "pattern_id": {
+            "type": "string",
+            "pattern": "^tycho\\.pattern\\.[a-z0-9]+(?:-[a-z0-9]+)*$"
+          },
+          "owner_document_id": {
+            "type": "string",
+            "pattern": "^tycho\\.(page|chapter|landing)\\.[a-z0-9]{6,32}$"
+          },
+          "owner_page": {
+            "type": "string",
+            "pattern": "^book/.*\\.md$"
+          },
+          "relation": {
+            "enum": [
+              "candidate",
+              "constraint",
+              "mechanism",
+              "reversal-trigger"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

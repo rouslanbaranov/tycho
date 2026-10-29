@@ -1,7 +1,8 @@
 # V12 architecture decision — 2026-10-29
 
-Status: accepted for planning only. #587 and #588–#593 remain deferred and do not
-authorize implementation.
+Status: implemented 2026-10-29 under explicit owner activation of #587. Independent review,
+owner acceptance and pattern promotion remain separate decisions. See the
+[implementation record](V12-IMPLEMENTATION-2026-10-29.md).
 
 ## Decision
 

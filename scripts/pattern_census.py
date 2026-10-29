@@ -8,6 +8,7 @@ import hashlib
 import json
 from collections import Counter
 from pathlib import Path
+from route_index import legacy_scope
 import re
 import sys
 
@@ -41,7 +42,7 @@ def locate(path):
 
 def build(root=ROOT):
     root = Path(root).resolve()
-    route = load(root / ROUTE)
+    route = legacy_scope(load(root / ROUTE))
     documents = []
     for doc in route["documents"]:
         text = (root / doc["path"]).read_text(encoding="utf-8")

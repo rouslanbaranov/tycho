@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "id": "tycho.scenario.checkout-overload",
+  "version": "1.0.0",
+  "title": "Checkout overload boundary",
+  "model_id": "tycho.model.checkout-des",
+  "purpose": "Exercise the overload boundary where offered load exceeds service capacity and the candidate must shed or fail work explicitly.",
+  "workload": {
+    "duration": 900.0,
+    "warmup": 120.0,
+    "time_unit": "second",
+    "arrival_process": {
+      "kind": "poisson",
+      "rate": 30.0,
+      "unit": "request/second"
+    }
+  },
+  "configuration": {
+    "servers": 12,
+    "service_time": {
+      "kind": "lognormal",
+      "mean": 0.5,
+      "cv": 0.6
+    },
+    "queue_capacity": 40,
+    "timeout": 1.0,
+    "max_attempts": 1,
+    "retry_backoff": {
+      "kind": "none",
+      "base": 0.0,
+      "jitter": "none"
+    },
+    "bulkhead": 45,
+    "cost_per_server_hour": 10.0
+  },
+  "uncertainty": {
+    "parameter_draws": [],
+    "correlations": []
+  },
+  "replications": 20,
+  "seed": {
+    "base": 20261029,
+    "scheme": "seed = base + replication index"
+  },
+  "metrics": [
+    {
+      "id": "success_rate",
+      "unit": "ratio",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "latency_p95",
+      "unit": "second",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "throughput",
+      "unit": "request/second",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "cost_per_1k_success",
+      "unit": "cost-unit/1000 successes",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "rejection_rate",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "retry_amplification",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    }
+  ],
+  "constraints": [
+    {
+      "id": "C1",
+      "kind": "hard",
+      "statement": "A candidate must not silently drop a request without recording a rejection or failure."
+    },
+    {
+      "id": "C2",
+      "kind": "hard",
+      "statement": "A candidate must preserve request conservation under the synthetic workload."
+    },
+    {
+      "id": "C3",
+      "kind": "non-quantitative",
+      "statement": "A candidate must remain operable by the existing team without a new platform dependency."
+    }
+  ],
+  "evidence_status": "assumed",
+  "validity_limits": [
+    "Synthetic workload only; no production trace or measurement is represented.",
+    "The candidate comparison is conditional on the declared configuration and seeds."
+  ],
+  "run_id": "tycho.run.checkout-overload"
+}

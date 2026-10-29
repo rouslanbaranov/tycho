@@ -1,0 +1,227 @@
+{
+  "schema_version": 1,
+  "id": "tycho.model.modernization-path",
+  "version": "1.0.0",
+  "title": "Staged modernization coexistence and rollback model",
+  "purpose": "Represent a staged traffic shift between a legacy path and a target path, with dual-write lag, reconciliation capacity, divergence accumulation and a rollback trigger, so that coexistence and rollback claims can be bounded.",
+  "scope": {
+    "includes": [
+      "A declared stage schedule",
+      "Traffic share between legacy and target paths",
+      "Dual-write lag and reconciliation capacity",
+      "Divergence accumulation",
+      "A rollback trigger and drain"
+    ],
+    "excludes": [
+      "Record-level data reconciliation",
+      "Schema compatibility",
+      "Business correctness of individual records",
+      "Deployment orchestration and infrastructure failure"
+    ]
+  },
+  "abstraction": {
+    "time_unit": "second",
+    "state_unit": "record",
+    "boundary": "The model starts when traffic is shifted to the target path and ends when a declared rollback drain is complete or the horizon closes.",
+    "resolution": "Fixed-step fluid model over traffic shares and record backlog; individual records are not represented."
+  },
+  "state_variables": [
+    {
+      "name": "legacy_share",
+      "unit": "ratio",
+      "description": "Share of traffic served by the legacy path.",
+      "non_negative": true
+    },
+    {
+      "name": "target_share",
+      "unit": "ratio",
+      "description": "Share of traffic served by the target path.",
+      "non_negative": true
+    },
+    {
+      "name": "dual_write_backlog",
+      "unit": "record",
+      "description": "Records awaiting reconciliation between paths.",
+      "non_negative": true
+    },
+    {
+      "name": "divergence",
+      "unit": "record",
+      "description": "Accumulated observed divergence between paths.",
+      "non_negative": true
+    }
+  ],
+  "parameters": [
+    {
+      "name": "arrival_rate",
+      "unit": "request/second",
+      "value_type": "number",
+      "default": 10.0,
+      "evidence_status": "assumed",
+      "source_ids": [
+        "src.little-law"
+      ],
+      "note": "Synthetic request rate during the migration."
+    },
+    {
+      "name": "target_share",
+      "unit": "ratio",
+      "value_type": "number",
+      "default": 1.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Final target traffic share."
+    },
+    {
+      "name": "target_capacity",
+      "unit": "request/second",
+      "value_type": "number",
+      "default": 12.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Target path service capacity."
+    },
+    {
+      "name": "legacy_capacity",
+      "unit": "request/second",
+      "value_type": "number",
+      "default": 20.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Legacy path service capacity."
+    },
+    {
+      "name": "dual_write_lag",
+      "unit": "second",
+      "value_type": "number",
+      "default": 0.5,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Synthetic dual-write lag; not measured."
+    },
+    {
+      "name": "reconciliation_capacity",
+      "unit": "record/second",
+      "value_type": "number",
+      "default": 10.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Synthetic reconciliation throughput."
+    },
+    {
+      "name": "rollback_at",
+      "unit": "second",
+      "value_type": "number",
+      "default": 1200.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Synthetic rollback trigger time."
+    },
+    {
+      "name": "rollback_drain",
+      "unit": "second",
+      "value_type": "number",
+      "default": 120.0,
+      "evidence_status": "assumed",
+      "source_ids": [],
+      "note": "Synthetic rollback drain allowance."
+    }
+  ],
+  "dynamics": {
+    "kind": "hybrid",
+    "equations": [
+      "share(t) = last declared stage at or before t, or 0 after rollback",
+      "target_served(t) = min(arrival_rate * share(t) * dt, target_capacity * dt)",
+      "legacy_served(t) = min(arrival_rate * (1 - share(t)) * dt, legacy_capacity * dt)",
+      "backlog(t+1) = backlog(t) + target_served(t) * dual_write_lag - min(backlog(t), reconciliation_capacity * dt)",
+      "divergence(t+1) = max(0, divergence(t) + (backlog(t) - reconciliation_capacity * dt) * dt * 0.001)"
+    ],
+    "time_step": 1.0
+  },
+  "invariants": [
+    {
+      "name": "traffic-conservation",
+      "statement": "Served plus rejected traffic equals offered traffic at every step.",
+      "check": "run_modernization conservation_ok"
+    },
+    {
+      "name": "share-bounds",
+      "statement": "Legacy and target shares remain within [0, 1].",
+      "check": "stage schedule validation"
+    },
+    {
+      "name": "non-negative-backlog",
+      "statement": "Dual-write backlog and divergence never become negative.",
+      "check": "run_modernization max(0, ...)"
+    }
+  ],
+  "verification": {
+    "status": "model-verified",
+    "cases": [
+      {
+        "id": "V12-B-MIG-01",
+        "description": "A full stage shift with zero lag has no divergence and no rollback delay.",
+        "expected": "max_divergence == 0",
+        "observed": "checked in test_modernization_zero_lag",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-MIG-02",
+        "description": "A declared rollback returns traffic to the legacy path and drains the backlog.",
+        "expected": "rollback_seconds finite",
+        "observed": "checked in test_modernization_rollback",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      },
+      {
+        "id": "V12-B-MIG-03",
+        "description": "Target capacity below offered target traffic produces rejection rather than silent success.",
+        "expected": "rejection_rate > 0",
+        "observed": "checked in test_modernization_capacity",
+        "status": "pass",
+        "test_path": "tests/test_tycho_v12_engine.py"
+      }
+    ],
+    "notes": "Verification covers the modeled accounting and stage/rollback rules, not a real migration."
+  },
+  "calibration": {
+    "status": "uncalibrated",
+    "evidence": [
+      {
+        "parameter": "dual_write_lag",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "No measured dual-write lag exists."
+      },
+      {
+        "parameter": "reconciliation_capacity",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "No measured reconciliation throughput exists."
+      },
+      {
+        "parameter": "rollback_at",
+        "status": "assumed",
+        "source_ids": [],
+        "note": "A synthetic decision point."
+      }
+    ],
+    "notes": "No migration was performed. The model exists to expose what must be measured before a cutover decision."
+  },
+  "validity_limits": [
+    "Valid only for the synthetic stage schedule and capacities recorded in a scenario.",
+    "The model does not establish record-level correctness, schema compatibility or rollback safety.",
+    "Divergence is a synthetic proxy, not an observed data-quality measure."
+  ],
+  "assumptions": [
+    "Traffic can be shifted in declared shares.",
+    "Dual-write lag is constant over the stage.",
+    "Reconciliation capacity is independent of target load."
+  ],
+  "unknowns": [
+    "The real dual-write lag distribution.",
+    "The real reconciliation throughput under load.",
+    "The business cost of divergence and the true rollback duration."
+  ]
+}

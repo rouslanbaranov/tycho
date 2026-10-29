@@ -37,6 +37,13 @@ class BranchNamingTests(unittest.TestCase):
             with self.subTest(branch=branch), self.assertRaises(ValueError):
                 mod.validate(branch, "[E01-01] Requirements and workload profile")
 
+    def test_activated_parent_issue_slug(self):
+        self.assertEqual(
+            mod.validate(
+                "feature/TYCHO-587-v12-architecture-modeling-simulation-decision-validation-isolated-volume",
+                "[FUTURE] V12 - Architecture Modeling, Simulation & Decision Validation (isolated volume)"),
+            587)
+
     def test_epic_not_executable_subissue(self):
         with self.assertRaises(ValueError):
             mod.validate("feature/TYCHO-2-architecture-decision-models",

@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "id": "tycho.decision.v12-checkout-candidate",
+  "version": "1.0.0",
+  "title": "Checkout candidate comparison under a synthetic 20 requests/second workload",
+  "status": "decision-supported",
+  "question": "Under the declared synthetic workload and hard constraints, which checkout candidate should be preferred before a measured pilot?",
+  "context": "Three candidates are compared with the same arrival rate, duration, warmup, metric definitions and seed scheme. Candidate A exposes a synchronous path with a short deadline and no retry budget. Candidate B uses a bounded queue, a longer deadline and a small retry budget. Candidate C adds servers but also coordination cost and a slower mean service time. The comparison is a conditional model result, not a production measurement.",
+  "constraints": [
+    {
+      "id": "C1",
+      "kind": "hard",
+      "statement": "Every offered request must be completed, rejected, failed or still in the system; conservation must hold."
+    },
+    {
+      "id": "C2",
+      "kind": "hard",
+      "statement": "No candidate may silently drop a request without recording a rejection or failure."
+    },
+    {
+      "id": "C3",
+      "kind": "non-quantitative",
+      "statement": "The candidate must remain operable by the existing team without a new platform dependency; simulation cannot establish this condition."
+    },
+    {
+      "id": "C4",
+      "kind": "hard",
+      "statement": "Synthetic cost per 1000 successful requests must not exceed 3.0 relative cost units."
+    },
+    {
+      "id": "C5",
+      "kind": "hard",
+      "statement": "Synthetic 95th-percentile successful-request latency must not exceed 1.5 seconds."
+    }
+  ],
+  "candidates": [
+    {
+      "id": "A",
+      "title": "Synchronous capacity with short deadline",
+      "scenario_id": "tycho.scenario.checkout-a-synchronous",
+      "run_ids": [
+        "tycho.run.checkout-a"
+      ],
+      "pattern_ids": [
+        "tycho.pattern.timeout",
+        "tycho.pattern.load-shedding"
+      ],
+      "owner_pages": [
+        "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+        "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md"
+      ]
+    },
+    {
+      "id": "B",
+      "title": "Bounded queue with retry budget",
+      "scenario_id": "tycho.scenario.checkout-b-queue",
+      "run_ids": [
+        "tycho.run.checkout-b"
+      ],
+      "pattern_ids": [
+        "tycho.pattern.queue-based-load-leveling",
+        "tycho.pattern.retry-with-exponential-backoff",
+        "tycho.pattern.bulkhead"
+      ],
+      "owner_pages": [
+        "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+        "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+        "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md"
+      ]
+    },
+    {
+      "id": "C",
+      "title": "Partitioned capacity with higher unit cost",
+      "scenario_id": "tycho.scenario.checkout-c-partitioned",
+      "run_ids": [
+        "tycho.run.checkout-c"
+      ],
+      "pattern_ids": [
+        "tycho.pattern.horizontal-scaling",
+        "tycho.pattern.bulkhead"
+      ],
+      "owner_pages": [
+        "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+        "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "id": "success_rate",
+      "unit": "ratio",
+      "direction": "higher",
+      "business_comparable": true
+    },
+    {
+      "id": "latency_p95",
+      "unit": "second",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "cost_per_1k_success",
+      "unit": "cost-unit/1000 successes",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "rejection_rate",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    },
+    {
+      "id": "retry_amplification",
+      "unit": "ratio",
+      "direction": "lower",
+      "business_comparable": true
+    }
+  ],
+  "evidence": {
+    "model_verification": "model-verified",
+    "calibration": "uncalibrated",
+    "simulation": "decision-supported",
+    "source_ids": [
+      "src.simpy",
+      "src.sargent-vv",
+      "src.little-law",
+      "src.owen-monte-carlo"
+    ]
+  },
+  "outcome": {
+    "recommendation": "B",
+    "rationale": "Under the declared synthetic workload, candidate B has the highest success rate (0.9996, 95% CI 0.9995-0.9996) and the lowest cost per 1000 successful requests (1.60, 95% CI 1.60-1.61). Candidate A succeeds on 0.9218 of offered requests (95% CI 0.9211-0.9226) with a lower p95 latency of 0.870 s but a higher cost of 2.17 and a 7.8% timeout rate. Candidate C exceeds the declared cost constraint at 4.28 and the p95 constraint at 1.529 s, although its success rate is 0.9834. Candidate B therefore dominates on the declared quantitative constraints. The recommendation is conditional: it does not establish production behavior, and the non-quantitative operability constraint C3 remains unverified.",
+    "non_quantitative_constraints": [
+      "C3 operability by the existing team is not established by simulation and requires an explicit operational review.",
+      "The cost model is synthetic and relative; no currency amount or vendor price is implied."
+    ]
+  },
+  "reversal_triggers": [
+    "A measured arrival rate above 22 requests/second or a measured mean service time above 0.65 seconds changes the utilization boundary.",
+    "A measured p95 service time whose tail causes B to exceed the 1.5-second latency constraint in the target environment.",
+    "A revised cost weight under which B no longer beats A on cost per successful request.",
+    "Failure of the C3 operability review or of a required platform dependency.",
+    "A measured retry rate that makes the 1.004 retry amplification materially larger than the modeled value."
+  ],
+  "limitations": [
+    "All inputs are synthetic and uncalibrated; no production trace was used.",
+    "The confidence intervals use a normal approximation across 30 replications.",
+    "The model does not represent dependency calls, data consistency or network retries inside the service.",
+    "The sensitivity screen is a quadratic response-surface approximation, not a full pick-freeze Sobol analysis."
+  ],
+  "pattern_links": [
+    {
+      "pattern_id": "tycho.pattern.timeout",
+      "owner_document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
+      "owner_page": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "relation": "candidate"
+    },
+    {
+      "pattern_id": "tycho.pattern.load-shedding",
+      "owner_document_id": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060",
+      "owner_page": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+      "relation": "candidate"
+    },
+    {
+      "pattern_id": "tycho.pattern.queue-based-load-leveling",
+      "owner_document_id": "tycho.page.a648fc495dab474489d17d01e2c5dd92",
+      "owner_page": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+      "relation": "candidate"
+    },
+    {
+      "pattern_id": "tycho.pattern.retry-with-exponential-backoff",
+      "owner_document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
+      "owner_page": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "relation": "candidate"
+    },
+    {
+      "pattern_id": "tycho.pattern.bulkhead",
+      "owner_document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
+      "owner_page": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+      "relation": "constraint"
+    },
+    {
+      "pattern_id": "tycho.pattern.horizontal-scaling",
+      "owner_document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
+      "owner_page": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+      "relation": "candidate"
+    }
+  ]
+}
