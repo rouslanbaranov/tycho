@@ -24,11 +24,15 @@ better top-result precision.
 
 ## Why hit@5 is easier on V12
 
-1. **Acceptance density.** V12 has 31 indexed pages and 23 unique accepted
-   pages; 74% of the volume is relevant somewhere. Book v2 has 129 accepted
-   pages in 423 (30%).
+1. **Union acceptance coverage.** V12 has 31 indexed pages; across all 14
+   answerable questions, 23 distinct pages appear at least once as accepted
+   (74% union coverage). This is not per-query density: one query accepts about
+   2 pages out of 31 (6.5%). Book v2 has 129 accepted pages in 423 (30% union
+   coverage), but only 1.4 accepted pages per query.
 2. **Multiple accepted pages.** V12 has 2.0 accepted pages per query; book v2
-   has 1.4. A top-5 page hit is easier even when the first result is wrong.
+   has 1.4. A random top-5 has about a 30% chance of touching an accepted V12
+   page, versus roughly 1.6% for book v2. A top-5 page hit is easier even when
+   the first result is wrong.
 3. **Shorter, more lexical questions.** V12 questions average 10.9 terms,
    versus 15.9 for v2 and 24.3 for phase3.
 4. **Higher lexical overlap.** V12 query/accepted-page overlap is 0.86, versus
