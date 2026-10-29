@@ -74,7 +74,7 @@ completed effects idempotent or deduplicated because a retry can re-deliver part
 unknown part count leaves the aggregate incomplete; a custom release rule or expiry must
 close it.
 
-**Technical owner.** [Splitter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#splitter) — bounded split decision, part identity and completion; not a channel implementation.
+**Technical owner.** [Splitter](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md#splitter) — bounded split decision, part identity and completion; not a channel implementation.
 
 **Sources.** [src.camel](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-splitter.2026-10-21: mechanism and watermark retry.

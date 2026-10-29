@@ -72,7 +72,7 @@ identity and recover through a transactional client or a declared checkpoint. Th
 states that the simple filter is not transactional, so an error before the output channel
 loses the message; Tycho guidance adds per-stage idempotency and a replay boundary.
 
-**Technical owner.** [Pipes and Filters](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#pipes-and-filters) — stage contract, ordering scope and non-transactional loss are bounded; backpressure, checkpoint and idempotency policy are Tycho guidance.
+**Technical owner.** [Pipes and Filters](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/pipes-and-filters.md#pipes-and-filters) — stage contract, ordering scope and non-transactional loss are bounded; backpressure, checkpoint and idempotency policy are Tycho guidance.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read records read.batch2-pipes.2026-10-21 and read.pipes-ch03.2026-10-28: the public

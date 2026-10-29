@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CARD = ROOT / "book/volumes/v11-pattern-atlas/c03-messaging-integration/resequencer.md"
 OWNER = ROOT / (
     "book/volumes/v04-distributed-coordination-and-events/"
-    "c06-messaging-families-and-delivery-contracts/message-selection.md"
+    "c06-messaging-families-and-delivery-contracts/resequencer.md"
 )
 OWNER_UNITS = ROOT / "edition/patterns/owner-units.v1.json"
 LEDGER = ROOT / "edition/patterns/reading-ledger.v1.json"
@@ -25,8 +25,8 @@ def squash(text):
 
 
 def owner_section(text):
-    start = text.index("### Resequencer")
-    end = text.index("### Content-Based Router", start)
+    start = text.index("# Resequencer")
+    end = text.index("## Navigation", start)
     return squash(text[start:end])
 
 
@@ -87,12 +87,12 @@ class ResequencerReviewGuardTests(unittest.TestCase):
             self.assertIn(record_id, self.card)
             self.assertIn(record["source_id"], self.card)
 
-    def test_sufficient_and_promoted_after_review(self):
+    def test_partial_bounded_and_suspended_after_split(self):
         promotions = {item["pattern_id"] for item in json.loads(
             PROMOTIONS.read_text(encoding="utf-8"))["promotions"]}
-        self.assertIn("tycho.pattern.resequencer", promotions)
-        self.assertEqual(self.unit["technical_coverage"], "sufficient")
-        self.assertEqual(self.unit["decision_coverage"], "sufficient")
+        self.assertNotIn("tycho.pattern.resequencer", promotions)
+        self.assertEqual(self.unit["technical_coverage"], "partial-bounded")
+        self.assertEqual(self.unit["decision_coverage"], "partial-bounded")
 
 
 if __name__ == "__main__":

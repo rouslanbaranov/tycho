@@ -75,7 +75,7 @@ or a token that consumers cannot resolve; the source also names store outage or 
 duplicate claim checks and integrity mismatches. Expire and garbage-collect claims, fail
 closed when retrieval is impossible, and make duplicate consumption idempotent.
 
-**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#claim-check) — payload lifecycle, claim-token ordering, access control, retrieval and failure policy are bounded; this is not a payload-store catalogue.
+**Technical owner.** [Claim Check](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md#claim-check) — payload lifecycle, claim-token ordering, access control, retrieval and failure policy are bounded; this is not a payload-store catalogue.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-claim.2026-10-21: the public pattern page is publisher-abridged and

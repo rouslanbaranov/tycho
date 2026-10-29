@@ -6,7 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CARD = ROOT / "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md"
 OWNER = ROOT / (
     "book/volumes/v04-distributed-coordination-and-events/"
-    "c06-messaging-families-and-delivery-contracts/workflow-failure.md"
+    "c06-messaging-families-and-delivery-contracts/claim-check.md"
 )
 OWNER_UNITS = ROOT / "edition/patterns/owner-units.v1.json"
 CASES = (
@@ -23,8 +23,8 @@ def squash(text):
 
 
 def owner_section(text):
-    start = text.index("### Claim Check")
-    end = text.index("### Correlation Identifier", start)
+    start = text.index("# Claim Check")
+    end = text.index("## Navigation", start)
     return text[start:end]
 
 

@@ -189,61 +189,11 @@ The source material keeps its original published/inferred/synthetic/unverified d
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. They are synthetic design guidance, not
 measured evidence, and they do not create a new source claim. The Pipes and
-Filters and Resequencer notes are exceptions: they are source-bound, with
-quotations and an Evidence paragraph tied to the records named in their cards
-and owner units.
+Filters and Resequencer notes have moved to dedicated source-bound owner pages.
 
 ### Resequencer
 
-**Decision.** Use a resequencer only when the message contract declares a required order, a
-reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition
-have owners. Partition by key instead when global order is unnecessary or the buffer cannot be
-bounded.
-
-**Mechanism.** A resequencer holds messages and releases them in a specified order. The
-Enterprise Integration Patterns page defines a "stateful filter" that collects and re-orders
-messages before publishing them to the output channel. Camel's batch mode collects, sorts and
-sends a batch; its stream mode sends a message as soon as the next expected sequence number
-arrives, and requires integer sequence numbers ordered from 1 to N. A stream message must carry
-a unique sequence number with a known predecessor and successor.
-
-**Invariant.** The pending-message backlog is a bounded buffer: the default capacity is 1000
-elements and can be configured. The source states that the capacity parameter prevents the
-resequencer from running out of memory. Duplicate handling is a declared rule, not a broker
-default: by default duplicates are not supported and only the last message is kept, while batch
-mode can allow them. Tycho guidance: the sequence domain, buffer cap, duplicate rule and gap
-timeout belong to the streaming contract.
-
-**Failure and recovery.** The failure path is a missing sequence that blocks later messages. On
-a timeout the resequencer disregards the current expected sequence number and moves to the next
-expected number. Late messages need a declared disposition: with old-message rejection enabled
-the implementation throws for an exchange older than the last delivered message, and invalid
-exchanges can be skipped explicitly. Tycho guidance: release after a declared gap timeout, fail
-the affected ordering scope when continuity is mandatory, and record dropped or rejected
-sequence numbers.
-
-**Alternative.** Partitioning messages by a category key and processing each category
-sequentially, with different categories in parallel, is the alternative when global order is
-unnecessary. The Sequential Convoy pattern partitions related messages that way; its
-considerations add that competing consumers alone lose per-group ordering and that a poison
-message blocks the rest of its session. Reverse the choice when ordering is global or the key
-cannot be made stable.
-
-**Limits.** Buffer memory, gap timeout and ordering scope are costs; a global resequencer can
-become a throughput bottleneck. The source warns that the lower the timeout relative to the
-out-of-sequence delay, the higher the probability of out-of-order delivery, and that large
-timeouts need sufficiently high capacity.
-
-**Evidence.** The Enterprise Integration Patterns Resequencer page
-(read.batch2-resequencer.2026-10-21) states the collect-and-reorder mechanism. The Apache Camel
-4.22.x LTS Resequence page (read.camel-resequence.2026-10-29, canonical text SHA-256
-e14de4848c2405163b796e003cc751c1d70decc6f83b5e53d160db0f3b269a9e) states batch and stream
-modes, the ordered integer sequence requirement, the default backlog capacity, duplicate
-handling, timeout release, old-message rejection and invalid-message skipping. The Microsoft
-Learn Sequential Convoy pattern page (read.microsoft-sequential-convoy.2026-10-29, canonical
-text SHA-256 89cfb0fe140931f0addd23e85124b6fbfe430a9b743d5a1739052ca33fbcb43d) states
-per-category partitioning with parallel categories and the per-group FIFO ordering boundary.
-No source is a benchmark.
+See the [dedicated Resequencer owner note](resequencer.md).
 
 ### Content-Based Router
 
@@ -265,52 +215,7 @@ rollback path.
 
 ### Pipes and Filters
 
-**Decision.** Compose processing as ordered stages only when each stage has an independent
-contract and the pipeline owns ordering, partial completion and recovery. If one stage needs
-the whole transaction, or per-stage latency and coordination exceed the value of isolation,
-keep one cohesive transformation.
-
-**Mechanism.** Pipes and filters decompose processing into ordered, replaceable stages
-connected by a message contract. The source defines the style as dividing "a larger
-processing task into a sequence of smaller, independent processing steps (filters) that are
-connected by channels (pipes)." The pipe carries one filter's output to the next; a filter
-receives on its inbound pipe, processes the message, and publishes the result to its
-outbound pipe. The source states: "Each filter exposes a very simple interface: It receives
-messages on the inbound pipe, processes the message, and publishes the results to the
-outbound pipe."
-
-**Invariant.** Each stage has one inbound and one outbound port in the basic form, and a
-parallel or multi-instance stage can reorder messages unless the pipeline declares an
-ordering scope and a resequencer. The source states: "If the sequence of messages is
-critical, we can run only one instance of each component or we must use a Resequencer
-(283)." Tycho guidance, not a source claim: give each stage an effect identity for
-deduplication, expose per-stage lag or queue depth, and define backpressure and a
-partial-completion rule before adding a stage.
-
-**Failure and recovery.** A failed middle stage leaves earlier effects applied; record stage
-identity and recover through a transactional client or a declared checkpoint. The source is
-explicit about the simple case: "This simple filter example is not transactional. If an
-error occurs while processing the message (before it is sent to the output channel), the
-message is lost. This is generally not desirable in a production environment. See
-Transactional Client (484) for a solution to this problem." Tycho guidance: retries and
-replays must be idempotent per stage, and the operator needs the failed stage, its input
-identity and the last completed stage.
-
-**Alternative.** A single in-process transformation is the alternative when the stages are
-small and cannot be operated independently. The source names a comprehensive "incoming
-message massaging module" as the alternative and calls that approach "inflexible and
-difficult to test"; an in-memory queue is a lighter pipe when all components share one
-machine. Use the pipeline when independent development, scaling or replacement pays for the
-message contract and partial-failure states.
-
-**Limits.** Channels consume memory and CPU cycles for buffering, and repeated message
-conversion lowers throughput on long chains; the slowest stage bounds pipeline throughput,
-and stateful filters are poor parallel candidates.
-
-**Evidence.** The 2003 Chapter 3 section, printed pp.70-77, supports the mechanism, ordering,
-non-transactional loss and the in-process alternative; the public pattern page is
-publisher-abridged. Backpressure, checkpoint and idempotency guidance is Tycho synthesis,
-not a source claim.
+See the [dedicated Pipes and Filters owner note](pipes-and-filters.md).
 
 ### Competing Consumers
 

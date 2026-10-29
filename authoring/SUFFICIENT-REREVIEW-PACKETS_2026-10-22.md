@@ -9,15 +9,15 @@
 | Measure | Value |
 |---|---:|
 | Packets | 145 |
-| Promoted after remediation | 140 |
+| Promoted after remediation | 135 |
 | Residual findings after re-review | 0 |
-| Unique owner pages | 76 |
+| Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
 | Reviewed by independent agent | 113 |
 | Rejected after review | 0 |
-| Awaiting current external review | 5 |
+| Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 5, "page-changed-since-review": 27, "reviewed-by-independent-agent": 113}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 22, "reviewed-by-independent-agent": 113}.
 
 ## Review procedure
 
@@ -126,8 +126,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Claim Check**
-  Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **Clean / Onion Architecture**
   Current: pass; historical: None; re-review: pass; report: None.
@@ -402,8 +402,8 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Pipes and Filters**
-  Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **Point-to-Point Queue**
   Current: pass; historical: None; re-review: pass; report: pass.
@@ -454,12 +454,12 @@ blank verdict template in the machine-readable file.
   Status: reviewed-by-independent-agent.
 
 - **Request-Reply Messaging**
-  Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **Resequencer**
-  Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **Retry with Exponential Backoff**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -534,8 +534,8 @@ blank verdict template in the machine-readable file.
   Status: page-changed-since-review.
 
 - **Splitter**
-  Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
+  Status: awaiting-current-external-review.
 
 - **Stale-While-Revalidate**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

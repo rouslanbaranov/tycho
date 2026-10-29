@@ -63,7 +63,7 @@ while it waits for the response.
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
 re-establish the caller's context.
 
-**Technical owner.** [Request-reply messaging and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#request-reply-messaging) — workflow failure gates are bounded, not a complete request-reply contract.
+**Technical owner.** [Request-Reply Messaging](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md#request-reply-messaging) — separate request and reply channels and recovery limits are bounded, not a complete request-reply contract.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)

@@ -78,7 +78,7 @@ old-message rejection throws on an exchange older than the last delivered messag
 messages can be discarded explicitly. At the buffer cap, reject or spill with evidence rather than
 dropping silently.
 
-**Technical owner.** [Resequencer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md#resequencer) — sequence domain, buffer bound, gap timeout and late-message disposition are bounded; this is not a broker implementation guide.
+**Technical owner.** [Resequencer](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md#resequencer) — sequence domain, buffer bound, gap timeout and late-message disposition are bounded; this is not a broker implementation guide.
 
 **Sources.** [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-resequencer.2026-10-21: the public pattern page is publisher-abridged and

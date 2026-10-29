@@ -5,11 +5,11 @@
   "sources": [
     {
       "path": "edition/patterns/sufficient-candidates.v1.json",
-      "sha256": "22f00faf772ca891f5882f9e5d43b3e40268a4d4a4e478ee40c693c8e074801f"
+      "sha256": "25998d00f18884b9ee779e101ffb02243b58da17313deebdffecb9a4920e0799"
     },
     {
       "path": "edition/patterns/sufficient-review-records.v1.json",
-      "sha256": "9b922ad64ad6e72d481336d21baf6efe2edcf9569a8b9f3f825b3da4903481c6"
+      "sha256": "bfe0ce0a4ded0ee26494ea5ac70181891244eda431e143e595da5c92a4a5fb14"
     },
     {
       "path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
@@ -27,33 +27,33 @@
   "summary": {
     "records": 145,
     "current_verdicts": {
-      "awaiting-current-external-review": 5,
-      "pass": 140
+      "awaiting-current-external-review": 10,
+      "pass": 135
     },
     "derived_states": {
-      "awaiting-current-external-review": 5,
-      "promoted-after-remediation": 140
+      "awaiting-current-external-review": 10,
+      "promoted-after-remediation": 135
     },
     "report_matches": {
       "exact": 9,
       "missing": 6,
-      "not-applicable": 5,
-      "verdict-mismatch": 125
+      "not-applicable": 10,
+      "verdict-mismatch": 120
     },
     "report_name_matches": {
       "alias": 1,
-      "exact": 133,
+      "exact": 128,
       "missing": 6,
-      "not-applicable": 5
+      "not-applicable": 10
     },
     "current_verdicts_supported_by_cited_report": 9,
-    "verdict_mismatches": 125,
-    "promoted_from_findings": 120,
-    "awaiting_current_external_review": 5,
-    "historical_passes_retained": 5,
+    "verdict_mismatches": 120,
+    "promoted_from_findings": 115,
+    "awaiting_current_external_review": 10,
+    "historical_passes_retained": 10,
     "report_reject_conflicts": 5,
-    "re_reviewed": 140,
-    "re_review_with_separate_report": 140,
+    "re_reviewed": 135,
+    "re_review_with_separate_report": 135,
     "re_review_without_separate_report": 0,
     "protocol_counts": {
       "pass": 11,
@@ -61,7 +61,7 @@
       "reject": 0
     },
     "protocol_divergence": {
-      "pass_delta": 129,
+      "pass_delta": 124,
       "pass_with_findings_delta": -134,
       "reject_delta": 0
     }
@@ -936,27 +936,48 @@
     {
       "pattern_id": "tycho.pattern.request-reply-messaging",
       "catalog_name": "Request-Reply Messaging",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
-      "findings": 2,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
-      "re_review_page_sha256": "6d315d879651e8c0ef604ccf4d9b034e4f8cdaaf1f534879df3ab393a8c5f319",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
-      "report_verdict": "pass-with-findings",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md",
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass-with-findings",
+          "reviewer": "independent-review-agent-batch-2026-10-22",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
+          "report_sha256": "f74b417b9fa6e74e632ca492d5b427c90c4e14165feb1660dd5523563aaa10f5",
+          "findings": 2,
+          "status": "historical-pinned-not-current",
+          "note": "Initial batch review before the 2026-10-29 split; superseded by the later delta pass."
+        },
+        {
+          "verdict": "pass",
+          "reviewer": "independent-reviewer-agent-2026-10-22-delta",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
+          "report_sha256": "b1d5590135083a2faf2faa49328872e95b8c79250fb780f60d0fb5ba007d0569",
+          "page_sha256": "6d315d879651e8c0ef604ccf4d9b034e4f8cdaaf1f534879df3ab393a8c5f319",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Pre-split delta pass; the 2026-10-29 split moved the owner section to a dedicated page and changed the page hash."
+        }
+      ],
+      "findings": 0,
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.correlation-identifier",
@@ -1036,52 +1057,83 @@
     {
       "pattern_id": "tycho.pattern.pipes-and-filters",
       "catalog_name": "Pipes and Filters",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
-      "findings": 2,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
-      "re_review_page_sha256": "650217e944b71a98d5b1bfc724d25897e2a9c4a0f4cad68f3bc7b53b47f446b2",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
-      "report_verdict": "pass-with-findings",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/pipes-and-filters.md",
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass-with-findings",
+          "reviewer": "independent-review-agent-batch-2026-10-22",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
+          "report_sha256": "f74b417b9fa6e74e632ca492d5b427c90c4e14165feb1660dd5523563aaa10f5",
+          "findings": 2,
+          "status": "historical-pinned-not-current",
+          "note": "Initial batch review before the 2026-10-29 split; superseded by the later delta pass."
+        },
+        {
+          "verdict": "pass",
+          "reviewer": "independent-reviewer-agent-2026-10-22-delta",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
+          "report_sha256": "b1d5590135083a2faf2faa49328872e95b8c79250fb780f60d0fb5ba007d0569",
+          "page_sha256": "650217e944b71a98d5b1bfc724d25897e2a9c4a0f4cad68f3bc7b53b47f446b2",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Pre-split delta pass; the 2026-10-29 split moved the owner section to a dedicated page and changed the page hash."
+        }
+      ],
+      "findings": 0,
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.splitter",
       "catalog_name": "Splitter",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass",
+          "reviewer": "reviewer-preset-2026-10-25-full-batches",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-25",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-2026-10-26-splitter-polyglot-pass.md",
+          "report_sha256": "494e206df8b52f21eda0cfe92ce7d26637d1fdd6a73b36ba72a2bc88f3d8b876",
+          "page_sha256": "d001f915c0b937a8f6338ee81d9b40351fd9019d7148c3fb3d341cf91b0101eb",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Pre-split pass; the 2026-10-29 split moved the owner section to a dedicated page and changed the page hash."
+        }
+      ],
       "findings": 0,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REVIEW-2026-10-26-splitter-polyglot-pass.md",
-      "re_review_page_sha256": "d001f915c0b937a8f6338ee81d9b40351fd9019d7148c3fb3d341cf91b0101eb",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-2026-10-26-splitter-polyglot-pass.md",
-      "report_verdict": "pass-with-findings",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.aggregator",
@@ -1409,52 +1461,94 @@
     {
       "pattern_id": "tycho.pattern.resequencer",
       "catalog_name": "Resequencer",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
-      "findings": 2,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
-      "re_review_page_sha256": "650217e944b71a98d5b1bfc724d25897e2a9c4a0f4cad68f3bc7b53b47f446b2",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
-      "report_verdict": "pass-with-findings",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass-with-findings",
+          "reviewer": "independent-review-agent-batch-2026-10-22",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
+          "report_sha256": "f74b417b9fa6e74e632ca492d5b427c90c4e14165feb1660dd5523563aaa10f5",
+          "findings": 2,
+          "status": "historical-pinned-not-current",
+          "note": "Initial batch review before the 2026-10-29 split; superseded by the later delta pass."
+        },
+        {
+          "verdict": "pass",
+          "reviewer": "independent-reviewer-agent-2026-10-22-delta",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
+          "report_sha256": "b1d5590135083a2faf2faa49328872e95b8c79250fb780f60d0fb5ba007d0569",
+          "page_sha256": "650217e944b71a98d5b1bfc724d25897e2a9c4a0f4cad68f3bc7b53b47f446b2",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Pre-split delta pass; the 2026-10-29 split moved the owner section to a dedicated page and changed the page hash."
+        }
+      ],
+      "findings": 0,
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.claim-check",
       "catalog_name": "Claim Check",
-      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
-      "current_verdict": "pass",
-      "current_state": null,
-      "historical_verdict": null,
-      "historical_reviews": [],
-      "findings": 2,
-      "remediated": true,
-      "re_reviewed": true,
-      "re_review_verdict": "pass",
-      "re_review_findings": 0,
-      "re_review_report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
-      "re_review_page_sha256": "6d315d879651e8c0ef604ccf4d9b034e4f8cdaaf1f534879df3ab393a8c5f319",
-      "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
-      "report_verdict": "pass-with-findings",
-      "report_name_match": "exact",
-      "report_match": "verdict-mismatch",
-      "derived_state": "promoted-after-remediation",
-      "issues": [
-        "re-review-without-report",
-        "report-verdict-mismatch"
-      ]
+      "owner_path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md",
+      "current_verdict": "awaiting-current-external-review",
+      "current_state": "awaiting-current-external-review",
+      "historical_verdict": "pass",
+      "historical_reviews": [
+        {
+          "verdict": "pass-with-findings",
+          "reviewer": "independent-review-agent-batch-2026-10-22",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REVIEW-BATCH-2026-10-22.md",
+          "report_sha256": "f74b417b9fa6e74e632ca492d5b427c90c4e14165feb1660dd5523563aaa10f5",
+          "findings": 2,
+          "status": "historical-pinned-not-current",
+          "note": "Initial batch review before the 2026-10-29 split; superseded by the later delta pass."
+        },
+        {
+          "verdict": "pass",
+          "reviewer": "independent-reviewer-agent-2026-10-22-delta",
+          "kind": "independent-agent",
+          "reviewed_at": "2026-10-22",
+          "report_path": "authoring/INDEPENDENT-AGENT-REREVIEW-2026-10-22-phase-a-v3.md",
+          "report_sha256": "b1d5590135083a2faf2faa49328872e95b8c79250fb780f60d0fb5ba007d0569",
+          "page_sha256": "6d315d879651e8c0ef604ccf4d9b034e4f8cdaaf1f534879df3ab393a8c5f319",
+          "findings": 0,
+          "status": "historical-pinned-not-current",
+          "note": "Pre-split delta pass; the 2026-10-29 split moved the owner section to a dedicated page and changed the page hash."
+        }
+      ],
+      "findings": 0,
+      "remediated": false,
+      "re_reviewed": false,
+      "re_review_verdict": null,
+      "re_review_findings": null,
+      "re_review_report_path": null,
+      "re_review_page_sha256": null,
+      "report_path": null,
+      "report_verdict": null,
+      "report_name_match": "not-applicable",
+      "report_match": "not-applicable",
+      "derived_state": "awaiting-current-external-review",
+      "issues": []
     },
     {
       "pattern_id": "tycho.pattern.message-broker-messaging-bridge",
