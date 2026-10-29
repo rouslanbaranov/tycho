@@ -43,12 +43,12 @@ evidence_scope:
   notes: "10 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 # V11/C09 — Scalability and load distribution
@@ -152,8 +152,11 @@ restart/downtime is acceptable.
 **Hard contraindications.** Reject when a single-node ceiling is near, when failover
 requires multiple nodes, or when cost grows superlinearly.
 
-**Competing alternative.** Horizontal scaling or partitioning. Reverse the choice when the
-larger node no longer meets availability/cost constraints.
+**Competing alternative.** Horizontal scaling by adding replicas. The Kubernetes
+page frames the choice as either changing the replica count (horizontal scaling) or
+adjusting resources in place (vertical scaling); it does not state when either is
+preferable. Reverse the choice when the larger node no longer meets availability or cost
+constraints; those conditions are Tycho synthesis.
 
 **Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
 section.
@@ -163,7 +166,15 @@ section.
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-k8s-resources.2026-10-21: all thirty-three served
 headings read. The source is a public pattern/documentation
-unit, not a benchmark.
+unit, not a benchmark. The competing alternative is bound to the same source's
+Autoscaling Workloads page, read record read.autoscaling-workloads-vertical.2026-10-29,
+section "Autoscaling Workloads", revision
+f653ca7cce9cb752cd41e1fc2d10b335acd8033a186aa324eb499897bb7219ab: "When you scale a
+workload, you can either increase or decrease the number of replicas managed by the
+workload, or adjust the resources available to the replicas in-place. The first approach
+is referred to as horizontal scaling, while the second is referred to as vertical
+scaling." The page defines both approaches but not when either is preferable; the
+reversal conditions remain Tycho synthesis.
 
 **Decision state.** applicable-under-conditions.
 

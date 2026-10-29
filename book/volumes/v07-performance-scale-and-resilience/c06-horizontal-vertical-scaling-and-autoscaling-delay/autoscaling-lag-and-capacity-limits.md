@@ -41,6 +41,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.k8s-hpa"
+    - "src.kubernetes"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -50,8 +51,8 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
-source_inspection_date: null
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:-1 -->
@@ -130,9 +131,18 @@ and cost must not grow superlinearly with that size. Measure the resource that a
 not only CPU, and verify that the operating system, runtime and dependency can use the larger
 allocation.
 
-Horizontal scaling or sharding may be preferable when the workload partitions and a single node is
-an unacceptable failure domain. Vertical scaling is a fit when the workload is hard to partition and
-the resize can be staged safely.
+Horizontal scaling may be preferable when the workload partitions and a single node is an
+unacceptable failure domain. The Kubernetes autoscaling page frames the same choice as either
+changing the replica count (horizontal scaling) or adjusting resources in place (vertical
+scaling). It states:
+
+> When you scale a workload, you can either increase or decrease the number of replicas managed by
+> the workload, or adjust the resources available to the replicas in-place. The first approach is
+> referred to as horizontal scaling, while the second is referred to as vertical scaling.
+
+The page defines the two approaches but does not state when horizontal scaling is preferable;
+partition, failure-domain and restart conditions remain Tycho synthesis. Vertical scaling is a fit
+when the workload is hard to partition and the resize can be staged safely.
 
 ### Autoscaling
 
