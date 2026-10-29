@@ -19,5 +19,17 @@ class HybridTests(unittest.TestCase):
         self.assertEqual(out[1]["bm25_rank"],None)
         self.assertTrue(out[1]["citation"].endswith("#2"))
 
+    def test_linear_fusion_keeps_bm25_sections(self):
+        bm=[{"path":"a","section_id":"1","section_key":"a#1",
+             "score":10.0}]
+        sem=[{"path":"a","section_id":"9","section_key":"a#9",
+              "score":.9},
+             {"path":"b","section_id":"2","section_key":"b#2",
+              "score":.8}]
+        out=hybrid_search.page_linear(bm,sem,weight=.1,limit=2)
+        self.assertEqual([x["path"] for x in out],["a","b"])
+        self.assertEqual(out[0]["section_id"],"1")
+        self.assertEqual(out[0]["retrieval_mode"],"hybrid-page-linear")
+
 if __name__=="__main__":
     unittest.main()

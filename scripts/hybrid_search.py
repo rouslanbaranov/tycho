@@ -129,9 +129,50 @@ def page_rrf(bm25_results, semantic_results, weight=DEFAULT_WEIGHT,
     return out
 
 
+def page_linear(bm25_results, semantic_results, weight=DEFAULT_WEIGHT,
+                limit=5):
+    """Linear page fusion with per-query min-max normalization."""
+    bm = {}
+    for item in bm25_results:
+        if item["path"] not in bm or item.get("score", 0) > bm[item["path"]].get("score", 0):
+            bm[item["path"]] = item
+    sem = {}
+    for item in semantic_results:
+        if item["path"] not in sem or item.get("score", 0) > sem[item["path"]].get("score", 0):
+            sem[item["path"]] = item
+    bm_values = [item.get("score", 0) for item in bm.values()] or [0]
+    sem_values = [item.get("score", 0) for item in sem.values()] or [0]
+    bmin, bmax = min(bm_values), max(bm_values)
+    smin, smax = min(sem_values), max(sem_values)
+    pages = set(bm) | set(sem)
+    ordered = []
+    for path in pages:
+        bscore = ((bm[path].get("score", 0) - bmin) / (bmax - bmin)
+                  if path in bm and bmax > bmin else (1.0 if path in bm else 0.0))
+        sscore = ((sem[path].get("score", 0) - smin) / (smax - smin)
+                  if path in sem and smax > smin else 0.0)
+        score = (1 - weight) * bscore + weight * sscore
+        ordered.append((score, path))
+    ordered.sort(key=lambda item: (-item[0], item[1]))
+    bm_rank = {path: rank for rank, path in enumerate(
+        sorted(bm, key=lambda p: -bm[p].get("score", 0)), 1)}
+    sem_rank = {path: rank for rank, path in enumerate(
+        sorted(sem, key=lambda p: -sem[p].get("score", 0)), 1)}
+    out = []
+    for score, path in ordered[:limit]:
+        item = dict(bm.get(path) or sem[path])
+        item["bm25_rank"] = bm_rank.get(path)
+        item["semantic_rank"] = sem_rank.get(path)
+        item["hybrid_score"] = round(score, 6)
+        item["retrieval_mode"] = "hybrid-page-linear"
+        item["citation"] = item["path"] + "#" + item["section_id"]
+        out.append(item)
+    return out
+
+
 def search(root, query, limit=5, weight=DEFAULT_WEIGHT,
            model_name=DEFAULT_MODEL, embeddings=DEFAULT_EMBEDDINGS,
-           index_path=None):
+           index_path=None, fusion="rrf"):
     import section_search
     matrix, data, _ = load_embeddings(root, model_name, embeddings)
     semantic = semantic_results(root, query, load_model(model_name),
@@ -142,9 +183,11 @@ def search(root, query, limit=5, weight=DEFAULT_WEIGHT,
     return {
         "status": "ok" if bm25 or semantic else "no-results",
         "query": query,
-        "retrieval_mode": "hybrid-page-rrf",
+        "retrieval_mode": "hybrid-page-" + fusion,
         "weight": weight,
-        "results": page_rrf(bm25, semantic, weight, limit),
+        "results": (page_rrf(bm25, semantic, weight, limit)
+                    if fusion == "rrf"
+                    else page_linear(bm25, semantic, weight, limit)),
         "notice": "BM25 remains the default; hybrid is diagnostic.",
     }
 
@@ -199,6 +242,7 @@ def main(argv=None):
     ap.add_argument("--weight", type=float, default=DEFAULT_WEIGHT)
     ap.add_argument("--model", default=DEFAULT_MODEL)
     ap.add_argument("--embeddings", type=Path, default=DEFAULT_EMBEDDINGS)
+    ap.add_argument("--fusion", choices=("rrf", "linear"), default="rrf")
     args = ap.parse_args(argv)
     if args.action == "build":
         print(json.dumps(build(args.root, args.model, args.embeddings),
@@ -211,7 +255,7 @@ def main(argv=None):
     if not args.query:
         raise SystemExit("--query is required for search")
     print(json.dumps(search(args.root, args.query, args.limit, args.weight,
-                            args.model, args.embeddings),
+                            args.model, args.embeddings, fusion=args.fusion),
                      indent=2, sort_keys=True))
     return 0
 

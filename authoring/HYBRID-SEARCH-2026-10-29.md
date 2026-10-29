@@ -21,6 +21,8 @@ Page-level RRF combines BM25 top-20 with H2 semantic top-20:
 - semantic rank weight 0.1;
 - page score = 1/(60+bm25_rank) + 0.1/(60+semantic_rank);
 - BM25 section wins when the page exists; semantic supplies missing pages.
+- Linear score fusion was also tested but measured 0.741 hit@5 in the actual
+  evaluator; it is not the selected mode.
 
 Embeddings: model2vec potion-base-8M, 256-dimensional, H2 heading + content,
 snapshot-bound. Rebuild with:
