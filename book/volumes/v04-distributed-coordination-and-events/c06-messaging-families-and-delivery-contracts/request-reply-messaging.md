@@ -74,7 +74,7 @@ complexity, however, is the callback mechanism that must re-establish the caller
 messaging's loose runtime coupling and buffered availability against the added broker complexity
 and more complex request/reply communication. The page states: "The RPI pattern is an alternative
 pattern". It records messaging's benefits, "Loose runtime coupling since it decouples the message
-sender" and "Improved availability since the message broker buffers messages until the consumer
+sender from the consumer" and "Improved availability since the message broker buffers messages until the consumer
 is able to process them", against its costs, "Additional complexity of message broker, which
 must be highly available" and "Request/reply-style communication is more complex". Tycho
 synthesis: prefer direct RPI when both parties can be available for the request, the call fits the
@@ -83,8 +83,8 @@ coupling or buffered availability matters.
 
 **Limits.** The primary bound page is publisher-abridged. It supports the separate request and
 reply channels, the one-outstanding-request or private-reply-channel implication of the
-Synchronous Block case, and the Synchronous Block and Asynchronous Callback descriptions. It does not state that both Synchronous Block messaging and RPC block the caller; Tycho
-synthesis treats both as blocking and the page does not compare them as decision alternatives. The alternative binds the microservices.io Messaging page:
+Synchronous Block case, and the Synchronous Block and Asynchronous Callback descriptions. It does not present Block messaging and RPI as compared decision alternatives; Tycho synthesis
+treats both as blocking. The alternative binds the microservices.io Messaging page:
 "The RPI pattern is an alternative pattern"; that page records messaging's benefits and costs
 but does not state a request-budget or blocking rule, so the selection conditions are Tycho
 synthesis. The primary page does not serve correlation-identifier mechanics, reply timeouts,

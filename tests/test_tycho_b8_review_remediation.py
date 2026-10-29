@@ -531,7 +531,7 @@ class B8FinalClaimRequestSplitterReviewTests(unittest.TestCase):
             unit["decision_evidence"]["competing_alternative"],
             card_alternative)
         limits = field(self.request_owner_raw, "Limits")
-        self.assertIn("Synchronous Block messaging and RPC block the caller", limits)
+        self.assertIn("does not present Block messaging and RPI", limits)
         self.assertIn("Tycho synthesis", limits)
 
 

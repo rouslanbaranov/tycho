@@ -76,9 +76,10 @@ channel and a single reply thread to process replies for multiple request thread
 correlation mechanics.
 
 **Hard contraindications.** Reject when a direct synchronous Remote Procedure Invocation meets
-the availability and latency target and the caller can block, or when no reply channel can be
-established. Both Synchronous Block messaging and a Remote Procedure Invocation block the
-caller, so a blocking caller thread alone is not a contraindication.
+the availability and latency target, no broker is justified, and the caller can block, or when
+no reply channel can be established. Tycho synthesis: both Synchronous Block messaging and a
+Remote Procedure Invocation are treated as blocking, so a blocking caller thread alone is not a
+contraindication.
 
 **Competing alternative.** The bound Messaging page names the RPI pattern as an alternative and
 records messaging's loose runtime coupling and buffered availability against the added broker
@@ -88,8 +89,8 @@ justified; prefer messaging request-reply when loose runtime coupling or buffere
 matters.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
-re-establish the caller's context. Tycho guidance, not a served source claim: bound retries,
-time out unresolved requests, and suppress duplicate replies and treat repeated delivery as an idempotent outcome.
+re-establish the caller's context. Tycho guidance, not a served source claim: time out unresolved
+requests, suppress duplicate replies, and treat repeated delivery as an idempotent outcome.
 
 **Technical owner.** [Request-Reply Messaging](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md#request-reply-messaging) — separate request and reply channels, one-outstanding or private reply channel, callback recovery and limits are bounded; this is not a complete request-reply contract.
 
