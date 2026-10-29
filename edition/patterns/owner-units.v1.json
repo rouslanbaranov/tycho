@@ -174,7 +174,7 @@
         "heading": "Microservices Architecture",
         "anchor": "microservices-architecture",
         "level": 3,
-        "line": 92,
+        "line": 93,
         "unit_kind": "dedicated",
         "unit_terms": [
           "A microservice owner accepts",
@@ -209,9 +209,25 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Retried commands carry a stable idempotency key or a natural unique effect, and the owner records the outcome.",
-          "reason": "Source discusses failure and circuit breakers but not retry/idempotency outcome recording."
+          "state": "supported",
+          "quote": "Because services can fail at any time, applications must be designed to tolerate the failure of a service and respond as gracefully as possible; recovery depends on detecting failures quickly and, if possible, restoring service automatically.",
+          "reason": "Binds the article's Design for failure section: any service call can fail, applications must tolerate the failure and respond gracefully, and recovery depends on detecting failures quickly and restoring service automatically. The article does not specify timeout values, an idempotency or retry mechanism, observability signals or a recovery-time bound; those remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.microservices",
+            "ledger_record": "read.microservices-article.2026-10-21",
+            "section": "Design for failure",
+            "quote": "Since services can fail at any time, it's important to be able to detect the failures quickly and, if possible, automatically restore service.",
+            "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microservices",
+              "ledger_record": "read.microservices-article.2026-10-21",
+              "section": "Design for failure",
+              "quote": "Any service call could fail due to unavailability of the supplier, the client has to respond to this as gracefully as possible.",
+              "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -243,7 +259,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Definition-level purpose section; detailed deployment and failure mechanisms are delegated to service-independence.md."
+      "notes": "Failure/recovery bound 2026-10-29 to the Design for failure section of the admitted microservices article; all four dimensions supported, coverage partial-bounded, no promotion; timeout, retry-identity, observability and recovery-time specifics remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.service-oriented-architecture-soa",
@@ -255,7 +271,7 @@
         "heading": "Service-Oriented Architecture (SOA)",
         "anchor": "service-oriented-architecture-soa",
         "level": 3,
-        "line": 111,
+        "line": 115,
         "unit_kind": "dedicated",
         "unit_terms": [
           "governed service contracts",
@@ -11229,7 +11245,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 60,
-    "failure_recovery_supported": 48,
+    "failure_recovery_supported": 49,
     "alternative_supported": 62,
     "technical_partial_bounded": 28,
     "technical_partial": 90,

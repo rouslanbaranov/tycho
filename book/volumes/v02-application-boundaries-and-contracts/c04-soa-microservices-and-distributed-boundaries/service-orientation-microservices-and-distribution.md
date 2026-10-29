@@ -39,6 +39,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.soa-model"
+    - "src.microservices"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -49,7 +50,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-29"
-source_inspection_date: "2026-10-29"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:-1 -->
@@ -60,7 +61,7 @@ content_verified_at: null
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Microservices Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#microservices-architecture) — decision conditions and contraindications.
+> **Pattern atlas:** [Microservices Architecture](../../v11-pattern-atlas/c01-application-boundaries/microservices-architecture.md#microservices-architecture) — decision conditions and contraindications.
 > [Service-Oriented Architecture](../../v11-pattern-atlas/c01-application-boundaries/README.md#service-oriented-architecture-soa) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.acb452608a8b42898aae7482c27f5f04:0 -->
 ## Purpose and mission
