@@ -109,3 +109,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 Health delta | pass | `2026-10-29-health-delta-deepseek.md` | `e8489ade200902ced772d0db85a0e072fdf19b86d89c5844eba30a896666a397` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Multi-Leader delta | pass | `2026-10-29-multi-leader-delta-deepseek.md` | `fedcd351d6b5861f1c6017674dcd441ac57d39eebcb1bfea281150a2ebc537c3` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Message Filter | pass | `2026-10-29-message-filter-deepseek.md` | `ed6a8561cc8dbe564c4f8df562a04d9c0dab73d7de41fd43ff28dfe2e1273d92` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Least Privilege | pass | `2026-10-29-least-privilege-deepseek.md` | `0a7cbfe04fbc43c07ed7f0321cd1af5f453ac62a3fc5423a619a589d0e505ec9` |
