@@ -44,3 +44,10 @@ No page content, credentials, headers or user identifiers are logged.
 
 No logging exists yet; this is not telemetry, CI, human review or sufficient
 coverage.
+
+## Implemented subset
+
+The opt-in MCP query log now stores query_sha256 by default. Raw query text is
+available only with --query-log-raw. This does not add rotation or retention;
+those remain planned.
+
