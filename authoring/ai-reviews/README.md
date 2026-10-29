@@ -96,3 +96,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-28 | DeepSeek Reviewer | #540 claim/request | pass | `2026-10-28-claim-request-deepseek.md` | `fa9ee4e7abc10781120d5f1d01fc39b1bb826ea5c8054c5917b8405dc78c63f3` |
 | 2026-10-29 | DeepSeek Reviewer | #540 claim/request final | pass | `2026-10-29-claim-request-final-deepseek.md` | `cf87685870bb237846e9dd0b3d3be7be3b860720c715228d327e27e7030de187` |
 | 2026-10-29 | DeepSeek Reviewer | #540 resequencer/pipes | pass | `2026-10-29-resequencer-pipes-deepseek.md` | `d3508b0610505ebf506ee18a8d34a56300facfc6723c38244073b3661db8ccc9` |
+| 2026-10-29 | DeepSeek Reviewer | #540 cache invalidation split | pass | `2026-10-29-cache-invalidation-split-review-deepseek.md` | `146b9cebefb66be12699ffe960e4b9e2ccba4f051ba826fb674a99f49d894dae` |
