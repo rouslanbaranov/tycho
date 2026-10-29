@@ -53,6 +53,19 @@ The earlier dev/held run selected weight 0.1 with v2 held hit@5 0.808, but that
 was on a different content snapshot; do not transfer the number as a current
 metric.
 
+## Adaptive routing
+
+BM25 is used when the top BM25 result covers at least 60% of unique query
+terms; otherwise page-level RRF hybrid is used. Current diagnostic:
+
+| Query set | BM25 hit@5 | Auto hit@5 | Auto hit@1 |
+|---|---:|---:|---:|
+| general qrels | 0.724 | **0.764** | 0.356 |
+| V12 qrels | 0.867 | 0.867 | 0.267 |
+
+V12 hit@5 is preserved but V12 hit@1 is lower, so automatic routing remains
+optional and does not replace the BM25 default.
+
 ## Decision
 
 - Keep BM25 as the production default.

@@ -19,6 +19,14 @@ class HybridTests(unittest.TestCase):
         self.assertEqual(out[1]["bm25_rank"],None)
         self.assertTrue(out[1]["citation"].endswith("#2"))
 
+    def test_matched_coverage_controls_router(self):
+        result=[{"matched_terms":["alpha"]}]
+        self.assertTrue(hybrid_search.matched_coverage(
+            "alpha beta", result, .5))
+        self.assertFalse(hybrid_search.matched_coverage(
+            "alpha beta gamma", result, .5))
+        self.assertFalse(hybrid_search.matched_coverage("alpha", []))
+
     def test_linear_fusion_keeps_bm25_sections(self):
         bm=[{"path":"a","section_id":"1","section_key":"a#1",
              "score":10.0}]
