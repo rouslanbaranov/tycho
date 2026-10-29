@@ -233,3 +233,12 @@ tool invocation that retrieves sources, or change.
     page before a planned promotion. Decoupling for a hypothetical future batch is not
     sufficient reason. Prefer coverage work on independent pages over maintenance
     splits of already sufficient entries.
+
+35. **Format-only promotion rebind.** A promotion hash may be updated without a new
+    external content review only when the change is proven to be formatting-only:
+    `git diff -w --exit-code <old> <new>` is empty, no frontmatter, code block, table,
+    link target, heading or list structure changed, and the canonical text hash is
+    unchanged. Record old/new file SHA-256, canonical hash and the diff command result
+    in a format-rebind record, and have a second read-only verifier confirm it. A raw
+    hash update without that proof is prohibited. Anything beyond whitespace/reflow
+    requires the normal review gate.
