@@ -107,3 +107,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 Fencing final | pass | `2026-10-29-fencing-final-deepseek.md` | `9eb50d90c52438ad690c56810d30061ae683b761b355ccd9f593fa857d1597bc` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Gatekeeper delta | pass | `2026-10-29-gatekeeper-delta-deepseek.md` | `c33066f036d07a28bffad59c20c2beeff2350e7f0c79b14c41bfe166e32184f3` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Health delta | pass | `2026-10-29-health-delta-deepseek.md` | `e8489ade200902ced772d0db85a0e072fdf19b86d89c5844eba30a896666a397` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Multi-Leader delta | pass | `2026-10-29-multi-leader-delta-deepseek.md` | `fedcd351d6b5861f1c6017674dcd441ac57d39eebcb1bfea281150a2ebc537c3` |
