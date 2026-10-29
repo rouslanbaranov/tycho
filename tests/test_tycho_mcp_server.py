@@ -354,6 +354,22 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["content_trust"],
                          mcp_server.CONTENT_TRUST)
 
+    def test_best_retrieval_mode_is_opt_in(self):
+        base = mcp_server.section_search.search(
+            self.root, "zebra", limit=1, abstain=False)
+        fake = {"status": "ok", "retrieval_mode": "best",
+                "snapshot": base["snapshot"], "rerank": "reranked",
+                "results": base["results"]}
+        with patch.object(mcp_server.best_search, "best_search",
+                          return_value=fake):
+            payload = self.call(self.server(), "tycho_search", {
+                "query": "zebra", "retrieval_mode": "best",
+            })["structuredContent"]
+        self.assertEqual(payload["retrieval_mode"], "best")
+        self.assertEqual(payload["rerank"], "reranked")
+        self.assertEqual(payload["results"][0]["section_id"],
+                         "retry-budget")
+
     def test_h3_match_maps_to_parent_and_is_not_readable(self):
         payload = self.call(self.server(), "tycho_search", {
             "query": "nested text", "limit": 2,
