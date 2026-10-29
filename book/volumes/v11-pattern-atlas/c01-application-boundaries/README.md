@@ -42,12 +42,12 @@ evidence_scope:
   notes: "All 12 cards cite read units; eight use bounded owner sections and remain partial."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-29"
+source_inspection_date: "2026-10-29"
 content_verified_at: null
 ---
 # V11/C01 — Application architecture and boundaries
@@ -177,16 +177,20 @@ shared authoritative data. A service count is not evidence of autonomy.
 when distribution cost outweighs the autonomy benefit, or when boundaries cannot be
 owned independently.
 
-**Failure and recovery.** Partial failure, retry amplification, latency and data
-consistency are normal; recovery requires timeouts, stable effect identity and
-observability. The cited article covers failure design; retry-identity specifics are
-synthetic owner guidance. The linked owner section states the remaining limits.
+**Failure and recovery.** Because services can fail at any time, applications must
+be designed to tolerate a service failure and respond as gracefully as possible;
+recovery depends on detecting failures quickly and, if possible, restoring service
+automatically. The cited article's "Design for failure" section binds that claim.
+Timeouts, retry identity, observability signals and recovery-time bounds remain
+Tycho guidance. The linked owner section states the remaining limits.
 
 **Technical owner.** [Microservices Architecture](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#microservices-architecture) — The section explicitly owns SOA and microservice boundary choices.
 
 **Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-article.2026-10-21: Microservices, all twenty-four
-headings read, including the SOA sidebar and the trade-offs card.
+headings read, including the SOA sidebar and the trade-offs card. The failure and
+recovery claim binds "Design for failure" at revision
+`a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8`.
 This is an architectural article, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.
