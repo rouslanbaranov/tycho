@@ -285,8 +285,13 @@ policy from infrastructure.
 behavior, a framework-centric application, or a team that cannot maintain boundary
 mapping. Drawing circles as team boundaries is not sufficient.
 
-**Competing alternative.** Hexagonal ports and adapters or layered architecture. Reverse
-the choice when the dependency rule stops protecting changes or mapping layers dominate.
+**Competing alternative.** Presentation-domain-data layering: dependencies run top to bottom,
+presentation depends on the domain, and the domain depends on its data source. Keeping the
+domain independent of its data source is arranged by introducing a mapper between the domain
+and data layers, the variation the source calls Hexagonal Architecture. Hexagonal ports and
+adapters is a variant of the same inward rule, not a competing alternative. Reverse the
+clean/onion choice when that independence is not the protected boundary, or when the mapper
+adds no tested change benefit. That reversal is Tycho guidance, not a source claim.
 
 **Failure and recovery.** Boundary erosion and DTO/mapping complexity are common.
 Recovery requires dependency checks and explicit use-case boundaries; the technical
@@ -297,7 +302,12 @@ owner section states the remaining limits.
 **Sources.** [src.clean-architecture](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.clean-architecture.2026-10-21: The Clean Architecture, sections
 "The Dependency Rule", "Entities", "Use Cases", "Interface Adapters", "Frameworks and
-Drivers", "Crossing boundaries". This is an author article, not a comparative study.
+Drivers", "Crossing boundaries". The article groups clean, onion and hexagonal as similar,
+so it does not support a competing-alternative comparison. The alternative is bound to
+[src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json) read record
+read.fowler-layering.2026-10-21: Presentation Domain Data Layering, section "Presentation
+Domain Data Layering", which describes top-to-bottom layer dependencies and the mapper
+variation it calls Hexagonal Architecture.
 
 **Decision state.** `applicable-under-conditions`.
 

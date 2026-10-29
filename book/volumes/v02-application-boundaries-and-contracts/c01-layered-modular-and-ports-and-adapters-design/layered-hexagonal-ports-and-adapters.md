@@ -178,8 +178,13 @@ direction rather than a diagram.
 
 Convenience imports erode the boundary until the domain must change for a technology reason; the
 remedy is an enforceable dependency test and a deliberate adapter, not another layer name. Hexagonal
-ports and adapters expresses the same inward rule with explicit application ports; prefer the
-simpler layering when the port indirection adds no tested change benefit.
+ports and adapters expresses the same inward rule with explicit application ports, so it is a
+variant rather than a competing alternative. The competing alternative is presentation-domain-data
+layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends
+on its data source. Keeping the domain independent of its data source is arranged by introducing a
+mapper between the domain and data layers, the variation the source calls Hexagonal Architecture.
+Reverse the clean/onion choice when that independence is not the protected boundary, or when the
+mapper adds no tested change benefit; that reversal is Tycho guidance, not a source claim.
 
 **Boundary data.** Domain entities stay inside the boundary; data crossing it is a DTO or
 port contract with an owned mapper. The adapter validates transport input, the domain refuses
