@@ -15,6 +15,14 @@ DEFAULT_INDEX = ROOT / "generated/sections-fts-v4.sqlite"
 DEFAULT_MODEL = "minishlab/potion-base-8M"
 
 
+def load_model(model_name, backend="model2vec"):
+    if backend == "sentence-transformers":
+        from sentence_transformers import SentenceTransformer
+        return SentenceTransformer(model_name)
+    from model2vec import StaticModel
+    return StaticModel.from_pretrained(model_name)
+
+
 def load_sections(root):
     with sqlite3.connect(str(DEFAULT_INDEX)) as db:
         db.row_factory = sqlite3.Row
@@ -80,11 +88,10 @@ def hit(results, item, limit=5):
     return None
 
 
-def evaluate(root, model_name, limit):
-    from model2vec import StaticModel
+def evaluate(root, model_name, limit, backend="model2vec"):
     import section_search
     rows = load_sections(root)
-    model = StaticModel.from_pretrained(model_name)
+    model = load_model(model_name, backend)
     matrix = embed(model, [r["heading"] + "\n" + r["content"] for r in rows])
     qrels = []
     for path in ("evaluation/corpus-qrels.v2.json",
@@ -112,6 +119,7 @@ def evaluate(root, model_name, limit):
                          / len(values), 3) for k in (1, 3, 5)}
     return {
         "model": model_name,
+        "backend": backend,
         "sections": len(rows),
         "queries": len(qrels),
         "hit": {name: summary(values) for name, values in results.items()},
@@ -122,20 +130,22 @@ def evaluate(root, model_name, limit):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--model", default=DEFAULT_MODEL)
+    ap.add_argument("--backend", choices=("model2vec", "sentence-transformers"),
+                    default="model2vec")
     ap.add_argument("--limit", type=int, default=5)
     ap.add_argument("--query")
     ap.add_argument("--evaluate", action="store_true")
     ap.add_argument("--root", type=Path, default=ROOT)
     args = ap.parse_args(argv)
     if args.evaluate:
-        print(json.dumps(evaluate(args.root, args.model, args.limit),
+        print(json.dumps(evaluate(args.root, args.model, args.limit,
+                                  args.backend),
                          indent=2, sort_keys=True))
         return 0
     if not args.query:
         raise SystemExit("provide --query or --evaluate")
-    from model2vec import StaticModel
     rows = load_sections(args.root)
-    model = StaticModel.from_pretrained(args.model)
+    model = load_model(args.model, args.backend)
     matrix = embed(model, [r["heading"] + "\n" + r["content"] for r in rows])
     print(json.dumps(rank_vector(args.query, model, rows, matrix,
                                  args.limit), indent=2))
