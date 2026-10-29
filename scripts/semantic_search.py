@@ -11,7 +11,7 @@ import sqlite3
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INDEX = ROOT / "generated/sections-fts-v4.sqlite"
+DEFAULT_INDEX = ROOT / "generated/sections-fts-v5.sqlite"
 DEFAULT_MODEL = "minishlab/potion-base-8M"
 
 

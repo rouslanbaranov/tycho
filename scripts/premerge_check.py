@@ -43,6 +43,9 @@ def main():
         [sys.executable, "scripts/validate_edition.py"],
         [sys.executable, "scripts/build_v12_index.py", "--check"],
         [sys.executable, "scripts/validate_v12.py"],
+        [sys.executable, "scripts/validate_corpus_qrels.py",
+         "--qrels", "evaluation/v12-simulation-qrels.v1.json",
+         "--scope", "v12"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],
     ]

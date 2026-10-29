@@ -11,6 +11,10 @@ mapping. Passages are rankable and diagnostic only; they never become public
 citable sections. Level-4 and deeper headings stay inside the owning passage or
 section text.
 
+The v5 schema also stores nullable artifact_type and volume columns plus a
+section_patterns table derived from the V12 index and reverse index. V12 JSON
+artifacts are exposed by the search-layer lookup, not by rewriting the book.
+
 Incremental mode reuses unchanged section *parsing* from an older valid index,
 then atomically publishes a fresh complete SQLite file; it does NOT claim
 in-place incremental SQLite B-tree updates or stable heading IDs across rename.
@@ -27,9 +31,10 @@ import tempfile
 import route_index
 
 ROOT = Path(__file__).resolve().parents[1]
-INDEX_NAME = "sections-fts-v4.sqlite"
-VERSION = 4
+INDEX_NAME = "sections-fts-v5.sqlite"
+VERSION = 5
 SECTION_MODEL = "overview+h2; porter unicode61; bm25 title=5 heading=2 body=0.25"
+FACET_MODEL = "v12-artifact-type+volume+pattern-ids; document defaults"
 PASSAGE_MODEL = ("h3-under-h2; parent-h2 mapping; porter unicode61; "
                  "bm25 title=5 heading=2 body=0.25")
 HEAD = re.compile(r"^ {0,3}(#{1,6})[ \t]+(.+?)[ \t]*#*[ \t]*$")
@@ -40,7 +45,7 @@ HEX = re.compile(r"^[0-9a-f]{64}$")
 SECTION_COLUMNS = (
     "section_key", "document_id", "section_id", "path", "heading",
     "heading_level", "title", "kind", "evidence_status", "content",
-    "char_start", "char_end", "document_sha256",
+    "char_start", "char_end", "document_sha256", "artifact_type", "volume",
 )
 PASSAGE_COLUMNS = (
     "passage_key", "passage_id", "parent_section_key", "parent_section_id",
@@ -50,7 +55,8 @@ PASSAGE_COLUMNS = (
 MANIFEST_KEYS = {
     "format_version", "route_snapshot_sha256", "coverage", "unannotated_paths",
     "document_count", "section_count", "passage_count", "document_sha256",
-    "section_model", "passage_model", "snapshot_id",
+    "section_model", "passage_model", "facet_model", "facet_input_sha256",
+    "snapshot_id",
 }
 
 
@@ -73,6 +79,75 @@ def slug(value):
     return "-".join(bits)[:120] or "section"
 
 
+def volume_of(path):
+    """Return the readable volume ID for a book path, or None."""
+    parts = Path(path).parts
+    if len(parts) >= 3 and parts[0] == "book" and parts[1] == "volumes":
+        return parts[2].split("-", 1)[0]
+    return None
+
+
+def facet_input_sha256(root):
+    """Hash the derived V12 files that supply search facets."""
+    root = Path(root).resolve()
+    digest = hashlib.sha256(b"tycho.v12-search-facets.v1\0")
+    for relative in ("generated/v12-index.v1.json",
+                     "edition/v12/reverse-index.v1.json"):
+        path = root / relative
+        digest.update(relative.encode("utf-8") + b"\0")
+        if path.is_file() and not path.is_symlink():
+            digest.update(path.read_bytes())
+        else:
+            digest.update(b"missing")
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def load_facets(root):
+    """Load V12 artifact facets from the derived index and reverse index.
+
+    The canonical book and route metadata remain authoritative. Missing files
+    produce document defaults, so a non-V12 tree builds unchanged.
+    """
+    root = Path(root).resolve()
+    facets = {}
+    index_path = root / "generated/v12-index.v1.json"
+    if index_path.is_file() and not index_path.is_symlink():
+        try:
+            payload = json.loads(index_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            payload = {}
+        for document in payload.get("documents", []):
+            if not isinstance(document, dict) or not isinstance(
+                    document.get("path"), str):
+                continue
+            facets[document["path"]] = {
+                "artifact_type": document.get("artifact_type") or "document",
+                "volume": document.get("volume") or volume_of(document["path"]),
+                "pattern_ids": sorted(set(document.get("pattern_ids") or [])),
+            }
+    reverse_path = root / "edition/v12/reverse-index.v1.json"
+    if reverse_path.is_file() and not reverse_path.is_symlink():
+        try:
+            reverse = json.loads(reverse_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            reverse = {}
+        for pattern_id, entries in (reverse.get("patterns") or {}).items():
+            if not isinstance(pattern_id, str):
+                continue
+            for entry in entries or []:
+                path = entry.get("path") if isinstance(entry, dict) else None
+                if not isinstance(path, str):
+                    continue
+                facets.setdefault(path, {
+                    "artifact_type": "document",
+                    "volume": volume_of(path),
+                    "pattern_ids": [],
+                })["pattern_ids"] = sorted(set(
+                    facets[path]["pattern_ids"] + [pattern_id]))
+    return facets
+
+
 def body_of(section):
     """Return indexable body text; drop the heading line of an H2 section."""
     if section["heading_level"] == 2:
@@ -87,7 +162,8 @@ def body_of_passage(passage):
     return rest if sep else ""
 
 
-def parse_sections(doc, text):
+def parse_sections(doc, text, facets=None):
+    facets = facets or {}
     require(digest(text) == doc["sha256"],
             "document digest changed since metadata scan")
     header = route_index.FENCE.match(text)
@@ -147,6 +223,9 @@ def parse_sections(doc, text):
             "char_start": offset,
             "char_end": end,
             "document_sha256": doc["sha256"],
+            "artifact_type": facets.get("artifact_type") or "document",
+            "volume": facets.get("volume") or volume_of(doc["path"]),
+            "pattern_ids": sorted(set(facets.get("pattern_ids") or [])),
         })
     require(segments, "No indexable content in " + doc["path"])
     return segments
@@ -247,6 +326,9 @@ def old_sections(index_path):
             topics = db.execute(
                 "SELECT section_key,topic FROM section_topics"
                 " ORDER BY section_key,topic").fetchall()
+            pattern_rows = db.execute(
+                "SELECT section_key,pattern_id FROM section_patterns"
+                " ORDER BY section_key,pattern_id").fetchall()
             passage_rows = db.execute(
                 "SELECT " + ",".join(PASSAGE_COLUMNS) + " FROM passages"
                 " ORDER BY document_id,char_start,passage_id").fetchall()
@@ -254,6 +336,12 @@ def old_sections(index_path):
                 "SELECT passage_key,title,heading,body FROM passage_fts"
                 " ORDER BY passage_key").fetchall()
         records = [dict(zip(SECTION_COLUMNS, r)) for r in rows]
+        patterns_by_key = {}
+        for key, pattern_id in pattern_rows:
+            patterns_by_key.setdefault(key, []).append(pattern_id)
+        for section in records:
+            section["pattern_ids"] = sorted(patterns_by_key.get(
+                section["section_key"], []))
         for section in records:
             require(HEX.match(section["document_sha256"]) is not None,
                     "Malformed document digest")
@@ -329,7 +417,8 @@ def old_sections(index_path):
             "Existing section index is corrupt/incompatible; refuse unverified reuse")
 
 
-def safe_reuse(doc, text, header_end, cached):
+def safe_reuse(doc, text, header_end, cached, facets=None):
+    facets = facets or {}
     if not cached:
         return False
     cached = sorted(cached, key=lambda r: r["char_start"])
@@ -347,6 +436,10 @@ def safe_reuse(doc, text, header_end, cached):
                 or section["title"] != doc["title"]
                 or section["kind"] != doc["kind"]
                 or section["evidence_status"] != doc["evidence_status"]
+                or section["artifact_type"] != (facets.get("artifact_type") or "document")
+                or section["volume"] != (facets.get("volume") or volume_of(doc["path"]))
+                or sorted(section.get("pattern_ids") or []) != sorted(
+                    set(facets.get("pattern_ids") or []))
                 or type(section["char_start"]) is not int
                 or type(section["char_end"]) is not int
                 or section["char_start"] >= section["char_end"]
@@ -363,6 +456,7 @@ def compose(root, previous=None, allow_partial=False):
     result = []
     reused = 0
     topics = {}
+    facets = load_facets(root)
     for doc in sorted(scan["documents"], key=lambda item: item["id"]):
         path = root / doc["path"]
         require(not path.is_symlink() and path.is_file()
@@ -374,11 +468,12 @@ def compose(root, previous=None, allow_partial=False):
         header = route_index.FENCE.match(text)
         require(header is not None, "Missing frontmatter during index build")
         cached = old.get("sections", {}).get(doc["id"], [])
-        if safe_reuse(doc, text, header.end(), cached):
+        facet = facets.get(doc["path"])
+        if safe_reuse(doc, text, header.end(), cached, facet):
             segments = cached
             reused += 1
         else:
-            segments = parse_sections(doc, text)
+            segments = parse_sections(doc, text, facet)
         result.extend(segments)
         for section in segments:
             topics[section["section_key"]] = sorted(set(doc["topics"]))
@@ -406,6 +501,8 @@ def compose(root, previous=None, allow_partial=False):
         "document_sha256": {d["id"]: d["sha256"] for d in scan["documents"]},
         "section_model": SECTION_MODEL,
         "passage_model": PASSAGE_MODEL,
+        "facet_model": FACET_MODEL,
+        "facet_input_sha256": facet_input_sha256(root),
     }
     parts = [{k: r[k] for k in ("section_key", "char_start", "char_end",
                                 "document_sha256")} for r in result]
@@ -468,7 +565,8 @@ def write_index(target, manifest, sections, topics, passages):
                 "heading_level INTEGER NOT NULL,title TEXT NOT NULL,"
                 "kind TEXT NOT NULL,evidence_status TEXT NOT NULL,"
                 "content TEXT NOT NULL,char_start INTEGER NOT NULL,"
-                "char_end INTEGER NOT NULL,document_sha256 TEXT NOT NULL)")
+                "char_end INTEGER NOT NULL,document_sha256 TEXT NOT NULL,"
+                "artifact_type TEXT NOT NULL,volume TEXT)")
             db.execute(
                 "CREATE TABLE passages(passage_key TEXT PRIMARY KEY,"
                 "passage_id TEXT NOT NULL,parent_section_key TEXT NOT NULL,"
@@ -482,6 +580,9 @@ def write_index(target, manifest, sections, topics, passages):
                        "parent_section_key)")
             db.execute("CREATE TABLE section_topics(section_key TEXT NOT NULL,"
                        "topic TEXT NOT NULL,PRIMARY KEY(section_key,topic))")
+            db.execute("CREATE TABLE section_patterns(section_key TEXT NOT NULL,"
+                       "pattern_id TEXT NOT NULL,"
+                       "PRIMARY KEY(section_key,pattern_id))")
             try:
                 db.execute(
                     "CREATE VIRTUAL TABLE fts USING fts5(section_key UNINDEXED,"
@@ -505,6 +606,12 @@ def write_index(target, manifest, sections, topics, passages):
                 "INSERT INTO section_topics(section_key,topic) VALUES(?,?)",
                 sorted((key, topic) for key, values in topics.items()
                        for topic in values))
+            db.executemany(
+                "INSERT INTO section_patterns(section_key,pattern_id)"
+                " VALUES(?,?)",
+                sorted((section["section_key"], pattern_id)
+                       for section in sections
+                       for pattern_id in section.get("pattern_ids", [])))
             db.executemany(
                 "INSERT INTO fts(section_key,title,heading,body) VALUES(?,?,?,?)",
                 [(s["section_key"], s["title"], s["heading"], body_of(s))

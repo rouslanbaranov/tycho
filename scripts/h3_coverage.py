@@ -7,7 +7,7 @@ from pathlib import Path
 import sqlite3
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_INDEX = ROOT / "generated/sections-fts-v4.sqlite"
+DEFAULT_INDEX = ROOT / "generated/sections-fts-v5.sqlite"
 
 
 def summarize(sections, passages, limit=20):

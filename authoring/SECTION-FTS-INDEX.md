@@ -15,8 +15,12 @@ status, paths, source hashes and coverage. It does not create frontmatter, fetch
 enrich prose, run embeddings, build a graph or expose MCP.
 
 The canonical book remains authoritative. The index is a disposable generated artifact at
-`generated/sections-fts-v4.sqlite`; it is excluded by [.gitignore](../.gitignore) and can
+`generated/sections-fts-v5.sqlite`; it is excluded by [.gitignore](../.gitignore) and can
 always be rebuilt from the pinned book tree. Rebuilding never rewrites the book.
+
+The v5 schema adds nullable `artifact_type` and `volume` columns plus the
+`section_patterns` table. They are populated from the derived V12 index and reverse index;
+V12 artifacts themselves stay JSON contracts and are exposed by the search-layer lookup.
 
 ## Section model
 

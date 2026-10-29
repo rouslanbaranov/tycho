@@ -254,6 +254,24 @@ def search_schema():
                 "type": "string",
                 "description": "Optional relative book path prefix.",
             },
+            "artifact_type": {
+                "type": "string",
+                "description": "Optional V12 artifact-type filter.",
+            },
+            "volume": {
+                "type": "string",
+                "description": "Optional volume filter, for example v12.",
+            },
+            "pattern_ids": {
+                "type": "array",
+                "items": {"type": "string", "minLength": 1, "maxLength": 200},
+                "description": "Optional V12 pattern-ID filters.",
+            },
+            "include_artifacts": {
+                "type": "boolean",
+                "default": False,
+                "description": "Return V12 model/scenario/run/decision lookup.",
+            },
             "mode": {
                 "type": "string",
                 "enum": ["strict", "exploratory"],
@@ -1259,7 +1277,8 @@ class TychoMcpServer:
     def _tool_search(self, args):
         reject_unknown(args, {
             "query", "limit", "kind", "topic", "evidence_status",
-            "path_prefix", "all_sections", "abstain", "snapshot_id",
+            "path_prefix", "artifact_type", "volume", "pattern_ids",
+            "include_artifacts", "all_sections", "abstain", "snapshot_id",
             "mode", "detail", "max_chars",
         })
         query = arg_string(args, "query", required=True)
@@ -1269,6 +1288,16 @@ class TychoMcpServer:
         evidence_status = arg_string(
             args, "evidence_status", maximum=300)
         path_prefix = arg_string(args, "path_prefix", maximum=500)
+        artifact_type = arg_string(args, "artifact_type", maximum=300)
+        volume = arg_string(args, "volume", maximum=100)
+        pattern_ids = args.get("pattern_ids", [])
+        if pattern_ids is None:
+            pattern_ids = []
+        if not isinstance(pattern_ids, list) or any(
+                not isinstance(item, str) or not item or len(item) > 200
+                for item in pattern_ids):
+            raise ProtocolFailure(-32602, "pattern_ids must be string IDs")
+        include_artifacts = arg_bool(args, "include_artifacts", False)
         all_sections = arg_bool(args, "all_sections", False)
         abstain = arg_bool(args, "abstain", True)
         mode = arg_string(args, "mode", maximum=20) or "strict"
@@ -1293,6 +1322,10 @@ class TychoMcpServer:
                 topic=topic,
                 evidence_status=evidence_status,
                 path_prefix=path_prefix,
+                artifact_type=artifact_type,
+                volume=volume,
+                pattern_ids=pattern_ids,
+                include_artifacts=include_artifacts,
                 index_path=self.index_path,
                 all_sections=all_sections,
                 abstain=abstain,
@@ -2111,6 +2144,14 @@ class TychoMcpServer:
         path = owner.get("path")
         anchor = owner.get("anchor")
         coverage = pattern.get("coverage") or {}
+        try:
+            v12_artifacts = section_search.v12_artifacts(
+                self.root, pattern_ids=[pattern_id], limit=50)
+        except (OSError, ValueError, section_search.SearchError):
+            v12_artifacts = {
+                "status": "not-available", "returned": 0, "total": 0,
+                "artifacts": [], "filters": {"pattern_ids": [pattern_id]},
+            }
         return {
             "status": "ok",
             "registry_snapshot": snapshot,
@@ -2128,6 +2169,7 @@ class TychoMcpServer:
                 if path else None
             ),
             "coverage": coverage,
+            "v12_artifacts": v12_artifacts,
             "sufficiency": {
                 "sufficient": coverage.get("overall") == "sufficient",
                 "coverage_state": coverage.get("overall", "unknown"),

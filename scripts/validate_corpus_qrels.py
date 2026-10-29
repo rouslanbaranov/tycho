@@ -26,8 +26,10 @@ def load(path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def validate(qrels, route, schema, require_snapshot=True):
-    if "unannotated_paths" in route and "coverage" in route:
+def validate(qrels, route, schema, require_snapshot=True, scope="legacy"):
+    if scope not in ("legacy", "v12"):
+        raise ValueError("scope must be legacy or v12")
+    if scope == "legacy" and "unannotated_paths" in route and "coverage" in route:
         route = legacy_scope(route)
     from jsonschema import Draft202012Validator, FormatChecker
 
@@ -64,6 +66,10 @@ def validate(qrels, route, schema, require_snapshot=True):
             require(doc["kind"] in KINDS, item["id"] + ": unsupported document kind")
             require(doc["path"] == answer["path"],
                     item["id"] + ": document id and path disagree")
+            if scope == "v12":
+                require(answer["path"].startswith(
+                    "book/volumes/v12-modeling-simulation-and-decision-validation/"),
+                    item["id"] + ": accepted answer is not a V12 document")
             require(paths[answer["path"]]["id"] == answer["document_id"],
                     item["id"] + ": path is not the documented page")
             key = (answer["document_id"], answer["section_id"])
@@ -98,9 +104,11 @@ def main():
     ap.add_argument("--qrels", type=Path, default=DEFAULT_QRELS)
     ap.add_argument("--route-index", type=Path, default=DEFAULT_ROUTE)
     ap.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
+    ap.add_argument("--scope", choices=("legacy", "v12"), default="legacy")
     args = ap.parse_args()
     try:
-        result = validate(load(args.qrels), load(args.route_index), load(args.schema))
+        result = validate(load(args.qrels), load(args.route_index), load(args.schema),
+                          scope=args.scope)
     except (ValueError, KeyError, json.JSONDecodeError) as exc:
         print(json.dumps({"status": "error", "error": str(exc)}, sort_keys=True))
         return 1
