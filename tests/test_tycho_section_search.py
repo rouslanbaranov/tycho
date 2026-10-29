@@ -133,6 +133,18 @@ class SearchTests(unittest.TestCase):
         second = self.search("zebra", limit=1)
         self.assertNotEqual(second["results"][0]["heading"], "mutated")
 
+    def test_query_cache_invalidates_after_book_and_index_change(self):
+        self.build()
+        first = self.search("zebra", limit=1)
+        self.a.write_text(
+            PAGE_A + "\n\n## Gamma section {#gamma-section}\n"
+            "New gamma token for cache invalidation.\n", encoding="utf-8")
+        self.build()
+        second = self.search("zebra", limit=1)
+        self.assertNotEqual(first["snapshot"], second["snapshot"])
+        gamma = self.search("gamma", limit=1)
+        self.assertEqual(gamma["results"][0]["section_id"], "gamma-section")
+
     def test_h3_match_maps_to_parent_h2_with_diagnostics(self):
         self.build()
         top = self.search("quasar", limit=1)["results"][0]
