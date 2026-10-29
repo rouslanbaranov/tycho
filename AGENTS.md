@@ -204,3 +204,10 @@ tool invocation that retrieves sources, or change.
     approval or confirmation. Do not report a blocker as the end of work. Stop only
     for restricted-material handling, destructive actions outside the plan, or an
     explicit owner stop. Owner acceptance remains batched after all planned work.
+
+31. **Run tests once at the end of a batch.** Do not run the full unit suite
+    after every entry, split or review. Use targeted validators during editing;
+    run the complete suite once when the batch's review-ready state is reached.
+    External AI reviewers must not run tests at all: give them read-only artifacts
+    and hashes, and keep test execution with the authoring parent. A reviewer that
+    runs the suite is wasting the batch window and must be told to stop.
