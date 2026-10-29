@@ -296,15 +296,15 @@ def search_schema():
             },
             "section_rerank": {
                 "type": "boolean",
-                "default": False,
+                "default": True,
                 "description": (
-                    "Opt into section-aware reranking of the top pages; "
-                    "default BM25 remains best-section-per-document."
+                    "Section-aware reranking of the top pages; production "
+                    "default is margin-gated. Set false for pure BM25."
                 ),
             },
             "section_rerank_margin": {
                 "type": ["number", "null"],
-                "default": None,
+                "default": 0.15,
                 "minimum": 0,
                 "maximum": 1,
                 "description": (
@@ -1334,23 +1334,21 @@ class TychoMcpServer:
             raise ProtocolFailure(-32602, "pattern_ids must be string IDs")
         include_artifacts = arg_bool(args, "include_artifacts", False)
         all_sections = arg_bool(args, "all_sections", False)
-        section_rerank = arg_bool(args, "section_rerank", False)
-        section_rerank_margin = args.get("section_rerank_margin")
+        section_rerank = arg_bool(args, "section_rerank", True)
+        section_rerank_margin = args.get("section_rerank_margin", 0.15)
         if section_rerank_margin is not None and (
                 not isinstance(section_rerank_margin, (int, float))
                 or isinstance(section_rerank_margin, bool)
                 or not 0 <= section_rerank_margin <= 1):
             raise ProtocolFailure(
                 -32602, "section_rerank_margin must be in 0..1 or null")
-        if section_rerank and retrieval_mode == "best":
-            raise ProtocolFailure(
-                -32602, "section_rerank is not supported with best mode")
-        if section_rerank and all_sections:
-            raise ProtocolFailure(
-                -32602, "section_rerank cannot be combined with all_sections")
-        if section_rerank and volume == "v12":
-            raise ProtocolFailure(
-                -32602, "section_rerank is disabled for volume v12")
+        if retrieval_mode == "best":
+            section_rerank = False
+        if all_sections:
+            section_rerank = False
+        if section_rerank and (volume == "v12"
+                               or "v12" in query.casefold()):
+            section_rerank = False
         abstain = arg_bool(args, "abstain", True)
         mode = arg_string(args, "mode", maximum=20) or "strict"
         if mode not in ("strict", "exploratory"):
@@ -1407,7 +1405,20 @@ class TychoMcpServer:
                     max_chars=max_chars,
                 )
         except section_search.SearchError as exc:
-            return self.search_error(exc, "tycho_search")
+            if section_rerank and "disabled for V12" in str(exc):
+                payload = section_search.search(
+                    self.root, query, limit=limit, kind=kind, topic=topic,
+                    evidence_status=evidence_status,
+                    path_prefix=path_prefix, artifact_type=artifact_type,
+                    volume=volume, pattern_ids=pattern_ids,
+                    include_artifacts=include_artifacts,
+                    index_path=self.index_path,
+                    all_sections=all_sections, section_rerank=False,
+                    abstain=abstain,
+                    include_weak=(mode == "exploratory"),
+                    detail=detail, max_chars=max_chars)
+            else:
+                return self.search_error(exc, "tycho_search")
         except (OSError, sqlite3.Error, ValueError, RuntimeError):
             return self.tool_error(
                 "not-available", "Search is not available",
