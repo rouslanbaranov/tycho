@@ -26,7 +26,8 @@ python3 scripts/search_reindex.py rebuild
   only when the snapshot is fully current; stale qrels produce
   `current-with-stale-qrels` and exit 1.
 - `rebuild` rebuilds route/section indexes and writes
-  `generated/search-reindex-report.json`. It does not change qrels.
+  `generated/search-reindex-report.json`. It reuses unchanged documents by
+  default; pass `--full` to reparse every document. It does not change qrels.
 
 ## Frozen pre-enrichment state
 
@@ -34,7 +35,7 @@ The manifest records:
 
 - 423 book files and their content digest;
 - route snapshot `06b80bd6…` (current at freeze time);
-- 2,751 H2 sections and 504 H3 passages;
+- 2,751 indexed heading sections (2,328 H2) and 504 H3 passages;
 - qrels hashes, item counts and route bindings;
 - `qrels_stale: [corpus-qrels.v2.json]` because the current route no longer
   matches that older qrels snapshot;
