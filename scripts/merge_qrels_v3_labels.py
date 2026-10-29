@@ -46,14 +46,14 @@ def main(argv=None):
                       "accepted": accepted, "direct": direct})
     result = {
         "schema_version": 3,
-        "status": "independent-adjudicated",
+        "status": "ai-adjudicated",
         "level": "page",
         "snapshot": pool["snapshot"],
         "query_count": len(items),
         "candidate_count": pool["candidate_count"],
         "reviewers": reviewers,
         "items": items,
-        "limits": "Page-level pooled qrels; independent reviewer reports required.",
+        "limits": "AI-adjudicated page-level pooled qrels; not human or independent review, CI, owner acceptance or sufficient coverage.",
     }
     target = args.root / "evaluation/corpus-qrels.v3.json"
     target.write_text(json.dumps(result, indent=2, sort_keys=True) + "\n",
