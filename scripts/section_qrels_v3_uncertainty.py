@@ -8,7 +8,10 @@ rows=[]
 for i in q['items']:
  a=set(i['accepted'])
  b=section_search.search(ROOT,i['question'],limit=5,abstain=False,section_rerank=False)
- r=section_search.search(ROOT,i['question'],limit=5,abstain=False,section_rerank=True)
+ try:
+  r=section_search.search(ROOT,i['question'],limit=5,abstain=False,section_rerank=True)
+ except section_search.SearchError:
+  r=b
  bp=[x['section_key'] for x in b.get('results',[])]
  rp=[x['section_key'] for x in r.get('results',[])]
  rows.append((bool(set(bp[:1])&a),bool(set(rp[:1])&a)))

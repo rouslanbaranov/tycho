@@ -56,20 +56,27 @@ def main(argv=None):
         base = section_search.search(
             ROOT, item["question"], limit=5, abstain=False,
             section_rerank=False)
-        rerank = section_search.search(
-            ROOT, item["question"], limit=5, abstain=False,
-            section_rerank=True)
+        guarded = False
+        try:
+            rerank = section_search.search(
+                ROOT, item["question"], limit=5, abstain=False,
+                section_rerank=True)
+        except section_search.SearchError:
+            rerank = base
+            guarded = True
         base_keys = [row["section_key"] for row in base.get("results", [])]
         rerank_keys = [row["section_key"]
                        for row in rerank.get("results", [])]
         pair = (bool(set(base_keys[:1]) & accepted),
                 bool(set(rerank_keys[:1]) & accepted))
-        groups.setdefault(item["split"], []).append(pair)
-        groups.setdefault("all", []).append(pair)
+        groups.setdefault(item["split"], []).append((pair, guarded))
+        groups.setdefault("all", []).append((pair, guarded))
     rng = random.Random(args.seed)
     output = {}
-    for split, pairs in sorted(groups.items()):
+    for split, rows in sorted(groups.items()):
+        pairs = [row[0] for row in rows]
         output[split] = summarize(pairs, args.bootstrap, rng)
+        output[split]["guarded"] = sum(1 for row in rows if row[1])
     print(json.dumps(output, indent=2))
     return 0
 
