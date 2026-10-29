@@ -9279,12 +9279,21 @@
             "section": "Strangler Fig",
             "quote": "The alternative that my colleagues and I prefer, is to do a gradual process of modernization. Like the fig, it begins with small additions, often new features, that are built on top of, yet separate to the legacy code base. As we do this we move bits of behavior from the legacy system into the new code base.",
             "revision": "ac274ebe2a36e7553e9f1923e7fbfbc3ff52504c542eec5353127ffba335989e"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-strangler",
+              "ledger_record": "read.aws-strangler.2026-10-29",
+              "section": "Strangler fig pattern",
+              "quote": "Cannot be used in systems where requests to the backend system cannot be intercepted and routed.",
+              "revision": "787962ad56fbc52feb9e3198749ceb7e3b9cea44bca6f9c2bb50530e30c66044"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
-          "quote": "Keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "quote": "Tycho synthesis: keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence.",
+          "reason": "Single-writer and routing/data-compatibility are Tycho synthesis; the Fowler binding supports coexistence, not this rule.",
           "binding": {
             "source_id": "src.fowler-strangler",
             "ledger_record": "read.fowler-strangler.2026-10-21",
@@ -9307,8 +9316,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Branch by abstraction, parallel run or a big-bang replacement",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "quote": "Tycho synthesis: branch by abstraction, parallel run or a big-bang replacement may be preferable when interception is impossible or the system is small enough to replace whole.",
+          "reason": "Fowler supports wholesale replacement; branch by abstraction and parallel run are Tycho decision guidance.",
           "binding": {
             "source_id": "src.fowler-strangler",
             "ledger_record": "read.fowler-strangler.2026-10-21",

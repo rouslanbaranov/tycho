@@ -54,7 +54,8 @@ modernization-pattern; priority core.
 routing seam rather than by a rewrite?
 
 **Good-fit conditions.** A seam can intercept and route old/new; coexistence is funded;
-routing and data compatibility are explicit; rollback is possible until a no-return point.
+one authoritative writer per invariant; routing and data compatibility are explicit; rollback is possible
+until a no-return point.
 
 **Hard contraindications.** Reject when the legacy has no seam, when dual-running data
 cannot be reconciled, or when the team cannot own two paths.
@@ -70,8 +71,8 @@ and old/new state can diverge. AWS Prescriptive Guidance states the conditions d
 > bottleneck if it isn't designed properly. Requires a rollback plan for each refactored
 > service to revert to the old way of doing things quickly and safely if things go wrong.
 
-Detect bypass, hold and route back until proven; a bypass detector, routing inventory and
-data reconciliation remain Tycho guidance. The page supports interception as a
+Tycho guidance: detect bypass, hold and route back until proven; a bypass detector, routing inventory
+and data reconciliation remain unproven operational checks. The page supports interception as a
 prerequisite, façade single-point risk and a per-service rollback plan; it does not define
 those checks or a no-return gate.
 
