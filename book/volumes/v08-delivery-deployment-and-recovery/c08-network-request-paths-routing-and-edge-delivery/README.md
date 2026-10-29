@@ -86,6 +86,7 @@ Follow one operation from name resolution to the authoritative service and back.
 | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functions may a gateway own without hiding backend authority? |
 | [Edge cache and origin protection](edge-cache-origin.md) | Which representations may be cached and what happens when the origin is unavailable? |
 | [Static Content Hosting owner note](static-content-hosting.md) | What does the host own for origin protection, purge and rollback? |
+| [Service Discovery owner note](service-discovery.md) | Which discovery behavior does Envoy own, and what does eventual consistency leave to health checking? |
 
 ## Synthesis and counterexample
 

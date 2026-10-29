@@ -324,31 +324,7 @@ documentation, not a benchmark.
 
 ### Service Discovery
 
-**Identity.** Service Discovery; family API and service communication; kind infrastructure
-pattern; priority core.
-
-**Decision question.** Should Envoy fetch cluster members from a xDS discovery service rather
-than a static endpoint list?
-
-**Good-fit conditions.** Cluster membership changes; a xDS management server is available;
-Envoy can use the endpoint discovery service.
-
-**Hard contraindications.** Reject when no xDS management server exists.
-
-**Competing alternative.** Static endpoint configuration is the simplest alternative.
-
-**Failure and recovery.** Discovery is eventually consistent; active health checking determines
-cluster health.
-
-**Technical owner.** [Network request paths: discovery and balancing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#service-discovery) — bounded to Envoy EDS, not a generic discovery contract.
-
-**Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.envoy-service-discovery.2026-10-21: Envoy service discovery page read.
-The source is public documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Client-Side Discovery; Server-Side Discovery; Load Balancing; DNS.
+See the [dedicated Service Discovery card](service-discovery.md).
 
 ### Client-Side Discovery
 

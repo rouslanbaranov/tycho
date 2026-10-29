@@ -100,7 +100,7 @@ class CommittedPacketTests(unittest.TestCase):
         self.assertEqual(summary["residual"], 0)
         self.assertEqual(summary["page_unverified"], 0)
         self.assertEqual(summary["rejected"], 0)
-        self.assertEqual(summary["unique_owner_pages"], 75)
+        self.assertEqual(summary["unique_owner_pages"], 76)
         self.assertEqual(summary["ready"], 0)
         self.assertEqual(summary["reviewed"], 113)
         self.assertEqual(summary["awaiting_current_external_review"], 5)

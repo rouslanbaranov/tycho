@@ -68,7 +68,7 @@
 
 
 > **Pattern atlas:**
-> [Service Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#service-discovery) — decision conditions and contraindications.
+> [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) — decision conditions and contraindications.
 > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) — decision conditions and contraindications.
 > [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) — decision conditions and contraindications.
 
@@ -211,15 +211,7 @@ reasoning.
 
 ### Service Discovery
 
-Envoy fetches cluster members from a xDS management server through the endpoint discovery service.
-The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the
-discovery service. EDS carries per-host attributes such as load-balancing weight, canary status
-and zone. Envoy assumes hosts come and go in an eventually consistent way. Active health checking
-determines cluster health. EDS is the preferred service discovery mechanism for Envoy. Static endpoint configuration is the
-simplest alternative. Envoy supports static, strict DNS, logical DNS, endpoint discovery service
-and original destination service discovery. With EDS, Envoy has explicit knowledge of each upstream
-host and can make more intelligent load-balancing decisions. Extra attributes carried in the
-discovery response inform Envoy of load-balancing weight, canary status and zone.
+See the [dedicated Service Discovery owner note](service-discovery.md).
 
 ### Client-Side Discovery
 

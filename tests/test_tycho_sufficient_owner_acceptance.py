@@ -9,7 +9,7 @@ from validate_sufficient_owner_acceptance import validate
 
 class SufficientOwnerAcceptanceTests(unittest.TestCase):
     def test_pending_record_is_not_acceptance(self):
-        self.assertEqual(validate(ROOT), {"status": "accepted", "entries": 9})
+        self.assertEqual(validate(ROOT), {"status": "accepted", "entries": 8})
 
 
 if __name__ == "__main__":
