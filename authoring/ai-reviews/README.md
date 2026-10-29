@@ -102,3 +102,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 B5-B6 final | pass | `2026-10-29-b5b6-final-deepseek.md` | `733b7371049d95581e099e01a61c415cb06f24b7715505d9bef86eaebda878b5` |
 | 2026-10-29 | DeepSeek Reviewer | #540 service-discovery split | pass | `2026-10-29-service-discovery-split-deepseek.md` | `736e1f51adead6bfd4867cafe0d2f1d564cce62b2251ea0381e139ace646093e` |
 | 2026-10-29 | DeepSeek Reviewer | #540 B8 final C/R/S | pass | `2026-10-29-b8-final-crs-deepseek.md` | `84b543a1e932d1369d1c38837f36bcca2ed6c75e8f704c09b20a331aa7917f91` |
+| 2026-10-29 | DeepSeek Reviewer | #540 TTL final | pass | `2026-10-29-ttl-final-deepseek.md` | `785a75a242517dad02c3d6c6c3d8c230f48a1485c451118009d42ccf2a7dee39` |
