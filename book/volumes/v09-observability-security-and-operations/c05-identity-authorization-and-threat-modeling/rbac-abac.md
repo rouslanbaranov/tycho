@@ -47,10 +47,10 @@ content_verified_at: null
 # RBAC-ABAC
 
 > **Pattern atlas:**
-> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/rbac-abac.md#rbac-abac) — decision conditions and contraindications.
+> [RBAC / ABAC](../../v11-pattern-atlas/c11-security-operations/rbac-abac.md#rbac--abac) — decision conditions and contraindications.
 
 This page owns the bounded technical note moved from the
-[authorization policy and least privilege page](authorization-policy-and-least-privilege.md#rbac-abac)
+[authorization policy and least privilege page](authorization-policy-and-least-privilege.md#rbac--abac)
 on 2026-10-29. The zero-trust and least-privilege walkthrough remains on the chapter page.
 
 RBAC employs pre-defined roles that carry a specific set of privileges. ABAC evaluates
@@ -78,4 +78,4 @@ above remain synthetic.
 | Route | Destination |
 |---|---|
 | Parent chapter | [V09/C05 — Identity, authorization and threat modeling](README.md) |
-| Originating page | [Authorization policy and least privilege](authorization-policy-and-least-privilege.md#rbac-abac) |
+| Originating page | [Authorization policy and least privilege](authorization-policy-and-least-privilege.md#rbac--abac) |

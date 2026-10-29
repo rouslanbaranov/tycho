@@ -1,10 +1,11 @@
 """Regression guards for the 2026-10-29 B4 review remediation.
 
 The B4 split suspended promotions for Self-Contained Service, Sidecar and
-Ambassador. This test pins their current state to awaiting external review and
-keeps the earlier passes only as historical evidence. It also pins the Ambassador
-priority/binding fixes, the static-stability shared-page metadata and the later
-final-review wording/link corrections.
+Ambassador. The final external reviews restored those promotions; the review
+records still retain the suspended state as history. This test pins the restored
+coverage and keeps the earlier passes only as historical evidence. It also pins
+the Ambassador priority/binding fixes, the static-stability shared-page metadata
+and the later final-review wording/link corrections.
 """
 import hashlib
 import json
@@ -60,23 +61,27 @@ class ReviewRecordTests(unittest.TestCase):
                 if "page_sha256" in item:
                     self.assertRegex(item["page_sha256"], r"^[0-9a-f]{64}$")
 
-    def test_three_stay_partial_bounded(self):
+    def test_three_promotions_are_restored(self):
         owners = {r["pattern_id"]: r for r in load(
             "edition/patterns/owner-units.v1.json")["entries"]}
         registry = {r["id"]: r for r in load(
             "edition/patterns/registry.v1.json")["patterns"]}
         promotions = {p["pattern_id"] for p in load(
             "edition/patterns/sufficient-promotions.v1.json")["promotions"]}
+        accepted = set(load(
+            "edition/patterns/sufficient-owner-acceptance.v1.json")
+            ["accepted_entries"])
         for pattern_id in THREE:
             self.assertEqual(owners[pattern_id]["technical_coverage"],
-                             "partial-bounded")
+                             "sufficient")
             self.assertEqual(owners[pattern_id]["decision_coverage"],
-                             "partial-bounded")
+                             "sufficient")
             self.assertEqual(registry[pattern_id]["coverage"],
-                             {"technical": "partial-bounded",
-                              "decision": "partial-bounded",
-                              "overall": "partial-bounded"})
-            self.assertNotIn(pattern_id, promotions)
+                             {"technical": "sufficient",
+                              "decision": "sufficient",
+                              "overall": "sufficient"})
+            self.assertIn(pattern_id, promotions)
+            self.assertNotIn(pattern_id, accepted)
 
 
 class DerivedArtifactTests(unittest.TestCase):

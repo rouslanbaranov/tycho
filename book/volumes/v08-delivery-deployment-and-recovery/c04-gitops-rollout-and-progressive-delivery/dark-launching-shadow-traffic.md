@@ -46,10 +46,10 @@ content_verified_at: null
 # Dark Launching-Shadow Traffic
 
 > **Pattern atlas:**
-> [Dark Launching / Shadow Traffic](../../v11-pattern-atlas/c10-deployment-modernization/dark-launching.md#dark-launching-shadow-traffic) — decision conditions and contraindications.
+> [Dark Launching / Shadow Traffic](../../v11-pattern-atlas/c10-deployment-modernization/dark-launching.md#dark-launching--shadow-traffic) — decision conditions and contraindications.
 
 This page owns the bounded technical note moved from the
-[GitOps and progressive delivery page](gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic)
+[GitOps and progressive delivery page](gitops-canary-and-progressive-rollout.md#dark-launching--shadow-traffic)
 on 2026-10-29. The rolling, blue/green and canary walkthrough remains on the chapter page.
 
 Dark launching calls new or changed back-end behavior from existing user requests without
@@ -80,4 +80,4 @@ sensitivity bound what it can prove.
 | Route | Destination |
 |---|---|
 | Parent chapter | [V08/C04 — GitOps, rollout and progressive delivery](README.md) |
-| Originating page | [GitOps, rolling, blue/green and canary release architecture](gitops-canary-and-progressive-rollout.md#dark-launching-shadow-traffic) |
+| Originating page | [GitOps, rolling, blue/green and canary release architecture](gitops-canary-and-progressive-rollout.md#dark-launching--shadow-traffic) |
