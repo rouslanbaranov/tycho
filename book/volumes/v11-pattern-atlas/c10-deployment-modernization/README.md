@@ -328,7 +328,9 @@ fallback. A named removal owner and date remain Tycho review conditions, not sou
 **Sources.** [src.fowler-branch](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch5-fowler-branch.2026-10-21: sections "Branch By Abstraction",
 "Further Reading", "Acknowledgements", "Notes".
-Failure and recovery also uses the public AWS Prescriptive Guidance page "Branch by
+Failure and recovery also uses
+[src.aws-branch](../../../../edition/patterns/reading-ledger.v1.json) read record
+read.aws-branch.2026-10-29: the public AWS Prescriptive Guidance page "Branch by
 abstraction pattern", accessed 2026-10-29; canonical text revision
 `618648d7274e985f417915ecd4eeffe83e6c7db8b2ee1d0691293aee04f09d1c`.
 The page supports reversible, backward-compatible increments, fallback verification,

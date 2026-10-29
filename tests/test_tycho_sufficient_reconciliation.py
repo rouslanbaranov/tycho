@@ -119,8 +119,15 @@ class AuditIntegrationTests(unittest.TestCase):
                                if r["verdict"] == "pass-with-findings"), 0)
         for record in phase_a:
             path = ROOT / owner_path[record["pattern_id"]]
+            re_review = record["re_review"]
+            reviewed = re_review.get("reviewed_page_sha256")
+            if reviewed is not None:
+                # A pinned historical hash records that a later evidence wave
+                # changed the page; the review still refers to its own snapshot.
+                self.assertEqual(reviewed, re_review["page_sha256"])
+                continue
             self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),
-                             record["re_review"]["page_sha256"])
+                             re_review["page_sha256"])
 
 
 class CommittedLedgerTests(unittest.TestCase):

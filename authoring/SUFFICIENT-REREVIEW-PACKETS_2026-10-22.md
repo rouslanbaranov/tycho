@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 113 |
+| Reviewed by independent agent | 105 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 22, "reviewed-by-independent-agent": 113}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 30, "reviewed-by-independent-agent": 105}.
 
 ## Review procedure
 
@@ -79,7 +79,7 @@ blank verdict template in the machine-readable file.
 
 - **Branch by Abstraction**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Bulkhead**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -131,7 +131,7 @@ blank verdict template in the machine-readable file.
 
 - **Clean / Onion Architecture**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Client-Side Discovery**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -203,7 +203,7 @@ blank verdict template in the machine-readable file.
 
 - **Distributed Lock**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Tracing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -259,7 +259,7 @@ blank verdict template in the machine-readable file.
 
 - **Fencing Tokens**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gatekeeper**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -303,7 +303,7 @@ blank verdict template in the machine-readable file.
 
 - **Hexagonal Architecture / Ports and Adapters**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Horizontal Scaling**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -327,11 +327,11 @@ blank verdict template in the machine-readable file.
 
 - **Layered Architecture**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Leader Election**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Leader-Follower Replication**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -339,7 +339,7 @@ blank verdict template in the machine-readable file.
 
 - **Lease-Based Ownership**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Least Privilege**
   Current: pass; historical: None; re-review: pass; report: pass.

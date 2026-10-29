@@ -457,15 +457,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Hexagonal ports and adapters expresses the same inward rule with explicit application ports; prefer the simpler layering when the port indirection adds no tested change benefit.",
-          "reason": "Source groups hexagonal/onion as similar but does not compare port indirection with simpler layering."
+          "state": "supported",
+          "quote": "The competing alternative is presentation-domain-data layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends on its data source.",
+          "reason": "Names top-to-bottom layer dependencies and identifies presentation-domain-data layering as the competing alternative; hexagonal is a variant.",
+          "binding": {
+            "source_id": "src.fowler-layering",
+            "ledger_record": "read.fowler-layering.2026-10-21",
+            "section": "Presentation Domain Data Layering",
+            "quote": "The dependencies generally run from top to bottom through the layer stack: presentation depends on the domain, which then depends on the data source.",
+            "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "clean-onion-architecture",
         "question": "Should dependencies point inward toward domain policies, with frameworks and delivery mechanisms at the outside?",
-        "competing_alternative": "Hexagonal ports and adapters or layered architecture. Reverse the choice when the dependency rule stops protecting changes or mapping layers dominate.",
+        "competing_alternative": "Presentation-domain-data layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends on its data source. Keeping the domain independent of its data source is arranged by introducing a mapper between the domain and data layers, the variation the source calls Hexagonal Architecture. Hexagonal ports and adapters is a variant of the same inward rule, not a competing alternative. Reverse the clean/onion choice when that independence is not the protected boundary, or when the mapper adds no tested change benefit. That reversal is Tycho guidance, not a source claim.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -7651,15 +7658,22 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Reverse to lease-only ownership or single-writer routing when destination enforcement cost exceeds the stale-write risk it removes",
-          "reason": "Article does not compare lease-only or single-writer routing."
+          "state": "supported",
+          "quote": "When the lock only avoids duplicate work, a best-effort single-node lock is sufficient; use fencing tokens when a stale write could corrupt state.",
+          "reason": "Names the efficiency-only best-effort single-node lock and limits fencing to correctness-sensitive stale writes.",
+          "binding": {
+            "source_id": "src.kleppmann-distributed-locking",
+            "ledger_record": "read.batch4-fencing.2026-10-21",
+            "section": "Conclusion",
+            "quote": "If you need locks only on a best-effort basis (as an efficiency optimization, not for correctness), I would recommend sticking with the straightforward single-node locking algorithm for Redis (conditional set-if-not-exists to obtain a lock, atomic delete-if-value-matches to release a lock), and documenting very clearly in your code that the locks are only approximate and may occasionally fail.",
+            "revision": "8cf7f237e65cdbbaea54578bbf1f08e7d716462a35b645a8b6b85d9233a380ea"
+          }
         }
       },
       "decision_evidence": {
         "atlas_section": "fencing-tokens",
         "question": "Should every write carry an epoch/token so the destination rejects a stale owner?",
-        "competing_alternative": "Lease-only ownership or single-writer routing. Reverse the choice when destination enforcement cost exceeds the stale-write risk it removes.",
+        "competing_alternative": "A best-effort single-node lock is sufficient when duplicate work is only an efficiency cost; use fencing when a stale write could corrupt state.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9186,7 +9200,7 @@
         "unit_terms": [
           "internal interface",
           "same contract",
-          "bypass around",
+          "removal date",
           "strangler facade"
         ]
       },
@@ -9216,9 +9230,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Untested side effects, a bypass around the abstraction and divergent implementations can break that contract.",
-          "reason": "Article has no untested-side-effect, bypass or divergence recovery rule."
+          "state": "supported",
+          "quote": "Keep each increment reversible and backward compatible, and use an easily flipped switch so the team can return to the old functionality if problems appear.",
+          "reason": "Names reversible, backward-compatible increments and an easily flipped switch for returning to old functionality.",
+          "binding": {
+            "source_id": "src.aws-branch",
+            "ledger_record": "read.aws-branch.2026-10-29",
+            "section": "Branch by abstraction pattern",
+            "quote": "Allows for incremental changes that are reversible in case anything goes wrong (backward compatible).",
+            "revision": "618648d7274e985f417915ecd4eeffe83e6c7db8b2ee1d0691293aee04f09d1c"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -11077,8 +11098,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 60,
-    "failure_recovery_supported": 45,
-    "alternative_supported": 56,
+    "failure_recovery_supported": 46,
+    "alternative_supported": 58,
     "technical_partial_bounded": 34,
     "technical_partial": 90,
     "technical_name_only": 0,
