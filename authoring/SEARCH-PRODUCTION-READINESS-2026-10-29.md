@@ -1,7 +1,13 @@
 # Search production readiness — 2026-10-29
 
-Status: **not production-certified**. This is a handoff, not owner acceptance,
-human review, CI or a sufficient-coverage claim.
+Status: **not production-certified**. Owner accepted AI labels as evidence on
+2026-10-29; that is not human review, CI or a sufficient-coverage claim.
+
+## Acceptance
+
+- Owner accepted AI labels for diagnostics in
+  [OWNER-ACCEPTANCE-AI-LABELS-2026-10-29.md](OWNER-ACCEPTANCE-AI-LABELS-2026-10-29.md).
+- This is not human review and does not remove the phase3 regression.
 
 ## Defaults
 
