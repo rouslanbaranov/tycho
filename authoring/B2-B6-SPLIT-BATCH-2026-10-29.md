@@ -139,8 +139,8 @@ claim, CI result or merge permission is implied.
 - `python3 scripts/check_boundary.py`: pass.
 - `python3 scripts/check_markdown_line_length.py`: the same three pre-existing
   V11 failures remain (two c01 lines and one c11 RBAC card line).
-- Full suite once at batch end: `python3 -m unittest discover -s tests`,
-  608 tests, OK.
+- Full suite at batch end: `python3 -m unittest discover -s tests`, 608 tests,
+  OK after correcting one moved qrels path exposed by the first run.
 - Verbatim check: every moved card or owner body is a contiguous substring of its
   new page; card bodies match after normalizing the owner-link path only.
 
