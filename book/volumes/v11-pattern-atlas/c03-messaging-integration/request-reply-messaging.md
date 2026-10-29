@@ -48,11 +48,13 @@ content_verified_at: null
 **Decision.** Use messaging Request-Reply when a request and its reply travel as separate
 messages and the requestor can wait or handle a callback. In the Synchronous Block case, the
 request thread waits for the reply, which implies one outstanding request or a reply channel
-private to the requesting thread. In the Asynchronous Callback case, the source states that
-multiple outstanding requests can share a single reply channel; Tycho synthesis: carry a
+private to the requesting thread. In the Asynchronous Callback case, the source states: "This
+approach enables multiple outstanding requests to share a single reply channel, and a single
+reply thread to process replies for multiple request threads." Tycho synthesis: carry a
 Correlation Identifier and match each reply to its request, because the bound page does not
-serve correlation mechanics. Prefer a direct synchronous Remote Procedure Invocation when the
-responder is reachable within the caller's request budget and blocking is acceptable.
+serve correlation mechanics. Tycho synthesis: prefer a direct synchronous Remote Procedure
+Invocation when the responder is reachable within the caller's request budget and blocking is
+acceptable.
 
 **Identity.** Request-Reply Messaging; family Messaging and event-driven integration; kind
 integration-pattern; priority core.
@@ -64,7 +66,9 @@ channels rather than one blocking call?
 exist; in the Synchronous Block case, at most one request is outstanding or the reply channel
 is private to the requesting thread. Tycho guidance, not a served source claim: a Correlation
 Identifier scopes reply matching when multiple requests share a reply channel; the source
-states that Asynchronous Callback enables that sharing but not the correlation mechanics.
+states that Asynchronous Callback enables multiple outstanding requests to share a single reply
+channel and a single reply thread to process replies for multiple request threads, but not the
+correlation mechanics.
 
 **Hard contraindications.** Reject when a direct synchronous Remote Procedure Invocation meets
 the availability and latency target and the caller can block, or when no reply channel can be
@@ -87,7 +91,8 @@ time out unresolved requests, and treat duplicate replies as idempotent outcomes
 read record read.batch2-request-reply.2026-10-21: Problem and Solution are
 unheaded; the served page also has Synchronous Block and Asynchronous Callback
 approaches, including the callback statement that multiple outstanding requests
-can share a reply channel; the page is publisher-abridged and has no Example
+can share a single reply channel and a single reply thread can process replies
+for multiple request threads; the page is publisher-abridged and has no Example
 section; correlation mechanics and timeout text are not served. The source is a
 public pattern/documentation unit, not a benchmark.
 

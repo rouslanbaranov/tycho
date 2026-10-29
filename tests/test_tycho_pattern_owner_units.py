@@ -114,6 +114,17 @@ class PatternOwnerUnitTests(unittest.TestCase):
         binding["section"] = "Not a recorded section"
         self.check_error(data, "owner-units-binding-section")
 
+    def test_supporting_binding_section_must_be_read(self):
+        data = self.copy()
+        item = next(entry for entry in data["entries"]
+                    if any(value.get("supporting_bindings")
+                           for value in entry["technical_evidence"].values()))
+        binding = next(value["supporting_bindings"][0]
+                       for value in item["technical_evidence"].values()
+                       if value.get("supporting_bindings"))
+        binding["section"] = "Not a recorded section"
+        self.check_error(data, "owner-units-binding-section")
+
     def test_sufficient_needs_a_promotion(self):
         evidence = {name: {"state": "supported"}
                     for name in ("mechanism", "invariant", "failure_recovery",

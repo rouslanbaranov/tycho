@@ -81,14 +81,15 @@ claims, and fail closed when retrieval is impossible.
 
 **Alternative.** The source states: "When payloads stay within a transport's supported limit
 and don't create unacceptable throughput or latency, send them inline to avoid the
-external-store dependency." Compression or a compact serializer can reduce inline size. Reverse
-the choice when retrieval and storage complexity exceed the savings.
+external-store dependency." It also states: "Compression can reduce repetitive text or binary
+payloads, and a more compact serializer can reduce message overhead." Tycho guidance, not a
+source claim: reverse the choice when retrieval and storage complexity exceed the savings.
 
 **Limits.** A claim check adds an external store, a retrieval hop and a second consistency
 boundary; it is not a payload catalogue or a security token. The source requires defining
 which component owns payload deletion and coordinating message expiration and payload
-retention; Tycho guidance, not a source claim, adds tenant binding and a cleanup path for
-claims.
+retention; Tycho guidance, not a source claim, adds tenant binding (a claim token is usable only
+inside the tenant that wrote the payload) and a cleanup path for claims.
 
 **Evidence.** The Microsoft Learn Claim Check pattern page (accessed 2026-10-28, canonical
 text SHA-256 391b162aaa47634d8898bf971471f8d9f19b69e08973a3277ffe4ef1463a0bfe) supports the

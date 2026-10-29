@@ -62,16 +62,16 @@ Camel states: "The Splitter will by default return the original input message. Y
 this by using a custom AggregationStrategy."
 
 **Invariant.** Each part must carry a correlation identity, a sequence position and, when
-known, the total size; completion is decidable only when the total count is known, or when a
-custom release strategy or expiry closes the group. Spring Integration's base splitter
-populates CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER on produced messages: "It is a
-MessageHandler implementation that encapsulates features common to splitters, such as filling
-in the appropriate message headers (CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the
-messages that are produced." For an iterator with no known size, Spring Integration's Iterators
-section sets SEQUENCE_SIZE to zero and states that the aggregate group remains incomplete until
-a custom release strategy or expiry closes it. Tycho guidance, not a source claim: a completion
-or compensation rule must have an owner, and the fan-out is bounded; the source does not fix
-per-part idempotency.
+known, the total size. Tycho guidance, not a source claim: completion is decidable only when
+the total count is known, or when a custom release strategy or expiry closes the group.
+Spring Integration's base splitter populates CORRELATION_ID, SEQUENCE_SIZE, and
+SEQUENCE_NUMBER on produced messages: "It is a MessageHandler implementation that
+encapsulates features common to splitters, such as filling in the appropriate message headers
+(CORRELATION_ID, SEQUENCE_SIZE, and SEQUENCE_NUMBER) on the messages that are produced." For
+an iterator with no known size, Spring Integration's Iterators section sets SEQUENCE_SIZE to
+zero and states that the aggregate group remains incomplete until a custom release strategy
+or expiry closes it. Tycho guidance, not a source claim: a completion or compensation rule
+must have an owner, and the fan-out is bounded; the source does not fix per-part idempotency.
 
 **Failure and recovery.** Apache Camel's value-based watermark is only updated when the split
 completes successfully; an aborted split (for example, one that exceeds maxFailedRecords) does

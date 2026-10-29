@@ -342,6 +342,11 @@ def validate_data(data, root=ROOT):
             if binding:
                 check_binding(item, name, binding,
                               plan_units.get(pattern_id, {}), records)
+            for index, supporting in enumerate(
+                    record.get("supporting_bindings", []), start=1):
+                check_binding(item, name + " supporting " + str(index),
+                              supporting, plan_units.get(pattern_id, {}),
+                              records)
             if (item["technical_coverage"] == "sufficient" or promotion):
                 require(record["state"] != "supported" or binding,
                         "owner-units-binding-missing: " + pattern_id + ": " + name)

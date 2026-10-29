@@ -56,10 +56,10 @@ sends the response.
 
 In the Synchronous Block approach, the request thread awaiting the response implies that there
 is only one outstanding request, or that the reply channel for this request is private for this
-thread. In the Asynchronous Callback approach, the source states that multiple outstanding
-requests can share a single reply channel and that a single reply thread can process replies for
-multiple request threads. Tycho synthesis: carry a Correlation Identifier and match each reply
-to its request; the bound page does not serve correlation mechanics.
+thread. In the Asynchronous Callback approach, the source states: "This approach enables
+multiple outstanding requests to share a single reply channel, and a single reply thread to
+process replies for multiple request threads." Tycho synthesis: carry a Correlation Identifier
+and match each reply to its request; the bound page does not serve correlation mechanics.
 
 If the requestor crashes, it can recover by simply restarting the reply thread. An added
 complexity, however, is the callback mechanism that must re-establish the caller's context.
@@ -72,11 +72,12 @@ decision alternative.
 
 **Limits.** The bound page is publisher-abridged. It supports the separate request and reply
 channels, the one-outstanding-request or private-reply-channel implication of the Synchronous
-Block case, and the Synchronous Block and Asynchronous Callback descriptions. It states that
-Asynchronous Callback enables multiple outstanding requests to share a single reply channel, but
-it does not serve correlation-identifier mechanics, reply timeouts, duplicate-reply handling or
-a complete callback contract; matching across multiple outstanding requests, deadline
-enforcement and duplicate suppression are Tycho guidance that needs implementation evidence. A
+Block case, and the Synchronous Block and Asynchronous Callback descriptions. It states:
+"This approach enables multiple outstanding requests to share a single reply channel, and a
+single reply thread to process replies for multiple request threads." It does not serve
+correlation-identifier mechanics, reply timeouts, duplicate-reply handling or a complete
+callback contract; matching across multiple outstanding requests, deadline enforcement and
+duplicate suppression are Tycho guidance that needs implementation evidence. A
 callback must re-establish the caller's context, but the bound text does not define its
 contract. This page is not a complete request-reply contract.
 
