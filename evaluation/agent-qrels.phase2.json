@@ -122,14 +122,14 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately. TTL is a fit when bounded staleness is acceptable and the origin can absorb the refill rate.",
-          "rationale": "Pairs TTL with invalidation/versioned keys; frames bounded staleness."
+          "quote": "For data that must be current, use shorter TTLs or bypass the cache entirely and read from the source data store.",
+          "rationale": "Source recommends a shorter TTL or bypass when data must be current."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "A TTL reduces the period during which data might be out of date. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL does the opposite. Jitter the expiry across keys to avoid synchronized bursts.",
-          "rationale": "Gives the shorter-TTL versus origin-load trade-off."
+          "quote": "If you make it too short, objects expire too quickly and you reduce the benefits of using the cache. If you make the period too long, you risk the data becoming stale.",
+          "rationale": "States the too-short/too-long range between reduced benefit and stale data."
         }
       ],
       "adjudication": "confirmed",
@@ -188,7 +188,7 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
           "section_id": "3-local-cache-eviction-and-refresh-are-different-actions",
-          "quote": "- **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit; - **expire-after-access:** frequently accessed values may remain resident longer (subject to other bounds); - **refresh-after-write:** an old value may remain visible while a new load runs, with configured failure/expiration behavior; - **size/weight eviction:** bounds memory and may remove useful hot entries, creating origin read bursts.",
+          "quote": "- **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit; - **expire-after-access:** frequently accessed values may remain resident longer (subject to other bounds); - **refresh-after-write:** an old value may remain visible while a new load runs, with configured failure/expiration behavior; - **size/weight eviction:** bounds memory by evicting entries not used recently or often when the cache exceeds its configured size or weight.",
           "rationale": "Separates refresh (soft) from expiry (hard) service behaviour."
         },
         {

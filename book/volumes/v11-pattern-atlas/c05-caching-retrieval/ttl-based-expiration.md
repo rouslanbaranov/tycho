@@ -49,26 +49,26 @@ priority core.
 **Decision question.** Should entries expire after a bounded time even without an explicit
 invalidation?
 
-**Good-fit conditions.** Staleness is bounded by time; refresh cost is acceptable; the TTL
-is shorter than the business freshness requirement.
+**Good-fit conditions.** The maximum acceptable stale window is at least the TTL; a reload
+after expiry is acceptable; staleness is bounded by time.
 
-**Hard contraindications.** Reject when a hard read-after-write contract exists, when
-synchronized expiry would stampede the source, or when TTL is longer than the acceptable
-stale window.
+**Hard contraindications.** Reject when data must be current and no shorter TTL or bypass
+can meet the freshness contract, or when the TTL would exceed the acceptable stale window.
 
-**Competing alternative.** Explicit invalidation or versioned keys. Reverse the choice
-when TTL expiry causes unacceptable misses or stale decisions.
+**Competing alternative.** A shorter TTL or a full bypass to the source data store.
+Reverse the choice when data must be current and bounded staleness is unacceptable.
 
-**Failure and recovery.** Synchronized expiry and stale reads are common; verify
-eviction/refresh in the owner section.
+**Failure and recovery.** A long-lived cache can fill; adding items can then force
+eviction of existing entries. The source states no recovery action. Tycho guidance:
+monitor eviction and reload traffic, and size or partition the cache.
 
-**Technical owner.** [TTL-Based Expiration](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#ttl-based-expiration) — eviction/refresh is bounded, not a universal TTL policy.
+**Technical owner.** [TTL-Based Expiration](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#ttl-based-expiration) — a bounded owner section, not a universal TTL policy.
 
 **Sources.**
 [src.microsoft-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-ms-caching.2026-10-21: sections "Manage data expiration in a
-cache", "Manage concurrency in a cache". The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch3-ms-caching.2026-10-21: sections "Considerations for using caching",
+"Caching and eventual consistency". The source is a public pattern/documentation unit, not
+a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

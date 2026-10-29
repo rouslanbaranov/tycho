@@ -4551,7 +4551,7 @@
         "heading": "4. Cache-aside is a sequence, not a consistency theorem",
         "anchor": "4-cache-aside-is-a-sequence-not-a-consistency-theorem",
         "level": 2,
-        "line": 70,
+        "line": 71,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Cache-aside is a sequence, not a consistency theorem",
@@ -4951,12 +4951,12 @@
         "heading": "TTL-Based Expiration",
         "anchor": "ttl-based-expiration",
         "level": 3,
-        "line": 131,
+        "line": 132,
         "unit_kind": "dedicated",
         "unit_terms": [
           "TTL-based expiration",
           "expire-after-write",
-          "Size/weight eviction",
+          "forcibly remove",
           "bounded staleness"
         ]
       },
@@ -4976,19 +4976,28 @@
         "invariant": {
           "state": "supported",
           "quote": "A TTL reduces the period during which data might be out of date.",
-          "reason": "Bounds staleness by time.",
+          "reason": "Bounds staleness by time; the source also ties the TTL to the tolerable staleness duration.",
           "binding": {
             "source_id": "src.microsoft-caching-guidance",
             "ledger_record": "read.batch3-ms-caching.2026-10-21",
             "section": "Considerations for using caching",
             "quote": "Many caching systems let you configure the cache to expire data, which reduces the period during which data might be out of date.",
             "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-caching-guidance",
+              "ledger_record": "read.batch3-ms-caching.2026-10-21",
+              "section": "Caching and eventual consistency",
+              "quote": "When you design your caching strategy, decide how much staleness your application can tolerate and set time-to-live (TTL) values accordingly.",
+              "revision": "1b4b20fd9da36c4004e50a3e3c11bbc9ceba1ab2cdb0b5030a0a15b4bbbe2b08"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts.",
-          "reason": "Names eviction-induced read bursts and the required refresh bound.",
+          "quote": "If you allow data to remain in the cache for a long time, the cache might fill up. In this case, any requests to add new items to the cache might cause the cache to forcibly remove some items in a process known as eviction.",
+          "reason": "Source states capacity-driven forced eviction, not hot-entry or origin-burst behavior; it states no recovery, so the recovery sentence is marked Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-caching-guidance",
             "ledger_record": "read.batch3-ms-caching.2026-10-21",
@@ -4999,8 +5008,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Explicit invalidation or versioned keys may be preferable when the source change must be visible immediately.",
-          "reason": "Names explicit invalidation/versioned keys and the reversal.",
+          "quote": "For data that must be current, use shorter TTLs or bypass the cache entirely and read from the source data store.",
+          "reason": "Names shorter TTLs and a full bypass when data must be current; this is the card reversal condition.",
           "binding": {
             "source_id": "src.microsoft-caching-guidance",
             "ledger_record": "read.batch3-ms-caching.2026-10-21",
@@ -5013,7 +5022,7 @@
       "decision_evidence": {
         "atlas_section": "ttl-based-expiration",
         "question": "Should entries expire after a bounded time even without an explicit invalidation?",
-        "competing_alternative": "Explicit invalidation or versioned keys. Reverse the choice when TTL expiry causes unacceptable misses or stale decisions.",
+        "competing_alternative": "A shorter TTL or a full bypass to the source data store. Reverse the choice when data must be current and bounded staleness is unacceptable.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -5027,7 +5036,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Embedded because the heading describes eviction/refresh, not TTL by name."
+      "notes": "Dedicated TTL-Based Expiration owner section; the reciprocal atlas card link is on the page. Coverage remains partial-bounded pending a fresh external review."
     },
     {
       "pattern_id": "tycho.pattern.negative-caching",
