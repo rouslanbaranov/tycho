@@ -36,7 +36,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-29"
 updated_at: "2026-10-29"
-source_inspection_date: null
+source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
 

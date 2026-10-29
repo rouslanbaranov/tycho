@@ -4002,13 +4002,13 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A crash after publish before completion duplicates",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "quote": "A crash after publish before completion duplicates; after commit before publish retries.",
+          "reason": "Names duplicate publication after publish and retry after commit; the guarantee covers eventual send and the relay issue covers duplicate delivery.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-outbox.2026-10-21",
             "section": "Result context",
-            "quote": "The Message relay might publish a message more than once. It might, for example, crash after publishing a message but before recording the fact that it has done so. When it restarts, it will then publish the message again. As a result, a message consumer must be idempotent, perhaps by tracking the IDs of the messages that it has already processed.",
+            "quote": "Messages are guaranteed to be sent if and only if the database transaction commits [...] The Message relay might publish a message more than once. It might, for example, crash after publishing a message but before recording the fact that it has done so. When it restarts, it will then publish the message again.",
             "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
           }
         },

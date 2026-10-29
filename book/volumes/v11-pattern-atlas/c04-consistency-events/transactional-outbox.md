@@ -59,8 +59,8 @@ outbox, when publication latency is unacceptable, or when no relay is operated.
 
 **Competing alternative.** Event sourcing is an alternative solution.
 
-**Failure and recovery.** A crash after publish/before checkpoint duplicates; a crash after
-commit/before publish retries; a poison row can block progress. Bound attempts/age and keep
+**Failure and recovery.** A crash after publish before completion duplicates; after commit
+before publish retries; a poison row can block progress. Bound attempts/age and keep
 repair evidence.
 
 **Technical owner.** [Transactional Outbox](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md#transactional-outbox) — outbox coordination is bounded, not a
