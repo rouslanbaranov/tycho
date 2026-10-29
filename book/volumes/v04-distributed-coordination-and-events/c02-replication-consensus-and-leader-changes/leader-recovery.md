@@ -230,20 +230,26 @@ token it has accepted and rejects a lower one. The token protects only where the
 checks and persists it atomically; a header that is never compared is decoration. A paused former
 owner is rejected when it resumes.
 
-Token or epoch reuse breaks monotonicity: never reuse a value after expiry, and reset the epoch
-only with a new authority. If the destination cannot enforce tokens, serialize through an
+Monotonic issuance is a precondition: the destination can reject a stale owner only when every
+new epoch carries a token greater than the last one it accepted. The article states that strictly
+increasing tokens make the lock safe and that a random value does not provide the required
+monotonicity. Tycho synthesis: never reuse a token value after expiry, and reset the epoch only
+with a new authority. If the destination cannot enforce tokens, serialize through an
 authoritative effect owner or use a stable idempotent operation identity; do not claim mutual
 exclusion from a token the destination ignores.
 
 **Alternative.** When the lock only avoids duplicate work, a best-effort single-node lock is
 sufficient; use fencing tokens when a stale write could corrupt state. The admitted article
 recommends a conditional set-if-not-exists lock for that case and says such locks are
-approximate and may occasionally fail; if the destination cannot enforce tokens, serialize
-through an authoritative effect owner or retain an explicit unresolved-safety boundary.
+approximate and may occasionally fail; for correctness it recommends a consensus system with
+fencing tokens enforced on all resource accesses. If the destination cannot enforce tokens,
+serialize through an authoritative effect owner or retain an explicit unresolved-safety
+boundary.
 
-**Source boundary.** The admitted article supports the efficiency-only single-node comparison
-and the token mechanism; the takeover linearization, epoch-reset and fallback rules are Tycho
-synthesis. The served page SHA-256 is
+**Source boundary.** The admitted article supports the efficiency-only single-node comparison,
+the correctness branch with enforced fencing, the strictly-increasing-token requirement and the
+token mechanism; the takeover linearization, token-reuse/epoch-reset and fallback rules are
+Tycho synthesis. The served page SHA-256 is
 8cf7f237e65cdbbaea54578bbf1f08e7d716462a35b645a8b6b85d9233a380ea.
 No lock service or failure test was executed.
 

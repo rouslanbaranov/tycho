@@ -218,17 +218,19 @@ priority core.
 **Decision question.** Should every write carry an epoch/token so the destination rejects
 a stale owner?
 
-**Good-fit conditions.** The destination can compare tokens; tokens increase
-monotonically; stale owners may still run but cannot commit.
+**Good-fit conditions.** The destination can compare and persist tokens; each new ownership
+epoch carries a strictly greater token; stale owners may still run but cannot commit.
 
-**Hard contraindications.** Reject when the resource cannot enforce tokens, when tokens
+**Hard contraindications.** Reject when the resource cannot enforce tokens, when token values
 can be reused, or when the lock is only an efficiency optimization.
 
 **Competing alternative.** A best-effort single-node lock is sufficient when duplicate work is
 only an efficiency cost; use fencing when a stale write could corrupt state.
 
-**Failure and recovery.** Token bypass and epoch reuse are common; verify destination
-enforcement in the owner section.
+**Failure and recovery.** A paused former owner is rejected when it resumes only where the
+destination checks and persists the token; non-monotonic issuance defeats that rejection. If the
+destination cannot enforce tokens, use an authoritative effect owner or an idempotent operation
+identity.
 
 **Technical owner.** [Fencing Tokens](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md#fencing-tokens) — destination fencing is bounded, not a universal token protocol.
 
@@ -236,7 +238,8 @@ enforcement in the owner section.
 [src.kleppmann-distributed-locking](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-fencing.2026-10-21: all nine served headings read.
 The Conclusion recommends a best-effort single-node lock for efficiency-only
-work and fencing for correctness. The source is a public article, not a benchmark.
+work, and a consensus system with fencing tokens enforced on every access when
+correctness matters. The source is a public article, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
