@@ -141,6 +141,17 @@ def page_rrf(bm25_results, semantic_results, weight=DEFAULT_WEIGHT,
     return out
 
 
+def matched_coverage(query, results, threshold=0.6):
+    """Return True when the top BM25 result covers enough query terms."""
+    import section_search
+    terms = set(section_search.normalize_terms(query))
+    if not results:
+        return False
+    matched = set(results[0].get("matched_terms", []))
+    coverage = len(terms & matched) / max(1, len(terms))
+    return coverage >= threshold
+
+
 def page_linear(bm25_results, semantic_results, weight=DEFAULT_WEIGHT,
                 limit=5):
     """Linear page fusion with per-query min-max normalization."""
@@ -184,14 +195,25 @@ def page_linear(bm25_results, semantic_results, weight=DEFAULT_WEIGHT,
 
 def search(root, query, limit=5, weight=DEFAULT_WEIGHT,
            model_name=DEFAULT_MODEL, embeddings=None,
-           index_path=None, fusion="rrf", backend="model2vec"):
+           index_path=None, fusion="rrf", backend="model2vec",
+           route="auto", coverage_threshold=0.6):
     import section_search
-    matrix, data, _ = load_embeddings(root, model_name, embeddings, backend)
-    semantic = semantic_results(root, query, load_model(model_name, backend),
-                                matrix, data)
     bm25 = section_search.search(
         root, query, limit=20, abstain=False, index_path=index_path).get(
             "results", [])
+    if route == "auto" and matched_coverage(
+            query, bm25, coverage_threshold):
+        return {
+            "status": "ok" if bm25 else "no-results",
+            "query": query,
+            "retrieval_mode": "bm25",
+            "weight": weight,
+            "results": bm25[:limit],
+            "notice": "Adaptive route selected BM25.",
+        }
+    matrix, data, _ = load_embeddings(root, model_name, embeddings, backend)
+    semantic = semantic_results(root, query, load_model(model_name, backend),
+                                matrix, data)
     return {
         "status": "ok" if bm25 or semantic else "no-results",
         "query": query,
@@ -205,7 +227,7 @@ def search(root, query, limit=5, weight=DEFAULT_WEIGHT,
 
 
 def evaluate(root, weight=DEFAULT_WEIGHT, model_name=DEFAULT_MODEL,
-             backend="model2vec"):
+             backend="model2vec", route="auto", coverage_threshold=0.6):
     import section_search
     rows = []
     for split, relative in (("v2", "evaluation/corpus-qrels.v2.json"),
@@ -225,7 +247,11 @@ def evaluate(root, weight=DEFAULT_WEIGHT, model_name=DEFAULT_MODEL,
                                     matrix, data)
         bm25 = section_search.search(
             root, item["question"], limit=20, abstain=False).get("results", [])
-        results = page_rrf(bm25, semantic, weight, 5)
+        if route == "auto" and matched_coverage(
+                item["question"], bm25, coverage_threshold):
+            results = bm25[:5]
+        else:
+            results = page_rrf(bm25, semantic, weight, 5)
         accepted = {(a["path"], a.get("section_id"))
                     for a in item.get("accepted", [])}
         rank = None
@@ -258,6 +284,8 @@ def main(argv=None):
                     default="model2vec")
     ap.add_argument("--embeddings", type=Path, default=None)
     ap.add_argument("--fusion", choices=("rrf", "linear"), default="rrf")
+    ap.add_argument("--route", choices=("auto", "always"), default="auto")
+    ap.add_argument("--coverage-threshold", type=float, default=0.6)
     args = ap.parse_args(argv)
     if args.action == "build":
         print(json.dumps(build(args.root, args.model, args.embeddings,
@@ -266,13 +294,16 @@ def main(argv=None):
         return 0
     if args.action == "evaluate":
         print(json.dumps(evaluate(args.root, args.weight, args.model,
-                                  args.backend),
+                                  args.backend, args.route,
+                                  args.coverage_threshold),
                          indent=2, sort_keys=True))
         return 0
     if not args.query:
         raise SystemExit("--query is required for search")
     print(json.dumps(search(args.root, args.query, args.limit, args.weight,
-                            args.model, args.embeddings, fusion=args.fusion),
+                            args.model, args.embeddings, fusion=args.fusion,
+                            route=args.route,
+                            coverage_threshold=args.coverage_threshold),
                      indent=2, sort_keys=True))
     return 0
 
