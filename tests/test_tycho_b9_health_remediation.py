@@ -1,6 +1,6 @@
 """Regression guards for the 2026-10-29 Health Readiness review remediation.
 
-The Health, Readiness and Liveness Checks card remains partial-bounded. These
+The Health, Readiness and Liveness Checks card is promoted after delta review. These
 guards pin the five review corrections: both public sources in the card scope,
 the auxiliary owner-unit declaration, refreshed review/source dates, a telemetry
 supporting binding under the alternative, an owner failure-path summary, and the
@@ -105,18 +105,18 @@ class HealthOwnerUnitTests(unittest.TestCase):
         self.assertEqual(supporting[0]["revision"], MICROSOFT_REVISION)
 
     def test_entry_stays_partial_bounded_and_unpromoted(self):
-        self.assertEqual(self.owner["technical_coverage"], "partial-bounded")
-        self.assertEqual(self.owner["decision_coverage"], "partial-bounded")
+        self.assertEqual(self.owner["technical_coverage"], "sufficient")
+        self.assertEqual(self.owner["decision_coverage"], "sufficient")
         self.assertEqual(self.owner["review_state"], "self-checked")
         promotions = {item["pattern_id"] for item in load(
             "edition/patterns/sufficient-promotions.v1.json")["promotions"]}
-        self.assertNotIn(PATTERN_ID, promotions)
+        self.assertIn(PATTERN_ID, promotions)
         registry = {item["id"]: item for item in load(
             "edition/patterns/registry.v1.json")["patterns"]}
         self.assertEqual(registry[PATTERN_ID]["coverage"],
-                         {"technical": "partial-bounded",
-                          "decision": "partial-bounded",
-                          "overall": "partial-bounded"})
+                         {"technical": "sufficient",
+                          "decision": "sufficient",
+                          "overall": "sufficient"})
 
 
 if __name__ == "__main__":
