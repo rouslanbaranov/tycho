@@ -120,7 +120,7 @@ the rejection. It does not block the arrival process silently. This matters beca
 that hides rejection can report a high success rate while refusing work at the front door.
 
 The overload scenario demonstrates the difference. A with a 40-request queue and a one-second
-deadline succeeds on 0.7797 of offered requests; 0.2790 time out and 0.1656 are rejected.
+deadline succeeds on 0.6488 of offered requests; 0.3495 time out and 0.0005 are rejected.
 The timeout rate, not the rejection rate, is the dominant failure mode. A model that reported
 only rejection would understate the loss.
 
@@ -130,9 +130,9 @@ only rejection would understate the loss.
 |---|---|---|---|---|---|
 | Baseline stock-flow | 20 | 24 | 1.000 | n/a | 0.000 |
 | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 |
-| Checkout A | 20 | 24 | 0.9360 | 0.917 | 0.0637 |
-| Checkout B | 20 | 24 | 0.9997 | 1.204 | 0.0028 |
-| Checkout C | 20 | 24 | 0.9989 | 1.419 | 0.0238 |
+| Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 |
+| Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 |
+| Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 |
 
 The table is deliberately compact. The stock-flow model has no individual p95; the checkout
 model does. Candidate B has a higher p95 than A because it waits longer before timing out,

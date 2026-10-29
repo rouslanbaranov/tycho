@@ -151,10 +151,10 @@ metrics:
 - B: a bounded queue, a two-second deadline and a small retry budget;
 - C: more servers, a slower mean service time and a higher unit cost.
 
-Under the declared assumptions, B succeeds on 0.9997 of offered requests with a
-1.204-second p95 latency and 1.34 relative cost units per 1000 successes. A succeeds on
-0.9360 with a 0.917-second p95 and 1.78 cost units. C succeeds on 0.9989 but exceeds the
-declared 3.0 cost constraint while meeting the 1.5-second p95 constraint. The decision
+Under the declared assumptions, B succeeds on 0.9996 of offered requests with a
+1.206-second p95 latency and 1.34 relative cost units per 1000 successes. A succeeds on
+0.9218 with a 0.870-second p95 and 1.81 cost units. C succeeds on 0.9679 but exceeds the
+declared 3.0 cost and 1.5-second p95 constraints. The decision
 record recommends B for the synthetic workload, records the non-quantitative operability
 constraint as unverified and lists the measurements that would reverse the choice.
 

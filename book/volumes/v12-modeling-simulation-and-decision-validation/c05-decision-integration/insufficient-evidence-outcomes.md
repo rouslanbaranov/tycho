@@ -83,7 +83,7 @@ The staged modernization run reports:
 - success rate 1.0 (the model serves the offered traffic);
 - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
 - rollback completed 0.1 (it finishes within the 2,400-second horizon in only 10% of replications);
-- rollback seconds censored at the horizon, 2,400.
+- rollback seconds mean 2,160, with non-completions censored at 2,400.
 
 The no-cutover baseline reports zero divergence and no rollback requirement. The staged
 candidate looks better only if the divergence is ignored. But the dual-write lag and

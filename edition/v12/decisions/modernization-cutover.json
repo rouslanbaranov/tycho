@@ -95,7 +95,7 @@
   },
   "outcome": {
     "recommendation": "none",
-    "rationale": "The staged candidate does not produce a decision-supported cutover. Its synthetic maximum divergence is 8,925.5 records (95% CI 5,561.6-12,289.3), and rollback completes in only 10% of replications within the 2,400-second horizon (rollback_completed 0.1). The no-cutover baseline has zero modeled divergence and no rollback requirement. Because the dual-write lag and reconciliation capacity are assumed over wide ranges and were not measured, the difference between the candidates cannot be attributed to a real migration path. The correct outcome is insufficient evidence, not a recommendation to cut over or to reject modernization permanently.",
+    "rationale": "The staged candidate does not produce a decision-supported cutover. Its synthetic maximum divergence is 8,925.5 records (95% CI 5,561.6-12,289.3), and rollback completes in only 10% of replications within the 2,400-second horizon (rollback_completed 0.1); non-completing rollback durations are censored at the horizon, giving a mean censored duration of 2,160 seconds. The no-cutover baseline has zero modeled divergence and no rollback requirement. Because the dual-write lag and reconciliation capacity are assumed over wide ranges and were not measured, the difference between the candidates cannot be attributed to a real migration path. The correct outcome is insufficient evidence, not a recommendation to cut over or to reject modernization permanently.",
     "non_quantitative_constraints": [
       "M3 business continuity ownership is not established by the model.",
       "No record-level reconciliation or schema compatibility was tested."
@@ -143,7 +143,7 @@
     {
       "constraint_id": "M2",
       "status": "fail",
-      "evidence": "rollback_completed is 0.1: rollback finishes inside the 2,400-second horizon in only 10% of replications."
+      "evidence": "rollback_completed is 0.1: rollback finishes inside the 2,400-second horizon in only 10% of replications; 90% are censored at the horizon."
     },
     {
       "constraint_id": "M3",

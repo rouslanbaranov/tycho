@@ -57,17 +57,18 @@ reading; reading is not independent review.
 
 The comparative experiment uses one synthetic workload, one seed scheme and one metric set
 for three checkout candidates. Candidate B is decision-supported under the declared
-constraints: success 0.9997, p95 1.204 s, cost 1.34 per 1000 successes. Candidate C is
-eliminated by the declared cost constraint; it meets the p95 constraint. The recommendation
+constraints: success 0.9996, p95 1.206 s, cost 1.34 per 1000 successes. Candidate C is
+eliminated by the declared cost and p95 constraints. The recommendation
 is conditional on an unverified operability constraint and uncalibrated inputs.
 
 The modernization experiment compares a staged cutover with a no-cutover baseline. The
-staged path produces a maximum divergence of 8,925.5 records and does not complete rollback
-within 2,400 seconds. The decision record returns `insufficient-evidence`.
+staged path produces a maximum divergence of 8,925.5 records and completes rollback within
+2,400 seconds in only 10% of replications. The decision record returns `insufficient-evidence`.
 
 The sensitivity screen reports first-order and total-order indices for arrival rate and
 service mean. It is a quadratic response-surface screen, not a full pick-freeze Sobol
-analysis, and its run is marked `insufficient-sample`.
+analysis. The sensitivity run is converged; a separate two-replication
+convergence-stress run is marked insufficient-sample.
 
 ## Validation evidence
 
@@ -84,7 +85,7 @@ chapters: 89
 v12_documents: 31
 
 python3 -m unittest discover -s tests -p 'test_tycho*.py'
-Ran 626 tests in 83.9s
+Ran 627 tests in 74.0s
 OK
 
 node tools/mermaid/check.mjs --root .
@@ -104,7 +105,10 @@ validator reports:
 {"protected_pages": 449, "promotion_records": 5, "changed": 0, "missing": 0, "leaked": 0}
 ```
 
-No existing page, card, owner page, promotion record or atlas manifest was edited. The only
+No existing page, card, owner page, sufficient-promotion record or atlas
+manifest was edited. The only new files under book/ are the V12 volume pages.
+One existing re-review packet had its route-source binding refreshed as
+recorded below.
 new files under `book/` are the V12 volume pages.
 
 ## Derived artifacts refreshed
@@ -128,7 +132,8 @@ inside this issue. The V12 validator checks the V12 line limit independently.
 
 ## Independent review round 1
 
-The first OpenAI Codex review (gpt-5.6-sol, read-only, pinned to the initial commit) returned
+The first OpenAI Codex review (GPT-5-based; exact serving version not exposed; read-only,
+pinned to the initial commit) returned
 reject with three blocking findings: declared input correlations were not applied, stored B
 and C runs were not reproducible from the pinned engine, and a stale completion event could
 complete a later retry attempt. It also found two high, three medium and one low issue.
@@ -150,6 +155,31 @@ Corrections applied in this branch:
 The initial review report is saved verbatim as
 \`authoring/ai-reviews/2026-10-29-v12-isolated-volume-codex.md\` and indexed with verdict
 reject. A delta review of the corrected artifacts is the next gate.
+
+## Independent review round 2
+
+A delta review of the correction commit returned reject with one blocking, one high and two
+medium findings:
+
+- N1: queue wait was no longer included in the per-attempt deadline, and a queued timeout did
+  not consume the attempt budget;
+- N2: correlated inputs were passed to an independent-input response-surface decomposition;
+- N3: rollback duration aggregation silently dropped failed rollbacks;
+- N4: correction metadata contained stale run counts and unsupported model-version claims.
+
+Corrections applied:
+
+- the attempt starts at arrival or retry, the deadline covers queue wait, and a queued
+  timeout consumes the attempt budget;
+- the sensitivity scenario is independent and the engine rejects a correlated screen; the
+  correlated-input run remains a separate Monte Carlo propagation;
+- non-completing rollback durations are censored at the horizon and the limitation is stored;
+- the decision, review index, implementation record and decision constraint evidence were
+  corrected, and the packet baseline limitation is recorded.
+
+The delta review report is saved verbatim as
+\`authoring/ai-reviews/2026-10-29-v12-isolated-volume-delta-codex.md\` and indexed with
+verdict reject. A second delta review of the corrected artifacts is the next gate.
 
 ## Limits
 

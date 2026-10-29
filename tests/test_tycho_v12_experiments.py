@@ -43,7 +43,7 @@ class ComparativeExperimentTests(unittest.TestCase):
         self.assertLess(b["cost_per_1k_success"]["value"], a["cost_per_1k_success"]["value"])
         self.assertLess(a["cost_per_1k_success"]["value"], c["cost_per_1k_success"]["value"])
         self.assertGreater(c["cost_per_1k_success"]["value"], 3.0)
-        self.assertLessEqual(c["latency_p95"]["value"], 1.5)
+        self.assertGreater(c["latency_p95"]["value"], 1.5)
         self.assertLessEqual(b["latency_p95"]["value"], 1.5)
 
     def test_all_runs_are_converged(self):

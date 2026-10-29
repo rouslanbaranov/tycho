@@ -66,15 +66,15 @@ for every discrete-event run.
 
 The A/B/C comparison shows the difference:
 
-- A has no retry budget: retry amplification 1.000, timeout rate 0.0637, success 0.9360.
-- B has three attempts with exponential backoff and full jitter: retry amplification 1.003,
-  timeout rate 0.0028, success 0.9997.
-- C has two attempts with linear backoff: retry amplification 1.023, timeout rate 0.0238,
-  success 0.9989.
+- A has no retry budget: retry amplification 1.000, timeout rate 0.0778, success 0.9218.
+- B has three attempts with exponential backoff and full jitter: retry amplification 1.004,
+  timeout rate 0.0041, success 0.9996.
+- C has two attempts with linear backoff: retry amplification 1.079, timeout rate 0.111,
+  success 0.9679.
 
 B's retry budget absorbs transient service-time variation without materially increasing load.
-C's retries amplify load and do not prevent a 2.4% timeout rate. A's lack of retries avoids
-amplification but loses 6.4% of requests to its one-second deadline.
+C's retries amplify load and do not prevent an 11.1% timeout rate. A's lack of retries avoids
+amplification but loses 7.8% of requests to its one-second deadline.
 
 ## Backoff and jitter
 
@@ -104,11 +104,11 @@ horizon. A model with no timeout lets a slow request occupy a server indefinitel
 The overload scenario offers 30 requests per second to a 24-request-per-second pool with a
 40-request queue and a one-second deadline. The run reports:
 
-- success rate 0.7797 (95% CI 0.7769-0.7826);
-- timeout rate 0.2790 (95% CI 0.2769-0.2810);
-- rejection rate 0.1656;
-- mean queue length 29.36;
-- server utilization 0.99999.
+- success rate 0.6488 (95% CI 0.6443-0.6534);
+- timeout rate 0.3495 (95% CI 0.3451-0.3540);
+- rejection rate 0.0005;
+- mean queue length 12.79;
+- server utilization 0.9966.
 
 The dominant failure is timeout, not rejection. The queue is large enough to absorb arrivals
 but not large enough to prevent deadline expiry. A report that focuses on rejection alone

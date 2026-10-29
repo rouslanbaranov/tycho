@@ -104,8 +104,8 @@ guarantee of bit-identical behavior on every platform.
 
 ## Example: candidate B run
 
-The candidate B run has 30 replications, a success rate of 0.9997 with a 95% CI of
-0.9996-0.9997, a p95 latency of 1.204 seconds, and a relative error of 0.00003. The
+The candidate B run has 30 replications, a success rate of 0.9996 with a 95% CI of
+0.9995-0.9997, a p95 latency of 1.206 seconds, and a relative error of 0.00003. The
 convergence status is converged against a 0.02 threshold. The uncertainty method is
 replication; there are no correlated inputs. The limitations say the workload is synthetic
 and the confidence intervals use a normal approximation.

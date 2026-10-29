@@ -260,16 +260,10 @@ class CheckoutSimulation:
             if request["done"]:
                 continue
             self.free_servers -= 1
-            if self._in_window(request):
-                self.attempts_total += 1
-            request["attempts"] += 1
-            request["attempt"] += 1
             request["state"] = "service"
             service_time = sample_service(self.rng, self.parameters["service_time"])
             request["service_end"] = self.now + service_time
             self.in_service[request["id"]] = request
-            self.events.schedule(self.now + self.timeout, 0, "timeout",
-                                 {"request_id": request["id"], "attempt": request["attempt"]})
             self.events.schedule(request["service_end"], 0, "service_done",
                                  {"request_id": request["id"], "attempt": request["attempt"]})
 
@@ -327,16 +321,18 @@ class CheckoutSimulation:
                 request = {
                     "id": self._next_request_id,
                     "first_arrival": self.now,
-                    "attempts": 0,
-                    "attempt": 0,
+                    "attempts": 1,
+                    "attempt": 1,
                     "done": False,
                     "state": "queued",
                     "outcome": None,
                 }
                 self.requests.append(request)
                 self.by_id[request["id"]] = request
+                if self._in_window(request):
+                    self.attempts_total += 1
                 self.events.schedule(self.now + self.timeout, 0, "timeout",
-                                     {"request_id": request["id"], "attempt": 0})
+                                     {"request_id": request["id"], "attempt": 1})
                 self._enqueue(request)
                 if self.arrival_rate > 0.0:
                     self.events.schedule(self.now + self.rng.expovariate(self.arrival_rate),
@@ -353,6 +349,10 @@ class CheckoutSimulation:
             elif event.kind == "retry":
                 request = self._request(event.payload["request_id"])
                 if request is not None and not request["done"]:
+                    request["attempt"] += 1
+                    request["attempts"] += 1
+                    if self._in_window(request):
+                        self.attempts_total += 1
                     request["state"] = "queued"
                     self.events.schedule(self.now + self.timeout, 0, "timeout",
                                          {"request_id": request["id"],
@@ -571,7 +571,7 @@ def run_modernization(scenario: dict, parameters: dict, seed: int) -> dict:
         "cost_per_1k_success": 0.0,
         "max_divergence": max_divergence,
         "rollback_seconds": ((rollback_end - rollback_at) if rollback_end is not None
-                             else (0.0 if not rollback_applicable else None)),
+                             else (0.0 if not rollback_applicable else duration)),
         "rollback_completed": 1.0 if (rollback_end is not None or not rollback_applicable) else 0.0,
         "cutover_completed": cutover_done,
         "served": completed,
@@ -882,7 +882,8 @@ def run_scenario(model: dict, scenario: dict, model_path: str, scenario_path: st
             "Synthetic workload; no production measurement is claimed.",
             "Metrics are conditional on the declared model and scenario assumptions.",
             "Confidence intervals use a normal approximation across replications.",
-        ],
+        ] + (["Non-completing rollback durations are censored at the scenario horizon."]
+             if any(name == "rollback_seconds" for name in metric_names) else []),
         "result_sha256": None,
     }
 
@@ -952,6 +953,8 @@ def sensitivity(model: dict, scenario: dict, model_path: str, scenario_path: str
     uncertain = scenario["uncertainty"].get("parameter_draws", [])
     require(1 <= len(uncertain) <= 2,
             "response-surface sensitivity supports 1-2 uncertain parameters")
+    require(not scenario["uncertainty"].get("correlations"),
+            "response-surface sensitivity requires independent inputs; use a separate dependent-input run")
     names = [item["parameter"] for item in uncertain]
     rng = random.Random(int(scenario["seed"]["base"]) + 700001)
 

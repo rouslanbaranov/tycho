@@ -84,7 +84,7 @@ The staged run reports:
 - mean dual-write backlog 4,242.0 records;
 - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3);
 - rollback completed 0.1;
-- rollback seconds 0 for the 10% that completed; non-completions are censored at 2,400.
+- rollback seconds mean 2,160, with non-completions censored at 2,400.
 
 The baseline reports:
 

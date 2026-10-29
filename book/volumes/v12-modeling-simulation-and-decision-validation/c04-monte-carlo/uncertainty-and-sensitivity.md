@@ -120,25 +120,27 @@ response-surface screen:
 5. Report the first-order and total-order shares.
 
 The screen is an approximation. It assumes that a quadratic surface is adequate over the
-sampled range and that the input standardization is meaningful. It is not a full Sobol'
-analysis and is labeled as a screening result.
+sampled range and that the input standardization is meaningful. It also requires independent
+inputs: the sensitivity scenario declares no correlation, and the engine rejects a correlated
+screen. Correlated inputs are propagated by the separate Monte Carlo run, not by this
+independent-input variance decomposition. The screen is not a full Sobol' analysis.
 
 For the candidate B sensitivity run, the fitted screen reports:
 
-- arrival rate: first-order 0.345, total-order 0.522;
-- service mean: first-order 0.478, total-order 0.655.
+- arrival rate: first-order 0.361, total-order 0.464;
+- service mean: first-order 0.536, total-order 0.639.
 
 The service mean has the larger main effect in this sampled range. The arrival rate has a
-substantial interaction share. The two first-order indices sum to 0.823, leaving about 0.177
+substantial interaction share. The two first-order indices sum to 0.897, leaving about 0.103
 for interaction and unexplained variation. The screen does not prove that service time is
 more important in production; it says that, under the declared distributions and the
 quadratic approximation, it explains more of the fitted variance.
 
 ## A separate insufficient-sample case
 
-The sensitivity scenario itself is converged at a 0.00048 relative error, but it is still a
+The sensitivity scenario itself is converged at a 0.00016 relative error, but it is still a
 screening approximation. A separate two-replication convergence-stress run has a relative
-error of 0.026, above the 0.02 threshold, and is marked insufficient-sample. Its wide input
+error of 0.032, above the 0.02 threshold, and is marked insufficient-sample. Its wide input
 draws and small replication budget show the failure mode without pretending that the
 sensitivity screen is precise.
 

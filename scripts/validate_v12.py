@@ -154,6 +154,12 @@ def validate(root: Path = ROOT) -> dict:
                 "run scenario hash mismatch: " + artifact["id"])
         body = {k: v for k, v in data.items() if k != "result_sha256"}
         require(data["result_sha256"] == sha_json(body), "run result hash mismatch: " + artifact["id"])
+        require(data["invariants"]["conservation_ok"] is True,
+                "run invariant failed: " + artifact["id"])
+        require(all(check["status"] == "pass" for check in data["invariants"]["checks"]),
+                "run invariant check failed: " + artifact["id"])
+        require(data["provenance"]["engine_sha256"] == sha(root / "scripts/v12_engine.py"),
+                "run engine hash mismatch: " + artifact["id"])
         for metric in data["metrics"].values():
             require(metric["ci_low"] <= metric["ci_high"], "run metric interval order")
     for artifact in artifacts["decisions"]:
@@ -167,6 +173,9 @@ def validate(root: Path = ROOT) -> dict:
                 require(pattern_id in patterns, "decision unknown pattern: " + pattern_id)
             for page in candidate["owner_pages"]:
                 require((root / page).is_file(), "decision owner page missing: " + page)
+        constraint_ids = {item["id"] for item in data["constraints"]}
+        evaluation_ids = {item["constraint_id"] for item in data["constraint_evaluation"]}
+        require(constraint_ids == evaluation_ids, "decision constraint evaluation mismatch")
         for link in data["pattern_links"]:
             require(link["pattern_id"] in patterns, "decision link unknown pattern")
             require(link["owner_document_id"] in index, "decision link unknown owner id")

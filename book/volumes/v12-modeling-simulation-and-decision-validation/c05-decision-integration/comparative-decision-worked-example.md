@@ -75,9 +75,9 @@ The candidates differ in capacity, deadline, queue, retry and unit cost:
 
 ## The results
 
-- A: success 0.9360 (95% CI 0.9355-0.9365), p95 0.917 s, cost 1.78, timeout 0.0637.
-- B: success 0.9997 (95% CI 0.9996-0.9997), p95 1.204 s, cost 1.34, timeout 0.0028.
-- C: success 0.9989 (95% CI 0.9988-0.9990), p95 1.419 s, cost 3.51, timeout 0.0238.
+- A: success 0.9218 (95% CI 0.9211-0.9226), p95 0.870 s, cost 1.81, timeout 0.0778.
+- B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041.
+- C: success 0.9679 (95% CI 0.9595-0.9764), p95 1.769 s, cost 3.63, timeout 0.111.
 
 All three runs are converged by the 0.02 relative-error rule. The confidence intervals are
 narrow because the workload is synthetic and the replications are independent. Narrow
@@ -94,11 +94,11 @@ The decision record declares:
 - C5: p95 latency at most 1.5 seconds (hard).
 
 C1 and C2 hold for all three runs: the model reports a conservation flag and the engine
-aborts on a failure. C4 eliminates C: 3.51 is above 3.0. C5 is met by all three candidates: C is at
-1.419, below 1.5. A and B pass both constraints.
+aborts on a failure. C4 eliminates C: 3.63 is above 3.0. C5 also eliminates C: 1.769 is
+above 1.5. A and B pass both constraints.
 
-B and A both pass. B has higher success (0.9997 versus 0.9360) and lower cost (1.34 versus
-1.78). A has lower p95 latency (0.917 versus 1.204). The record recommends B because the
+B and A both pass. B has higher success (0.9996 versus 0.9218) and lower cost (1.34 versus
+1.81). A has lower p95 latency (0.870 versus 1.206). The record recommends B because the
 declared decision prioritizes successful completions and cost per success over the latency
 difference inside the 1.5-second ceiling. That prioritization is a decision, not a fact
 produced by the simulation.
@@ -108,13 +108,13 @@ an operational review. The recommendation is therefore conditional.
 
 ## Sensitivity and uncertainty
 
-The candidate B sensitivity screen reports arrival rate first-order 0.345 and total-order
-0.522, service mean first-order 0.478 and total-order 0.655. The screen is a quadratic
+The candidate B sensitivity screen reports arrival rate first-order 0.361 and total-order
+0.464, service mean first-order 0.536 and total-order 0.639. The screen is a quadratic
 approximation over 48 rows. It says service time explains more of the fitted variance in the
 sampled range. It does not prove that service time is the dominant production factor.
 
-The sensitivity scenario is converged at a 0.00048 relative error. A separate two-replication
-convergence-stress run is insufficient-sample at 0.026. The decision record does not use the
+The sensitivity scenario is converged at a 0.00016 relative error. A separate two-replication
+convergence-stress run is insufficient-sample at 0.032. The decision record does not use the
 sensitivity ranking to support a production claim; it uses it to identify what to measure
 first.
 

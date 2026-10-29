@@ -172,6 +172,20 @@ class DiscreteEventTests(unittest.TestCase):
         self.assertEqual(result["metrics"]["success_rate"]["value"], 0.0)
         self.assertTrue(result["invariants"]["conservation_ok"])
 
+    def test_queued_timeout_consumes_attempt_budget(self):
+        s = scenario(configuration={"servers": 1, "service_time": {"kind": "deterministic",
+                                                                  "mean": 10.0, "cv": 0.01},
+                                    "queue_capacity": 50, "timeout": 0.1, "max_attempts": 1,
+                                    "retry_backoff": {"kind": "none", "base": 0.0, "jitter": "none"},
+                                    "bulkhead": 100, "cost_per_server_hour": 10.0},
+                     workload={"duration": 1.0, "warmup": 0.0, "time_unit": "second",
+                               "arrival_process": {"kind": "poisson", "rate": 5.0,
+                                                   "unit": "request/second"}})
+        result = engine.run_scenario(model("discrete-event"), s, str(MODEL_PATH), str(SCENARIO_PATH))
+        self.assertEqual(result["metrics"]["success_rate"]["value"], 0.0)
+        self.assertGreater(result["metrics"]["timeout_rate"]["value"], 0.5)
+        self.assertTrue(result["invariants"]["conservation_ok"])
+
     def test_cost_uses_measurement_window(self):
         s = scenario(configuration={"servers": 12, "service_time": {"kind": "deterministic",
                                                                   "mean": 0.5, "cv": 0.01},
