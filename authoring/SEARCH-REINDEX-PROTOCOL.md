@@ -86,3 +86,10 @@ keys and the pages whose section sets changed, in addition to page hashes and
 qrels changes. This makes enrichment impact visible without parsing the book
 again.
 
+## Deep verify
+
+search_reindex.py verify runs the full section_fts_index verifier: section
+metadata, offsets, topics and H3 parent mapping against the book. check remains
+the cheaper manifest/route/count gate. verify is read-only and does not change
+qrels.
+

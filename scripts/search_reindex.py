@@ -293,9 +293,21 @@ def check(root, manifest_path=DEFAULT_MANIFEST):
     }
 
 
+def verify(root, manifest_path=DEFAULT_MANIFEST):
+    result = section_fts_index.verify(Path(root))
+    result["status"] = "verified"
+    if Path(manifest_path).is_file():
+        result["qrels_stale"] = check(root, manifest_path).get(
+            "qrels_stale", [])
+    else:
+        result["qrels_stale"] = []
+    return result
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("action", choices=("snapshot", "check", "rebuild", "diff"))
+    ap.add_argument("action", choices=("snapshot", "check", "rebuild", "diff",
+                                      "verify"))
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
     ap.add_argument("--allow-partial", action="store_true")
@@ -320,6 +332,10 @@ def main(argv=None):
         report = diff_current(args.root, args.manifest)
         print(json.dumps(report, indent=2, sort_keys=True))
         return 0 if report["status"] == "unchanged" else 1
+    if args.action == "verify":
+        report = verify(args.root, args.manifest)
+        print(json.dumps(report, indent=2, sort_keys=True))
+        return 0
     route, result, stats = build(
         args.root, args.allow_partial, full=args.full)
     report = {

@@ -96,6 +96,16 @@ class SearchReindexTests(unittest.TestCase):
                     with search_reindex.reindex_lock(tmp):
                         pass
 
+    def test_verify_wraps_deep_index_verification(self):
+        deep = {"outcome": "verified", "snapshot": "s" * 64}
+        with patch.object(search_reindex.section_fts_index, "verify",
+                          return_value=deep), \
+             patch.object(search_reindex, "check",
+                          return_value={"qrels_stale": ["q"]}):
+            report = search_reindex.verify(ROOT)
+        self.assertEqual(report["status"], "verified")
+        self.assertEqual(report["qrels_stale"], ["q"])
+
     def test_build_forwards_full_mode(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
