@@ -138,6 +138,8 @@ class SearchTests(unittest.TestCase):
                          "section-rerank")
         with self.assertRaises(section_search.SearchError):
             self.search("zebra", all_sections=True, section_rerank=True)
+        with self.assertRaises(section_search.SearchError):
+            self.search("zebra", volume="v12", section_rerank=True)
 
     def test_query_cache_returns_defensive_copy(self):
         self.build()

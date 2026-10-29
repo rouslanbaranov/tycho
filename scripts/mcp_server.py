@@ -1332,6 +1332,9 @@ class TychoMcpServer:
         if section_rerank and all_sections:
             raise ProtocolFailure(
                 -32602, "section_rerank cannot be combined with all_sections")
+        if section_rerank and volume == "v12":
+            raise ProtocolFailure(
+                -32602, "section_rerank is disabled for volume v12")
         abstain = arg_bool(args, "abstain", True)
         mode = arg_string(args, "mode", maximum=20) or "strict"
         if mode not in ("strict", "exploratory"):
