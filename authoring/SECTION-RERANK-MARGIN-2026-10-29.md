@@ -17,6 +17,13 @@ Apply global section_rerank only when the BM25 top-1/top-2 score margin is below
 | phase2 | section | .130/.315/.352 | .185/.370/.426 | .185/.370/.407 |
 | phase3 | section | .263/.368/.526 | .263/.526/.684 | .263/.421/.632 |
 
+Held-out page level:
+
+| Qrels | Base hit@1/3/5 | Margin-gated hit@1/3/5 |
+|---|---|---|
+| phase2 | .296/.611/.667 | .278/.630/.667 |
+| phase3 | .421/.632/.737 | .474/.632/.737 |
+
 On qrels v3:
 
 - page v2: .865 -> .929;
@@ -27,8 +34,9 @@ On qrels v3:
 ## Interpretation
 
 The margin gate removes the phase3/V12 page regression while retaining most of
-the v2 page gain. It does not improve held-out phase2/phase3 section top-1,
-though it improves their top-3/top-5 versus BM25.
+the v2 page gain. It does not improve held-out phase2/phase3 section top-1.
+On held-out page level it improves phase3 top-1 by 5.3 points but loses 1.8
+points on phase2; the effect is mixed, not a universal win.
 
 The 0.15 threshold was selected on qrels v3; this is a tuning risk. Do not make
 it default without a held-out independent review.
