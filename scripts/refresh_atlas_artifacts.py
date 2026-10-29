@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Refresh every derived atlas artifact, optionally authorizing mechanical revisions."""
 import argparse
+import datetime
 import hashlib
 import json
 import re
@@ -58,7 +59,7 @@ def authorize_missing(reason):
     revisions = json.loads((ROOT / "edition/content-revisions.json").read_text())
     revisions["revisions"].append({
         "issue": 540,
-        "authorized_at": "2026-10-27",
+        "authorized_at": datetime.date.today().isoformat(),
         "authorization": reason,
         "directory_documents": entries["directory_documents"],
         "source_blocks": [],
@@ -169,6 +170,7 @@ def main():
     if (ROOT / "research/sufficient-pilot-540/manifest.json").is_file():
         sync_json("research/sufficient-pilot-540/manifest.json", pilot_manifest)
 
+    run("scripts/reconcile_sufficient_reviews.py")
     run("scripts/build_rereview_scope.py", "--write")
     run("scripts/build_rereview_packets.py")
     print("atlas artifacts refreshed")

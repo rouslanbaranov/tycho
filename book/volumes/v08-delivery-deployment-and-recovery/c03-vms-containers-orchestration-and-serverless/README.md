@@ -63,6 +63,7 @@ Begin with the integrated decision, then open the independent question that matc
 | [Integrated decision and original walkthrough](runtime-placement-and-control-plane.md) | Which topology suits operational and workload requirements? |
 | [Compute models and operating constraints](compute-models.md) | Which workload, isolation and operating constraints make a runtime topology viable? |
 | [Control planes, placement and reversibility](static-stability.md) | What work can continue when orchestration or placement control is unavailable? |
+| [Immutable Infrastructure owner note](immutable-infrastructure.md) | How is replacement from a recorded artifact kept reproducible? |
 
 ## Boundaries and further reading
 

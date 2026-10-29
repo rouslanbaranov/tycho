@@ -30,11 +30,11 @@ evidence_scope:
   notes: "Moved card page; source binding remains in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-28"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-28"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---
@@ -42,20 +42,22 @@ content_verified_at: null
 # Ambassador
 
 **Identity.** Ambassador; family Application architecture and boundaries; kind
-deployment-pattern; priority core.
+deployment-pattern; priority advanced.
 
 **Decision question.** Should client connectivity be offloaded to a colocated out-of-process proxy?
 
 **Good-fit conditions.** Many languages need common connectivity; a legacy application is hard to
 modify; monitoring or resilience belongs outside the client.
 
-**Hard contraindications.** Reject when proxy latency outweighs offloading or when retries are
-needed for non-idempotent operations.
+**Hard contraindications.** Reject ambassador-managed retries on non-idempotent
+operations; other offload uses remain viable. Reject when proxy latency outweighs
+offloading.
 
 **Competing alternative.** A client library invoked directly by the application when proxy overhead
 outweighs offloading.
 
-**Failure and recovery.** Proxy retries are unsafe unless operations are idempotent.
+**Failure and recovery.** Ambassador-managed retries might not be safe unless all
+operations are idempotent; other offload uses remain viable.
 
 **Technical owner.** [Static stability and colocated helpers](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#ambassador) — bounded to the client-side proxy pattern.
 

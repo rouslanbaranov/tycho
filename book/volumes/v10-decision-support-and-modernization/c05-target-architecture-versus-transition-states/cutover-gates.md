@@ -130,11 +130,4 @@ incremental change benefit, and remove the seam once the old path is gone.
 
 ### Controlled Cutover
 
-A controlled cutover drains the write pipeline and verifies that source changes replicate before
-switching writes. Verify pipeline health and DLQ state before cutover. Resolve DLQ errors before pausing writes. Verify the forward replication pipeline has no permanent errors and wait
-for the data freshness metric to reach zero before switching. A contingency fallback pathway can be configured before cutover using reverse replication. The procedure assumes the target schema is deployed and the
-backfill job is complete. Verify active CDC replication before pausing writes. Pause Datastream and
-confirm that no replication events pass through the stream, then update connection strings and start
-application services against the target. Monitor reverse replication errors after cutover. The
-fallback path requires an active reverse pipeline before cutover starts. Strangler Fig replacement
-moves authority incrementally through seams.
+See the [dedicated Controlled Cutover owner note](controlled-cutover.md).

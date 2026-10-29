@@ -60,7 +60,7 @@ administration costs more than the access-control benefit.
 **Failure and recovery.** In ACL/IBAC systems, failure to remove or revoke access over time
 accumulates privileges.
 
-**Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
+**Technical owner.** [RBAC-ABAC](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/rbac-abac.md#rbac-abac) — role/attribute model and decision point are bounded; policy administration is platform-specific.
 
 **Sources.** [src.owasp-asvs](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch6-asvs.2026-10-21: full 120-page ASVS 5.0.0 PDF read;

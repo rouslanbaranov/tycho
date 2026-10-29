@@ -80,6 +80,9 @@ def find_report_verdict(name, verdicts):
 
 
 def derive_state(record):
+    current_state = record.get("current_state")
+    if current_state:
+        return current_state
     verdict = record["verdict"]
     remediated = record.get("remediated", False)
     re_reviewed = record.get("re_reviewed", False)
@@ -115,15 +118,21 @@ def reconcile(candidates, records, batch_text, sufficient_text, protocol_text):
         entry = catalog.get(record["pattern_id"])
         if entry is None:
             raise ValueError("review record without candidate: " + record["pattern_id"])
-        use_sufficient = "SUFFICIENT-CANDIDATES" in record["report_path"]
-        report = sufficient if use_sufficient else batch
-        report_verdict, match_kind = find_report_verdict(entry["catalog_name"], report)
-        if match_kind == "missing":
-            report_match = "missing"
-        elif report_verdict != record["verdict"]:
-            report_match = "verdict-mismatch"
+        current_state = record.get("current_state")
+        if current_state:
+            report_verdict, match_kind = None, "not-applicable"
+            report_match = "not-applicable"
         else:
-            report_match = match_kind
+            use_sufficient = "SUFFICIENT-CANDIDATES" in record["report_path"]
+            report = sufficient if use_sufficient else batch
+            report_verdict, match_kind = find_report_verdict(
+                entry["catalog_name"], report)
+            if match_kind == "missing":
+                report_match = "missing"
+            elif report_verdict != record["verdict"]:
+                report_match = "verdict-mismatch"
+            else:
+                report_match = match_kind
         state = derive_state(record)
         issues = []
         if report_match == "missing":
@@ -144,7 +153,10 @@ def reconcile(candidates, records, batch_text, sufficient_text, protocol_text):
             "pattern_id": record["pattern_id"],
             "catalog_name": entry["catalog_name"],
             "owner_path": entry["owner_path"],
-            "current_verdict": record["verdict"],
+            "current_verdict": current_state or record["verdict"],
+            "current_state": current_state,
+            "historical_verdict": record.get("historical_verdict"),
+            "historical_reviews": record.get("historical_reviews", []),
             "findings": record.get("findings", 0),
             "remediated": record.get("remediated", False),
             "re_reviewed": record.get("re_reviewed", False),
@@ -152,7 +164,7 @@ def reconcile(candidates, records, batch_text, sufficient_text, protocol_text):
             "re_review_findings": re_review.get("findings"),
             "re_review_report_path": re_review.get("report_path"),
             "re_review_page_sha256": re_review.get("page_sha256"),
-            "report_path": record["report_path"],
+            "report_path": record.get("report_path"),
             "report_verdict": report_verdict,
             "report_name_match": match_kind,
             "report_match": report_match,
@@ -181,6 +193,10 @@ def reconcile(candidates, records, batch_text, sufficient_text, protocol_text):
         "current_verdicts_supported_by_cited_report": len(supported),
         "verdict_mismatches": matches["verdict-mismatch"],
         "promoted_from_findings": promoted_from_findings,
+        "awaiting_current_external_review": states.get(
+            "awaiting-current-external-review", 0),
+        "historical_passes_retained": sum(
+            1 for row in rows if row["historical_verdict"] == "pass"),
         "report_reject_conflicts": len(reject_conflicts),
         "re_reviewed": len(re_reviewed),
         "re_review_with_separate_report": sum(
@@ -209,7 +225,12 @@ def build_output(base):
     return {
         "schema_version": 1,
         "scope": ("Read-only reconciliation of sufficient-candidate review records "
-                  "against cited reports. Not a review, sufficiency claim or promotion."),
+                  "against cited reports and current suspension states. Historical "
+                  "passes are pinned evidence only; not a review, sufficiency claim "
+                  "or promotion."),
+        "state_note": ("'promoted-after-remediation' is a historical agent-review "
+                       "state, not a current promotion record. Promotions live only "
+                       "in sufficient-promotions.v1.json."),
         "sources": [
             {"path": path.relative_to(ROOT).as_posix(), "sha256": digest(path)}
             for path in (CANDIDATES, RECORDS, BATCH, SUFFICIENT, PROTOCOL)

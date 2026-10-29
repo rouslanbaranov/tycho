@@ -85,6 +85,7 @@ Follow one operation from name resolution to the authoritative service and back.
 | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? |
 | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functions may a gateway own without hiding backend authority? |
 | [Edge cache and origin protection](edge-cache-origin.md) | Which representations may be cached and what happens when the origin is unavailable? |
+| [Static Content Hosting owner note](static-content-hosting.md) | What does the host own for origin protection, purge and rollback? |
 
 ## Synthesis and counterexample
 

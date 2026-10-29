@@ -639,7 +639,7 @@
         "heading": "Self-Contained Service",
         "anchor": "self-contained-service",
         "level": 3,
-        "line": 116,
+        "line": 118,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Self-Contained Service"
@@ -648,8 +648,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A self-contained service is designed to respond to a synchronous request without waiting for another service.",
-          "reason": "The pattern designs a service to respond without waiting for collaborators.",
+          "quote": "Design a service so that it can respond to a synchronous request without waiting for the response from any other service.",
+          "reason": "The pattern rule is to respond without waiting for any collaborator's response.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
@@ -660,8 +660,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "It can use CQRS to maintain a replica of data owned by other services and Saga to maintain consistency asynchronously.",
-          "reason": "Self-contained service uses CQRS and Saga for replica and asynchronous consistency.",
+          "quote": "A self-contained service uses the Saga pattern to asynchronously maintain data consistency. It uses the CQRS pattern to maintain a replica of data owned by other services.",
+          "reason": "The pattern uses CQRS for a replica and Saga for asynchronous consistency.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
@@ -672,24 +672,24 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "If a collaborator is unavailable, a service that waits cannot complete the request and returns an error.",
-          "reason": "Synchronous collaboration blocks when a collaborator is unavailable.",
+          "quote": "The pattern's recovery design is a local read model plus asynchronous reconciliation, which lets the service respond while a collaborator is unavailable.",
+          "reason": "The source's recovery outcome is that the service responds even when a collaborator is unavailable; the Solution names the CQRS replica and asynchronous Saga reconciliation.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
             "section": "Context",
-            "quote": "However, a key drawback of using synchronous request/response is that it reduces availability. That’s because if any of the Order Sevice’s collaborators are unavailable, it will not be able to create the order and must return an error to the client.",
+            "quote": "The Order Service always respond to a POST /orders request even when one of the other services is unavailable.",
             "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
           }
         },
         "alternative": {
           "state": "supported",
-          "quote": "A service can retry a failed collaborator, but this increases response time.",
+          "quote": "A service can retry a request to a failed collaborator but this increases response time.",
           "reason": "Retry is the alternative and increases response time.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-self-contained.2026-10-21",
-            "section": "Context",
+            "section": "Forces",
             "quote": "A service can retry a request to a failed collaborator but this increases response time.",
             "revision": "f6d39ad075a6532dfd070e467d183387fb2024fe881feb3daf658014c2163502"
           }
@@ -712,7 +712,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Moved card page created 2026-10-29; all four technical dimensions remain supported after the final review remediation. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.sidecar",
@@ -724,7 +724,7 @@
         "heading": "Sidecar",
         "anchor": "sidecar",
         "level": 3,
-        "line": 158,
+        "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Sidecar"
@@ -797,7 +797,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Shared static-stability page changed on 2026-10-29 when the Immutable Infrastructure note moved out; the Sidecar section is unchanged. All four technical dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.ambassador",
@@ -809,7 +809,7 @@
         "heading": "Ambassador",
         "anchor": "ambassador",
         "level": 3,
-        "line": 147,
+        "line": 151,
         "unit_kind": "dedicated",
         "unit_terms": [
           "out-of-process proxy",
@@ -819,32 +819,32 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "An ambassador is an out-of-process proxy colocated with the client.",
-          "reason": "Microsoft defines Ambassador as a colocated out-of-process proxy.",
+          "quote": "Think of an ambassador service as an out-of-process proxy that's colocated with the client.",
+          "reason": "The source presents the colocated out-of-process proxy as an analogy, not a formal definition.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
-            "section": "Solution",
+            "section": "Ambassador pattern",
             "quote": "Think of an ambassador service as an out-of-process proxy that's colocated with the client.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         },
         "invariant": {
           "state": "supported",
-          "quote": "It forwards requests to remote services and can offload monitoring, logging, routing, TLS and resilience.",
-          "reason": "The proxy mediates requests and responses.",
+          "quote": "send network requests on behalf of a consumer service or application",
+          "reason": "The source's introduction describes sending network requests on behalf of a consumer and offloading common connectivity tasks.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
-            "section": "Solution",
-            "quote": "The client application sends requests to the ambassador instead of calling external services directly. The ambassador forwards those requests to the remote service. Responses from the remote service return through the ambassador and back to the client application.",
+            "section": "Ambassador pattern",
+            "quote": "Create helper services that send network requests on behalf of a consumer service or application. Think of an ambassador service as an out-of-process proxy that's colocated with the client. Use the Ambassador pattern to offload common client connectivity tasks like monitoring, logging, routing, security like Transport Layer Security (TLS), and resiliency patterns in a language-agnostic way.",
             "revision": "49dab1385a60bdbe23ea4b0996ad42777adf4a4029a282d60204d48f9b51362c"
           }
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Proxy retries are unsafe unless all operations are idempotent.",
-          "reason": "Microsoft warns that proxy retries are unsafe for non-idempotent operations.",
+          "quote": "The ambassador could handle retries, but that approach might not be safe unless all operations are idempotent.",
+          "reason": "The source warns that ambassador-managed retries might not be safe unless all operations are idempotent; other offload uses remain viable.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-ambassador.2026-10-21",
@@ -883,7 +883,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Bounded ownership note with a complete mechanism, failure path and alternative."
+      "notes": "Shared static-stability page changed on 2026-10-29: the Immutable Infrastructure note moved out and the Ambassador paragraph was rewrapped. The final review remediation restored the retry hedge and analogy attribution. All four dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.anti-corruption-layer",
@@ -3961,12 +3961,12 @@
       "catalog_name": "Transactional Outbox",
       "family": "data-consistency-transactions-and-event-sourcing",
       "owner": {
-        "document_id": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9",
-        "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+        "document_id": "tycho.page.61636057f11b418a9478066a8034ff56",
+        "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
         "heading": "Transactional Outbox",
         "anchor": "transactional-outbox",
-        "level": 3,
-        "line": 129,
+        "level": 1,
+        "line": 43,
         "unit_kind": "dedicated",
         "unit_terms": [
           "publication queue",
@@ -4002,13 +4002,13 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A crash after publish before completion duplicates",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "quote": "A crash after publish before completion duplicates; after commit before publish retries.",
+          "reason": "Names duplicate publication after publish and retry after commit; the guarantee covers eventual send and the relay issue covers duplicate delivery.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-outbox.2026-10-21",
             "section": "Result context",
-            "quote": "The Message relay might publish a message more than once. It might, for example, crash after publishing a message but before recording the fact that it has done so. When it restarts, it will then publish the message again. As a result, a message consumer must be idempotent, perhaps by tracking the IDs of the messages that it has already processed.",
+            "quote": "Messages are guaranteed to be sent if and only if the database transaction commits [...] The Message relay might publish a message more than once. It might, for example, crash after publishing a message but before recording the fact that it has done so. When it restarts, it will then publish the message again.",
             "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
           }
         },
@@ -4042,7 +4042,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Dedicated card and owner pages created 2026-10-29; all four technical dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.transactional-inbox",
@@ -7843,7 +7843,7 @@
         "heading": "Distributed Workflow Orchestration",
         "anchor": "distributed-workflow-orchestration",
         "level": 3,
-        "line": 144,
+        "line": 133,
         "unit_kind": "dedicated",
         "unit_terms": [
           "state machine",
@@ -8490,12 +8490,12 @@
       "catalog_name": "Static Content Hosting",
       "family": "scalability-and-load-distribution",
       "owner": {
-        "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+        "document_id": "tycho.page.840c65c6698344ba8ed13f1f10038b5c",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
         "heading": "Static Content Hosting",
         "anchor": "static-content-hosting",
-        "level": 3,
-        "line": 147,
+        "level": 1,
+        "line": 45,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Static content hosting",
@@ -8520,7 +8520,7 @@
         "invariant": {
           "state": "supported",
           "quote": "A retained version is the rollback path",
-          "reason": "Requires cache key, freshness and authorization to agree for served static assets.",
+          "reason": "Retained older assets keep the rollback path available while cached pages and supported versions still depend on them.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.static-content-hosting.2026-10-26",
@@ -8543,13 +8543,13 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "The application must process or personalize content for each request before delivering it.",
-          "reason": "Names the per-request processing condition that defeats static hosting.",
+          "quote": "The alternative is to serve static content dynamically from the application origin.",
+          "reason": "Names the application-origin alternative to dedicated static hosting.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.static-content-hosting.2026-10-26",
-            "section": "When to use this pattern",
-            "quote": "The application must process or personalize content for each request before delivering it. For example, it might need to insert user-specific data into a document.",
+            "section": "Workload design",
+            "quote": "Generally, using an application platform to deliver static content isn't cost-effective.",
             "revision": "7e46edc77c874f02d6076511dbbe5a7a80b72f2b0753ad6f0636c6cf33bc87a3"
           }
         }
@@ -8557,7 +8557,7 @@
       "decision_evidence": {
         "atlas_section": "static-content-hosting",
         "question": "Should static content be served from a dedicated store or edge rather than the application origin?",
-        "competing_alternative": "Process or personalize content for each request before delivery.",
+        "competing_alternative": "Serve static content dynamically from the application origin.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8571,7 +8571,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "The section treats immutable public assets as edge-reusable; publication governance and origin protection remain bounded gaps."
+      "notes": "Dedicated card and owner pages created 2026-10-29; all four technical dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.tenant-based-resource-isolation",
@@ -8647,7 +8647,7 @@
         "heading": "Rolling Deployment",
         "anchor": "rolling-deployment",
         "level": 3,
-        "line": 136,
+        "line": 115,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Rolling Deployment"
@@ -8704,7 +8704,7 @@
         "heading": "Blue-Green Deployment",
         "anchor": "blue-green-deployment",
         "level": 3,
-        "line": 153,
+        "line": 132,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Blue-Green Deployment",
@@ -8778,7 +8778,7 @@
         "heading": "Canary Release",
         "anchor": "canary-release",
         "level": 3,
-        "line": 170,
+        "line": 149,
         "unit_kind": "dedicated",
         "unit_terms": [
           "small, identifiable cohort",
@@ -8988,12 +8988,12 @@
       "catalog_name": "Immutable Infrastructure",
       "family": "deployment-and-legacy-modernization",
       "owner": {
-        "document_id": "tycho.page.b7913b53d5ea439697bc5236f902d76e",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+        "document_id": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md",
         "heading": "Immutable Infrastructure",
         "anchor": "immutable-infrastructure",
-        "level": 3,
-        "line": 175,
+        "level": 1,
+        "line": 44,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Immutable Infrastructure"
@@ -9052,7 +9052,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Owner section moved verbatim to a dedicated page on 2026-10-29 to free the candidate from a promotion-bound shared page. Coverage remains partial; no promotion or acceptance is claimed."
     },
     {
       "pattern_id": "tycho.pattern.strangler-fig",
@@ -9309,12 +9309,12 @@
       "catalog_name": "Dark Launching / Shadow Traffic",
       "family": "deployment-and-legacy-modernization",
       "owner": {
-        "document_id": "tycho.page.b938ff1a06264492a425f2eff555ae7d",
-        "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+        "document_id": "tycho.page.b1318da570f746bb8126e863b97d8eb3",
+        "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/dark-launching-shadow-traffic.md",
         "heading": "Dark Launching-Shadow Traffic",
         "anchor": "dark-launching-shadow-traffic",
-        "level": 3,
-        "line": 111,
+        "level": 1,
+        "line": 46,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Dark launching",
@@ -9389,7 +9389,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "One of four owner units on this page; the others are Rolling, Blue-Green and Canary."
+      "notes": "Dedicated owner page created 2026-10-29; all four technical dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.expand-and-contract",
@@ -9456,12 +9456,12 @@
       "catalog_name": "Controlled Cutover",
       "family": "deployment-and-legacy-modernization",
       "owner": {
-        "document_id": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03",
-        "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+        "document_id": "tycho.page.5187d0a69bc343f388225f9be0ee2ffa",
+        "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/controlled-cutover.md",
         "heading": "Controlled Cutover",
         "anchor": "controlled-cutover",
-        "level": 3,
-        "line": 131,
+        "level": 1,
+        "line": 45,
         "unit_kind": "dedicated",
         "unit_terms": [
           "write pipeline",
@@ -9536,7 +9536,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Three technical bindings use Spanner cutover; the alternative uses Fowler Strangler Fig."
+      "notes": "Dedicated card and owner pages created 2026-10-29; all four technical dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.federated-identity",
@@ -9780,12 +9780,12 @@
       "catalog_name": "RBAC / ABAC",
       "family": "security-isolation-and-operational-architecture",
       "owner": {
-        "document_id": "tycho.page.99e04ece579d426ba5e48bbb1f6f3695",
-        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
+        "document_id": "tycho.page.701f492e0f6b4801a832153ac94ad22a",
+        "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/rbac-abac.md",
         "heading": "RBAC-ABAC",
         "anchor": "rbac-abac",
-        "level": 2,
-        "line": 107,
+        "level": 1,
+        "line": 47,
         "unit_kind": "dedicated",
         "unit_terms": [
           "RBAC-ABAC",
@@ -9861,7 +9861,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Dedicated owner page created 2026-10-29; all four technical dimensions remain supported. Promotion restored after the 2026-10-29 final external review; owner acceptance remains pending until final acceptance."
     },
     {
       "pattern_id": "tycho.pattern.workload-identity-mtls",
@@ -10578,24 +10578,6 @@
   ],
   "shared_pages": [
     {
-      "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
-      "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
-      "pattern_count": 6,
-      "pattern_ids": [
-        "tycho.pattern.command-query-responsibility-segregation-cqrs",
-        "tycho.pattern.command-side-replica",
-        "tycho.pattern.cqrs-read-projections",
-        "tycho.pattern.domain-events",
-        "tycho.pattern.event-sourcing",
-        "tycho.pattern.materialized-view"
-      ],
-      "unit_count": 6,
-      "dedicated_units": 6,
-      "bounded_entries": 1,
-      "decision": "deepen",
-      "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
-    },
-    {
       "document_id": "tycho.page.77b512c4e2e946bd92d70b4a714600c8",
       "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
       "pattern_count": 3,
@@ -10625,20 +10607,48 @@
       "rationale": "Microservices and SOA now have distinct dedicated units with separate contract and ownership emphasis."
     },
     {
-      "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
-      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "document_id": "tycho.page.b7913b53d5ea439697bc5236f902d76e",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+      "pattern_count": 2,
+      "pattern_ids": [
+        "tycho.pattern.ambassador",
+        "tycho.pattern.sidecar"
+      ],
+      "unit_count": 2,
+      "dedicated_units": 2,
+      "bounded_entries": 0,
+      "decision": "keep",
+      "rationale": "Two colocated-helper patterns have two distinct dedicated bounded notes on a coherent static-stability page. The Immutable Infrastructure owner note moved out to a dedicated page on 2026-10-29."
+    },
+    {
+      "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
       "pattern_count": 4,
       "pattern_ids": [
-        "tycho.pattern.deadline-propagation",
-        "tycho.pattern.retry-with-exponential-backoff",
-        "tycho.pattern.retry-with-jitter",
-        "tycho.pattern.timeout"
+        "tycho.pattern.api-gateway",
+        "tycho.pattern.gateway-aggregation",
+        "tycho.pattern.gateway-offloading",
+        "tycho.pattern.reverse-proxy"
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 0,
+      "bounded_entries": 2,
+      "decision": "keep",
+      "rationale": "Four gateway functions have dedicated bounded units on the new gateway page."
+    },
+    {
+      "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "pattern_count": 2,
+      "pattern_ids": [
+        "tycho.pattern.gateway-routing",
+        "tycho.pattern.health-endpoint-monitoring"
+      ],
+      "unit_count": 2,
+      "dedicated_units": 2,
+      "bounded_entries": 1,
       "decision": "deepen",
-      "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
+      "rationale": "Gateway routing and health endpoint monitoring now have separate dedicated units."
     },
     {
       "document_id": "tycho.page.cccbd188936543a2aaf904f4002236d8",
@@ -10655,81 +10665,20 @@
       "rationale": "Two API-composition patterns have two dedicated bounded notes on a coherent contract page."
     },
     {
-      "document_id": "tycho.page.4961bb03a6534242a0977db265b68d95",
-      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+      "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
       "pattern_count": 4,
       "pattern_ids": [
-        "tycho.pattern.distributed-lock",
-        "tycho.pattern.fencing-tokens",
-        "tycho.pattern.leader-election",
-        "tycho.pattern.lease-based-ownership"
+        "tycho.pattern.client-side-discovery",
+        "tycho.pattern.load-balancing",
+        "tycho.pattern.server-side-discovery",
+        "tycho.pattern.service-discovery"
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 2,
-      "decision": "deepen",
-      "rationale": "The election and the lock/lease/fencing patterns now have four dedicated units."
-    },
-    {
-      "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
-      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
-      "pattern_count": 2,
-      "pattern_ids": [
-        "tycho.pattern.quorum-based-reads-writes",
-        "tycho.pattern.quorum-coordination"
-      ],
-      "unit_count": 2,
-      "dedicated_units": 2,
       "bounded_entries": 0,
       "decision": "deepen",
-      "rationale": "Quorum reads/writes and quorum coordination now have two distinct dedicated units."
-    },
-    {
-      "document_id": "tycho.page.1b2657011d454460856103419095031b",
-      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
-      "pattern_count": 4,
-      "pattern_ids": [
-        "tycho.pattern.consensus",
-        "tycho.pattern.leader-follower-replication",
-        "tycho.pattern.multi-leader-replication",
-        "tycho.pattern.read-replicas"
-      ],
-      "unit_count": 4,
-      "dedicated_units": 4,
-      "bounded_entries": 2,
-      "decision": "deepen",
-      "rationale": "Replication, consensus, multi-leader and read-replica patterns now have five dedicated units."
-    },
-    {
-      "document_id": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9",
-      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
-      "pattern_count": 2,
-      "pattern_ids": [
-        "tycho.pattern.distributed-workflow-orchestration",
-        "tycho.pattern.transactional-outbox"
-      ],
-      "unit_count": 2,
-      "dedicated_units": 2,
-      "bounded_entries": 1,
-      "decision": "deepen",
-      "rationale": "Transactional outbox and durable workflow orchestration now have two distinct dedicated units."
-    },
-    {
-      "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
-      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
-      "pattern_count": 5,
-      "pattern_ids": [
-        "tycho.pattern.compensating-transaction",
-        "tycho.pattern.process-manager-routing-slip",
-        "tycho.pattern.saga",
-        "tycho.pattern.saga-choreography",
-        "tycho.pattern.saga-orchestration"
-      ],
-      "unit_count": 5,
-      "dedicated_units": 5,
-      "bounded_entries": 2,
-      "decision": "deepen",
-      "rationale": "Saga, choreography, orchestration, compensation and process manager have distinct units."
+      "rationale": "Service discovery, client-side discovery, server-side discovery and load balancing now have four distinct dedicated units."
     },
     {
       "document_id": "tycho.page.0eee61f261054af0ad728d791036c5f4",
@@ -10755,21 +10704,6 @@
       "rationale": "All eleven messaging patterns now have dedicated units covering delivery semantics, consumer identity, routing, filtering and the bridge failure domain; no shared unit remains."
     },
     {
-      "document_id": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070",
-      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
-      "pattern_count": 3,
-      "pattern_ids": [
-        "tycho.pattern.aggregator",
-        "tycho.pattern.scatter-gather",
-        "tycho.pattern.splitter"
-      ],
-      "unit_count": 3,
-      "dedicated_units": 3,
-      "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Three messaging composition patterns have three dedicated bounded notes on one coherent family page."
-    },
-    {
       "document_id": "tycho.page.148a37ff87ca4e42a2fec625c65319b0",
       "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
       "pattern_count": 4,
@@ -10786,32 +10720,54 @@
       "rationale": "Claim Check, correlation, request-reply and workflow-failure gates have four dedicated units; DLQ and Request-Reply remain partial-bounded."
     },
     {
-      "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
-      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
-      "pattern_count": 2,
+      "document_id": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+      "pattern_count": 3,
       "pattern_ids": [
-        "tycho.pattern.partitioning",
-        "tycho.pattern.sharding"
+        "tycho.pattern.aggregator",
+        "tycho.pattern.scatter-gather",
+        "tycho.pattern.splitter"
       ],
-      "unit_count": 2,
-      "dedicated_units": 2,
-      "bounded_entries": 1,
-      "decision": "deepen",
-      "rationale": "Sharding now has a dedicated owner unit with explicit limits."
+      "unit_count": 3,
+      "dedicated_units": 3,
+      "bounded_entries": 2,
+      "decision": "keep",
+      "rationale": "Three messaging composition patterns have three dedicated bounded notes on one coherent family page."
     },
     {
-      "document_id": "tycho.page.7e927696162f48beaa33fc834b36ee76",
-      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
-      "pattern_count": 2,
+      "document_id": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "pattern_count": 5,
       "pattern_ids": [
-        "tycho.pattern.expand-and-contract-schema",
-        "tycho.pattern.online-data-migration"
+        "tycho.pattern.compensating-transaction",
+        "tycho.pattern.process-manager-routing-slip",
+        "tycho.pattern.saga",
+        "tycho.pattern.saga-choreography",
+        "tycho.pattern.saga-orchestration"
       ],
-      "unit_count": 2,
-      "dedicated_units": 2,
-      "bounded_entries": 0,
+      "unit_count": 5,
+      "dedicated_units": 5,
+      "bounded_entries": 2,
       "decision": "deepen",
-      "rationale": "Expand-and-contract and online migration now have two distinct dedicated units."
+      "rationale": "Saga, choreography, orchestration, compensation and process manager have distinct units."
+    },
+    {
+      "document_id": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af",
+      "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "pattern_count": 6,
+      "pattern_ids": [
+        "tycho.pattern.command-query-responsibility-segregation-cqrs",
+        "tycho.pattern.command-side-replica",
+        "tycho.pattern.cqrs-read-projections",
+        "tycho.pattern.domain-events",
+        "tycho.pattern.event-sourcing",
+        "tycho.pattern.materialized-view"
+      ],
+      "unit_count": 6,
+      "dedicated_units": 6,
+      "bounded_entries": 1,
+      "decision": "deepen",
+      "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
     },
     {
       "document_id": "tycho.page.33742c54f667446cbf57cb9f3696a533",
@@ -10860,6 +10816,64 @@
       "rationale": "Stampede protection and single-flight now have separate dedicated units with scope limits."
     },
     {
+      "document_id": "tycho.page.0d34dd26886340b89fd4f1499d790a81",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+      "pattern_count": 2,
+      "pattern_ids": [
+        "tycho.pattern.partitioning",
+        "tycho.pattern.sharding"
+      ],
+      "unit_count": 2,
+      "dedicated_units": 2,
+      "bounded_entries": 1,
+      "decision": "deepen",
+      "rationale": "Sharding now has a dedicated owner unit with explicit limits."
+    },
+    {
+      "document_id": "tycho.page.1b2657011d454460856103419095031b",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+      "pattern_count": 4,
+      "pattern_ids": [
+        "tycho.pattern.consensus",
+        "tycho.pattern.leader-follower-replication",
+        "tycho.pattern.multi-leader-replication",
+        "tycho.pattern.read-replicas"
+      ],
+      "unit_count": 4,
+      "dedicated_units": 4,
+      "bounded_entries": 2,
+      "decision": "deepen",
+      "rationale": "Replication, consensus, multi-leader and read-replica patterns now have five dedicated units."
+    },
+    {
+      "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+      "pattern_count": 2,
+      "pattern_ids": [
+        "tycho.pattern.quorum-based-reads-writes",
+        "tycho.pattern.quorum-coordination"
+      ],
+      "unit_count": 2,
+      "dedicated_units": 2,
+      "bounded_entries": 0,
+      "decision": "deepen",
+      "rationale": "Quorum reads/writes and quorum coordination now have two distinct dedicated units."
+    },
+    {
+      "document_id": "tycho.page.7e927696162f48beaa33fc834b36ee76",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+      "pattern_count": 2,
+      "pattern_ids": [
+        "tycho.pattern.expand-and-contract-schema",
+        "tycho.pattern.online-data-migration"
+      ],
+      "unit_count": 2,
+      "dedicated_units": 2,
+      "bounded_entries": 0,
+      "decision": "deepen",
+      "rationale": "Expand-and-contract and online migration now have two distinct dedicated units."
+    },
+    {
       "document_id": "tycho.page.80ab784dafed47a7baf31722fce5eabc",
       "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
       "pattern_count": 2,
@@ -10872,6 +10886,22 @@
       "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Circuit breaker and bulkhead now have two distinct dedicated units."
+    },
+    {
+      "document_id": "tycho.page.43414664520b4866929f7f006f27f59b",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md",
+      "pattern_count": 4,
+      "pattern_ids": [
+        "tycho.pattern.deadline-propagation",
+        "tycho.pattern.retry-with-exponential-backoff",
+        "tycho.pattern.retry-with-jitter",
+        "tycho.pattern.timeout"
+      ],
+      "unit_count": 4,
+      "dedicated_units": 4,
+      "bounded_entries": 0,
+      "decision": "deepen",
+      "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
     },
     {
       "document_id": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060",
@@ -10891,6 +10921,22 @@
       "rationale": "Fallback, degradation, shedding, throttling and rate limiting now have distinct dedicated units with separate trigger and failure contracts."
     },
     {
+      "document_id": "tycho.page.4961bb03a6534242a0977db265b68d95",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/leader-recovery.md",
+      "pattern_count": 4,
+      "pattern_ids": [
+        "tycho.pattern.distributed-lock",
+        "tycho.pattern.fencing-tokens",
+        "tycho.pattern.leader-election",
+        "tycho.pattern.lease-based-ownership"
+      ],
+      "unit_count": 4,
+      "dedicated_units": 4,
+      "bounded_entries": 2,
+      "decision": "deepen",
+      "rationale": "The election and the lock/lease/fencing patterns now have four dedicated units."
+    },
+    {
       "document_id": "tycho.page.49d9df04c0b4488e936b02e580a62271",
       "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
       "pattern_count": 3,
@@ -10904,37 +10950,6 @@
       "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Horizontal, vertical and autoscaling now have distinct dedicated units with separate lag and failure behavior."
-    },
-    {
-      "document_id": "tycho.page.b7913b53d5ea439697bc5236f902d76e",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
-      "pattern_count": 3,
-      "pattern_ids": [
-        "tycho.pattern.ambassador",
-        "tycho.pattern.immutable-infrastructure",
-        "tycho.pattern.sidecar"
-      ],
-      "unit_count": 3,
-      "dedicated_units": 3,
-      "bounded_entries": 0,
-      "decision": "keep",
-      "rationale": "Three control-plane patterns have three distinct units, two dedicated bounded notes, on a coherent static-stability page."
-    },
-    {
-      "document_id": "tycho.page.b938ff1a06264492a425f2eff555ae7d",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
-      "pattern_count": 4,
-      "pattern_ids": [
-        "tycho.pattern.blue-green-deployment",
-        "tycho.pattern.canary-release",
-        "tycho.pattern.dark-launching-shadow-traffic",
-        "tycho.pattern.rolling-deployment"
-      ],
-      "unit_count": 4,
-      "dedicated_units": 4,
-      "bounded_entries": 0,
-      "decision": "deepen",
-      "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
     {
       "document_id": "tycho.page.1849584c8a3fadc9e06c8d2edead5789",
@@ -10952,48 +10967,33 @@
       "rationale": "Cells, shuffle sharding and deployment stamps now have three distinct dedicated units."
     },
     {
-      "document_id": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
-      "pattern_count": 4,
-      "pattern_ids": [
-        "tycho.pattern.client-side-discovery",
-        "tycho.pattern.load-balancing",
-        "tycho.pattern.server-side-discovery",
-        "tycho.pattern.service-discovery"
-      ],
-      "unit_count": 4,
-      "dedicated_units": 4,
-      "bounded_entries": 0,
-      "decision": "deepen",
-      "rationale": "Service discovery, client-side discovery, server-side discovery and load balancing now have four distinct dedicated units."
-    },
-    {
-      "document_id": "tycho.page.3349b84b088ebcca496bb52fbdbbc565",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "document_id": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb",
+      "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
       "pattern_count": 2,
       "pattern_ids": [
-        "tycho.pattern.cdn-edge-caching",
-        "tycho.pattern.static-content-hosting"
+        "tycho.pattern.multitenant-isolation",
+        "tycho.pattern.tenant-based-resource-isolation"
       ],
       "unit_count": 2,
       "dedicated_units": 2,
       "bounded_entries": 0,
-      "decision": "deepen",
-      "rationale": "CDN edge caching and static content hosting now have two distinct dedicated units."
+      "decision": "keep",
+      "rationale": "Tenant-based and multitenant isolation have dedicated bounded units on the isolation page."
     },
     {
-      "document_id": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c",
-      "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
-      "pattern_count": 2,
+      "document_id": "tycho.page.b938ff1a06264492a425f2eff555ae7d",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+      "pattern_count": 3,
       "pattern_ids": [
-        "tycho.pattern.audit-trail",
-        "tycho.pattern.structured-logging"
+        "tycho.pattern.blue-green-deployment",
+        "tycho.pattern.canary-release",
+        "tycho.pattern.rolling-deployment"
       ],
-      "unit_count": 2,
-      "dedicated_units": 2,
+      "unit_count": 3,
+      "dedicated_units": 3,
       "bounded_entries": 0,
       "decision": "deepen",
-      "rationale": "Structured logging and audit trail now have separate dedicated units with distinct retention and atomicity contracts."
+      "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
     {
       "document_id": "tycho.page.dde63373c50f4f4a80e727b6e160def5",
@@ -11010,83 +11010,38 @@
       "rationale": "Identity federation and workload identity remain on the identity page; authorization and isolation moved to separate pages."
     },
     {
-      "document_id": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03",
-      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
-      "pattern_count": 2,
-      "pattern_ids": [
-        "tycho.pattern.branch-by-abstraction",
-        "tycho.pattern.controlled-cutover"
-      ],
-      "unit_count": 2,
-      "dedicated_units": 2,
-      "bounded_entries": 1,
-      "decision": "deepen",
-      "rationale": "Branch by abstraction and controlled cutover now have two distinct dedicated units."
-    },
-    {
-      "document_id": "tycho.page.07904f22ca8249069cedc8c2e1140630",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
-      "pattern_count": 2,
-      "pattern_ids": [
-        "tycho.pattern.gateway-routing",
-        "tycho.pattern.health-endpoint-monitoring"
-      ],
-      "unit_count": 2,
-      "dedicated_units": 2,
-      "bounded_entries": 1,
-      "decision": "deepen",
-      "rationale": "Gateway routing and health endpoint monitoring now have separate dedicated units."
-    },
-    {
-      "document_id": "tycho.page.99c509e133d9494fbb3080b6212b7ba7",
-      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
-      "pattern_count": 4,
-      "pattern_ids": [
-        "tycho.pattern.api-gateway",
-        "tycho.pattern.gateway-aggregation",
-        "tycho.pattern.gateway-offloading",
-        "tycho.pattern.reverse-proxy"
-      ],
-      "unit_count": 4,
-      "dedicated_units": 4,
-      "bounded_entries": 2,
-      "decision": "keep",
-      "rationale": "Four gateway functions have dedicated bounded units on the new gateway page."
-    },
-    {
       "document_id": "tycho.page.99e04ece579d426ba5e48bbb1f6f3695",
       "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md",
-      "pattern_count": 3,
+      "pattern_count": 2,
       "pattern_ids": [
-        "tycho.pattern.zero-trust-architecture",
         "tycho.pattern.least-privilege",
-        "tycho.pattern.rbac-abac"
+        "tycho.pattern.zero-trust-architecture"
       ],
-      "unit_count": 3,
-      "dedicated_units": 3,
+      "unit_count": 2,
+      "dedicated_units": 2,
       "bounded_entries": 2,
       "decision": "keep",
       "rationale": "Zero trust, least privilege and RBAC/ABAC have dedicated bounded units on the authorization page."
     },
     {
-      "document_id": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb",
-      "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+      "document_id": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c",
+      "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
       "pattern_count": 2,
       "pattern_ids": [
-        "tycho.pattern.multitenant-isolation",
-        "tycho.pattern.tenant-based-resource-isolation"
+        "tycho.pattern.audit-trail",
+        "tycho.pattern.structured-logging"
       ],
       "unit_count": 2,
       "dedicated_units": 2,
       "bounded_entries": 0,
-      "decision": "keep",
-      "rationale": "Tenant-based and multitenant isolation have dedicated bounded units on the isolation page."
+      "decision": "deepen",
+      "rationale": "Structured logging and audit trail now have separate dedicated units with distinct retention and atomicity contracts."
     }
   ],
   "summary": {
     "entries": 145,
-    "owner_pages": 69,
-    "shared_pages": 33,
+    "owner_pages": 75,
+    "shared_pages": 30,
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
@@ -11106,7 +11061,7 @@
     "independent_reviews": 0,
     "shared_page_decisions": {
       "keep": 7,
-      "deepen": 26,
+      "deepen": 23,
       "split": 0
     },
     "split_deferred": 0

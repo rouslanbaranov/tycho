@@ -68,7 +68,14 @@ def validate(root=ROOT):
                 'enrichment-question-drift')
         require(meta['evidence_scope']['source_ids'] == record['source_ids'],
                 'enrichment-source-drift')
-        require(set(record['source_ids']) <= sources & inspected, 'enrichment-uninspected-source')
+        if record.get('origin_page'):
+            # A verbatim split inherits the origin page's source bindings and
+            # claims no new inspection; the record registers membership only.
+            require(record['origin_page'] in documents, 'enrichment-split-origin')
+            require(record['origin_page'] != path, 'enrichment-split-origin')
+            require(set(record['source_ids']) <= sources, 'enrichment-uninspected-source')
+        else:
+            require(set(record['source_ids']) <= sources & inspected, 'enrichment-uninspected-source')
         require(meta['content_review']['status'] == 'self-checked'
                 and meta['content_verified_at'] is None, 'enrichment-fabricated-acceptance')
         require(meta['source_inspection_date'] == record.get('source_inspection_date', '2026-10-20'),

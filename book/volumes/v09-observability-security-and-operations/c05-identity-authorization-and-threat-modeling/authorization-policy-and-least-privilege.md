@@ -106,25 +106,7 @@ audited path with revocation tests and logging rather than a permanent broad rol
 
 ## RBAC-ABAC
 
-RBAC employs pre-defined roles that carry a specific set of privileges. ABAC evaluates
-principal, resource and context attributes to reach a decision. Authorization is determined by evaluating attributes associated with the subject, object,
-requested operations, and, where applicable, environment conditions against policy.
-
-Policy decision and enforcement can be separate components: a policy decision point evaluates
-policy and attributes, a policy enforcement point applies the decision, a policy information
-point supplies attributes and a policy administration point manages policy. Distributed
-placement makes attribute freshness and audit harder.
-
-In ACL/IBAC systems, failure to remove or revoke access over time leads to users accumulating
-privileges. ACLs work on the attribute of identity; RBAC works on the attribute of role.
-
-**Limits.** Policy/attribute freshness and decision logging are costs; an unexplainable deny or
-allow is a production incident, not a policy detail. Attribute sources need freshness SLAs; a
-stale attribute is an authorization failure, not a cache miss.
-
-**Source boundary.** The NIST SP 800-162 record supports the PDP/PEP/PIP/PAP separation and
-policy administration. Revocation mechanics, role explosion and attribute-freshness guidance
-above remain synthetic.
+See the [dedicated RBAC-ABAC owner note](rbac-abac.md).
 
 ## Navigation
 

@@ -12,7 +12,9 @@ perspectives:
 summary: "Decision card for Sidecar; bounded owner evidence and explicit limits."
 route_hints:
   questions:
-    - "Should auxiliary runtime behavior run in a colocated helper beside the workload?"
+    - >-
+      Should auxiliary runtime behavior run in a colocated helper beside the main
+      workload rather than inside it?
   prerequisites:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
   related_ids:
@@ -30,11 +32,11 @@ evidence_scope:
   notes: "Moved card page; source binding remains in the owner unit."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-28"
+  reviewed_at: "2026-10-29"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-28"
-updated_at: "2026-10-28"
+updated_at: "2026-10-29"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---

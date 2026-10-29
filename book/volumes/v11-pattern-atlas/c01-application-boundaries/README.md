@@ -383,32 +383,7 @@ Transactional Outbox; CQRS.
 
 ### Self-Contained Service
 
-**Identity.** Self-Contained Service; family Application architecture and boundaries;
-kind service-decomposition-pattern; priority advanced.
-
-**Decision question.** Should a service respond to a synchronous request without waiting for another
-service?
-
-**Good-fit conditions.** Runtime availability coupling is material; the service can own a local read
-model; asynchronous reconciliation is acceptable.
-
-**Hard contraindications.** Reject when strong consistency is mandatory or data cannot be replicated.
-
-**Competing alternative.** Synchronous request/response or retry; retry increases response time and
-synchronous calls reduce availability.
-
-**Failure and recovery.** An unavailable collaborator blocks a waiting service; retry increases
-response time.
-
-**Technical owner.** [Independent deployment and its costs](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-independence.md#self-contained-service) — bounded to response independence.
-
-**Sources.** [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-self-contained.2026-10-21: Self-contained service pattern page.
-The source is public documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Composition; Backend for Frontend; CQRS; Saga.
+See the [dedicated Self-Contained Service card](self-contained-service.md).
 
 ### Sidecar
 

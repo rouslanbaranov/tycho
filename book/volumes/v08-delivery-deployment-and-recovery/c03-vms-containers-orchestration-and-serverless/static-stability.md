@@ -33,11 +33,11 @@ evidence_scope:
   notes: "Bounded question from tycho.page.ea94649bfd8c4be183f9114618d7ccaa; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-29"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-29"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -85,8 +85,11 @@ Assume three zones, each can demonstrably serve 60 *identical invented* units/s 
 > **Pattern atlas:**
 > [Immutable Infrastructure](../../v11-pattern-atlas/c10-deployment-modernization/README.md#immutable-infrastructure) — decision conditions and contraindications.
 
-> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/sidecar.md#sidecar) — decision conditions and contraindications.
-> [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/ambassador.md#ambassador) — decision conditions and contraindications.
+> **Pattern atlas:** [Sidecar](../../v11-pattern-atlas/c01-application-boundaries/sidecar.md#sidecar) — decision conditions and
+> contraindications.
+
+> **Pattern atlas:** [Ambassador](../../v11-pattern-atlas/c01-application-boundaries/ambassador.md#ambassador) — decision conditions and
+> contraindications.
 <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:3 -->
 ## Placement and topology constraints
 
@@ -142,18 +145,24 @@ The source material keeps its original published/inferred/synthetic/unverified d
 These notes define the decision boundary for atlas cards whose mechanism is
 not the main subject of this page. Where a section names an admitted source, that
 source supports the bounded claims; limits and deployment notes remain synthetic
-and create no new source claim.
+and create no new source claim. Immutable Infrastructure moved to a dedicated
+owner note on 2026-10-29; this page retains the two colocated-helper notes below.
 
 ### Ambassador
 
-An ambassador is an out-of-process proxy colocated with the client. It forwards requests to remote
-services and can offload monitoring, logging, routing, TLS and resilience. Proxy retries are unsafe unless all operations are idempotent. A client library invoked
-directly by the application may be better when overhead outweighs offloading. The proxy can monitor
-performance metrics such as latency or resource usage on the same host. A mechanism can let the client
-pass context, such as an HTTP header to opt out of retry or cap retries. Use the pattern when many
-languages or frameworks need common connectivity features, or a legacy application is hard to modify.
-The proxy can be packaged as a separate container on the same host and can standardize and extend
-instrumentation across languages.
+The source describes an ambassador service, by analogy, as follows: "Think of an
+ambassador service as an out-of-process proxy that's colocated with the client."
+It can send network requests on behalf of a consumer service or application and
+offload monitoring, logging, routing, TLS and resilience. For example, the
+ambassador could handle retries, but that approach might not be safe unless all
+operations are idempotent. Other offload uses remain viable. A client library
+invoked directly by the application may be better when overhead outweighs
+offloading. The proxy can monitor performance metrics such as latency or resource
+usage on the same host. A mechanism can let the client pass context, such
+as an HTTP header to opt out of retry or cap retries. Use the pattern when many
+languages or frameworks need common connectivity features, or a legacy
+application is hard to modify. The proxy can be packaged as a separate container
+on the same host and can standardize and extend instrumentation across languages.
 
 ### Sidecar
 
@@ -174,17 +183,4 @@ pair, and include both in the rollback plan.
 
 ### Immutable Infrastructure
 
-Immutable infrastructure replaces instances from a versioned image or definition instead of mutating
-running hosts, so each instance is reproducible from a recorded artifact. Every running instance
-must be reproducible from a recorded artifact digest, and drift must be detected rather than
-tolerated.
-
-A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled
-change; record digests and test the rebuild path. Configuration management on long-lived hosts is
-cheaper when state locality dominates; choose immutable replacement when reproducibility, an
-automated replacement path and artifact rollback speed matter.
-
-**Limits.** Immutable replacement is not a backup: data, secrets and external effects still need
-lifecycle ownership, toolchain and base-image provenance must be reproducible, and a rollback
-restores an artifact, not necessarily compatible data. Rebuild time and image size are
-operational costs, not proofs of reproducibility.
+See the [dedicated Immutable Infrastructure owner note](immutable-infrastructure.md).

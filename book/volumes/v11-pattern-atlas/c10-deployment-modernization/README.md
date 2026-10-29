@@ -256,7 +256,7 @@ choice when replacement cost exceeds drift/recovery benefit.
 **Failure and recovery.** Orphaned state and image drift are common; verify lifecycle in
 the owner section.
 
-**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
+**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
 
 **Sources.**
 [src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
@@ -373,34 +373,7 @@ Compatibility; Backup/PITR.
 
 ### Controlled Cutover
 
-**Identity.** Controlled Cutover; family Deployment and legacy modernization; kind
-modernization-pattern; priority core.
-
-**Decision question.** Should authority switch during a planned downtime only after writes pause,
-replication drains and data freshness reaches zero?
-
-**Good-fit conditions.** A downtime window is available; schema and backfill are complete; CDC
-replication is active; a reverse fallback can be configured.
-
-**Hard contraindications.** Reject when writes cannot be paused or replication completeness cannot
-be verified.
-
-**Competing alternative.** Strangler Fig replacement moves authority incrementally through seams.
-
-**Failure and recovery.** A contingency fallback pathway can be configured before cutover
-using reverse replication.
-
-**Technical owner.** [Cutover gates](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md#controlled-cutover) — bounded to the Spanner cutover procedure, not a generic no-return contract.
-
-**Sources.** [src.gcp-spanner-cutover](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.gcp-spanner-cutover.2026-10-26: all ten served headings read.
-[src.fowler-strangler](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.fowler-strangler.2026-10-21: Strangler Fig alternative.
-The sources are public documentation/articles, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Strangler Fig; Expand-and-Contract; Blue/Green; Rollback Limits.
+See the [dedicated Controlled Cutover card](controlled-cutover.md).
 
 ## Chapter result and counterexample
 
