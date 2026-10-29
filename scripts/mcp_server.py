@@ -294,6 +294,14 @@ def search_schema():
                     "abstain; weak results are explicitly separate."
                 ),
             },
+            "section_rerank": {
+                "type": "boolean",
+                "default": False,
+                "description": (
+                    "Opt into section-aware reranking of the top pages; "
+                    "default BM25 remains best-section-per-document."
+                ),
+            },
             "detail": {
                 "type": "string",
                 "enum": ["ids", "snippets"],
@@ -1294,6 +1302,7 @@ class TychoMcpServer:
             "path_prefix", "artifact_type", "volume", "pattern_ids",
             "include_artifacts", "all_sections", "abstain", "snapshot_id",
             "mode", "detail", "max_chars", "retrieval_mode",
+            "section_rerank",
         })
         query = arg_string(args, "query", required=True)
         limit = arg_int(args, "limit", DEFAULT_LIMIT, 1, MAX_LIMIT)
@@ -1316,6 +1325,13 @@ class TychoMcpServer:
             raise ProtocolFailure(-32602, "pattern_ids must be string IDs")
         include_artifacts = arg_bool(args, "include_artifacts", False)
         all_sections = arg_bool(args, "all_sections", False)
+        section_rerank = arg_bool(args, "section_rerank", False)
+        if section_rerank and retrieval_mode == "best":
+            raise ProtocolFailure(
+                -32602, "section_rerank is not supported with best mode")
+        if section_rerank and all_sections:
+            raise ProtocolFailure(
+                -32602, "section_rerank cannot be combined with all_sections")
         abstain = arg_bool(args, "abstain", True)
         mode = arg_string(args, "mode", maximum=20) or "strict"
         if mode not in ("strict", "exploratory"):
@@ -1364,6 +1380,7 @@ class TychoMcpServer:
                     include_artifacts=include_artifacts,
                     index_path=self.index_path,
                     all_sections=all_sections,
+                    section_rerank=section_rerank,
                     abstain=abstain,
                     include_weak=(mode == "exploratory"),
                     detail=detail,
