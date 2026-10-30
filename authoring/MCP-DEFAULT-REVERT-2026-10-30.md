@@ -7,7 +7,7 @@ human review, CI, owner acceptance or sufficient coverage.
 
 - MCP `tycho_search` default is `section_rerank=false` (BM25).
 - Margin-gated section rerank remains opt-in:
-  `section_rerank=true, section_rerank_margin=0.15`.
+  `section_rerank=true, section_rerank_margin=0.05`.
 - Best mode remains optional.
 - V12/all_sections/best fallbacks stay.
 

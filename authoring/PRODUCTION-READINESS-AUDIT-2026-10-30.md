@@ -17,7 +17,7 @@ coverage.
 | BM25 weights | title 5, heading 2, body 0.5 |
 | MCP `section_rerank` | false |
 | Core API/CLI | explicit BM25 |
-| Margin gate | opt-in; schema default .15, preferred .05 |
+| Margin gate | opt-in; schema default .05 |
 | Best mode | opt-in |
 
 ## Quality
@@ -50,8 +50,6 @@ Layer-scoped:
 - Semantic hybrid (MiniLM and model2vec) is below BM25; opt-in only.
 - Artifact-level qrels labels do not exist; only a handoff and self-retrieval
   diagnostic.
-- Margin schema default .15 is inconsistent with the .05 evidence and should be
-  changed before calling margin opt-in finalized.
 - No production-client benchmark; local hardware only.
 - No process pool for MCP; thread cap only.
 
