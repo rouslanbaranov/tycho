@@ -39,6 +39,10 @@ evidence_scope:
     - "src.morning-paper-tail-at-scale"
     - "src.kubernetes"
     - "src.postgresql"
+    - "src.aws-cloudwatch-synthetics"
+    - "src.aws-elastic-load-balancing"
+    - "src.sre-frontend-enrichment"
+    - "src.sre-workbook"
   claim_ids: []
   status: "source-linked"
   notes: "16 cards cite read units; owner links are bounded."
@@ -503,25 +507,37 @@ operations-pattern; priority core.
 startup health?
 
 **Good-fit conditions.** Startup, readiness and liveness are separate probes; probe
-semantics match the failure; restart and traffic removal are distinct; external journey
-monitoring exists.
+semantics match the failure; restart and traffic removal are distinct; an external journey
+check is independent of the dependency it observes.
 
 **Hard contraindications.** Reject when a liveness probe would restart a healthy process
-because a shared dependency is down, or when one probe is used for every failure.
+because a shared dependency is down, when one probe is used for every failure, or when the
+external check shares the dependency under test.
 
-**Competing alternative.** Simple process check plus external journey monitoring. Reverse
-the choice when probe complexity causes false restarts.
+**Competing alternative.** Process liveness plus an external journey check (a synthetic
+canary) or SLO-based alerting on customer experience. Reverse the choice when probe complexity
+causes false restarts or the external check reuses the failing dependency. The choice rule is
+Tycho guidance.
 
 **Failure and recovery.** Shared-dependency failures can fail every probe and cause mass
-restart/ejection; cached or missing health can keep routing to a draining instance. Define
-no-response behavior, keep probes on an independent path, and bound frequency/exposure.
+restart/ejection; cached or missing health can keep routing to a draining instance. Kubernetes
+binds readiness to traffic removal and liveness to restart; Google SRE records that health
+checking itself can make a service unhealthy; AWS removes a target after bounded consecutive
+failures and fails open when all targets fail. The shared-dependency composition and DNS-cache
+staleness are Tycho. Define no-response behavior, keep probes on an independent path, and
+bound frequency and exposure.
 
 **Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 
 **Sources.** [src.kubernetes](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch4-k8s-probes.2026-10-21: all fifteen served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
+The failure and alternative dimensions also cite Google SRE "Addressing Cascading Failures"
+(read.batch4-sre-cascading.2026-10-21) and "Load Balancing at the Frontend"
+(read.batch5-sre-frontend.2026-10-21), AWS "Health checks for Application Load Balancer
+target groups" (read.aws-elb-health-checks.2026-10-30), AWS "Synthetic monitoring
+(canaries)" (read.aws-synthetics-canaries.2026-10-30) and Google SRE Workbook "Alerting on
+SLOs" (read.sre-workbook-slos.2026-10-30). The last three are proposed records. These are
+public pattern/documentation units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

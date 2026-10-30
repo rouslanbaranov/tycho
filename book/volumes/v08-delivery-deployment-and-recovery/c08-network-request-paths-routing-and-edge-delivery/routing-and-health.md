@@ -51,7 +51,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-22",
-  "updated_at": "2026-10-22",
+  "updated_at": "2026-10-30",
   "source_inspection_date": "2026-10-21",
   "content_verified_at": null
 }
@@ -102,12 +102,48 @@ Define startup eligibility, readiness, draining and permanent removal separately
 endpoint should not restart every healthy process because one shared dependency is
 unavailable.
 
-**Failure and recovery.** A shared dependency failure can fail every probe and cause mass
-ejection or restart; a cached "healthy" answer can keep sending traffic to a draining
-instance. Bound probe frequency/timeouts, separate instance-local from shared faults, and
-drain before removal. Synthetic checks or SLO-based external monitoring may be preferable
-when the runtime probe cannot observe the user journey. Exact probe behavior belongs to the
-chosen runtime/version.
+**Failure and recovery (Tycho synthesis).** A shared dependency failure can fail every probe
+and cause mass ejection or restart; a cached "healthy" answer can keep sending traffic to a
+draining instance. The parts are documented. Kubernetes says a pod whose containers report
+that they are not ready "does not receive traffic through Kubernetes Services"; a failed
+liveness check makes the kubelet "kill and restart the container"; and its readiness example
+includes applications that "depend on external services after startup". Google SRE records
+that health checking "may create a failure mode in which health-checking itself makes the
+service unhealthy", and it separates process health checking for a scheduler from service
+health checking for a load balancer. AWS takes a target out of service after a bounded number
+of consecutive failures, puts it back after a bounded number of successes, and, "if all
+targets fail health checks at the same time", the load balancer "fails open". The composition
+is Tycho: one shared dependency can fail every probe, so readiness removes the whole fleet
+from traffic or liveness drives a restart loop, and the load balancer may then fail open to
+the same unhealthy targets. Cached answers are composed too: Google SRE notes that resolvers
+"cache responses" within the DNS TTL and that authoritative servers cannot flush those
+caches, so a previously healthy answer can outlive the health change that should remove it;
+reading that cached answer as current health is Tycho. Bound probe frequency and timeouts,
+keep liveness independent of shared dependencies, separate instance-local from shared faults,
+and drain before removal.
+
+**Alternative (Tycho comparison).** Synthetic checks or SLO-based external monitoring may be
+preferable when the runtime probe cannot observe the user journey. AWS describes canaries as
+"configurable scripts that run on a schedule, to monitor your endpoints and APIs" that "follow
+the same routes and perform the same actions as a customer", so an external check can verify
+the journey "even when you don't have any customer traffic on your applications". Google SRE
+argues that SLOs measuring reliability "as experienced by your customers" provide the
+"highest-quality indication for when an on-call engineer should respond". The choice rule is
+Tycho guidance: prefer an external journey check when a process-local probe cannot observe
+the journey, keep the runtime probes for local semantics, and do not treat a synthetic check
+that shares the dependency under test as independent evidence. A canary that reuses the same
+failing dependency is not an external observer.
+
+**Sources and limits.** The bindings use Kubernetes "Configure Liveness, Readiness and
+Startup Probes" (`read.batch4-k8s-probes.2026-10-21`), Google SRE "Addressing Cascading
+Failures" (`read.batch4-sre-cascading.2026-10-21`) and "Load Balancing at the Frontend"
+(`read.batch5-sre-frontend.2026-10-21`), AWS "Health checks for Application Load Balancer
+target groups" (`read.aws-elb-health-checks.2026-10-30`), AWS "Synthetic monitoring
+(canaries)" (`read.aws-synthetics-canaries.2026-10-30`) and Google SRE Workbook "Alerting on
+SLOs" (`read.sre-workbook-slos.2026-10-30`). The AWS and workbook records are proposed and
+not yet in the shared ledger. These pages describe probe, health-check and monitoring
+mechanics; none measures this page's fleet or proves that a shared dependency will be
+detected. Exact probe behavior belongs to the chosen runtime and version.
 
 **Unknown probe data and path independence.** No response is not evidence of health.
 Define fail-open or fail-closed per dependency and privilege, run probes on a path that does
