@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 299.
+Inventory date: 2026-10-30. Entries: 301.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -291,6 +291,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.morning-paper-tail-at-scale / supporting | [The Tail at Scale — summary](https://blog.acolyer.org/2015/01/15/the-tail-at-scale/) — The Morning Paper (Adrian Colyer) | Secondary public summary for tail latency, hedged requests and tail-tolerant design. | admitted-for-research / public-web-or-author-download |
 | src.azure-cdn / core | [Azure Content Delivery Network documentation](https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works) — Microsoft Learn | Azure CDN cache-key, freshness, authorization and purge limits for the CDN / Edge Caching entry. | admitted-for-research / public-web-or-author-download |
 | src.cloudfront / core | [Amazon CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html) — Amazon Web Services | CloudFront cache-key, Authorization-header, expiration and invalidation limits for the CDN / Edge Caching entry. | admitted-for-research / public-web-or-author-download |
+| src.aws-load-shedding / core | [Using load shedding to avoid overload](https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/) — Amazon Web Services | Load-shedding rejection, visibility, false-positive measurement and capacity response. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 
@@ -434,3 +435,9 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-api-gateway / core | [Amazon API Gateway Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) — Amazon Web Services | Bounded public REST API Gateway pages for throttling behavior and stage deployment snapshots. | admitted-for-research / public-web-or-author-download |
 | src.azure-api-management / core | [Azure API Management documentation](https://learn.microsoft.com/en-us/azure/api-management/) — Microsoft Learn | Bounded public API Management pages for authorization delegation, self-hosted gateway connectivity, rate limiting and quota behavior. | admitted-for-research / public-web-or-author-download |
 | src.aws-bff / supporting | [Backends for Frontends Pattern](https://aws.amazon.com/blogs/mobile/backends-for-frontends-pattern/) — Amazon Web Services | Explicit AWS vendor account of one backend per user experience and same-team BFF maintenance for the BFF mechanism and ownership binding. | admitted-for-research / public-web-or-author-download |
+
+## Operations
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.sre-best-practices / supporting | [A Collection of Best Practices for Production Services](https://sre.google/sre-book/service-best-practices/) — Google SRE authors | Overload response choices: degraded results, load shedding and explicit client errors. | admitted-for-research / public-web-or-author-download |

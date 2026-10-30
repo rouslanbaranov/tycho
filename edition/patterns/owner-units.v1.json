@@ -8415,7 +8415,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Degradation removes optional features or reduces quality to protect an essential outcome under overload.",
+          "quote": "Graceful degradation removes optional features or reduces quality to protect an essential outcome under overload.",
           "reason": "Defines the mechanism and its scope.",
           "binding": {
             "source_id": "src.sre-cascading",
@@ -8438,20 +8438,115 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Silent loss of correctness is worse than an explicit failure.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Google SRE documents that the degraded path is rarely exercised and may fail, that complexity can activate it unintentionally or create feedback cycles, and that operators need monitoring and a way to disable or tune it; AWS documents visible instrumentation and alarms for rejected work. The claim that silent correctness loss is worse than explicit failure is Tycho judgment, labelled in the page.",
+          "binding": {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "section": "Load Shedding and Graceful Degradation",
+            "quote": "Complex load shedding and graceful degradation can cause problems themselves—excessive complexity may cause the server to trip into a degraded mode when it is not desired, or enter feedback cycles at undesired times. Design a way to quickly turn off complex graceful degradation or tune parameters if needed.",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+              "section": "Load Shedding and Graceful Degradation",
+              "quote": "Remember that the code path you never use is the code path that (often) doesn’t work.",
+              "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+            },
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+              "section": "Load Shedding and Graceful Degradation",
+              "quote": "Monitor and alert when too many servers enter these modes.",
+              "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+            },
+            {
+              "source_id": "src.sre-overload",
+              "ledger_record": "read.sre-overload.2026-10-21",
+              "section": "Handling Overload",
+              "quote": "One option for handling overload is to serve degraded responses: responses that are not as accurate as or that contain less data than normal responses, but that are easier to compute.",
+              "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            },
+            {
+              "source_id": "src.sre-overload",
+              "ledger_record": "read.sre-overload.2026-10-21",
+              "section": "Handling Overload",
+              "quote": "However, under extreme overload, the service might not even be able to compute and serve degraded responses. At this point it may have no immediate option but to serve errors.",
+              "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            },
+            {
+              "source_id": "src.aws-load-shedding",
+              "ledger_record": "read.aws-load-shedding.2026-10-30",
+              "section": "Visibility",
+              "quote": "In terms of visibility, when load shedding rejects requests, we make sure that we have proper instrumentation to know who the client was, which operation they were calling, and any other information that will help us tune our protection measures. We also use alarms to detect whether the countermeasures are rejecting any significant volume of traffic.",
+              "revision": "a48240c61fea2792e6a8958f696867dfb02d7c812a0874cdc220de8fe77486db"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-hpa.2026-10-30",
+              "section": "Stabilization window",
+              "quote": "The stabilization window is used to restrict the flapping of replica count when the metrics used for scaling keep fluctuating. The autoscaling algorithm uses this window to infer a previous desired state and avoid unwanted changes to workload scale.",
+              "revision": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A complete, explicit outage or added capacity may be preferable when no safe mode exists.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Google SRE documents explicit errors when degraded responses cannot be computed or are too expensive, and adding tasks as an expedient recovery; AWS makes adding capacity the priority during a brownout. The preference rule is Tycho guidance, labelled in the page.",
+          "binding": {
+            "source_id": "src.sre-best-practices",
+            "ledger_record": "read.sre-best-practices-overload.2026-10-30",
+            "section": "Overloads and Failure",
+            "quote": "For times when load is high enough that even degraded responses are too expensive for all queries, practice graceful load shedding, using well-behaved queuing and dynamic timeouts; see Handling Overload. Other techniques include answering requests after a significant delay (“tarpitting”) and choosing a consistent subset of clients to receive errors, preserving a good user experience for the remainder.",
+            "revision": "03ad19970146a1a0ed8406a60f9702af0fd5fa8470ce2c6b33846280e4f9a4be"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-overload",
+              "ledger_record": "read.sre-overload.2026-10-21",
+              "section": "Handling Overload",
+              "quote": "However, under extreme overload, the service might not even be able to compute and serve degraded responses. At this point it may have no immediate option but to serve errors.",
+              "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            },
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+              "section": "Immediate Steps to Address Cascading Failures",
+              "quote": "If your system is running at degraded capacity and you have idle resources, adding tasks can be the most expedient way to recover from the outage. However, if the service has entered a death spiral of some sort, adding more resources may not be sufficient to recover.",
+              "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+            },
+            {
+              "source_id": "src.aws-load-shedding",
+              "ledger_record": "read.aws-load-shedding.2026-10-30",
+              "section": "Visibility",
+              "quote": "When there is a brownout, our priority is to add capacity and to address the current bottleneck.",
+              "revision": "a48240c61fea2792e6a8958f696867dfb02d7c812a0874cdc220de8fe77486db"
+            },
+            {
+              "source_id": "src.aws-load-shedding",
+              "ledger_record": "read.aws-load-shedding.2026-10-30",
+              "section": "Load shedding effects on automatic scaling and Availability Zone failure",
+              "quote": "If misconfigured, load shedding can disable reactive automatic scaling.",
+              "revision": "a48240c61fea2792e6a8958f696867dfb02d7c812a0874cdc220de8fe77486db"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-hpa.2026-10-30",
+              "section": "Horizontal Pod Autoscaling",
+              "quote": "In Kubernetes, a HorizontalPodAutoscaler automatically updates a workload resource (such as a Deployment or StatefulSet), with the aim of automatically scaling capacity to match demand.",
+              "revision": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "graceful-degradation",
         "question": "Should non-essential capabilities be reduced to protect essential work under stress?",
-        "competing_alternative": "Admission control or fail fast. Reverse the choice when partial service creates more confusion than value.",
+        "competing_alternative": "An explicit outage or added capacity. Reverse the choice when no safe degraded response exists, when no reduced result preserves the correctness contract, or when capacity can be added faster than a degraded mode can be made safe. The choice rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8460,12 +8555,34 @@
         "source_id": "src.sre-cascading",
         "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          },
+          {
+            "source_id": "src.sre-best-practices",
+            "ledger_record": "read.sre-best-practices-overload.2026-10-30",
+            "revision": "03ad19970146a1a0ed8406a60f9702af0fd5fa8470ce2c6b33846280e4f9a4be"
+          },
+          {
+            "source_id": "src.aws-load-shedding",
+            "ledger_record": "read.aws-load-shedding.2026-10-30",
+            "revision": "a48240c61fea2792e6a8958f696867dfb02d7c812a0874cdc220de8fe77486db"
+          },
+          {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.k8s-hpa.2026-10-30",
+            "revision": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to Google SRE cascading/overload/best-practices, AWS load shedding and Kubernetes HPA; silent-correctness judgment, degradation hysteresis application and the alternative choice rule remain Tycho. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.load-shedding",
@@ -8477,7 +8594,7 @@
         "heading": "Load Shedding",
         "anchor": "load-shedding",
         "level": 3,
-        "line": 194,
+        "line": 216,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Shedding requires one named",
@@ -8551,7 +8668,7 @@
         "heading": "Throttling",
         "anchor": "throttling",
         "level": 3,
-        "line": 211,
+        "line": 233,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Throttling slows work that",
@@ -8639,7 +8756,7 @@
         "heading": "Rate Limiting",
         "anchor": "rate-limiting",
         "level": 3,
-        "line": 232,
+        "line": 254,
         "unit_kind": "dedicated",
         "unit_terms": [
           "bounds requests",
@@ -13090,8 +13207,8 @@
     "embedded_units": 0,
     "mechanism_supported": 111,
     "invariant_supported": 73,
-    "failure_recovery_supported": 66,
-    "alternative_supported": 72,
+    "failure_recovery_supported": 67,
+    "alternative_supported": 73,
     "technical_partial_bounded": 17,
     "technical_partial": 75,
     "technical_name_only": 0,

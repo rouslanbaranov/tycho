@@ -8415,6 +8415,126 @@
       "read_scope": "The three sections listed above",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.aws-load-shedding.2026-10-30",
+      "source_id": "src.aws-load-shedding",
+      "unit_url": "https://builder.aws.com/content/3Eun1EEyX6p2e3VYNyRLSJzLuMV/using-load-shedding-to-avoid-overload",
+      "unit_label": "Using load shedding to avoid overload — AWS Builder Center",
+      "unit_type": "engineering-article",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET on 2026-10-30; HTTP Date 2026-10-30T21:39:40Z; HTTP Last-Modified 2026-10-27T00:29:08Z; no ETag; raw HTML SHA-256 a48240c61fea2792e6a8958f696867dfb02d7c812a0874cdc220de8fe77486db",
+      "sections_read": [
+        "Using load shedding to avoid overload",
+        "Introduction",
+        "The anatomy of overload",
+        "Testing",
+        "Visibility",
+        "Load shedding effects on automatic scaling and Availability Zone failure",
+        "Load shedding mechanisms",
+        "Thinking about overload differently"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images and unrelated site chrome",
+        "other AWS Builder Center articles"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public AWS Builder Center article; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Load shedding rejects work to protect a service; a rejection reduces availability and can be a false positive when the service still has capacity.",
+        "Visibility instrumentation records who the client was and which operation was called, and alarms detect significant rejection volume.",
+        "During a brownout the priority is to add capacity and address the current bottleneck; misconfigured load shedding can disable reactive automatic scaling."
+      ],
+      "claims_not_supported": [
+        "service-level measurements",
+        "implementation behavior",
+        "independent reproduction or benchmark",
+        "a rule that shedding always beats a degraded response"
+      ],
+      "limitations": "One public AWS Builder Center article; no load test, incident or production service was observed. It states operational guidance, not a measured outcome for this page's service.",
+      "content_sha256": "a48240c61fea2792e6a8958f696867dfb02d7c812a0874cdc220de8fe77486db",
+      "read_scope": "The eight sections listed above",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.sre-best-practices-overload.2026-10-30",
+      "source_id": "src.sre-best-practices",
+      "unit_url": "https://sre.google/sre-book/service-best-practices/",
+      "unit_label": "A Collection of Best Practices for Production Services — Google SRE book appendix",
+      "unit_type": "book-chapter",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET on 2026-10-30; HTTP Date 2026-10-30T21:39:43Z; HTTP Last-Modified 2026-10-08T04:48:00Z; raw HTML SHA-256 03ad19970146a1a0ed8406a60f9702af0fd5fa8470ce2c6b33846280e4f9a4be",
+      "sections_read": [
+        "A Collection of Best Practices for Production Services",
+        "Capacity Planning",
+        "Overloads and Failure"
+      ],
+      "sections_not_read": [
+        "other SRE book chapters",
+        "linked pages",
+        "figures and unrelated site chrome"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public SRE book appendix under CC BY-NC-ND 4.0; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Services should produce reasonable but suboptimal results if overloaded.",
+        "When even degraded responses are too expensive for all queries, practice graceful load shedding with well-behaved queuing and dynamic timeouts, tarpitting and a consistent subset of clients receiving errors."
+      ],
+      "claims_not_supported": [
+        "which degraded result preserves a correctness contract",
+        "implementation behavior",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "One appendix under CC BY-NC-ND 4.0; it does not define which degraded result preserves a correctness contract or measure an outage.",
+      "content_sha256": "03ad19970146a1a0ed8406a60f9702af0fd5fa8470ce2c6b33846280e4f9a4be",
+      "read_scope": "The three sections listed above",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.k8s-hpa.2026-10-30",
+      "source_id": "src.kubernetes",
+      "unit_url": "https://kubernetes.io/docs/concepts/workloads/autoscaling/horizontal-pod-autoscale/",
+      "unit_label": "Horizontal Pod Autoscaling — Kubernetes documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET on 2026-10-30; HTTP Date 2026-10-30T21:39:46Z; ETag \"0a016345798fe0b328d49068b74a9184-ssl\"; no Last-Modified; raw HTML SHA-256 5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c",
+      "sections_read": [
+        "Horizontal Pod Autoscaling",
+        "Stability of workload scale",
+        "Configurable scaling behavior",
+        "Stabilization window"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images and unrelated site chrome",
+        "other Kubernetes documentation"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Kubernetes documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A HorizontalPodAutoscaler automatically updates a workload resource with the aim of automatically scaling capacity to match demand.",
+        "Horizontal scaling responds to increased load by deploying more Pods.",
+        "Replica count can keep fluctuating frequently (thrashing or flapping), and a stabilization window restricts that flapping."
+      ],
+      "claims_not_supported": [
+        "cluster or autoscaler behavior",
+        "applying a stabilization window to a degraded mode",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "One rolling Kubernetes documentation page; no cluster, autoscaler or benchmark was run. Applying a replica-stabilization window to a degraded response mode is Tycho composition, not a Kubernetes statement.",
+      "content_sha256": "5b55be37d316eb65f59a93f058d3ef54b7388c9280440782180ff2e2e4823e3c",
+      "read_scope": "The four sections listed above",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }
