@@ -9657,7 +9657,7 @@
         "heading": "Causal Ordering",
         "anchor": "causal-ordering",
         "level": 3,
-        "line": 168,
+        "line": 206,
         "unit_kind": "dedicated",
         "unit_terms": [
           "partial order",
@@ -9692,20 +9692,122 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Partition, reordered delivery, lost metadata and a server switch can expose missing dependencies.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A partition is therefore survivable only while a client stays on one non-faulty server; reconnecting elsewhere can expose missing dependencies.",
+          "reason": "Jepsen states that causal consistency is sticky available only while clients stay on the same server; Lamport and Mattern both note that messages may be received out of order; Mattern's vector metadata travels with each message and convergence is required once operations are visible. The server-switch and metadata-loss failure paths are Tycho inferences, labelled in the page; the durable, replay and merge rule is Tycho guidance.",
+          "binding": {
+            "source_id": "src.jepsen-consistency",
+            "ledger_record": "read.batch4-causal.2026-10-21",
+            "section": "Causal Consistency",
+            "quote": "Causal consistency is sticky available: even in the presence of network partitions, every client connected to a non-faulty node can make progress. However, clients must stick to the same server.",
+            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.lamport-time",
+              "ledger_record": "read.lamport-time.2026-10-30",
+              "section": "The Partial Ordering",
+              "quote": "Observe that messages may be received out of order.",
+              "revision": "c55e7cab4230aa3d7126748a149b2db6f0d7a67296d5eccfdd50a210299a96b2"
+            },
+            {
+              "source_id": "src.mattern-vector-time",
+              "ledger_record": "read.mattern-vector-time.2026-10-30",
+              "section": "Abstract",
+              "quote": "Finally, we present a new algorithm to compute a consistent global snapshot of a distributed system where messages may be received out of order.",
+              "revision": "9dea637ae03a9ec2cdeae442a2c99739d6437bf2941b2b024590d4d684078fd7"
+            },
+            {
+              "source_id": "src.mattern-vector-time",
+              "ledger_record": "read.mattern-vector-time.2026-10-30",
+              "section": "7 Vector time",
+              "quote": "For that, we equip each process Pi with a clock Ci consisting of a vector of length n, where n is the total number of processes.",
+              "revision": "9dea637ae03a9ec2cdeae442a2c99739d6437bf2941b2b024590d4d684078fd7"
+            },
+            {
+              "source_id": "src.jepsen-consistency",
+              "ledger_record": "read.batch4-causal.2026-10-21",
+              "section": "Causal Consistency",
+              "quote": "Convergent causal systems require that the values of objects in the system converge to identical values, once the same operations are visible.",
+              "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+            },
+            {
+              "source_id": "src.jepsen-consistency",
+              "ledger_record": "read.batch4-causal.2026-10-21",
+              "section": "Formally",
+              "quote": "Mahajan et al. leave conflict resolution (what to do with concurrent writes) up to the implementation, requiring only that all concurrent writes are returned for a read.",
+              "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "If total order is mandatory, use consensus and accept its coordination cost.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A total order is therefore a stronger serialization contract than causality: it adds a chosen order and its coordination, availability or latency cost.",
+          "reason": "Jepsen recommends sequential consistency when total order is required and names the availability/latency cost; Kafka describes a replicated log that comes into consensus on the order and a leader that chooses it, and states the network-partition availability limit; Lamport's total-order extension depends on the chosen clocks and is not unique. The stronger-contract synthesis, the per-key/cross-partition reading and the choice rule are Tycho, labelled in the page.",
+          "binding": {
+            "source_id": "src.jepsen-consistency",
+            "ledger_record": "read.batch4-causal.2026-10-21",
+            "section": "Causal Consistency",
+            "quote": "When a total order is required, and you’re willing to sacrifice availability (and latency), consider sequential consistency.",
+            "revision": "3dbd842b05924a8bdee10daa1eaa53bb8d1eea83a915ecd4cbb7199756ddebc8"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka-design.2026-10-30",
+              "section": "Replicated Logs: Quorums, ISRs, and State Machines (Oh my!)",
+              "quote": "A replicated log models the process of coming into consensus on the order of a series of values",
+              "revision": "d01981797402d75cada10599d586b753d02f8a9deb08d658a0e07758dedadfb7"
+            },
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka-design.2026-10-30",
+              "section": "Replicated Logs: Quorums, ISRs, and State Machines (Oh my!)",
+              "quote": "There are many ways to implement this, but the simplest and fastest is with a leader who chooses the ordering of values provided to it.",
+              "revision": "d01981797402d75cada10599d586b753d02f8a9deb08d658a0e07758dedadfb7"
+            },
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka-design.2026-10-30",
+              "section": "Replication",
+              "quote": "Kafka will remain available in the presence of node failures after a short fail-over period, but may not remain available in the presence of network partitions.",
+              "revision": "d01981797402d75cada10599d586b753d02f8a9deb08d658a0e07758dedadfb7"
+            },
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka-design.2026-10-30",
+              "section": "Consumer Position",
+              "quote": "Our topic is divided into a set of totally ordered partitions, each of which is consumed by exactly one consumer within each subscribing consumer group at any given time.",
+              "revision": "d01981797402d75cada10599d586b753d02f8a9deb08d658a0e07758dedadfb7"
+            },
+            {
+              "source_id": "src.kafka",
+              "ledger_record": "read.kafka-introduction.2026-10-30",
+              "section": "Main Concepts and Terminology",
+              "quote": "Events with the same event key (e.g., a customer or vehicle ID) are written to the same partition, and Kafka guarantees that any consumer of a given topic-partition will always read that partition’s events in exactly the same order as they were written.",
+              "revision": "f288579b9ed405c44df2f31e9245794902ff6f99f1369290c17dce1ddde2333f"
+            },
+            {
+              "source_id": "src.lamport-time",
+              "ledger_record": "read.lamport-time.2026-10-30",
+              "section": "Ordering the Events Totally",
+              "quote": "It is only the partial ordering which is uniquely determined by the system of events.",
+              "revision": "c55e7cab4230aa3d7126748a149b2db6f0d7a67296d5eccfdd50a210299a96b2"
+            },
+            {
+              "source_id": "src.lamport-time",
+              "ledger_record": "read.lamport-time.2026-10-30",
+              "section": "Ordering the Events Totally",
+              "quote": "Different choices of clocks which satisfy the Clock Condition yield different relations",
+              "revision": "c55e7cab4230aa3d7126748a149b2db6f0d7a67296d5eccfdd50a210299a96b2"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "causal-ordering",
         "question": "Should operations that are causally related preserve their order without requiring a total order?",
-        "competing_alternative": "Total ordering via consensus or per-key ordering. Reverse the choice when causal metadata cost exceeds ordering benefit.",
+        "competing_alternative": "Sequential consistency as the total-order model, a consensus-backed replicated log as one implementation, or per-key ordering. Jepsen notes that total order sacrifices availability and latency; Kafka guarantees order per partition and routes same-key events to one partition, not a topic-wide order. Reverse the choice when causal metadata cost exceeds the ordering benefit; the cross-partition reading is Tycho.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9714,12 +9816,34 @@
         "source_id": "src.jepsen-consistency",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.lamport-time",
+            "ledger_record": "read.lamport-time.2026-10-30",
+            "revision": "c55e7cab4230aa3d7126748a149b2db6f0d7a67296d5eccfdd50a210299a96b2"
+          },
+          {
+            "source_id": "src.mattern-vector-time",
+            "ledger_record": "read.mattern-vector-time.2026-10-30",
+            "revision": "9dea637ae03a9ec2cdeae442a2c99739d6437bf2941b2b024590d4d684078fd7"
+          },
+          {
+            "source_id": "src.kafka",
+            "ledger_record": "read.kafka-introduction.2026-10-30",
+            "revision": "f288579b9ed405c44df2f31e9245794902ff6f99f1369290c17dce1ddde2333f"
+          },
+          {
+            "source_id": "src.kafka-design",
+            "ledger_record": "read.kafka-design.2026-10-30",
+            "revision": "d01981797402d75cada10599d586b753d02f8a9deb08d658a0e07758dedadfb7"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section 1 explains happens-before, Lamport clocks and the total-order trade-off; ordering scope is also discussed in section 3."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to Lamport's partial-order paper, Mattern's vector-time paper, Kafka's 4.1 Introduction and Design pages and Jepsen's causal-consistency page; server-switch and metadata-loss inferences, the cross-partition reading and the choice rule remain Tycho. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.session-consistency",
@@ -13291,8 +13415,8 @@
     "embedded_units": 0,
     "mechanism_supported": 111,
     "invariant_supported": 74,
-    "failure_recovery_supported": 68,
-    "alternative_supported": 73,
+    "failure_recovery_supported": 69,
+    "alternative_supported": 74,
     "technical_partial_bounded": 16,
     "technical_partial": 74,
     "technical_name_only": 0,

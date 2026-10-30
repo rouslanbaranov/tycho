@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 303.
+Inventory date: 2026-10-30. Entries: 304.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -42,6 +42,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.mapreduce / supporting | [MapReduce: Simplified Data Processing on Large Clusters](https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/) — Jeffrey Dean / Sanjay Ghemawat | Batch execution and fault recovery foundations. | admitted-for-research / public-web-or-author-download |
 | src.hnsw / supporting | [Efficient and Robust Approximate Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs](https://arxiv.org/abs/1603.09320) — Yu. A. Malkov / D. A. Yashunin | ANN recall, memory and latency trade-offs. | admitted-for-research / public-web-or-author-download |
 | src.jepsen-consistency / supporting | [Consistency Models](https://jepsen.io/consistency) — Jepsen | Precise consistency vocabulary; use original papers for formal claims. | admitted-for-research / public-web-or-author-download |
+| src.mattern-vector-time / supporting | [Virtual Time and Global States of Distributed Systems](https://vs.inf.ethz.ch/publ/papers/VirtTimeGlobStates.pdf) — Friedemann Mattern | Vector-clock construction, concurrency distinction and per-process metadata for the causal-ordering failure/recovery and alternative dimensions. | admitted-for-research / public-web-or-author-download |
 
 ## Architecture
 

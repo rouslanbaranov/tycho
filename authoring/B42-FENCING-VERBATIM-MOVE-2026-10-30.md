@@ -101,6 +101,11 @@ extraction, not the Python extractor: both normalized bodies hashed to
 `536becf7...` and `cmp` exited 0. The proof is mechanically reproducible
 from the parent HEAD and the new page.
 
+Independent second-verifier confirmation was provided by the delegating agent
+after commit `a27e8aec`: the new page SHA matches the promotion
+`card_sha256`, and the old README section body is line-identical to the new
+page body after frontmatter and the added H1 heading (line diff empty).
+
 ## Promotion update
 
 - `card_sha256`:
