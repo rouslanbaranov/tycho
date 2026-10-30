@@ -5616,7 +5616,7 @@
         "heading": "Distributed Cache",
         "anchor": "distributed-cache",
         "level": 3,
-        "line": 255,
+        "line": 256,
         "unit_kind": "dedicated",
         "unit_terms": [
           "distributed cache",
@@ -6502,10 +6502,10 @@
           "reason": "Defines a local tier in front of a shared tier.",
           "binding": {
             "source_id": "src.hazelcast",
-            "ledger_record": "read.batch3-hazelcast-near.2026-10-21",
+            "ledger_record": "read.hazelcast-near-cache.2026-10-30",
             "section": "Near Cache",
             "quote": "This cache maintains copies of distributed data in local memory for very fast access.",
-            "revision": "7b005e21be9446a60b04cd62f4c49357cc43af78d35fce610c32d0e8942de4b9"
+            "revision": "3dafe42787ec7b957abf573e69f9ad506eb3a7cec4b1031372b9e7b506e1af7f"
           }
         },
         "invariant": {
@@ -6538,26 +6538,26 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Tier divergence serves different values from different processes; version keys and measure the propagation delay of each invalidation path.",
+          "quote": "Tycho guidance: tier divergence can serve different values from different processes, so use version keys and measure the propagation delay of each invalidation path.",
           "reason": "Names tier divergence and requires version keys and propagation-delay measurement.",
           "binding": {
             "source_id": "src.hazelcast",
-            "ledger_record": "read.batch3-hazelcast-near.2026-10-21",
+            "ledger_record": "read.hazelcast-near-cache.2026-10-30",
             "section": "Eventual Consistency",
             "quote": "After detection of an invalidation loss, stale data is made unreachable and Near Cache's get calls to that data are directed to the underlying IMap/JCache to fetch the fresh data.",
-            "revision": "7b005e21be9446a60b04cd62f4c49357cc43af78d35fce610c32d0e8942de4b9"
+            "revision": "3dafe42787ec7b957abf573e69f9ad506eb3a7cec4b1031372b9e7b506e1af7f"
           }
         },
         "alternative": {
           "state": "supported",
           "quote": "A remote cache avoids duplicate local copies and gives \"more consistent responses between clients, better efficiency in stored data\"; its cost is \"higher latency, as an additional network hop is required to check the remote cache.\"",
-          "reason": "AWS states that a remote cache gives more consistent responses and better storage efficiency because storage scales independently of clients, at the cost of a network hop, and that client-side caching can be combined with remote caching for multi-level caching; Hazelcast and Redis state the local-copy latency benefit and its invalidation cost. The measurement threshold, the local-only fallback and the promotion rule are Tycho guidance.",
+          "reason": "AWS contrasts remote caching with client-side caching; Hazelcast documents the local copy. The measurement threshold and promotion rule are Tycho guidance.",
           "binding": {
-            "source_id": "src.hazelcast",
-            "ledger_record": "read.hazelcast-near-cache.2026-10-30",
-            "section": "Near Cache",
-            "quote": "Access to small-to-medium, read-mostly data sets may be sped up by creating a Near Cache. This cache maintains copies of distributed data in local memory for very fast access.",
-            "revision": "3dafe42787ec7b957abf573e69f9ad506eb3a7cec4b1031372b9e7b506e1af7f"
+            "source_id": "src.aws-caching-guidance",
+            "ledger_record": "read.aws-caching-guidance.2026-10-30",
+            "section": "Remote caching",
+            "quote": "The disadvantage of a remote cache is that the overall system may see a higher latency, as an additional network hop is required to check the remote cache.",
+            "revision": "2a8596fad95cec9fcea60751e31a9190a76fcb0f773ee83c1c51d8775ff83ceb"
           },
           "supporting_bindings": [
             {
@@ -6568,25 +6568,18 @@
               "revision": "2a8596fad95cec9fcea60751e31a9190a76fcb0f773ee83c1c51d8775ff83ceb"
             },
             {
+              "source_id": "src.hazelcast",
+              "ledger_record": "read.hazelcast-near-cache.2026-10-30",
+              "section": "Near Cache",
+              "quote": "This cache maintains copies of distributed data in local memory for very fast access.",
+              "revision": "3dafe42787ec7b957abf573e69f9ad506eb3a7cec4b1031372b9e7b506e1af7f"
+            },
+            {
               "source_id": "src.aws-caching-guidance",
               "ledger_record": "read.aws-caching-guidance.2026-10-30",
               "section": "Client-side caching",
               "quote": "This pattern allows each client to store data in the closest location possible (the client itself), resulting in the lowest possible latency.",
               "revision": "2a8596fad95cec9fcea60751e31a9190a76fcb0f773ee83c1c51d8775ff83ceb"
-            },
-            {
-              "source_id": "src.aws-caching-guidance",
-              "ledger_record": "read.aws-caching-guidance.2026-10-30",
-              "section": "Implementation guidance",
-              "quote": "Client-side caching can be used alongside remote caching for multi-level caching to improve the latency.",
-              "revision": "2a8596fad95cec9fcea60751e31a9190a76fcb0f773ee83c1c51d8775ff83ceb"
-            },
-            {
-              "source_id": "src.redis",
-              "ledger_record": "read.redis-client-side-caching.2026-10-30",
-              "section": "Client-side caching introduction",
-              "quote": "Client-side caching reduces network traffic between a Redis client and the server, which generally improves performance.",
-              "revision": "2fe5199edb619ef4fc3bc17d72312ba5b356ce061c0ca82b2950a10cae15561d"
             }
           ]
         }

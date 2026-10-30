@@ -216,11 +216,12 @@ one way to enforce the bound; no selected source states it as a per-tier require
 disjunction and per-tier scope are Tycho synthesis; the sources describe one local tier, not every
 cache topology. Test the bound for every tier, including after a cold start and a rolling deploy.
 
-**Failure and recovery.** Tier divergence serves different values from different processes;
-version keys and measure the propagation delay of each invalidation path. A lost invalidation is
-a common cause: Hazelcast detects the loss and directs reads to the underlying structure, Redis
-flushes the local cache on disconnect, and a TTL bounds the stale copy. Test the lost-invalidation,
-disconnect-flush and TTL paths, including after a cold start and a rolling deploy.
+**Failure and recovery.** A lost invalidation is a common cause: Hazelcast detects the loss and
+directs reads to the underlying structure, Redis flushes the local cache on disconnect, and a TTL
+bounds the stale copy. Tycho guidance: tier divergence can serve different values from different
+processes, so use version keys and measure the propagation delay of each invalidation path. Test
+the lost-invalidation, disconnect-flush and TTL paths, including after a cold start and a rolling
+deploy.
 
 **Alternative (Tycho synthesis).** A remote cache avoids duplicate local copies and gives "more
 consistent responses between clients, better efficiency in stored data"; its cost is "higher
