@@ -33,6 +33,8 @@ evidence_scope:
     - "src.spring-modulith"
     - "src.aws-hexagonal"
     - "src.fowler-bounded-context"
+    - "src.ddd-reference"
+    - "src.microsoft-ddd"
     - "src.microsoft-cloud-patterns"
     - "src.fowler-layering"
     - "src.microservices"
@@ -211,9 +213,10 @@ family Application architecture and boundaries; kind architecture-style; priorit
 **Decision question.** Should models and ownership be separated by bounded context
 rather than forced into one shared enterprise model?
 
-**Good-fit conditions.** Several business meanings or languages coexist; ownership and
-change cadence differ; translation between models can be owned; domain experts can
-validate boundaries; context maps clarify integration rather than mandate a graph.
+**Good-fit conditions.** Several business meanings or languages coexist; ownership
+and change cadence differ; domain experts co-create the vocabulary and can challenge
+terms that hide different meanings; translation between models can be owned; context
+maps clarify integration rather than mandate a graph.
 
 **Hard contraindications.** Reject the claim when one stable model has a single
 accountable owner; when no domain expertise is available to validate meaning; when DDD
@@ -226,16 +229,28 @@ separation, or when one owner can govern the shared model.
 
 **Failure and recovery.** Common failures are conflating authority with storage,
 turning a context map into a mandatory graph, and drawing boundaries around teams
-rather than business meaning. Recovery starts by revisiting model behavior, ownership
-and translation cost in the technical owner.
+rather than business meaning. A shared term that changes meaning is a model change:
+Evans says to "Recognize that a change in the language is a change to the model."
+Microsoft says service boundaries "don't remain fixed." Recovery starts by
+revisiting model behavior and ownership with the domain expert before a boundary
+moves, then checking translation cost in the technical owner. The sequenced expert
+review is Tycho guidance, not a quoted Microsoft or Evans rule.
 
 **Technical owner.** [Domain-Driven Design / Bounded Context](../../v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md#domain-driven-design-and-bounded-context).
 
 **Sources.**
 [src.fowler-bounded-context](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.fowler-bounded-context.2026-10-21`: Bounded Context, sections
-"Bounded Context", "Further Reading", "Notes". The article is a definition and
-boundary argument, not a full DDD reference.
+"Bounded Context", "Further Reading", "Notes"; a definition and boundary argument,
+not a full DDD reference.
+[src.microsoft-ddd](../../../../edition/patterns/reading-ledger.v1.json) read
+record `read.microsoft-ddd.2026-10-30`: "Use domain analysis to model
+microservices", sections "Introduction", "Analyze the domain", "Define bounded
+contexts"; living Microsoft Learn page, canonical revision `62191a60...`.
+[src.ddd-reference](../../../../edition/patterns/reading-ledger.v1.json) read
+record `read.ddd-reference-bounded-context.2026-10-30`: DDD Reference, sections
+"Definitions", "Bounded Context", "Ubiquitous Language"; 2015-03 PDF, raw
+revision `cf82dc7b...`.
 
 **Decision state.** `applicable-under-conditions`.
 
