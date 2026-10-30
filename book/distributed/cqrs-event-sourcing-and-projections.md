@@ -40,7 +40,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -307,21 +307,63 @@ cost and stale rows are acceptable between refreshes.
 
 ### Command Query Responsibility Segregation (CQRS)
 
-CQRS begins with a recorded decision about divergent command and query needs, not with a second
-database. The write owner accepts command admission, invariant checks and rejection semantics.
+**Mechanism and ownership.** CQRS begins with a recorded decision about divergent command and
+query needs, not with a second database. The write owner accepts command admission, invariant
+checks and rejection semantics. The read side owns a derived view, its freshness declaration and
+its rebuild procedure. A shared schema may remain, provided table ownership and permitted
+writers are explicit. Microsoft defines the pattern as "Segregate the read and write operations
+for a data store into separate data models"; AWS says it "separates the data mutation, or the
+command part of a system, from the query part"; Fowler describes splitting the conceptual model
+"into separate models for update and display". Tycho guidance, not a source claim: name the owner
+who approves each contract and keep write ownership explicit even when both sides share a
+schema.
 
-The read side owns a derived view, its freshness declaration and its rebuild procedure. A shared
-schema may remain, provided table ownership and permitted writers are explicit.
+**Invariant.** The write model owns command authority and the read model is a derived, read-only
+view; neither side may claim authority merely because it can read the other's tables. Microsoft
+states that "Queries never alter data", that the read model "has no business logic or validation
+stack", and that, with event sourcing, "The event store is the write model and the single source
+of truth"; it calls materialized views "a durable, read-only cache". AWS puts validation and
+authorization on the command side: its command processing "involves validating, authorizing, and
+running the operation", while the query side retrieves data. A projection must expose no write
+path for command-owned state, and a command handler must not depend on a lagging view for an
+invariant decision. The "neither side may claim authority" rule and the last two rules are Tycho
+guidance, not source claims: the pages separate the models and keep the read side read-only, but
+do not themselves forbid a read-derived decision.
 
-Neither side may claim authority merely because it can read the other's tables. A projection
-must expose no write path for command-owned state, and a command handler must not depend on a
-lagging view for an invariant decision.
+**Failure and recovery.** Projection lag is expected: Microsoft says the read data "might not
+show the most recent changes immediately" and that the read model "is eventually consistent with
+the write model"; AWS says "The CQRS pattern typically results in eventual consistency between
+the data stores." Microsoft also says to "make the read-model consumer idempotent to tolerate
+duplicate delivery" and that views can be regenerated "by replaying historical events". Tycho
+guidance, not a source claim: commit the derived row and its cursor atomically, disable outbound
+side effects during rebuild, and represent an unknown or lagging view explicitly rather than
+serving it as current.
 
-Record who approves changes to each contract. Apply projection events idempotently: commit the
-derived row and its cursor atomically, and disable outbound side effects during rebuild. Revisit
-the separation when command contention, projection lag or rebuild duration outweighs the read
-benefit, and prefer one model when that case cannot be made. A reversal deserves the same written
-rationale as the initial choice.
+**Alternative.** Revisit the separation when command contention, projection lag or rebuild
+duration outweighs the read benefit, and prefer one model when that case cannot be made. A
+reversal deserves the same written rationale as the initial choice.
+
+**Limits.** Tycho guidance, not a source claim: projection lag, duplicate apply, cursor gaps and
+schema drift are common; a rebuild needs an owner, a recorded position and a freshness contract,
+and a stale view is a derived read rather than authority. The selected pages describe the
+separation and the eventual consistency cost; they do not test a projector crash, a cursor
+protocol or a production rebuild.
+
+**Source boundary.** Public pattern pages, accessed 2026-10-30; living pages, not a benchmark or
+an executed projection test.
+
+- Microsoft, "CQRS Pattern", sections "Solution", "Separate models in a single data store",
+  "Separate models in different data stores", "When to use this pattern", "Problems and
+  considerations", "Combine the Event Sourcing and CQRS patterns" and "Benefits of combining
+  the Event Sourcing and CQRS patterns": canonical text revision
+  `469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f`, raw HTML revision
+  `20f41ffdcd68ed13a952bb8b4a331ed4f6dd1c201d46cd5bfbc3658f2fc93c5f`.
+- AWS, "CQRS pattern", section "CQRS pattern": canonical text revision
+  `d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258`, raw HTML revision
+  `4e6f93053f75665a2efce9079b551847db05c6b375075c53a0be5127bd5382e9`.
+- Fowler, "CQRS", sections "CQRS" and "When to use it": record
+  `read.fowler-cqrs.2026-10-21`, raw revision
+  `11cf46ce308805e94e4b110016b09d004fbf8c47669a7041080f661c798b2f29`.
 
 ### CQRS Read Projections
 
