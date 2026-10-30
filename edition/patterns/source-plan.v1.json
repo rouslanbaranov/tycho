@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-30",
   "registry_version": "0.2.0",
-  "registry_sha256": "2221f31a9ed7dc522f34a07335bc7d0ce4fed416c53af59c747d0cb579311013",
-  "route_index_snapshot": "5dabb5a85be3d106ab12465247b38bb243fdfd0fc82e2cde7d7dadc4abada4d9",
+  "registry_sha256": "9a4d0de2112127bef3c2712bd51056deffa7b1e4be2f709346a3f7bcf43b6ae9",
+  "route_index_snapshot": "8c987615cb21c3546d39af75e07a59113fd05552429d2997e47ae9eb1bf01103",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2952,9 +2952,56 @@
           "status": "read",
           "read_record_id": "read.batch3-cassandra-dynamo.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.cassandra",
+          "unit": "Read repair — Apache Cassandra documentation",
+          "unit_type": "documentation-page",
+          "url": "https://cassandra.apache.org/doc/latest/cassandra/managing/operating/read_repair.html",
+          "sections": [
+            "Read repair",
+            "Expectation of Monotonic Quorum Reads",
+            "Table level configuration of monotonic reads"
+          ],
+          "status": "read",
+          "read_record_id": "read.cassandra-read-repair.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.dynamo",
+          "unit": "Dynamo: Amazon's Highly Available Key-value Store — SOSP 2007 paper",
+          "unit_type": "paper",
+          "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+          "sections": [
+            "4.4 Data Versioning",
+            "4.5 Execution of get() and put() operations",
+            "4.6 Handling Failures: Hinted Handoff",
+            "4.7 Handling permanent failures: Replica synchronization",
+            "4.8 Membership and Failure Detection",
+            "4.9 Adding/Removing Storage Nodes"
+          ],
+          "status": "read",
+          "read_record_id": "read.dynamo-sosp2007.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.riak",
+          "unit": "Replication Properties — Riak KV 2.2.3",
+          "unit_type": "documentation-page",
+          "url": "https://github.com/basho/basho_docs/blob/6409dd9c93b08f0a6e959a1874b5568c88172f3a/content/riak/kv/2.2.3/developing/app-guide/replication-properties.md",
+          "sections": [
+            "N Value and Replication",
+            "Primary Reads and Writes with PR and PW",
+            "Durable Writes with DW",
+            "Symbolic Consistency Names",
+            "Illustrative Scenarios"
+          ],
+          "status": "read",
+          "read_record_id": "read.riak-replication-properties.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "The Dynamo architecture page supports R + W > N and best-effort repair; the read-repair page supports monotonic quorum reads and most-up-to-date returns; the SOSP 2007 paper supports quorum arithmetic, vector-clock reconciliation, hinted handoff, anti-entropy and membership handoff; Riak 2.2.3 supports sloppy/strict quorum, read repair and timestamp/vector-clock resolution. Old/new quorum overlap and a highest-version selector remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.index-table",
@@ -5278,11 +5325,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 209,
-    "read_units": 208,
+    "required_units": 212,
+    "read_units": 211,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 172
+    "ledger_records": 175
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

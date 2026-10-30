@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "17dca2379e52c311f2469309e813cf82d87c4867bbab1b9e3b43740ee7cf7725",
-    "ledger_sha256": "c1b2fe380f36b19ac2b88ac213c89687e5313816cba757fedd894127ceae50ec",
-    "card_batches_sha256": "1c131983da6efdbf283b6db75ae12b164043861e7ceff83ce4e1658da4a7d398",
-    "route_index_sha256": "71c895ad943b3b51bffd6472569be56dbd4296530bbfec22b1e9f5ade0c18757",
-    "coverage_sha256": "1b1df81ea044be02fc888bdebd26220165b6720aa036ee90d32205b4a2cd936b"
+    "registry_sha256": "9a4d0de2112127bef3c2712bd51056deffa7b1e4be2f709346a3f7bcf43b6ae9",
+    "ledger_sha256": "8c3b59ed758d1d90f790d8228ac63a5a0180870914e472f61a7258341c8c4fe4",
+    "card_batches_sha256": "9e659e3140ade321d0698fa9466382e055122f1cfe92af00689387df66c3661e",
+    "route_index_sha256": "447c15660ba53b1779474c3a9cab86f1cb98fe5dc06ec34f4d4f36b8faec996f",
+    "coverage_sha256": "41e040f2987eda9f9ba4e38344cb3849d097ea4b45259920d0ddebe44f2885df"
   },
   "dimensions": [
     "identity",
@@ -24,7 +24,7 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 488,
+    "pages": 489,
     "entries": 145,
     "cards": 145,
     "routes": 536,
@@ -3270,6 +3270,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.6f56fff79cb74db0b699c504412e1f54",
+      "path": "book/volumes/v11-pattern-atlas/c06-database-storage/quorum-based-reads-writes.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.chapter.69085752a11c69305aa2a369b8ec9d29",
       "path": "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
       "kind": "chapter",
@@ -4479,18 +4486,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should the caller’s remaining time budget be passed through downstream calls?"
@@ -6042,17 +6049,18 @@
         "failure_recovery": "pass",
         "technical_owner": "partial",
         "owner_anchor": "pass",
-        "backlink": "pass",
+        "backlink": "missing",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
-        "independent-review-missing"
+        "independent-review-missing",
+        "backlink-missing"
       ],
       "question": "Should reads and writes require intersecting majorities to guarantee consistency?"
     },
@@ -7739,14 +7747,14 @@
     },
     {
       "pattern_id": "tycho.pattern.deadline-propagation",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
@@ -8520,15 +8528,16 @@
     },
     {
       "pattern_id": "tycho.pattern.quorum-based-reads-writes",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
-        "independent-review-missing"
+        "independent-review-missing",
+        "backlink-missing"
       ]
     },
     {

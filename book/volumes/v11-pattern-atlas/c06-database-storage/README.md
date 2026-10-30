@@ -64,9 +64,10 @@ public article and the V05/C04 selection section.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter currently uses one landing page plus a
+dedicated card page for a moved entry; a later split is an editorial change, not a plan
+failure. Start with the card, check its conditions and contraindications, then read the
+exact owner section.
 
 ## Entry inventory
 
@@ -235,53 +236,7 @@ unit, not a benchmark.
 
 ### Quorum-Based Reads / Writes
 
-**Identity.** Quorum-Based Reads/Writes; family Database and storage architecture; kind
-replication-pattern; priority advanced.
-
-**Decision question.** Should reads and writes require intersecting majorities to
-guarantee consistency?
-
-**Good-fit conditions.** Replica count and failure domains are known; quorum arithmetic is
-explicit; the application defines a version selector and a repair path; latency of majority
-calls is acceptable.
-
-**Hard contraindications.** Reject when a single leader suffices, when quorum latency
-violates the budget, when failure domains make majority meaningless, or when concurrent
-versions cannot be ordered or repaired.
-
-**Competing alternative.** Leader-based replication, strict quorum or eventual consistency.
-Reverse the choice when quorum availability/latency cost exceeds consistency benefit, or
-when sloppy quorum is the intended availability trade-off.
-
-**Failure and recovery.** Intersection alone does not guarantee freshness. Cassandra read
-repair returns the most up-to-date data and repairs replicas; Dynamo reconciles divergent
-vector-clock versions and uses hinted handoff and Merkle-tree anti-entropy; Riak uses read
-repair and active anti-entropy. A highest-version selector needs an application-defined
-total order, because Dynamo and Riak can expose concurrent siblings. A membership change
-needs the old and new quorums to overlap, or an explicit sloppy-quorum trade-off; see the
-owner section.
-
-**Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
-
-**Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read records `read.batch3-cassandra-dynamo.2026-10-21` and
-`read.cassandra-read-repair.2026-10-30`: the Dynamo architecture page and the
-read-repair page, including "Tunable Consistency", "Replica Synchronization" and
-"Expectation of Monotonic Quorum Reads".
-[src.dynamo](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.dynamo-sosp2007.2026-10-30`: sections 4.4-4.7 and 4.9;
-quorum arithmetic, version reconciliation, hinted handoff, anti-entropy and
-membership handoff.
-[src.riak](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.riak-replication-properties.2026-10-30`: "Primary Reads and
-Writes with PR and PW", "Symbolic Consistency Names" and "Illustrative
-Scenarios"; sloppy and strict quorum, read repair and vector-clock/timestamp
-resolution. The sources are public documentation and a paper, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader-Follower Replication; Multi-Leader Replication; Read Replicas;
-2PC.
+See the [dedicated Quorum-Based Reads / Writes card](quorum-based-reads-writes.md).
 
 ### Index Table
 

@@ -7414,6 +7414,130 @@
       "read_scope": "The Requests section of the pinned protocol specification",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.cassandra-read-repair.2026-10-30",
+      "source_id": "src.cassandra",
+      "unit_url": "https://cassandra.apache.org/doc/latest/cassandra/managing/operating/read_repair.html",
+      "unit_label": "Read repair — Apache Cassandra documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET on 2026-10-30; served HTML 59,750 bytes; HTTP Date 2026-10-30T18:27:54Z; Last-Modified 2026-08-26T07:20:02Z; ETag \"e966-659ee0c3b8f95\"; raw HTML SHA-256 104508d54a14dc5f6268504c295437ee72561733c57cc18239c2acd4712a3980",
+      "sections_read": [
+        "Read repair",
+        "Expectation of Monotonic Quorum Reads",
+        "Table level configuration of monotonic reads"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "implementation behavior",
+        "cluster experiments"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Apache Cassandra documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Read repair reconciles replicas during a read request and the most up-to-date data is returned to the client.",
+        "Blocking read repair supports the expectation of monotonic quorum reads across successive quorum reads, even when a failed write reached only a minority.",
+        "Setting read_repair to NONE makes the coordinator reconcile differences without repairing them, trading repair for write atomicity."
+      ],
+      "claims_not_supported": [
+        "linked pages",
+        "implementation behavior",
+        "independent reproduction"
+      ],
+      "limitations": "One documentation page; no cluster experiment or failure test. The page presents blocking read repair as the default and the none setting as a trade-off, not an old/new membership rule.",
+      "content_sha256": "104508d54a14dc5f6268504c295437ee72561733c57cc18239c2acd4712a3980",
+      "read_scope": "The Read repair, Expectation of Monotonic Quorum Reads and Table level configuration of monotonic reads sections of the public page",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.dynamo-sosp2007.2026-10-30",
+      "source_id": "src.dynamo",
+      "unit_url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+      "unit_label": "Dynamo: Amazon's Highly Available Key-value Store — SOSP 2007 paper",
+      "unit_type": "paper",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS download on 2026-10-30; PDF 900,468 bytes, 16 pages, PDF creation 2007-08-15, modification 2007-09-26; HTTP Date 2026-10-30T14:18:58Z; Last-Modified 2026-08-26T16:00:16Z; ETag \"d9383e34b6e8292796bfe54b0aeeb93c\"; PDF SHA-256 5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4; text extracted with pdftotext -raw: 1,663 lines, 14,930 words, SHA-256 2da247073d091ba83236b71dd9c5c56a19516f9f7b2e29258a0e3b5c4d4fb140",
+      "sections_read": [
+        "4.4 Data Versioning",
+        "4.5 Execution of get() and put() operations",
+        "4.6 Handling Failures: Hinted Handoff",
+        "4.7 Handling permanent failures: Replica synchronization",
+        "4.8 Membership and Failure Detection",
+        "4.9 Adding/Removing Storage Nodes"
+      ],
+      "sections_not_read": [
+        "sections outside 4.4-4.9",
+        "linked references",
+        "implementation behavior",
+        "any deployment"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public SOSP 2007 paper; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Setting R and W such that R + W > N yields a quorum-like system.",
+        "Vector clocks capture causality between versions; divergent versions are returned and a reconciled version is written back.",
+        "Hinted handoff and Merkle-tree anti-entropy repair lagging replicas.",
+        "Membership handoff transfers ranges after a confirmation round.",
+        "Sloppy quorum performs reads and writes on the first N healthy nodes and does not enforce strict quorum membership."
+      ],
+      "claims_not_supported": [
+        "current service internals",
+        "implementation behavior",
+        "independent reproduction"
+      ],
+      "limitations": "2007 paper; historical design; extracted PDF text; no Dynamo deployment was tested. The paper explicitly chooses sloppy quorum over strict quorum membership, so it bounds the trade-off rather than supporting a strict overlap requirement.",
+      "content_sha256": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4",
+      "read_scope": "Sections 4.4-4.9 of the 16-page PDF, read from extracted text",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.riak-replication-properties.2026-10-30",
+      "source_id": "src.riak",
+      "unit_url": "https://github.com/basho/basho_docs/blob/6409dd9c93b08f0a6e959a1874b5568c88172f3a/content/riak/kv/2.2.3/developing/app-guide/replication-properties.md",
+      "unit_label": "Replication Properties — Riak KV 2.2.3",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET of the pinned Markdown at basho/basho_docs commit 6409dd9c93b08f0a6e959a1874b5568c88172f3a (master commit date 2022-12-12); 26,963 bytes, 580 lines, 3,802 words; SHA-256 b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30; HTTP Date 2026-10-30T18:28:51Z; ETag \"3edddb531b5b673f218ca42fe1b6a91e74b236fd5dad0d6b55559cfb24da6715\"; no Last-Modified header",
+      "sections_read": [
+        "N Value and Replication",
+        "Primary Reads and Writes with PR and PW",
+        "Durable Writes with DW",
+        "Symbolic Consistency Names",
+        "Illustrative Scenarios"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "clients and screencast",
+        "implementation behavior",
+        "Riak cluster behavior"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Riak KV documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "R and W define the replicas that must respond; quorum means a majority, half plus one.",
+        "Strict quorum uses primary vnodes and raises failure probability, while sloppy quorum uses failover nodes to meet R and W.",
+        "Read repair and active anti-entropy bring a recovered vnode up to date.",
+        "Vector clocks and timestamps resolve conflicting values, which read repair propagates."
+      ],
+      "claims_not_supported": [
+        "implementation behavior",
+        "independent reproduction",
+        "clients and screencast"
+      ],
+      "limitations": "One documentation page pinned to a commit; no Riak cluster was run. The page documents sloppy failover and an optional strict-quorum mode; it does not state an old/new quorum-overlap rule.",
+      "content_sha256": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30",
+      "read_scope": "The five named sections of the pinned Markdown representation",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

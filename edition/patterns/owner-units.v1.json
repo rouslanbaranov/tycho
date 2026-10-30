@@ -7105,14 +7105,88 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "During a membership change, require the old and new quorums to overlap",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Membership changes that move replicas can violate consistency. A strict system must require the old and new quorums to overlap.",
+          "reason": "Cassandra says simultaneous range movements can violate monotonic consistency and can even cause data loss; Dynamo transfers ranges only after a confirmation round but explicitly uses a sloppy quorum instead of strict membership; Riak offers strict quorum as an option but describes sloppy failover as its default mode. These sources bound the hazard and the availability trade-off. The requirement that old and new quorum sets overlap, and that a minority refuse authoritative commits, is Tycho design guidance, not a source claim.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+            "section": "Ring Membership and Failure Detection",
+            "quote": "This also helps to prevent simultaneous range movements, where multiple replicas of a token range are moving at the same time, which can violate monotonic consistency and can even cause data loss.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-sosp2007.2026-10-30",
+              "section": "4.9 Adding/Removing Storage Nodes",
+              "quote": "When X is added to the system, it is in charge of storing keys in the ranges (F, G], (G, A] and (A, X]. As a consequence, nodes B, C and D no longer have to store the keys in these respective ranges. Therefore, nodes B, C, and D will offer to and upon confirmation from X transfer the appropriate set of keys.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-sosp2007.2026-10-30",
+              "section": "4.6 Handling Failures: Hinted Handoff",
+              "quote": "To remedy this it does not enforce strict quorum membership and instead it uses a “sloppy quorum”; all read and write operations are performed on the first N healthy nodes from the preference list, which may not always be the first N nodes encountered while walking the consistent hashing ring.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-replication-properties.2026-10-30",
+              "section": "Primary Reads and Writes with PR and PW",
+              "quote": "Setting PR and/or PW to non-zero values produces a mode of operation called strict quorum. This mode has the advantage that the client is more likely to receive the most up-to-date values, but at the cost of a higher probability that reads or writes will fail because primary vnodes are unavailable.",
+              "revision": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Overlap is necessary but not sufficient for freshness: choose the response with the highest version and repair replicas behind it.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Overlap is necessary but not sufficient for freshness: choose the application's version selector and repair replicas behind it.",
+          "reason": "Cassandra's blocking read repair makes replicas consistent and returns the most up-to-date data, supporting monotonic quorum reads even when a failed write reached only a minority; Cassandra also calls read repair and hinted handoff best-effort and relies on anti-entropy repair. Dynamo states R + W > N, returns causally unrelated versions, and writes back a reconciled version; Riak resolves vector-clock conflicts and propagates the result via read repair or active anti-entropy. The 'highest version wins' rule and the total order it needs are Tycho policy because Dynamo and Riak can expose concurrent siblings.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.cassandra-read-repair.2026-10-30",
+            "section": "Expectation of Monotonic Quorum Reads",
+            "quote": "Cassandra uses a blocking read repair to ensure the expectation of \"monotonic quorum reads\" i.e. that in 2 successive quorum reads, it’s guaranteed the 2nd one won’t get something older than the 1st one, and this even if a failed quorum write made a write of the most up to date value only to a minority of replicas.",
+            "revision": "104508d54a14dc5f6268504c295437ee72561733c57cc18239c2acd4712a3980"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cassandra",
+              "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
+              "section": "Replica Synchronization",
+              "quote": "These techniques are only best-effort, however, and to guarantee eventual consistency Cassandra implements anti-entropy repair",
+              "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+            },
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-sosp2007.2026-10-30",
+              "section": "4.5 Execution of get() and put() operations",
+              "quote": "Setting R and W such that R + W > N yields a quorum-like system.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-sosp2007.2026-10-30",
+              "section": "4.5 Execution of get() and put() operations",
+              "quote": "If the coordinator ends up gathering multiple versions of the data, it returns all the versions it deems to be causally unrelated. The divergent versions are then reconciled and the reconciled version superseding the current versions is written back.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-replication-properties.2026-10-30",
+              "section": "Illustrative Scenarios",
+              "quote": "The vector clocks are used to resolve the conflict and return a single value, which is propagated via read repair to the relevant vnodes",
+              "revision": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-replication-properties.2026-10-30",
+              "section": "Primary Reads and Writes with PR and PW",
+              "quote": "When the failed vnode returns to service, it will receive the new copy of the data via either read repair or active anti-entropy.",
+              "revision": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -7130,7 +7204,7 @@
       "decision_evidence": {
         "atlas_section": "quorum-based-reads-writes",
         "question": "Should reads and writes require intersecting majorities to guarantee consistency?",
-        "competing_alternative": "Leader-based replication or eventual consistency. Reverse the choice when quorum availability/latency cost exceeds consistency benefit.",
+        "competing_alternative": "Leader-based replication, strict quorum or eventual consistency. Reverse the choice when quorum availability/latency cost exceeds consistency benefit, or when sloppy quorum is the intended availability trade-off.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -7139,12 +7213,29 @@
         "source_id": "src.cassandra",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.cassandra-read-repair.2026-10-30",
+            "revision": "104508d54a14dc5f6268504c295437ee72561733c57cc18239c2acd4712a3980"
+          },
+          {
+            "source_id": "src.dynamo",
+            "ledger_record": "read.dynamo-sosp2007.2026-10-30",
+            "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+          },
+          {
+            "source_id": "src.riak",
+            "ledger_record": "read.riak-replication-properties.2026-10-30",
+            "revision": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Registry anchor is section 2, but the text covers voting-quorum arithmetic, not read/write quorum intersection."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Cassandra, Dynamo (SOSP 2007) and Riak 2.2.3; old/new quorum overlap and a highest-version selector remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.index-table",
@@ -8981,7 +9072,7 @@
         "heading": "Quorum Coordination",
         "anchor": "quorum-coordination",
         "level": 3,
-        "line": 179,
+        "line": 231,
         "unit_kind": "dedicated",
         "unit_terms": [
           "voting threshold",
@@ -12399,7 +12490,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Quorum reads/writes and quorum coordination now have two distinct dedicated units."
     },
@@ -12590,11 +12681,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 111,
-    "invariant_supported": 70,
-    "failure_recovery_supported": 63,
+    "invariant_supported": 71,
+    "failure_recovery_supported": 64,
     "alternative_supported": 68,
-    "technical_partial_bounded": 19,
-    "technical_partial": 78,
+    "technical_partial_bounded": 20,
+    "technical_partial": 77,
     "technical_name_only": 0,
     "technical_sufficient": 48,
     "decision_partial_bounded": 97,

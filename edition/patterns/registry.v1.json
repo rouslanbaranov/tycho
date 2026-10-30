@@ -3676,7 +3676,7 @@
         "document_id": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80",
         "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
         "anchor": "quorum-based-reads-writes",
-        "state": "partial"
+        "state": "partial-bounded"
       },
       "atlas_owner": {
         "chapter": "V11/C06",
@@ -3684,9 +3684,9 @@
         "state": "partial-bounded"
       },
       "coverage": {
-        "technical": "partial",
+        "technical": "partial-bounded",
         "decision": "partial-bounded",
-        "overall": "partial"
+        "overall": "partial-bounded"
       },
       "confidence": "high",
       "source_units": [
@@ -3694,10 +3694,25 @@
           "source_id": "src.cassandra",
           "unit": "Dynamo — multi-master replication and tunable consistency",
           "status": "read"
+        },
+        {
+          "source_id": "src.cassandra",
+          "unit": "Read repair — Apache Cassandra documentation",
+          "status": "read"
+        },
+        {
+          "source_id": "src.dynamo",
+          "unit": "Dynamo: Amazon's Highly Available Key-value Store — SOSP 2007 paper",
+          "status": "read"
+        },
+        {
+          "source_id": "src.riak",
+          "unit": "Replication Properties — Riak KV 2.2.3",
+          "status": "read"
         }
       ],
       "review_status": "self-checked",
-      "notes": "Phase 3 C06 card; bounded owner section and backlink are self-checked, not independent-reviewed or sufficient."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Cassandra, Dynamo (SOSP 2007) and Riak 2.2.3; old/new quorum overlap and a highest-version selector remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "id": "tycho.pattern.index-table",

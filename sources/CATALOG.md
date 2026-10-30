@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 293.
+Inventory date: 2026-10-30. Entries: 294.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -36,7 +36,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.lamport-time / supporting | [Time, Clocks, and the Ordering of Events in a Distributed System](https://lamport.azurewebsites.net/pubs/time-clocks.pdf) — Leslie Lamport | Causality and ordering foundations. | admitted-for-research / public-web-or-author-download |
 | src.raft / supporting | [In Search of an Understandable Consensus Algorithm](https://raft.github.io/raft.pdf) — Diego Ongaro / John Ousterhout | Consensus and replicated-state-machine reasoning. | admitted-for-research / public-web-or-author-download |
 | src.paxos / supporting | [Paxos Made Simple](https://lamport.azurewebsites.net/pubs/paxos-simple.pdf) — Leslie Lamport | Original author exposition; compare assumptions with Raft. | admitted-for-research / public-web-or-author-download |
-| src.dynamo / supporting | [Dynamo: Amazon's Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) — Amazon authors | Historical design trade-offs, not evidence of current service internals. | admitted-for-research / public-web-or-author-download |
+| src.dynamo / core | [Dynamo: Amazon's Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) — Amazon authors | Quorum arithmetic, vector-clock versioning, hinted handoff, anti-entropy and membership handoff for the Quorum-Based Reads/Writes entry. | admitted-for-research / public-web-or-author-download |
 | src.spanner / supporting | [Spanner: Google's Globally-Distributed Database](https://research.google/pubs/spanner-googles-globally-distributed-database/) — Google Research authors | Global transactions and time assumptions. | admitted-for-research / public-web-or-author-download |
 | src.bigtable / supporting | [Bigtable: A Distributed Storage System for Structured Data](https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/) — Google Research authors | Historical wide-column storage architecture. | admitted-for-research / public-web-or-author-download |
 | src.mapreduce / supporting | [MapReduce: Simplified Data Processing on Large Clusters](https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/) — Jeffrey Dean / Sanjay Ghemawat | Batch execution and fault recovery foundations. | admitted-for-research / public-web-or-author-download |
@@ -139,6 +139,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.cockroachdb / supporting | [CockroachDB Architecture Overview](https://www.cockroachlabs.com/docs/stable/architecture/overview) — Cockroach Labs | Distributed SQL design; vendor claims require explicit conditions. | admitted-for-research / public-web-or-author-download |
 | src.foundationdb / supporting | [FoundationDB Documentation](https://apple.github.io/foundationdb/) — FoundationDB | Transactional key-value design and deterministic testing. | admitted-for-research / public-web-or-author-download |
 | src.cassandra / supporting | [Apache Cassandra Architecture](https://cassandra.apache.org/doc/latest/cassandra/architecture/overview.html) — Apache Software Foundation | Partitioning, replication and tunable consistency. | admitted-for-research / public-web-or-author-download |
+| src.riak / core | [Riak KV Documentation](https://docs.riak.com/riak/kv/2.2.3/developing/app-guide/replication-properties/index.html) — Riak KV project | Quorum reads/writes, sloppy and strict quorum, version conflict resolution and read repair for the Quorum-Based Reads/Writes entry. | admitted-for-research / public-web-or-author-download |
 | src.mongodb / supporting | [MongoDB Data Modeling](https://www.mongodb.com/docs/manual/data-modeling/) — MongoDB | Document boundaries, embedding and referencing trade-offs. | admitted-for-research / public-web-or-author-download |
 | src.clickhouse / supporting | [ClickHouse Architecture](https://clickhouse.com/docs/development/architecture) — ClickHouse | Analytical storage and execution architecture. | admitted-for-research / public-web-or-author-download |
 | src.postgres17-mvcc-pages / core | [PostgreSQL 17 MVCC, isolation and routine vacuuming](https://www.postgresql.org/docs/17/mvcc-intro.html) — PostgreSQL Global Development Group | Explain snapshot visibility, version lifetime and the distinction from WAL durability. | admitted-for-research / public-web-or-author-download |
