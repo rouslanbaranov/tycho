@@ -422,14 +422,40 @@ def _artifact_detail_text(root, relative_path):
     with _ARTIFACT_DETAIL_LOCK:
         cached = _ARTIFACT_DETAIL_CACHE.get(key)
     if cached is not None:
-        return cached
+        text, dependencies = cached
+        valid = True
+        for dep_path, dep_mtime, dep_size in dependencies:
+            try:
+                dep_stat = dep_path.stat()
+            except OSError:
+                valid = False
+                break
+            if (dep_stat.st_mtime_ns, dep_stat.st_size) != (dep_mtime, dep_size):
+                valid = False
+                break
+        if valid:
+            return text
+    dependencies = []
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
         text = " ".join(_flatten_detail(payload))
+        scenario_id = payload.get("scenario_id")
+        if isinstance(scenario_id, str) and scenario_id.startswith(
+                "tycho.scenario."):
+            suffix = scenario_id.removeprefix("tycho.scenario.")
+            scenario_path = (path.parent.parent / "scenarios" /
+                             (suffix + ".json"))
+            if scenario_path.is_file():
+                scenario_stat = scenario_path.stat()
+                linked = json.loads(scenario_path.read_text(encoding="utf-8"))
+                text += " " + " ".join(_flatten_detail(linked))
+                dependencies.append((scenario_path,
+                                     scenario_stat.st_mtime_ns,
+                                     scenario_stat.st_size))
     except (OSError, json.JSONDecodeError):
         text = ""
     with _ARTIFACT_DETAIL_LOCK:
-        _ARTIFACT_DETAIL_CACHE[key] = text
+        _ARTIFACT_DETAIL_CACHE[key] = (text, tuple(dependencies))
         while len(_ARTIFACT_DETAIL_CACHE) > _ARTIFACT_DETAIL_MAX:
             _ARTIFACT_DETAIL_CACHE.popitem(last=False)
     return text
