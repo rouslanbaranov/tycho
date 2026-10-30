@@ -158,9 +158,9 @@ backends, frontends, networks, data stores, and other infrastructure," and AWS r
 blue and green environments to use "up-to-date data" with schema updates that stay "backward
 compatible" for the old version. A canary that writes through a shared store can therefore
 leave state the baseline cannot read; that consequence is Tycho's inference, and rollback does
-not undo committed data. Watch metric leakage across cohorts, shared-state contamination and
-sample size. Small samples hide rare errors, and an unrepresentative cohort can pass while a
-rare failure hides.
+not undo committed data. Tycho guidance, not a source claim: watch metric leakage across cohorts and sample size;
+small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure
+hides. Shared-state contamination is the source-backed risk described above.
 
 Traffic mirroring is safe only when requests are idempotent or can be processed twice:
 Flagger says mirroring "should be used for requests that are idempotent or capable of being
@@ -170,7 +170,9 @@ guidance, not a Flagger requirement. AWS's blue/green account shares the data st
 rather than moving them: both environments need "up-to-date data," and schema updates must
 be "backward compatible." Google SRE describes feature flags that "separate feature
 launches from binary releases," so activation can be scoped without a second environment;
-that no-second-copy comparison is Tycho guidance. A rolling deployment replaces instances
+that no-second-copy comparison is Tycho guidance. Google SRE also notes that blue/green uses
+"twice as many resources as a more traditional deployment," a cost the canary comparison must
+include. A rolling deployment replaces instances
 in batches without a separate cohort, and Argo notes that a canary without steps "will
 mimic the rolling update behavior." Choosing among these is Tycho guidance; use an
 alternative when the canary cohort cannot be isolated.

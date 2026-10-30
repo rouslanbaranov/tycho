@@ -10067,7 +10067,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure hides",
+          "quote": "Tycho guidance, not a source claim: watch metric leakage across cohorts and sample size; small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure hides.",
           "reason": "Names failure and recovery.",
           "binding": {
             "source_id": "src.argo-rollouts",
@@ -10123,7 +10123,7 @@
       "decision_evidence": {
         "atlas_section": "canary-release",
         "question": "Should a new version receive a small traffic share before full promotion?",
-        "competing_alternative": "Traffic mirroring, blue/green, feature flags or rolling deployment. Reverse the choice when canary analysis cost exceeds risk reduction, the cohort cannot be isolated, or writes make mirroring unsafe.",
+        "competing_alternative": "Traffic mirroring, blue/green, feature flags or rolling deployment. Reverse the canary choice when analysis cost exceeds risk reduction or the cohort cannot be isolated; avoid mirroring when writes cannot be made idempotent or safely processed twice. Blue/green costs roughly twice the resources.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -10154,7 +10154,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Invariant and alternative bound 2026-10-30 to AWS data-tier, Flagger mirroring, Google SRE canarying and the existing Argo record; the reads-only default and alternative-choice rule remain Tycho guidance. Coverage partial-bounded; no promotion."
+      "notes": "Mechanism Argo; invariant Google SRE shared infrastructure + AWS shared data/backward-compatible schema; alternative Flagger mirroring idempotence + Google SRE feature flags/blue-green + AWS shared stores. Representativeness, small-sample blindness, metric leakage, reads-only mirroring, suppression of writes and alternative-choice rule are Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.feature-flags-feature-toggles",

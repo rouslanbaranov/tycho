@@ -21,6 +21,7 @@ route_hints:
     - "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0"
   related_ids:
     - "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0"
+    - "tycho.page.b938ff1a06264492a425f2eff555ae7d"
   excludes:
     - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
   keywords:
@@ -56,20 +57,21 @@ promotion?
 
 **Good-fit conditions.** A measurable signal exists; traffic can be split; abort/rollback
 is defined; the canary is representative; shared-state compatibility is explicit; any
-mirrored traffic is read-only or idempotent.
+mirrored traffic is idempotent or can be processed twice.
 
 **Hard contraindications.** Reject when traffic cannot be split, when metrics are too
 noisy, when the canary shares hidden state with the baseline, or when mirrored writes
-cannot be made idempotent.
+cannot be made idempotent or safely processed twice.
 
 **Competing alternative.** Traffic mirroring, blue/green, feature flags or rolling
-deployment. Reverse the choice when canary analysis cost exceeds risk reduction, the
-cohort cannot be isolated, or writes make mirroring unsafe.
+deployment. Reverse the canary choice when analysis cost exceeds risk reduction or the
+cohort cannot be isolated; avoid mirroring when writes cannot be made idempotent or safely
+processed twice. Blue/green costs roughly twice the resources.
 
-**Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
-contamination are common; a binary rollback does not undo committed data. A mirrored
-write can execute twice, and a blue/green switch still shares the data boundary.
-Source checks in the owner section separate these failures from Tycho guidance.
+**Failure and recovery.** Shared-state contamination is source-backed: a binary rollback
+does not undo committed data, a mirrored write can execute twice, and a blue/green switch
+still shares the data boundary. Tycho guidance, not a source claim: low-traffic blindness,
+metric leakage and sample-size limits make a small cohort pass while a rare failure hides.
 
 **Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
 
