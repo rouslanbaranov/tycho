@@ -79,7 +79,7 @@ def _cache_put(key, value):
 
 
 def bm25_weights():
-    raw = os.environ.get("TYCHO_BM25_WEIGHTS", "5,2,0.25")
+    raw = os.environ.get("TYCHO_BM25_WEIGHTS", "5,2,0.5")
     try:
         values = tuple(float(part) for part in raw.split(","))
     except ValueError as exc:

@@ -15,7 +15,8 @@ explicit. See [MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.m
 
 ## Defaults
 
-- MCP default is BM25 (`section_rerank=false`).
+- MCP default is BM25 (`section_rerank=false`) with title/heading/body
+  weights 5/2/0.5.
 - Margin-gated section rerank is opt-in:
   `section_rerank=true, section_rerank_margin=0.15`.
 - Core API/CLI default remains explicit BM25.
