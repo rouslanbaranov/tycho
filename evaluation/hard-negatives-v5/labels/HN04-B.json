@@ -1,0 +1,81 @@
+{
+  "batch": "HN04",
+  "labeler": "B",
+  "status": "ai-adjudicated-not-human",
+  "items": [
+    {
+      "id": "V4-B046",
+      "page_grades": {
+        "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md": 1,
+        "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md": 2
+      },
+      "section_grades": {
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit": 1,
+        "tycho.page.de62a6f0e5a145aea3798ee69715f033#2-separate-business-context-from-technical-context": 1,
+        "tycho.page.07bb1f96bdd94195ac8e31644527a217#2-original-synthetic-example-community-workshop-reservation": 2,
+        "tycho.page.b6be128c3e714ac68ef3311a30d65141#5-problem-framing-produces-explicit-unknowns": 0,
+        "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension": 0
+      },
+      "notes": "Business success is the committed reservation state; notification is an optional derived effect whose delivery must not decide acceptance. The events section says this directly; the audit and context sections support separation. Unknowns and saga sections are adjacent but do not answer."
+    },
+    {
+      "id": "V4-B051",
+      "page_grades": {
+        "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md": 1,
+        "book/security/identity-authorization-threat-models-and-isolation.md": 1,
+        "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md": 2,
+        "book/cases/uber-cinnamon-admission-and-fairness.md": 0
+      },
+      "section_grades": {
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation": 1,
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional": 1,
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2": 0,
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable": 0
+      },
+      "notes": "A tenant move needs state copy, write fencing, routing/cutover and coordinator recovery; the cells page has a worked tenant-migration passage (page grade 2), but its candidate note section is not that passage. The security section names schema deployment, backup and failover costs when separating databases. Admission/fairness material is unrelated."
+    },
+    {
+      "id": "V4-B056",
+      "page_grades": {
+        "book/deployment/multi-region-disaster-recovery-contracts.md": 2,
+        "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md": 0,
+        "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md": 2
+      },
+      "section_grades": {
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries": 2,
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation": 0,
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication": 2,
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission": 2
+      },
+      "notes": "Promotion follows the replicated history, so an accidental deletion is replayed too; recovery needs an earlier backup or PITR point. The multi-region, replica and backup pages state this directly. The zone-failure walkthrough does not."
+    },
+    {
+      "id": "V4-B061",
+      "page_grades": {
+        "book/cases/netflix-java21-virtual-thread-pinning.md": 0,
+        "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md": 1,
+        "book/volumes/v03-execution-concurrency-and-flow-control/README.md": 1
+      },
+      "section_grades": {
+        "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem": 0,
+        "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4#purpose-and-mission": 1,
+        "tycho.volume.c4854b444d7c480e9616c5bf06f4db08#a-worked-cross-chapter-synthesis": 2
+      },
+      "notes": "Finite database permits bound acquisition, but request admission, task lifetime, buffering, connection acquisition and caller deadlines are separate authorities. The V03 synthesis states this directly; the threads page supports the demand-versus-capacity point. Pinning is a different failure mode."
+    },
+    {
+      "id": "V4-B066",
+      "page_grades": {
+        "book/application/architecture-styles-and-module-boundaries.md": 0,
+        "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-contracts.md": 0
+      },
+      "section_grades": {
+        "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route": 1,
+        "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot": 0,
+        "tycho.page.cdb86c0b91a6489f979689ab08efad35#6-candidate-evaluation-under-realistic-requirements": 0,
+        "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#pages-and-reasoning-route": 1
+      },
+      "notes": "Derived-edge provenance is owned by the graph-provenance page; the graph page and chapter route only point to it and note edge source identity, so they support rather than answer. Architecture-distribution and service-extraction sections do not discuss evidence for tracing an extracted edge."
+    }
+  ]
+}
