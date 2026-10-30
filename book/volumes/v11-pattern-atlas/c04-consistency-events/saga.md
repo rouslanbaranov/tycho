@@ -76,8 +76,8 @@ read record read.batch2-saga.2026-10-21: all eleven served headings read.
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microsoft-saga-azure.2026-10-30: sections "Solution", "Key concepts in the
 Saga pattern" and "Problems and considerations"; exact quotes "If a step fails, a series of
-compensating transactions undoes the changes that the completed steps made" and "Compensating
-transactions might not always succeed, which can leave the system in an inconsistent state";
+compensating transactions undoes the changes that the completed steps made." and "Compensating
+transactions might not always succeed, which can leave the system in an inconsistent state.";
 revision 84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca.
 Both sources are public pattern/specification units, not benchmarks.
 
