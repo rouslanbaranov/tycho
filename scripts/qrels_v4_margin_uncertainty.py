@@ -29,6 +29,7 @@ def main(argv=None):
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--bootstrap", type=int, default=5000)
     ap.add_argument("--seed", type=int, default=20261030)
+    ap.add_argument("--margin", type=float, default=0.05)
     args = ap.parse_args(argv)
     qrels = json.loads((args.root / "evaluation/corpus-qrels.v4.json")
                        .read_text(encoding="utf-8"))
@@ -41,7 +42,7 @@ def main(argv=None):
         try:
             margin = section_search.search(
                 args.root, item["question"], limit=5, abstain=False,
-                section_rerank=True, section_rerank_margin=0.15)
+                section_rerank=True, section_rerank_margin=args.margin)
         except section_search.SearchError:
             margin = base
         base_paths = [row["path"] for row in base.get("results", [])]
