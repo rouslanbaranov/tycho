@@ -27,14 +27,14 @@ evidence_scope:
   source_ids: []
   claim_ids: []
   status: "unknown"
-  notes: "Bounded question from tycho.page.4681b3ba9e234c46bdb4b5993634b0e3; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  notes: "Body Source boundary records the 2026-10-30 inspection and exact revisions."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-30"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -91,15 +91,60 @@ owner's contract or published events. The boundary is an ownership rule even whe
 share one physical server. Only the owning service writes its records, and no critical-path query
 joins another service's tables without an explicit contract.
 
-Shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through schema
-ownership review and cross-service access inspection rather than assuming the boundary exists. Dual
-writes, stale replicas and cross-service queries are common; use an outbox or idempotent
-reconciliation for cross-service effects and verify replica freshness before joining. A shared
-database with enforced module ownership is simpler when teams release together; choose separate
-stores only when independent ownership, scaling or recovery justify the coordination cost.
-Strong cross-service transactions remain a contraindication: an outbox or reconciliation
+Shared-table shortcuts and distributed joins reappear as hidden coupling; detect them through
+schema ownership review and cross-service access inspection rather than assuming the boundary
+exists. Dual writes, stale replicas and cross-service queries are common; use an outbox or
+idempotent reconciliation for cross-service effects and verify replica freshness before joining.
+A shared database with enforced module ownership is simpler when teams release together; choose
+separate stores only when independent ownership, scaling or recovery justify the coordination
+cost. Strong cross-service transactions remain a contraindication: an outbox or reconciliation
 reduces, but does not remove, that coordination cost.
 
-**Limits.** Schema ownership adds migration, cross-service query and reporting costs; a shared
-database with enforced modules is often cheaper until independent failure or scaling domains
-matter.
+**Failure and recovery.** The Database per Service page's "Resulting context" says that
+"Implementing business transactions that span multiple services is not straightforward" and that
+"Implementing queries that join data that is now in multiple databases is challenging." It points
+to Saga, API Composition and CQRS for those gaps. The Transactional outbox page states the atomic
+update-and-send requirement directly: a command "must atomically update the database and send
+messages in order to avoid data inconsistencies and bugs", yet a message sent after commit can be
+lost if the service crashes. Its solution stores the message "in the database as part of the
+transaction that updates the business entities" and a separate relay publishes it; because the
+relay "might publish a message more than once", "a message consumer must be idempotent". The
+Saga page adds that a saga is "a reliably coordinated sequence of local transactions" and that
+failed steps are undone by "compensating transactions". The pages mention replication only as a
+scaling fact; they do not establish replica lag: Database per Service says only that databases
+"must sometimes be replicated and sharded in order to scale." "Verify replica freshness before
+joining" and "reconciliation" as a repair loop are therefore Tycho guidance, not source claims.
+
+**Alternative.** The Shared database page describes one database "shared by multiple services"
+where each service "freely accesses data owned by other services", and lists "A single database is
+simpler to operate" and familiar ACID transactions as benefits. It also warns of "Development time
+coupling" when services coordinate schema changes and "Runtime coupling" when they interfere. The
+Database per Service page links "The Shared Database anti-pattern" as the problem source; the two
+pages therefore disagree, and this note keeps both readings. Tycho's narrower alternative is a
+shared database whose module ownership is enforced by schema grants, code review and dependency
+checks, not the page's free cross-service access. That combination is simpler when one team
+releases the modules together, because schema coordination stays inside one release; the pages
+support the simplicity and coupling statements, not the enforced-ownership condition or the
+release-cadence inference. Monolith First adds that the microservice premium "will slow down a
+team, favoring a monolith for simpler applications" and that modularity at "the API boundaries
+and how the data is stored" makes a later split easier.
+
+**Source boundary.** Public pattern pages from `src.microservices-patterns` and one article from
+`src.monolith-first`, all rechecked 2026-10-30. The Database per Service, Saga and Transactional
+Outbox records retain their 2026-10-21 revisions; their recorded HTML digests reproduce. The
+Shared database page is a new unit.
+
+- Database per Service, record `read.microservices-database-per-service.2026-10-21`, revision
+  `09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31`; sections
+  "Resulting context" and "Forces".
+- Saga, record `read.batch2-saga.2026-10-21`, revision
+  `54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047`; section "Solution".
+- Transactional outbox, record `read.batch2-outbox.2026-10-21`, revision
+  `7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb`; sections "Context",
+  "Solution" and "Result context".
+- Shared database, record `read.microservices-shared-database.2026-10-30`, revision
+  `4dc5fcf1a9bdf1d4c97c3ba916f997611cebdc2bc4b87927a6bb0a61c11c5731`; sections
+  "Pattern: Shared database" and "Forces".
+- Monolith First, record `read.monolith-first.2026-10-21`, revision
+  `722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446`; section
+  "Monolith First".
