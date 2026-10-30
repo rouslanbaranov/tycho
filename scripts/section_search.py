@@ -493,6 +493,19 @@ def load_v12_artifacts(root):
     return artifacts
 
 
+def _artifact_type_intent(terms):
+    normalized = set(terms)
+    if normalized & {"run", "runs", "result", "results"}:
+        return "run"
+    if normalized & {"input", "inputs", "configuration", "configurations"}:
+        return "scenario"
+    if "decision" in normalized:
+        return "decision"
+    if "model" in normalized:
+        return "model"
+    return None
+
+
 def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
                   limit=50, terms=None):
     """Return V12 artifacts filtered and optionally ranked by query terms."""
@@ -534,7 +547,10 @@ def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
                 scored.append((len(hits),
                                sum(text.count(term) for term in hits),
                                item))
-        scored.sort(key=lambda row: (-row[0], -row[1], str(row[2]["id"])))
+        intent = _artifact_type_intent(artifact_terms)
+        scored.sort(key=lambda row: (
+            0 if intent and row[2]["artifact_type"] == intent else 1,
+            -row[0], -row[1], str(row[2]["id"])))
         artifacts = [row[2] for row in scored]
     return {
         "status": "ok" if artifacts else "no-results",

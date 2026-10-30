@@ -111,6 +111,14 @@ class V12SearchFacetTests(unittest.TestCase):
         self.assertEqual({item["artifact_type"] for item in result["artifacts"]},
                          {"model"})
 
+    def test_artifact_type_intent_priority(self):
+        self.assertEqual(
+            section_search._artifact_type_intent(["input"]), "scenario")
+        self.assertEqual(
+            section_search._artifact_type_intent(["result"]), "run")
+        self.assertEqual(
+            section_search._artifact_type_intent(["input", "run"]), "run")
+
     def test_include_artifacts_filters_by_query(self):
         self.build()
         with patch.object(route_index, "canonical_scan",
