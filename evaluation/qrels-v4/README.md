@@ -1,8 +1,7 @@
 # Qrels v4 — AI-adjudicated
 
-Status: **rework pending**. Current qrels v4 is AI-adjudicated but includes the
-narrow B01–B03 batches. Do not treat it as final until the coverage rework is
-merged.
+Status: **complete**, AI-adjudicated. B01–B03 were reworked for broad coverage
+(12 volumes, 15 chapter topics).
 
 - Page: `evaluation/corpus-qrels.v4.json`
 - Section: `evaluation/section-qrels.v4.json`
@@ -13,9 +12,9 @@ merged.
 
 ## Coverage caveat
 
-B01–B03 are narrow: each is concentrated in one chapter/topic. They passed
-schema validation but are not representative of the whole book. B04–B06 are
-broader; atlas and V12 coverage is documented in [REPORT.md](REPORT.md).
+B01–B03 now span 12 volumes and 15 chapter topics; 12 questions use a case
+page as a direct answer. B04–B06 are also broad. Atlas and V12 coverage is
+documented in [REPORT.md](REPORT.md).
 
 ## Handoff history
 
