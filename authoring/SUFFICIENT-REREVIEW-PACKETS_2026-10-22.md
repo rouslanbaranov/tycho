@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 87 |
+| Reviewed by independent agent | 83 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 48, "reviewed-by-independent-agent": 87}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 52, "reviewed-by-independent-agent": 83}.
 
 ## Review procedure
 
@@ -51,7 +51,7 @@ blank verdict template in the machine-readable file.
 
 - **API Gateway**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Asynchronous Request-Reply**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.
@@ -267,11 +267,11 @@ blank verdict template in the machine-readable file.
 
 - **Gateway Aggregation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gateway Offloading**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Gateway Routing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -471,7 +471,7 @@ blank verdict template in the machine-readable file.
 
 - **Reverse Proxy**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Rolling Deployment**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

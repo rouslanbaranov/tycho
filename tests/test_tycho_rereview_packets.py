@@ -39,7 +39,11 @@ class SectionParsingTests(unittest.TestCase):
 class PacketTests(unittest.TestCase):
     def setUp(self):
         record = next(r for r in RECORDS if r.get("re_reviewed"))
-        self.record = record
+        # The synthetic route below pins the current page, so drop a historical
+        # pin that would otherwise mark the fixture as changed since review.
+        review = {key: value for key, value in record["re_review"].items()
+                  if key != "reviewed_page_sha256"}
+        self.record = {**record, "re_review": review}
         self.candidate = next(c for c in CANDIDATES
                               if c["pattern_id"] == record["pattern_id"])
         self.recon = {
@@ -102,12 +106,12 @@ class CommittedPacketTests(unittest.TestCase):
         self.assertEqual(summary["rejected"], 0)
         self.assertEqual(summary["unique_owner_pages"], 81)
         self.assertEqual(summary["ready"], 0)
-        self.assertEqual(summary["reviewed"], 87)
+        self.assertEqual(summary["reviewed"], 83)
         self.assertEqual(summary["awaiting_current_external_review"], 10)
         self.assertEqual(summary["packet_statuses"],
                          {"awaiting-current-external-review": 10,
-                          "page-changed-since-review": 48,
-                          "reviewed-by-independent-agent": 87})
+                          "page-changed-since-review": 52,
+                          "reviewed-by-independent-agent": 83})
 
     def test_no_packet_contains_a_verdict(self):
         for packet in self.payload["packets"]:

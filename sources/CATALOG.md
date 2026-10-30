@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 283.
+Inventory date: 2026-10-30. Entries: 285.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -413,3 +413,10 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-sqs-dlq / core | [Using dead-letter queues in Amazon SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) — Amazon Web Services | Dead-letter queue retry bounds, retention, redrive and diagnostic evidence. | admitted-for-research / public-web-or-author-download |
 | src.azure-service-bus-dlq / core | [Overview of Service Bus dead-letter queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues) — Microsoft Learn | Service Bus dead-letter purpose, delivery-count bound, diagnostic fields and application-level rejection. | admitted-for-research / public-web-or-author-download |
 | src.hookdeck-dlq-alternatives / supporting | [Alternatives to Dead-Letter Queues for Webhook Reliability](https://hookdeck.com/webhooks/guides/alternatives-to-dead-letter-queues) — Hookdeck | Explicit vendor guide comparison of DLQs with database persistence, retry table and transactional outbox. | admitted-for-research / public-web-or-author-download |
+
+## Api
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.aws-api-gateway / core | [Amazon API Gateway Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) — Amazon Web Services | Bounded public REST API Gateway pages for throttling behavior and stage deployment snapshots. | admitted-for-research / public-web-or-author-download |
+| src.azure-api-management / core | [Azure API Management documentation](https://learn.microsoft.com/en-us/azure/api-management/) — Microsoft Learn | Bounded public API Management pages for authorization delegation, self-hosted gateway connectivity, rate limiting and quota behavior. | admitted-for-research / public-web-or-author-download |

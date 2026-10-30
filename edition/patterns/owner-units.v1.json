@@ -1036,14 +1036,116 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Keep resource authorization at the boundary owning the resource, with documented delegation if a central decision service is used.",
-          "reason": "Source page discusses routing and fan-out but not resource-authorization boundaries."
+          "reason": "Azure documents backend-scoped pass-through, gateway-scoped validation and explicit delegation of backend authorization; the resource-owner enforcement rule is Tycho guidance.",
+          "binding": {
+            "source_id": "src.azure-api-management",
+            "ledger_record": "read.azure-api-management-authorization.2026-10-30",
+            "section": "Scenario 3: API Management authorizes to backend",
+            "quote": "the user or client app delegates backend authentication and authorization to API Management.",
+            "revision": "15f91d50adc65357c092f4d9ae874a9eea8ccdc74dc415a4d5d01e48e57805ad"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-api-management",
+              "ledger_record": "read.azure-api-management-authorization.2026-10-30",
+              "section": "Scenario 1 - Client app authorizes directly to backend",
+              "quote": "The access token's scope is between the calling application and backend API.",
+              "revision": "15f91d50adc65357c092f4d9ae874a9eea8ccdc74dc415a4d5d01e48e57805ad"
+            },
+            {
+              "source_id": "src.azure-api-management",
+              "ledger_record": "read.azure-api-management-authorization.2026-10-30",
+              "section": "Scenario 2 - Client app authorizes to API Management",
+              "quote": "The scope of the access token is between the calling application and the API Management gateway.",
+              "revision": "15f91d50adc65357c092f4d9ae874a9eea8ccdc74dc415a4d5d01e48e57805ad"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-api-gateway.2026-10-21",
+              "section": "Solution",
+              "quote": "The API gateway might also implement security, e.g. verify that the client is authorized to perform the request",
+              "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-api-gateway.2026-10-21",
+              "section": "Related patterns",
+              "quote": "The API Gateway may authenticate the user and pass an Access Token containing information about the user to the services",
+              "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Gateway bypass, configuration drift, a stale route and an outage that blocks every backend are common.",
-          "reason": "Source page does not discuss bypass, configuration drift, stale routes or total outage."
+          "state": "supported",
+          "quote": "Gateway bypass, configuration drift, a stale route, a rate-limit or quota failure and an outage that blocks every backend are common.",
+          "reason": "AWS documents stage snapshots, redeploy-before-effective settings, best-effort throttles and 429 responses; Azure documents fail-static configuration, delayed updates, 429 rate-limit, 403 quota and post-restart quota lag. Bypass and total-backend outage are Tycho consequences, not provider observations.",
+          "binding": {
+            "source_id": "src.azure-api-management",
+            "ledger_record": "read.azure-api-management-self-hosted-gateway.2026-10-30",
+            "section": "Connectivity failures",
+            "quote": "When connectivity to Azure is lost, the self-hosted gateway is unable to receive configuration updates, report its status, or upload telemetry.",
+            "revision": "2fb2f8b28185086345b4813b433195cdaac8f93fc9cc22268781bcd1e0370d53"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-api-gateway",
+              "ledger_record": "read.aws-api-gateway-stages.2026-10-30",
+              "section": "Overview",
+              "quote": "A stage is a named reference to a deployment, which is a snapshot of the API.",
+              "revision": "f3be77f63ce31d681ae6b8206e28ff6909822786c40dfd2183950223e4ced97b"
+            },
+            {
+              "source_id": "src.aws-api-gateway",
+              "ledger_record": "read.aws-api-gateway-stages.2026-10-30",
+              "section": "Modify stage settings",
+              "quote": "Redeploy your API for the new settings to take effect.",
+              "revision": "f3be77f63ce31d681ae6b8206e28ff6909822786c40dfd2183950223e4ced97b"
+            },
+            {
+              "source_id": "src.aws-api-gateway",
+              "ledger_record": "read.aws-api-gateway-throttling.2026-10-30",
+              "section": "Overview",
+              "quote": "When request submissions exceed the steady-state request rate and burst limits, API Gateway begins to throttle requests. Clients may receive 429 Too Many Requests error responses at this point.",
+              "revision": "23e9755e061ae48b18e74d385adb1360d1d58782bdb0dd6dc745423dcc656ae1"
+            },
+            {
+              "source_id": "src.aws-api-gateway",
+              "ledger_record": "read.aws-api-gateway-throttling.2026-10-30",
+              "section": "Overview",
+              "quote": "Both throttles and quotas are applied on a best-effort basis and should be thought of as targets rather than guaranteed request ceilings.",
+              "revision": "23e9755e061ae48b18e74d385adb1360d1d58782bdb0dd6dc745423dcc656ae1"
+            },
+            {
+              "source_id": "src.azure-api-management",
+              "ledger_record": "read.azure-api-management-rate-limit.2026-10-30",
+              "section": "Limit call rate by subscription",
+              "quote": "When the call rate is exceeded, the caller receives a 429 Too Many Requests response status code.",
+              "revision": "048897863df1f50803bf4f2e56491a2ed09489e2840123e88a34e3e1a86825f7"
+            },
+            {
+              "source_id": "src.azure-api-management",
+              "ledger_record": "read.azure-api-management-quota.2026-10-30",
+              "section": "Set usage quota by subscription",
+              "quote": "When the quota is exceeded, the caller receives a 403 Forbidden response status code, and the response includes a Retry-After header whose value is the recommended retry interval in seconds.",
+              "revision": "f002b56b84263bb0b3b9dc99de6eac7560de290fa274878d388187a83bd394dc"
+            },
+            {
+              "source_id": "src.azure-api-management",
+              "ledger_record": "read.azure-api-management-quota.2026-10-30",
+              "section": "Set usage quota by subscription",
+              "quote": "When underlying compute resources restart in the service platform, API Management might continue to handle requests for a short period after a quota is reached.",
+              "revision": "f002b56b84263bb0b3b9dc99de6eac7560de290fa274878d388187a83bd394dc"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-api-gateway.2026-10-21",
+              "section": "Solution",
+              "quote": "Implement an API gateway that is the single entry point for all clients.",
+              "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -1070,12 +1172,44 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-api-gateway",
+            "ledger_record": "read.aws-api-gateway-throttling.2026-10-30",
+            "revision": "23e9755e061ae48b18e74d385adb1360d1d58782bdb0dd6dc745423dcc656ae1"
+          },
+          {
+            "source_id": "src.aws-api-gateway",
+            "ledger_record": "read.aws-api-gateway-stages.2026-10-30",
+            "revision": "f3be77f63ce31d681ae6b8206e28ff6909822786c40dfd2183950223e4ced97b"
+          },
+          {
+            "source_id": "src.azure-api-management",
+            "ledger_record": "read.azure-api-management-authorization.2026-10-30",
+            "revision": "15f91d50adc65357c092f4d9ae874a9eea8ccdc74dc415a4d5d01e48e57805ad"
+          },
+          {
+            "source_id": "src.azure-api-management",
+            "ledger_record": "read.azure-api-management-self-hosted-gateway.2026-10-30",
+            "revision": "2fb2f8b28185086345b4813b433195cdaac8f93fc9cc22268781bcd1e0370d53"
+          },
+          {
+            "source_id": "src.azure-api-management",
+            "ledger_record": "read.azure-api-management-rate-limit.2026-10-30",
+            "revision": "048897863df1f50803bf4f2e56491a2ed09489e2840123e88a34e3e1a86825f7"
+          },
+          {
+            "source_id": "src.azure-api-management",
+            "ledger_record": "read.azure-api-management-quota.2026-10-30",
+            "revision": "f002b56b84263bb0b3b9dc99de6eac7560de290fa274878d388187a83bd394dc"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "The boundary contract owns gateway centralization and resource-authority limits; alternatives sit in a later section."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Azure, AWS and microservices.io public pages; bypass and total-backend outage remain Tycho analysis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.gateway-routing",
@@ -1161,7 +1295,7 @@
         "heading": "Gateway Aggregation",
         "anchor": "gateway-aggregation",
         "level": 2,
-        "line": 101,
+        "line": 158,
         "unit_kind": "dedicated",
         "unit_terms": [
           "read-mostly",
@@ -1235,7 +1369,7 @@
         "heading": "Gateway Offloading",
         "anchor": "gateway-offloading",
         "level": 2,
-        "line": 117,
+        "line": 174,
         "unit_kind": "dedicated",
         "unit_terms": [
           "terminate TLS",
@@ -1454,7 +1588,7 @@
         "heading": "Reverse Proxy",
         "anchor": "reverse-proxy",
         "level": 2,
-        "line": 134,
+        "line": 191,
         "unit_kind": "dedicated",
         "unit_terms": [
           "accepts client connections",
@@ -11361,7 +11495,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 2,
+      "bounded_entries": 3,
       "decision": "keep",
       "rationale": "Four gateway functions have dedicated bounded units on the new gateway page."
     },
@@ -11769,11 +11903,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 64,
-    "failure_recovery_supported": 55,
+    "invariant_supported": 65,
+    "failure_recovery_supported": 56,
     "alternative_supported": 66,
-    "technical_partial_bounded": 20,
-    "technical_partial": 86,
+    "technical_partial_bounded": 21,
+    "technical_partial": 85,
     "technical_name_only": 0,
     "technical_sufficient": 39,
     "decision_partial_bounded": 106,

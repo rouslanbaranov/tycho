@@ -33,6 +33,8 @@ evidence_scope:
     - "src.microservices-patterns"
     - "src.microsoft-cloud-patterns"
     - "src.envoy"
+    - "src.aws-api-gateway"
+    - "src.azure-api-management"
   claim_ids: []
   status: "source-linked"
   notes: "12 cards cite read units; owner links are bounded."
@@ -62,9 +64,9 @@ mechanism.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus a dedicated card
+page for API Gateway; a later split is an editorial change, not a plan failure. Start with
+the card, check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
 
@@ -73,46 +75,7 @@ none claims sufficient technical or decision coverage.
 
 ### API Gateway
 
-**Identity.** API Gateway; family API and service communication; kind integration
-pattern; priority core.
-
-**Decision question.** Should external clients enter through a managed gateway that
-owns routing, authentication and cross-cutting edge policy?
-
-**Good-fit conditions.** Multiple clients or backends share edge concerns; routing,
-TLS, authentication or rate policy must be consistent; the gateway can be operated and
-observed as a critical component; backend authority remains explicit.
-
-**Hard contraindications.** Reject the claim when one simple client can call one
-backend directly; when the gateway would become an unowned single point of failure;
-when it hides domain authorization in the backend; when every request needs a unique
-policy that the gateway cannot safely express.
-
-**Competing alternative.** A reverse proxy with a narrow edge contract, or direct
-backend exposure with client-side policy. Reverse the choice when gateway complexity
-and outage blast radius exceed the shared edge benefit.
-
-**Failure and recovery.** Gateway bypass, configuration drift, a stale route, a rate-limit
-or quota failure and an outage that blocks every backend are common. AWS's REST API
-developer guide documents stage snapshots, the need to redeploy for new settings,
-best-effort throttling and 429 responses; Azure documents 429 and 403 rate and quota
-responses, quota lag after a platform restart, and a self-hosted gateway that keeps its
-last configuration while disconnected. Keep backend authorization, test the bypass path and
-version gateway policy. Bypass and total backend-blocking outage consequences remain Tycho
-analysis; the sources do not test them.
-
-**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#api-gateway) — edge identity and gateway boundary; not a full API management specification.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-api-gateway.2026-10-21: all ten served headings
-read. AWS API Gateway Developer Guide and Azure API Management pages accessed 2026-10-30;
-exact quotes, sections and canonical revisions are in the owner section.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Gateway Routing; Gateway Aggregation; Gateway Offloading; Reverse
-Proxy.
+See the [dedicated API Gateway card](api-gateway.md).
 
 ### Gateway Routing
 
