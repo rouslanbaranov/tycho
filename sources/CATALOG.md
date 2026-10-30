@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 287.
+Inventory date: 2026-10-30. Entries: 288.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -54,7 +54,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.c4 / supporting | [The C4 Model](https://c4model.com/) — Simon Brown | Consistent abstraction levels for architecture views. | admitted-for-research / public-web-or-author-download |
 | src.arc42 / supporting | [arc42 Documentation](https://docs.arc42.org/home/) — arc42 authors | Question-driven documentation and constraints. | admitted-for-research / public-web-or-author-download |
 | src.microservices-patterns / core | [Microservice Architecture Patterns](https://microservices.io/patterns/) — Chris Richardson | Pattern-level reference and implementation links. | admitted-for-research / public-web-or-author-download |
-| src.ddd-reference / supporting | [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/) — Eric Evans / Domain Language | Domain boundaries and tactical design vocabulary. | admitted-for-research / public-web-or-author-download |
+| src.ddd-reference / supporting | [Domain-Driven Design Reference](https://www.domainlanguage.com/ddd/reference/) — Eric Evans / Domain Language | Domain boundaries and tactical design vocabulary, including the 2015-03 summary PDF. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-cloud-patterns / core | [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/) — Microsoft Learn | Pattern catalog admission and source-unit planning for E17 Phase 2. | admitted-for-research / public-web-or-author-download |
 | src.fowler-cqrs / core | [CQRS](https://martinfowler.com/bliki/CQRS.html) — Martin Fowler | Primary article for CQRS applicability, trade-offs and reporting-database alternative. | admitted-for-research / public-web-or-author-download |
 | src.fowler-strangler / core | [Strangler Fig](https://martinfowler.com/bliki/StranglerFigApplication.html) — Martin Fowler | Primary article for incremental legacy replacement, seams and transitional architecture. | admitted-for-research / public-web-or-author-download |
@@ -67,6 +67,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-branch / core | [Branch by abstraction pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/branch-by-abstraction.html) — AWS Prescriptive Guidance | Bounded public page for the branch by abstraction process, reversible increments, fallback verification, switch-back recovery and the data-consistency limit. | admitted-for-research / public-web-or-author-download |
 | src.aws-strangler / core | [Strangler fig pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/strangler-fig.html) — AWS Prescriptive Guidance | Bounded public page for incremental replacement, coexistence, rollback planning, interception prerequisites and facade failure conditions. | admitted-for-research / public-web-or-author-download |
 | src.aws-cqrs / core | [CQRS pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html) — AWS Prescriptive Guidance | Bounded public page for CQRS command/query separation, command-side validation and eventual consistency. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-ddd / core | [Use domain analysis to model microservices](https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis) — Microsoft Learn | Bounded public page for domain analysis, bounded contexts, ubiquitous language and context maps. | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 

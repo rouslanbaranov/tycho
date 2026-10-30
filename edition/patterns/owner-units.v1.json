@@ -621,14 +621,81 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A named domain expert co-owns that vocabulary and arbitrates disputed meanings.",
-          "reason": "Source does not state that a named domain expert co-owns vocabulary or arbitrates meaning."
+          "reason": "Microsoft says the vocabulary is one that developers and domain experts create together within each bounded context; Evans says domain experts should object to terms or structures that are awkward or inadequate to convey domain understanding. The words 'co-owns' and 'arbitrates', the single named arbiter and the resolution record are Tycho operational guidance.",
+          "binding": {
+            "source_id": "src.microsoft-ddd",
+            "ledger_record": "read.microsoft-ddd.2026-10-30",
+            "section": "Introduction",
+            "quote": "It's a shared vocabulary that developers and domain experts create together within each bounded context.",
+            "revision": "62191a60e230bc6b1950ea8427f27d0c5a360c14d2e02353a38ab3d7d903cf60"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.ddd-reference",
+              "ledger_record": "read.ddd-reference-bounded-context.2026-10-30",
+              "section": "Ubiquitous Language",
+              "quote": "Domain experts should object to terms or structures that are awkward or inadequate to convey domain understanding; developers should watch for ambiguity or inconsistency that will trip up design.",
+              "revision": "cf82dc7b4736bb24f4a1b69a3213c25cbd38aa98e37b99c2facfb94ff5cacb99"
+            },
+            {
+              "source_id": "src.ddd-reference",
+              "ledger_record": "read.ddd-reference-bounded-context.2026-10-30",
+              "section": "Ubiquitous Language",
+              "quote": "Resolve confusion over terms in conversation, in just the way we come to agree on the meaning of ordinary words.",
+              "revision": "cf82dc7b4736bb24f4a1b69a3213c25cbd38aa98e37b99c2facfb94ff5cacb99"
+            },
+            {
+              "source_id": "src.microsoft-ddd",
+              "ledger_record": "read.microsoft-ddd.2026-10-30",
+              "section": "Analyze the domain",
+              "quote": "This effort should involve domain experts, software architects, and other stakeholders.",
+              "revision": "62191a60e230bc6b1950ea8427f27d0c5a360c14d2e02353a38ab3d7d903cf60"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Model behavior changes are reviewed with the domain expert before a boundary moves.",
-          "reason": "Source does not describe reviewing model behavior with a domain expert before moving a boundary."
+          "reason": "Evans says to recognize that a change in the language is a change to the model; Microsoft says DDD is iterative and service boundaries do not remain fixed, and advises revisiting boundaries or team structure when ownership misaligns; Fowler says a different model is needed when the language changes. The sequenced review by a named expert before a boundary move is Tycho governance.",
+          "binding": {
+            "source_id": "src.ddd-reference",
+            "ledger_record": "read.ddd-reference-bounded-context.2026-10-30",
+            "section": "Ubiquitous Language",
+            "quote": "Recognize that a change in the language is a change to the model.",
+            "revision": "cf82dc7b4736bb24f4a1b69a3213c25cbd38aa98e37b99c2facfb94ff5cacb99"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.ddd-reference",
+              "ledger_record": "read.ddd-reference-bounded-context.2026-10-30",
+              "section": "Ubiquitous Language",
+              "quote": "Relentlessly exercise the ubiquitous language to hammer out a shared view of the model as the concepts evolve in different people’s heads.",
+              "revision": "cf82dc7b4736bb24f4a1b69a3213c25cbd38aa98e37b99c2facfb94ff5cacb99"
+            },
+            {
+              "source_id": "src.microsoft-ddd",
+              "ledger_record": "read.microsoft-ddd.2026-10-30",
+              "section": "Introduction",
+              "quote": "DDD is an iterative, ongoing process, so service boundaries don't remain fixed.",
+              "revision": "62191a60e230bc6b1950ea8427f27d0c5a360c14d2e02353a38ab3d7d903cf60"
+            },
+            {
+              "source_id": "src.microsoft-ddd",
+              "ledger_record": "read.microsoft-ddd.2026-10-30",
+              "section": "Analyze the domain",
+              "quote": "If a single team must own multiple unrelated bounded contexts, or a single bounded context requires coordination across many teams, revisit either the boundaries or the team structure.",
+              "revision": "62191a60e230bc6b1950ea8427f27d0c5a360c14d2e02353a38ab3d7d903cf60"
+            },
+            {
+              "source_id": "src.fowler-bounded-context",
+              "ledger_record": "read.fowler-bounded-context.2026-10-21",
+              "section": "Bounded Context",
+              "quote": "you need a different model when the language changes.",
+              "revision": "5f6bbdd9567aeb45cb81d536a9e01a7636f2792ba41fa0abeff5603b74d46184"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -655,12 +722,24 @@
         "source_id": "src.fowler-bounded-context",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-ddd",
+            "ledger_record": "read.microsoft-ddd.2026-10-30",
+            "revision": "62191a60e230bc6b1950ea8427f27d0c5a360c14d2e02353a38ab3d7d903cf60"
+          },
+          {
+            "source_id": "src.ddd-reference",
+            "ledger_record": "read.ddd-reference-bounded-context.2026-10-30",
+            "revision": "cf82dc7b4736bb24f4a1b69a3213c25cbd38aa98e37b99c2facfb94ff5cacb99"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Embedded ownership section; authority and context-map material sits in sections 2-3."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Fowler’s Bounded Context article, Microsoft’s domain-analysis page and the Evans 2015-03 summary; the single named arbiter and the expert review before a boundary move remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.database-per-service",
@@ -12311,11 +12390,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 110,
-    "invariant_supported": 67,
-    "failure_recovery_supported": 60,
+    "invariant_supported": 68,
+    "failure_recovery_supported": 61,
     "alternative_supported": 67,
-    "technical_partial_bounded": 19,
-    "technical_partial": 82,
+    "technical_partial_bounded": 20,
+    "technical_partial": 81,
     "technical_name_only": 0,
     "technical_sufficient": 44,
     "decision_partial_bounded": 101,

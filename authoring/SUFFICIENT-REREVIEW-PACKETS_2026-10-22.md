@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 74 |
+| Reviewed by independent agent | 73 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 61, "reviewed-by-independent-agent": 74}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 62, "reviewed-by-independent-agent": 73}.
 
 ## Review procedure
 
@@ -219,7 +219,7 @@ blank verdict template in the machine-readable file.
 
 - **Domain-Driven Design / Bounded Context**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Durable Subscriber**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
