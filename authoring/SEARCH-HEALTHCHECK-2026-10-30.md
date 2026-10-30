@@ -9,6 +9,7 @@ sufficient coverage.
 
 - published index snapshot;
 - qrels v4 page/section status, count and snapshot;
+- artifact qrels status, count and snapshot;
 - BM25 weights;
 - MCP default section_rerank and margin.
 
@@ -18,6 +19,7 @@ sufficient coverage.
 {
   "index_snapshot": "e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa",
   "qrels": {"page": 150, "section": 150, "snapshot_match": true},
+  "artifact_qrels": {"count": 30, "snapshot_match": true},
   "weights": [5.0, 2.0, 0.5],
   "mcp_defaults": {"section_rerank": false, "margin": 0.05},
   "status": "ok"
