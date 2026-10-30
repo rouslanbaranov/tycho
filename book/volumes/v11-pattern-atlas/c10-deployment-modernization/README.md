@@ -34,6 +34,9 @@ evidence_scope:
     - "src.istio-traffic-mirroring"
     - "src.k8s-deployments"
     - "src.argo-rollouts"
+    - "src.flagger-deployment-strategies"
+    - "src.sre-workbook"
+    - "src.aws-blue-green-deployments"
     - "src.fowler-feature-toggles"
     - "src.opengitops"
     - "src.ibm-immutable-infrastructure"
@@ -46,12 +49,12 @@ evidence_scope:
   notes: "12 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-29"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-29"
-source_inspection_date: "2026-10-29"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C10 — Deployment and legacy modernization
@@ -151,23 +154,37 @@ deployment-pattern; priority core.
 promotion?
 
 **Good-fit conditions.** A measurable signal exists; traffic can be split; abort/rollback
-is defined; the canary is representative; shared-state compatibility is explicit.
+is defined; the canary is representative; shared-state compatibility is explicit; any
+mirrored traffic is read-only or idempotent.
 
 **Hard contraindications.** Reject when traffic cannot be split, when metrics are too
-noisy, or when the canary shares hidden state with the baseline.
+noisy, when the canary shares hidden state with the baseline, or when mirrored writes
+cannot be made idempotent.
 
-**Competing alternative.** Blue/green or feature flag. Reverse the choice when canary
-analysis cost exceeds risk reduction.
+**Competing alternative.** Traffic mirroring, blue/green, feature flags or rolling
+deployment. Reverse the choice when canary analysis cost exceeds risk reduction, the
+cohort cannot be isolated, or writes make mirroring unsafe.
 
 **Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
-contamination are common; a binary rollback does not undo committed data.
+contamination are common; a binary rollback does not undo committed data. A mirrored
+write can execute twice, and a blue/green switch still shares the data boundary.
+Source checks in the owner section separate these failures from Tycho guidance.
 
 **Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
 
 **Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-argo-canary.2026-10-21: all fifteen served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
+read record `read.batch5-argo-canary.2026-10-21`: all fifteen served headings read;
+canary steps, analysis abort and the rolling mimic.
+[src.flagger-deployment-strategies](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.flagger-deployment-strategies.2026-10-30`: deployment strategies,
+canary, A/B, blue/green and mirroring; mirroring idempotency.
+[src.sre-workbook](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.sre-workbook-canarying.2026-10-30`: shared infrastructure,
+stateful teeing limits and feature flags.
+[src.aws-blue-green-deployments](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.aws-blue-green-data.2026-10-30`: shared data stores and
+backward-compatible schema changes. The sources are public documentation units,
+not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

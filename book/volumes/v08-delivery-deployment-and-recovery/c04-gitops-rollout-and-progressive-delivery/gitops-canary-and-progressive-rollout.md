@@ -47,7 +47,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-26"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -150,16 +150,49 @@ environment an owner and expiry, and treat a rehearsed reverse switch as accepta
 
 Route a small, identifiable cohort to the new version and check that it is representative;
 compare its SLIs with a baseline over a window long enough to expose rare errors, then expand or
-abort. The cohort, window and abort
-threshold are the release contract.
+abort. The cohort, window and abort threshold are the release contract.
 
-The exposure slice is not a data-compatibility boundary: it can write shared state that older
-instances cannot read, and rollback does not undo committed data. Watch metric leakage across
-cohorts, shared-state contamination and sample size. Small samples hide rare errors, and an
-unrepresentative cohort can pass while a rare failure hides.
+The exposure slice is not a data-compatibility boundary. That separation is Tycho guidance,
+not a source rule: Google SRE notes that "the canary population and the control may share
+backends, frontends, networks, data stores, and other infrastructure," and AWS requires both
+blue and green environments to use "up-to-date data" with schema updates that stay "backward
+compatible" for the old version. A canary that writes through a shared store can therefore
+leave state the baseline cannot read; that consequence is Tycho's inference, and rollback does
+not undo committed data. Watch metric leakage across cohorts, shared-state contamination and
+sample size. Small samples hide rare errors, and an unrepresentative cohort can pass while a
+rare failure hides.
 
-Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute
-twice. Blue/green moves the whole state boundary; a feature flag can scope exposure without a
-second copy. Use any only when the cohort cannot be isolated.
+Traffic mirroring is safe only when requests are idempotent or can be processed twice:
+Flagger says mirroring "should be used for requests that are idempotent or capable of being
+processed twice" and warns that a write may be "duplicated and handled by the primary and
+canary." Treat reads-only mirroring as the safe default; suppressing writes is Tycho
+guidance, not a Flagger requirement. AWS's blue/green account shares the data stores
+rather than moving them: both environments need "up-to-date data," and schema updates must
+be "backward compatible." Google SRE describes feature flags that "separate feature
+launches from binary releases," so activation can be scoped without a second environment;
+that no-second-copy comparison is Tycho guidance. A rolling deployment replaces instances
+in batches without a separate cohort, and Argo notes that a canary without steps "will
+mimic the rolling update behavior." Choosing among these is Tycho guidance; use an
+alternative when the canary cohort cannot be isolated.
+
 Canary is a fit when traffic can be split safely and the SLI comparison has enough signal and an
 owner.
+
+**Source boundary.**
+
+- Argo Rollouts `read.batch5-argo-canary.2026-10-21`, raw HTML
+  `925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7`:
+  canary steps, analysis abort and the rolling mimic.
+- Flagger `read.flagger-deployment-strategies.2026-10-30`, raw Markdown
+  `2d57c5d5bd950da50cf3fc73e1aff83f84981959e544cd8a40cc25c97d66b745`:
+  canary, A/B, blue/green and mirroring; mirroring idempotency.
+- Google SRE `read.sre-workbook-canarying.2026-10-30`, raw HTML
+  `2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f`:
+  shared infrastructure, stateful teeing limits, feature flags and blue/green
+  resource cost.
+- AWS `read.aws-blue-green-data.2026-10-30`, raw HTML
+  `07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442`:
+  shared data stores and backward-compatible schema changes.
+- Limits: none of these pages tests a canary against an incompatible schema;
+  the data-compatibility separation and the reads-only mirroring rule are Tycho
+  guidance built from the quoted passages.
