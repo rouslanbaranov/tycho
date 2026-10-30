@@ -39,7 +39,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-20"
 updated_at: "2026-10-30"
-source_inspection_date: "2026-10-30"
+source_inspection_date: null
 content_verified_at: null
 ---
 # Sagas, workflow recovery and compensation

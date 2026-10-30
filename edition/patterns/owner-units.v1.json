@@ -3505,7 +3505,7 @@
         "heading": "Process Manager-Routing Slip",
         "anchor": "process-manager-routing-slip",
         "level": 3,
-        "line": 177,
+        "line": 178,
         "unit_kind": "dedicated",
         "unit_terms": [
           "process manager",
@@ -3794,7 +3794,7 @@
         "heading": "Saga",
         "anchor": "saga",
         "level": 3,
-        "line": 192,
+        "line": 193,
         "unit_kind": "dedicated",
         "unit_terms": [
           "long-running business protocol",
@@ -3829,9 +3829,39 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A lost acknowledgment is an unknown outcome, not a failure, and a failed compensation remains a repair item.",
-          "reason": "Source covers local transaction compensation, not unknown acknowledgment or failed compensation repair."
+          "state": "supported",
+          "quote": "Compensating transactions might not always succeed, which can leave the system in an inconsistent state.",
+          "reason": "Binds the Azure Saga page's limitation that compensating transactions can fail and leave an inconsistent state, plus its transient-failure/idempotence and monitoring requirements. Lost-acknowledgment handling and repair-state wording remain Tycho guidance, not source claims.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+            "section": "Problems and considerations",
+            "quote": "Compensating transactions might not always succeed, which can leave the system in an inconsistent state.",
+            "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+              "section": "Solution",
+              "quote": "If a step fails, a series of compensating transactions undoes the changes that the completed steps made.",
+              "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "The system must handle transient failures effectively and ensure idempotence, when repeating the same operation doesn't alter the outcome.",
+              "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Monitoring and tracking the workflow of a saga are essential tasks to maintain operational oversight.",
+              "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -3858,12 +3888,19 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+            "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated saga section; choreography and orchestration appear only as one-line coordination styles."
+      "notes": "Failure/recovery bound 2026-10-30 to the Azure Saga page's compensating-transaction limitation, transient-failure/idempotence requirement and monitoring requirement. Lost-acknowledgment handling and repair-state wording remain Tycho guidance. All four dimensions supported; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.saga-choreography",
@@ -3875,7 +3912,7 @@
         "heading": "Saga Choreography",
         "anchor": "saga-choreography",
         "level": 3,
-        "line": 209,
+        "line": 227,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Participants react",
@@ -3949,7 +3986,7 @@
         "heading": "Saga Orchestration",
         "anchor": "saga-orchestration",
         "level": 3,
-        "line": 226,
+        "line": 244,
         "unit_kind": "dedicated",
         "unit_terms": [
           "orchestrator",
@@ -4030,7 +4067,7 @@
         "heading": "Compensating Transaction",
         "anchor": "compensating-transaction",
         "level": 3,
-        "line": 241,
+        "line": 259,
         "unit_kind": "dedicated",
         "unit_terms": [
           "new business action",
@@ -11363,7 +11400,7 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 62,
-    "failure_recovery_supported": 51,
+    "failure_recovery_supported": 52,
     "alternative_supported": 63,
     "technical_partial_bounded": 23,
     "technical_partial": 88,

@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 95 |
+| Reviewed by independent agent | 90 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 40, "reviewed-by-independent-agent": 95}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 45, "reviewed-by-independent-agent": 90}.
 
 ## Review procedure
 
@@ -147,7 +147,7 @@ blank verdict template in the machine-readable file.
 
 - **Compensating Transaction**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Competing Consumers**
   Current: pass; historical: None; re-review: pass; report: pass.
@@ -419,7 +419,7 @@ blank verdict template in the machine-readable file.
 
 - **Process Manager / Routing Slip**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Publish/Subscribe**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -479,15 +479,15 @@ blank verdict template in the machine-readable file.
 
 - **Saga**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Saga Choreography**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Saga Orchestration**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Scatter-Gather**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
