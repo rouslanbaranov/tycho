@@ -1,4 +1,4 @@
-# Codex prompt — qrels v4.1 expansion
+# Codex prompt — qrels v4.1 batch
 
 Work only in the isolated clone:
 
@@ -6,44 +6,48 @@ Work only in the isolated clone:
 cd ~/Projects/tycho-index-and-search
 ```
 
-Read `authoring/QRELS-V4.1-EXPANSION-HANDOFF-2026-10-30.md` and the frozen v4
-qrels.
+Read:
 
-Do not read current search rankings, v3 labels or author conclusions.
+- `authoring/QRELS-V4.1-EXPANSION-HANDOFF-2026-10-30.md`
+- `evaluation/qrels-v4-1/BATCHES.md`
+- frozen v4 page/section qrels.
 
-## Task
+Do not read current search rankings or v3 labels.
 
-Create v4.1 page/section qrels for all 150 v4 queries.
+## This run: exactly one batch
 
-For each query:
+Operator supplies:
 
-- keep every existing candidate and grade exactly;
-- add 5–10 new candidates, ending with 10–15;
+```text
+BATCH=<B01|...|B15>
+```
+
+Each batch is 10 queries. For every query:
+
+- keep every existing v4 candidate and grade exactly;
+- add 5–10 candidates, ending with 10–15;
 - add at least 2 new grade-0 candidates;
 - add at least one candidate outside the original pool;
-- use structural neighbors: same/adjacent chapter, adjacent atlas card, linked
-  V12 page; never current search results;
+- use structural neighbors (same/adjacent chapter, adjacent atlas card, linked V12 page);
+- never use current search rankings;
 - label new pages/sections 0/1/2;
 - keep page/section consistency and at least one direct grade 2.
 
-Do not edit book, atlas, edition, generated indexes or production config.
-Do not modify v4.
-
 Outputs:
 
-- `evaluation/corpus-qrels.v4.1.json`
-- `evaluation/section-qrels.v4.1.json`
-- `evaluation/qrels-v4-1/REPORT.md`
-- `evaluation/qrels-v4-1/validation.txt`
+- `evaluation/qrels-v4-1/batches/<BATCH>.page.json`
+- `evaluation/qrels-v4-1/batches/<BATCH>.section.json`
+- append to `evaluation/qrels-v4-1/BATCH-REPORT.md`
+
+Do not merge; do not edit v4/book/atlas/generated indexes.
 
 Validate:
 
 ```sh
-python3 scripts/validate_qrels_v41.py \
-  --page evaluation/corpus-qrels.v4.1.json \
-  --section evaluation/section-qrels.v4.1.json \
-  --baseline-page evaluation/corpus-qrels.v4.json \
-  --baseline-section evaluation/section-qrels.v4.json
+python3 scripts/validate_qrels_v41_batch.py \
+  --page evaluation/qrels-v4-1/batches/<BATCH>.page.json \
+  --section evaluation/qrels-v4-1/batches/<BATCH>.section.json \
+  --batch <BATCH>
 ```
 
 State AI-adjudicated only; not human review, CI, owner acceptance or sufficient
