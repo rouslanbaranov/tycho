@@ -451,7 +451,7 @@
         "invariant": {
           "state": "supported",
           "quote": "No domain module may import a framework, transport or storage dependency, and an automated build check must enforce the direction rather than a diagram.",
-          "reason": "Requires no domain import of framework, transport or storage and an automated direction check.",
+          "reason": "Source states that inner circles must not know outer circles; the automated build check is Tycho guidance, not a source claim.",
           "binding": {
             "source_id": "src.clean-architecture",
             "ledger_record": "read.clean-architecture.2026-10-21",
@@ -463,7 +463,7 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "Convenience imports erode the boundary until the domain must change for a technology reason; the remedy is an enforceable dependency test and a deliberate adapter, not another layer name.",
-          "reason": "Names convenience imports as erosion and requires a dependency test and adapter.",
+          "reason": "Source supports keeping outer data structures out of inner circles; the dependency-test and adapter remedy is Tycho guidance, not a source claim.",
           "binding": {
             "source_id": "src.clean-architecture",
             "ledger_record": "read.clean-architecture.2026-10-21",
@@ -474,13 +474,13 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "The competing alternative is presentation-domain-data layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends on its data source.",
-          "reason": "Names top-to-bottom layer dependencies and identifies presentation-domain-data layering as the competing alternative; hexagonal is a variant.",
+          "quote": "A common variation is to arrange things so that the domain does not depend on its data sources by introducing a mapper between the domain and data source layers. This approach is often referred to as a Hexagonal Architecture.",
+          "reason": "Quotes the mapper variation between the domain and data source layers and its Hexagonal Architecture label; the top-to-bottom framing is in the same source section.",
           "binding": {
             "source_id": "src.fowler-layering",
             "ledger_record": "read.fowler-layering.2026-10-21",
             "section": "Presentation Domain Data Layering",
-            "quote": "The dependencies generally run from top to bottom through the layer stack: presentation depends on the domain, which then depends on the data source.",
+            "quote": "The dependencies generally run from top to bottom through the layer stack: presentation depends on the domain, which then depends on the data source. A common variation is to arrange things so that the domain does not depend on its data sources by introducing a mapper between the domain and data source layers. This approach is often referred to as a Hexagonal Architecture.",
             "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444"
           }
         }
@@ -488,7 +488,7 @@
       "decision_evidence": {
         "atlas_section": "clean-onion-architecture",
         "question": "Should dependencies point inward toward domain policies, with frameworks and delivery mechanisms at the outside?",
-        "competing_alternative": "Presentation-domain-data layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends on its data source. Keeping the domain independent of its data source is arranged by introducing a mapper between the domain and data layers, the variation the source calls Hexagonal Architecture. Hexagonal ports and adapters is a variant of the same inward rule, not a competing alternative. Reverse the clean/onion choice when that independence is not the protected boundary, or when the mapper adds no tested change benefit. That reversal is Tycho guidance, not a source claim.",
+        "competing_alternative": "Presentation-domain-data layering: dependencies run top to bottom, presentation depends on the domain, and the domain depends on its data source. Keeping the domain independent of its data source is arranged by introducing a mapper between the domain and data layers, the variation Fowler calls Hexagonal Architecture. Fowler states: “A common variation is to arrange things so that the domain does not depend on its data sources by introducing a mapper between the domain and data source layers. This approach is often referred to as a Hexagonal Architecture.” Hexagonal ports and adapters is a variant of the same inward rule, not a competing alternative. Reverse the clean/onion choice when that independence is not the protected boundary, or when the mapper adds no tested change benefit. That reversal is Tycho guidance, not a source claim.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -497,12 +497,19 @@
         "source_id": "src.clean-architecture",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.fowler-layering",
+            "ledger_record": "read.fowler-layering.2026-10-21",
+            "revision": "bb249131feb914aa939976528d7d28ce4063e6413fc1038826d9e80bf12e0444"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Alternative binding extended 2026-10-30 with the Fowler mapper/Hexagonal sentence. Invariant and failure/recovery reasons state that the automated build check and the dependency-test/adapter remedy are Tycho guidance. Coverage remains partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.domain-driven-design-bounded-context",
