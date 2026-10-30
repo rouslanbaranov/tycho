@@ -114,3 +114,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 Structured Logging | pass | `2026-10-29-structured-logging-deepseek.md` | `38ccf812536a4a60b8bad1e435df63103173457bf65c750f01228264f686f269` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Strangler Fig | pass | `2026-10-29-strangler-deepseek.md` | `dd4aaedfbc19dabd861e4a0699d56a07ec979ac5a90fe90af62c1571d1d2fcc3` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Request-Reply delta4 | pass | `2026-10-29-request-reply-delta4-deepseek.md` | `10552383b7a3a0c177f8003f009b63cd0c6fdaee21dd1958bb5c79e6c49b0803` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Clean/Onion | pass | `2026-10-30-clean-onion-deepseek.md` | `41e6b7ec247363fb1805c637a650203c71978f31018e44d1b8005b3e8850786c` |

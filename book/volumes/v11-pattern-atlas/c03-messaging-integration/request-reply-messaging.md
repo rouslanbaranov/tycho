@@ -83,9 +83,10 @@ contraindication.
 
 **Competing alternative.** The bound Messaging page names the RPI pattern as an alternative and
 records messaging's loose runtime coupling and buffered availability against the added broker
-complexity and more complex request/reply communication. Tycho synthesis: prefer direct RPI only when both parties can be available for the request, the
-call fits the request budget, no broker is justified, and blocking is acceptable; prefer messaging request-reply when loose runtime coupling or buffered availability
-matters.
+complexity and more complex request/reply communication. Tycho synthesis: prefer direct RPI
+only when both parties can be available for the request, the call fits the request budget,
+no broker is justified, and blocking is acceptable; prefer messaging request-reply when
+loose runtime coupling or buffered availability matters.
 
 **Failure and recovery.** A crashed requestor can restart the reply thread; the callback must
 re-establish the caller's context. Tycho guidance, not a served source claim: time out unresolved
