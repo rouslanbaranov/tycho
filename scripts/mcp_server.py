@@ -296,10 +296,10 @@ def search_schema():
             },
             "section_rerank": {
                 "type": "boolean",
-                "default": True,
+                "default": False,
                 "description": (
-                    "Section-aware reranking of the top pages; production "
-                    "default is margin-gated. Set false for pure BM25."
+                    "Opt-in section-aware reranking; BM25 remains default. "
+                    "Pair with section_rerank_margin for margin gating."
                 ),
             },
             "section_rerank_margin": {
@@ -1334,7 +1334,7 @@ class TychoMcpServer:
             raise ProtocolFailure(-32602, "pattern_ids must be string IDs")
         include_artifacts = arg_bool(args, "include_artifacts", False)
         all_sections = arg_bool(args, "all_sections", False)
-        section_rerank = arg_bool(args, "section_rerank", True)
+        section_rerank = arg_bool(args, "section_rerank", False)
         section_rerank_margin = args.get("section_rerank_margin", 0.15)
         if section_rerank_margin is not None and (
                 not isinstance(section_rerank_margin, (int, float))

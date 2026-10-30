@@ -33,8 +33,8 @@ remains `human_review: not-claimed`.
 
 ## Decision
 
-- MCP default is margin-gated section rerank at .15; core API/CLI remain
-  explicit BM25.
+- MCP default was margin-gated at .15; qrels v4 reversed it to BM25 on
+  2026-10-30. Margin gate remains opt-in.
 - Best mode remains optional; its v3 gain is not significant and is
   prior-accepted-page driven.
 - Global section rerank remains optional; phase3 page top-1 regresses .895 ->

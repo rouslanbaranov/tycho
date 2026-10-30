@@ -11,17 +11,18 @@ explicit. See [MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.m
 
 - Owner accepted AI labels for diagnostics in
   [OWNER-ACCEPTANCE-AI-LABELS-2026-10-29.md](OWNER-ACCEPTANCE-AI-LABELS-2026-10-29.md).
-- This is not human review. The margin gate removes the phase3 page regression
-  on the production path; global rerank remains unsafe.
+- This is not human review. Qrels v4 reversed the margin-default decision.
 
 ## Defaults
 
-- MCP default: margin-gated section rerank, `section_rerank=true` and
-  `section_rerank_margin=0.15`.
+- MCP default is BM25 (`section_rerank=false`).
+- Margin-gated section rerank is opt-in:
+  `section_rerank=true, section_rerank_margin=0.15`.
 - Core API/CLI default remains explicit BM25.
 - Best mode is optional and requires semantic artifacts/model cache.
 - Global section rerank remains optional (`section_rerank_margin=null`).
 - V12 explicit/top-page/query guard prevents known section-rerank regression.
+- See [MCP-DEFAULT-REVERT-2026-10-30.md](MCP-DEFAULT-REVERT-2026-10-30.md).
 
 ## Evidence
 

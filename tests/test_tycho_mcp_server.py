@@ -380,9 +380,9 @@ class McpServerTests(unittest.TestCase):
                 "kind": "page",
             })
 
-    def test_section_rerank_is_default_and_gated(self):
+    def test_section_rerank_is_opt_in_and_gated(self):
         schema = mcp_server.search_schema()
-        self.assertTrue(schema["properties"]["section_rerank"]["default"])
+        self.assertFalse(schema["properties"]["section_rerank"]["default"])
         self.assertEqual(
             schema["properties"]["section_rerank_margin"]["default"],
             0.15)
@@ -396,8 +396,8 @@ class McpServerTests(unittest.TestCase):
         default = self.call(self.server(), "tycho_search", {
             "query": "nested text",
         })["structuredContent"]
-        self.assertIn(default["result_scope"],
-                      ("section-rerank", "best-section-per-document"))
+        self.assertEqual(default["result_scope"],
+                         "best-section-per-document")
         gated = self.call(self.server(), "tycho_search", {
             "query": "nested text", "section_rerank": True,
             "section_rerank_margin": 0.0,
