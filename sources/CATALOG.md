@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 301.
+Inventory date: 2026-10-30. Entries: 303.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -249,6 +249,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.minimumcd-parallel-run / supporting | [Parallel Run](https://beyond.minimumcd.org/docs/foundations/evolutionary-coding/parallel-run/) — MinimumCD Practice Guide | Parallel Run mechanism, comparison workflow, pitfalls and side-effect boundary. | admitted-for-research / public-web-or-author-download |
 | src.flagger-deployment-strategies / core | [Deployment Strategies](https://docs.flagger.app/usage/deployment-strategies) — Flux project | Canary, A/B, blue/green and traffic-mirroring strategies, including idempotency conditions for mirrored requests. | admitted-for-research / public-web-or-author-download |
 | src.aws-blue-green-deployments / core | [Blue/Green Deployments on AWS](https://docs.aws.amazon.com/whitepapers/latest/blue-green-deployments/welcome.html) — Amazon Web Services | Blue/green environment boundary and data-tier compatibility, including shared data stores and schema-change order. | admitted-for-research / public-web-or-author-download |
+| src.aws-immutable-infrastructure / core | [REL08-BP04 Deploy using immutable infrastructure](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_tracking_change_management_immutable_infrastructure.html) — Amazon Web Services | Immutable deployment reproducibility, drift detection and rollback for the immutable-infrastructure invariant and failure/recovery dimensions. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 
@@ -406,6 +407,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.fowler-feature-toggles / core | [Feature Toggles (aka Feature Flags)](https://martinfowler.com/articles/feature-toggles.html) — Martin Fowler | Primary article for toggle categories, lifecycle and release decoupling. | admitted-for-research / public-web-or-author-download |
 | src.fowler-branch / core | [Branch By Abstraction](https://martinfowler.com/bliki/BranchByAbstraction.html) — Martin Fowler | Primary article for mainline incremental replacement through abstraction seams. | admitted-for-research / public-web-or-author-download |
 | src.ibm-immutable-infrastructure / supporting | [What is Immutable Infrastructure?](https://www.ibm.com/think/topics/immutable-infrastructure) — IBM | Public overview of immutable infrastructure replacement and state boundaries. | admitted-for-research / public-web-or-author-download |
+| src.hashicorp-immutable-vms / core | [Create immutable virtual machines](https://developer.hashicorp.com/well-architected-framework/define-and-automate-processes/define/immutable-infrastructure/virtual-machines) — HashiCorp | Immutable VM rebuild, rollback and image metadata for the immutable-infrastructure failure/recovery dimension. | admitted-for-research / public-web-or-author-download |
 
 ## Scalability
 

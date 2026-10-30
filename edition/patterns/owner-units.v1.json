@@ -11059,14 +11059,81 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Every running instance must be reproducible from a recorded artifact digest, and drift must be detected rather than tolerated.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "AWS describes version-controlled replacement and reproducibility and states that unmanaged drift should be detected and remediated; HashiCorp deploys identical machine images and describes recording build metadata; IBM documents changes as tested and reproducible. The digest is Tycho's recording rule, labelled in the page.",
+          "binding": {
+            "source_id": "src.aws-immutable-infrastructure",
+            "ledger_record": "read.aws-immutable-infrastructure.2026-10-30",
+            "section": "REL08-BP04 Deploy using immutable infrastructure",
+            "quote": "Follow an immutable infrastructure deployment strategy to increase the reliability, consistency, and reproducibility in your workload deployments.",
+            "revision": "5023f6f37c78581aeb9040d28ae31774f7e729e2e1f2643e47e56aad5e77e77b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-immutable-infrastructure",
+              "ledger_record": "read.aws-immutable-infrastructure.2026-10-30",
+              "section": "Drift detection",
+              "quote": "Any type of unmanaged configuration change goes against the notion of immutable infrastructure, and should be detected and remediated in order to have a successful implementation of immutable infrastructure.",
+              "revision": "5023f6f37c78581aeb9040d28ae31774f7e729e2e1f2643e47e56aad5e77e77b"
+            },
+            {
+              "source_id": "src.hashicorp-immutable-vms",
+              "ledger_record": "read.hashicorp-immutable-vms.2026-10-30",
+              "section": "Why use immutable virtual machines",
+              "quote": "Immutable virtual machines prevent drift by deploying identical machine images, ensuring every VM across all environments matches your defined configuration exactly.",
+              "revision": "d5c0484691a4f9b512a72bbdf7c171a937eb71ca1753e823336be1520a3f53d2"
+            },
+            {
+              "source_id": "src.ibm-immutable-infrastructure",
+              "ledger_record": "read.ibm-immutable.2026-10-30",
+              "section": "Provisioning with infrastructure as code",
+              "quote": "All infrastructure changes are then documented in version control systems like Git, ensuring they’re tested and reproducible.",
+              "revision": "22bb64044ae882898ff1ceda85658cf2c803a93cbc2cd2b843e36652ac590a14"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change; record digests and test the rebuild path.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "HashiCorp describes rebuilding the previous image, redeploying it and recording build metadata; IBM redeploys the previous image and describes tested, reproducible changes; AWS keeps the previous working version unchanged for rollback. Comparing rebuilt and deployed digests is Tycho's failure test, labelled in the page.",
+          "binding": {
+            "source_id": "src.hashicorp-immutable-vms",
+            "ledger_record": "read.hashicorp-immutable-vms.2026-10-30",
+            "section": "Immutable VM workflow",
+            "quote": "Rollback if needed: If the new version causes issues, run packer build with your previous Packer template to recreate the old image, then run terraform apply.",
+            "revision": "d5c0484691a4f9b512a72bbdf7c171a937eb71ca1753e823336be1520a3f53d2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.hashicorp-immutable-vms",
+              "ledger_record": "read.hashicorp-immutable-vms.2026-10-30",
+              "section": "Immutable VM workflow",
+              "quote": "Track image metadata: Use HCP Packer to store metadata about your machine images, tracking which Git commit built each image, which environments are running each version, and the full ancestry of your image builds.",
+              "revision": "d5c0484691a4f9b512a72bbdf7c171a937eb71ca1753e823336be1520a3f53d2"
+            },
+            {
+              "source_id": "src.ibm-immutable-infrastructure",
+              "ledger_record": "read.ibm-immutable.2026-10-30",
+              "section": "Recovery",
+              "quote": "Each update creates a new instance, maintaining a clean image for rollback. The same automation tools that provision and deploy can restore previous versions in minutes. Teams redeploy the previous image rather than debugging and troubleshooting modified servers—greatly reducing the detective work traditionally required when configuration management changes fail.",
+              "revision": "22bb64044ae882898ff1ceda85658cf2c803a93cbc2cd2b843e36652ac590a14"
+            },
+            {
+              "source_id": "src.ibm-immutable-infrastructure",
+              "ledger_record": "read.ibm-immutable.2026-10-30",
+              "section": "Provisioning with infrastructure as code",
+              "quote": "All infrastructure changes are then documented in version control systems like Git, ensuring they’re tested and reproducible.",
+              "revision": "22bb64044ae882898ff1ceda85658cf2c803a93cbc2cd2b843e36652ac590a14"
+            },
+            {
+              "source_id": "src.aws-immutable-infrastructure",
+              "ledger_record": "read.aws-immutable-infrastructure.2026-10-30",
+              "section": "REL08-BP04 Deploy using immutable infrastructure",
+              "quote": "Safer deployments with fast rollback and recovery processes: Deployments are safer because the previous working version is not changed. You can roll back to it if errors are detected.",
+              "revision": "5023f6f37c78581aeb9040d28ae31774f7e729e2e1f2643e47e56aad5e77e77b"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -11093,12 +11160,29 @@
         "source_id": "src.ibm-immutable-infrastructure",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.ibm-immutable-infrastructure",
+            "ledger_record": "read.ibm-immutable.2026-10-30",
+            "revision": "22bb64044ae882898ff1ceda85658cf2c803a93cbc2cd2b843e36652ac590a14"
+          },
+          {
+            "source_id": "src.aws-immutable-infrastructure",
+            "ledger_record": "read.aws-immutable-infrastructure.2026-10-30",
+            "revision": "5023f6f37c78581aeb9040d28ae31774f7e729e2e1f2643e47e56aad5e77e77b"
+          },
+          {
+            "source_id": "src.hashicorp-immutable-vms",
+            "ledger_record": "read.hashicorp-immutable-vms.2026-10-30",
+            "revision": "d5c0484691a4f9b512a72bbdf7c171a937eb71ca1753e823336be1520a3f53d2"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner section moved verbatim to a dedicated page on 2026-10-29 to free the candidate from a promotion-bound shared page. Coverage remains partial; no promotion or acceptance is claimed."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to AWS REL08-BP04, HashiCorp immutable VMs and IBM's full page. Digest recording and rebuild equality remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.strangler-fig",
@@ -13206,11 +13290,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 111,
-    "invariant_supported": 73,
-    "failure_recovery_supported": 67,
+    "invariant_supported": 74,
+    "failure_recovery_supported": 68,
     "alternative_supported": 73,
-    "technical_partial_bounded": 16,
-    "technical_partial": 75,
+    "technical_partial_bounded": 17,
+    "technical_partial": 74,
     "technical_name_only": 0,
     "technical_sufficient": 54,
     "decision_partial_bounded": 91,

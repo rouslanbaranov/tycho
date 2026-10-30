@@ -218,44 +218,7 @@ Provenance.
 
 ### Immutable Infrastructure
 
-**Identity.** Immutable Infrastructure; family Deployment and legacy modernization; kind
-delivery-pattern; priority core.
-
-**Decision question.** Should infrastructure be replaced rather than mutated in place?
-
-**Good-fit conditions.** Images/artifacts are versioned and recorded; drift is
-detected and remediated; state is externalized; replacement, rebuild and
-rollback are automated.
-
-**Hard contraindications.** Reject when in-place state cannot be externalized,
-when replacement is too slow, when drift is invisible, or when artifact
-identity and the rebuild path cannot be tested.
-
-**Competing alternative.** Mutable servers with configuration management. Reverse the
-choice when replacement cost exceeds drift/recovery benefit.
-
-**Failure and recovery.** A rebuilt image can differ from the deployed artifact;
-record digests, test the rebuild path and roll back to the previous artifact.
-AWS treats unmanaged drift as something to detect and remediate; HashiCorp
-describes rebuilding and redeploying the previous image and recording build
-metadata; IBM documents tested, reproducible changes and rollback. Comparing
-rebuilt and deployed digests remains Tycho guidance.
-
-**Technical owner.** [Immutable Infrastructure](../../v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md#immutable-infrastructure) — immutable replacement and drift are bounded, not a cloud product.
-
-**Sources.**
-[src.ibm-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
-read records read.batch5-ibm-immutable.2026-10-21 and
-read.ibm-immutable.2026-10-30;
-[src.aws-immutable-infrastructure](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.aws-immutable-infrastructure.2026-10-30;
-[src.hashicorp-immutable-vms](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.hashicorp-immutable-vms.2026-10-30. The sources are public
-documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** GitOps; Blue/Green; Rolling Deployment; Infrastructure as Code.
+See the [dedicated Immutable Infrastructure card](immutable-infrastructure.md).
 
 ### Strangler Fig
 
