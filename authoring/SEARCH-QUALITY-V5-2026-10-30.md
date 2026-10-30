@@ -33,6 +33,20 @@ Unconditional rerank and deeper page-to-section reranking were worse. No default
 Current 5/2/0.5 on v3: page .920/.984/.989; section .846/.952/.968.
 The newer-qrels gain is real but v3 regresses; no default change.
 
+10/5/1 is a smaller compromise:
+
+- v5 page .727/.913/.973; section .573/.827/.893
+- v4.1 page .700/.907/.973; section .567/.807/.880
+- v4 page .620/.893/.953; section .520/.753/.827
+- v3 page .920/.984/.989; section .814/.936/.952
+
+v3 page is unchanged, but v3 section top-1 is still 3.2 points lower. Not adopted.
+
+### 5-fold v5 stability
+
+3/2/1 wins page top-1 in 4 of 5 folds; fold 2 regresses. The gain is
+v5-internal but not unanimous. v3 remains the transfer guard.
+
 ### RRF fusion
 
 default + 3/2/1:
