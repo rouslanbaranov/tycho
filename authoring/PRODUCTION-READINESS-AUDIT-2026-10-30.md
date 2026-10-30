@@ -57,5 +57,5 @@ Layer-scoped:
 
 ## Verdict
 
-Not complete. Search defaults and latency are production-oriented, but artifact
-labels, margin opt-in consistency and external validation remain open.
+Not complete. See [RELEASE-CANDIDATE-2026-10-30.md](RELEASE-CANDIDATE-2026-10-30.md)
+for the consolidated evidence and blockers.
