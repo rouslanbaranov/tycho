@@ -32,17 +32,18 @@ evidence_scope:
     - "src.enterprise-integration"
     - "src.camel"
     - "src.aws-scatter-gather"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
   notes: "All 20 cards cite read units; owner links are bounded sections, not dedicated EIP pages."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-29"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C03 — Messaging and event-driven integration
@@ -453,16 +454,31 @@ is unstable, or when deduplication state cannot be retained.
 **Competing alternative.** Natural idempotency or a transactional inbox. Reverse the
 choice when identity retention and lookup cost exceed duplicate risk.
 
-**Failure and recovery.** Identity collisions and retention expiry create duplicate
-effects; verify dedup authority in the owner section.
+**Failure and recovery.** A crash after a separate external effect but before its
+marker can duplicate the effect; a marker written before the effect can leave an
+in-progress record that needs reconciliation. The Microsoft Learn Idempotent
+Consumer page supplies the check-then-process window, the in-progress/completed
+marker pair and the reconcile-stale-records rule. Cleanup ownership, post-expiry
+routing and the order/version policy beyond the page's caveat are Tycho guidance.
 
 **Technical owner.** [Idempotent Receiver](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#idempotent-receiver) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-idempotent.2026-10-21: served problem/solution; publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-idempotent-consumer.2026-10-30: sections "Commit the
+processed key and the side effects atomically", "Guard against concurrent
+duplicates", "Choose a stable deduplication key", "Handle side effects that can't
+join the transaction" and "Problems and considerations". Exact quotes: "Avoid this
+failure window by writing the deduplication marker and the business side effects in
+the same transaction."; "Use a uniqueness constraint on the deduplication key such
+that two transactions can attempt to insert a key, but only one can succeed.";
+"Record the key with an in-progress state, and then perform the external action.";
+"The consumer should reconcile stale records or route unresolved cases for
+intervention before acknowledging redelivery." Revision
+`f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34`. The source is
+public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
