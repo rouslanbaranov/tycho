@@ -27,17 +27,19 @@ evidence_scope:
   source_ids:
     - "src.nats"
     - "src.rabbitmq"
+    - "src.aws-sqs-dlq"
+    - "src.azure-service-bus-dlq"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.98616bdc3c514ea997b2cfe30ad7c070; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-30"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-29"
-source_inspection_date: null
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # Workflow state and messaging failure gates
@@ -199,6 +201,22 @@ A quarantine queue receives a message after its retry or age policy is exhausted
 payload, headers and failure context. The DLQ is a policy state, not a second work queue
 that silently retries forever.
 
+**Invariant.** A message must leave the retry path when its retry budget is exhausted or its
+failure is permanent, and must enter a declared quarantine with enough context to diagnose it.
+The Enterprise Integration Patterns Dead Letter Channel page states: "When a messaging system
+determines that it cannot or should not deliver a message, it may elect to move the message
+to a Dead Letter Channel." Amazon SQS makes the retry bound explicit: "The maxReceiveCount is
+the number of times a consumer can receive a message from a source queue before it is moved
+to a dead-letter queue." The Azure Service Bus dead-letter queue page states the purpose and
+permanent-failure cases: "The purpose of the dead-letter queue is to hold messages that can't
+be delivered to any receiver, or messages that couldn't be processed." and "When the delivery
+count exceeds the limit, the message is moved to the DLQ." Its application-level section adds:
+"Unacceptable messages can include messages that can't be properly processed because of any
+sort of system issue, messages that hold malformed payloads, or messages that fail
+authentication when some message-level security scheme is used." These sentences support
+retry exhaustion and permanent failure as quarantine triggers; classifying each outcome as
+transient, permanent or unknown remains Tycho guidance.
+
 Retrying cannot repair an invalid schema or a permanently rejected target. Separate
 transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence
 without leaking payload. The DLQ needs an owner, an alert threshold, a retention horizon, a
@@ -206,8 +224,30 @@ capacity limit, an access policy and a cleanup owner. A replay procedure preserv
 original effect identity, reauthorizes the action and checks whether the effect was already
 committed before republishing; a blind replay is a duplicate-effect risk.
 
-When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with
-audit, drop with a record, or a repair table/outbox. A
-DLQ is a fit when the failure is inspectable and a human or repair job can decide the terminal
-outcome.
+**Alternative.** Bounded retry with an audit record, dropping with a recorded disposition, or
+parking the work in a repair table/outbox may be preferable when failure is deterministic or
+the broker cannot retain evidence safely. The AWS page supports a bounded retry setting:
+"To ensure that your system is resilient against errors, set the maxReceiveCount high enough
+to allow for sufficient retries." The Azure page supports a diagnostic record: "The following
+two properties (dead-letter reason and dead-letter description) are added to dead-lettered
+messages." and a repair route: "An application might let a user correct issues and resubmit
+the message." Those sentences describe retry limits, diagnostics and resubmission inside the
+DLQ mechanism. They do not compare a DLQ with bounded retry without quarantine, drop with a
+record, or a repair table/outbox. Those alternatives and the condition for reversing the DLQ
+choice are Tycho guidance, not source claims. A DLQ is a fit when the failure is inspectable
+and a human or repair job can decide the terminal outcome.
+
+**Source boundary.** EIP page record `read.batch2-dlq.2026-10-21`, revision
+`714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278`; publisher-abridged,
+and requeue, ownership, retention and alerting are not stated. AWS page read 2026-10-30;
+canonical text SHA-256
+`c6142288904155bbd99a057145c632195aa76ab86aa939a38a9f0825f3c7e74b`; sections "Using
+dead-letter queues in Amazon SQS", "Using policies for dead-letter queues" and
+"Understanding message retention periods for dead-letter queues". Azure page read 2026-10-30;
+canonical text SHA-256
+`200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600`; document version
+`19d4a83e-55c8-8b9c-38a0-0e9a26ba2cdb`, ms.date 2026-07-16 and updated_at 2026-07-22;
+sections "The dead-letter queue", "Moving messages to the DLQ", "Maximum delivery count"
+and "Application-level dead-lettering". All three are public documentation, not benchmarks.
+No replay, retention, redrive or repair behavior was executed.
 

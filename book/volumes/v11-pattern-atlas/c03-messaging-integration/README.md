@@ -33,6 +33,8 @@ evidence_scope:
     - "src.camel"
     - "src.aws-scatter-gather"
     - "src.microsoft-cloud-patterns"
+    - "src.aws-sqs-dlq"
+    - "src.azure-service-bus-dlq"
   claim_ids: []
   status: "source-linked"
   notes: "All 20 cards cite read units; owner links are bounded sections, not dedicated EIP pages."
@@ -386,19 +388,44 @@ policy; retention and access are bounded; alerting is defined.
 **Hard contraindications.** Reject when failures are transient and immediate retry is
 safe, when no one owns the DLQ, or when dead-lettering hides a programming error.
 
-**Competing alternative.** Bounded retry with backoff, then alert and stop. Reverse the
+**Competing alternative.** Bounded retry with backoff and an audit record, then alert and
+stop; drop with a recorded disposition or park the work in a repair table/outbox when failure
+is deterministic. The public DLQ pages describe retry limits and diagnostic fields, not these
+comparisons; the alternatives and the reversal condition are Tycho guidance. Reverse the
 choice when replay is frequent and needs automated policy.
 
-**Failure and recovery.** DLQ growth and silent abandonment are common; verify poison-work
-policy in the owner section.
+**Failure and recovery.** DLQ growth and silent abandonment are common; the Azure page states
+there is no automatic cleanup and messages remain until retrieved, while AWS documents
+retention and redrive. Verify poison-work policy in the owner section.
 
 **Technical owner.** [Dead Letter Channel / DLQ](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#dead-letter-channel-dlq) — poison-work policy is bounded, not a full DLQ operations manual.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-dlq.2026-10-21: served problem/solution; publisher-abridged. The
-source is a public pattern/documentation
-unit, not a benchmark.
+source is a public pattern/documentation unit, not a benchmark.
+[src.aws-sqs-dlq](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.aws-sqs-dlq.2026-10-30: sections "Using dead-letter queues in Amazon SQS",
+"Using policies for dead-letter queues" and "Understanding message retention periods for
+dead-letter queues". Exact quotes: "The maxReceiveCount is the number of times a consumer can
+receive a message from a source queue before it is moved to a dead-letter queue."; "To ensure
+that your system is resilient against errors, set the maxReceiveCount high enough to allow for
+sufficient retries."; "Move messages out of the dead-letter queue using dead-letter queue
+redrive."; "Thus, it is a best practice to always set the retention period of a dead-letter
+queue to be longer than the retention period of the original queue." Revision
+`c6142288904155bbd99a057145c632195aa76ab86aa939a38a9f0825f3c7e74b`. Public AWS
+documentation, not a benchmark.
+[src.azure-service-bus-dlq](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.azure-service-bus-dlq.2026-10-30: sections "The dead-letter queue", "Moving
+messages to the DLQ", "Maximum delivery count" and "Application-level dead-lettering". Exact
+quotes: "The purpose of the dead-letter queue is to hold messages that
+can't be delivered to any receiver, or messages that couldn't be processed."; "When the
+delivery count exceeds the limit, the message is moved to the DLQ."; "The following two
+properties (dead-letter reason and dead-letter description) are added to dead-lettered
+messages."; "There's no automatic cleanup of the DLQ. Messages remain in the DLQ until you
+explicitly retrieve them from the DLQ and complete the dead-letter message." Revision
+`200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600`. Public Microsoft Learn
+documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 
