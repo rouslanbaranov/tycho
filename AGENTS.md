@@ -237,3 +237,11 @@ tool invocation that retrieves sources, or change.
     in a format-rebind record, and have a second read-only verifier confirm it. A raw
     hash update without that proof is prohibited. Anything beyond whitespace/reflow
     requires the normal review gate.
+
+36. **Promotion timing bookkeeping.** After every promotion, append the entry's
+    measured interval to `authoring/promotion-entry-timing-*.json`, regenerate the
+    single-entry chart so the new entry is visible, and recompute the forecast from
+    **all** promoted entries rather than a recent window, a hardcoded remaining count
+    or a reused default duration. Derive the remaining count and tier distribution
+    from `owner-units.v1.json`, regenerate the forecast SVG, and label intervals
+    between commits as measured intervals, not stopwatch measurements.
