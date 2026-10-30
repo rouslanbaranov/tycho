@@ -12,8 +12,8 @@ Apply global section_rerank only when the BM25 top-1/top-2 score margin is below
 
 | Qrels | Level | Base hit@1/3/5 | Rerank hit@1/3/5 | Margin-gated hit@1/3/5 |
 |---|---|---|---|---|
-| corpus v3 | page | .878/.952/.973 | .915/.963/.973 | **.931/.963/.973** |
-| section v3 | section | .803/.941/.979 | .883/.941/.968 | **.894/.952/.968** |
+| corpus v3 | page | .878/.952/.973 | .915/.963/.973 | **.920/.963/.973** |
+| section v3 | section | .803/.941/.979 | .883/.941/.968 | **.888/.952/.968** |
 | phase2 | section | .130/.315/.352 | .185/.370/.426 | .185/.370/.407 |
 | phase3 | section | .263/.368/.526 | .263/.526/.684 | .263/.421/.632 |
 
@@ -21,7 +21,7 @@ Held-out page level:
 
 | Qrels | Base hit@1/3/5 | Margin-gated hit@1/3/5 |
 |---|---|---|
-| phase2 | .296/.611/.667 | .278/.630/.667 |
+| phase2 | .296/.611/.667 | .296/.630/.667 |
 | phase3 | .421/.632/.737 | .474/.632/.737 |
 
 On qrels v3:
