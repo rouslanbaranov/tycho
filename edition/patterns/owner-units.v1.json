@@ -2791,7 +2791,7 @@
         "heading": "Aggregator",
         "anchor": "aggregator",
         "level": 3,
-        "line": 117,
+        "line": 119,
         "unit_kind": "dedicated",
         "unit_terms": [
           "fans in related results",
@@ -2879,7 +2879,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 142,
+        "line": 144,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -2914,21 +2914,44 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The source states that timed-out responses should be communicated as an incomplete response and that the aggregator can ignore timed-out responses. Tycho guidance, not a source claim: gather should return a bounded partial result or fail under a declared rule, and cancel outstanding work.",
-          "reason": "Incomplete-response and timeout-ignore behavior are source-stated; bounded partial result, failure rule and cancellation are Tycho guidance, not bound to the cited passage.",
+          "state": "supported",
+          "quote": "When requests are scattered to multiple recipients, some recipients can time out. In these cases, the implementation should communicate to the client that the response is incomplete.",
+          "reason": "Binds the AWS page: recipient timeouts, a client-visible incomplete response, ignoring timed-out responses and returning a combined partial result. The bounded partial-result contract, failure rule and cancellation are Tycho guidance, not source statements.",
           "binding": {
             "source_id": "src.aws-scatter-gather",
             "ledger_record": "read.aws-scatter-gather.2026-10-28",
             "section": "Issues and considerations",
             "quote": "When requests are scattered to multiple recipients, some recipients can time out. In these cases, the implementation should communicate to the client that the response is incomplete.",
             "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-scatter-gather",
+              "ledger_record": "read.aws-scatter-gather.2026-10-28",
+              "section": "Scatter by distribution (overview)",
+              "quote": "It can configure a timeout parameter to ignore responses that take too long.",
+              "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
+            },
+            {
+              "source_id": "src.aws-scatter-gather",
+              "ledger_record": "read.aws-scatter-gather.2026-10-28",
+              "section": "Scatter by distribution (overview)",
+              "quote": "The responses that time out are ignored.",
+              "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
+            },
+            {
+              "source_id": "src.aws-scatter-gather",
+              "ledger_record": "read.aws-scatter-gather.2026-10-28",
+              "section": "Scatter by distribution (overview)",
+              "quote": "The aggregator combines the partial responses and returns the final result to the client.",
+              "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Tycho synthesis: an aggregator alone is the alternative when responses already exist; the source describes the aggregator as another messaging pattern that collects and distills responses, while scatter-gather adds the broadcast.",
-          "reason": "The source describes the aggregator as a component and related pattern; the standalone alternative framing is Tycho synthesis, not a source statement.",
+          "state": "supported",
+          "quote": "Tycho synthesis: an aggregator alone is the alternative when responses already exist and no broadcast is needed; reverse the choice when only already-produced responses must be combined.",
+          "reason": "The AWS page describes the aggregator as another messaging pattern that collects and distills responses, supporting a message-aggregation comparison; the standalone aggregator alternative and its reversal are Tycho synthesis, not source statements.",
           "binding": {
             "source_id": "src.aws-scatter-gather",
             "ledger_record": "read.aws-scatter-gather.2026-10-28",
@@ -2941,7 +2964,7 @@
       "decision_evidence": {
         "atlas_section": "scatter-gather",
         "question": "Should one request be broadcast to several recipients and their responses combined?",
-        "competing_alternative": "Tycho synthesis: a standalone aggregator fits when responses already exist and no broadcast is needed. Reverse the choice when only already-produced responses must be combined.",
+        "competing_alternative": "Tycho synthesis: a standalone aggregator fits when responses already exist and no broadcast is needed. The AWS page supports only the comparison: it calls the aggregator \"another messaging pattern\" that collects and distills responses, while scatter-gather adds the broadcast. Reverse the choice when only already-produced responses must be combined.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -2950,12 +2973,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-scatter-gather",
+            "ledger_record": "read.aws-scatter-gather.2026-10-28",
+            "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Mechanism and invariant are source-bound; failure recovery is partial and separates source-stated incomplete-response/timeout-ignore behavior from Tycho partial-result, failure and cancellation policy; alternative is Tycho synthesis; coverage remains partial-bounded; no promotion."
+      "notes": "Failure/recovery bound 2026-10-30 to AWS recipient-timeout, incomplete-response, timeout-ignore and partial-response return statements; alternative bound to the AWS aggregator-as-another-pattern comparison, with the standalone aggregator alternative and reversal labelled Tycho synthesis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.dead-letter-channel-dlq",
@@ -11740,8 +11770,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 64,
-    "failure_recovery_supported": 54,
-    "alternative_supported": 65,
+    "failure_recovery_supported": 55,
+    "alternative_supported": 66,
     "technical_partial_bounded": 21,
     "technical_partial": 86,
     "technical_name_only": 0,

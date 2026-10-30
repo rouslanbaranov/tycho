@@ -337,43 +337,7 @@ documentation, not benchmarks.
 
 ### Scatter-Gather
 
-**Identity.** Scatter-Gather; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should one request be broadcast to several recipients and their
-responses combined?
-
-**Good-fit conditions.** Recipients are known or discoverable; partial responses are
-acceptable; per-recipient deadlines exist; the aggregate is bounded. Tycho guidance, not
-a source claim: define a response contract and a quorum or completeness rule, and assign
-a straggler policy to an owner.
-
-**Hard contraindications.** Reject when one authoritative recipient suffices, when
-responses are not comparable, when the aggregate must be globally consistent, or when
-tail latency would exceed the caller's budget. Tycho guidance: fan-out that can exhaust
-the caller is also a contraindication.
-
-**Competing alternative.** Tycho synthesis: a standalone aggregator fits when responses
-already exist and no broadcast is needed. Reverse the choice when only already-produced
-responses must be combined.
-
-**Failure and recovery.** Slow or missing recipients dominate tail latency; verify
-deadlines and partial results in the owner section.
-
-**Technical owner.** [Scatter-Gather](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#scatter-gather) — fan-out/fan-in deadline is bounded; the source states incomplete-response and timeout-ignore behavior; partial-result, failure and cancellation policy is Tycho guidance.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-scatter.2026-10-21: three H2 examples; Problem and
-Solution are unheaded, and the page is publisher-abridged.
-[src.aws-scatter-gather](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.aws-scatter-gather.2026-10-28: the Intent section defines the
-broadcast-and-aggregate pattern and the scatter-by-auction section calls the aggregator
-another messaging pattern. The sources are public documentation, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Aggregator; Splitter; Hedged Requests; API Composition.
+See the [dedicated Scatter-Gather card](scatter-gather.md).
 
 ### Dead Letter Channel / DLQ
 

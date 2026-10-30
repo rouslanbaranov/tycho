@@ -33,6 +33,8 @@ evidence_scope:
   source_ids:
     - "src.nats"
     - "src.rabbitmq"
+    - "src.enterprise-integration"
+    - "src.aws-scatter-gather"
   claim_ids: []
   status: "source-linked"
   notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
@@ -42,7 +44,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-28"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -150,12 +152,33 @@ it when independent participants can answer the same question and a partial view
 useful. Tycho guidance: do not use it when one authority must answer, when responses are
 not comparable, or when tail latency would exceed the caller's budget.
 
-The source states that timed-out responses should be communicated as an incomplete
-response and that the aggregator can ignore timed-out responses. Tycho guidance, not a
-source claim: gather should return a bounded partial result or fail under a declared rule,
-and cancel outstanding work. Tycho synthesis: an aggregator alone is the alternative when
-responses already exist; the source describes the aggregator as another messaging pattern
-that collects and distills responses, while scatter-gather adds the broadcast.
+**Failure and recovery.** The AWS Prescriptive Guidance page's "Partial responses"
+consideration states: "When requests are scattered to multiple recipients, some recipients
+can time out. In these cases, the implementation should communicate to the client that the
+response is incomplete." Its scatter-by-distribution description adds that the controller
+"can configure a timeout parameter to ignore responses that take too long", that "The
+responses that time out are ignored" and that "The aggregator combines the partial
+responses and returns the final result to the client." These sentences support timeout
+handling, a client-visible incomplete response, ignoring late responses and combining
+partial responses into a returned result. Tycho guidance, not a source claim: gather should
+return a bounded partial result or fail under a declared rule, and cancel outstanding work.
+
+**Alternative.** The same page describes the aggregator as "another messaging pattern" and
+states: "Because the root controller isn't aware of the recipients, the gathering process
+uses an aggregator (another messaging pattern) to collect the responses and distill them
+into a single response message." That supports a message-aggregation comparison, not a
+standalone alternative: the aggregator is the gather component inside scatter-gather.
+Tycho synthesis: an aggregator alone is the alternative when responses already exist and
+no broadcast is needed; reverse the choice when only already-produced responses must be
+combined.
 
 **Limits.** Fan-out cost and tail latency grow with participants; a quorum result must name
 which participants answered and which did not.
+
+**Source boundary.** AWS Prescriptive Guidance, "Scatter-gather pattern", read 2026-10-30;
+canonical text SHA-256
+`4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3`; sections "Issues and
+considerations", "Scatter by distribution (overview)" and "Scatter by auction (overview)".
+The page is a living document; no benchmark or execution was performed. The standalone
+aggregator alternative and the bounded partial-result, failure and cancellation rules are
+Tycho guidance, not AWS statements.
