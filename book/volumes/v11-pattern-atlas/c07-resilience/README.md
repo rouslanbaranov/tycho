@@ -33,6 +33,8 @@ evidence_scope:
     - "src.resilience4j"
     - "src.sre-cascading"
     - "src.sre-overload"
+    - "src.grpc-deadlines"
+    - "src.grpc-protocol"
     - "src.rabbitmq"
     - "src.morning-paper-tail-at-scale"
     - "src.kubernetes"
@@ -42,12 +44,12 @@ evidence_scope:
   notes: "16 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C07 — Resilience and fault tolerance
@@ -242,8 +244,8 @@ resilience-pattern; priority core.
 **Decision question.** Should the caller’s remaining time budget be passed through
 downstream calls?
 
-**Good-fit conditions.** The full request path can carry a deadline; each hop can shorten
-it; expiration is observable.
+**Good-fit conditions.** The full request path can carry the remaining budget as a
+relative duration; each hop enforces expiry before more work; expiration is observable.
 
 **Hard contraindications.** Reject when downstream work must outlive the caller request,
 when only absolute wall-clock deadlines are available across hosts with unbounded skew,
@@ -252,16 +254,24 @@ or when no hop enforces expiry.
 **Competing alternative.** Independent per-hop timeouts with a parent budget. Reverse the
 choice when propagation complexity exceeds the benefit of end-to-end bounds.
 
-**Failure and recovery.** Clock skew, lost deadlines and divergent per-hop timeouts are
-common; transmit remaining duration where possible, enforce expiry at each hop and keep an
-explicit cleanup path.
+**Failure and recovery.** Clock skew, a lost timeout header and a hop that ignores
+expiry are common. gRPC converts the absolute deadline to a relative timeout with elapsed
+time deducted, removing the clock-synchronization dependency; an omitted `grpc-timeout`
+header means an infinite timeout, so a lost header silently removes the bound. The server
+cancels on expiry and the client fails with `DEADLINE_EXCEEDED`, but the application must
+still stop spawned work. Requiring a deadline at ingress, defining a bounded skew for
+absolute timestamps, and recording cancellation outcomes are Tycho guidance.
 
-**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — deadline propagation and budget are bounded; clock-skew handling is platform-specific.
+**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — gRPC relative-timeout conversion, SRE per-stage enforcement and platform-specific skew bounds.
 
 **Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21: all forty-four served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark.
+read record read.batch4-sre-cascading.2026-10-21, section "Latency and Deadlines";
+[src.grpc-deadlines](../../../../edition/patterns/reading-ledger.v1.json) record
+read.grpc-deadlines.2026-10-30, sections "Deadlines on the Client", "Deadlines on the
+Server" and "Deadline Propagation";
+[src.grpc-protocol](../../../../edition/patterns/reading-ledger.v1.json) record
+read.grpc-protocol.2026-10-30, section "Requests". The guides do not test an
+implementation or define a numeric skew bound.
 
 **Decision state.** applicable-under-conditions.
 
