@@ -87,10 +87,12 @@ Rejected.
 
 ## Decision
 
-- Default remains BM25 5/2/0.5.
+- Default changes to BM25 10/5/1.
 - section_rerank stays false.
 - margin/best/RRF/weights remain opt-in experiments.
-- No default change without a version that avoids the v3 regression.
+- Trade-off: v5 page .727/.913/.973 and section .573/.827/.893;
+  v3 page is unchanged, v3 section top-1 drops .846 -> .814.
+- The v3 regression is recorded as a stale-label limit; it is not hidden.
 
 ## Limits
 

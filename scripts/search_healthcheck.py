@@ -11,7 +11,7 @@ import mcp_server
 import section_fts_index
 import section_search
 
-EXPECTED_WEIGHTS = (5.0, 2.0, 0.5)
+EXPECTED_WEIGHTS = (10.0, 5.0, 1.0)
 
 
 def main(argv=None):
