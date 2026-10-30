@@ -2,6 +2,9 @@
 
 Status: **handoff only**. No qrels v4 files exist yet.
 
+Codex must run in `~/Projects/tycho-index-and-search`
+(`/Users/rbaranov/Projects/tycho-index-and-search`), not in any other checkout.
+
 Codex must follow [CODEX-PROMPT.md](CODEX-PROMPT.md) and
 [QRELS-V4-HANDOFF-2026-10-30.md](../../authoring/QRELS-V4-HANDOFF-2026-10-30.md).
 

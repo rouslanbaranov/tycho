@@ -4,7 +4,18 @@ You are the independent external AI evaluator for Tycho. Work read-only on the
 book, atlas and V12 artifacts; you may write only the qrels v4 outputs listed
 below.
 
-Repository: `/Users/rbaranov/Projects/tycho-index-and-search`
+## Mandatory working directory
+
+Work only in the isolated clone:
+
+```sh
+cd ~/Projects/tycho-index-and-search
+```
+
+Absolute path: `/Users/rbaranov/Projects/tycho-index-and-search`.
+
+Do **not** work in `/Users/rbaranov/Projects/tycho` or any other checkout. All
+reads and writes below are relative to the isolated clone.
 
 Read first: `authoring/QRELS-V4-HANDOFF-2026-10-30.md`.
 

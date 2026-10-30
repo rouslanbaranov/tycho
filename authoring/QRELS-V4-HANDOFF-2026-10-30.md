@@ -2,6 +2,17 @@
 
 Status: handoff only. No qrels v4 labels exist yet.
 
+## Mandatory working directory
+
+Work only in the isolated clone:
+
+```sh
+cd ~/Projects/tycho-index-and-search
+```
+
+Absolute path: `/Users/rbaranov/Projects/tycho-index-and-search`. Do not use
+`/Users/rbaranov/Projects/tycho` or any other checkout.
+
 ## Goal
 
 Create an independent, AI-adjudicated qrels v4 from the book pages, atlas cards
