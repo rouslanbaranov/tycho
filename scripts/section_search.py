@@ -51,6 +51,9 @@ _QUERY_CACHE_LOCK = threading.Lock()
 _INDEX_VALIDATION_CACHE = OrderedDict()
 _INDEX_VALIDATION_LOCK = threading.Lock()
 _INDEX_VALIDATION_MAX = 4
+_ARTIFACT_DETAIL_CACHE = OrderedDict()
+_ARTIFACT_DETAIL_LOCK = threading.Lock()
+_ARTIFACT_DETAIL_MAX = 64
 _SEARCH_CONCURRENCY = threading.BoundedSemaphore(2)
 _ARTIFACT_STOPWORDS = frozenset({
     "a", "an", "and", "are", "as", "at", "be", "by", "does", "do",
@@ -392,6 +395,46 @@ def load_document_metadata(root):
     return metadata
 
 
+def _flatten_detail(value):
+    parts = []
+    if isinstance(value, dict):
+        for key, item in value.items():
+            parts.append(str(key))
+            parts.extend(_flatten_detail(item))
+    elif isinstance(value, list):
+        for item in value:
+            parts.extend(_flatten_detail(item))
+    elif value is not None:
+        parts.append(str(value))
+    return parts
+
+
+def _artifact_detail_text(root, relative_path):
+    if not isinstance(relative_path, str) or not relative_path.startswith(
+            "edition/v12/"):
+        return ""
+    path = Path(root) / relative_path
+    try:
+        stat = path.stat()
+    except OSError:
+        return ""
+    key = (str(path), stat.st_mtime_ns, stat.st_size)
+    with _ARTIFACT_DETAIL_LOCK:
+        cached = _ARTIFACT_DETAIL_CACHE.get(key)
+    if cached is not None:
+        return cached
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        text = " ".join(_flatten_detail(payload))
+    except (OSError, json.JSONDecodeError):
+        text = ""
+    with _ARTIFACT_DETAIL_LOCK:
+        _ARTIFACT_DETAIL_CACHE[key] = text
+        while len(_ARTIFACT_DETAIL_CACHE) > _ARTIFACT_DETAIL_MAX:
+            _ARTIFACT_DETAIL_CACHE.popitem(last=False)
+    return text
+
+
 def load_v12_artifacts(root):
     """Load V12 model/scenario/run/decision facets from derived indexes.
 
@@ -444,6 +487,7 @@ def load_v12_artifacts(root):
             "questions": list(document.get("questions") or []),
             "keywords": list(document.get("keywords") or []),
             "topics": list(document.get("topics") or []),
+            "_match_text": _artifact_detail_text(root, path),
         })
     artifacts.sort(key=lambda item: (str(item["artifact_type"]), str(item["id"])))
     return artifacts
@@ -483,7 +527,8 @@ def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
                  " ".join(item.get("questions") or []),
                  " ".join(item.get("keywords") or []),
                  " ".join(item.get("topics") or []),
-                 " ".join(item.get("pattern_ids") or [])]).casefold()
+                 " ".join(item.get("pattern_ids") or []),
+                 str(item.get("_match_text") or "")]).casefold()
             hits = [term for term in artifact_terms if term in text]
             if hits and len(hits) >= min(2, len(artifact_terms)):
                 scored.append((len(hits),
@@ -500,7 +545,9 @@ def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
         },
         "returned": len(artifacts[:limit]),
         "total": len(artifacts),
-        "artifacts": artifacts[:limit],
+        "artifacts": [{key: value for key, value in item.items()
+                       if not key.startswith("_")}
+                      for item in artifacts[:limit]],
         "scope": (
             "Derived V12 model, scenario, run and decision lookup. "
             "Not a semantic graph and not a source of claim truth."
