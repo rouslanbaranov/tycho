@@ -7339,6 +7339,81 @@
       "read_scope": "The stale-while-revalidate section and the Age vocabulary entry",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.grpc-deadlines.2026-10-30",
+      "source_id": "src.grpc-deadlines",
+      "unit_url": "https://grpc.io/docs/guides/deadlines/",
+      "unit_label": "Deadlines — gRPC guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET on 2026-10-30; served HTML 72,634 bytes; HTTP Date 2026-10-30T17:56:43Z; no Last-Modified or ETag; raw HTML SHA-256 879c69cdb7370ebcd5fbb6bd06ab95853378681381010c3d10f7a17ee6d7d776; binding revision is the pinned source Markdown at grpc/grpc.io commit 78db5a6f78ee0d3426cf53cee07739196d962ea2 (last modified 2025-07-07), 4,703 bytes, SHA-256 e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900",
+      "sections_read": [
+        "Overview",
+        "Deadlines on the Client",
+        "Deadlines on the Server",
+        "Deadline Propagation"
+      ],
+      "sections_not_read": [
+        "linked language examples",
+        "the deadlines blog post",
+        "implementation and running-system behavior"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public gRPC documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A deadline is the point in time past which a client is unwilling to wait; a timeout can be converted to a deadline by adding it to the current time.",
+        "gRPC converts an absolute deadline to a timeout with elapsed time already deducted before propagation, which shields the system from clock skew.",
+        "A server automatically cancels a call once a client deadline passes, while the application is responsible for stopping spawned activity.",
+        "The client fails the RPC with DEADLINE_EXCEEDED; automatic propagation is implementation-dependent."
+      ],
+      "claims_not_supported": [
+        "a numeric clock-skew bound",
+        "implementation behavior beyond the guide",
+        "a tested deployment"
+      ],
+      "limitations": "Full guide page; linked examples and implementation not verified.",
+      "content_sha256": "e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900",
+      "read_scope": "The full public guide page as served, excluding linked examples and the deadlines blog post",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.grpc-protocol.2026-10-30",
+      "source_id": "src.grpc-protocol",
+      "unit_url": "https://github.com/grpc/grpc/blob/36a2ae2930d02c392e6e471c0d95d9d6e0c62dc9/doc/PROTOCOL-HTTP2.md",
+      "unit_label": "gRPC over HTTP2 — protocol specification",
+      "unit_type": "specification",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET on 2026-10-30; pinned raw Markdown at grpc/grpc commit 36a2ae2930d02c392e6e471c0d95d9d6e0c62dc9; 16,105 bytes, 266 lines; SHA-256 b51ea1b8cee67ad3477e73152bb60ac3ebf6e164962b46ba79434e980739256f",
+      "sections_read": [
+        "Requests"
+      ],
+      "sections_not_read": [
+        "the rest of the specification",
+        "linked RFCs",
+        "implementations and examples"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "Public gRPC protocol specification; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The grpc-timeout header carries a positive integer value of at most eight digits with an hour, minute, second, millisecond, microsecond or nanosecond unit.",
+        "If Timeout is omitted a server should assume an infinite timeout; clients may send a default minimum timeout."
+      ],
+      "claims_not_supported": [
+        "lost-header detection by an implementation",
+        "implementation behavior",
+        "linked RFCs and examples"
+      ],
+      "limitations": "Requests section only; linked RFCs and implementations not verified.",
+      "content_sha256": "b51ea1b8cee67ad3477e73152bb60ac3ebf6e164962b46ba79434e980739256f",
+      "read_scope": "The Requests section of the pinned protocol specification",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

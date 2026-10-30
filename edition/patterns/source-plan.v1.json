@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-30",
   "registry_version": "0.2.0",
-  "registry_sha256": "5e8e9da33a290fba6b6ea83be81ea65a83e8bc17c9af277895e3f91511e856a8",
-  "route_index_snapshot": "edd14330816be5f11b983551a9e85fc30cdee2d1519e6557b9870bb53818c958",
+  "registry_sha256": "17dca2379e52c311f2469309e813cf82d87c4867bbab1b9e3b43740ee7cf7725",
+  "route_index_snapshot": "5dabb5a85be3d106ab12465247b38bb243fdfd0fc82e2cde7d7dadc4abada4d9",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -3311,9 +3311,36 @@
           "status": "read",
           "read_record_id": "read.batch4-sre-cascading.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.grpc-deadlines",
+          "unit": "Deadlines — gRPC guide",
+          "unit_type": "documentation-page",
+          "url": "https://grpc.io/docs/guides/deadlines/",
+          "sections": [
+            "Overview",
+            "Deadlines on the Client",
+            "Deadlines on the Server",
+            "Deadline Propagation"
+          ],
+          "status": "read",
+          "read_record_id": "read.grpc-deadlines.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.grpc-protocol",
+          "unit": "gRPC over HTTP2 — protocol specification",
+          "unit_type": "specification",
+          "url": "https://github.com/grpc/grpc/blob/36a2ae2930d02c392e6e471c0d95d9d6e0c62dc9/doc/PROTOCOL-HTTP2.md",
+          "sections": [
+            "Requests"
+          ],
+          "status": "read",
+          "read_record_id": "read.grpc-protocol.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "The relative timeout, clock-skew conversion and server cancellation use gRPC Deadlines; the omitted-header infinite timeout uses gRPC over HTTP2; per-stage checks and the absolute-deadline example use Google SRE. Monotonic-clock use, bounded skew and durable cleanup remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.fallback",
@@ -5251,11 +5278,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 207,
-    "read_units": 206,
+    "required_units": 209,
+    "read_units": 208,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 170
+    "ledger_records": 172
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

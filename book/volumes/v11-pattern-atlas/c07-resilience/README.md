@@ -67,9 +67,10 @@ deadline page may own the failure contract without owning every resilience mecha
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
-check its conditions and contraindications, then read the exact owner section.
+Page count is content-dependent. This chapter currently uses one landing page plus a
+dedicated card page for a moved entry; a later split is an editorial change, not a plan
+failure. Start with the card, check its conditions and contraindications, then read the
+exact owner section.
 
 ## Entry inventory
 
@@ -238,45 +239,7 @@ Key.
 
 ### Deadline Propagation
 
-**Identity.** Deadline Propagation; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should the caller’s remaining time budget be passed through
-downstream calls?
-
-**Good-fit conditions.** The full request path can carry the remaining budget as a
-relative duration; each hop enforces expiry before more work; expiration is observable.
-
-**Hard contraindications.** Reject when downstream work must outlive the caller request,
-when only absolute wall-clock deadlines are available across hosts with unbounded skew,
-or when no hop enforces expiry.
-
-**Competing alternative.** Independent per-hop timeouts with a parent budget. Reverse the
-choice when propagation complexity exceeds the benefit of end-to-end bounds.
-
-**Failure and recovery.** Clock skew, a lost timeout header and a hop that ignores
-expiry are common. gRPC converts the absolute deadline to a relative timeout with elapsed
-time deducted, removing the clock-synchronization dependency; an omitted `grpc-timeout`
-header means an infinite timeout, so a lost header silently removes the bound. The server
-cancels on expiry and the client fails with `DEADLINE_EXCEEDED`, but the application must
-still stop spawned work. Requiring a deadline at ingress, defining a bounded skew for
-absolute timestamps, and recording cancellation outcomes are Tycho guidance.
-
-**Technical owner.** [Deadline Propagation](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/deadlines-retries.md#deadline-propagation) — gRPC relative-timeout conversion, SRE per-stage enforcement and platform-specific skew bounds.
-
-**Sources.** [src.sre-cascading](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-sre-cascading.2026-10-21, section "Latency and Deadlines";
-[src.grpc-deadlines](../../../../edition/patterns/reading-ledger.v1.json) record
-read.grpc-deadlines.2026-10-30, sections "Deadlines on the Client", "Deadlines on the
-Server" and "Deadline Propagation";
-[src.grpc-protocol](../../../../edition/patterns/reading-ledger.v1.json) record
-read.grpc-protocol.2026-10-30, section "Requests". The guides do not test an
-implementation or define a numeric skew bound.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Timeout; Retry with Exponential Backoff; Request-Reply; Async
-Request-Reply.
+See the [dedicated Deadline Propagation card](deadline-propagation.md).
 
 ### Fallback
 

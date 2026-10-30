@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 73 |
+| Reviewed by independent agent | 69 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 62, "reviewed-by-independent-agent": 73}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 66, "reviewed-by-independent-agent": 69}.
 
 ## Review procedure
 
@@ -191,7 +191,7 @@ blank verdict template in the machine-readable file.
 
 - **Deadline Propagation**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Deployment Stamps**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -463,11 +463,11 @@ blank verdict template in the machine-readable file.
 
 - **Retry with Exponential Backoff**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Retry with Jitter**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Reverse Proxy**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -567,7 +567,7 @@ blank verdict template in the machine-readable file.
 
 - **Timeout**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Transactional Inbox**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

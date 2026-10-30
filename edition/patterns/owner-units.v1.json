@@ -7803,9 +7803,32 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Deadline propagation carries the caller's remaining budget as a relative duration.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "gRPC converts an absolute deadline to a timeout with elapsed time deducted before propagation, which supports a relative remaining-budget form; Google SRE's worked example states the remaining seconds at each hop. The reconciliation to an absolute ingress deadline and the monotonic-clock rule are Tycho guidance.",
+          "binding": {
+            "source_id": "src.grpc-deadlines",
+            "ledger_record": "read.grpc-deadlines.2026-10-30",
+            "section": "Deadline Propagation",
+            "quote": "Since a deadline is set point in time, propagating it as-is to a server can be problematic as the clocks on the two servers might not be synchronized. To address this gRPC converts the deadline to a timeout from which the already elapsed time is already deducted. This shields your system from any clock skew issues.",
+            "revision": "e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+              "section": "Latency and Deadlines",
+              "quote": "With deadline propagation, a deadline is set high in the stack (e.g., in the frontend). The tree of RPCs emanating from an initial request will all have the same absolute deadline.",
+              "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+            },
+            {
+              "source_id": "src.grpc-deadlines",
+              "ledger_record": "read.grpc-deadlines.2026-10-30",
+              "section": "Deadlines on the Server",
+              "quote": "A gRPC server deals with this situation by automatically cancelling a call (CANCELLED status) once a deadline set by the client has passed.",
+              "revision": "e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
@@ -7820,9 +7843,39 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Clock skew, a lost header and a hop that ignores expiry are the common failures.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Clock skew, a lost timeout header and a hop that ignores expiry are the common failures.",
+          "reason": "The gRPC guide says propagating an absolute deadline is problematic because clocks may not be synchronized, and that an elapsed-adjusted timeout shields against clock skew. The protocol says an omitted Timeout header means an infinite timeout, so a lost header removes the bound. The gRPC server cancels automatically, but the application must stop spawned work; Google SRE shows a hop wasting work after the client deadline. Bounded skew, ingress deadline requirements and outcome recording are Tycho guidance.",
+          "binding": {
+            "source_id": "src.grpc-deadlines",
+            "ledger_record": "read.grpc-deadlines.2026-10-30",
+            "section": "Deadline Propagation",
+            "quote": "Since a deadline is set point in time, propagating it as-is to a server can be problematic as the clocks on the two servers might not be synchronized. To address this gRPC converts the deadline to a timeout from which the already elapsed time is already deducted. This shields your system from any clock skew issues.",
+            "revision": "e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.grpc-protocol",
+              "ledger_record": "read.grpc-protocol.2026-10-30",
+              "section": "Requests",
+              "quote": "If Timeout is omitted a server should assume an infinite timeout.",
+              "revision": "b51ea1b8cee67ad3477e73152bb60ac3ebf6e164962b46ba79434e980739256f"
+            },
+            {
+              "source_id": "src.grpc-deadlines",
+              "ledger_record": "read.grpc-deadlines.2026-10-30",
+              "section": "Deadlines on the Server",
+              "quote": "Please note that the server application is responsible for stopping any activity it has spawned to service the RPC.",
+              "revision": "e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900"
+            },
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+              "section": "Latency and Deadlines",
+              "quote": "Had server B used deadline propagation, server C could immediately give up on the request because the 2-second deadline was exceeded.",
+              "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -7849,12 +7902,24 @@
         "source_id": "src.sre-cascading",
         "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.grpc-deadlines",
+            "ledger_record": "read.grpc-deadlines.2026-10-30",
+            "revision": "e310a0e5a4bdc8f353ef04a641336d9a51176ffaa0ba0ee8b8b1aad98263a900"
+          },
+          {
+            "source_id": "src.grpc-protocol",
+            "ledger_record": "read.grpc-protocol.2026-10-30",
+            "revision": "b51ea1b8cee67ad3477e73152bb60ac3ebf6e164962b46ba79434e980739256f"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Core deadline section; timeout, retry and backoff patterns also map here."
+      "notes": "Mechanism and failure/recovery bound 2026-10-30 to gRPC Deadlines, gRPC over HTTP2 and Google SRE; monotonic clocks, bounded skew and durable cleanup remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.fallback",
@@ -12378,7 +12443,7 @@
       ],
       "unit_count": 4,
       "dedicated_units": 4,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "All four time-budget patterns now have distinct dedicated units; no further page split."
     },
@@ -12524,12 +12589,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 110,
+    "mechanism_supported": 111,
     "invariant_supported": 70,
-    "failure_recovery_supported": 62,
+    "failure_recovery_supported": 63,
     "alternative_supported": 68,
-    "technical_partial_bounded": 19,
-    "technical_partial": 79,
+    "technical_partial_bounded": 20,
+    "technical_partial": 78,
     "technical_name_only": 0,
     "technical_sufficient": 47,
     "decision_partial_bounded": 98,

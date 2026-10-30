@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 291.
+Inventory date: 2026-10-30. Entries: 293.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -83,6 +83,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.grpc / supporting | [gRPC Core Concepts](https://grpc.io/docs/what-is-grpc/core-concepts/) — gRPC authors | RPC lifecycle, deadlines and streaming contracts. | admitted-for-research / public-web-or-author-download |
 | src.ietf-idempotency-key / core | [The Idempotency-Key HTTP Header Field](https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt) — IETF (Internet-Draft) | Primary draft for idempotency-key scope, retry correlation and duplicate-request semantics. | admitted-for-research / public-web-or-author-download |
 | src.rfc5861 / core | [HTTP Cache-Control Extensions for Stale Content](https://www.rfc-editor.org/rfc/rfc5861.txt) — IETF | Primary specification for stale-while-revalidate and stale-if-error. | admitted-for-research / public-web-or-author-download |
+| src.grpc-deadlines / core | [Deadlines](https://grpc.io/docs/guides/deadlines/) — gRPC authors | Deadline propagation, remaining-budget conversion and server cancellation semantics for the Deadline Propagation entry. | admitted-for-research / public-web-or-author-download |
+| src.grpc-protocol / supporting | [gRPC over HTTP2](https://github.com/grpc/grpc/blob/36a2ae2930d02c392e6e471c0d95d9d6e0c62dc9/doc/PROTOCOL-HTTP2.md) — gRPC authors | grpc-timeout wire representation and the omitted-header timeout rule for the Deadline Propagation entry. | admitted-for-research / public-web-or-author-download |
 
 ## Java
 
