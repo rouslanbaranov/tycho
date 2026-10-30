@@ -304,7 +304,7 @@ def search_schema():
             },
             "section_rerank_margin": {
                 "type": ["number", "null"],
-                "default": 0.15,
+                "default": 0.05,
                 "minimum": 0,
                 "maximum": 1,
                 "description": (
@@ -1335,7 +1335,7 @@ class TychoMcpServer:
         include_artifacts = arg_bool(args, "include_artifacts", False)
         all_sections = arg_bool(args, "all_sections", False)
         section_rerank = arg_bool(args, "section_rerank", False)
-        section_rerank_margin = args.get("section_rerank_margin", 0.15)
+        section_rerank_margin = args.get("section_rerank_margin", 0.05)
         if section_rerank_margin is not None and (
                 not isinstance(section_rerank_margin, (int, float))
                 or isinstance(section_rerank_margin, bool)

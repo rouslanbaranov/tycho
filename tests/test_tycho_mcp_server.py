@@ -385,7 +385,7 @@ class McpServerTests(unittest.TestCase):
         self.assertFalse(schema["properties"]["section_rerank"]["default"])
         self.assertEqual(
             schema["properties"]["section_rerank_margin"]["default"],
-            0.15)
+            0.05)
         payload = self.call(self.server(), "tycho_search", {
             "query": "nested text", "section_rerank": True,
             "section_rerank_margin": None,
