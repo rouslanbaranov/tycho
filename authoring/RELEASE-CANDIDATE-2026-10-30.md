@@ -73,7 +73,8 @@ Layer-scoped:
 - No human review, independent review, CI, owner acceptance or sufficient
   coverage.
 - V12 section top-1 remains 17/30; guard retained.
-- Qrels v4 candidate pools are 4–10, not exhaustive.
+- Qrels v4 pools are 4–5 per query; a v4.1 10–15 candidate expansion
+  handoff/validator is ready, but the labels do not exist yet.
 
 ## Operations
 
