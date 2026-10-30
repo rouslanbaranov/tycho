@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 288.
+Inventory date: 2026-10-30. Entries: 290.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -240,6 +240,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.liquibase / supporting | [Liquibase Documentation](https://docs.liquibase.com/) — Liquibase | Change management and deployment compatibility. | admitted-for-research / public-web-or-author-download |
 | src.fowler-dark-launching / supporting | [Dark Launching](https://martinfowler.com/bliki/DarkLaunching.html) — Martin Fowler | Hidden back-end invocation, load assessment and feature-flag rollback. | admitted-for-research / public-web-or-author-download |
 | src.minimumcd-parallel-run / supporting | [Parallel Run](https://beyond.minimumcd.org/docs/foundations/evolutionary-coding/parallel-run/) — MinimumCD Practice Guide | Parallel Run mechanism, comparison workflow, pitfalls and side-effect boundary. | admitted-for-research / public-web-or-author-download |
+| src.flagger-deployment-strategies / core | [Deployment Strategies](https://docs.flagger.app/usage/deployment-strategies) — Flux project | Canary, A/B, blue/green and traffic-mirroring strategies, including idempotency conditions for mirrored requests. | admitted-for-research / public-web-or-author-download |
+| src.aws-blue-green-deployments / core | [Blue/Green Deployments on AWS](https://docs.aws.amazon.com/whitepapers/latest/blue-green-deployments/welcome.html) — Amazon Web Services | Blue/green environment boundary and data-tier compatibility, including shared data stores and schema-change order. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 

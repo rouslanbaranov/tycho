@@ -72,8 +72,8 @@ transition-state page may own the reversibility contract without owning every pa
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page for all
-entries; a later split is an editorial change, not a plan failure. Start with the card,
+Page count is content-dependent. This chapter uses a landing page plus a dedicated
+card page; a later split is an editorial change, not a plan failure. Start with the card,
 check its conditions and contraindications, then read the exact owner section.
 
 ## Entry inventory
@@ -147,48 +147,7 @@ Controlled Cutover.
 
 ### Canary Release
 
-**Identity.** Canary Release; family Deployment and legacy modernization; kind
-deployment-pattern; priority core.
-
-**Decision question.** Should a new version receive a small traffic share before full
-promotion?
-
-**Good-fit conditions.** A measurable signal exists; traffic can be split; abort/rollback
-is defined; the canary is representative; shared-state compatibility is explicit; any
-mirrored traffic is read-only or idempotent.
-
-**Hard contraindications.** Reject when traffic cannot be split, when metrics are too
-noisy, when the canary shares hidden state with the baseline, or when mirrored writes
-cannot be made idempotent.
-
-**Competing alternative.** Traffic mirroring, blue/green, feature flags or rolling
-deployment. Reverse the choice when canary analysis cost exceeds risk reduction, the
-cohort cannot be isolated, or writes make mirroring unsafe.
-
-**Failure and recovery.** Low-traffic blindness, metric leakage and shared-state
-contamination are common; a binary rollback does not undo committed data. A mirrored
-write can execute twice, and a blue/green switch still shares the data boundary.
-Source checks in the owner section separate these failures from Tycho guidance.
-
-**Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
-
-**Sources.** [src.argo-rollouts](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.batch5-argo-canary.2026-10-21`: all fifteen served headings read;
-canary steps, analysis abort and the rolling mimic.
-[src.flagger-deployment-strategies](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.flagger-deployment-strategies.2026-10-30`: deployment strategies,
-canary, A/B, blue/green and mirroring; mirroring idempotency.
-[src.sre-workbook](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.sre-workbook-canarying.2026-10-30`: shared infrastructure,
-stateful teeing limits and feature flags.
-[src.aws-blue-green-deployments](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.aws-blue-green-data.2026-10-30`: shared data stores and
-backward-compatible schema changes. The sources are public documentation units,
-not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Blue/Green; Rolling Deployment; Feature Flags; Dark Launching.
+See the [dedicated Canary Release card](canary-release.md).
 
 ### Feature Flags-Feature Toggles
 

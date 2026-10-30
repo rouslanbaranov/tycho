@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-30",
   "registry_version": "0.2.0",
-  "registry_sha256": "3961836b1378203ee8bad02d51093340c1ff69feb8f842645f87df38385b5bb3",
-  "route_index_snapshot": "c62cfb4ff05d443aeab99d7c8314846c8aadec5a5eaa450ea55771a41bc74f45",
+  "registry_sha256": "bc8d5f8f368e73756e6952e9fca49b4e390317cd6d6e3028ecb51961b92c96bc",
+  "route_index_snapshot": "738fbab024474f564dee6b20d5ed7da43900310d99e6ae2b97d1c948d5e6d3d8",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -4282,9 +4282,56 @@
           "status": "read",
           "read_record_id": "read.batch5-argo-canary.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.flagger-deployment-strategies",
+          "unit": "Deployment Strategies — Flagger documentation",
+          "unit_type": "documentation-page",
+          "url": "https://docs.flagger.app/usage/deployment-strategies.md",
+          "sections": [
+            "Deployment Strategies",
+            "Canary Release",
+            "A/B Testing",
+            "Blue/Green Deployments",
+            "Blue/Green with Traffic Mirroring",
+            "Canary Release with Session Affinity"
+          ],
+          "status": "read",
+          "read_record_id": "read.flagger-deployment-strategies.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre-workbook",
+          "unit": "Canarying Releases — The Site Reliability Workbook, Chapter 16",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/workbook/canarying-releases/",
+          "sections": [
+            "Separating Components That Change at Different Rates",
+            "Dependencies and Isolation",
+            "Related Concepts",
+            "Blue/Green Deployment",
+            "Traffic Teeing",
+            "full Chapter 16 body"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-workbook-canarying.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-blue-green-deployments",
+          "unit": "Best Practices for Managing Data Synchronization and Schema Changes — Blue/Green Deployments on AWS",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/blue-green-deployments/best-practices-for-managing-data-synchronization-and-schema-changes.html",
+          "sections": [
+            "Best Practices for Managing Data Synchronization and Schema Changes",
+            "Decoupling Schema Changes from Code Changes"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-blue-green-data.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 public unit read; claims limited to the ledger record."
+      "notes": "Canary mechanism and failure/recovery use Argo Rollouts; the invariant uses AWS shared-data-store and backward-compatible-schema guidance plus Google SRE shared-infrastructure and stateful-teeing limits; the alternative uses Flagger mirroring idempotency plus Google SRE feature flags/blue-green and the Argo rolling mimic. The reads-only default, data-compatibility separation and alternative-choice rule remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.feature-flags-feature-toggles",
@@ -5178,11 +5225,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 202,
-    "read_units": 201,
+    "required_units": 205,
+    "read_units": 204,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 165
+    "ledger_records": 168
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

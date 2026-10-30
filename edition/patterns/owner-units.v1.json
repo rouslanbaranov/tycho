@@ -10031,9 +10031,39 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The exposure slice is not a data-compatibility boundary",
-          "reason": "Unit covers traffic weights and analysis, not shared state or data compatibility."
+          "state": "supported",
+          "quote": "The exposure slice is not a data-compatibility boundary.",
+          "reason": "Google SRE says the canary population and the control may share backends, frontends, networks, data stores and other infrastructure, and that traffic teeing does not adequately identify risk in stateful systems. AWS says both blue and green environments need up-to-date data, share the same data stores, and require backward-compatible schema updates. The claim that exposure is not a data-compatibility boundary, and the reads-only default, are Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-blue-green-deployments",
+            "ledger_record": "read.aws-blue-green-data.2026-10-30",
+            "section": "Best Practices for Managing Data Synchronization and Schema Changes",
+            "quote": "Broadly, you accomplish this by having both the green and blue environments share the same data stores.",
+            "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "Dependencies and Isolation",
+              "quote": "For practical reasons, the canary population and the control may share backends, frontends, networks, data stores, and other infrastructure.",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "Traffic Teeing",
+              "quote": "Traffic teeing also doesn’t adequately identify risk in stateful systems; copies of traffic may introduce unexpected influences between the seemingly independent deployments.",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            },
+            {
+              "source_id": "src.aws-blue-green-deployments",
+              "ledger_record": "read.aws-blue-green-data.2026-10-30",
+              "section": "Decoupling Schema Changes from Code Changes",
+              "quote": "Database updates must be backward compatible, so the old version of the application can still interact with the data.",
+              "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
@@ -10048,15 +10078,52 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Shadow traffic tests reads safely only when writes are suppressed; a mirrored write can execute twice.",
-          "reason": "Unit does not present shadow, blue/green or flags as alternatives."
+          "state": "supported",
+          "quote": "Traffic mirroring is safe only when requests are idempotent or can be processed twice",
+          "reason": "Flagger lists canary, A/B, blue/green and blue/green mirroring, and says mirroring should be used only for requests that are idempotent or can be processed twice because a duplicated write can hit both versions. Google SRE describes feature flags that separate feature launches from binary releases and blue/green that uses twice the resources; Argo notes a canary without steps mimics a rolling update. The reads-only default and the choice rule are Tycho guidance.",
+          "binding": {
+            "source_id": "src.flagger-deployment-strategies",
+            "ledger_record": "read.flagger-deployment-strategies.2026-10-30",
+            "section": "Blue/Green with Traffic Mirroring",
+            "quote": "Mirroring should be used for requests that are idempotent or capable of being processed twice (once by the primary and once by the canary).",
+            "revision": "2d57c5d5bd950da50cf3fc73e1aff83f84981959e544cd8a40cc25c97d66b745"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "Separating Components That Change at Different Rates",
+              "quote": "Feature flag or experiment frameworks like Gertrude, Feature, and PlanOut allow you to separate feature launches from binary releases.",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "Blue/Green Deployment",
+              "quote": "One downside is that this setup uses twice as many resources as a more “traditional” deployment.",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            },
+            {
+              "source_id": "src.argo-rollouts",
+              "ledger_record": "read.batch5-argo-canary.2026-10-21",
+              "section": "Mimicking Rolling Update",
+              "quote": "If the steps field is omitted, the canary strategy will mimic the rolling update behavior.",
+              "revision": "925398c1c97a8e700b22ec0354648ae6240b405d73e219f2f3e5ffc286c982e7"
+            },
+            {
+              "source_id": "src.aws-blue-green-deployments",
+              "ledger_record": "read.aws-blue-green-data.2026-10-30",
+              "section": "Best Practices for Managing Data Synchronization and Schema Changes",
+              "quote": "Both the blue and green environments need up-to-date data",
+              "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "canary-release",
         "question": "Should a new version receive a small traffic share before full promotion?",
-        "competing_alternative": "Blue/green or feature flag. Reverse the choice when canary analysis cost exceeds risk reduction.",
+        "competing_alternative": "Traffic mirroring, blue/green, feature flags or rolling deployment. Reverse the choice when canary analysis cost exceeds risk reduction, the cohort cannot be isolated, or writes make mirroring unsafe.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -10065,12 +10132,29 @@
         "source_id": "src.argo-rollouts",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.flagger-deployment-strategies",
+            "ledger_record": "read.flagger-deployment-strategies.2026-10-30",
+            "revision": "2d57c5d5bd950da50cf3fc73e1aff83f84981959e544cd8a40cc25c97d66b745"
+          },
+          {
+            "source_id": "src.sre-workbook",
+            "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+            "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+          },
+          {
+            "source_id": "src.aws-blue-green-deployments",
+            "ledger_record": "read.aws-blue-green-data.2026-10-30",
+            "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Invariant and alternative bound 2026-10-30 to AWS data-tier, Flagger mirroring, Google SRE canarying and the existing Argo record; the reads-only default and alternative-choice rule remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.feature-flags-feature-toggles",
@@ -12335,7 +12419,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Canary Release now has a dedicated owner unit with explicit limits."
     },
@@ -12390,11 +12474,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 110,
-    "invariant_supported": 68,
+    "invariant_supported": 69,
     "failure_recovery_supported": 61,
-    "alternative_supported": 67,
-    "technical_partial_bounded": 19,
-    "technical_partial": 81,
+    "alternative_supported": 68,
+    "technical_partial_bounded": 20,
+    "technical_partial": 80,
     "technical_name_only": 0,
     "technical_sufficient": 45,
     "decision_partial_bounded": 100,
