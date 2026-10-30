@@ -61,21 +61,24 @@ safe, when no one owns the DLQ, or when dead-lettering hides a programming error
 
 **Competing alternative.** Bounded retry with backoff and an audit record, then alert and
 stop; drop with a recorded disposition or park the work in a repair table/outbox when failure
-is deterministic. Hookdeck's alternatives guide explicitly compares a DLQ with database
-persistence, a retry table and a transactional outbox; the guide is webhook-specific, so the
-drop variant and general transfer are Tycho guidance. Reverse the choice when replay is
-frequent and needs automated policy.
+is deterministic. Hookdeck's alternatives guide presents database persistence, a retry table and a
+transactional outbox as alternatives to a DLQ; the guide is webhook-specific, so the drop
+variant and general transfer are Tycho guidance. Reverse the choice for high-scale systems with
+dedicated platform teams, where the guide says traditional DLQs remain a solid choice; Tycho
+guidance: also reverse when replay is frequent and needs automated policy.
 
-**Failure and recovery.** DLQ growth and silent abandonment are common; the Azure page states
-there is no automatic cleanup and messages remain until retrieved, while AWS documents
-retention and redrive. Verify poison-work policy in the owner section.
+**Failure and recovery.** Tycho guidance: monitor DLQ growth and silent abandonment. The Azure
+page states there is no automatic cleanup and messages remain until retrieved, while AWS
+documents retention and redrive. Verify poison-work policy in the owner section.
 
 **Technical owner.** [Dead Letter Channel / DLQ](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#dead-letter-channel-dlq) — poison-work policy is bounded, not a full DLQ operations manual.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-dlq.2026-10-21: served problem/solution; publisher-abridged. The
-source is a public pattern/documentation unit, not a benchmark.
+read record read.batch2-dlq.2026-10-21, revision
+`714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278`: served
+problem/solution; publisher-abridged. The source is a public pattern/documentation unit,
+not a benchmark.
 [src.aws-sqs-dlq](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.aws-sqs-dlq.2026-10-30: sections "Using dead-letter queues in Amazon SQS",
 "Using policies for dead-letter queues" and "Understanding message retention periods for

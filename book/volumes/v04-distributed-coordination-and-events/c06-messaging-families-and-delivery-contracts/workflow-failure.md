@@ -198,9 +198,9 @@ See the [dedicated Request-Reply Messaging owner note](request-reply-messaging.m
 
 ### Dead Letter Channel-DLQ
 
-A quarantine queue receives a message after its retry or age policy is exhausted, retaining
-payload, headers and failure context. The DLQ is a policy state, not a second work queue
-that silently retries forever.
+A quarantine queue receives a message that the system cannot or should not deliver. Tycho
+guidance: after its retry or age policy is exhausted, retain payload, headers and failure
+context. The DLQ is a policy state, not a second work queue that silently retries forever.
 
 **Invariant.** A message must leave the retry path when its retry budget is exhausted or its
 failure is permanent, and must enter a declared quarantine with enough context to diagnose it.
@@ -218,17 +218,17 @@ authentication when some message-level security scheme is used." These sentences
 retry exhaustion and permanent failure as quarantine triggers; classifying each outcome as
 transient, permanent or unknown remains Tycho guidance.
 
-Retrying cannot repair an invalid schema or a permanently rejected target. Separate
-transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic evidence
-without leaking payload. The DLQ needs an owner, an alert threshold, a retention horizon, a
+Retrying cannot repair an invalid schema or a permanently rejected target. Tycho guidance:
+separate transient, permanent and unknown outcomes; bound attempts and age; keep diagnostic
+evidence without leaking payload. The DLQ needs an owner, an alert threshold, a retention horizon, a
 capacity limit, an access policy and a cleanup owner. A replay procedure preserves the
 original effect identity, reauthorizes the action and checks whether the effect was already
 committed before republishing; a blind replay is a duplicate-effect risk.
 
 **Alternative.** Bounded retry with an audit record, dropping with a recorded disposition, or
 parking the work in a repair table/outbox may be preferable when failure is deterministic or
-the broker cannot retain evidence safely. Hookdeck's alternatives guide explicitly compares a
-DLQ with database persistence, a retry table and a transactional outbox: "Instead of moving
+the broker cannot retain evidence safely. Hookdeck's alternatives guide presents database persistence, a retry table and a
+transactional outbox as alternatives to a DLQ: "Instead of moving
 failed events to a separate queue, persist them directly to a database table."; "A variation
 of database persistence, the retry table pattern uses a dedicated table specifically for
 events that need reprocessing."; "After a maximum number of attempts, events move to a failed
@@ -238,7 +238,10 @@ traditional DLQs remain a solid choice." Those sentences support database persis
 retry-table and outbox alternatives with a bounded-attempt/record path. The AWS page supports
 the retry bound and the Azure page the diagnostic record, but neither compares these
 alternatives. The guide is webhook-specific; the drop-with-record variant and the general
-transfer beyond webhooks remain Tycho guidance. A DLQ is a fit when the failure is inspectable
+transfer beyond webhooks remain Tycho guidance. Reverse the choice for high-scale systems with
+dedicated platform teams, where the guide says traditional DLQs remain a solid choice; Tycho
+guidance: also reverse when replay is frequent and needs automated policy. A DLQ is a fit when
+the failure is inspectable
 and a human or repair job can decide the terminal outcome.
 
 **Source boundary.** EIP page record `read.batch2-dlq.2026-10-21`, revision
