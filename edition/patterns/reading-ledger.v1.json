@@ -6404,6 +6404,99 @@
       "read_scope": "complete Markdown alternate of the public guide; linked pages and images excluded",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.pg-prepare-transaction.2026-10-30",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/18/sql-prepare-transaction.html",
+      "unit_label": "PREPARE TRANSACTION — PostgreSQL 18",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-30",
+      "access_method": "two identical 19,968-byte public HTTPS GETs on 2026-10-30; canonical page text SHA-256 8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5; raw HTML SHA-256 2a2fe0714e1b6c7d2c830918bb7c2b7df9e3bfd926d1c5d5675c298b727b649b",
+      "sections_read": [
+        "PREPARE TRANSACTION",
+        "Description",
+        "Notes"
+      ],
+      "sections_not_read": [
+        "Synopsis",
+        "Parameters",
+        "Examples",
+        "Compatibility",
+        "linked pages",
+        "navigation and unrelated chrome"
+      ],
+      "tables_figures": [
+        "no table or figure was used"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "After this command, the transaction is no longer associated with the current session; instead, its state is fully stored on disk, and there is a very high probability that it can be committed successfully, even if a database crash occurs before the commit is requested.",
+        "Keep in mind also that the transaction continues to hold whatever locks it held.",
+        "If you have not set up an external transaction manager to track prepared transactions and ensure they get closed out promptly, it is best to keep the prepared-transaction feature disabled by setting max_prepared_transactions to zero.",
+        "It is unwise to leave transactions in the prepared state for a long time."
+      ],
+      "claims_not_supported": [
+        "a coordinator crash-recovery algorithm",
+        "other PostgreSQL versions",
+        "execution, crash or recovery behavior"
+      ],
+      "limitations": "One PostgreSQL 18 page; product-specific SQL behavior; no database, prepared transaction, crash or recovery test was executed.",
+      "content_sha256": "8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5",
+      "read_scope": "Description and Notes",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.oracle-distributed-transactions.2026-10-30",
+      "source_id": "src.oracle-distributed-transactions",
+      "unit_url": "https://docs.oracle.com/en/database/oracle/oracle-database/26/admin/distributed-transactions-concepts.html",
+      "unit_label": "Distributed Transactions Concepts — Oracle Database 26",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-30",
+      "access_method": "two identical 106,035-byte public HTTPS GETs on 2026-10-30; canonical page text SHA-256 509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25; raw HTML SHA-256 355acefc2e541d3ba7a2d500d6cc0f91240d9ce0c8a1b61190ab4ea5fd03fe4e",
+      "sections_read": [
+        "Two-Phase Commit Mechanism",
+        "Commit Point Site",
+        "Prepare Phase",
+        "Commit Phase",
+        "In-Doubt Transactions",
+        "About In-Doubt Transactions",
+        "Automatic Resolution of In-Doubt Transactions",
+        "Manual Resolution of In-Doubt Transactions"
+      ],
+      "sections_not_read": [
+        "other page sections",
+        "linked pages",
+        "images",
+        "navigation and unrelated chrome"
+      ],
+      "tables_figures": [
+        "tables in the selected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Oracle documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A transaction becomes in-doubt if the two-phase commit mechanism fails.",
+        "What happens if any of the three phases fails because of a system or network error? The transaction becomes in-doubt.",
+        "A server system running Oracle Database software crashes",
+        "Records information in the redo logs so that it can subsequently either commit or roll back the transaction, regardless of intervening failures",
+        "The prepared nodes then wait until a COMMIT or ROLLBACK request is received from the global coordinator.",
+        "The node guarantees that locks held for the transaction are able to survive a failure.",
+        "Because the commit point log contains a record of the commit, the transaction is considered committed even though some participating nodes may still be only in the prepared state and the transaction not yet actually committed at these nodes.",
+        "Until RECO can resolve the transaction, the data is locked for both reads and writes.",
+        "If necessary, force a commit using the COMMIT FORCE statement or a rollback using the ROLLBACK FORCE statement."
+      ],
+      "claims_not_supported": [
+        "a product-neutral decision-log format",
+        "a universal coordinator-crash rule",
+        "linked pages and images",
+        "execution or recovery behavior"
+      ],
+      "limitations": "One living Oracle product page with Release 26 and a 2026-07-20 content date; RECO-specific behavior; no database or recovery test was executed.",
+      "content_sha256": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25",
+      "read_scope": "selected sections: two-phase commit mechanism, commit point site, prepare phase, commit phase, in-doubt transactions and their automatic/manual resolution",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

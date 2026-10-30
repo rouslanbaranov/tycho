@@ -458,46 +458,7 @@ Service.
 
 ### Two-Phase Commit (2PC)
 
-**Identity.** Two-Phase Commit (2PC); family Data consistency, transactions and event
-sourcing; kind transaction-pattern; priority advanced.
-
-**Decision question.** Should a distributed transaction use a prepare/commit protocol
-across resource managers?
-
-**Good-fit conditions.** Participants support a prepare phase; the coordinator is highly
-available; blocking and recovery are acceptable; the invariant spans resources.
-
-**Hard contraindications.** Reject when participants cannot prepare, when coordinator
-failure would block critical resources, or when compensation-based saga is sufficient.
-
-**Competing alternative.** Saga/compensation or one local transaction. The public Saga pattern
-says "2PC is not an option" in its context and replaces atomic commit with local transactions
-and compensating actions, accepting visible intermediate states and non-atomic outcomes. Reverse
-the choice when blocking and coordinator complexity exceed atomicity benefit.
-
-**Failure and recovery.** A failure after prepare leaves the transaction in doubt while prepared
-data stays locked; a commit-point log and an external transaction manager track the decision, and
-resolution may be automatic or forced. Verify protocol limits in the owner section.
-
-**Technical owner.** [Two-Phase Commit (2PC)](../../v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md#two-phase-commit-2pc) — local/global commit limits are bounded, not a 2PC protocol reference.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-pg-2pc.2026-10-21: §66.4, the single served heading.
-[src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.pg-prepare-transaction.2026-10-30: Description and Notes.
-[src.oracle-distributed-transactions](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.oracle-distributed-transactions.2026-10-30: Prepare Phase, Commit Phase and
-In-Doubt Transactions.
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: Forces, Solution and Resulting context.
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-saga-azure.2026-10-30: Problems and considerations.
-The sources are public documentation and a public pattern description, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga; Compensating Transaction; Transactional Outbox; Distributed
-Transactions.
+See the [dedicated Two-Phase Commit (2PC) card](two-phase-commit-2pc.md).
 
 ## Chapter result and counterexample
 

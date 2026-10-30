@@ -4749,7 +4749,7 @@
         "heading": "Two-Phase Commit (2PC)",
         "anchor": "two-phase-commit-2pc",
         "level": 3,
-        "line": 126,
+        "line": 130,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Two-Phase Commit (2PC)"
@@ -4781,20 +4781,143 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A coordinator crash after prepare leaves participants holding locks with an unknown outcome; recovery depends on a durable decision log and an explicit resolution procedure.",
-          "reason": "Source does not address coordinator crash recovery or a durable decision log."
+          "state": "supported",
+          "quote": "A transaction becomes in-doubt if the two-phase commit mechanism fails.",
+          "reason": "Oracle supplies the in-doubt, prepared-node waiting, redo-log, commit-point, lock and force-resolution statements; PostgreSQL supplies the durable prepared-state, crash-survival, held-lock and external-transaction-manager statements. The coordinator-crash framing is a Tycho reading of the documented roles and no portable recovery algorithm is claimed.",
+          "binding": {
+            "source_id": "src.oracle-distributed-transactions",
+            "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+            "section": "In-Doubt Transactions",
+            "quote": "A transaction becomes in-doubt if the two-phase commit mechanism fails.",
+            "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "About In-Doubt Transactions",
+              "quote": "What happens if any of the three phases fails because of a system or network error? The transaction becomes in-doubt.",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "About In-Doubt Transactions",
+              "quote": "Until RECO can resolve the transaction, the data is locked for both reads and writes.",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "Prepare Phase",
+              "quote": "Records information in the redo logs so that it can subsequently either commit or roll back the transaction, regardless of intervening failures",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "Prepare Phase",
+              "quote": "The prepared nodes then wait until a COMMIT or ROLLBACK request is received from the global coordinator.",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "Prepare Phase",
+              "quote": "The node guarantees that locks held for the transaction are able to survive a failure.",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "Commit Point Site",
+              "quote": "Because the commit point log contains a record of the commit, the transaction is considered committed even though some participating nodes may still be only in the prepared state and the transaction not yet actually committed at these nodes.",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.oracle-distributed-transactions",
+              "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+              "section": "Manual Resolution of In-Doubt Transactions",
+              "quote": "If necessary, force a commit using the COMMIT FORCE statement or a rollback using the ROLLBACK FORCE statement.",
+              "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-prepare-transaction.2026-10-30",
+              "section": "Description",
+              "quote": "After this command, the transaction is no longer associated with the current session; instead, its state is fully stored on disk, and there is a very high probability that it can be committed successfully, even if a database crash occurs before the commit is requested.",
+              "revision": "8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-prepare-transaction.2026-10-30",
+              "section": "Notes",
+              "quote": "Keep in mind also that the transaction continues to hold whatever locks it held.",
+              "revision": "8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-prepare-transaction.2026-10-30",
+              "section": "Notes",
+              "quote": "If you have not set up an external transaction manager to track prepared transactions and ensure they get closed out promptly, it is best to keep the prepared-transaction feature disabled by setting max_prepared_transactions to zero.",
+              "revision": "8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A saga with compensating actions avoids prepared locks at the cost of visible intermediate states and non-atomic business outcomes; prefer 2PC when participants can hold locks and atomic durability is required. A single local transaction is preferable when every resource shares one database.",
-          "reason": "Source does not name saga, compensating actions or a single local transaction as alternatives."
+          "state": "supported",
+          "quote": "the changes made by the completed steps are undone by compensating transactions",
+          "reason": "The Saga page frames 2PC as not an option in its context, defines compensation, lists the lack of automatic rollback and lack of isolation, and shows an Order in a PENDING state; Azure states that compensation can fail and leave an inconsistent state. The avoided-locks and single-local-transaction comparisons remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "section": "Solution",
+            "quote": "the changes made by the completed steps are undone by compensating transactions",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.batch2-saga.2026-10-21",
+              "section": "Resulting context",
+              "quote": "Lack of automatic rollback - a developer must design compensating transactions that explicitly undo changes made earlier in a saga rather than relying on the automatic rollback feature of ACID transactions",
+              "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.batch2-saga.2026-10-21",
+              "section": "Resulting context",
+              "quote": "Lack of isolation (the “I” in ACID) - the lack of isolation means that there’s risk that the concurrent execution of multiple sagas and transactions can use data anomalies.",
+              "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.batch2-saga.2026-10-21",
+              "section": "Example: Choreography-based saga",
+              "quote": "The Order Service receives the POST /orders request and creates an Order in a PENDING state",
+              "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+              "section": "Solution",
+              "quote": "If a step fails, a series of compensating transactions undoes the changes that the completed steps made.",
+              "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Compensating transactions might not always succeed, which can leave the system in an inconsistent state.",
+              "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "two-phase-commit-2pc",
         "question": "Should a distributed transaction use a prepare/commit protocol across resource managers?",
-        "competing_alternative": "Saga/compensation or one local transaction. Reverse the choice when blocking and coordinator complexity exceed atomicity benefit.",
+        "competing_alternative": "Saga/compensation or one local transaction. The public Saga pattern says \"2PC is not an option\" in its context and replaces atomic commit with local transactions and compensating actions, accepting visible intermediate states and non-atomic outcomes. Reverse the choice when blocking and coordinator complexity exceed atomicity benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -4803,12 +4926,34 @@
         "source_id": "src.postgresql",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg-prepare-transaction.2026-10-30",
+            "revision": "8cf69b9a6e4e0d7f2318a05bb054f6ca67e6a486e564d892db4f858835aa0bd5"
+          },
+          {
+            "source_id": "src.oracle-distributed-transactions",
+            "ledger_record": "read.oracle-distributed-transactions.2026-10-30",
+            "revision": "509659faa90d9379b750679db38da26eb48e83428585e16f50247972f698ca25"
+          },
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          },
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-saga-azure.2026-10-30",
+            "revision": "84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Failure/recovery bound 2026-10-30 to Oracle in-doubt, redo-log, commit-point and lock statements plus PostgreSQL prepared-state and lock statements. Alternative bound to the microservices.io Saga compensation/PENDING text and Microsoft Azure compensation-failure text. Coordinator-crash framing and 'avoids prepared locks' remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.distributed-cache",
@@ -11595,8 +11740,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 64,
-    "failure_recovery_supported": 53,
-    "alternative_supported": 64,
+    "failure_recovery_supported": 54,
+    "alternative_supported": 65,
     "technical_partial_bounded": 22,
     "technical_partial": 86,
     "technical_name_only": 0,

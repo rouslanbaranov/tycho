@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 88 |
+| Reviewed by independent agent | 87 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 47, "reviewed-by-independent-agent": 88}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 48, "reviewed-by-independent-agent": 87}.
 
 ## Review procedure
 
@@ -583,7 +583,7 @@ blank verdict template in the machine-readable file.
 
 - **Two-Phase Commit (2PC)**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Valet Key**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
