@@ -6832,8 +6832,8 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Sharding is an application-level routing contract: a versioned shard map assigns each key to a shard, the request carries the shard key, and the store enforces one owner per key.",
-          "reason": "Defines the mechanism.",
+          "quote": "**Definition (Tycho synthesis).** Sharding is horizontal partitioning across independent stores plus an application-level routing contract: a versioned shard map assigns each key to a shard, the request carries the shard key, and the store enforces one owner per key.",
+          "reason": "Citus defines the horizontal-partitioning core; the routing-contract wording is Tycho synthesis.",
           "binding": {
             "source_id": "src.citus",
             "ledger_record": "read.batch3-citus.2026-10-21",
@@ -6856,8 +6856,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Map drift, split brain, application-level hot-key throttling and dual-read/verify are Tycho failure modes: the selected pages document metadata replication/restore and write fencing, not drift detection, split-brain resolution, a per-key throttle or a read-verification step.",
-          "reason": "MongoDB states that a monotonically increasing key concentrates writes on a hot shard and hot chunk, that the balancer applies data-size migration thresholds and briefly pauses application reads and writes while the range location is committed, and that resharding requires a two-second application-tolerated write block with bounded retryable writes; Citus states that a shard is write-locked only briefly while metadata promotes the subscriber and that coordinator metadata can be replicated and restored. The map-drift, split-brain, per-key-throttle and dual-read/verify names are Tycho synthesis; no selected page states a drift detector, split-brain protocol, per-key throttle or read-verification procedure.",
+          "quote": "Tycho failure modes are map drift and split brain; Tycho controls are application-level hot-key throttling and dual-read/verify. The selected pages document metadata replication/restore and write fencing, not drift detection, split-brain resolution, a per-key throttle or a read-verification step.",
+          "reason": "MongoDB documents hotspots, balancer pauses, migration thresholds and five-minute retryable writes; Citus documents brief write locks and metadata replication/restore. Map drift/split brain are Tycho failure modes; throttling/dual-read are Tycho controls.",
           "binding": {
             "source_id": "src.mongo-sharding",
             "ledger_record": "read.mongo-balancer.2026-10-30",
@@ -6921,6 +6921,13 @@
               "section": "Chapter 26. High Availability, Load Balancing, and Replication",
               "quote": "A standby server that cannot be connected to until it is promoted to a primary server is called a warm standby server, and one that can accept connections and serves read-only queries is called a hot standby server.",
               "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.batch3-pg-partition.2026-10-21",
+              "section": "5.12.1. Overview",
+              "quote": "Partitioning refers to splitting what is logically one large table into smaller physical pieces.",
+              "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
             }
           ]
         }
@@ -6928,7 +6935,7 @@
       "decision_evidence": {
         "atlas_section": "sharding",
         "question": "Should data be split across shards by a partition key to scale beyond one node?",
-        "competing_alternative": "Partitioning within one database, read replicas (hot standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby read-only replicas; MongoDB contrasts vertical scaling with horizontal scaling and its infrastructure complexity; Citus warns that joins cross the network boundary. Reverse the choice when distribution adds cross-shard coordination without relieving the measured constraint; that reversal rule is Tycho synthesis.",
+        "competing_alternative": "Partitioning within one database, read replicas (hot standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby read-only replicas; MongoDB notes that vertical scaling has a practical maximum; Citus warns that joins cross the network boundary. Reverse the choice when distribution adds cross-shard coordination without relieving the measured constraint; that reversal rule is Tycho synthesis.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -6978,6 +6985,11 @@
             "source_id": "src.postgresql",
             "ledger_record": "read.pg18-ha.2026-10-30",
             "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-partition.2026-10-21",
+            "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
           }
         ]
       },

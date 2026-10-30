@@ -125,14 +125,16 @@ new source claim.
 
 ### Sharding
 
-Sharding is an application-level routing contract: a versioned shard map assigns each key to a
-shard, the request carries the shard key, and the store enforces one owner per key. Unlike table
-partitioning inside one store, a shard crosses independent stores, so the map and rebalancing
-protocol are part of the contract rather than a physical-layout detail.
+**Definition (Tycho synthesis).** Sharding is horizontal partitioning across independent stores
+plus an application-level routing contract: a versioned shard map assigns each key to a shard,
+the request carries the shard key, and the store enforces one owner per key. Citus documents the
+horizontal-partitioning core; the routing-contract wording is Tycho. Unlike table partitioning
+inside one store, a shard crosses independent stores, so the map and rebalancing protocol are part
+of the contract rather than a physical-layout detail.
 
 One authoritative owner must exist per key, and a resharding move must fence writes or preserve a
-verifiable handoff. A key that changes often creates a move storm; a key with low cardinality
-creates one hot shard.
+verifiable handoff. Tycho guidance: a key that changes often creates a move storm; a key with low
+cardinality creates one hot shard.
 
 **Failure and recovery (Tycho synthesis).** Hotspots and failed migrations are documented failure
 modes. A monotonically increasing key routes inserts to one "hot shard" and "hot chunk"; a
@@ -146,14 +148,16 @@ application to tolerate a two-second period in which writes to the resharded col
 blocked, fails on duplicate `_id` values, and keeps retryable writes retryable for five minutes,
 after which the definitive result may be unavailable (MongoDB — Reshard a Collection).
 
-Map drift, split brain, application-level hot-key throttling and dual-read/verify are Tycho failure
-modes: the selected pages document metadata replication/restore and write fencing, not drift
-detection, split-brain resolution, a per-key throttle or a read-verification step.
+Tycho failure modes are map drift and split brain; Tycho controls are application-level hot-key
+throttling and dual-read/verify. The selected pages document metadata replication/restore and write
+fencing, not drift detection, split-brain resolution, a per-key throttle or a read-verification step.
 
 **Alternative (Tycho comparison).** Partitioning inside one database is the first option:
 PostgreSQL describes partitioning as "splitting what is logically one large table into smaller
 physical pieces" (PostgreSQL — Table Partitioning), and Citus recommends PostgreSQL table
-partitioning for time-ordered data (Citus — Choosing Distribution Column). Read replicas are
+partitioning for time-ordered data (Citus — Choosing Distribution Column). The retained
+`read.batch3-pg-partition.2026-10-21` binds the PostgreSQL partitioning quote with revision
+`6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001`. Read replicas are
 another: PostgreSQL documents hot-standby servers that serve read-only queries and warns that,
 with asynchronous replication, "load balanced servers might return slightly stale results"
 (PostgreSQL — High Availability). Vertical scaling is the third: MongoDB notes that it raises a

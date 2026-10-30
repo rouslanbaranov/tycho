@@ -64,29 +64,32 @@ cannot be detected and verified.
 
 **Competing alternative.** Partitioning within one database, read replicas (hot
 standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby
-read-only replicas; MongoDB contrasts vertical scaling with horizontal scaling and its
-infrastructure complexity; Citus warns that joins cross the network boundary. Reverse
+read-only replicas; MongoDB notes that vertical scaling has a practical maximum; Citus warns
+that joins cross the network boundary. Reverse
 the choice when distribution adds cross-shard coordination without relieving the
 measured constraint; that reversal rule is Tycho synthesis.
 
 **Failure and recovery.** Hotspots, hot chunks and failed migrations are documented;
 MongoDB identifies uneven load from monotonic keys, the balancer pauses reads/writes
-while updating range metadata, and reshard retries are bounded. Citus takes a brief
-write-lock while promoting a shard. Map drift, split brain, hot-key throttling and
-dual-read/verify are Tycho failure modes; verify them in the owner section.
+while updating range metadata, and retryable writes remain retryable for five minutes
+after a reshard. Citus takes a brief write-lock while promoting a shard. Map drift and
+split brain are Tycho failure modes; hot-key throttling and dual-read/verify are Tycho
+controls; verify them in the owner section.
 
 **Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — shard key choice and resharding cost are bounded; per-engine placement is platform-specific.
 
 **Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
 mechanism record `read.batch3-citus.2026-10-21`; 2026-10-30 records
-`read.citus-cluster.2026-10-30` and `read.citus-datamodel.2026-10-30`.
+`read.citus-cluster.2026-10-30` and `read.citus-datamodel.2026-10-30`
+("Choosing Distribution Column").
 [src.mongo-sharding](../../../../edition/patterns/reading-ledger.v1.json)
 records `read.mongo-sharding.2026-10-30`, `read.mongo-choose-key.2026-10-30`,
 `read.mongo-troubleshoot-key.2026-10-30`, `read.mongo-balancer.2026-10-30` and
 `read.mongo-reshard.2026-10-30`.
 [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json) record
 `read.pg18-ha.2026-10-30`; the retained
-`read.batch3-pg-partition.2026-10-21` binds partitioning. Public documentation,
+`read.batch3-pg-partition.2026-10-21` binds partitioning (revision
+`6f4540b0…`). Public documentation,
 not a benchmark, cluster run or migration test.
 
 **Decision state.** applicable-under-conditions.
