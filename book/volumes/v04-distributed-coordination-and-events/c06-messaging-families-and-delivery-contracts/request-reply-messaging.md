@@ -75,8 +75,8 @@ pattern". It records messaging's benefits, "Loose runtime coupling since it deco
 sender from the consumer" and "Improved availability since the message broker buffers messages until the consumer
 is able to process them", against its costs, "Additional complexity of message broker, which
 must be highly available" and "Request/reply-style communication is more complex". Tycho
-synthesis: prefer direct RPI when both parties can be available for the request, the call fits the
-request budget and no broker is justified; prefer messaging request-reply when loose runtime
+synthesis: prefer direct RPI only when both parties can be available for the request, the call
+fits the request budget, no broker is justified, and blocking is acceptable; prefer messaging request-reply when loose runtime
 coupling or buffered availability matters.
 
 **Limits.** The primary bound page is publisher-abridged. It supports the separate request and
