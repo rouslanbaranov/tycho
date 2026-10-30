@@ -1,8 +1,8 @@
 # Margin-gated section rerank option — 2026-10-29
 
-Status: the core option remains opt-in; MCP now defaults to
-`section_rerank=true, section_rerank_margin=0.15`. See
-[MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md).
+Status: historical. The core option remains opt-in, but MCP now defaults to
+BM25; the preferred opt-in margin is `.05`. See
+[MCP-DEFAULT-REVERT-2026-10-30.md](MCP-DEFAULT-REVERT-2026-10-30.md).
 
 ## Change
 

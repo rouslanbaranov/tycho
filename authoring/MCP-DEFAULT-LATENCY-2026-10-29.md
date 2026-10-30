@@ -1,7 +1,8 @@
 # MCP default latency — 2026-10-29
 
-Status: bounded local smoke benchmark, not production capacity evidence. No
-human review, independent review, CI or sufficient coverage.
+Status: historical benchmark of the former margin default; MCP now defaults to
+BM25. Bounded local smoke, not production capacity evidence. No human review,
+independent review, CI or sufficient coverage.
 
 ## Setup
 
