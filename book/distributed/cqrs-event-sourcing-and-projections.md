@@ -334,17 +334,18 @@ do not themselves forbid a read-derived decision.
 show the most recent changes immediately" and that the read model "is eventually consistent with
 the write model"; AWS says "The CQRS pattern typically results in eventual consistency between
 the data stores." Microsoft also says to "make the read-model consumer idempotent to tolerate
-duplicate delivery" and that views can be regenerated "by replaying historical events". Tycho
+duplicate delivery", to "Use the Transactional Outbox pattern to persist the state change and
+event atomically", and that views can be regenerated "by replaying historical events". Tycho
 guidance, not a source claim: commit the derived row and its cursor atomically, disable outbound
-side effects during rebuild, and represent an unknown or lagging view explicitly rather than
-serving it as current.
+side effects during rebuild, and treat cursor gaps and schema drift as explicit failure states
+rather than serving an unknown view as current.
 
 **Alternative.** Revisit the separation when command contention, projection lag or rebuild
 duration outweighs the read benefit, and prefer one model when that case cannot be made. A
 reversal deserves the same written rationale as the initial choice.
 
-**Limits.** Tycho guidance, not a source claim: projection lag, duplicate apply, cursor gaps and
-schema drift are common; a rebuild needs an owner, a recorded position and a freshness contract,
+**Limits.** Tycho guidance, not a source claim: projection lag and duplicate apply are common;
+cursor gaps and schema drift are explicit failure states; a rebuild needs an owner, a recorded position and a freshness contract,
 and a stale view is a derived read rather than authority. The selected pages describe the
 separation and the eventual consistency cost; they do not test a projector crash, a cursor
 protocol or a production rebuild.

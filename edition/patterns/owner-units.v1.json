@@ -4278,7 +4278,7 @@
         "invariant": {
           "state": "supported",
           "quote": "The write model owns command authority and the read model is a derived, read-only view; neither side may claim authority merely because it can read the other's tables.",
-          "reason": "Microsoft separates the read and write models, makes queries non-mutating, gives the read model no business logic and calls the event store the single source of truth; AWS places validation and authorization on the command side. The neither-side-authority rule and the ban on a lagging view for an invariant decision are Tycho guidance, not source claims.",
+          "reason": "Microsoft/AWS support read-only queries, no validation stack, event store as write source and command-side validation; the authority rule, no write path for command state, and no lagging-view invariant decision are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-cqrs.2026-10-30",
@@ -4326,8 +4326,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Microsoft also says to \"make the read-model consumer idempotent to tolerate duplicate delivery\" and that views can be regenerated \"by replaying historical events\".",
-          "reason": "Microsoft supports eventual-consistency lag, an idempotent read-model consumer, replay-based regeneration and the Transactional Outbox write-side commit; AWS and Fowler support eventual consistency. The atomic derived-row/cursor commit, rebuild side-effect suppression and unknown-view handling are Tycho guidance.",
+          "quote": "Microsoft also says to \"make the read-model consumer idempotent to tolerate duplicate delivery\", to \"Use the Transactional Outbox pattern to persist the state change and event atomically\", and that views can be regenerated \"by replaying historical events\".",
+          "reason": "Microsoft supports outbox state+event atomicity, idempotent consumer, lag and replay regeneration; AWS supports eventual consistency; atomic row+cursor, rebuild side effects and cursor gaps/schema drift as failure states are Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-cqrs.2026-10-30",
@@ -4369,7 +4369,7 @@
         "alternative": {
           "state": "supported",
           "quote": "Revisit the separation when command contention, projection lag or rebuild duration outweighs the read benefit, and prefer one model when that case cannot be made.",
-          "reason": "Bounded owner statement from the current section.",
+          "reason": "Fowler supports revisiting the separation when the read benefit does not justify it; the card and owner section use the same three triggers.",
           "binding": {
             "source_id": "src.fowler-cqrs",
             "ledger_record": "read.fowler-cqrs.2026-10-21",
@@ -4382,7 +4382,7 @@
       "decision_evidence": {
         "atlas_section": "command-query-responsibility-segregation-cqrs",
         "question": "Should command and query models be separated so reads and writes can evolve independently?",
-        "competing_alternative": "Single model with indexes/views. Reverse the choice when projection lag and dual-model complexity exceed read-scale benefit.",
+        "competing_alternative": "Single model with indexes/views. Revisit the separation when command contention, projection lag or rebuild duration outweighs the read benefit, and prefer one model when that case cannot be made.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -7086,7 +7086,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 368,
+        "line": 369,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The projection owner publishes",
