@@ -35,7 +35,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -109,16 +109,54 @@ source claim.
 
 ### Stale-While-Revalidate
 
-Stale-while-revalidate serves the current stale value while one owner refreshes it in the
-background, within a bounded stale window. The stale window and the refresh owner must be bounded
-and observable, and a failed refresh must not extend the window indefinitely.
+Stale-while-revalidate serves the current stale value while a cache revalidates it in the
+background, within a bounded stale window. The window is the response's declared
+`stale-while-revalidate` delta-seconds; it is not an open-ended permission.
 
-A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures
-and fall back to a blocking read when the bound is reached. TTL-only expiry is the alternative when
-background refresh cannot be bounded; it trades freshness for no refresh coordination. A blocking
-refresh guarantees freshness at the cost of latency; choose stale-while-revalidate only when the
-declared stale window is acceptable to the reader.
+RFC 5861 says caches "MAY serve the response in which it appears after it becomes stale, up
+to the indicated number of seconds" and that if delta-seconds passes without revalidation
+the response "SHOULD NOT continue to be served stale." RFC 9111 requires that a cache
+"MUST NOT generate a stale response unless" it is disconnected or explicitly permitted,
+and names extension directives such as RFC 5861. MDN's example allows reuse for the
+following 86400 seconds "provided that they revalidate the response in the background,"
+then says the next request revalidates normally. Read together, RFC 5861's SHOULD NOT
+cutoff and RFC 9111's permission rule bound the window. The stale window is bounded by
+the declared delta-seconds, and a failed or inconclusive refresh must not extend it.
 
-**Limits.** The stale window is a user-visible correctness bound; a refresh that silently fails
-must eventually force a blocking read or explicit error, and the refresh owner needs a failure
-metric.
+A failed or inconclusive refresh may keep serving stale only inside the window; after the
+bound, the next request blocks and is handled normally. RFC 5861's example says that when
+"validation is inconclusive," after the window "the stale-while-revalidate function will
+cease to operate" and the next request "will block and be handled normally." Cap the stale
+age at the declared bound, and fall back to a blocking read when it is reached.
+
+A single refresh owner and refresh-failure telemetry are Tycho guidance, not HTTP
+requirements: the sources describe cache-level revalidation, not a coalescing owner or a
+failure metric. RFC 5861 expected a stale response to carry a non-zero Age and a warning;
+RFC 9111 later obsoleted Warning while keeping Age, so use Age as the observable staleness
+signal and add an owner-specific failure signal.
+
+TTL-only expiry is the alternative when background refresh cannot be bounded; it trades
+freshness for no refresh coordination. A blocking refresh guarantees freshness at the cost
+of latency; choose stale-while-revalidate only when the declared stale window is acceptable
+to the reader.
+
+**Limits.** The window is a user-visible correctness bound. RFC 5861 is Informational;
+RFC 9111 is Standards Track STD 98. The sources specify HTTP caches and do not test a cache
+implementation, a refresh owner or a failure metric. The single-owner and telemetry rules
+are Tycho guidance.
+
+**Source boundary.**
+
+- RFC 5861, `read.batch3-rfc5861.2026-10-21`, raw text
+  `1193f1c8710af162e1b9fb4250d79bc6dd26497df4caeeaaa8bcb2fefdd2529e`:
+  sections 3 and 3.1; the delta-seconds window, the SHOULD NOT continuation and the
+  inconclusive-validation fallback.
+- RFC 9111, `read.rfc9111-stale.2026-10-30`, raw text
+  `aeb52adb3279d5f23dae34f68af11bd5cef0a0aff7ffcd014c9ca93c5302cf3e`:
+  section 4.2.4 (stale only when explicitly permitted, naming RFC 5861) and
+  section 5.5 (Warning obsoleted; Age remains).
+- MDN, "Cache-Control header", `read.mdn-cache-control.2026-10-30`, raw HTML
+  `f10655f725b4f7735b97156ee8f9d699ffddf02d67edc05357d7c66de7c67f3c`:
+  the `stale-while-revalidate` section and the Age definition.
+- Limits: these are HTTP-cache specifications and documentation, not an implementation
+  test; the single-owner and telemetry rules are Tycho guidance.

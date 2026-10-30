@@ -35,18 +35,20 @@ evidence_scope:
     - "src.microsoft-caching-guidance"
     - "src.google-cdn-negative-caching"
     - "src.rfc5861"
+    - "src.rfc9111-enrichment"
+    - "src.mdn-cache-control"
     - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
   notes: "14 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C05 — Caching and retrieval
@@ -386,8 +388,8 @@ priority advanced.
 **Decision question.** Should a stale response be served while a refresh runs in the
 background?
 
-**Good-fit conditions.** The contract tolerates bounded staleness; refresh has an owner;
-the stale window is explicit; failure can fall back.
+**Good-fit conditions.** The contract tolerates bounded staleness; the stale window is
+explicit; revalidation can run in the background; failure can fall back to a blocking read.
 
 **Hard contraindications.** Reject when read-after-write is mandatory, when stale data
 would mislead a decision, or when refresh cannot be bounded.
@@ -395,16 +397,25 @@ would mislead a decision, or when refresh cannot be bounded.
 **Competing alternative.** Blocking refresh or TTL-only expiry. Reverse the choice when
 stale responses violate a business contract.
 
-**Failure and recovery.** Background refresh failure can extend staleness; verify
-boundaries in the owner section.
+**Failure and recovery.** A failed or inconclusive revalidation may keep serving stale only
+inside the window; after the bound, the next request blocks and is handled normally. A single
+refresh owner and refresh-failure telemetry are Tycho guidance, not RFC requirements; the
+owner section separates them from the HTTP rules.
 
 **Technical owner.** [Stale fills and regeneration ownership](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md#stale-while-revalidate) — stale-fill ownership is bounded, not a full HTTP cache specification.
 
 **Sources.** [src.rfc5861](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-rfc5861.2026-10-21: sections "Introduction", "The
-stale-while-revalidate Cache-Control Extension". The source is a public
-pattern/documentation
-unit, not a benchmark.
+read record `read.batch3-rfc5861.2026-10-21`: sections "3. The
+stale-while-revalidate Cache-Control Extension" and "3.1. Example"; the bounded
+window, the SHOULD NOT continuation and the inconclusive-validation fallback.
+[src.rfc9111-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.rfc9111-stale.2026-10-30`: sections "4.2.4. Serving Stale
+Responses" and "5.5. Warning"; stale only when explicitly permitted, and
+Warning obsoleted while Age remains.
+[src.mdn-cache-control](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.mdn-cache-control.2026-10-30`: the `stale-while-revalidate`
+section and the Age definition. The sources are public specification and
+documentation units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
