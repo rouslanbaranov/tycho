@@ -10,10 +10,18 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import section_fts_index
 from validate_qrels_v4 import check_file, fail
 
-BATCHES = {
-    f"B{index:02d}": [f"V4-A{start + offset:03d}" for offset in range(10)]
-    for index, start in enumerate(range(1, 151, 10), 1)
-}
+def _batch(prefix, start, count=10):
+    return [f"V4-{prefix}{number:03d}"
+            for number in range(start, start + count)]
+
+
+BATCHES = {}
+for index in range(1, 4):
+    BATCHES[f"B{index:02d}"] = _batch("A", (index - 1) * 10 + 1)
+for index in range(4, 13):
+    BATCHES[f"B{index:02d}"] = _batch("B", (index - 4) * 10 + 1)
+for index in range(13, 16):
+    BATCHES[f"B{index:02d}"] = _batch("V", (index - 13) * 10 + 1)
 
 
 def main(argv=None):
