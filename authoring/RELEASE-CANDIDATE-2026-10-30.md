@@ -81,6 +81,7 @@ See [SEARCH-OPERATIONS-2026-10-30.md](SEARCH-OPERATIONS-2026-10-30.md).
 
 ## Verdict
 
-Search default and runtime are release-candidate ready for further external
-evaluation. Artifact qrels exist, but production-client/external validation and
-sufficient coverage are still missing.
+Core BM25/search objective is complete for the isolated clone: BM25 default,
+negative hybrid result, qrels v4 evaluation, cache/concurrency/runtime, artifact
+qrels and healthcheck. Production-client/external validation and sufficient
+coverage are **not claimed**; artifact scenario top-1 remains .500.
