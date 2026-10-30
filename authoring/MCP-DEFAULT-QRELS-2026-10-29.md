@@ -17,9 +17,9 @@ Phase3 and V12 page top-1 are preserved. v2 improves by 5.1 points.
 ## Difference from direct API
 
 The direct margin-gated API measured .931 on corpus v3. The MCP default measures
-.920 because the MCP layer disables section rerank early for v12-named queries;
-some v2 queries contain v12 wording. This is a real production-path difference,
-not a metric typo.
+.920. The cause has not been isolated. An audit found that no v2 query contains
+v12 wording, so the earlier v12-precheck explanation is not supported. The MCP
+number is the production-path number; the difference remains an open diagnostic.
 
 ## Limits
 
