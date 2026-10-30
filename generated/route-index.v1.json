@@ -2248,12 +2248,15 @@
         "tycho.chapter.b20625a099bc4c82b7d547c32c7da28a",
         "tycho.chapter.9825cb82eb2142754c638aea1ba8d845"
       ],
-      "sha256": "52d944074ee2f1fdf430c4ec22cfbd5ca6435bc904dbfb7a0e0b1fe529a3f9a7",
+      "sha256": "2f3790fce83ccdd8fdb2e445aa5305a3d43d942ddc0dff8afbfa518ab7321baa",
       "source_ids": [
         "src.enterprise-integration",
         "src.camel",
         "src.aws-scatter-gather",
-        "src.microsoft-cloud-patterns"
+        "src.microsoft-cloud-patterns",
+        "src.aws-sqs-dlq",
+        "src.azure-service-bus-dlq",
+        "src.hookdeck-dlq-alternatives"
       ],
       "summary": "All 20 C03 cards with bounded owner links; decision coverage partial.",
       "title": "V11/C03 — Messaging and event-driven integration",
@@ -5104,10 +5107,13 @@
         "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928",
         "tycho.page.98616bdc3c514ea997b2cfe30ad7c070"
       ],
-      "sha256": "efc999753ebeee48cdcefb9add28b156f50c914af8a51f0837106e242a78b9a5",
+      "sha256": "1c1143daf196168f2bdc92ebf761378da0fe62b4bc758fad8b8f70d929406174",
       "source_ids": [
         "src.nats",
-        "src.rabbitmq"
+        "src.rabbitmq",
+        "src.aws-sqs-dlq",
+        "src.azure-service-bus-dlq",
+        "src.hookdeck-dlq-alternatives"
       ],
       "summary": "When does a queue need an additional durable business-state protocol?",
       "title": "Workflow state and messaging failure gates",
@@ -12686,6 +12692,45 @@
     {
       "claim_ids": [],
       "evidence_status": "source-linked",
+      "id": "tycho.page.a91747aee5c745d2a503de341ea1b7f6",
+      "keywords": [
+        "pattern atlas",
+        "dead-letter-channel-dlq",
+        "dead letter queue"
+      ],
+      "kind": "page",
+      "parent_id": "tycho.chapter.a4b31346a691566550633efe0cf2693e",
+      "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/dead-letter-channel.md",
+      "perspectives": [
+        "architecture",
+        "evaluation"
+      ],
+      "prerequisites": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e"
+      ],
+      "questions": [
+        "Should messages that cannot be processed be isolated in a dead-letter channel?"
+      ],
+      "related": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e"
+      ],
+      "sha256": "32570c0076222879fd7ce4ddeead7a7e36ec26f2e6732e6c7d51991622edcabc",
+      "source_ids": [
+        "src.enterprise-integration",
+        "src.aws-sqs-dlq",
+        "src.azure-service-bus-dlq",
+        "src.hookdeck-dlq-alternatives"
+      ],
+      "summary": "Decision card for Dead Letter Channel / DLQ with bounded owner evidence.",
+      "title": "Dead Letter Channel / DLQ",
+      "topics": [
+        "integration-architecture",
+        "architecture-decisions"
+      ]
+    },
+    {
+      "claim_ids": [],
+      "evidence_status": "source-linked",
       "id": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b",
       "keywords": [
         "Queueing",
@@ -17931,6 +17976,6 @@
   ],
   "metadata_version": 1,
   "schema_version": 1,
-  "snapshot_sha256": "bd54a79536383e40161069567dfd2a08a13890775d98a0dd461e6c5da321a3ff",
+  "snapshot_sha256": "660600d4f18bd2d97b0b0df23e63d47b2e087b80de061431fa6b325abe75e172",
   "unannotated_paths": []
 }

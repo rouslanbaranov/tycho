@@ -72,8 +72,9 @@ def build():
             if card_path:
                 card_text = (ROOT / card_path).read_text(encoding="utf-8")
                 name = registry[entry["pattern_id"]]["catalog_name"]
-                headings = [line[4:].strip() for line in card_text.splitlines()
-                            if line.startswith("### ")]
+                headings = [re.sub(r"^#{1,3}\s+", "", line).strip()
+                            for line in card_text.splitlines()
+                            if re.match(r"^#{1,3}\s+", line)]
                 heading = next((item for item in headings
                                 if norm_heading(item) == norm_heading(name)), None)
                 if heading is None:

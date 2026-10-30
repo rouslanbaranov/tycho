@@ -102,12 +102,12 @@ class CommittedPacketTests(unittest.TestCase):
         self.assertEqual(summary["rejected"], 0)
         self.assertEqual(summary["unique_owner_pages"], 81)
         self.assertEqual(summary["ready"], 0)
-        self.assertEqual(summary["reviewed"], 89)
+        self.assertEqual(summary["reviewed"], 88)
         self.assertEqual(summary["awaiting_current_external_review"], 10)
         self.assertEqual(summary["packet_statuses"],
                          {"awaiting-current-external-review": 10,
-                          "page-changed-since-review": 46,
-                          "reviewed-by-independent-agent": 89})
+                          "page-changed-since-review": 47,
+                          "reviewed-by-independent-agent": 88})
 
     def test_no_packet_contains_a_verdict(self):
         for packet in self.payload["packets"]:

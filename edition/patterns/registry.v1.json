@@ -1786,7 +1786,7 @@
         "document_id": "tycho.page.148a37ff87ca4e42a2fec625c65319b0",
         "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md",
         "anchor": "dead-letter-channel-dlq",
-        "state": "partial"
+        "state": "partial-bounded"
       },
       "atlas_owner": {
         "chapter": "V11/C03",
@@ -1794,9 +1794,9 @@
         "state": "partial-bounded"
       },
       "coverage": {
-        "technical": "partial",
+        "technical": "partial-bounded",
         "decision": "partial-bounded",
-        "overall": "partial"
+        "overall": "partial-bounded"
       },
       "confidence": "high",
       "source_units": [
@@ -1804,10 +1804,25 @@
           "source_id": "src.enterprise-integration",
           "unit": "Dead Letter Channel — pattern page",
           "status": "read"
+        },
+        {
+          "source_id": "src.aws-sqs-dlq",
+          "unit": "Using dead-letter queues in Amazon SQS — Amazon Simple Queue Service",
+          "status": "read"
+        },
+        {
+          "source_id": "src.azure-service-bus-dlq",
+          "unit": "Overview of Service Bus dead-letter queues — Azure Service Bus",
+          "status": "read"
+        },
+        {
+          "source_id": "src.hookdeck-dlq-alternatives",
+          "unit": "Alternatives to Dead-Letter Queues for Webhook Reliability — Hookdeck",
+          "status": "read"
         }
       ],
       "review_status": "self-checked",
-      "notes": "Phase 3 C03 card; bounded owner section and backlink are self-checked, not independent-reviewed or sufficient."
+      "notes": "Phase 3 C03 card; bounded owner section and backlink are self-checked, not independent-reviewed or sufficient. All four technical dimensions bound 2026-10-30: invariant EIP/AWS/Azure, alternative Hookdeck database persistence/retry table/outbox, failure/recovery EIP SQS example. Coverage partial-bounded."
     },
     {
       "id": "tycho.pattern.durable-subscriber",

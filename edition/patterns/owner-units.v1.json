@@ -2373,7 +2373,7 @@
         "heading": "Correlation Identifier",
         "anchor": "correlation-identifier",
         "level": 3,
-        "line": 172,
+        "line": 175,
         "unit_kind": "dedicated",
         "unit_terms": [
           "ties together messages",
@@ -2967,7 +2967,7 @@
         "heading": "Dead Letter Channel-DLQ",
         "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 196,
+        "line": 199,
         "unit_kind": "dedicated",
         "unit_terms": [
           "quarantine queue",
@@ -2990,9 +2990,46 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Retrying cannot repair an invalid schema or a permanently rejected target.",
-          "reason": "Page does not state permanent schema/target failure separation."
+          "state": "supported",
+          "quote": "The maxReceiveCount is the number of times a consumer can receive a message from a source queue before it is moved to a dead-letter queue.",
+          "reason": "AWS supports the receive-count bound, EIP supports cannot/should-not-deliver, and Azure supports the purpose, delivery-count and malformed-payload/authentication cases; classifying each outcome as transient, permanent or unknown remains Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-sqs-dlq",
+            "ledger_record": "read.aws-sqs-dlq.2026-10-30",
+            "section": "Using policies for dead-letter queues",
+            "quote": "The maxReceiveCount is the number of times a consumer can receive a message from a source queue before it is moved to a dead-letter queue.",
+            "revision": "c6142288904155bbd99a057145c632195aa76ab86aa939a38a9f0825f3c7e74b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.enterprise-integration",
+              "ledger_record": "read.batch2-dlq.2026-10-21",
+              "section": "Solution (unlabelled)",
+              "quote": "When a messaging system determines that it cannot or should not deliver a message, it may elect to move the message to a Dead Letter Channel .",
+              "revision": "714f6babd327e622695d9be989c93c704d23b034cb2e0fcc1065a0eaa203a278"
+            },
+            {
+              "source_id": "src.azure-service-bus-dlq",
+              "ledger_record": "read.azure-service-bus-dlq.2026-10-30",
+              "section": "The dead-letter queue",
+              "quote": "The purpose of the dead-letter queue is to hold messages that can't be delivered to any receiver, or messages that couldn't be processed.",
+              "revision": "200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600"
+            },
+            {
+              "source_id": "src.azure-service-bus-dlq",
+              "ledger_record": "read.azure-service-bus-dlq.2026-10-30",
+              "section": "Maximum delivery count",
+              "quote": "When the delivery count exceeds the limit, the message is moved to the DLQ.",
+              "revision": "200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600"
+            },
+            {
+              "source_id": "src.azure-service-bus-dlq",
+              "ledger_record": "read.azure-service-bus-dlq.2026-10-30",
+              "section": "Application-level dead-lettering",
+              "quote": "Unacceptable messages can include messages that can't be properly processed because of any sort of system issue, messages that hold malformed payloads, or messages that fail authentication when some message-level security scheme is used.",
+              "revision": "200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
@@ -3007,15 +3044,66 @@
           }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "When failure is deterministic or evidence cannot be retained safely, prefer bounded retry with audit, drop with a record, or a repair table/outbox.",
-          "reason": "Page lists related patterns without bounded-retry/audit comparison."
+          "state": "supported",
+          "quote": "Instead of moving failed events to a separate queue, persist them directly to a database table.",
+          "reason": "Hookdeck explicitly compares a DLQ with database persistence, a retry table and a transactional outbox and states the high-scale reversal; AWS supports the bounded retry setting and Azure the diagnostic record; the guide is webhook-specific and drop-with-record plus general transfer remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.hookdeck-dlq-alternatives",
+            "ledger_record": "read.hookdeck-dlq-alternatives.2026-10-30",
+            "section": "The Database Persistence Pattern",
+            "quote": "Instead of moving failed events to a separate queue, persist them directly to a database table.",
+            "revision": "bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.hookdeck-dlq-alternatives",
+              "ledger_record": "read.hookdeck-dlq-alternatives.2026-10-30",
+              "section": "The Retry Table Pattern",
+              "quote": "A variation of database persistence, the retry table pattern uses a dedicated table specifically for events that need reprocessing.",
+              "revision": "bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af"
+            },
+            {
+              "source_id": "src.hookdeck-dlq-alternatives",
+              "ledger_record": "read.hookdeck-dlq-alternatives.2026-10-30",
+              "section": "The Retry Table Pattern",
+              "quote": "After a maximum number of attempts, events move to a failed state for manual review.",
+              "revision": "bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af"
+            },
+            {
+              "source_id": "src.hookdeck-dlq-alternatives",
+              "ledger_record": "read.hookdeck-dlq-alternatives.2026-10-30",
+              "section": "The Transactional Outbox Pattern",
+              "quote": "The transactional outbox pattern solves the dual-write problem: when you need to both update your database and send a message, failures can leave these out of sync.",
+              "revision": "bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af"
+            },
+            {
+              "source_id": "src.hookdeck-dlq-alternatives",
+              "ledger_record": "read.hookdeck-dlq-alternatives.2026-10-30",
+              "section": "Choosing the Right Approach",
+              "quote": "For high-scale systems with dedicated platform teams, traditional DLQs remain a solid choice.",
+              "revision": "bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af"
+            },
+            {
+              "source_id": "src.aws-sqs-dlq",
+              "ledger_record": "read.aws-sqs-dlq.2026-10-30",
+              "section": "Using policies for dead-letter queues",
+              "quote": "To ensure that your system is resilient against errors, set the maxReceiveCount high enough to allow for sufficient retries.",
+              "revision": "c6142288904155bbd99a057145c632195aa76ab86aa939a38a9f0825f3c7e74b"
+            },
+            {
+              "source_id": "src.azure-service-bus-dlq",
+              "ledger_record": "read.azure-service-bus-dlq.2026-10-30",
+              "section": "Moving messages to the DLQ",
+              "quote": "The following two properties (dead-letter reason and dead-letter description) are added to dead-lettered messages.",
+              "revision": "200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "dead-letter-channel-dlq",
         "question": "Should messages that cannot be processed be isolated in a dead-letter channel?",
-        "competing_alternative": "Bounded retry with backoff, then alert and stop. Reverse the choice when replay is frequent and needs automated policy.",
+        "competing_alternative": "Bounded retry with backoff and an audit record, then alert and stop; drop with a recorded disposition or park the work in a repair table/outbox when failure is deterministic. Hookdeck's alternatives guide explicitly compares a DLQ with database persistence, a retry table and a transactional outbox; the guide is webhook-specific, so the drop variant and general transfer are Tycho guidance. Reverse the choice when replay is frequent and needs automated policy.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3024,12 +3112,29 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-sqs-dlq",
+            "ledger_record": "read.aws-sqs-dlq.2026-10-30",
+            "revision": "c6142288904155bbd99a057145c632195aa76ab86aa939a38a9f0825f3c7e74b"
+          },
+          {
+            "source_id": "src.azure-service-bus-dlq",
+            "ledger_record": "read.azure-service-bus-dlq.2026-10-30",
+            "revision": "200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600"
+          },
+          {
+            "source_id": "src.hookdeck-dlq-alternatives",
+            "ledger_record": "read.hookdeck-dlq-alternatives.2026-10-30",
+            "revision": "bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Poison-work subsection treats the DLQ as holding state; routing and retention mechanics are not described."
+      "notes": "All four technical dimensions are source-bound: invariant EIP/AWS/Azure, alternative Hookdeck database persistence/retry table/outbox, failure/recovery EIP SQS example. Drop-with-record and general webhook transfer remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.durable-subscriber",
@@ -11143,7 +11248,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Correlation and dead-letter policy retain two dedicated units after Claim Check and Request-Reply Messaging moved to dedicated owner pages on 2026-10-29."
     },
@@ -11473,11 +11578,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 63,
+    "invariant_supported": 64,
     "failure_recovery_supported": 53,
-    "alternative_supported": 63,
-    "technical_partial_bounded": 22,
-    "technical_partial": 87,
+    "alternative_supported": 64,
+    "technical_partial_bounded": 23,
+    "technical_partial": 86,
     "technical_name_only": 0,
     "technical_sufficient": 36,
     "decision_partial_bounded": 109,
