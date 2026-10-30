@@ -111,6 +111,20 @@ class V12SearchFacetTests(unittest.TestCase):
         self.assertEqual({item["artifact_type"] for item in result["artifacts"]},
                          {"model"})
 
+    def test_include_artifacts_filters_by_query(self):
+        self.build()
+        with patch.object(route_index, "canonical_scan",
+                          side_effect=self.fake_scan):
+            matched = section_search.search(
+                self.root, "checkout model", volume="v12",
+                include_artifacts=True, abstain=False)
+            unmatched = section_search.search(
+                self.root, "zebra", volume="v12",
+                include_artifacts=True, abstain=False)
+        self.assertEqual([item["id"] for item in matched["artifacts"]],
+                         ["tycho.model.checkout"])
+        self.assertEqual(unmatched["artifacts"], [])
+
     def test_changed_v12_index_invalidates_search(self):
         self.build()
         payload = json.loads((self.root / "generated/v12-index.v1.json").read_text())
