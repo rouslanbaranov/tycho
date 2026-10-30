@@ -11,7 +11,8 @@ explicit. See [MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.m
 
 - Owner accepted AI labels for diagnostics in
   [OWNER-ACCEPTANCE-AI-LABELS-2026-10-29.md](OWNER-ACCEPTANCE-AI-LABELS-2026-10-29.md).
-- This is not human review and does not remove the phase3 regression.
+- This is not human review. The margin gate removes the phase3 page regression
+  on the production path; global rerank remains unsafe.
 
 ## Defaults
 
@@ -39,10 +40,10 @@ Section-qrels v3 guarded (188 queries, AI-adjudicated):
 | Mode | hit@1/3/5 |
 |---|---|
 | BM25 | .803/.941/.979 |
-| section_rerank | .883/.941/.968 |
+| section_rerank, production gate | **.888/.952/.968** |
 
-Guarded section top-1 is significant (p=.0041), but phase3 page top-1 still
-regresses .895 -> .842. Default section_rerank is not safe.
+Production margin path keeps V12 at 1.000 and improves phase3 page top-1
+(.421 -> .474) and section top-1 (.737 -> .895). Global rerank is still not safe.
 
 ## Performance
 
@@ -52,20 +53,18 @@ regresses .895 -> .842. Default section_rerank is not safe.
 
 ## Tests
 
-- 727 tests pass.
-- MCP search schema is closed; section_rerank opt-in tested.
+- **728 tests pass**.
+- MCP default margin gate, opt-out and V12/all_sections fallbacks tested.
 - V12 guards tested.
-- Local premerge checks pass; milestone acceptance is separate.
+- Local full premerge checks pass; milestone acceptance is separate.
 
-## Open gates before any default change
+## Remaining limits
 
-1. Phase3 page-level regression needs a guard or a dedicated section rerank
-   variant that does not reorder the top page.
-2. Independent human/owner adjudication is still absent; all qrels v3 labels
-   are AI.
-3. The section pool was built from both default and rerank candidates; a
+1. Independent human adjudication is still absent; all qrels v3 labels are AI.
+2. The section pool was built from both default and rerank candidates; a
    mode-independent pool is needed for an unbiased estimate.
-4. Default switch requires owner acceptance and a production client benchmark.
+3. Threshold 0.15 was tuned on v3; held-out page effect is mixed.
+4. No production-client benchmark; the owner waived one before the switch.
 
 ## Artifacts
 
@@ -75,6 +74,9 @@ regresses .895 -> .842. Default section_rerank is not safe.
 - [SECTION-RERANK-GUARDED-2026-10-29.md](SECTION-RERANK-GUARDED-2026-10-29.md)
 - [SECTION-RERANK-PAGE-TRADEOFF-2026-10-29.md](SECTION-RERANK-PAGE-TRADEOFF-2026-10-29.md)
 - [MCP-SECTION-RERANK-2026-10-29.md](MCP-SECTION-RERANK-2026-10-29.md)
+- [MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md)
+- [MCP-DEFAULT-QRELS-2026-10-29.md](MCP-DEFAULT-QRELS-2026-10-29.md)
+- [MCP-DEFAULT-SECTION-2026-10-30.md](MCP-DEFAULT-SECTION-2026-10-30.md)
 
 ## Limits
 
