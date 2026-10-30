@@ -75,6 +75,10 @@ Layer-scoped:
 - V12 section top-1 remains 17/30; guard retained.
 - Qrels v4 candidate pools are 4–10, not exhaustive.
 
+## Operations
+
+See [SEARCH-OPERATIONS-2026-10-30.md](SEARCH-OPERATIONS-2026-10-30.md).
+
 ## Verdict
 
 Search default and runtime are release-candidate ready for further external
