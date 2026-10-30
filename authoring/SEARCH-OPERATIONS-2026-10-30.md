@@ -5,7 +5,7 @@ owner acceptance or sufficient coverage.
 
 ## Defaults
 
-- BM25 field weights: title 5, heading 2, body 0.5.
+- BM25 field weights: title 10, heading 5, body 1.
 - MCP section_rerank=false.
 - Opt-in margin: 0.05.
 - Best/semantic mode: opt-in only.

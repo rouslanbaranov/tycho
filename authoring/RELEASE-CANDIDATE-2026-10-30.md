@@ -16,7 +16,7 @@ sufficient coverage.
 
 | Surface | Value |
 |---|---|
-| BM25 weights | title 5, heading 2, body 0.5 |
+| BM25 weights | title 10, heading 5, body 1 |
 | MCP `section_rerank` | false |
 | MCP opt-in margin | 0.05 |
 | Core API/CLI | explicit BM25 |
