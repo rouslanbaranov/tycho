@@ -35,6 +35,11 @@ Using the 50 artifact questions as queries for their own artifact:
 The low top-1 is expected in part because decision/run/scenario records share
 the same questions; this is a diagnostic, not a qrels quality claim.
 
+## Volume-only leak
+
+A volume filter alone also populated all artifacts; that trigger was removed.
+Only `include_artifacts`, `pattern_ids` or `artifact_type` populate the payload.
+
 ## Decision
 
 - Keep artifact lookup opt-in.

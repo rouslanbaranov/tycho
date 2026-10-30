@@ -121,9 +121,12 @@ class V12SearchFacetTests(unittest.TestCase):
             unmatched = section_search.search(
                 self.root, "zebra", volume="v12",
                 include_artifacts=True, abstain=False)
+            volume_only = section_search.search(
+                self.root, "zebra", volume="v12", abstain=False)
         self.assertEqual([item["id"] for item in matched["artifacts"]],
                          ["tycho.model.checkout"])
         self.assertEqual(unmatched["artifacts"], [])
+        self.assertEqual(volume_only["artifacts"], [])
 
     def test_changed_v12_index_invalidates_search(self):
         self.build()

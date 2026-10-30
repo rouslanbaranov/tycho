@@ -905,7 +905,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 "volume": volume,
             },
         }
-        if include_artifacts or pattern_ids or artifact_type or volume:
+        if include_artifacts or pattern_ids or artifact_type:
             artifact_terms = (terms if include_artifacts and not pattern_ids
                               and artifact_type is None else None)
             artifact_payload = v12_artifacts(
