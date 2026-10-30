@@ -54,14 +54,14 @@ modernization-pattern; priority core.
 routing seam rather than by a rewrite?
 
 **Good-fit conditions.** A seam can intercept and route old/new; coexistence is funded;
-Tycho synthesis: one authoritative writer per invariant; routing and data compatibility are explicit;
-rollback is possible
-until a no-return point.
+Tycho synthesis: one authoritative writer per invariant; routing and
+data compatibility are explicit; rollback is possible until a no-return point.
 
 **Hard contraindications.** Reject when the legacy has no seam, when dual-running data
 cannot be reconciled, or when the team cannot own two paths.
 
-**Competing alternative.** Tycho synthesis: branch by abstraction, parallel run or a big-bang replacement.
+**Competing alternative.** Tycho synthesis: branch by abstraction, parallel run or a big-bang
+replacement.
 Reverse the choice when coexistence cost exceeds incremental replacement benefit.
 
 **Failure and recovery.** Interception may be impossible, internal callers may bypass the façade,
@@ -72,10 +72,10 @@ and old/new state can diverge. AWS Prescriptive Guidance states the conditions d
 > bottleneck if it isn't designed properly. Requires a rollback plan for each refactored
 > service to revert to the old way of doing things quickly and safely if things go wrong.
 
-Tycho guidance: detect bypass, hold and route back until proven; a bypass detector, routing inventory
-and data reconciliation remain unproven operational checks. The page supports interception as a
-prerequisite, façade single-point risk and a per-service rollback plan; it does not define
-those checks or a no-return gate.
+Tycho guidance: detect bypass, hold and route back until proven; a bypass detector, routing
+inventory and data reconciliation remain unproven operational checks. The page supports
+interception as a prerequisite, façade single-point risk and a per-service rollback plan; it does
+not define those checks or a no-return gate.
 
 **Technical owner.** [Strangler Fig](../../v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md#strangler-fig) — strangler is bounded to transition-state reasoning.
 

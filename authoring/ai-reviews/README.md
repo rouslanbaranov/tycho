@@ -112,3 +112,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-29 | DeepSeek Reviewer | #540 Least Privilege | pass | `2026-10-29-least-privilege-deepseek.md` | `0a7cbfe04fbc43c07ed7f0321cd1af5f453ac62a3fc5423a619a589d0e505ec9` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Microservices | pass | `2026-10-29-microservices-deepseek.md` | `b54b5373a9088375e436553ebd0901de29d687a1f2e0e9938a58195607d70b29` |
 | 2026-10-29 | DeepSeek Reviewer | #540 Structured Logging | pass | `2026-10-29-structured-logging-deepseek.md` | `38ccf812536a4a60b8bad1e435df63103173457bf65c750f01228264f686f269` |
+| 2026-10-29 | DeepSeek Reviewer | #540 Strangler Fig | pass | `2026-10-29-strangler-deepseek.md` | `dd4aaedfbc19dabd861e4a0699d56a07ec979ac5a90fe90af62c1571d1d2fcc3` |
