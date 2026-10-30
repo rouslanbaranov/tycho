@@ -59,9 +59,9 @@ acceptable; compensation is a business decision; progress is durable.
 **Hard contraindications.** Reject when one local transaction can preserve the invariant,
 when no compensation is possible, or when intermediate visibility is unacceptable.
 
-**Competing alternative.** Single local transaction or two-phase commit. Reverse when steps do
-not genuinely cross independent owners or compensation is
-unsafe.
+**Competing alternative.** For one owner, a local ACID transaction. Tycho synthesis: two-phase
+commit may be preferable when all participants can hold prepared state and atomic visibility is
+mandatory; reverse when steps do not cross independent owners or compensation is unsafe.
 
 **Failure and recovery.** Compensating transactions can fail and leave an inconsistent state;
 transient failures and idempotence must be handled, and monitoring/tracking is required. Tycho

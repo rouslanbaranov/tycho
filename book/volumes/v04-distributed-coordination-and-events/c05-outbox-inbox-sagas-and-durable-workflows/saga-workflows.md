@@ -201,8 +201,8 @@ it, record committed, failed or unknown. A compensation is a new business action
 authorization, evidence and failure mode, and its ordering is declared rather than assumed to be the
 reverse of the forward path.
 
-The invariant is one authority and one effect identity per step; the saga never claims atomicity or
-rollback.
+Tycho synthesis: the invariant is one authority and one effect identity per step; the saga never
+claims atomicity or rollback.
 
 **Failure and recovery.** The Azure Saga page states: "If a step fails, a series of compensating
 transactions undoes the changes that the completed steps made." It also states: "Compensating
@@ -221,8 +221,11 @@ documentation, not a benchmark, and does not prescribe an acknowledgment-loss po
 limits, a compensation-ordering algorithm or a specific repair procedure; those remain Tycho
 guidance.
 
-Use one local transaction when all effects fit one owner, or two-phase commit when participants can
-hold prepared state and atomic visibility is mandatory.
+Use one local transaction when all effects fit one owner; the bound Context supports that a single
+local ACID transaction is unavailable when the databases have different owners. Tycho synthesis:
+two-phase commit may be preferable when participants can hold prepared state and atomic visibility
+is mandatory; compensation is unsafe when a step cannot be undone or its intermediate state cannot
+be exposed.
 
 ### Saga Choreography
 

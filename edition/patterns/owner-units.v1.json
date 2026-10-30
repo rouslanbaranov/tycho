@@ -3818,8 +3818,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "The invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
-          "reason": "Requires one authority and one effect identity per step without atomicity or rollback.",
+          "quote": "Tycho synthesis: the invariant is one authority and one effect identity per step; the saga never claims atomicity or rollback.",
+          "reason": "The source supports no automatic rollback; one-authority and effect-identity are Tycho synthesis.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-saga.2026-10-21",
@@ -3865,8 +3865,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Use one local transaction when all effects fit one owner, or two-phase commit when participants can hold prepared state and atomic visibility is mandatory.",
-          "reason": "Names the alternative and reversal.",
+          "quote": "Tycho synthesis: two-phase commit may be preferable when participants can hold prepared state and atomic visibility is mandatory; compensation is unsafe when a step cannot be undone or its intermediate state cannot be exposed.",
+          "reason": "Context supports the local-ACID limitation across owners; two-phase commit and compensation-safety reversal are Tycho synthesis.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-saga.2026-10-21",
@@ -3879,7 +3879,7 @@
       "decision_evidence": {
         "atlas_section": "saga",
         "question": "Should a multi-service business process be coordinated through local transactions and compensations?",
-        "competing_alternative": "Single local transaction or two-phase commit. Reverse when steps do not genuinely cross independent owners or compensation is unsafe.",
+        "competing_alternative": "For one owner, a local ACID transaction. Tycho synthesis: two-phase commit may be preferable when all participants can hold prepared state and atomic visibility is mandatory; reverse when steps do not cross independent owners or compensation is unsafe.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -3912,7 +3912,7 @@
         "heading": "Saga Choreography",
         "anchor": "saga-choreography",
         "level": 3,
-        "line": 227,
+        "line": 230,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Participants react",
@@ -3986,7 +3986,7 @@
         "heading": "Saga Orchestration",
         "anchor": "saga-orchestration",
         "level": 3,
-        "line": 244,
+        "line": 247,
         "unit_kind": "dedicated",
         "unit_terms": [
           "orchestrator",
@@ -4067,7 +4067,7 @@
         "heading": "Compensating Transaction",
         "anchor": "compensating-transaction",
         "level": 3,
-        "line": 259,
+        "line": 262,
         "unit_kind": "dedicated",
         "unit_terms": [
           "new business action",
