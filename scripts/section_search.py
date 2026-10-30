@@ -64,11 +64,12 @@ def _query_cache_key(root, snapshot, query, limit, kind, topic,
                      evidence_status, path_prefix, index_path, all_sections,
                      abstain, include_weak, detail, max_chars, artifact_type,
                      volume, pattern_ids, section_rerank,
-                     section_rerank_margin):
+                     section_rerank_margin, include_artifacts, weights):
     return (str(Path(root).resolve()), snapshot, query, limit, kind, topic,
             evidence_status, path_prefix, str(index_path), all_sections,
             abstain, include_weak, detail, max_chars, artifact_type, volume,
-            tuple(pattern_ids or ()), section_rerank, section_rerank_margin)
+            tuple(pattern_ids or ()), section_rerank, section_rerank_margin,
+            include_artifacts, tuple(weights))
 
 
 def _cache_get(key):
@@ -654,7 +655,8 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         root, manifest["snapshot_id"], query, limit, kind, topic,
         evidence_status, path_prefix, index_path, all_sections, abstain,
         include_weak, detail, max_chars, artifact_type, volume, pattern_ids,
-        section_rerank, section_rerank_margin)
+        section_rerank, section_rerank_margin, include_artifacts,
+        bm25_weights())
     cached = _cache_get(cache_key)
     if cached is not None:
         db.close()
