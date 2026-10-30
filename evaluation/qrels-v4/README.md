@@ -8,6 +8,9 @@ Codex must run in `~/Projects/tycho-index-and-search`
 Follow [CODEX-PROMPT.md](CODEX-PROMPT.md) and
 [QRELS-V4-HANDOFF-2026-10-30.md](../../authoring/QRELS-V4-HANDOFF-2026-10-30.md).
 
+For one run that completes all ten batches, use
+[CODEX-ONE-RUN-PROMPT.md](CODEX-ONE-RUN-PROMPT.md).
+
 ## Batches
 
 Ten batches of 15 queries; see [BATCHES.md](BATCHES.md). Each Codex run creates
