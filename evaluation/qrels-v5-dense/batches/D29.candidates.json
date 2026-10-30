@@ -1,0 +1,1270 @@
+{
+  "batch": "D29",
+  "items": [
+    {
+      "id": "V4-V021",
+      "page_existing": [
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md"
+      ],
+      "page_new": [
+        {
+          "excerpt": "# Convergence and error **Question.** When is a Monte Carlo result stable enough to use, and what does a confidence interval actually cover? **Short answer.** A result is stable when its estimated standard error is small relative to the decision-relevant effect and the sampling assumptions hold. V12 reports the standard error, a 95% confidence interval and a relative-error threshold. It marks the run insufficient-sam",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "title": "Convergence and error"
+        },
+        {
+          "excerpt": "# V12/C06 - Modernization-path simulation **Status:** self-checked chapter landing, 2026-10-29. The modernization model is synthetic; no migration was performed.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "title": "V12/C06 - Modernization-path simulation"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# V12/C01 - Foundations of architecture modeling **Status:** self-checked chapter landing, 2026-10-29. The pages carry the detail and source limits. No production measurement or independent review is asserted.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "title": "V12/C01 - Foundations of architecture modeling"
+        },
+        {
+          "excerpt": "# Coexistence and rollback **Question.** Which coexistence, reconciliation and rollback states must a modernization model expose before a cutover can be called supported? **Short answer.** A staged model must show the traffic share on each path, the dual-write backlog, the reconciliation capacity, the accumulated divergence and the rollback drain. A cutover is supported only when those states stay inside declared lim",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "title": "Coexistence and rollback"
+        },
+        {
+          "excerpt": "# Model specification contract **Question.** Which fields must a model specification carry so that a reader can see its state, units, assumptions and verification evidence without reading the engine? **Short answer.** A V12 model specification is a versioned JSON object with a stable identifier, purpose, scope, abstraction, state variables, parameters, dynamics, invariants, verification cases, calibration status, val",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "title": "Model specification contract"
+        },
+        {
+          "excerpt": "# Decision record contract **Question.** Which fields turn a simulation comparison into a reviewable architecture decision without hiding a hard constraint or a missing measurement? **Short answer.** A V12 decision record states the question, context, constraints, candidates, metrics, evidence statuses, outcome, reversal triggers, limitations and one-way pattern links. It may recommend a candidate or return insuffici",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "title": "Decision record contract"
+        },
+        {
+          "excerpt": "# Evidence and validation vocabulary **Question.** Which evidence labels may be used for a V12 result, and which inferences are forbidden because they conflate different layers? **Short answer.** V12 keeps five layers separate: source and claim evidence, model verification, calibration, simulation evidence and decision evidence. Each layer answers a different question. A result can be strong in one layer and weak in ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "title": "Evidence and validation vocabulary"
+        },
+        {
+          "excerpt": "# Reproducibility and replay **Question.** What makes a V12 result replayable, and what does a successful replay not prove? **Short answer.** A replayable result has a versioned model, a versioned scenario, a stored seed, a stored engine version, canonical hashes and a result hash. Replay recomputes the result and fails on drift. It does not prove that the model is valid or that the decision is correct.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "title": "Reproducibility and replay"
+        },
+        {
+          "excerpt": "# V12/C05 - Decision integration and pattern links **Status:** self-checked chapter landing, 2026-10-29. Decision records are present; owner acceptance and pattern promotion are not.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "title": "V12/C05 - Decision integration and pattern links"
+        },
+        {
+          "excerpt": "# V12/C02 - Model, scenario, run and decision contracts **Status:** self-checked chapter landing, 2026-10-29. The contracts are versioned JSON objects with strict schemas; page prose explains their intent and limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "title": "V12/C02 - Model, scenario, run and decision contracts"
+        },
+        {
+          "excerpt": "# Insufficient-evidence outcomes **Question.** When should a decision record return no recommendation, and how is that different from a failed model? **Short answer.** A record returns insufficient evidence when the model is implemented but the inputs, constraints or observations needed for a decision are missing or contradictory. The model can be verified and the run converged; the decision still cannot be supported",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "title": "Insufficient-evidence outcomes"
+        },
+        {
+          "excerpt": "# Run and result provenance contract **Question.** What must a run record preserve so that another reader can replay it and see what the run did not establish? **Short answer.** A run record binds the model and scenario by SHA-256, records the engine version, seed base, replication count, input hash, Python and platform, invocation, metrics, convergence, uncertainty, sensitivity and limitations. It also stores a resu",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "title": "Run and result provenance contract"
+        },
+        {
+          "excerpt": "# Stock-and-flow modeling versus stock-to-flow shorthand **Question.** What is the difference between a stock and a flow, and why does conflating them produce a model that cannot conserve its own quantities? **Short answer.** A stock is an accumulation at a point in time. A flow is a rate over an interval. A model is coherent only when every state variable has a stock unit, every rate has a per-time unit, and the int",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "title": "Stock-and-flow modeling versus stock-to-flow shorthand"
+        },
+        {
+          "excerpt": "# Uncertainty and sensitivity **Question.** Which inputs are uncertain, how should their uncertainty be propagated, and which inputs actually change the decision? **Short answer.** Declare a distribution or a range for each uncertain input, sample it with a recorded seed, run the model across the sample, and report the output distribution with its error. Then estimate a sensitivity index that separates a main effect ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "title": "Uncertainty and sensitivity"
+        },
+        {
+          "excerpt": "# Calibration and validity limits **Question.** Which V12 inputs are measured, assumed, derived or unknown, and what does each status forbid us to claim? **Short answer.** Every V12 model is uncalibrated. Arrival rates, service times, timeouts, dual-write lag and reconciliation capacity are assumed. The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "title": "Calibration and validity limits"
+        },
+        {
+          "excerpt": "# Comparative decision worked example **Question.** How does the V12 checkout comparison move from three runs to a conditional recommendation? **Short answer.** The comparison fixes the workload, seed scheme and metrics, eliminates a candidate that violates hard constraints, compares the survivors on business-comparable metrics, and records the non-quantitative constraint that the model cannot test.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "title": "Comparative decision worked example"
+        },
+        {
+          "excerpt": "# V12/C04 - Monte Carlo uncertainty and sensitivity **Status:** self-checked chapter landing, 2026-10-29. The sensitivity screen is a bounded approximation; the page states its limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "title": "V12/C04 - Monte Carlo uncertainty and sensitivity"
+        },
+        {
+          "excerpt": "# Decision records and pattern links **Question.** How can a V12 decision record point to existing patterns without editing their cards, owner pages or evidence records? **Short answer.** V12 links one way to stable tycho.pattern.* identifiers and canonical owner pages. A derived reverse index maps pattern identifiers to V12 models, scenarios, runs and decisions. No reverse link is written into an existing card or pa",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "title": "Decision records and pattern links"
+        },
+        {
+          "excerpt": "# Modernization-path experiment **Question.** How does the staged modernization scenario compare with a no-cutover baseline, and what does the comparison establish? **Short answer.** The experiment fixes the workload and seed scheme, varies the stage schedule and rollback trigger, and compares the staged path with a no-cutover baseline. The staged path serves the traffic but produces a large synthetic divergence and ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "title": "Modernization-path experiment"
+        }
+      ],
+      "question": "What does the V12 reference engine do when an invariant fails before a run record is written?",
+      "section_existing": [
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#pages-and-reasoning-route",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.687d2196433c3b076d00c73144dad431#components",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+      ],
+      "section_new": [
+        {
+          "excerpt": "## Evidence ledger - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports the verification and validation distinction and the data/conceptual/operational validity split. It does not certify the V12 gates. - [PLOS Ten Simple Rules](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285) supports reproducible inputs, scripts, parameters and environments. It does not establis",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#evidence-ledger"
+        },
+        {
+          "excerpt": "## A comparison diagram ~~~mermaid flowchart LR W[\"Same synthetic workload\"] --> S[\"Staged cutover\"] W --> B[\"No-cutover baseline\"] S --> D[\"Divergence and rollback\"] B --> Z[\"No divergence\"] D --> I[\"Insufficient evidence\"] Z --> I I --> M[\"Measure lag, capacity, rollback\"] ~~~ Text alternative: the same workload feeds a staged cutover and a no-cutover baseline. The staged path produces divergence and an incomplete ",
+          "heading": "A comparison diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#a-comparison-diagram"
+        },
+        {
+          "excerpt": "## Evidence ledger - [SimPy 4.1 documentation](https://simpy.readthedocs.io/en/latest/) supports event, process, resource and scheduling vocabulary. It does not establish the V12 engine's correctness. - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports computerized-model verification as a distinct concern. It does not validate the engine against a production system.",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#evidence-ledger"
+        },
+        {
+          "excerpt": "## What the experiment establishes It establishes that, under the declared inputs: - the target path can serve the synthetic traffic; - the dual-write backlog grows when lag times throughput exceeds reconciliation capacity; - the rollback completes in only 10% of replications inside the 2,400-second window; - the divergence range is wide enough to cross plausible business thresholds. It does not establish that the ta",
+          "heading": "What the experiment establishes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes"
+        },
+        {
+          "excerpt": "## Purpose and mission This chapter states what V12 actually verifies and what it does not. It separates model verification, calibration, simulation evidence and decision validity, records the gate matrix, and explains how a stored run is replayed. The chapter answers which verification, calibration and decision claims are supported. It does not claim production validity, security, compliance or migration safety.",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "section_key": "tycho.chapter.77831d9a57067de6faa1da630a83f49b#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Why the decision is insufficient evidence The decision record compares the staged path with the baseline. The staged path has a non-zero divergence and an incomplete rollback. The baseline has neither. A decision to cut over would need to show that the divergence is acceptable and the rollback is achievable. The model cannot show either because the inputs are assumed over wide ranges. The correct next step is meas",
+          "heading": "Why the decision is insufficient evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence"
+        },
+        {
+          "excerpt": "## Retry amplification If every request is attempted 1.05 times on average, the service load is 5% higher than the offered load. If every request is attempted three times, the load can be three times higher. The retry amplification metric is total attempts divided by offered requests. V12 reports it for every discrete-event run. The A/B/C comparison shows the difference: - A has no retry budget: retry amplification 1",
+          "heading": "Retry amplification",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification"
+        },
+        {
+          "excerpt": "## Pages and reasoning route - [Model specification contract](model-specification.md): state variables, units, parameters and evidence status. - [Scenario specification contract](scenario-specification.md): identical workload rules, seeds, metrics and constraints. - [Run and result provenance contract](run-and-result-provenance.md): hashes, replay and provenance vocabulary. - [Decision record contract](decision-recor",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## A provenance chain ~~~mermaid flowchart LR M[\"Model entity\"] --> A[\"Engine run activity\"] S[\"Scenario entity\"] --> A A --> R[\"Run record entity\"] R --> D[\"Decision record\"] R --> P[\"Replay activity\"] P --> R2[\"Recomputed result hash\"] ~~~ Text alternative: model and scenario entities feed an engine run. The run generates a record that feeds a decision and a replay. The replay recomputes the result hash and compare",
+          "heading": "A provenance chain",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C02 - Contracts](../README.md) - Previous: [Run and result provenance contract](run-and-result-provenance.md) - Next: [V12/C03 - Deterministic and DES](../c03-deterministic-and-des/README.md) - Schema: [decision-record.v1.schema.json](../../../../schemas/v12/decision-record.v1.schema.json)",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#navigation"
+        },
+        {
+          "excerpt": "## Applying the constraints The decision record declares: - C1: every offered request is accounted for (hard); - C2: no silent drop (hard); - C3: operable by the existing team (non-quantitative); - C4: cost per 1000 successes at most 3.0 (hard); - C5: p95 latency at most 1.5 seconds (hard). C1 and C2 hold for all three runs: the model reports a conservation flag and the engine aborts on a failure. C4 eliminates C: 3.",
+          "heading": "Applying the constraints",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints"
+        },
+        {
+          "excerpt": "# Retries and backpressure **Question.** When do retries absorb transient failure, and when do they amplify overload? **Short answer.** A retry helps only when the failure is transient and the retry budget is bounded. Without a budget, backoff and jitter, retries add load to an already saturated system. Backpressure, queue capacity and a bulkhead decide whether the system rejects work explicitly or collapses under it",
+          "heading": "Retries and backpressure",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview"
+        },
+        {
+          "excerpt": "# Modernization-path experiment **Question.** How does the staged modernization scenario compare with a no-cutover baseline, and what does the comparison establish? **Short answer.** The experiment fixes the workload and seed scheme, varies the stage schedule and rollback trigger, and compares the staged path with a no-cutover baseline. The staged path serves the traffic but produces a large synthetic divergence and ",
+          "heading": "Modernization-path experiment",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview"
+        },
+        {
+          "excerpt": "## Failure modes - **Hash drift.** A model or scenario is edited without regenerating its run. - **Unrecorded seed.** The result cannot be reproduced. - **Mutable dependency.** A library update changes the output and is not recorded. - **Timestamp-only provenance.** A file says when it was created but not what it used. - **Replay theater.** The command reruns the model but compares only the metric names, not the valu",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes"
+        },
+        {
+          "excerpt": "## Diagram ~~~mermaid sequenceDiagram participant A as Arrival participant Q as Queue participant S as Server participant T as Timeout A->>Q: admit or reject Q->>S: dispatch when capacity is free S-->>Q: release on completion T-->>S: cancel expired attempt S-->>A: completed, failed or retried ~~~ Text alternative: an arrival is admitted to a bounded queue or rejected. A free server dispatches a queued request, and co",
+          "heading": "Diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#diagram"
+        },
+        {
+          "excerpt": "## The modernization example The staged modernization run reports: - success rate 1.0 (the model serves the offered traffic); - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1 (it finishes within the 2,400-second horizon in only 10% of replications); - rollback seconds mean 1,080, with non-completions censored at 1,200 seconds after the trigger. The no-cutover baseline reports z",
+          "heading": "The modernization example",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example"
+        },
+        {
+          "excerpt": "## Evidence ledger - [SimPy 4.1 documentation](https://simpy.readthedocs.io/en/latest/) supports resource capacity, queueing, priority and preemption vocabulary. It does not establish the V12 resource implementation. - Kim and Whitt, Statistical Analysis with Little's Law (source src.little-law; see the reading ledger) supports the finite-window caveat and batch-means approach. It does not validate the V12 workload. ",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#evidence-ledger"
+        },
+        {
+          "excerpt": "# Model verification **Question.** Which checks show that the V12 engine implements its models as specified, and which checks are still missing? **Short answer.** Verification covers units, conservation, non-negativity, boundary cases, event ordering, timeout interaction, retry conservation and deterministic replay. It does not cover operational validity, calibration or a production trace. The test matrix records wha",
+          "heading": "Model verification",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#overview"
+        },
+        {
+          "excerpt": "## Example: candidate B Candidate B declares 12 servers, a lognormal service time with mean 0.5 seconds and coefficient of variation 0.6, a 200-request queue, a 2-second timeout, three attempts, exponential backoff with base 0.2 seconds and full jitter, a 240-request bulkhead and a relative cost of 8.0 per server-hour. It uses 30 replications and the shared seed base. The same file also declares the metrics: success ",
+          "heading": "Example: candidate B",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C05 - Decision integration](../README.md) - Previous: [Decision records and pattern links](decision-records-and-pattern-links.md) - Next: [Insufficient-evidence outcomes](insufficient-evidence-outcomes.md) - Decision record: edition/v12/decisions/checkout-candidate.json",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#navigation"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V022",
+      "page_existing": [
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md"
+      ],
+      "page_new": [
+        {
+          "excerpt": "# Stock-and-flow modeling versus stock-to-flow shorthand **Question.** What is the difference between a stock and a flow, and why does conflating them produce a model that cannot conserve its own quantities? **Short answer.** A stock is an accumulation at a point in time. A flow is a rate over an interval. A model is coherent only when every state variable has a stock unit, every rate has a per-time unit, and the int",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "title": "Stock-and-flow modeling versus stock-to-flow shorthand"
+        },
+        {
+          "excerpt": "# Decision records and pattern links **Question.** How can a V12 decision record point to existing patterns without editing their cards, owner pages or evidence records? **Short answer.** V12 links one way to stable tycho.pattern.* identifiers and canonical owner pages. A derived reverse index maps pattern identifiers to V12 models, scenarios, runs and decisions. No reverse link is written into an existing card or pa",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "title": "Decision records and pattern links"
+        },
+        {
+          "excerpt": "# Decision record contract **Question.** Which fields turn a simulation comparison into a reviewable architecture decision without hiding a hard constraint or a missing measurement? **Short answer.** A V12 decision record states the question, context, constraints, candidates, metrics, evidence statuses, outcome, reversal triggers, limitations and one-way pattern links. It may recommend a candidate or return insuffici",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "title": "Decision record contract"
+        },
+        {
+          "excerpt": "# Evidence and validation vocabulary **Question.** Which evidence labels may be used for a V12 result, and which inferences are forbidden because they conflate different layers? **Short answer.** V12 keeps five layers separate: source and claim evidence, model verification, calibration, simulation evidence and decision evidence. Each layer answers a different question. A result can be strong in one layer and weak in ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "title": "Evidence and validation vocabulary"
+        },
+        {
+          "excerpt": "# V12/C02 - Model, scenario, run and decision contracts **Status:** self-checked chapter landing, 2026-10-29. The contracts are versioned JSON objects with strict schemas; page prose explains their intent and limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "title": "V12/C02 - Model, scenario, run and decision contracts"
+        },
+        {
+          "excerpt": "# Model scope, boundary and abstraction **Question.** How should a modeling team choose what to include, what to omit and how much detail a decision actually needs? **Short answer.** Start from the decision, not from the system. State the purpose, the decision owner, the alternatives, the constraints and the observations that could change the choice. Then choose the smallest model that can distinguish those alternati",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "title": "Model scope, boundary and abstraction"
+        },
+        {
+          "excerpt": "# V12 validation gates **Question.** Which structural, model, statistical, calibration, decision and review gates does V12 pass, and what evidence supports each one? **Short answer.** V12-A through V12-E are implemented and checked locally. V12-F is an independent review gate and is recorded separately. A passing local check is not independent review, CI, owner acceptance or production validity.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "title": "V12 validation gates"
+        },
+        {
+          "excerpt": "# Model specification contract **Question.** Which fields must a model specification carry so that a reader can see its state, units, assumptions and verification evidence without reading the engine? **Short answer.** A V12 model specification is a versioned JSON object with a stable identifier, purpose, scope, abstraction, state variables, parameters, dynamics, invariants, verification cases, calibration status, val",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "title": "Model specification contract"
+        },
+        {
+          "excerpt": "# Reproducibility and replay **Question.** What makes a V12 result replayable, and what does a successful replay not prove? **Short answer.** A replayable result has a versioned model, a versioned scenario, a stored seed, a stored engine version, canonical hashes and a result hash. Replay recomputes the result and fails on drift. It does not prove that the model is valid or that the decision is correct.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "title": "Reproducibility and replay"
+        },
+        {
+          "excerpt": "# V12/C07 - Validation, reproducibility and limits **Status:** self-checked chapter landing, 2026-10-29. The validation gates are recorded locally; independent review remains a separate gate.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "title": "V12/C07 - Validation, reproducibility and limits"
+        },
+        {
+          "excerpt": "# Run and result provenance contract **Question.** What must a run record preserve so that another reader can replay it and see what the run did not establish? **Short answer.** A run record binds the model and scenario by SHA-256, records the engine version, seed base, replication count, input hash, Python and platform, invocation, metrics, convergence, uncertainty, sensitivity and limitations. It also stores a resu",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "title": "Run and result provenance contract"
+        },
+        {
+          "excerpt": "# Scenario specification contract **Question.** Which fields make a scenario reproducible and comparable across candidates? **Short answer.** A V12 scenario fixes the model identifier, workload, candidate configuration, uncertainty inputs, replication count, seed scheme, metrics and constraints. For a candidate comparison, the workload, duration, warmup, metric definitions and seed scheme are identical. Only the cand",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "title": "Scenario specification contract"
+        },
+        {
+          "excerpt": "# Event ordering and timeouts **Question.** Which event-ordering and timeout rules must be fixed so that two runs with the same seed produce the same outcome? **Short answer.** A discrete-event engine must define a total order over events, schedule timeouts explicitly, cancel stale events and record how a retry resets a deadline. V12 uses (time, priority, insertion sequence) and a per-attempt timeout event.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "title": "Event ordering and timeouts"
+        },
+        {
+          "excerpt": "# V12/C06 - Modernization-path simulation **Status:** self-checked chapter landing, 2026-10-29. The modernization model is synthetic; no migration was performed.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "title": "V12/C06 - Modernization-path simulation"
+        },
+        {
+          "excerpt": "# Calibration and validity limits **Question.** Which V12 inputs are measured, assumed, derived or unknown, and what does each status forbid us to claim? **Short answer.** Every V12 model is uncalibrated. Arrival rates, service times, timeouts, dual-write lag and reconciliation capacity are assumed. The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "title": "Calibration and validity limits"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# V12/C01 - Foundations of architecture modeling **Status:** self-checked chapter landing, 2026-10-29. The pages carry the detail and source limits. No production measurement or independent review is asserted.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "title": "V12/C01 - Foundations of architecture modeling"
+        },
+        {
+          "excerpt": "# Retries and backpressure **Question.** When do retries absorb transient failure, and when do they amplify overload? **Short answer.** A retry helps only when the failure is transient and the retry budget is bounded. Without a budget, backoff and jitter, retries add load to an already saturated system. Backpressure, queue capacity and a bulkhead decide whether the system rejects work explicitly or collapses under it",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "title": "Retries and backpressure"
+        },
+        {
+          "excerpt": "# Queue and resource models **Question.** How should capacity, occupancy and waiting time be related in a queue model, and when does a finite-window measurement mislead? **Short answer.** Arrival rate, service capacity, utilization and occupancy are related but not interchangeable. Little's law connects average occupancy, arrival rate and average time in system under stated conditions. A finite simulation window is n",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "title": "Queue and resource models"
+        },
+        {
+          "excerpt": "# Modernization-path experiment **Question.** How does the staged modernization scenario compare with a no-cutover baseline, and what does the comparison establish? **Short answer.** The experiment fixes the workload and seed scheme, varies the stage schedule and rollback trigger, and compares the staged path with a no-cutover baseline. The staged path serves the traffic but produces a large synthetic divergence and ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "title": "Modernization-path experiment"
+        }
+      ],
+      "question": "Which analytic Monte Carlo checks are identified as future work rather than completed reference tests?",
+      "section_existing": [
+        "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#pages-and-reasoning-route",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#pages-and-reasoning-route",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+      ],
+      "section_new": [
+        {
+          "excerpt": "## Navigation - Parent: [V12/C07 - Validation and limits](../README.md) - Previous: [Calibration and validity limits](calibration-and-validity-limits.md) - Next: [Reproducibility and replay](reproducibility-and-replay.md) - Validator: scripts/validate_v12.py",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#navigation"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C02 - Contracts](../README.md) - Previous: [Model specification contract](model-specification.md) - Next: [Run and result provenance contract](run-and-result-provenance.md) - Schema: schemas/v12/scenario-specification.v1.schema.json",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#navigation"
+        },
+        {
+          "excerpt": "## Little's law and its finite-window caveat Little's law states that, under its conditions, the long-run average number in system equals the arrival rate times the average time in system: L = lambda * W. It is a relation among averages, not a per-request identity and not a guarantee for a short window. Kim and Whitt's paper makes the finite-window problem explicit. Measurements over a finite interval are neither lon",
+          "heading": "Little's law and its finite-window caveat",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+        },
+        {
+          "excerpt": "## Failure modes - **Assumed as measured.** A uniform range is treated as if it came from a measured distribution. - **Independent by default.** Correlated inputs are sampled independently, narrowing the output distribution. - **Sensitivity without error.** Indices are reported without the sample size or a convergence check. - **Quadratic overreach.** The response surface is extrapolated beyond the sampled range. - *",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+        },
+        {
+          "excerpt": "## The results - A: success 0.9218 (95% CI 0.9211-0.9226), p95 0.870 s, cost 1.81, timeout 0.0778. - B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041. - C: success 0.9679 (95% CI 0.9595-0.9764), p95 1.769 s, cost 3.63, timeout 0.111. All three runs are converged by the 0.02 relative-error rule. The confidence intervals are narrow because the workload is synthetic and the replications a",
+          "heading": "The results",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+        },
+        {
+          "excerpt": "## Experiment design The staged scenario: - offers 10 requests per second for 2,400 seconds; - shifts target traffic to 0.2 at t=0, 0.5 at t=300 and 1.0 at t=600; - uses a 1.5-second dual-write lag and a 4-record-per-second reconciliation capacity; - triggers a rollback at t=1,200; - draws lag from 0.5-2.5 seconds and reconciliation capacity from 2-8 records per second, with a -0.4 correlation; - uses 20 replications",
+          "heading": "Experiment design",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design"
+        },
+        {
+          "excerpt": "## Backoff and jitter Exponential backoff increases the delay after each attempt. Full jitter replaces the delay with a uniform draw between zero and the computed delay. Jitter reduces synchronized retry waves: without it, many clients that failed at the same time retry at the same time. V12 implements three backoff kinds: none, exponential and linear. It implements no jitter, full jitter and equal jitter. The scenar",
+          "heading": "Backoff and jitter",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter"
+        },
+        {
+          "excerpt": "## A reference-case record Each verification case in the model contract has: - an identifier; - a description; - the expected result; - the observed result; - a pass, fail or not-run status; - the test path. A case without a test path is not a verification case. A case marked pass without an observed result is a claim, not evidence.",
+          "heading": "A reference-case record",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record"
+        },
+        {
+          "excerpt": "## Validity limits Each model records limits such as: - valid only for the synthetic workload in a scenario; - no individual latency in the stock-flow model; - no dependency calls or storage in the checkout model; - no record-level reconciliation in the modernization model; - no production claim without measurement. A validity limit is not a disclaimer appended to a result. It is a condition on the result's use. If a",
+          "heading": "Validity limits",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+        },
+        {
+          "excerpt": "## What the gates do not establish - They do not establish that the source claims are true; the source ledger records what was read and what was not. - They do not establish that the models match a real system. - They do not establish that the decisions are accepted by the owner. - They do not establish CI, deployment or production behavior. - They do not promote any existing pattern.",
+          "heading": "What the gates do not establish",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+        },
+        {
+          "excerpt": "## What the experiment establishes It establishes that, under the declared inputs: - the target path can serve the synthetic traffic; - the dual-write backlog grows when lag times throughput exceeds reconciliation capacity; - the rollback completes in only 10% of replications inside the 2,400-second window; - the divergence range is wide enough to cross plausible business thresholds. It does not establish that the ta",
+          "heading": "What the experiment establishes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C05 - Decision integration](../README.md) - Next: [Comparative decision worked example](comparative-decision-worked-example.md) - Reverse index: edition/v12/reverse-index.v1.json",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#navigation"
+        },
+        {
+          "excerpt": "## Evidence ledger - MIT ESD.00 lectures 2-4 (source src.mit-esd-system-dynamics; see the reading ledger) supports stocks as accumulations, flows as rates, integration, feedback and delay. It does not establish any V12 parameter, run or real-system behavior. - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports verification versus validation, data and conceptual-model validity. It does not estab",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "section_key": "tycho.page.870e64da1f925c52109a602440048603#evidence-ledger"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C03 - Deterministic and DES](../README.md) - Next: [Queue and resource models](queue-and-resource-models.md) - Engine: scripts/v12_engine.py",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#navigation"
+        },
+        {
+          "excerpt": "## Scope The engine implements: - a fixed-step stock-and-flow backlog model with exact request conservation; - a discrete-event checkout model with capacity, queueing, timeouts, retries and backpressure; - a staged modernization model with dual-write lag, reconciliation and rollback; - seeded replications and Monte Carlo aggregation; - a quadratic response-surface sensitivity screen; - canonical JSON hashing and a re",
+          "heading": "Scope",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#scope"
+        },
+        {
+          "excerpt": "## Failure modes - **Hash drift.** A model or scenario is edited without regenerating its run. Replay fails; the old result is stale. - **Unrecorded seed.** The result cannot be reproduced because the seed was chosen in a notebook and not stored. - **Timestamp-only provenance.** A file says when it was created but not which inputs it used. - **Environment omission.** A result depends on a library version that is not ",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C03 - Deterministic and DES](../README.md) - Previous: [Event ordering and timeouts](event-ordering-and-timeouts.md) - Next: [V12/C04 - Monte Carlo](../c04-monte-carlo/README.md)",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#navigation"
+        },
+        {
+          "excerpt": "## Volume map - [C01 - Foundations](c01-foundations/README.md): stock and flow, scope, evidence. - [C02 - Contracts](c02-contracts/README.md): model, scenario, run, decision. - [C03 - Deterministic and DES](c03-deterministic-and-des/README.md): queues and retries. - [C04 - Monte Carlo](c04-monte-carlo/README.md): sensitivity and convergence. - [C05 - Decision integration](c05-decision-integration/README.md): links an",
+          "heading": "Volume map",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#volume-map"
+        },
+        {
+          "excerpt": "## Boundary cases The boundary tests are: - zero arrivals: no requests, no completions, no fabricated success; - zero servers: no service; requests are rejected or remain in backlog according to the model; - zero queue capacity: a request that cannot start service immediately is rejected; - full bulkhead: explicit rejection; - one attempt: no retry; - maximum attempts: terminal failure after the last timeout. A bound",
+          "heading": "Boundary cases",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases"
+        },
+        {
+          "excerpt": "## What measurement would change For the checkout comparison: - an arrival trace from the target environment; - a service-time sample, including the tail; - a measured timeout and retry policy; - a measured deployment capacity and cost. For the modernization comparison: - a measured dual-write lag distribution; - a measured reconciliation throughput under target load; - a rehearsed rollback duration; - a measured div",
+          "heading": "What measurement would change",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V023",
+      "page_existing": [
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md"
+      ],
+      "page_new": [
+        {
+          "excerpt": "# Coexistence and rollback **Question.** Which coexistence, reconciliation and rollback states must a modernization model expose before a cutover can be called supported? **Short answer.** A staged model must show the traffic share on each path, the dual-write backlog, the reconciliation capacity, the accumulated divergence and the rollback drain. A cutover is supported only when those states stay inside declared lim",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "title": "Coexistence and rollback"
+        },
+        {
+          "excerpt": "# V12/C06 - Modernization-path simulation **Status:** self-checked chapter landing, 2026-10-29. The modernization model is synthetic; no migration was performed.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "title": "V12/C06 - Modernization-path simulation"
+        },
+        {
+          "excerpt": "# Evidence and validation vocabulary **Question.** Which evidence labels may be used for a V12 result, and which inferences are forbidden because they conflate different layers? **Short answer.** V12 keeps five layers separate: source and claim evidence, model verification, calibration, simulation evidence and decision evidence. Each layer answers a different question. A result can be strong in one layer and weak in ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "title": "Evidence and validation vocabulary"
+        },
+        {
+          "excerpt": "# Retries and backpressure **Question.** When do retries absorb transient failure, and when do they amplify overload? **Short answer.** A retry helps only when the failure is transient and the retry budget is bounded. Without a budget, backoff and jitter, retries add load to an already saturated system. Backpressure, queue capacity and a bulkhead decide whether the system rejects work explicitly or collapses under it",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "title": "Retries and backpressure"
+        },
+        {
+          "excerpt": "# V12/C07 - Validation, reproducibility and limits **Status:** self-checked chapter landing, 2026-10-29. The validation gates are recorded locally; independent review remains a separate gate.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "title": "V12/C07 - Validation, reproducibility and limits"
+        },
+        {
+          "excerpt": "# Model specification contract **Question.** Which fields must a model specification carry so that a reader can see its state, units, assumptions and verification evidence without reading the engine? **Short answer.** A V12 model specification is a versioned JSON object with a stable identifier, purpose, scope, abstraction, state variables, parameters, dynamics, invariants, verification cases, calibration status, val",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "title": "Model specification contract"
+        },
+        {
+          "excerpt": "# Event ordering and timeouts **Question.** Which event-ordering and timeout rules must be fixed so that two runs with the same seed produce the same outcome? **Short answer.** A discrete-event engine must define a total order over events, schedule timeouts explicitly, cancel stale events and record how a retry resets a deadline. V12 uses (time, priority, insertion sequence) and a per-attempt timeout event.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "title": "Event ordering and timeouts"
+        },
+        {
+          "excerpt": "# Stock-and-flow modeling versus stock-to-flow shorthand **Question.** What is the difference between a stock and a flow, and why does conflating them produce a model that cannot conserve its own quantities? **Short answer.** A stock is an accumulation at a point in time. A flow is a rate over an interval. A model is coherent only when every state variable has a stock unit, every rate has a per-time unit, and the int",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "title": "Stock-and-flow modeling versus stock-to-flow shorthand"
+        },
+        {
+          "excerpt": "# Model verification **Question.** Which checks show that the V12 engine implements its models as specified, and which checks are still missing? **Short answer.** Verification covers units, conservation, non-negativity, boundary cases, event ordering, timeout interaction, retry conservation and deterministic replay. It does not cover operational validity, calibration or a production trace. The test matrix records wha",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "title": "Model verification"
+        },
+        {
+          "excerpt": "# Run and result provenance contract **Question.** What must a run record preserve so that another reader can replay it and see what the run did not establish? **Short answer.** A run record binds the model and scenario by SHA-256, records the engine version, seed base, replication count, input hash, Python and platform, invocation, metrics, convergence, uncertainty, sensitivity and limitations. It also stores a resu",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "title": "Run and result provenance contract"
+        },
+        {
+          "excerpt": "# V12/C02 - Model, scenario, run and decision contracts **Status:** self-checked chapter landing, 2026-10-29. The contracts are versioned JSON objects with strict schemas; page prose explains their intent and limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "title": "V12/C02 - Model, scenario, run and decision contracts"
+        },
+        {
+          "excerpt": "# Calibration and validity limits **Question.** Which V12 inputs are measured, assumed, derived or unknown, and what does each status forbid us to claim? **Short answer.** Every V12 model is uncalibrated. Arrival rates, service times, timeouts, dual-write lag and reconciliation capacity are assumed. The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "title": "Calibration and validity limits"
+        },
+        {
+          "excerpt": "# Scenario specification contract **Question.** Which fields make a scenario reproducible and comparable across candidates? **Short answer.** A V12 scenario fixes the model identifier, workload, candidate configuration, uncertainty inputs, replication count, seed scheme, metrics and constraints. For a candidate comparison, the workload, duration, warmup, metric definitions and seed scheme are identical. Only the cand",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "title": "Scenario specification contract"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# Decision records and pattern links **Question.** How can a V12 decision record point to existing patterns without editing their cards, owner pages or evidence records? **Short answer.** V12 links one way to stable tycho.pattern.* identifiers and canonical owner pages. A derived reverse index maps pattern identifiers to V12 models, scenarios, runs and decisions. No reverse link is written into an existing card or pa",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "title": "Decision records and pattern links"
+        },
+        {
+          "excerpt": "# V12 validation gates **Question.** Which structural, model, statistical, calibration, decision and review gates does V12 pass, and what evidence supports each one? **Short answer.** V12-A through V12-E are implemented and checked locally. V12-F is an independent review gate and is recorded separately. A passing local check is not independent review, CI, owner acceptance or production validity.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "title": "V12 validation gates"
+        },
+        {
+          "excerpt": "# Reference engine architecture **Question.** Which components and determinism rules make the V12 reference engine small enough to verify and explicit enough to replay? **Short answer.** The engine is a dependency-free Python module with an event queue, a seeded random source, three model families, metric aggregation, a sensitivity screen and canonical hashing. It is intentionally separate from the book pages and fro",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "title": "Reference engine architecture"
+        },
+        {
+          "excerpt": "# V12/C01 - Foundations of architecture modeling **Status:** self-checked chapter landing, 2026-10-29. The pages carry the detail and source limits. No production measurement or independent review is asserted.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "title": "V12/C01 - Foundations of architecture modeling"
+        },
+        {
+          "excerpt": "# Reproducibility and replay **Question.** What makes a V12 result replayable, and what does a successful replay not prove? **Short answer.** A replayable result has a versioned model, a versioned scenario, a stored seed, a stored engine version, canonical hashes and a result hash. Replay recomputes the result and fails on drift. It does not prove that the model is valid or that the decision is correct.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "title": "Reproducibility and replay"
+        },
+        {
+          "excerpt": "# Model scope, boundary and abstraction **Question.** How should a modeling team choose what to include, what to omit and how much detail a decision actually needs? **Short answer.** Start from the decision, not from the system. State the purpose, the decision owner, the alternatives, the constraints and the observations that could change the choice. Then choose the smallest model that can distinguish those alternati",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "title": "Model scope, boundary and abstraction"
+        }
+      ],
+      "question": "What consistency relation should hold between first-order and total-order sensitivity shares?",
+      "section_existing": [
+        "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes"
+      ],
+      "section_new": [
+        {
+          "excerpt": "## Timeout lifecycle A request receives a timeout event when it enters the system. The deadline is the arrival time plus the configured timeout. If the request completes before the deadline, the later timeout event finds a completed request and is ignored. If the timeout fires first: - a queued request is removed from the queue; - an in-service request releases its server; - the attempt is counted as timed out; - if ",
+          "heading": "Timeout lifecycle",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle"
+        },
+        {
+          "excerpt": "# Convergence and error **Question.** When is a Monte Carlo result stable enough to use, and what does a confidence interval actually cover? **Short answer.** A result is stable when its estimated standard error is small relative to the decision-relevant effect and the sampling assumptions hold. V12 reports the standard error, a 95% confidence interval and a relative-error threshold. It marks the run insufficient-sam",
+          "heading": "Convergence and error",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview"
+        },
+        {
+          "excerpt": "## A provenance chain ~~~mermaid flowchart LR M[\"Model entity\"] --> A[\"Engine run activity\"] S[\"Scenario entity\"] --> A A --> R[\"Run record entity\"] R --> D[\"Decision record\"] R --> P[\"Replay activity\"] P --> R2[\"Recomputed result hash\"] ~~~ Text alternative: model and scenario entities feed an engine run. The run generates a record that feeds a decision and a replay. The replay recomputes the result hash and compare",
+          "heading": "A provenance chain",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C07 - Validation and limits](../README.md) - Previous: [V12 validation gates](validation-gates.md) - Parent volume: [V12 - Architecture modeling and decision validation](../README.md) - Replay: scripts/v12_engine.py",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#navigation"
+        },
+        {
+          "excerpt": "## Diagram ~~~mermaid flowchart LR Q[\"Architecture question\"] --> B[\"Boundary and purpose\"] B --> S[\"Stocks and flows\"] B --> E[\"Event detail\"] S --> M[\"Model contract\"] E --> M M --> V[\"Verification\"] V --> C[\"Calibration and validity limits\"] C --> D[\"Decision evidence\"] ~~~ Text alternative: an architecture question defines a boundary and purpose. The boundary selects either stock-and-flow or event-level descripti",
+          "heading": "Diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#diagram"
+        },
+        {
+          "excerpt": "## What replay proves Replay proves that the stored inputs, engine version and seed produce the stored metrics on the same platform family. It does not prove that the model is valid, that the inputs are measured or that the decision is correct. A replay that matches is a reproducibility check, not a truth check. Platform strings can differ across operating systems and Python builds. V12 stores the platform string and",
+          "heading": "What replay proves",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves"
+        },
+        {
+          "excerpt": "## A sequence diagram ~~~mermaid sequenceDiagram participant R as Request participant Q as Queue participant S as Server participant T as Timeout R->>Q: arrive at t=0 Q->>S: dispatch at t=0.9 S->>T: completion scheduled at t=1.3 T->>S: timeout at t=1.0 S-->>Q: release and retry ~~~ Text alternative: a request arrives, waits, starts service, and is cancelled by its timeout before the scheduled completion. The server i",
+          "heading": "A sequence diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#a-sequence-diagram"
+        },
+        {
+          "excerpt": "## Rollback A rollback trigger sets the target share to zero. The legacy path must absorb the traffic, and the target must drain its backlog and divergence. The model records: - whether the rollback completed within the horizon; - the time from trigger to drain, or a censored value at the horizon; - the maximum divergence observed before the trigger. A rollback that does not complete is not a failed model. It is a fi",
+          "heading": "Rollback",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback"
+        },
+        {
+          "excerpt": "## Navigation and prerequisites - Previous: [V12/C01 - Foundations](../c01-foundations/README.md) - Next: [V12/C03 - Deterministic and DES](../c03-deterministic-and-des/README.md) - Model schema: schemas/v12/model-specification.v1.schema.json",
+          "heading": "Navigation and prerequisites",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#navigation-and-prerequisites"
+        },
+        {
+          "excerpt": "## Failure modes - **Backlink contamination.** A V12 link is added to an existing card. The card hash changes and a promotion becomes stale. - **Duplicate owner.** A V12 page explains the pattern mechanism in full and becomes a second canonical source. - **Promotion by mention.** A reader treats a pattern link in a decision record as a promotion. - **Manual reverse map.** The reverse index is edited by hand and drift",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes"
+        },
+        {
+          "excerpt": "## A worked order-intake example The V12 order-intake model has three stocks and three flows: - backlog (requests): admitted work not yet served; - completed (requests): cumulative served work; - rejected (requests): cumulative refused work; - arrivals (requests/second): offered work; - service (requests/second): capacity-limited completion; - rejection (requests/second): offered work that cannot be admitted. The bas",
+          "heading": "A worked order-intake example",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "section_key": "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example"
+        },
+        {
+          "excerpt": "## The iron rule The binding rule for this volume is: > V12 references existing patterns. Existing patterns do not reference V12. The rule protects the evidence layer. Existing cards and owner pages have promotion hashes, source ledgers and review records. Adding a V12 backlink would change a protected file and invalidate those records. The protection is not a matter of style; it is a requirement for keeping the exis",
+          "heading": "The iron rule",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C07 - Validation and limits](../README.md) - Next: [Calibration and validity limits](calibration-and-validity-limits.md) - Tests: tests/test_tycho_v12_engine.py",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#navigation"
+        },
+        {
+          "excerpt": "## Why a contract instead of a diagram A diagram can show the shape of a model and still leave every decision hidden. Is the backlog measured in requests or batches? Is the service rate a constant or a distribution? Was the arrival rate measured or assumed? The diagram does not say. A contract forces those choices into named fields that a validator can check and a reader can challenge. The contract does not prove the",
+          "heading": "Why a contract instead of a diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram"
+        },
+        {
+          "excerpt": "## A reference-case record Each verification case in the model contract has: - an identifier; - a description; - the expected result; - the observed result; - a pass, fail or not-run status; - the test path. A case without a test path is not a verification case. A case marked pass without an observed result is a claim, not evidence.",
+          "heading": "A reference-case record",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record"
+        },
+        {
+          "excerpt": "# Decision record contract **Question.** Which fields turn a simulation comparison into a reviewable architecture decision without hiding a hard constraint or a missing measurement? **Short answer.** A V12 decision record states the question, context, constraints, candidates, metrics, evidence statuses, outcome, reversal triggers, limitations and one-way pattern links. It may recommend a candidate or return insuffici",
+          "heading": "Decision record contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#overview"
+        },
+        {
+          "excerpt": "# Monte Carlo reference cases **Question.** Which small cases with known answers can catch a broken sampler, a wrong estimator or a false convergence claim? **Short answer.** A reference case should have an analytic answer, a clear tolerance and a failure mode that the test can detect. V12 uses conservation, boundary cases, deterministic replay and a sensitivity-screen sanity check. It does not claim that these cases",
+          "heading": "Monte Carlo reference cases",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview"
+        },
+        {
+          "excerpt": "## The test matrix | Check | Test | Result | |---|---|---| | Stock-flow conservation | test_conservation_below_capacity | pass | | Stock-flow non-negativity | test_saturation_rejects_and_conserves | pass | | Zero-arrival boundary | test_zero_boundary | pass | | Saturation and rejection | test_saturation_rejects_and_conserves | pass | | Event order at equal time | test_ties_use_priority_then_insertion | pass | | Timeo",
+          "heading": "The test matrix",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix"
+        },
+        {
+          "excerpt": "## Evidence ledger - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports the verification and validation distinction and the data/conceptual/operational validity split. It does not certify the V12 gates. - [PLOS Ten Simple Rules](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003285) supports reproducible inputs, scripts, parameters and environments. It does not establis",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#evidence-ledger"
+        },
+        {
+          "excerpt": "## Batch means and dependence Replications are independent by construction in V12: each replication uses its own seed. Within a replication, events are dependent by design. If a metric were computed from a single long run, batch means would be needed to estimate its standard error. Kim and Whitt recommend batch means for simulation output analysis and discuss edge effects in finite-window Little's law measurements. V",
+          "heading": "Batch means and dependence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V024",
+      "page_existing": [
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md"
+      ],
+      "page_new": [
+        {
+          "excerpt": "# V12 validation gates **Question.** Which structural, model, statistical, calibration, decision and review gates does V12 pass, and what evidence supports each one? **Short answer.** V12-A through V12-E are implemented and checked locally. V12-F is an independent review gate and is recorded separately. A passing local check is not independent review, CI, owner acceptance or production validity.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "title": "V12 validation gates"
+        },
+        {
+          "excerpt": "# Run and result provenance contract **Question.** What must a run record preserve so that another reader can replay it and see what the run did not establish? **Short answer.** A run record binds the model and scenario by SHA-256, records the engine version, seed base, replication count, input hash, Python and platform, invocation, metrics, convergence, uncertainty, sensitivity and limitations. It also stores a resu",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "title": "Run and result provenance contract"
+        },
+        {
+          "excerpt": "# Coexistence and rollback **Question.** Which coexistence, reconciliation and rollback states must a modernization model expose before a cutover can be called supported? **Short answer.** A staged model must show the traffic share on each path, the dual-write backlog, the reconciliation capacity, the accumulated divergence and the rollback drain. A cutover is supported only when those states stay inside declared lim",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "title": "Coexistence and rollback"
+        },
+        {
+          "excerpt": "# V12/C01 - Foundations of architecture modeling **Status:** self-checked chapter landing, 2026-10-29. The pages carry the detail and source limits. No production measurement or independent review is asserted.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "title": "V12/C01 - Foundations of architecture modeling"
+        },
+        {
+          "excerpt": "# V12/C02 - Model, scenario, run and decision contracts **Status:** self-checked chapter landing, 2026-10-29. The contracts are versioned JSON objects with strict schemas; page prose explains their intent and limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "title": "V12/C02 - Model, scenario, run and decision contracts"
+        },
+        {
+          "excerpt": "# Evidence and validation vocabulary **Question.** Which evidence labels may be used for a V12 result, and which inferences are forbidden because they conflate different layers? **Short answer.** V12 keeps five layers separate: source and claim evidence, model verification, calibration, simulation evidence and decision evidence. Each layer answers a different question. A result can be strong in one layer and weak in ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "title": "Evidence and validation vocabulary"
+        },
+        {
+          "excerpt": "# V12/C07 - Validation, reproducibility and limits **Status:** self-checked chapter landing, 2026-10-29. The validation gates are recorded locally; independent review remains a separate gate.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "title": "V12/C07 - Validation, reproducibility and limits"
+        },
+        {
+          "excerpt": "# Comparative decision worked example **Question.** How does the V12 checkout comparison move from three runs to a conditional recommendation? **Short answer.** The comparison fixes the workload, seed scheme and metrics, eliminates a candidate that violates hard constraints, compares the survivors on business-comparable metrics, and records the non-quantitative constraint that the model cannot test.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "title": "Comparative decision worked example"
+        },
+        {
+          "excerpt": "# Model specification contract **Question.** Which fields must a model specification carry so that a reader can see its state, units, assumptions and verification evidence without reading the engine? **Short answer.** A V12 model specification is a versioned JSON object with a stable identifier, purpose, scope, abstraction, state variables, parameters, dynamics, invariants, verification cases, calibration status, val",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "title": "Model specification contract"
+        },
+        {
+          "excerpt": "# Calibration and validity limits **Question.** Which V12 inputs are measured, assumed, derived or unknown, and what does each status forbid us to claim? **Short answer.** Every V12 model is uncalibrated. Arrival rates, service times, timeouts, dual-write lag and reconciliation capacity are assumed. The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "title": "Calibration and validity limits"
+        },
+        {
+          "excerpt": "# Reference engine architecture **Question.** Which components and determinism rules make the V12 reference engine small enough to verify and explicit enough to replay? **Short answer.** The engine is a dependency-free Python module with an event queue, a seeded random source, three model families, metric aggregation, a sensitivity screen and canonical hashing. It is intentionally separate from the book pages and fro",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "title": "Reference engine architecture"
+        },
+        {
+          "excerpt": "# Stock-and-flow modeling versus stock-to-flow shorthand **Question.** What is the difference between a stock and a flow, and why does conflating them produce a model that cannot conserve its own quantities? **Short answer.** A stock is an accumulation at a point in time. A flow is a rate over an interval. A model is coherent only when every state variable has a stock unit, every rate has a per-time unit, and the int",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "title": "Stock-and-flow modeling versus stock-to-flow shorthand"
+        },
+        {
+          "excerpt": "# Queue and resource models **Question.** How should capacity, occupancy and waiting time be related in a queue model, and when does a finite-window measurement mislead? **Short answer.** Arrival rate, service capacity, utilization and occupancy are related but not interchangeable. Little's law connects average occupancy, arrival rate and average time in system under stated conditions. A finite simulation window is n",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "title": "Queue and resource models"
+        },
+        {
+          "excerpt": "# V12/C03 - Deterministic and discrete-event models **Status:** self-checked chapter landing, 2026-10-29. The reference engine is implemented and tested locally; it is not a production simulator.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "title": "V12/C03 - Deterministic and discrete-event models"
+        },
+        {
+          "excerpt": "# Model verification **Question.** Which checks show that the V12 engine implements its models as specified, and which checks are still missing? **Short answer.** Verification covers units, conservation, non-negativity, boundary cases, event ordering, timeout interaction, retry conservation and deterministic replay. It does not cover operational validity, calibration or a production trace. The test matrix records wha",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "title": "Model verification"
+        },
+        {
+          "excerpt": "# Retries and backpressure **Question.** When do retries absorb transient failure, and when do they amplify overload? **Short answer.** A retry helps only when the failure is transient and the retry budget is bounded. Without a budget, backoff and jitter, retries add load to an already saturated system. Backpressure, queue capacity and a bulkhead decide whether the system rejects work explicitly or collapses under it",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "title": "Retries and backpressure"
+        },
+        {
+          "excerpt": "# Model scope, boundary and abstraction **Question.** How should a modeling team choose what to include, what to omit and how much detail a decision actually needs? **Short answer.** Start from the decision, not from the system. State the purpose, the decision owner, the alternatives, the constraints and the observations that could change the choice. Then choose the smallest model that can distinguish those alternati",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "title": "Model scope, boundary and abstraction"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# Reproducibility and replay **Question.** What makes a V12 result replayable, and what does a successful replay not prove? **Short answer.** A replayable result has a versioned model, a versioned scenario, a stored seed, a stored engine version, canonical hashes and a result hash. Replay recomputes the result and fails on drift. It does not prove that the model is valid or that the decision is correct.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "title": "Reproducibility and replay"
+        },
+        {
+          "excerpt": "# Decision record contract **Question.** Which fields turn a simulation comparison into a reviewable architecture decision without hiding a hard constraint or a missing measurement? **Short answer.** A V12 decision record states the question, context, constraints, candidates, metrics, evidence statuses, outcome, reversal triggers, limitations and one-way pattern links. It may recommend a candidate or return insuffici",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "title": "Decision record contract"
+        }
+      ],
+      "question": "How are correlated lag and reconciliation-capacity assumptions propagated in the V12 modernization scenario?",
+      "section_existing": [
+        "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission",
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#priorities"
+      ],
+      "section_new": [
+        {
+          "excerpt": "## The five layers - **Source and claim evidence:** does a public, admitted source support the method or claim? This is the layer of the reading ledger and page citations. - **Model verification:** is the model implemented as specified? This is the layer of units, conservation, boundary cases, event ordering and deterministic tests. - **Calibration:** do the parameters match measured reality? This is the layer of mea",
+          "heading": "The five layers",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "heading": "V12 - Architecture modeling, simulation and decision validation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#overview"
+        },
+        {
+          "excerpt": "## Validity limits Each model records limits such as: - valid only for the synthetic workload in a scenario; - no individual latency in the stock-flow model; - no dependency calls or storage in the checkout model; - no record-level reconciliation in the modernization model; - no production claim without measurement. A validity limit is not a disclaimer appended to a result. It is a condition on the result's use. If a",
+          "heading": "Validity limits",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+        },
+        {
+          "excerpt": "## Boundaries and evidence MADR and Nygard support the context, options, outcome and consequences structure. Sargent supports the separation of model verification from validity for a purpose. The pattern links use the existing registry and owner pages without modifying them. The chapter does not promote a pattern, claim owner acceptance or create a second canonical explanation of a pattern.",
+          "heading": "Boundaries and evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#boundaries-and-evidence"
+        },
+        {
+          "excerpt": "# V12/C05 - Decision integration and pattern links **Status:** self-checked chapter landing, 2026-10-29. Decision records are present; owner acceptance and pattern promotion are not.",
+          "heading": "V12/C05 - Decision integration and pattern links",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#overview"
+        },
+        {
+          "excerpt": "## Why a contract instead of a diagram A diagram can show the shape of a model and still leave every decision hidden. Is the backlog measured in requests or batches? Is the service rate a constant or a distribution? Was the arrival rate measured or assumed? The diagram does not say. A contract forces those choices into named fields that a validator can check and a reader can challenge. The contract does not prove the",
+          "heading": "Why a contract instead of a diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram"
+        },
+        {
+          "excerpt": "## Boundaries and evidence The chapter relies on public methodological sources: MIT OpenCourseWare lectures on system dynamics for stock, flow and feedback vocabulary, and Sargent's verification and validation paper for the validation distinctions. Those sources support method vocabulary, not any V12 parameter or run. Exact units and omissions are recorded in the V12 reading ledger. The chapter does not cover control",
+          "heading": "Boundaries and evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#boundaries-and-evidence"
+        },
+        {
+          "excerpt": "# Model specification contract **Question.** Which fields must a model specification carry so that a reader can see its state, units, assumptions and verification evidence without reading the engine? **Short answer.** A V12 model specification is a versioned JSON object with a stable identifier, purpose, scope, abstraction, state variables, parameters, dynamics, invariants, verification cases, calibration status, val",
+          "heading": "Model specification contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#overview"
+        },
+        {
+          "excerpt": "## A comparison diagram ~~~mermaid flowchart LR W[\"Same synthetic workload\"] --> S[\"Staged cutover\"] W --> B[\"No-cutover baseline\"] S --> D[\"Divergence and rollback\"] B --> Z[\"No divergence\"] D --> I[\"Insufficient evidence\"] Z --> I I --> M[\"Measure lag, capacity, rollback\"] ~~~ Text alternative: the same workload feeds a staged cutover and a no-cutover baseline. The staged path produces divergence and an incomplete ",
+          "heading": "A comparison diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#a-comparison-diagram"
+        },
+        {
+          "excerpt": "## Failure modes - **Workload drift.** A candidate gets a shorter warmup or a lower arrival rate. The comparison is invalid. - **Seed reuse across candidates.** Sharing the same random stream can create common random numbers, which is sometimes desirable, but it must be a declared choice. V12 uses the same seed scheme for all candidates; the engine samples independently per replication. - **Ignored correlation.** Two",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes"
+        },
+        {
+          "excerpt": "## Seeds and replications A seed is not a random number chosen to make a result look stable. It is part of the input contract. V12 uses a base seed and a deterministic per-replication seed. The run record stores the base seed and replication count, and the result hash covers the metrics. Replications estimate sampling error. A larger number reduces the standard error but does not remove input uncertainty. If the inpu",
+          "heading": "Seeds and replications",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications"
+        },
+        {
+          "excerpt": "## Evidence ledger - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports verification, validation, data and conceptual validity. It does not establish V12 operational validity. - JCGM 100:2008 (source src.jcgm-100; see the V12 reading ledger) supports measurement result, uncertainty and coverage vocabulary. It does not establish a V12 uncertainty budget. - [Owen, Monte Carlo chapters](https://ar",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-ledger"
+        },
+        {
+          "excerpt": "## Evidence ledger - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports purpose-dependent validity and conceptual/operational validity. It does not establish any V12 scope choice. - MIT ESD.00 lectures 2-4 (source src.mit-esd-system-dynamics; see the reading ledger) supports system dynamics as a purpose-built simulation method. It does not establish a general theory of abstraction.",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#evidence-ledger"
+        },
+        {
+          "excerpt": "## Determinism rules - The seed comes from the scenario, not from the wall clock. - Events at the same time are ordered by priority and insertion sequence. - A retry gets a new timeout event at the retry time. - A timeout that fires after a completion is ignored by the request state. - Metric windows use the declared warmup and duration, not the process clock. - The result hash covers metrics, convergence, uncertaint",
+          "heading": "Determinism rules",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+        },
+        {
+          "excerpt": "## Pages and reasoning route - [Model specification contract](model-specification.md): state variables, units, parameters and evidence status. - [Scenario specification contract](scenario-specification.md): identical workload rules, seeds, metrics and constraints. - [Run and result provenance contract](run-and-result-provenance.md): hashes, replay and provenance vocabulary. - [Decision record contract](decision-recor",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## A gate flow ~~~mermaid flowchart LR A[\"V12-A Structure\"] --> B[\"V12-B Model\"] B --> C[\"V12-C Statistical\"] C --> D[\"V12-D Calibration\"] D --> E[\"V12-E Decision\"] E --> F[\"V12-F Review\"] ~~~ Text alternative: structural checks precede model checks, statistical checks, calibration, decision validity and independent review. A later gate cannot substitute for an earlier one.",
+          "heading": "A gate flow",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C02 - Contracts](../README.md) - Previous: [Model specification contract](model-specification.md) - Next: [Run and result provenance contract](run-and-result-provenance.md) - Schema: schemas/v12/scenario-specification.v1.schema.json",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#navigation"
+        },
+        {
+          "excerpt": "# Decision record contract **Question.** Which fields turn a simulation comparison into a reviewable architecture decision without hiding a hard constraint or a missing measurement? **Short answer.** A V12 decision record states the question, context, constraints, candidates, metrics, evidence statuses, outcome, reversal triggers, limitations and one-way pattern links. It may recommend a candidate or return insuffici",
+          "heading": "Decision record contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#overview"
+        },
+        {
+          "excerpt": "## Components The engine has six parts: 1. **Event queue.** A heap ordered by time, then priority, then insertion sequence. 2. **Random source.** A per-replication random.Random instance seeded from the scenario. 3. **Model families.** Stock-flow, discrete-event and modernization functions selected by the model identifier and dynamics kind. 4. **Metric aggregation.** Mean, standard error, confidence interval and conv",
+          "heading": "Components",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#components"
+        },
+        {
+          "excerpt": "## Boundaries and evidence SimPy documentation supports the event, resource and timeout vocabulary. Little's law supports the relation between average occupancy, arrival rate and time in system, with the paper's finite-window caveat. Sargent supports the verification and validation distinction. The engine is independently implemented; no SimPy code is embedded. The chapter does not model dependency calls, network tra",
+          "heading": "Boundaries and evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#boundaries-and-evidence"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V025",
+      "page_existing": [
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+        "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md"
+      ],
+      "page_new": [
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# V12/C01 - Foundations of architecture modeling **Status:** self-checked chapter landing, 2026-10-29. The pages carry the detail and source limits. No production measurement or independent review is asserted.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "title": "V12/C01 - Foundations of architecture modeling"
+        },
+        {
+          "excerpt": "# Model specification contract **Question.** Which fields must a model specification carry so that a reader can see its state, units, assumptions and verification evidence without reading the engine? **Short answer.** A V12 model specification is a versioned JSON object with a stable identifier, purpose, scope, abstraction, state variables, parameters, dynamics, invariants, verification cases, calibration status, val",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "title": "Model specification contract"
+        },
+        {
+          "excerpt": "# Reference engine architecture **Question.** Which components and determinism rules make the V12 reference engine small enough to verify and explicit enough to replay? **Short answer.** The engine is a dependency-free Python module with an event queue, a seeded random source, three model families, metric aggregation, a sensitivity screen and canonical hashing. It is intentionally separate from the book pages and fro",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "title": "Reference engine architecture"
+        },
+        {
+          "excerpt": "# V12/C02 - Model, scenario, run and decision contracts **Status:** self-checked chapter landing, 2026-10-29. The contracts are versioned JSON objects with strict schemas; page prose explains their intent and limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "title": "V12/C02 - Model, scenario, run and decision contracts"
+        },
+        {
+          "excerpt": "# Uncertainty and sensitivity **Question.** Which inputs are uncertain, how should their uncertainty be propagated, and which inputs actually change the decision? **Short answer.** Declare a distribution or a range for each uncertain input, sample it with a recorded seed, run the model across the sample, and report the output distribution with its error. Then estimate a sensitivity index that separates a main effect ",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "title": "Uncertainty and sensitivity"
+        },
+        {
+          "excerpt": "# Decision record contract **Question.** Which fields turn a simulation comparison into a reviewable architecture decision without hiding a hard constraint or a missing measurement? **Short answer.** A V12 decision record states the question, context, constraints, candidates, metrics, evidence statuses, outcome, reversal triggers, limitations and one-way pattern links. It may recommend a candidate or return insuffici",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "title": "Decision record contract"
+        },
+        {
+          "excerpt": "# Queue and resource models **Question.** How should capacity, occupancy and waiting time be related in a queue model, and when does a finite-window measurement mislead? **Short answer.** Arrival rate, service capacity, utilization and occupancy are related but not interchangeable. Little's law connects average occupancy, arrival rate and average time in system under stated conditions. A finite simulation window is n",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "title": "Queue and resource models"
+        },
+        {
+          "excerpt": "# Run and result provenance contract **Question.** What must a run record preserve so that another reader can replay it and see what the run did not establish? **Short answer.** A run record binds the model and scenario by SHA-256, records the engine version, seed base, replication count, input hash, Python and platform, invocation, metrics, convergence, uncertainty, sensitivity and limitations. It also stores a resu",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "title": "Run and result provenance contract"
+        },
+        {
+          "excerpt": "# Scenario specification contract **Question.** Which fields make a scenario reproducible and comparable across candidates? **Short answer.** A V12 scenario fixes the model identifier, workload, candidate configuration, uncertainty inputs, replication count, seed scheme, metrics and constraints. For a candidate comparison, the workload, duration, warmup, metric definitions and seed scheme are identical. Only the cand",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "title": "Scenario specification contract"
+        },
+        {
+          "excerpt": "# Monte Carlo reference cases **Question.** Which small cases with known answers can catch a broken sampler, a wrong estimator or a false convergence claim? **Short answer.** A reference case should have an analytic answer, a clear tolerance and a failure mode that the test can detect. V12 uses conservation, boundary cases, deterministic replay and a sensitivity-screen sanity check. It does not claim that these cases",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "title": "Monte Carlo reference cases"
+        },
+        {
+          "excerpt": "# Retries and backpressure **Question.** When do retries absorb transient failure, and when do they amplify overload? **Short answer.** A retry helps only when the failure is transient and the retry budget is bounded. Without a budget, backoff and jitter, retries add load to an already saturated system. Backpressure, queue capacity and a bulkhead decide whether the system rejects work explicitly or collapses under it",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "title": "Retries and backpressure"
+        },
+        {
+          "excerpt": "# Model verification **Question.** Which checks show that the V12 engine implements its models as specified, and which checks are still missing? **Short answer.** Verification covers units, conservation, non-negativity, boundary cases, event ordering, timeout interaction, retry conservation and deterministic replay. It does not cover operational validity, calibration or a production trace. The test matrix records wha",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "title": "Model verification"
+        },
+        {
+          "excerpt": "# Event ordering and timeouts **Question.** Which event-ordering and timeout rules must be fixed so that two runs with the same seed produce the same outcome? **Short answer.** A discrete-event engine must define a total order over events, schedule timeouts explicitly, cancel stale events and record how a retry resets a deadline. V12 uses (time, priority, insertion sequence) and a per-attempt timeout event.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "title": "Event ordering and timeouts"
+        },
+        {
+          "excerpt": "# Reproducibility and replay **Question.** What makes a V12 result replayable, and what does a successful replay not prove? **Short answer.** A replayable result has a versioned model, a versioned scenario, a stored seed, a stored engine version, canonical hashes and a result hash. Replay recomputes the result and fails on drift. It does not prove that the model is valid or that the decision is correct.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "title": "Reproducibility and replay"
+        },
+        {
+          "excerpt": "# V12/C04 - Monte Carlo uncertainty and sensitivity **Status:** self-checked chapter landing, 2026-10-29. The sensitivity screen is a bounded approximation; the page states its limits.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "title": "V12/C04 - Monte Carlo uncertainty and sensitivity"
+        },
+        {
+          "excerpt": "# Model scope, boundary and abstraction **Question.** How should a modeling team choose what to include, what to omit and how much detail a decision actually needs? **Short answer.** Start from the decision, not from the system. State the purpose, the decision owner, the alternatives, the constraints and the observations that could change the choice. Then choose the smallest model that can distinguish those alternati",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "title": "Model scope, boundary and abstraction"
+        },
+        {
+          "excerpt": "# V12/C03 - Deterministic and discrete-event models **Status:** self-checked chapter landing, 2026-10-29. The reference engine is implemented and tested locally; it is not a production simulator.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "title": "V12/C03 - Deterministic and discrete-event models"
+        },
+        {
+          "excerpt": "# Stock-and-flow modeling versus stock-to-flow shorthand **Question.** What is the difference between a stock and a flow, and why does conflating them produce a model that cannot conserve its own quantities? **Short answer.** A stock is an accumulation at a point in time. A flow is a rate over an interval. A model is coherent only when every state variable has a stock unit, every rate has a per-time unit, and the int",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "title": "Stock-and-flow modeling versus stock-to-flow shorthand"
+        },
+        {
+          "excerpt": "# Convergence and error **Question.** When is a Monte Carlo result stable enough to use, and what does a confidence interval actually cover? **Short answer.** A result is stable when its estimated standard error is small relative to the decision-relevant effect and the sampling assumptions hold. V12 reports the standard error, a 95% confidence interval and a relative-error threshold. It marks the run insufficient-sam",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "title": "Convergence and error"
+        }
+      ],
+      "question": "How is a rollback duration reported when the modeled drain has not completed by the end of the horizon?",
+      "section_existing": [
+        "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#pages-and-reasoning-route",
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#pages-and-reasoning-route",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#pages-and-reasoning-route",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example"
+      ],
+      "section_new": [
+        {
+          "excerpt": "# Reproducibility and replay **Question.** What makes a V12 result replayable, and what does a successful replay not prove? **Short answer.** A replayable result has a versioned model, a versioned scenario, a stored seed, a stored engine version, canonical hashes and a result hash. Replay recomputes the result and fails on drift. It does not prove that the model is valid or that the decision is correct.",
+          "heading": "Reproducibility and replay",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#overview"
+        },
+        {
+          "excerpt": "## V12-F: independent review The independent review gate requires a fresh read-only reviewer outside the authoring session. It checks the V12 artifacts and does not rerun the test suite. Its report is stored verbatim, indexed with a SHA-256 and linked from the review record. A pass is not owner acceptance and does not promote a pattern. Five external reports are saved and indexed. The final verdict is pass-with-findi",
+          "heading": "V12-F: independent review",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review"
+        },
+        {
+          "excerpt": "# Uncertainty and sensitivity **Question.** Which inputs are uncertain, how should their uncertainty be propagated, and which inputs actually change the decision? **Short answer.** Declare a distribution or a range for each uncertain input, sample it with a recorded seed, run the model across the sample, and report the output distribution with its error. Then estimate a sensitivity index that separates a main effect ",
+          "heading": "Uncertainty and sensitivity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#overview"
+        },
+        {
+          "excerpt": "## A provenance chain ~~~mermaid flowchart LR M[\"Model entity\"] --> A[\"Engine run activity\"] S[\"Scenario entity\"] --> A A --> R[\"Run record entity\"] R --> D[\"Decision record\"] R --> P[\"Replay activity\"] P --> R2[\"Recomputed result hash\"] ~~~ Text alternative: model and scenario entities feed an engine run. The run generates a record that feeds a decision and a replay. The replay recomputes the result hash and compare",
+          "heading": "A provenance chain",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C06 - Migration simulation](../README.md) - Next: [Modernization-path experiment](modernization-path-experiment.md) - Decision record: edition/v12/decisions/modernization-cutover.json",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#navigation"
+        },
+        {
+          "excerpt": "## Purpose and mission V12 helps a reader evaluate architecture alternatives before costly implementation. It combines stock-and-flow reasoning, discrete-event simulation, Monte Carlo uncertainty, comparative decision records and staged modernization-path simulation. The result is quantitative decision evidence with explicit assumptions, not a proof that a design is correct, secure, compliant or safe to migrate. The ",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#purpose-and-mission"
+        },
+        {
+          "excerpt": "## The basic quantities - Arrival rate (lambda): requests per second offered to the queue. - Service capacity (mu): requests per second the server pool can complete when busy. - Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server class, or lambda / (c * mu) for c identical servers. - Queue length: requests waiting for a server. - In-system count: waiting plus in service. - Time in sy",
+          "heading": "The basic quantities",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+        },
+        {
+          "excerpt": "## Failure modes - **Hash drift.** A model or scenario is edited without regenerating its run. - **Unrecorded seed.** The result cannot be reproduced. - **Mutable dependency.** A library update changes the output and is not recorded. - **Timestamp-only provenance.** A file says when it was created but not what it used. - **Replay theater.** The command reruns the model but compares only the metric names, not the valu",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes"
+        },
+        {
+          "excerpt": "## Where the model fails - **Unit collapse.** A stock and a flow share a label. The model becomes dimensionally meaningless. - **Hidden stock.** Work waiting in a database, a client retry buffer or an operator queue is omitted. The visible backlog looks stable while total work grows elsewhere. - **Unbounded flow.** A service rate is treated as infinite because the server is \"fast\". The backlog then drains at an impos",
+          "heading": "Where the model fails",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "section_key": "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails"
+        },
+        {
+          "excerpt": "## Required fields The run contract contains: - id, version, model_id and scenario_id; - engine: name, version and deterministic flag; - provenance: model hash, scenario hash, seed base, replications, input hash, Python, platform and invocation; - metrics: value, unit, replication count, standard error and confidence interval; - convergence: status, metric, relative error, threshold and replications; - uncertainty: m",
+          "heading": "Required fields",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields"
+        },
+        {
+          "excerpt": "## Failure modes - **Assumed as measured.** A uniform range is treated as if it came from a measured distribution. - **Independent by default.** Correlated inputs are sampled independently, narrowing the output distribution. - **Sensitivity without error.** Indices are reported without the sample size or a convergence check. - **Quadratic overreach.** The response surface is extrapolated beyond the sampled range. - *",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+        },
+        {
+          "excerpt": "## Standard error For n independent replications with sample standard deviation s, the standard error of the mean is: se = s / sqrt(n) A 95% confidence interval under a normal approximation is: mean +/- 1.96 * se The interval is narrower when n is larger or the output is less variable. It does not become more valid if the replications are correlated or the output distribution is heavy-tailed. V12 uses the normal appr",
+          "heading": "Standard error",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A synthetic checkout service receives 20 requests per second for 30 minutes after a five-minute warmup. Three candidates use the same arrivals, duration, seed scheme and metrics: - A: direct capacity with a one-second deadline and no retry budget; - B: a bounded queue, a two-second deadline and a small retry budget; - C: more servers, a slower mean service time and a higher unit co",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+        },
+        {
+          "excerpt": "## From decision to boundary A model boundary is the line between the model's state and the rest of the world. It is not the same as a service boundary or a team boundary. A checkout model may include a queue and a server pool while omitting the payment network, the database and the deployment platform. That is acceptable only if the omitted parts cannot change the comparison under the declared conditions. A useful b",
+          "heading": "From decision to boundary",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary"
+        },
+        {
+          "excerpt": "## Backpressure Backpressure is the explicit refusal or delay of work when capacity is exhausted. V12 uses three limits: - queue capacity: maximum waiting requests; - bulkhead: maximum waiting plus in-service requests; - timeout: maximum time an attempt may occupy the system. When a limit is reached, the request is rejected and counted. A model with an unbounded queue never rejects; it accumulates backlog and reports",
+          "heading": "Backpressure",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure"
+        },
+        {
+          "excerpt": "## Batch means and dependence Replications are independent by construction in V12: each replication uses its own seed. Within a replication, events are dependent by design. If a metric were computed from a single long run, batch means would be needed to estimate its standard error. Kim and Whitt recommend batch means for simulation output analysis and discuss edge effects in finite-window Little's law measurements. V",
+          "heading": "Batch means and dependence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence"
+        },
+        {
+          "excerpt": "## Failure modes - **Unstable tie-breaking.** Two events at the same time depend on hash order. - **Timeout resets on retry omitted.** A retry inherits an expired deadline and fails immediately. - **Timeout not cancelled on completion.** A completed request is later marked failed. - **Double release.** A timeout and a completion both free the same server, increasing capacity beyond the configured pool. - **Floating-p",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+        },
+        {
+          "excerpt": "## What replay proves Replay proves that the stored inputs, engine version and seed produce the stored metrics on the same platform family. It does not prove: - that the model is valid; - that the inputs are measured; - that the confidence interval covers a production value; - that the decision is correct; - that another platform will produce bit-identical floats. The platform and Python strings make a cross-environm",
+          "heading": "What replay proves",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves"
+        },
+        {
+          "excerpt": "## Boundaries and evidence Sargent supports the verification and validation distinction and the data/conceptual/ operational validity split. JCGM 100 supports uncertainty vocabulary. PLOS supports reproducibility practices. PROV-O informs provenance vocabulary. None of those sources validates a V12 model or decision. The chapter does not claim CI execution, deployment acceptance, owner acceptance or pattern promotion",
+          "heading": "Boundaries and evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "section_key": "tycho.chapter.77831d9a57067de6faa1da630a83f49b#boundaries-and-evidence"
+        },
+        {
+          "excerpt": "## Failure modes - **Testing the happy path only.** A model passes one steady-state run and fails at zero arrivals or full capacity. - **Asserting no exception.** The test checks that the function returns, not that the result is correct. - **Reference to a moving target.** The expected value is copied from the current output, so the test can never fail. - **Coverage without power.** A confidence-interval check uses t",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes"
+        }
+      ],
+      "split": "v12"
+    }
+  ]
+}
