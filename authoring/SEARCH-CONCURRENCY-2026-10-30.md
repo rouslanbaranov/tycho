@@ -28,9 +28,20 @@ Three 16-worker rounds: 34.6/35.3/40.4 s, 0 mismatches.
   processes for parallel clients.
 - Do not raise thread concurrency based on this result.
 
+## Bounded implementation
+
+Added an in-process semaphore of 2 around `search`. Re-running 150 queries with
+16 threads:
+
+- elapsed: **20.0 s** (was 43.0 s);
+- mismatches: **0**.
+
+The cap removes the worst contention but is not a substitute for process
+isolation; the 2-worker run remains faster (13.1 s).
+
 ## Follow-up
 
-- Consider a bounded search semaphore or process pool for MCP concurrency.
+- Consider process isolation for MCP concurrency.
 - Keep BM25 latency default and validation cache.
 - Verify with a production client before selecting a concurrency limit.
 

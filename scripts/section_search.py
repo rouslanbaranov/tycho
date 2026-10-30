@@ -21,6 +21,7 @@ comparison.
 import argparse
 import copy
 from collections import OrderedDict
+import functools
 import hashlib
 import json
 import os
@@ -50,6 +51,7 @@ _QUERY_CACHE_LOCK = threading.Lock()
 _INDEX_VALIDATION_CACHE = OrderedDict()
 _INDEX_VALIDATION_LOCK = threading.Lock()
 _INDEX_VALIDATION_MAX = 4
+_SEARCH_CONCURRENCY = threading.BoundedSemaphore(2)
 _QUERY_CACHE_MAX = 128
 
 
@@ -570,6 +572,15 @@ def section_rerank_candidates(db, terms, selected, limit, filters, params,
     return scored[:limit] or selected
 
 
+def _bounded_search(function):
+    @functools.wraps(function)
+    def wrapper(*args, **kwargs):
+        with _SEARCH_CONCURRENCY:
+            return function(*args, **kwargs)
+    return wrapper
+
+
+@_bounded_search
 def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
            path_prefix=None, index_path=None, all_sections=False, abstain=True,
            include_weak=False, detail="snippets", max_chars=None,
