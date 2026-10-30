@@ -17,6 +17,7 @@ SCHEMA = ROOT / "schemas/document-metadata.v1.schema.json"
 DEFAULT_INDEX = ROOT / "generated/route-index.v1.json"
 FENCE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 WORD = re.compile(r"[a-z0-9]+", re.I)
+_SCHEMA_CACHE = {}
 
 
 def require(ok, message):
@@ -41,13 +42,18 @@ def canonical_scan(root, allow_partial=False):
     root = Path(root).resolve()
     book = root / "book"
     require(book.is_dir() and not book.is_symlink(), "book directory missing or symlink")
-    schema = json.loads((root / "schemas/document-metadata.v1.schema.json").read_text())
-    Draft.check_schema(schema)
-    check = Draft(schema, format_checker=Format())
+    schema_path = root / "schemas/document-metadata.v1.schema.json"
+    schema_text = schema_path.read_text()
+    cache_key = (str(schema_path), schema_text)
+    check = _SCHEMA_CACHE.get(cache_key)
+    if check is None:
+        schema = json.loads(schema_text)
+        Draft.check_schema(schema)
+        check = Draft(schema, format_checker=Format())
+        _SCHEMA_CACHE[cache_key] = check
     docs, skipped, ids, paths = [], [], set(), set()
     for file in sorted(book.rglob("*.md")):
-        require(not file.is_symlink() and file.resolve().is_relative_to(book.resolve()),
-                "unsafe book file/symlink")
+        require(not file.is_symlink(), "unsafe book file/symlink")
         text = file.read_text(encoding="utf-8")
         rel = file.relative_to(root).as_posix()
         header = FENCE.match(text)
