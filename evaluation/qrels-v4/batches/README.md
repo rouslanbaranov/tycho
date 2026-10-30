@@ -1,6 +1,8 @@
 # Qrels v4 batches
 
-Status: **ten batches complete and merged** into qrels v4; AI-adjudicated only.
+Status: **B01–B03 coverage rework pending**. The current qrels v4 still
+contains the original narrow B01–B03; do not treat it as final until the
+replacement batches are merged.
 
 Coverage:
 

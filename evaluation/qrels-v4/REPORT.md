@@ -1,7 +1,10 @@
 # Qrels v4 — final AI-adjudicated set
 
-Status: **complete, AI-adjudicated**. Not human review, independent review, CI,
-owner acceptance or sufficient coverage.
+Status: **complete draft; B01–B03 coverage rework pending.** Not human review,
+independent review, CI, owner acceptance or sufficient coverage.
+
+The current files still contain the narrow B01–B03 batches. Re-merge after the
+coverage rework.
 
 ## Files
 

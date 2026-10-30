@@ -1,6 +1,8 @@
 # Qrels v4 — AI-adjudicated
 
-Status: **complete**, AI-adjudicated only.
+Status: **rework pending**. Current qrels v4 is AI-adjudicated but includes the
+narrow B01–B03 batches. Do not treat it as final until the coverage rework is
+merged.
 
 - Page: `evaluation/corpus-qrels.v4.json`
 - Section: `evaluation/section-qrels.v4.json`
