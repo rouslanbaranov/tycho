@@ -241,16 +241,19 @@ healthy. Envoy's "On eventually consistent service discovery" section states the
 > Envoy will still route.
 
 A healthy proxy can therefore route to a backend that discovery has already removed. Active
-health checking is the documented way to determine cluster health; it must remove a stale backend
-before it attracts more traffic. Envoy's page gives no propagation bound, drain procedure or
-health-check interval, so those remain Tycho guidance.
+health checks can remove an unhealthy backend, but they do not remove a healthy backend that
+discovery has already removed; that backend remains routable until discovery converges or a
+drain completes. Envoy's page gives no propagation bound, drain procedure or health-check
+interval; those and any drain step are Tycho guidance.
 
-Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose
-a degraded path and plan the proxy's own failover.
+The proxy is a shared dependency; replicate it for availability and capacity. Tycho guidance,
+not a source claim: a proxy outage, retry amplification and a shared-proxy bottleneck are
+operational risks; bound retries, expose a degraded path and plan the proxy's own failover.
 
-Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes
-are rare. Server-side discovery is a fit when clients should not carry routing policy and the proxy
-can be operated as a critical dependency.
+Client Side Discovery is an alternative solution. Tycho guidance, not a source claim: static DNS,
+a service mesh or direct endpoint configuration may be simpler when membership changes are rare.
+Server-side discovery is a fit when clients should not carry routing policy and the proxy can be
+operated as a critical dependency.
 
 ### Load Balancing
 

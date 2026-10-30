@@ -52,27 +52,31 @@ discovery pattern; priority core.
 selection for the caller?
 
 **Good-fit conditions.** Clients should stay simple; the intermediary can observe
-health and membership, and its discovery view can be eventually consistent because
-active health checks remove stale backends; selection policy is centrally owned; the
+health and membership, and its discovery view can be eventually consistent, though a
+removed-but-healthy backend can remain routable until convergence or a drain completes
+(Tycho guidance); selection policy is centrally owned; the
 extra hop and proxy lifecycle are acceptable.
 
 **Hard contraindications.** Reject the claim when the intermediary becomes an unowned
 single point; when it cannot observe backend health; when clients need a selection
 policy the proxy cannot express; when the extra hop violates a hard latency budget.
 
-**Competing alternative.** Client-side discovery or static endpoints. Reverse the
-choice when proxy blast radius and operational cost exceed the client simplification
-benefit.
+**Competing alternative.** Client-side discovery is the bound alternative. Tycho guidance:
+static endpoints, a service mesh or direct endpoint configuration may be simpler when
+membership changes are rare. Reverse when proxy blast radius and operational cost exceed
+the client simplification benefit.
 
-**Failure and recovery.** Proxy outage, stale membership, retry amplification and a shared
-proxy bottleneck are common. Envoy's "On eventually consistent service discovery" section
-states the routing limit:
+**Failure and recovery.** The proxy is a shared dependency; replicate it for availability and
+capacity. Envoy's "On eventually consistent service discovery" section states the routing
+limit:
 
 > If a host continues to pass health check even after becoming absent from the discovery data,
 > Envoy will still route.
 
-Active health checking is the documented mitigation. Expose a degraded path and bound retries;
-the source gives no propagation bound or health-check interval, so those remain Tycho guidance.
+Active health checks remove unhealthy backends, not a removed-but-healthy backend; that host
+remains routable until discovery converges or a drain completes. Tycho guidance, not a source
+claim: bound retries, expose a degraded path, and plan proxy failover; the source gives no
+propagation bound, drain procedure or health-check interval.
 
 **Technical owner.** [Server-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#server-side-discovery) — discovery and selection; server-side specifics are bounded to the linked section.
 

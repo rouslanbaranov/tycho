@@ -1725,8 +1725,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Proxy outage, retry amplification and a shared-proxy bottleneck are common; bound retries, expose a degraded path and plan the proxy's own failover.",
-          "reason": "Requires the proxy to detect stale membership and bound last-known data-plane use.",
+          "quote": "The proxy is a shared dependency; replicate it for availability and capacity.",
+          "reason": "Bound page supports replication for availability and capacity; retry bounds, degraded path and proxy failover are Tycho guidance.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-server-discovery.2026-10-21",
@@ -1737,8 +1737,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Static DNS, a service mesh or direct endpoint configuration may be simpler when membership changes are rare.",
-          "reason": "Names the alternative and reversal.",
+          "quote": "Client Side Discovery is an alternative solution.",
+          "reason": "Bound page names client-side discovery as the alternative; static DNS, service mesh and direct endpoint configuration are Tycho guidance.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.microservices-server-discovery.2026-10-21",
@@ -1751,7 +1751,7 @@
       "decision_evidence": {
         "atlas_section": "server-side-discovery",
         "question": "Should a proxy or load balancer own service lookup and backend selection for the caller?",
-        "competing_alternative": "Client-side discovery or static endpoints. Reverse the choice when proxy blast radius and operational cost exceed the client simplification benefit.",
+        "competing_alternative": "Client-side discovery is the bound alternative. Tycho guidance: static endpoints, a service mesh or direct endpoint configuration may be simpler when membership changes are rare. Reverse when proxy blast radius and operational cost exceed the client simplification benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8105,7 +8105,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 255,
+        "line": 258,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",
