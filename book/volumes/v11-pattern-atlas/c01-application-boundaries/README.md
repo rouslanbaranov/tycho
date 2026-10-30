@@ -42,12 +42,12 @@ evidence_scope:
   notes: "All 12 cards cite read units; eight use bounded owner sections and remain partial."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-29"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-29"
-source_inspection_date: "2026-10-29"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C01 — Application architecture and boundaries
@@ -246,21 +246,27 @@ frameworks and delivery mechanisms at the outside?
 frameworks are plausible; dependency direction can be enforced; tests need to isolate
 policy from infrastructure.
 
-**Hard contraindications.** Reject the claim for a CRUD surface with little domain
-behavior, a framework-centric application, or a team that cannot maintain boundary
-mapping. Drawing circles as team boundaries is not sufficient.
+**Hard contraindications.** Reject the claim when mapping overhead dominates a small CRUD
+application or when ports have no genuinely different implementations; prefer simpler
+layering then. Tycho guidance, not a source claim: a framework-centric application or a
+team that cannot maintain boundary mapping is also a poor fit, and drawing circles as team
+boundaries is not sufficient.
 
 **Competing alternative.** Presentation-domain-data layering: dependencies run top to bottom,
 presentation depends on the domain, and the domain depends on its data source. Keeping the
 domain independent of its data source is arranged by introducing a mapper between the domain
-and data layers, the variation the source calls Hexagonal Architecture. Hexagonal ports and
-adapters is a variant of the same inward rule, not a competing alternative. Reverse the
-clean/onion choice when that independence is not the protected boundary, or when the mapper
-adds no tested change benefit. That reversal is Tycho guidance, not a source claim.
+and data layers, the variation Fowler calls Hexagonal Architecture. Fowler states: “A common
+variation is to arrange things so that the domain does not depend on its data sources by
+introducing a mapper between the domain and data source layers. This approach is often referred
+to as a Hexagonal Architecture.” Hexagonal ports and adapters is a variant of the same inward
+rule, not a competing alternative. Reverse the clean/onion choice when that independence is not
+the protected boundary, or when the mapper adds no tested change benefit. That reversal is Tycho
+guidance, not a source claim.
 
-**Failure and recovery.** Boundary erosion and DTO/mapping complexity are common.
-Recovery requires dependency checks and explicit use-case boundaries; the technical
-owner section states the remaining limits.
+**Failure and recovery.** Boundary erosion and DTO/mapping complexity are common failure
+modes. Tycho guidance, not a source claim: recover with an enforceable dependency test and a
+deliberate adapter, not another layer name; the technical owner section states the
+remaining limits.
 
 **Technical owner.** [Layered, hexagonal and ports-and-adapters architecture](../../v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md#clean-onion-architecture) — The section owns dependency direction and ports; Clean/Onion vocabulary is bounded to that mechanism.
 
@@ -271,8 +277,9 @@ Drivers", "Crossing boundaries". The article groups clean, onion and hexagonal a
 so it does not support a competing-alternative comparison. The alternative is bound to
 [src.fowler-layering](../../../../edition/patterns/reading-ledger.v1.json) read record
 read.fowler-layering.2026-10-21: Presentation Domain Data Layering, section "Presentation
-Domain Data Layering", which describes top-to-bottom layer dependencies and the mapper
-variation it calls Hexagonal Architecture.
+Domain Data Layering", which states that dependencies generally run top to bottom through the
+layer stack and that the mapper variation is Hexagonal Architecture, quoted in the competing
+alternative above. The article is one author's explanation, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.
 
