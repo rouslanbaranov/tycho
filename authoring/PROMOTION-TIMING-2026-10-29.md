@@ -28,12 +28,12 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 43 sufficient of 145; 7 owner-accepted of 43.
+Current: 44 sufficient of 145; 7 owner-accepted of 44.
 
-Remaining to 145: 102 entries. All 23 observed entries run 6-120 minutes (mean 36.2), including
+Remaining to 145: 101 entries. All 24 observed entries run 6-120 minutes (mean 34.7), including
 pre-optimization entries and review/remediation outliers. Using tiered
-estimates calibrated to that mean gives 38-81 focused hours, or
-**4.8-10.1 days of continuous work**. Base is **6.5 days**. The dominant cost is the 46 entries at 2/4 that still need
+estimates calibrated to that mean gives 38-80 focused hours, or
+**4.8-10.0 days of continuous work**. Base is **6.5 days**. The dominant cost is the 45 entries at 2/4 that still need
 two dimensions, not the three entries at 3/4.
 
 ## Report block
@@ -64,11 +64,11 @@ Promotion window estimates, minutes: TTL 43, Fencing 6, Gatekeeper 7,
 Health 7, Multi-Leader 8, Message Filter 11, Least Privilege 15,
 Microservices 10, Structured Logging 35, Strangler Fig 60, Request-Reply 120,
 Clean/Onion 45, Server-side Discovery 60, Vertical Scaling 40, Saga 35,
-Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monolith 40, Database per Service 40, BFF 40. Data:
+Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monolith 40, Database per Service 40, BFF 40, CQRS 40. Data:
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
-bars include review and remediation cycles. Across all 23 entries the mean is
-36.2 minutes (range 6-120); the dashed band forecasts the next single entry at
+bars include review and remediation cycles. Across all 24 entries the mean is
+34.7 minutes (range 6-120); the dashed band forecasts the next single entry at
 that mean, not a promise. Request-Reply is an outlier because it needed four
 delta cycles. These are timestamp estimates, not stopwatch measurements.
 
@@ -76,9 +76,9 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ![Promotion forecast](promotion-forecast-2026-10-30.svg)
 
-Remaining tiers at 43 sufficient: 1 entry 4/4, 4 entries 3/4,
-46 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
-scenarios: optimistic **4.8**, base **6.5**, pessimistic **10.1**.
+Remaining tiers at 44 sufficient: 1 entry 4/4, 4 entries 3/4,
+45 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
+scenarios: optimistic **4.8**, base **6.5**, pessimistic **10.0**.
 Base assumes 50/45/34/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
 `scripts/promotion_forecast_chart.py`. These are planning estimates,
