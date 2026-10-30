@@ -124,8 +124,10 @@ Vertical scaling changes resources available to existing replicas. It can raise 
 throughput without adding partition or routing complexity, but it changes the failure domain: one
 larger node is still one node.
 
-Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed
-bottleneck. A resize usually needs a restart or migration, so the old capacity is unavailable during
+Each node has a maximum capacity for each of the resource types: the amount of CPU and memory it
+can provide for Pods. Tycho synthesis: serial or externally fixed bottlenecks can cap throughput
+regardless of scaling. Tycho synthesis: when in-place resize is unavailable, a resize requires
+restart or migration and the old capacity is unavailable during
 the change; bound the maintenance window and keep a fallback. The provider must allow a larger size,
 and cost must not grow superlinearly with that size. Measure the resource that actually saturates,
 not only CPU, and verify that the operating system, runtime and dependency can use the larger

@@ -51,7 +51,7 @@ scalability-pattern; priority core.
 instance?
 
 **Good-fit conditions.** The workload fits one node; the provider allows a larger size;
-restart/downtime is acceptable.
+restart/downtime is acceptable only when in-place resize is unavailable.
 
 **Hard contraindications.** Reject when a single-node ceiling is near, when failover
 requires multiple nodes, or when cost grows superlinearly.
@@ -62,7 +62,8 @@ adjusting resources in place (vertical scaling); it does not state when either i
 preferable. Reverse the choice when the larger node no longer meets availability or cost
 constraints; those conditions are Tycho synthesis.
 
-**Failure and recovery.** Ceiling and restart risk are common; verify limits in the owner
+**Failure and recovery.** Resource ceilings are bounded; restart or migration risk is conditional
+on in-place resize being unavailable. Verify limits in the owner
 section.
 
 **Technical owner.** [Vertical Scaling](../../v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md#vertical-scaling) — resource ceiling and restart cost are bounded; instance sizing is platform-specific.

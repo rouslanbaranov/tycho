@@ -8284,8 +8284,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Neither horizontal nor vertical scaling can increase throughput past a serial or externally fixed bottleneck.",
-          "reason": "States the capacity ceiling that vertical scaling cannot exceed.",
+          "quote": "Each node has a maximum capacity for each of the resource types: the amount of CPU and memory it can provide for Pods.",
+          "reason": "Bounds vertical scaling by per-node resource capacity; serial or externally fixed bottlenecks remain Tycho synthesis.",
           "binding": {
             "source_id": "src.kubernetes",
             "ledger_record": "read.batch5-k8s-resources.2026-10-21",
@@ -8296,8 +8296,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A resize usually needs a restart or migration, so the old capacity is unavailable during the change; bound the maintenance window and keep a fallback.",
-          "reason": "Names resize unavailability and the required fallback.",
+          "quote": "Tycho synthesis: when in-place resize is unavailable, a resize requires restart or migration and the old capacity is unavailable during the change; bound the maintenance window and keep a fallback.",
+          "reason": "Conditional Tycho synthesis for platforms where in-place resize is unavailable; the bound page only names the replacement-Pod approach.",
           "binding": {
             "source_id": "src.kubernetes",
             "ledger_record": "read.batch5-k8s-resources.2026-10-21",
@@ -8355,7 +8355,7 @@
         "heading": "Autoscaling",
         "anchor": "autoscaling",
         "level": 3,
-        "line": 147,
+        "line": 149,
         "unit_kind": "dedicated",
         "unit_terms": [
           "feedback-control mechanism",
