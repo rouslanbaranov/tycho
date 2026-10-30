@@ -37,17 +37,18 @@ evidence_scope:
     - "src.debezium-outbox"
     - "src.postgresql"
     - "src.postgres-logical"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
   notes: "14 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-22"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C04 — Data consistency, transactions and event sourcing
@@ -196,16 +197,23 @@ when no compensation is possible, or when intermediate visibility is unacceptabl
 not genuinely cross independent owners or compensation is
 unsafe.
 
-**Failure and recovery.** Partial completion and compensation failure are common; verify
-saga protocol in the owner section.
+**Failure and recovery.** Compensating transactions can fail and leave an inconsistent state;
+transient failures and idempotence must be handled, and monitoring/tracking is required. Tycho
+guidance, not a source claim: treat a lost acknowledgment as unknown and a failed compensation as
+a repair item; verify the saga protocol in the owner section.
 
 **Technical owner.** [Saga](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga) — saga recovery is the bounded owner, not a full saga engine.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-saga.2026-10-21: all eleven served headings read.
-The source is a public pattern/specification
-unit, not a benchmark.
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.microsoft-saga-azure.2026-10-30: sections "Solution", "Key concepts in the
+Saga pattern" and "Problems and considerations"; exact quotes "If a step fails, a series of
+compensating transactions undoes the changes that the completed steps made" and "Compensating
+transactions might not always succeed, which can leave the system in an inconsistent state";
+revision 84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca.
+Both sources are public pattern/specification units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 

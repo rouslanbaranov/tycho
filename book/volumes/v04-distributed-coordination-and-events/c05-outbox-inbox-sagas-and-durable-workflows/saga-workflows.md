@@ -28,17 +28,18 @@ evidence_scope:
     - "src.enterprise-integration"
     - "src.microservices-patterns"
     - "src.temporal"
+    - "src.microsoft-cloud-patterns"
   claim_ids: []
   status: "source-linked"
   notes: "Read source-plan units; page-level, not claim-mapped."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-30"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
-source_inspection_date: null
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # Sagas, workflow recovery and compensation
@@ -201,10 +202,27 @@ authorization, evidence and failure mode, and its ordering is declared rather th
 reverse of the forward path.
 
 The invariant is one authority and one effect identity per step; the saga never claims atomicity or
-rollback. A lost acknowledgment is an unknown outcome, not a failure, and a failed
-compensation remains a repair item. Use one local transaction when all effects fit one
-owner, or two-phase commit when participants can hold prepared state and atomic
-visibility is mandatory.
+rollback.
+
+**Failure and recovery.** The Azure Saga page states: "If a step fails, a series of compensating
+transactions undoes the changes that the completed steps made." It also states: "Compensating
+transactions might not always succeed, which can leave the system in an inconsistent state." The
+page requires explicit failure handling: "The system must handle transient failures effectively and
+ensure idempotence, when repeating the same operation doesn't alter the outcome." It also requires
+operational oversight: "Monitoring and tracking the workflow of a saga are essential tasks to
+maintain operational oversight." Tycho guidance, not a source claim: treat a lost acknowledgment as
+an unknown outcome, not a failure, and hold a failed compensation as a repair item rather than
+retrying it blindly.
+
+**Source boundary.** The failure/recovery quotes are from "Saga distributed transactions pattern"
+(Azure Architecture Center), read record `read.microsoft-saga-azure.2026-10-30`, revision
+`84fba1653e842f2af72959d9ac6c3d88821c179804049849e09431b5132069ca`. The page is living
+documentation, not a benchmark, and does not prescribe an acknowledgment-loss policy, retry
+limits, a compensation-ordering algorithm or a specific repair procedure; those remain Tycho
+guidance.
+
+Use one local transaction when all effects fit one owner, or two-phase commit when participants can
+hold prepared state and atomic visibility is mandatory.
 
 ### Saga Choreography
 
