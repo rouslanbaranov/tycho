@@ -21,7 +21,7 @@ def main():
     plot_w = width - left - right
     plot_h = height - top - bottom
     max_days = 18
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">',
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
              '<rect width="100%" height="100%" fill="white"/>']
     for d in range(0, max_days + 1, 3):
         y = top + plot_h - plot_h * d / max_days

@@ -17,14 +17,15 @@ def main():
     lo, hi = min(post), max(post)
     forecast_slots = 4
     total_slots = len(entries) + forecast_slots
-    width, height = 1500, 520
-    left, top, right, bottom = 80, 60, 40, 100
+    width = 1500
+    height = 600
+    left, top, right, bottom = 80, 60, 40, 190
     plot_w = width - left - right
     plot_h = height - top - bottom
     max_v = 10 * ((max(observed + [hi]) + 9) // 10)
     slot = plot_w / total_slots
     bar_w = slot * 0.55
-    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}">',
+    parts = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">',
              '<rect width="100%" height="100%" fill="white"/>']
     for v in range(0, max_v + 1, max(10, max_v // 6)):
         y = top + plot_h - plot_h * v / max_v
@@ -40,7 +41,7 @@ def main():
     fy_mean = top + plot_h - plot_h * mean / max_v
     parts.append(f'<rect x="{fx0:.1f}" y="{fy_hi:.1f}" width="{fx1-fx0:.1f}" height="{fy_lo-fy_hi:.1f}" fill="#1e5ab4" opacity="0.10"/>')
     parts.append(f'<line x1="{fx0:.1f}" y1="{fy_mean:.1f}" x2="{fx1:.1f}" y2="{fy_mean:.1f}" stroke="#1e5ab4" stroke-width="2" stroke-dasharray="6 4"/>')
-    parts.append(f'<text x="{fx0+8:.1f}" y="{fy_mean-8:.1f}" font-family="Verdana" font-size="11" fill="#1e5ab4">forecast {mean:.0f} min (all {len(observed)} entries, range {lo}-{hi})</text>')
+    parts.append(f'<text x="{fx0+8:.1f}" y="{fy_mean-8:.1f}" font-family="Verdana" font-size="10" fill="#1e5ab4">forecast {mean:.0f} min; range {lo}-{hi} (n={len(observed)})</text>')
     for i, item in enumerate(entries):
         value = item["minutes"]
         x = left + slot * i + (slot - bar_w) / 2
@@ -48,7 +49,9 @@ def main():
         color = "#c85a1e" if i == 0 else "#1e5ab4"
         parts.append(f'<rect x="{x:.1f}" y="{y:.1f}" width="{bar_w:.1f}" height="{top+plot_h-y:.1f}" fill="{color}" opacity="0.85"/>')
         parts.append(f'<text x="{x+bar_w/2:.1f}" y="{y-6:.1f}" text-anchor="middle" font-family="Verdana" font-size="11" fill="#323232">{value}</text>')
-        parts.append(f'<text x="{x+bar_w/2:.1f}" y="{top+plot_h+20}" text-anchor="middle" font-family="Verdana" font-size="9" fill="#323232">{item["label"]}</text>')
+        lx = x + bar_w / 2
+        ly = top + plot_h + 16
+        parts.append(f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="end" transform="rotate(-45 {lx:.1f} {ly:.1f})" font-family="Verdana" font-size="10" fill="#323232">{item["label"]}</text>')
     parts.append(f'<text x="{left}" y="25" font-family="Verdana" font-size="16" fill="#141414">Single-entry promotion time and forecast</text>')
     parts.append(f'<text x="{left}" y="44" font-family="Verdana" font-size="11" fill="#606060">orange: pre-optimization; blue bars: observed; dashed band: next-entry range</text>')
     parts.append('</svg>')
