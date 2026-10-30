@@ -96,8 +96,19 @@ def main(argv=None):
             text=True).strip()
     except (OSError, subprocess.CalledProcessError):
         head = None
-    if head and page.get("content_commit") != head:
-        fail(errors, "content_commit is not current HEAD")
+    commit = page.get("content_commit")
+    if commit and commit != head:
+        exists = subprocess.run(
+            ["git", "-C", str(args.root), "cat-file", "-e",
+             commit + "^{commit}"], capture_output=True)
+        if exists.returncode != 0:
+            fail(errors, "content_commit does not exist")
+        else:
+            unchanged = subprocess.run(
+                ["git", "-C", str(args.root), "diff", "--quiet",
+                 commit, head, "--", "book", "edition", "generated"])
+            if unchanged.returncode != 0:
+                fail(errors, "canonical content changed since content_commit")
     page_by_id = {item["id"]: item for item in page.get("items", [])}
     sections = section_map(errors)
     for item in section.get("items", []):

@@ -56,3 +56,21 @@ Questions and candidates were selected and adjudicated from read book bodies, wi
 ## Cross-batch commit note
 
 B01–B03 record HEAD `a6d962ce9c87931480722038ad335ba8c0f116a1`; B04–B06 record HEAD `7918391fe10bc3c2f91e8358b3ee768cf70fbea2`. The section snapshot is the same. The merge script requires a single content commit across all batches, so this mismatch must be resolved before merging; no earlier batch was modified in this run.
+
+## A01
+
+HEAD `9deabb77a011911b3f7c7ecc1688205cb3d834ca`; snapshot `e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa`. 15 atlas queries; cards by chapter: C01 Ambassador, Sidecar; C02 Asynchronous Request-Reply, Service Discovery; C03 Splitter, Claim Check; C04 Transactional Outbox, Saga; C05 TTL-Based Expiration, Cache Invalidation; C06 Sharding, Backup/PITR/Restore; C07 Circuit Breaker, Bulkhead; C08 Fencing Tokens. 15 distinct cards across 8 chapters, at most 2 per chapter. Page candidates 60; section candidates 60. Page grades {0: 18, 1: 26, 2: 16}; section grades {0: 18, 1: 26, 2: 16}.
+
+Questions and grades were created from read cards and related book sections, without rankings; section identities are read from the sections table. Standalone cards use overview, while embedded H3 cards use the broader H2 Entry inventory. Validator passed. Candidate pools are incomplete and individual card relevance may be broader at section level. AI-adjudicated only; not human review, CI, owner acceptance or sufficient coverage. No question rejected.
+
+## A02
+
+HEAD `9deabb77a011911b3f7c7ecc1688205cb3d834ca`; snapshot `e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa`. 15 atlas queries; cards by chapter: C01 Anti-Corruption Layer, Self-Contained Service; C02 Gateway Aggregation, Backend for Frontend; C03 Message Filter, Resequencer; C04 CDC, Materialized View; C05 Cache-Aside, Write-Through; C06 Read Replicas, Partitioning; C09 Static Content Hosting; C10 Parallel Run, Dark Launching. 15 distinct cards, 11 owning pages, 8 chapters, at most 2 per chapter. Page candidates 60; section candidates 60. Page grades {0: 17, 1: 28, 2: 15}; section grades {0: 17, 1: 28, 2: 15}.
+
+Questions and grades were created from read cards and related book sections, without rankings; section identities are read from the sections table. Standalone cards use overview, while embedded H3 cards use the broader H2 Entry inventory. Validator passed. Candidate pools are incomplete and individual card relevance may be broader at section level. AI-adjudicated only; not human review, CI, owner acceptance or sufficient coverage. No question rejected.
+
+## V01
+
+HEAD `9deabb77a011911b3f7c7ecc1688205cb3d834ca`; snapshot `e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa`. 15 V12 queries; owning chapters C01 Foundations 2, C02 Contracts 3, C03 Deterministic and DES 3, C04 Monte Carlo 3, C05 Decision integration 2, C07 Validation and limits 2. Page candidates 60; section candidates 60. Page grades {0: 16, 1: 24, 2: 20}; section grades {0: 16, 1: 24, 2: 20}.
+
+Questions and judgments were made from V12 book-page bodies, with exact H2 identities read from the sections table and no ranking data. The V12 index was inspected for structure only; artifact records were not individually adjudicated. Validator passed. Synthetic models and incomplete candidate pools limit coverage. AI-adjudicated only; not human review, CI, owner acceptance or sufficient coverage. No question rejected.
