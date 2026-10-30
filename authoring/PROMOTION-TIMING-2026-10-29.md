@@ -30,10 +30,10 @@ research has been 60-120 minutes.
 
 Current: 42 sufficient of 145; 7 owner-accepted of 42.
 
-Remaining to 145: 103 entries. All 22 observed entries run 6-120 minutes (mean 32.1), including
+Remaining to 145: 103 entries. All 22 observed entries run 6-120 minutes (mean 36.0), including
 pre-optimization entries and review/remediation outliers. Using tiered
 estimates calibrated to that mean gives 39-82 focused hours, or
-**4.9-10.2 days of continuous work**. Base is **6.4 days**. The dominant cost is the 47 entries at 2/4 that still need
+**4.9-10.2 days of continuous work**. Base is **6.6 days**. The dominant cost is the 47 entries at 2/4 that still need
 two dimensions, not the three entries at 3/4.
 
 ## Report block
@@ -68,7 +68,7 @@ Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monoli
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
 bars include review and remediation cycles. Across all 22 entries the mean is
-32.1 minutes (range 6-120); the dashed band forecasts the next single entry at
+36.0 minutes (range 6-120); the dashed band forecasts the next single entry at
 that mean, not a promise. Request-Reply is an outlier because it needed four
 delta cycles. These are timestamp estimates, not stopwatch measurements.
 
@@ -76,9 +76,9 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ![Promotion forecast](promotion-forecast-2026-10-30.svg)
 
-Remaining tiers at 42 sufficient: 2 entries 4/4, 3 entries 3/4,
+Remaining tiers at 42 sufficient: 1 entry 4/4, 4 entries 3/4,
 47 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
-scenarios: optimistic **4.9**, base **6.4**, pessimistic **10.2**.
+scenarios: optimistic **4.9**, base **6.6**, pessimistic **10.2**.
 Base assumes 50/45/34/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
 `scripts/promotion_forecast_chart.py`. These are planning estimates,
