@@ -1033,7 +1033,23 @@
             "section": "Solution",
             "quote": "Implement an API gateway that is the single entry point for all clients.",
             "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-api-management",
+              "ledger_record": "read.azure-api-management-rate-limit.2026-10-30",
+              "section": "Limit call rate by subscription",
+              "quote": "When the call rate is exceeded, the caller receives a 429 Too Many Requests response status code.",
+              "revision": "048897863df1f50803bf4f2e56491a2ed09489e2840123e88a34e3e1a86825f7"
+            },
+            {
+              "source_id": "src.aws-api-gateway",
+              "ledger_record": "read.aws-api-gateway-throttling.2026-10-30",
+              "section": "Overview",
+              "quote": "Both throttles and quotas are applied on a best-effort basis and should be thought of as targets rather than guaranteed request ceilings.",
+              "revision": "23e9755e061ae48b18e74d385adb1360d1d58782bdb0dd6dc745423dcc656ae1"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
@@ -1163,7 +1179,7 @@
       "decision_evidence": {
         "atlas_section": "api-gateway",
         "question": "Should external clients enter through a managed gateway that owns routing, authentication and cross-cutting edge policy?",
-        "competing_alternative": "A reverse proxy with a narrow edge contract, or direct backend exposure with client-side policy. Reverse the choice when gateway complexity and outage blast radius exceed the shared edge benefit.",
+        "competing_alternative": "A BFF, a service-mesh sidecar or direct backend exposure with an explicit identity contract. Tycho synthesis: a reverse proxy with a narrow edge contract is a further alternative; reverse when gateway complexity and outage blast radius exceed the shared edge benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -1209,7 +1225,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Invariant and failure/recovery bound 2026-10-30 to Azure, AWS and microservices.io public pages; bypass and total-backend outage remain Tycho analysis. Coverage partial-bounded; no promotion."
+      "notes": "Mechanism microservices.io plus Azure/AWS rate/quota supporting bindings; invariant Azure scenarios 1-3 and microservices.io security/token forwarding; failure AWS stage/throttle and Azure self-hosted/rate/quota. Resource-owner enforcement, sidecar/direct-exposure, reverse proxy, bypass, stale route and total outage are Tycho analysis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.gateway-routing",
@@ -1295,7 +1311,7 @@
         "heading": "Gateway Aggregation",
         "anchor": "gateway-aggregation",
         "level": 2,
-        "line": 158,
+        "line": 164,
         "unit_kind": "dedicated",
         "unit_terms": [
           "read-mostly",
@@ -1369,7 +1385,7 @@
         "heading": "Gateway Offloading",
         "anchor": "gateway-offloading",
         "level": 2,
-        "line": 174,
+        "line": 180,
         "unit_kind": "dedicated",
         "unit_terms": [
           "terminate TLS",
@@ -1588,7 +1604,7 @@
         "heading": "Reverse Proxy",
         "anchor": "reverse-proxy",
         "level": 2,
-        "line": 191,
+        "line": 197,
         "unit_kind": "dedicated",
         "unit_terms": [
           "accepts client connections",

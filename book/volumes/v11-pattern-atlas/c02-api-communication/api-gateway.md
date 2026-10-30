@@ -59,12 +59,13 @@ observed as a critical component; backend authority remains explicit.
 
 **Hard contraindications.** Reject the claim when one simple client can call one
 backend directly; when the gateway would become an unowned single point of failure;
-when it hides domain authorization in the backend; when every request needs a unique
-policy that the gateway cannot safely express.
+when the gateway masks the absence of domain authorization in the backend; when every
+request needs a unique policy that the gateway cannot safely express.
 
-**Competing alternative.** A reverse proxy with a narrow edge contract, or direct
-backend exposure with client-side policy. Reverse the choice when gateway complexity
-and outage blast radius exceed the shared edge benefit.
+**Competing alternative.** A BFF, a service-mesh sidecar or direct backend exposure with an
+explicit identity contract. Tycho synthesis: a reverse proxy with a narrow edge contract is
+a further alternative; reverse when gateway complexity and outage blast radius exceed the
+shared edge benefit.
 
 **Failure and recovery.** Gateway bypass, configuration drift, a stale route, a rate-limit
 or quota failure and an outage that blocks every backend are common. AWS's REST API
@@ -72,8 +73,8 @@ developer guide documents stage snapshots, the need to redeploy for new settings
 best-effort throttling and 429 responses; Azure documents 429 and 403 rate and quota
 responses, quota lag after a platform restart, and a self-hosted gateway that keeps its
 last configuration while disconnected. Keep backend authorization, test the bypass path and
-version gateway policy. Bypass and total backend-blocking outage consequences remain Tycho
-analysis; the sources do not test them.
+version gateway policy. Bypass, stale-route and total backend-blocking outage consequences remain
+Tycho analysis; the sources do not test them.
 
 **Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#api-gateway) — edge identity and gateway boundary; not a full API management specification.
 
@@ -81,7 +82,7 @@ analysis; the sources do not test them.
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.microservices-api-gateway.2026-10-21: all ten served headings
 read. AWS API Gateway Developer Guide and Azure API Management pages accessed 2026-10-30;
-exact quotes, sections and canonical revisions are in the owner section.
+source records, sections and canonical revisions are in the reading ledger and owner unit.
 
 **Decision state.** applicable-under-conditions.
 
