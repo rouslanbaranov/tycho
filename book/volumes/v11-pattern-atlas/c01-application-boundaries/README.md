@@ -30,6 +30,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.monolith-first"
+    - "src.spring-modulith"
     - "src.aws-hexagonal"
     - "src.fowler-bounded-context"
     - "src.microsoft-cloud-patterns"
@@ -139,16 +140,24 @@ choice when release cadence, independent scaling or blast-radius isolation becom
 binding constraint, or when module boundaries cannot be enforced.
 
 **Failure and recovery.** The common failure is a distributed monolith in disguise:
-shared data, synchronous call chains and one deployment blast radius. Recovery starts
+shared data, synchronous call chains and one deployment blast radius. Spring Modulith
+1.3.12 documents synchronous event publication and warns that more triggered
+functionality "will widen the transaction boundary". Its module verification rejects
+references to internal packages and undeclared dependencies; its event page also warns
+that an asynchronous listener can lose the event without a safety net. Recovery starts
 with explicit module ownership, contract tests and a rollback path; event durability
-and transaction semantics must be verified in the technical owner.
+and transaction semantics must be verified in the technical owner. The deployment
+blast radius and the "distributed monolith" label remain Tycho analysis; the sources
+do not measure them.
 
 **Technical owner.** [Modular Monolith](../../v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md#modular-monolith).
 
 **Sources.** [src.monolith-first](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.monolith-first.2026-10-21`: all five served headings read.
-The source is architectural
-guidance, not a benchmark.
+Spring Modulith 1.3.12 "Verifying Application Module Structure", "Fundamentals" and
+"Working with Application Events", source `src.spring-modulith`, accessed 2026-10-30;
+exact quotes, sections and canonical revisions are in the owner section. The sources
+are documentation and architectural guidance, not a benchmark.
 
 **Decision state.** `applicable-under-conditions`.
 
