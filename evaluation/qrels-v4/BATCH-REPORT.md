@@ -74,3 +74,9 @@ Questions and grades were created from read cards and related book sections, wit
 HEAD `9deabb77a011911b3f7c7ecc1688205cb3d834ca`; snapshot `e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa`. 15 V12 queries; owning chapters C01 Foundations 2, C02 Contracts 3, C03 Deterministic and DES 3, C04 Monte Carlo 3, C05 Decision integration 2, C07 Validation and limits 2. Page candidates 60; section candidates 60. Page grades {0: 16, 1: 24, 2: 20}; section grades {0: 16, 1: 24, 2: 20}.
 
 Questions and judgments were made from V12 book-page bodies, with exact H2 identities read from the sections table and no ranking data. The V12 index was inspected for structure only; artifact records were not individually adjudicated. Validator passed. Synthetic models and incomplete candidate pools limit coverage. AI-adjudicated only; not human review, CI, owner acceptance or sufficient coverage. No question rejected.
+
+## V02
+
+HEAD `6f6e242dd26a98bd77b37cb1268ca3104a3082bb`; snapshot `e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa`. 15 V12 queries; owning chapters C02 Contracts 3, C03 Deterministic and DES 3, C04 Monte Carlo 3, C06 Migration simulation 3, C07 Validation and limits 3. Page candidates 60; section candidates 60. Page grades {0: 15, 1: 22, 2: 23}; section grades {0: 15, 1: 22, 2: 23}.
+
+Questions and judgments were made from V12 book-page bodies, with exact H2 identities read from the sections table and no ranking data. One preliminary question was replaced to maintain chapter coverage. Validator passed. Synthetic model assumptions and incomplete candidate pools limit coverage; artifact records were not individually adjudicated. AI-adjudicated only; not human review, CI, owner acceptance or sufficient coverage.
