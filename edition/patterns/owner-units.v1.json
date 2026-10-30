@@ -6899,7 +6899,7 @@
         "alternative": {
           "state": "supported",
           "quote": "These alternatives are preferable when distribution adds cross-shard coordination without relieving the measured constraint; that decision rule is Tycho guidance, not a source claim.",
-          "reason": "PostgreSQL describes partitioning as splitting a logical table into smaller physical pieces and documents hot-standby servers that serve read-only queries while asynchronous replicas can return slightly stale results; MongoDB contrasts vertical scaling with horizontal scaling and its infrastructure complexity; Citus recommends PostgreSQL table partitioning for time-ordered data and warns that joins cross the network boundary. The retained PostgreSQL 18 Table Partitioning record read.batch3-pg-partition.2026-10-21 (revision 6f4540b0...) also supports the partitioning comparison. The selection rule is Tycho guidance; no selected page states it.",
+          "reason": "PostgreSQL describes partitioning as splitting a logical table into smaller physical pieces and documents hot-standby servers that serve read-only queries while asynchronous replicas can return slightly stale results; MongoDB notes that vertical scaling has a practical maximum; Citus recommends PostgreSQL table partitioning for time-ordered data and warns that joins cross the network boundary. The retained PostgreSQL 18 Table Partitioning record read.batch3-pg-partition.2026-10-21 (revision 6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001) also supports the partitioning comparison. The selection rule is Tycho guidance; no selected page states it.",
           "binding": {
             "source_id": "src.citus",
             "ledger_record": "read.citus-datamodel.2026-10-30",
@@ -6928,6 +6928,13 @@
               "section": "5.12.1. Overview",
               "quote": "Partitioning refers to splitting what is logically one large table into smaller physical pieces.",
               "revision": "6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001"
+            },
+            {
+              "source_id": "src.citus",
+              "ledger_record": "read.citus-datamodel.2026-10-30",
+              "section": "Best Practices",
+              "quote": "Use PostgreSQL table partitioning for time instead.",
+              "revision": "5081a6810d6f9e3b0ed5370af4b648aaee513657d065129593f6c531c0d654aa"
             }
           ]
         }
@@ -6935,7 +6942,7 @@
       "decision_evidence": {
         "atlas_section": "sharding",
         "question": "Should data be split across shards by a partition key to scale beyond one node?",
-        "competing_alternative": "Partitioning within one database, read replicas (hot standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby read-only replicas; MongoDB notes that vertical scaling has a practical maximum; Citus warns that joins cross the network boundary. Reverse the choice when distribution adds cross-shard coordination without relieving the measured constraint; that reversal rule is Tycho synthesis.",
+        "competing_alternative": "Partitioning within one database, read replicas (hot standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby read-only replicas; Citus recommends PostgreSQL table partitioning for time-ordered data and warns that joins cross the network boundary; MongoDB notes that vertical scaling has a practical maximum. Reverse the choice when distribution adds cross-shard coordination without relieving the measured constraint; that reversal rule is Tycho synthesis.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

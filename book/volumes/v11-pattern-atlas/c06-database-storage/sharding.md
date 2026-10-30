@@ -64,8 +64,9 @@ cannot be detected and verified.
 
 **Competing alternative.** Partitioning within one database, read replicas (hot
 standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby
-read-only replicas; MongoDB notes that vertical scaling has a practical maximum; Citus warns
-that joins cross the network boundary. Reverse
+read-only replicas; Citus recommends PostgreSQL table partitioning for time-ordered data and
+warns that joins cross the network boundary; MongoDB notes that vertical scaling has a
+practical maximum. Reverse
 the choice when distribution adds cross-shard coordination without relieving the
 measured constraint; that reversal rule is Tycho synthesis.
 
@@ -89,7 +90,7 @@ records `read.mongo-sharding.2026-10-30`, `read.mongo-choose-key.2026-10-30`,
 [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json) record
 `read.pg18-ha.2026-10-30`; the retained
 `read.batch3-pg-partition.2026-10-21` binds partitioning (revision
-`6f4540b0…`). Public documentation,
+`6f4540b06405f349bbffa5a003e1788584c1f3dbe6167e997e76c7e721406001`). Public documentation,
 not a benchmark, cluster run or migration test.
 
 **Decision state.** applicable-under-conditions.
