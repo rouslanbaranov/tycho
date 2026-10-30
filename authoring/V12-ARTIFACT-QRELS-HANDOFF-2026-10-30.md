@@ -1,6 +1,7 @@
 # V12 artifact-level qrels — handoff
 
-Status: handoff only. No artifact-level qrels exist.
+Status: completed by external Codex on 2026-10-30. See
+[V12-ARTIFACT-QRELS-EVAL-2026-10-30.md](V12-ARTIFACT-QRELS-EVAL-2026-10-30.md).
 
 ## Goal
 
