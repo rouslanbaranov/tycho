@@ -11,54 +11,54 @@
     {
       "id": "V4-A001",
       "split": "atlas",
-      "question": "When does an ambassador proxy make sense for clients in several languages, and what retry hazard constrains it?",
+      "question": "What risk arises when a translation layer between legacy and new domains has no owner for its mappings?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md": 2,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md": 1,
-        "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md": 1,
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 0
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md": 2,
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md": 1,
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md": 0,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md",
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md",
-        "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md"
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md",
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md"
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md"
       ]
     },
     {
       "id": "V4-A002",
       "split": "atlas",
-      "question": "When is a colocated helper a suitable way to add auxiliary runtime behavior?",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md": 2,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md": 1,
-        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0,
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 0
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md": 2,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 1,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md": 1,
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md",
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md"
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md",
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md",
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md"
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md"
       ]
     },
     {
       "id": "V4-A003",
       "split": "atlas",
-      "question": "Which pattern lets a client submit long-running work and poll a durable result while safely repeating a lost submission?",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md": 2,
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 1,
-        "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md": 1,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md": 0
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 1,
+        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md",
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md",
-        "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md"
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md"
@@ -67,16 +67,16 @@
     {
       "id": "V4-A004",
       "split": "atlas",
-      "question": "When is Envoy endpoint discovery a better fit than a fixed endpoint list?",
+      "question": "What infrastructure must exist before Envoy can use the service-discovery approach described by the card?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 2,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md": 1,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/sidecar.md": 0,
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md": 1,
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md": 0,
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md",
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md"
+        "book/volumes/v11-pattern-atlas/c01-application-boundaries/self-contained-service.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md"
@@ -85,17 +85,17 @@
     {
       "id": "V4-A005",
       "split": "atlas",
-      "question": "When should one composite message be split into parts, and what makes that unsafe?",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md": 2,
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 1,
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md": 1,
-        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 1,
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md",
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md",
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md"
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md"
@@ -104,17 +104,17 @@
     {
       "id": "V4-A006",
       "split": "atlas",
-      "question": "When should large payloads travel by reference instead of directly through a broker?",
+      "question": "What failure can arise if a claim token is published before its payload is durably stored?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 2,
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md": 1,
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 1,
-        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
+        "book/volumes/v11-pattern-atlas/c11-security-operations/valet-key.md": 1,
+        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md",
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md",
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md"
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md",
+        "book/volumes/v11-pattern-atlas/c11-security-operations/valet-key.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md"
@@ -123,17 +123,17 @@
     {
       "id": "V4-A007",
       "split": "atlas",
-      "question": "What pattern preserves publication intent atomically with a local state change when a relay publishes later?",
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 2,
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md": 1,
         "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md": 1,
-        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 1,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md",
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md",
-        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md"
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md",
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md"
@@ -142,36 +142,36 @@
     {
       "id": "V4-A008",
       "split": "atlas",
-      "question": "When can a business process spanning services use local transactions and compensations?",
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md": 2,
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 1,
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 2,
         "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md": 1,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md": 0
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md": 1,
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md",
         "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md",
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md"
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md",
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md"
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md"
       ]
     },
     {
       "id": "V4-A009",
       "split": "atlas",
-      "question": "When is time-based cache expiry unsuitable for a strict read-after-write requirement?",
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 2,
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md": 1,
-        "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md": 1,
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 0
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 1,
+        "book/volumes/v11-pattern-atlas/c11-security-operations/valet-key.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md",
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
-        "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md"
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md"
@@ -180,17 +180,17 @@
     {
       "id": "V4-A010",
       "split": "atlas",
-      "question": "When is invalidating a cached entry on a write a poor fit for the freshness contract?",
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
       "grades": {
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md": 2,
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 1,
-        "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md": 1,
-        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 1,
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md": 0
       },
       "accepted": [
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md",
-        "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md"
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md"
       ],
       "direct": [
         "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md"
@@ -199,96 +199,96 @@
     {
       "id": "V4-A011",
       "split": "atlas",
-      "question": "When should sharding be avoided even if a system needs to grow?",
+      "question": "Why can removing an origin asset leave an old copy available after an edge purge?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c06-database-storage/README.md": 2,
-        "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md": 1,
-        "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md": 1,
-        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 2,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md": 1,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 1,
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
-        "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
-        "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md"
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md",
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md",
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c06-database-storage/README.md"
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md"
       ]
     },
     {
       "id": "V4-A012",
       "split": "atlas",
-      "question": "When is a backup-and-WAL recovery pattern not ready to support a stated recovery objective?",
+      "question": "What version-retention condition helps static hosting support rollback?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c06-database-storage/README.md": 2,
-        "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md": 2,
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md": 0,
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 2,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 1,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md": 1,
         "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
-        "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md"
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md",
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md",
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/cache-invalidation.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c06-database-storage/README.md",
-        "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md"
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md"
       ]
     },
     {
       "id": "V4-A013",
       "split": "atlas",
-      "question": "When is opening a circuit around a failing dependency unsuitable despite repeated errors?",
+      "question": "What should happen to the user response if the candidate fails during a parallel run?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c07-resilience/README.md": 2,
-        "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md": 1,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md": 1,
-        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 0
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md": 2,
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md": 1,
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md": 1,
+        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
-        "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retry-retention.md",
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md"
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md",
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md",
+        "book/volumes/v11-pattern-atlas/c02-api-communication/async-request-reply.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c07-resilience/README.md"
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md"
       ]
     },
     {
       "id": "V4-A014",
       "split": "atlas",
-      "question": "When can a bulkhead isolate a dependency, and what capacity trade-off does it introduce?",
+      "question": "Why is mirrored production traffic unsafe for a shadow service that performs live writes?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c07-resilience/README.md": 2,
-        "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md": 1,
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md": 1,
-        "book/volumes/v11-pattern-atlas/c05-caching-retrieval/ttl-based-expiration.md": 0
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md": 2,
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md": 2,
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md": 1,
+        "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
-        "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
-        "book/volumes/v11-pattern-atlas/c01-application-boundaries/ambassador.md"
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md",
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md",
+        "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c07-resilience/README.md"
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/dark-launching.md",
+        "book/volumes/v11-pattern-atlas/c10-deployment-modernization/parallel-run.md"
       ]
     },
     {
       "id": "V4-A015",
       "split": "atlas",
-      "question": "When can a destination-enforced fencing token protect against a lease holder that resumes late?",
+      "question": "What limits the exposure from a leaked credential issued for direct storage access?",
       "grades": {
-        "book/volumes/v11-pattern-atlas/c08-coordination/README.md": 2,
-        "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md": 1,
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md": 1,
+        "book/volumes/v11-pattern-atlas/c11-security-operations/valet-key.md": 2,
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md": 1,
+        "book/volumes/v11-pattern-atlas/c09-scalability/static-content-hosting.md": 0,
         "book/volumes/v11-pattern-atlas/c02-api-communication/service-discovery.md": 0
       },
       "accepted": [
-        "book/volumes/v11-pattern-atlas/c08-coordination/README.md",
-        "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
-        "book/volumes/v11-pattern-atlas/c04-consistency-events/README.md"
+        "book/volumes/v11-pattern-atlas/c11-security-operations/valet-key.md",
+        "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md"
       ],
       "direct": [
-        "book/volumes/v11-pattern-atlas/c08-coordination/README.md"
+        "book/volumes/v11-pattern-atlas/c11-security-operations/valet-key.md"
       ]
     }
   ]
