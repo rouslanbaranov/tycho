@@ -73,8 +73,9 @@ Layer-scoped:
 - No human review, independent review, CI, owner acceptance or sufficient
   coverage.
 - V12 section top-1 remains 17/30; guard retained.
-- Qrels v4 pools are 4–5 per query; a v4.1 10–15 candidate expansion
-  handoff/validator is ready, but the labels do not exist yet.
+- Qrels v4 pools are 4–5 per query. The v4.1 expansion exists (10–11
+  candidates, 784 accepted); BM25 page hit@1/3/5 is .687/.867/.967. It is a
+  different, AI-labelled pool and is not directly comparable to v4.
 
 ## Operations
 

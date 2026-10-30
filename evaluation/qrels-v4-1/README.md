@@ -1,13 +1,14 @@
 # Qrels v4.1 expansion
 
-Status: **7/15 batches complete** (B01–B07 PASS). B08–B15 are pending the
-Codex account usage limit; no final v4.1 labels exist.
+Status: **15/15 batches complete** (B01–B15 PASS). Final v4.1 page/section
+qrels and evaluation exist.
 
 - Handoff: `../../authoring/QRELS-V4.1-EXPANSION-HANDOFF-2026-10-30.md`
 - Batch plan: [BATCHES.md](BATCHES.md)
 - Codex prompt: [CODEX-PROMPT.md](CODEX-PROMPT.md)
 - Batch validator: `scripts/validate_qrels_v41_batch.py`
 - Merge: `scripts/merge_qrels_v41_batches.py`
+- Evaluation: [EVAL.md](EVAL.md), [eval.json](eval.json)
 
 15 batches ×10 queries. The failed 6/150 draft is under `partial/` and must not
 be used. Target: same 150 v4 queries, 10–15 candidates each, existing v4 labels
