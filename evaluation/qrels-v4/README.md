@@ -1,46 +1,31 @@
-# Qrels v4 — handoff state
+# Qrels v4 — AI-adjudicated
 
-Status: **handoff only**. No final qrels v4 files exist.
+Status: **complete**, AI-adjudicated only.
 
-Codex must run in `~/Projects/tycho-index-and-search`
-(`/Users/rbaranov/Projects/tycho-index-and-search`), not in any other checkout.
+- Page: `evaluation/corpus-qrels.v4.json`
+- Section: `evaluation/section-qrels.v4.json`
+- Report: [REPORT.md](REPORT.md)
+- Validation: [validation.txt](validation.txt)
 
-Follow [CODEX-PROMPT.md](CODEX-PROMPT.md) and
-[QRELS-V4-HANDOFF-2026-10-30.md](../../authoring/QRELS-V4-HANDOFF-2026-10-30.md).
+150 queries: 90 book, 30 atlas, 30 V12. Validator PASS.
 
-For one run that completes all ten batches, use
-[CODEX-ONE-RUN-PROMPT.md](CODEX-ONE-RUN-PROMPT.md).
+## Coverage caveat
 
-## Batches
+B01–B03 are narrow: each is concentrated in one chapter/topic. They passed
+schema validation but are not representative of the whole book. B04–B06 are
+broader; atlas and V12 coverage is documented in [REPORT.md](REPORT.md).
 
-Ten batches of 15 queries; see [BATCHES.md](BATCHES.md). Each Codex run creates
-only one page/section batch:
+## Handoff history
 
-```text
-evaluation/qrels-v4/batches/<BATCH>.page.json
-evaluation/qrels-v4/batches/<BATCH>.section.json
-```
+- [CODEX-PROMPT.md](CODEX-PROMPT.md) — per-batch prompt
+- [CODEX-ONE-RUN-PROMPT.md](CODEX-ONE-RUN-PROMPT.md) — all-batches attempt
+- [BATCHES.md](BATCHES.md) — batch plan
+- [QRELS-V4-HANDOFF-2026-10-30.md](../../authoring/QRELS-V4-HANDOFF-2026-10-30.md)
 
-Validate one batch:
+The failed one-query draft is under `partial/`; do not use it.
 
-```sh
-python3 scripts/validate_qrels_v4.py \
-  --page evaluation/qrels-v4/batches/B01.page.json \
-  --section evaluation/qrels-v4/batches/B01.section.json \
-  --book 15 --atlas 0 --v12 0
-```
+## Limits
 
-After all ten:
-
-```sh
-python3 scripts/merge_qrels_v4_batches.py \
-  --batch-dir evaluation/qrels-v4/batches
-```
-
-Target: 150 queries (90 book, 30 atlas, 30 V12). These are AI-adjudicated, not
-human review, CI, owner acceptance or sufficient coverage.
-
-## Partial draft
-
-The failed one-query Codex draft is quarantined under `partial/`. Do not merge
-or evaluate it as qrels v4.
+AI-adjudicated only; not human review, independent review, CI, owner acceptance
+or sufficient coverage. PASS is schema/consistency validation, not judgment
+quality.
