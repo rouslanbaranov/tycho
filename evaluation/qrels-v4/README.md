@@ -1,7 +1,7 @@
 # Qrels v4 — AI-adjudicated
 
-Status: **complete**, AI-adjudicated. B01–B03 were reworked for broad coverage
-(12 volumes, 15 chapter topics).
+Status: **atlas section rework pending**, AI-adjudicated. B01–B03 are broad, but
+A01–A02 still contain broad Entry inventory section anchors.
 
 - Page: `evaluation/corpus-qrels.v4.json`
 - Section: `evaluation/section-qrels.v4.json`
