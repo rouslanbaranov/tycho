@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 297.
+Inventory date: 2026-10-30. Entries: 299.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -194,6 +194,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.victoriametrics / supporting | [VictoriaMetrics Documentation](https://docs.victoriametrics.com/) — VictoriaMetrics | Alternative time-series storage, ingestion and cluster design. | admitted-for-research / public-web-or-author-download |
 | src.prom-alerting / core | [Prometheus Alerting Overview](https://prometheus.io/docs/alerting/latest/overview/) — Prometheus | Rule evaluation, Alertmanager routing and notification boundaries. | admitted-for-research / public-web-or-author-download |
 | src.openlineage / supporting | [OpenLineage Documentation](https://openlineage.io/docs/) — OpenLineage | Dataset/job/run lineage, distinct from request tracing and audit records. | admitted-for-research / public-web-or-author-download |
+| src.aws-cloudwatch-synthetics / core | [Synthetic monitoring (canaries)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html) — Amazon Web Services | Synthetic canary checks that follow user journeys, as an external alternative to runtime probes. | admitted-for-research / public-web-or-author-download |
 
 ## Platform
 
@@ -208,6 +209,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.docker / supporting | [Docker Overview](https://docs.docker.com/get-started/docker-overview/) — Docker | Image, container, registry and runtime boundaries. | admitted-for-research / public-web-or-author-download |
 | src.lambda / supporting | [AWS Lambda Execution Environments](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html) — AWS | Execution environment reuse, lifecycle and deployment constraints. | admitted-for-research / public-web-or-author-download |
 | src.istio-traffic-mirroring / supporting | [Istio Mirroring](https://istio.io/latest/docs/tasks/traffic-management/mirroring/) — Istio | Request mirroring, fire-and-forget responses and fractional mirroring. | admitted-for-research / public-web-or-author-download |
+| src.aws-elastic-load-balancing / core | [Health checks for Application Load Balancer target groups](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html) — Amazon Web Services | Health-check thresholds, target ejection and fail-open behavior for load-balanced backends. | admitted-for-research / public-web-or-author-download |
 
 ## Security
 

@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 65 |
+| Reviewed by independent agent | 64 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 70, "reviewed-by-independent-agent": 65}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 71, "reviewed-by-independent-agent": 64}.
 
 ## Review procedure
 
@@ -291,7 +291,7 @@ blank verdict template in the machine-readable file.
 
 - **Health Endpoint Monitoring**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Health, Readiness and Liveness Checks**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

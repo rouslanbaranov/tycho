@@ -1510,7 +1510,7 @@
         "heading": "Gateway Routing",
         "anchor": "gateway-routing",
         "level": 3,
-        "line": 132,
+        "line": 168,
         "unit_kind": "dedicated",
         "unit_terms": [
           "gateway matches",
@@ -8921,20 +8921,80 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A shared dependency failure can fail every probe and cause mass ejection or restart; a cached \"healthy\" answer can keep sending traffic to a draining instance.",
-          "reason": "Page has no shared-dependency mass-ejection or cached-health failure path."
+          "reason": "AWS documents bounded consecutive-failure ejection and fail-open when all targets fail; Kubernetes documents readiness-driven traffic removal and liveness restart; Google SRE documents health-checking itself making a service unhealthy and DNS resolver caching/TTL limits. The shared-dependency mass-ejection and cached-health composition is Tycho.",
+          "binding": {
+            "source_id": "src.aws-elastic-load-balancing",
+            "ledger_record": "read.aws-elb-health-checks.2026-10-30",
+            "section": "Health check settings",
+            "quote": "If the health checks exceed UnhealthyThresholdCount consecutive failures, the load balancer takes the target out of service. When the health checks exceed HealthyThresholdCount consecutive successes, the load balancer puts the target back in service.",
+            "revision": "0ed90e2b33aef9a2369191b15de328cb847be6ba0fb48d04fb3b07c9ff2eec1c"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-elastic-load-balancing",
+              "ledger_record": "read.aws-elb-health-checks.2026-10-30",
+              "section": "Health checks for Application Load Balancer target groups",
+              "quote": "This means that if all targets fail health checks at the same time in all enabled Availability Zones, the load balancer fails open.",
+              "revision": "0ed90e2b33aef9a2369191b15de328cb847be6ba0fb48d04fb3b07c9ff2eec1c"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+              "section": "Define readiness probes",
+              "quote": "A pod with containers reporting that they are not ready does not receive traffic through Kubernetes Services.",
+              "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.batch4-k8s-probes.2026-10-21",
+              "section": "Define a liveness HTTP request",
+              "quote": "checks will fail, and the kubelet will kill and restart the container.",
+              "revision": "2a69b9a5354d355147f562bce0c808c875bb046b7b15b045f012c757c87fad7e"
+            },
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+              "section": "Immediate Steps to Address Cascading Failures",
+              "quote": "This practice may create a failure mode in which health-checking itself makes the service unhealthy.",
+              "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+            },
+            {
+              "source_id": "src.sre-frontend-enrichment",
+              "ledger_record": "read.batch5-sre-frontend.2026-10-21",
+              "section": "Load Balancing Using DNS",
+              "quote": "Given that authoritative nameservers cannot flush resolvers’ caches, DNS records need a relatively low TTL. This effectively sets a lower bound on how quickly DNS changes can be propagated to users.",
+              "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Synthetic checks or SLO-based external monitoring may be preferable when the runtime probe cannot observe the user journey.",
-          "reason": "Page has only runtime probes, no synthetic/SLO alternative."
+          "reason": "AWS documents synthetic canaries that follow customer routes and verify the customer experience; Google SRE documents SLOs that measure reliability as customers experience it and treats them as the highest-quality indication for on-call response. The choice rule and the independence condition are Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-cloudwatch-synthetics",
+            "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+            "section": "Synthetic monitoring (canaries)",
+            "quote": "Canaries follow the same routes and perform the same actions as a customer, which makes it possible for you to continually verify your customer experience even when you don't have any customer traffic on your applications.",
+            "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-slos.2026-10-30",
+              "section": "Alerting on SLOs",
+              "quote": "We believe that having good SLOs that measure the reliability of your platform, as experienced by your customers, provides the highest-quality indication for when an on-call engineer should respond.",
+              "revision": "340f148f65a7a92596c65f0a44828cbc1bcf165291cccf2c33a2b57673dd30b3"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "health-endpoint-monitoring",
         "question": "Should an external monitor distinguish liveness, readiness and startup health?",
-        "competing_alternative": "Simple process check plus external journey monitoring. Reverse the choice when probe complexity causes false restarts.",
+        "competing_alternative": "Process liveness plus an external journey check (a synthetic canary) or SLO-based alerting on customer experience. Reverse the choice when probe complexity causes false restarts or the external check reuses the failing dependency. The choice rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8943,12 +9003,39 @@
         "source_id": "src.kubernetes",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.batch4-sre-cascading.2026-10-21",
+            "revision": "d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a"
+          },
+          {
+            "source_id": "src.sre-frontend-enrichment",
+            "ledger_record": "read.batch5-sre-frontend.2026-10-21",
+            "revision": "18a223169690f9df2ccd534337c28de4ea54c2e45e4a72f14bf3042072d2918f"
+          },
+          {
+            "source_id": "src.aws-elastic-load-balancing",
+            "ledger_record": "read.aws-elb-health-checks.2026-10-30",
+            "revision": "0ed90e2b33aef9a2369191b15de328cb847be6ba0fb48d04fb3b07c9ff2eec1c"
+          },
+          {
+            "source_id": "src.aws-cloudwatch-synthetics",
+            "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+            "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+          },
+          {
+            "source_id": "src.sre-workbook",
+            "ledger_record": "read.sre-workbook-slos.2026-10-30",
+            "revision": "340f148f65a7a92596c65f0a44828cbc1bcf165291cccf2c33a2b57673dd30b3"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Only the failure section bounds liveness/readiness semantics; endpoint exposure and external monitoring are not explained."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to Kubernetes probes, Google SRE cascading/frontend and SLO chapters, and AWS ELB and synthetic monitoring; shared-dependency mass ejection, cached health and the alternative-choice rule remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.failover-failback",
@@ -13003,8 +13090,8 @@
     "embedded_units": 0,
     "mechanism_supported": 111,
     "invariant_supported": 73,
-    "failure_recovery_supported": 65,
-    "alternative_supported": 71,
+    "failure_recovery_supported": 66,
+    "alternative_supported": 72,
     "technical_partial_bounded": 18,
     "technical_partial": 75,
     "technical_name_only": 0,
