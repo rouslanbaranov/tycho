@@ -30,10 +30,10 @@ research has been 60-120 minutes.
 
 Current: 45 sufficient of 145; 7 owner-accepted of 45.
 
-Remaining to 145: 100 entries. All 25 observed entries run 6-120 minutes (mean 33.3), including
+Remaining to 145: 100 entries. All 25 observed entries run 6-120 minutes (mean 35.1), including
 pre-optimization entries and review/remediation outliers. Using tiered
 estimates calibrated to that mean gives 37-79 focused hours, or
-**4.7-9.9 days of continuous work**. Base is **6.4 days**. The dominant cost is the 44 entries at 2/4 that still need
+**4.7-9.9 days of continuous work**. Base is **6.3 days**. The dominant cost is the 44 entries at 2/4 that still need
 two dimensions, not the three entries at 3/4.
 
 ## Report block
@@ -68,7 +68,7 @@ Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monoli
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
 bars include review and remediation cycles. Across all 25 entries the mean is
-33.3 minutes (range 6-120); the dashed band forecasts the next single entry at
+35.1 minutes (range 6-120); recent entries use measured intervals between promotion commits; the dashed band forecasts the next single entry at
 that mean, not a promise. Request-Reply is an outlier because it needed four
 delta cycles. These are timestamp estimates, not stopwatch measurements.
 
@@ -78,7 +78,7 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 Remaining tiers at 45 sufficient: 1 entry 4/4, 4 entries 3/4,
 44 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
-scenarios: optimistic **4.7**, base **6.4**, pessimistic **9.9**.
+scenarios: optimistic **4.7**, base **6.3**, pessimistic **9.9**.
 Base assumes 50/45/34/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
 `scripts/promotion_forecast_chart.py`. These are planning estimates,
