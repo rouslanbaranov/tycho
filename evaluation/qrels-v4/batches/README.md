@@ -1,7 +1,7 @@
 # Qrels v4 batches
 
-Status: **ten batches complete and merged** into qrels v4; AI-adjudicated only.
-B01–B03 were reworked for broad coverage.
+Status: **A01–A02 atlas section rework pending**; the current qrels v4 still
+contains broad Entry inventory anchors for atlas sections.
 
 Coverage:
 

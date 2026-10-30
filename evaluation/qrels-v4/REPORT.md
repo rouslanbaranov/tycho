@@ -1,7 +1,7 @@
 # Qrels v4 — final AI-adjudicated set
 
-Status: **complete**, AI-adjudicated. Not human review, independent review, CI,
-owner acceptance or sufficient coverage.
+Status: **A01–A02 atlas section rework pending**, AI-adjudicated. Not human
+review, independent review, CI, owner acceptance or sufficient coverage.
 
 ## Files
 
@@ -39,8 +39,8 @@ grades, accepted/direct sets, page/section consistency and canonical content.
 - B04–B06 span 5/5, 8/8 and 9/12 volumes/chapters.
 - A01–A02 cover 15 distinct cards across 8 atlas chapters each.
 - V01 spans 6 V12 chapters; V02 spans 5.
-- Atlas cards use the broader `Entry inventory` section where no narrower H2
-  exists.
+- Atlas cards currently use the broader `Entry inventory` section where no
+  narrower H2 exists; A01–A02 section specificity rework is pending.
 - V12 judgments use V12 book pages, not individual artifact records.
 - Candidate pools are 4–10 pages/sections, not exhaustive.
 - Final merge normalizes `content_commit` to `7918391f`; book/edition/generated
