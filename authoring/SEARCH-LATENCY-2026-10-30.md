@@ -21,10 +21,20 @@ manifest/row-count validation on every query.
 BM25 is ~20 ms of actual query work; most warm latency is repeated index
 validation. Best mode has a cold model-load spike and remains opt-in.
 
-## Next
+## Validation cache
 
-Cache index validation by file identity (mtime/size) while still checking the
-book/route snapshot. Re-measure after the change.
+Added a validated-manifest cache keyed by index path, mtime, size and inode.
+The book/route and facet snapshots are still checked on every query; corrupt or
+rebuilt files get a new key.
+
+| Mode | Before p50/p95 | After p50/p95 |
+|---|---|---|
+| BM25 warm | 133.3/178.5 ms | **66.7/79.7 ms** |
+| Margin .05 | 142.6/206.4 ms | **60.2/70.5 ms** |
+| Best (20) | 361.7/842.2 ms | **216.5/420.4 ms** |
+
+BM25 cold-cache p50 also falls from 173.7 ms to 53.7 ms because repeated index
+validation was the dominant cost. Max outliers remain from process/model warmup.
 
 ## Limits
 
