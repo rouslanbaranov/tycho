@@ -123,3 +123,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-30 | DeepSeek Reviewer | #540 Two-Phase Commit | pass | `2026-10-30-two-phase-commit-deepseek.md` | `ae86a6455c3e46fe5d75005b5e840b20675e82e0a918355e14b9b8371af15563` |
 | 2026-10-30 | DeepSeek Reviewer | #540 Scatter-Gather | pass | `2026-10-30-scatter-gather-deepseek.md` | `17d2e9f603eacb14b8659228b035126932303bb70a692f58ce957281e9947296` |
 | 2026-10-30 | DeepSeek Reviewer | #540 API Gateway | pass | `2026-10-30-api-gateway-deepseek.md` | `cac155011e9a0279ec119214b3b3303fb26466bdaeaed59f47c6ce9cc6f7c597` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Modular Monolith | pass | `2026-10-30-modular-monolith-deepseek.md` | `49a508fa536718c4657d3333d9e3915875056e36a310eb1bd210714dd457d0c9` |

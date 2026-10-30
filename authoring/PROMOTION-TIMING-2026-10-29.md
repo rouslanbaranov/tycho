@@ -28,12 +28,12 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 40 sufficient of 145; 7 owner-accepted of 40.
+Current: 41 sufficient of 145; 7 owner-accepted of 41.
 
-Remaining to 145: 105 entries. All 20 observed entries run 6-120 minutes (mean 31.4), including
+Remaining to 145: 104 entries. All 21 observed entries run 6-120 minutes (mean 31.8), including
 pre-optimization entries and review/remediation outliers. Using tiered
-estimates calibrated to that mean gives 40-84 focused hours, or
-**5.0-10.5 days of continuous work**. Base is **6.6 days**. The dominant cost is the 49 entries at 2/4 that still need
+estimates calibrated to that mean gives 40-83 focused hours, or
+**5.0-10.4 days of continuous work**. Base is **6.5 days**. The dominant cost is the 48 entries at 2/4 that still need
 two dimensions, not the three entries at 3/4.
 
 ## Report block
@@ -64,11 +64,11 @@ Promotion window estimates, minutes: TTL 43, Fencing 6, Gatekeeper 7,
 Health 7, Multi-Leader 8, Message Filter 11, Least Privilege 15,
 Microservices 10, Structured Logging 35, Strangler Fig 60, Request-Reply 120,
 Clean/Onion 45, Server-side Discovery 60, Vertical Scaling 40, Saga 35,
-Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40. Data:
+Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monolith 40. Data:
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
-bars include review and remediation cycles. Across all 20 entries the mean is
-31.4 minutes (range 6-120); the dashed band forecasts the next single entry at
+bars include review and remediation cycles. Across all 21 entries the mean is
+31.8 minutes (range 6-120); the dashed band forecasts the next single entry at
 that mean, not a promise. Request-Reply is an outlier because it needed four
 delta cycles. These are timestamp estimates, not stopwatch measurements.
 
@@ -76,9 +76,9 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ![Promotion forecast](promotion-forecast-2026-10-30.svg)
 
-Remaining tiers at 40 sufficient: 2 entries 4/4, 3 entries 3/4,
-49 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
-scenarios: optimistic **5.0**, base **6.6**, pessimistic **10.5**.
+Remaining tiers at 41 sufficient: 2 entries 4/4, 3 entries 3/4,
+48 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
+scenarios: optimistic **5.0**, base **6.5**, pessimistic **10.4**.
 Base assumes 50/45/34/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
 `scripts/promotion_forecast_chart.py`. These are planning estimates,
