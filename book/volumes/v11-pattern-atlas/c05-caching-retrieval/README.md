@@ -393,24 +393,35 @@ priority core.
 **Decision question.** Should data be cached in more than one tier with different latency
 and freshness?
 
-**Good-fit conditions.** Each tier has a distinct role; promotion/invalidation across
-tiers is owned; local staleness is bounded.
+**Good-fit conditions.** Each tier has a distinct role and a named freshness bound;
+promotion and invalidation across tiers are owned; a missed invalidation is detected or
+a TTL bounds the stale copy.
 
 **Hard contraindications.** Reject when one tier suffices, when cross-tier invalidation
-cannot be tested, or when duplicate caching only adds inconsistency.
+or a staleness bound cannot be tested, or when duplicate caching only adds inconsistency.
 
-**Competing alternative.** Single distributed cache or local-only cache. Reverse the
-choice when tier coordination cost exceeds latency benefit.
+**Competing alternative.** Single shared remote cache or local-only cache. A shared cache
+gives more consistent responses at the cost of a network hop; a local tier lowers latency
+but duplicates data. Reverse the choice when coordination and invalidation cost exceeds
+the latency benefit.
 
-**Failure and recovery.** Cross-tier stale data and invalidation fan-out are common;
-verify placement in the owner section.
+**Failure and recovery.** Cross-tier stale data and invalidation fan-out are common; test
+the lost-invalidation, disconnect-flush and TTL bounds in the owner section.
 
 **Technical owner.** [Local and distributed caching: authority, freshness and placement](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md#multi-level-caching) — multi-level authority and coherence are bounded; per-tier eviction is page-specific.
 
 **Sources.** [src.hazelcast](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-hazelcast-near.2026-10-21: all fifteen served headings read. The source is a
-public pattern/documentation
-unit, not a benchmark.
+read records read.batch3-hazelcast-near.2026-10-21 and
+read.hazelcast-near-cache.2026-10-30: Near Cache local-memory, eventual-consistency and
+invalidation-loss statements. [src.redis](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.redis-client-side-caching.2026-10-30: local-cache, tracking,
+invalidation and disconnect-flush statements.
+[src.aws-caching-guidance](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.aws-caching-guidance.2026-10-30: client-side, remote and multi-level
+caching statements and the TTL invalidation step. The owner section carries the exact
+quotes and representation hashes; the 2026-10-30 records and the AWS source are proposed
+in the B37 lane note, not yet registered. These are public documentation units, not
+benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
