@@ -1664,9 +1664,74 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A backend for frontend composes the API surface for one client experience. It needs a client owner, a composition contract, a policy for duplicated domain logic and a boundary that prevents the BFF from becoming a second domain authority.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A BFF is a separate backend for one client experience, owned by the frontend team: it customizes the client API and may compose several service calls, code duplication is a probable outcome, and cross-cutting and domain logic remain outside the BFF.",
+          "reason": "The sources support the separate client-specific backend, team ownership, composition, code-duplication trade-off and client-specific scope; the composition contract, duplication policy and domain-authority boundary are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-bff.2026-10-30",
+            "section": "Solution",
+            "quote": "Create a separate backend service for each frontend interface, instead of using a single general-purpose backend for all of them.",
+            "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Solution",
+              "quote": "This pattern customizes the client experience for a specific interface without affecting other interfaces.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Solution",
+              "quote": "Frontend teams independently manage their own BFF service, which gives them control over language selection, release cadence, workload prioritization, and feature integration.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Code duplication is a probable outcome of this pattern. Evaluate the trade-off between code duplication and a better-tailored experience for each client.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "The BFF service should only handle client-specific logic related to a specific user experience. Cross-cutting features, such as monitoring and authorization, should be abstracted to maintain efficiency.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Example",
+              "quote": "The desktop BFF service aggregates multiple requests by using underlying microservices calls before responding to the client with a multiple page response.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            },
+            {
+              "source_id": "src.aws-bff",
+              "ledger_record": "read.aws-bff.2026-10-30",
+              "section": "Conclusion",
+              "quote": "The BFF pattern refers to having one backend per user experience, instead of having only one general-purpose API backend.",
+              "revision": "bfab5e7c99406c982f8bddbe077d4e2d5fc3494c6e7ef6762d82d0f3a746280c"
+            },
+            {
+              "source_id": "src.aws-bff",
+              "ledger_record": "read.aws-bff.2026-10-30",
+              "section": "The BFF pattern",
+              "quote": "the BFF is tightly coupled to a specific user experience, and will typically be maintained by the same team as the user interface, thereby making it easier to define and adapt the API as the UI requires, while also simplifying the process of lining up releases of both the client and server components.",
+              "revision": "bfab5e7c99406c982f8bddbe077d4e2d5fc3494c6e7ef6762d82d0f3a746280c"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-api-gateway.2026-10-21",
+              "section": "Variation: Backends for frontends",
+              "quote": "A variation of this pattern is the Backends for frontends pattern. It defines a separate API gateway for each kind of client.",
+              "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
@@ -1681,9 +1746,32 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is drift between the BFF and the domain API; version the composition and test the client contract.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A BFF is tightly coupled to one client experience and released with it, while the services it composes have independent lifecycles; Tycho guidance, not a source claim: treat divergence between the BFF composition and the domain API as drift, version the composition and test the client contract on every release.",
+          "reason": "AWS supports tight coupling and release alignment; Microsoft supports independent lifecycles and per-client containment; the selected pages do not document drift, versioning or client-contract tests, so those are Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-bff",
+            "ledger_record": "read.aws-bff.2026-10-30",
+            "section": "The BFF pattern",
+            "quote": "According to him, the BFF is tightly coupled to a specific user experience, and will typically be maintained by the same team as the user interface, thereby making it easier to define and adapt the API as the UI requires, while also simplifying the process of lining up releases of both the client and server components.",
+            "revision": "bfab5e7c99406c982f8bddbe077d4e2d5fc3494c6e7ef6762d82d0f3a746280c"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Each individual service has its own life cycle, deployment and maintenance requirements, and security needs.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-bff.2026-10-30",
+              "section": "Workload design",
+              "quote": "When you isolate services to a specific frontend interface, you contain malfunctions. The availability of one client doesn't affect the availability of another client's access.",
+              "revision": "0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -1706,16 +1794,33 @@
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.microsoft-bff.2026-10-21",
+        "ledger_record": "read.microsoft-bff.2026-10-30",
         "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-bff",
+            "ledger_record": "read.aws-bff.2026-10-30",
+            "revision": "bfab5e7c99406c982f8bddbe077d4e2d5fc3494c6e7ef6762d82d0f3a746280c"
+          },
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-bff.2026-10-21",
+            "revision": "7126f490a1ee27d6bdea832b2a10c965987f4945d8e92d89135e4bfe8add5e70"
+          },
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-gateway.2026-10-21",
+            "revision": "e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated bounded note under Bounded pattern ownership notes; all four dimensions are covered."
+      "notes": "BFF mechanism and failure/recovery bound 2026-10-30 to Microsoft, AWS and microservices.io pattern pages; composition contract, duplication policy, drift, versioning and client-contract testing remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.api-composition",
@@ -1727,7 +1832,7 @@
         "heading": "API Composition",
         "anchor": "api-composition",
         "level": 3,
-        "line": 142,
+        "line": 193,
         "unit_kind": "dedicated",
         "unit_terms": [
           "API Composition"
@@ -11733,7 +11838,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "keep",
       "rationale": "Two API-composition patterns have two dedicated bounded notes on a coherent contract page."
     },
@@ -12112,12 +12217,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 109,
+    "mechanism_supported": 110,
     "invariant_supported": 66,
-    "failure_recovery_supported": 58,
+    "failure_recovery_supported": 59,
     "alternative_supported": 67,
-    "technical_partial_bounded": 19,
-    "technical_partial": 84,
+    "technical_partial_bounded": 20,
+    "technical_partial": 83,
     "technical_name_only": 0,
     "technical_sufficient": 42,
     "decision_partial_bounded": 103,

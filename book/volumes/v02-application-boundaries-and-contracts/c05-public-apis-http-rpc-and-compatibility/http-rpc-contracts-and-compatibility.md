@@ -64,7 +64,7 @@ content_verified_at: null
 <!-- /tycho-question-source -->
 
 > **Pattern atlas:**
-> [Backend for Frontend](../../v11-pattern-atlas/c02-api-communication/README.md#backend-for-frontend-bff) — decision conditions and contraindications.
+> [Backend for Frontend](../../v11-pattern-atlas/c02-api-communication/backend-for-frontend.md#backend-for-frontend-bff) — decision conditions and contraindications.
 > [API Composition](../../v11-pattern-atlas/c02-api-communication/README.md#api-composition) — decision conditions and contraindications.
 
 <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:0 -->
