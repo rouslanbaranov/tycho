@@ -39,6 +39,23 @@ def main(argv=None):
             errors.append(path.name + ": expected 150 queries")
         if data.get("snapshot") != snapshot:
             errors.append(path.name + ": stale snapshot")
+    artifact_path = args.root / "evaluation/v12-artifact-qrels.v1.json"
+    artifact = {"exists": artifact_path.is_file()}
+    if not artifact_path.is_file():
+        errors.append("artifact qrels missing")
+    else:
+        data = json.loads(artifact_path.read_text(encoding="utf-8"))
+        artifact.update({
+            "status": data.get("status"),
+            "count": len(data.get("items", [])),
+            "snapshot_match": data.get("snapshot") == snapshot,
+        })
+        if data.get("status") != "ai-adjudicated-not-human":
+            errors.append("artifact qrels: unexpected status")
+        if len(data.get("items", [])) != 30:
+            errors.append("artifact qrels: expected 30 queries")
+        if data.get("snapshot") != snapshot:
+            errors.append("artifact qrels: stale snapshot")
     weights = section_search.bm25_weights()
     if weights != EXPECTED_WEIGHTS:
         errors.append("unexpected BM25 weights: " + repr(weights))
@@ -50,6 +67,7 @@ def main(argv=None):
     output = {
         "index_snapshot": snapshot,
         "qrels": qrels,
+        "artifact_qrels": artifact,
         "weights": weights,
         "mcp_defaults": {
             "section_rerank": schema["section_rerank"]["default"],
