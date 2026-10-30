@@ -38,6 +38,13 @@ def main(argv=None):
     section_ids = {item["id"] for item in section_items}
     if len(page_ids) != 150 or page_ids != section_ids:
         raise SystemExit("query ID coverage mismatch")
+    reviewers = set()
+    for batch in pages:
+        reviewer = batch.get("reviewer")
+        if isinstance(reviewer, list):
+            reviewers.update(str(item) for item in reviewer)
+        elif reviewer:
+            reviewers.add(str(reviewer))
     output = {
         "schema_version": 4,
         "status": "ai-adjudicated-not-human",
@@ -45,7 +52,7 @@ def main(argv=None):
         "snapshot": snapshots.pop(),
         "content_commit": commits.pop(),
         "query_count": 150,
-        "reviewer": sorted({batch.get("reviewer", "") for batch in pages}),
+        "reviewer": sorted(reviewers),
         "items": page_items,
         "limits": ("Pool-expanded AI qrels; not human review, CI, owner "
                    "acceptance or sufficient coverage."),

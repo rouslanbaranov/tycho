@@ -23,13 +23,20 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--margin", type=float, default=0.05)
+    ap.add_argument(
+        "--page-qrels", type=Path,
+        default=Path("evaluation/corpus-qrels.v4.json"))
+    ap.add_argument(
+        "--section-qrels", type=Path,
+        default=Path("evaluation/section-qrels.v4.json"))
     args = ap.parse_args(argv)
-    page_qrels = json.loads(
-        (args.root / "evaluation/corpus-qrels.v4.json").read_text(
-            encoding="utf-8"))
-    section_qrels = json.loads(
-        (args.root / "evaluation/section-qrels.v4.json").read_text(
-            encoding="utf-8"))
+    page_path = args.page_qrels if args.page_qrels.is_absolute() else (
+        args.root / args.page_qrels)
+    section_path = (args.section_qrels
+                    if args.section_qrels.is_absolute()
+                    else args.root / args.section_qrels)
+    page_qrels = json.loads(page_path.read_text(encoding="utf-8"))
+    section_qrels = json.loads(section_path.read_text(encoding="utf-8"))
     sections = {item["id"]: item for item in section_qrels["items"]}
     counts = {split: {mode: {level: [0, 0, 0]
                              for level in ("page", "section")}
@@ -61,7 +68,8 @@ def main(argv=None):
                     for target in (split, "all"):
                         counts[target][mode][level][index] += int(
                             hits(results, accepted, level, k))
-    output = {"qrels": "evaluation/corpus-qrels.v4.json",
+    output = {"qrels": str(page_path.relative_to(args.root))
+              if page_path.is_relative_to(args.root) else str(page_path),
               "status": page_qrels["status"], "splits": {}}
     totals = {split: sum(1 for item in page_qrels["items"]
                          if split == "all" or item["split"] == split)
