@@ -450,8 +450,8 @@ digests.
   notes` heading and the preceding `### Partitioning` section are unchanged,
   so the owner-unit line for Partitioning stays at 105. The page grows from
   140 to 171 lines.
-- Raw SHA-256: `148542e538d59052e1817ebc95a69f1ddf5fd2d268e4ec62f054b3302e593818`.
-- Historical-view SHA-256: `5a85a0b24bf295c67f3d7ffb65b5b5ce1273e0df88f9e69d6ff4592415409101`.
+- Raw SHA-256: `746c5f9626119db6debd14f041674608444f8e7495e760b2dfef5f86d78790ca`.
+- Historical-view SHA-256: `90f5a2197527303a4c782b4cf9227ac5efe1e742049ca7ccd65c0145b7aaaa25`.
 - Base raw SHA-256: `882d3cc6d9bedf396ce5fa395e6ae7560f32ad9da5e7d9d9a3d1a0d2e6a0b0e4`;
   base historical-view SHA-256:
   `e5ae4c19dd2335ab51bb8abd502a6316d5d13fc78f4ffa67444d1bc58900dab0`.
@@ -669,7 +669,7 @@ owner acceptance." Use these historical-view hashes:
 - Owner path, previous:
   `e5ae4c19dd2335ab51bb8abd502a6316d5d13fc78f4ffa67444d1bc58900dab0`;
   current:
-  `5a85a0b24bf295c67f3d7ffb65b5b5ce1273e0df88f9e69d6ff4592415409101`.
+  `90f5a2197527303a4c782b4cf9227ac5efe1e742049ca7ccd65c0145b7aaaa25`.
 - Card path, previous:
   `ca6da267affe777ce4f894506145c6c6bb1524832081c8f36b1a66d6b058d105`;
   current:
@@ -678,7 +678,7 @@ owner acceptance." Use these historical-view hashes:
   `enrichment_baselines` empty.
 
 Raw file hashes for reference:
-`148542e538d59052e1817ebc95a69f1ddf5fd2d268e4ec62f054b3302e593818` (owner) and
+`746c5f9626119db6debd14f041674608444f8e7495e760b2dfef5f86d78790ca` (owner) and
 `747aa588f881122cdb21d7a907064833050810a85b3bccaf54d4b6be88af63ca` (card).
 
 ### Frontmatter and evidence scope
@@ -706,7 +706,7 @@ batch end; do not treat a stale derived hash as a lane content failure. The
 atlas manifest must record the new V11/C06 chapter SHA-256
 `747aa588f881122cdb21d7a907064833050810a85b3bccaf54d4b6be88af63ca` and the
 new owner page SHA-256
-`148542e538d59052e1817ebc95a69f1ddf5fd2d268e4ec62f054b3302e593818`. The prior
+`746c5f9626119db6debd14f041674608444f8e7495e760b2dfef5f86d78790ca`. The prior
 sufficient review, if any, predates this edit and does not cover the changed
 bytes. The book/atlas
 independent review gate applies.

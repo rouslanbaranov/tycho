@@ -141,10 +141,10 @@ Keys; MongoDB — Choose a Shard Key). MongoDB's balancer monitors data per shar
 thresholds and briefly pauses reads and writes while the range location is committed to the config
 servers; `_secondaryThrottle` and the balancing window limit migration work (MongoDB — Balancer).
 Citus puts "a brief write-lock on a shard only during the time it takes to update metadata to
-promote the subscriber shard as active" (Citus — Cluster Management). MongoDB resharding blocks
-writes for up to two seconds, fails on duplicate `_id` values, and keeps retryable writes retryable
-for five minutes, after which the definitive result may be unavailable (MongoDB — Reshard a
-Collection).
+promote the subscriber shard as active" (Citus — Cluster Management). MongoDB requires the
+application to tolerate a two-second period in which writes to the resharded collection are
+blocked, fails on duplicate `_id` values, and keeps retryable writes retryable for five minutes,
+after which the definitive result may be unavailable (MongoDB — Reshard a Collection).
 
 Map drift, split brain, application-level hot-key throttling and dual-read/verify are Tycho failure
 modes: the selected pages document metadata replication/restore and write fencing, not drift
