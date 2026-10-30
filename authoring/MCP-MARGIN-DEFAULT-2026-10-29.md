@@ -1,7 +1,8 @@
 # MCP margin default — 2026-10-29
 
-Status: owner-requested production default for MCP search. AI-adjudicated
-evidence; not human review, CI or sufficient coverage.
+Status: historical; superseded on 2026-10-30. Qrels v4 showed top-5 and atlas
+regressions, so MCP default returned to BM25. See
+[MCP-DEFAULT-REVERT-2026-10-30.md](MCP-DEFAULT-REVERT-2026-10-30.md).
 
 ## Owner decisions
 
