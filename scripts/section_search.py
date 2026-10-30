@@ -47,6 +47,9 @@ SECTION_SEARCH_COLUMNS = (
 TOKEN = section_fts_index.TOKEN
 _QUERY_CACHE = OrderedDict()
 _QUERY_CACHE_LOCK = threading.Lock()
+_INDEX_VALIDATION_CACHE = OrderedDict()
+_INDEX_VALIDATION_LOCK = threading.Lock()
+_INDEX_VALIDATION_MAX = 4
 _QUERY_CACHE_MAX = 128
 
 
@@ -211,11 +214,34 @@ def open_snapshot(root, index_path=None):
         raise SearchError(
             "No published section index; run section_fts_index.py build first",
             "not-available")
+    stat = target.stat()
+    cache_key = (str(target), stat.st_mtime_ns, stat.st_size,
+                 getattr(stat, "st_ino", 0))
+    with _INDEX_VALIDATION_LOCK:
+        cached = _INDEX_VALIDATION_CACHE.get(cache_key)
     try:
         db = sqlite3.connect("file:" + target.as_posix() + "?mode=ro", uri=True)
     except sqlite3.DatabaseError as exc:
         raise SearchError("Section index cannot be opened", "not-available") from exc
     db.row_factory = sqlite3.Row
+    if cached is not None:
+        try:
+            manifest = cached
+            current = _current_route_snapshot(root)
+            if current != manifest["route_snapshot_sha256"]:
+                raise SnapshotMismatch(
+                    "Section index snapshot does not match the current book; rebuild it")
+            facet_current = section_fts_index.facet_input_sha256(root)
+            if facet_current != manifest.get("facet_input_sha256"):
+                raise SnapshotMismatch(
+                    "Section index V12 facets do not match the current indexes; rebuild it")
+        except (sqlite3.DatabaseError, ValueError, TypeError, KeyError) as exc:
+            db.close()
+            if isinstance(exc, SearchError):
+                raise
+            raise SearchError("Section index is unreadable or malformed",
+                              "not-available") from exc
+        return db, manifest
     try:
         _require(db.execute("PRAGMA quick_check").fetchone()[0] == "ok",
                  "Section index failed quick integrity check", "not-available")
@@ -244,6 +270,10 @@ def open_snapshot(root, index_path=None):
         if facet_current != manifest.get("facet_input_sha256"):
             raise SnapshotMismatch(
                 "Section index V12 facets do not match the current indexes; rebuild it")
+        with _INDEX_VALIDATION_LOCK:
+            _INDEX_VALIDATION_CACHE[cache_key] = manifest
+            while len(_INDEX_VALIDATION_CACHE) > _INDEX_VALIDATION_MAX:
+                _INDEX_VALIDATION_CACHE.popitem(last=False)
     except (sqlite3.DatabaseError, ValueError, TypeError, KeyError) as exc:
         db.close()
         if isinstance(exc, SearchError):
