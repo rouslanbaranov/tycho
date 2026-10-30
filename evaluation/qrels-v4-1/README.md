@@ -1,6 +1,7 @@
 # Qrels v4.1 expansion
 
-Status: **batched handoff**. No final v4.1 labels exist.
+Status: **7/15 batches complete** (B01–B07 PASS). B08–B15 are pending the
+Codex account usage limit; no final v4.1 labels exist.
 
 - Handoff: `../../authoring/QRELS-V4.1-EXPANSION-HANDOFF-2026-10-30.md`
 - Batch plan: [BATCHES.md](BATCHES.md)
