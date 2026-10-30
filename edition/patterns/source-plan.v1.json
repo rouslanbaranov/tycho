@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-30",
   "registry_version": "0.2.0",
-  "registry_sha256": "ffbd0d940403f8f4a956e017bd8a81d5f0e2ad4f49d056fb07219224a74c261a",
-  "route_index_snapshot": "71c648a998e80d7c2d76feabcc51248d74a111e960a9b08980b5fbaedd39ea0a",
+  "registry_sha256": "a8898f30cecdaf9090db360e3cd41485161c9e70ca7b8e58d09f786c7f1e3747",
+  "route_index_snapshot": "8f49e132204053e36141de92cf07f1447fe214bbaeafb6987a7afc5addf90bbb",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -1775,9 +1775,47 @@
           "status": "read",
           "read_record_id": "read.fowler-cqrs.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "CQRS pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cqrs",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Separate read models and write models",
+            "Separate models in a single data store",
+            "Separate models in different data stores",
+            "Benefits of CQRS",
+            "Problems and considerations",
+            "When to use this pattern",
+            "Workload design",
+            "Combine the Event Sourcing and CQRS patterns",
+            "Benefits of combining the Event Sourcing and CQRS patterns",
+            "Considerations for how to combine the Event Sourcing and CQRS patterns",
+            "Example",
+            "Next step",
+            "Related resources"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-cqrs.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-cqrs",
+          "unit": "CQRS pattern — AWS Prescriptive Guidance",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html",
+          "sections": [
+            "CQRS pattern"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-cqrs.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Foundation unit read; claims limited to the ledger record."
+      "notes": "Bounded three-unit plan: Fowler for the conceptual update/display split, shared-database option and applicability; Microsoft for read/write models, read-only projections, the Transactional Outbox plus idempotent consumer and replay-based regeneration; AWS for command/query separation, command-side validation and eventual consistency. No projector crash, cursor protocol, production rebuild or independent reproduction is claimed."
     },
     {
       "pattern_id": "tycho.pattern.event-sourcing",
@@ -5110,11 +5148,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 198,
-    "read_units": 197,
+    "required_units": 200,
+    "read_units": 199,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 161
+    "ledger_records": 163
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

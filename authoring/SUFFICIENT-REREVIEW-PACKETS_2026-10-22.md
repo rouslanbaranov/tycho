@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 80 |
+| Reviewed by independent agent | 74 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 55, "reviewed-by-independent-agent": 80}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 61, "reviewed-by-independent-agent": 74}.
 
 ## Review procedure
 
@@ -139,11 +139,11 @@ blank verdict template in the machine-readable file.
 
 - **Command Query Responsibility Segregation (CQRS)**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Command-Side Replica**
   Current: pass; historical: None; re-review: pass; report: None.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Compensating Transaction**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -175,7 +175,7 @@ blank verdict template in the machine-readable file.
 
 - **CQRS Read Projections**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Dark Launching / Shadow Traffic**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.
@@ -215,7 +215,7 @@ blank verdict template in the machine-readable file.
 
 - **Domain Events**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Domain-Driven Design / Bounded Context**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -227,7 +227,7 @@ blank verdict template in the machine-readable file.
 
 - **Event Sourcing**
   Current: pass; historical: None; re-review: pass; report: pass.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Event-Driven Consumer**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -355,7 +355,7 @@ blank verdict template in the machine-readable file.
 
 - **Materialized View**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Message Broker / Messaging Bridge**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

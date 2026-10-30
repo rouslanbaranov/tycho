@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 286.
+Inventory date: 2026-10-30. Entries: 287.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -66,6 +66,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-scatter-gather / core | [Scatter-gather pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/scatter-gather.html) — AWS Prescriptive Guidance | Bounded public page for scatter-gather intent, the aggregator component relationship, applicability and failure considerations. | admitted-for-research / public-web-or-author-download |
 | src.aws-branch / core | [Branch by abstraction pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/branch-by-abstraction.html) — AWS Prescriptive Guidance | Bounded public page for the branch by abstraction process, reversible increments, fallback verification, switch-back recovery and the data-consistency limit. | admitted-for-research / public-web-or-author-download |
 | src.aws-strangler / core | [Strangler fig pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-decomposing-monoliths/strangler-fig.html) — AWS Prescriptive Guidance | Bounded public page for incremental replacement, coexistence, rollback planning, interception prerequisites and facade failure conditions. | admitted-for-research / public-web-or-author-download |
+| src.aws-cqrs / core | [CQRS pattern](https://docs.aws.amazon.com/prescriptive-guidance/latest/modernization-data-persistence/cqrs-pattern.html) — AWS Prescriptive Guidance | Bounded public page for CQRS command/query separation, command-side validation and eventual consistency. | admitted-for-research / public-web-or-author-download |
 
 ## Contracts
 

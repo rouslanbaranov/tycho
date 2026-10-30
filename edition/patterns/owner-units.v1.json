@@ -4276,14 +4276,95 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Neither side may claim authority merely because it can read the other's tables.",
-          "reason": "Source permits shared database and states no read/write authority rule."
+          "state": "supported",
+          "quote": "The write model owns command authority and the read model is a derived, read-only view; neither side may claim authority merely because it can read the other's tables.",
+          "reason": "Microsoft separates the read and write models, makes queries non-mutating, gives the read model no business logic and calls the event store the single source of truth; AWS places validation and authorization on the command side. The neither-side-authority rule and the ban on a lagging view for an invariant decision are Tycho guidance, not source claims.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-cqrs.2026-10-30",
+            "section": "Solution",
+            "quote": "Queries never alter data. Instead, they return data transfer objects (DTOs) that present the required data in a convenient format, without any domain logic.",
+            "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "When to use this pattern",
+              "quote": "The read model has no business logic or validation stack. It returns a DTO for use in a view model. The read model is eventually consistent with the write model.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Combine the Event Sourcing and CQRS patterns",
+              "quote": "The event store is the write model and the single source of truth.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Benefits of combining the Event Sourcing and CQRS patterns",
+              "quote": "Basically, materialized views function as a durable, read-only cache that's optimized for fast and efficient queries.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Separate models in a single data store",
+              "quote": "A write model is designed to handle commands that update or persist data. It includes validation and domain logic, and helps ensure data consistency by optimizing for transactional integrity and business processes.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.aws-cqrs",
+              "ledger_record": "read.aws-cqrs.2026-10-30",
+              "section": "CQRS pattern",
+              "quote": "The application processes the incoming command on the command side. This involves validating, authorizing, and running the operation.",
+              "revision": "d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Apply projection events idempotently: commit the derived row and its cursor atomically, and disable outbound side effects during rebuild.",
-          "reason": "Source discusses eventual consistency but not idempotent projection, cursor commit or rebuild side effects."
+          "state": "supported",
+          "quote": "Microsoft also says to \"make the read-model consumer idempotent to tolerate duplicate delivery\" and that views can be regenerated \"by replaying historical events\".",
+          "reason": "Microsoft supports eventual-consistency lag, an idempotent read-model consumer, replay-based regeneration and the Transactional Outbox write-side commit; AWS and Fowler support eventual consistency. The atomic derived-row/cursor commit, rebuild side-effect suppression and unknown-view handling are Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-cqrs.2026-10-30",
+            "section": "Separate models in different data stores",
+            "quote": "Use the Transactional Outbox pattern to persist the state change and event atomically, and make the read-model consumer idempotent to tolerate duplicate delivery.",
+            "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "When the read databases and write databases are separated, the read data might not show the most recent changes immediately. This delay results in stale data.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Benefits of combining the Event Sourcing and CQRS patterns",
+              "quote": "Because the event store acts as the single source of truth, you can easily regenerate materialized views or adapt to changes in the read model by replaying historical events.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.aws-cqrs",
+              "ledger_record": "read.aws-cqrs.2026-10-30",
+              "section": "CQRS pattern",
+              "quote": "The CQRS pattern typically results in eventual consistency between the data stores.",
+              "revision": "d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258"
+            },
+            {
+              "source_id": "src.fowler-cqrs",
+              "ledger_record": "read.fowler-cqrs.2026-10-21",
+              "section": "CQRS",
+              "quote": "Having separate models raises questions about how hard to keep those models consistent, which raises the likelihood of using eventual consistency",
+              "revision": "11cf46ce308805e94e4b110016b09d004fbf8c47669a7041080f661c798b2f29"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -4310,12 +4391,24 @@
         "source_id": "src.fowler-cqrs",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-cqrs.2026-10-30",
+            "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+          },
+          {
+            "source_id": "src.aws-cqrs",
+            "ledger_record": "read.aws-cqrs.2026-10-30",
+            "revision": "d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Owner unit covers recorded CQRS decision, side authority, idempotent projection/cursor rebuild and reversal; projector-crash recovery also appears in section 4 outside this bounded unit."
+      "notes": "CQRS invariant and failure/recovery bound 2026-10-30 to Microsoft CQRS and AWS Prescriptive Guidance pages; the read-authority rule, no-lagging-view invariant decision, atomic derived-row/cursor commit, rebuild side-effect suppression and unknown-view handling remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.event-sourcing",
@@ -6993,7 +7086,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 326,
+        "line": 368,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The projection owner publishes",
@@ -11937,7 +12030,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 6,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
     },
@@ -12218,11 +12311,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 110,
-    "invariant_supported": 66,
-    "failure_recovery_supported": 59,
+    "invariant_supported": 67,
+    "failure_recovery_supported": 60,
     "alternative_supported": 67,
-    "technical_partial_bounded": 19,
-    "technical_partial": 83,
+    "technical_partial_bounded": 20,
+    "technical_partial": 82,
     "technical_name_only": 0,
     "technical_sufficient": 43,
     "decision_partial_bounded": 102,
