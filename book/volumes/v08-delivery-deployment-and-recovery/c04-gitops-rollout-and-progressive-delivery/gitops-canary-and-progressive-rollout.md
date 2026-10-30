@@ -160,7 +160,7 @@ compatible" for the old version. A canary that writes through a shared store can
 leave state the baseline cannot read; that consequence is Tycho's inference, and rollback does
 not undo committed data. Tycho guidance, not a source claim: watch metric leakage across cohorts and sample size;
 small samples hide rare errors, and an unrepresentative cohort can pass while a rare failure
-hides. Shared-state contamination is the source-backed risk described above.
+hides. Shared-state contamination is a Tycho inference from the shared-store and backward-compatibility facts above.
 
 Traffic mirroring is safe only when requests are idempotent or can be processed twice:
 Flagger says mirroring "should be used for requests that are idempotent or capable of being

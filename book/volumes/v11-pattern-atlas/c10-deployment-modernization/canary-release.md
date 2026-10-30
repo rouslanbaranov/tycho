@@ -68,9 +68,9 @@ deployment. Reverse the canary choice when analysis cost exceeds risk reduction 
 cohort cannot be isolated; avoid mirroring when writes cannot be made idempotent or safely
 processed twice. Blue/green costs roughly twice the resources.
 
-**Failure and recovery.** Shared-state contamination is source-backed: a binary rollback
-does not undo committed data, a mirrored write can execute twice, and a blue/green switch
-still shares the data boundary. Tycho guidance, not a source claim: low-traffic blindness,
+**Failure and recovery.** Shared-state contamination is a Tycho inference: a binary
+rollback does not undo committed data, a mirrored write can execute twice, and a blue/green
+switch still shares the data boundary. Tycho guidance, not a source claim: low-traffic blindness,
 metric leakage and sample-size limits make a small cohort pass while a rare failure hides.
 
 **Technical owner.** [Canary Release](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md#canary-release) — canary analysis and abort are bounded; metric selection is service-specific.
@@ -91,4 +91,6 @@ not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
-**Related entries.** Blue/Green; Rolling Deployment; Feature Flags; Dark Launching.
+**Related entries.** Blue/Green; Rolling Deployment; Feature Flags; Dark Launching
+(shadow traffic). The routing schema accepts page/chapter IDs in `related_ids`; pattern
+names here are prose-only.
