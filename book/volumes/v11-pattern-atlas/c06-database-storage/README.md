@@ -33,6 +33,8 @@ evidence_scope:
     - "src.citus"
     - "src.postgresql"
     - "src.cassandra"
+    - "src.dynamo"
+    - "src.riak"
     - "src.microservices-patterns"
     - "src.flyway"
     - "src.gh-ost"
@@ -41,12 +43,12 @@ evidence_scope:
   notes: "13 cards cite read units; Polyglot Persistence is bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-21"
+  reviewed_at: "2026-10-30"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-22"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C06 — Database and storage architecture
@@ -240,24 +242,41 @@ replication-pattern; priority advanced.
 guarantee consistency?
 
 **Good-fit conditions.** Replica count and failure domains are known; quorum arithmetic is
-explicit; latency of majority calls is acceptable.
+explicit; the application defines a version selector and a repair path; latency of majority
+calls is acceptable.
 
 **Hard contraindications.** Reject when a single leader suffices, when quorum latency
-violates the budget, or when failure domains make majority meaningless.
+violates the budget, when failure domains make majority meaningless, or when concurrent
+versions cannot be ordered or repaired.
 
-**Competing alternative.** Leader-based replication or eventual consistency. Reverse the
-choice when quorum availability/latency cost exceeds consistency benefit.
+**Competing alternative.** Leader-based replication, strict quorum or eventual consistency.
+Reverse the choice when quorum availability/latency cost exceeds consistency benefit, or
+when sloppy quorum is the intended availability trade-off.
 
-**Failure and recovery.** Quorum loss and slow replicas are common; verify failure
-envelope in the owner section.
+**Failure and recovery.** Intersection alone does not guarantee freshness. Cassandra read
+repair returns the most up-to-date data and repairs replicas; Dynamo reconciles divergent
+vector-clock versions and uses hinted handoff and Merkle-tree anti-entropy; Riak uses read
+repair and active anti-entropy. A highest-version selector needs an application-defined
+total order, because Dynamo and Riak can expose concurrent siblings. A membership change
+needs the old and new quorums to overlap, or an explicit sloppy-quorum trade-off; see the
+owner section.
 
 **Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-cassandra-dynamo.2026-10-21: all nineteen served
-headings read. The source is a public
-pattern/documentation
-unit, not a benchmark.
+read records `read.batch3-cassandra-dynamo.2026-10-21` and
+`read.cassandra-read-repair.2026-10-30`: the Dynamo architecture page and the
+read-repair page, including "Tunable Consistency", "Replica Synchronization" and
+"Expectation of Monotonic Quorum Reads".
+[src.dynamo](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.dynamo-sosp2007.2026-10-30`: sections 4.4-4.7 and 4.9;
+quorum arithmetic, version reconciliation, hinted handoff, anti-entropy and
+membership handoff.
+[src.riak](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.riak-replication-properties.2026-10-30`: "Primary Reads and
+Writes with PR and PW", "Symbolic Consistency Names" and "Illustrative
+Scenarios"; sloppy and strict quorum, read repair and vector-clock/timestamp
+resolution. The sources are public documentation and a paper, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
