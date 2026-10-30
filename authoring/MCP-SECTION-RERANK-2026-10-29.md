@@ -1,8 +1,8 @@
 # MCP section rerank — 2026-10-29
 
-Status: historical opt-in report; superseded by the MCP production default.
-Current default is `section_rerank=true, section_rerank_margin=0.15`. See
-[MCP-MARGIN-DEFAULT-2026-10-29.md](MCP-MARGIN-DEFAULT-2026-10-29.md).
+Status: historical opt-in report. The margin default was later reverted to
+BM25; see [MCP-DEFAULT-REVERT-2026-10-30.md](MCP-DEFAULT-REVERT-2026-10-30.md).
+Current opt-in is `section_rerank=true, section_rerank_margin=0.05`.
 
 ## Change
 

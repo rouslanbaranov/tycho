@@ -55,8 +55,8 @@ Production margin path keeps V12 at 1.000 and improves phase3 page top-1
 
 ## Tests
 
-- **728 tests pass**.
-- MCP default margin gate, opt-out and V12/all_sections fallbacks tested.
+- **730 tests pass**.
+- BM25 default, margin opt-in and V12/all_sections fallbacks tested.
 - V12 guards tested.
 - Local full premerge checks pass; milestone acceptance is separate.
 
