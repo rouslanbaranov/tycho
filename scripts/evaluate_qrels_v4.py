@@ -22,6 +22,7 @@ def hits(results, accepted, level, k):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, default=ROOT)
+    ap.add_argument("--margin", type=float, default=0.05)
     args = ap.parse_args(argv)
     page_qrels = json.loads(
         (args.root / "evaluation/corpus-qrels.v4.json").read_text(
@@ -46,7 +47,7 @@ def main(argv=None):
         try:
             margin = section_search.search(
                 args.root, item["question"], limit=5, abstain=False,
-                section_rerank=True, section_rerank_margin=0.15)
+                section_rerank=True, section_rerank_margin=args.margin)
         except section_search.SearchError:
             margin = base
         best = best_search.best_search(
