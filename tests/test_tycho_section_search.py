@@ -472,7 +472,7 @@ class SearchTests(unittest.TestCase):
     def test_bm25_weights_are_bounded(self):
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("TYCHO_BM25_WEIGHTS", None)
-            self.assertEqual(section_search.bm25_weights(), (5.0, 2.0, 0.25))
+            self.assertEqual(section_search.bm25_weights(), (5.0, 2.0, 0.5))
         for raw in ("4,3", "4,0,1", "x,2,1"):
             with patch.dict(os.environ, {"TYCHO_BM25_WEIGHTS": raw}):
                 with self.assertRaises(section_search.SearchError):

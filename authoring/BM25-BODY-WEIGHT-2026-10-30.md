@@ -37,7 +37,8 @@ Page/section hit@1/3/5, all queries:
 ## Decision
 
 Use **5/2/0.5** as the BM25 default. It has the best cross-qrels tradeoff. Body
-1.0 is not selected because it loses v3 section top-1/top-5.
+1.0 is not selected because it loses v3 section top-1/top-5. This was applied
+to `section_search.py` in issue #739.
 
 ## Limits
 
