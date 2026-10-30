@@ -31,6 +31,7 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.citus"
+    - "src.mongo-sharding"
     - "src.postgresql"
     - "src.cassandra"
     - "src.dynamo"
@@ -83,23 +84,35 @@ data-distribution-pattern; priority core.
 beyond one node?
 
 **Good-fit conditions.** A stable partition key exists; cross-shard transactions are
-avoidable; routing and rebalancing are owned; hotspots can be measured.
+avoidable; routing and rebalancing are owned; hotspots can be measured; a failed
+migration has a bounded retry or rollback path.
 
 **Hard contraindications.** Reject when one node suffices, when the key creates hot
-tenants, or when cross-shard joins/transactions dominate.
+tenants, when cross-shard joins/transactions dominate, or when a failed migration
+cannot be detected and verified.
 
-**Competing alternative.** Partitioning within one database or vertical scaling. Reverse
-the choice when operational shard complexity exceeds scale benefit.
+**Competing alternative.** Partitioning within one database, read replicas (hot
+standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby
+read-only replicas; MongoDB contrasts vertical scaling with horizontal scaling and its
+infrastructure complexity; Citus warns that joins cross the network boundary. Reverse
+the choice when distribution adds cross-shard coordination without relieving the
+measured constraint; that reversal rule is Tycho synthesis.
 
-**Failure and recovery.** Hotspots and resharding are common; verify routing/rebalancing
-in the owner section.
+**Failure and recovery.** Hotspots, hot chunks and failed migrations are documented;
+MongoDB identifies uneven load from monotonic keys, the balancer pauses reads/writes
+while updating range metadata, and reshard retries are bounded. Citus takes a brief
+write-lock while promoting a shard. Map drift, split brain, hot-key throttling and
+dual-read/verify are Tycho failure modes; verify them in the owner section.
 
 **Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — shard key choice and resharding cost are bounded; per-engine placement is platform-specific.
 
 **Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-citus.2026-10-21: sections "Concepts". The source is a public
-pattern/documentation
-unit, not a benchmark.
+mechanism record `read.batch3-citus.2026-10-21`; proposed 2026-10-30 records
+`read.mongo-sharding`, `read.mongo-choose-key`, `read.mongo-troubleshoot-key`,
+`read.mongo-balancer`, `read.mongo-reshard`, `read.citus-cluster`,
+`read.citus-datamodel` and `read.pg18-ha`; the existing
+`read.batch3-pg-partition.2026-10-21` remains the partitioning binding. Public documentation,
+not a benchmark, cluster run or migration test.
 
 **Decision state.** applicable-under-conditions.
 

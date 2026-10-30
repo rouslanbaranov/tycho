@@ -38,7 +38,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-18"
-updated_at: "2026-10-20"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -131,10 +131,41 @@ partitioning inside one store, a shard crosses independent stores, so the map an
 protocol are part of the contract rather than a physical-layout detail.
 
 One authoritative owner must exist per key, and a resharding move must fence writes or preserve a
-verifiable handoff. Hotspots, map drift, split brain and a failed migration are common; detect skew,
-throttle the hot key and dual-read/verify during movement. A key that changes often creates a move
-storm; a key with low cardinality creates one hot shard.
+verifiable handoff. A key that changes often creates a move storm; a key with low cardinality
+creates one hot shard.
 
-Partitioning inside one database, read replicas or vertical scaling may be preferable when
-distribution would add cross-shard coordination without relieving the measured constraint. Sharding
-is a fit when one node cannot hold or serve the data and the key distributes the real access pattern.
+**Failure and recovery (Tycho synthesis).** Hotspots and failed migrations are documented failure
+modes. A monotonically increasing key routes inserts to one "hot shard" and "hot chunk"; a
+low-cardinality key cannot spread work beyond its distinct values (MongoDB — Troubleshoot Shard
+Keys; MongoDB — Choose a Shard Key). MongoDB's balancer monitors data per shard, applies migration
+thresholds and briefly pauses reads and writes while the range location is committed to the config
+servers; `_secondaryThrottle` and the balancing window limit migration work (MongoDB — Balancer).
+Citus puts "a brief write-lock on a shard only during the time it takes to update metadata to
+promote the subscriber shard as active" (Citus — Cluster Management). MongoDB resharding blocks
+writes for up to two seconds, fails on duplicate `_id` values, and keeps retryable writes retryable
+for five minutes, after which the definitive result may be unavailable (MongoDB — Reshard a
+Collection).
+
+Map drift, split brain, application-level hot-key throttling and dual-read/verify are Tycho failure
+modes: the selected pages document metadata replication/restore and write fencing, not drift
+detection, split-brain resolution, a per-key throttle or a read-verification step.
+
+**Alternative (Tycho comparison).** Partitioning inside one database is the first option:
+PostgreSQL describes partitioning as "splitting what is logically one large table into smaller
+physical pieces" (PostgreSQL — Table Partitioning), and Citus recommends PostgreSQL table
+partitioning for time-ordered data (Citus — Choosing Distribution Column). Read replicas are
+another: PostgreSQL documents hot-standby servers that serve read-only queries and warns that,
+with asynchronous replication, "load balanced servers might return slightly stale results"
+(PostgreSQL — High Availability). Vertical scaling is the third: MongoDB notes that it raises a
+single server's capacity but has "a practical maximum" (MongoDB — Sharding). Distribution is
+not free: Citus warns that joins "then need to cross the network boundary" (Citus — Table
+Co-Location). These alternatives are preferable when distribution adds cross-shard coordination
+without relieving the measured
+constraint; that decision rule is Tycho guidance, not a source claim.
+
+**Sources and limits.** Proposed 2026-10-30 records bind MongoDB 9.0 (Current) "Sharding",
+"Choose a Shard Key", "Troubleshoot Shard Keys", "Balancer" and "Reshard a Collection"; Citus
+13.0.1 "Cluster Management" and "Choosing Distribution Column"; and PostgreSQL 18.6 "High
+Availability, Load Balancing, and Replication". The existing
+`read.batch3-pg-partition.2026-10-21` binds "Table Partitioning". Exact raw and article-text
+digests are in the lane note. No cluster, rebalance or migration was run.
