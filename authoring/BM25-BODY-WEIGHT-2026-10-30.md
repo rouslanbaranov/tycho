@@ -21,6 +21,13 @@ Page/section hit@1/3/5, all queries:
 | 5/2/1.0 | .607/.887/.953 | .507/.747/.820 | .910/.973/.984 | .793/.899/.926 |
 | 5/2/1.5 | .620/.880/.953 | .500/.733/.807 | .894/.963/.979 | .729/.888/.915 |
 
+Qrels v2 page (155 answerable; author-labelled, older labels):
+
+| Weights | Page hit@1/3/5 |
+|---|---|
+| 5/2/.25 | .381/.632/.787 |
+| 5/2/.5 | **.419/.665/.787** |
+
 ## Paired uncertainty: 5/2/.5 vs 5/2/.25
 
 | Dataset | Level | Top-1 diff | 95% CI | p |
