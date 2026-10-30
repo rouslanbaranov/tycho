@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 294.
+Inventory date: 2026-10-30. Entries: 296.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -286,6 +286,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.google-cdn-negative-caching / supporting | [Use negative caching](https://docs.cloud.google.com/cdn/docs/using-negative-caching?hl=en) — Google Cloud | Primary public page for per-status negative-caching policy and TTLs. | admitted-for-research / public-web-or-author-download |
 | src.gh-ost / supporting | [gh-ost — online schema migration](https://github.com/github/gh-ost) — GitHub | Public implementation reference for triggerless online schema migration and controlled cut-over. | admitted-for-research / public-web-or-author-download |
 | src.morning-paper-tail-at-scale / supporting | [The Tail at Scale — summary](https://blog.acolyer.org/2015/01/15/the-tail-at-scale/) — The Morning Paper (Adrian Colyer) | Secondary public summary for tail latency, hedged requests and tail-tolerant design. | admitted-for-research / public-web-or-author-download |
+| src.azure-cdn / core | [Azure Content Delivery Network documentation](https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works) — Microsoft Learn | Azure CDN cache-key, freshness, authorization and purge limits for the CDN / Edge Caching entry. | admitted-for-research / public-web-or-author-download |
+| src.cloudfront / core | [Amazon CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html) — Amazon Web Services | CloudFront cache-key, Authorization-header, expiration and invalidation limits for the CDN / Edge Caching entry. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 

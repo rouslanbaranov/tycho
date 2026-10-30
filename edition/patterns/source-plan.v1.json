@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-30",
   "registry_version": "0.2.0",
-  "registry_sha256": "ea8f2f021a23cfcf331258903efce1f087af24be6d1d1f009c3cb47292d3b0fd",
-  "route_index_snapshot": "8a254c1a44e71c0325963d0de68aae947e422e8283d7c10299a6a1d63d4bf230",
+  "registry_sha256": "24a6f986fb9d86e2bd12698344235397474fcee26254db8faf6fe502cbca4687",
+  "route_index_snapshot": "0c6ca05e7d7b1c7054f00058020cd38096c8beabb04ccde2e01433c6c77b05b5",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2710,9 +2710,117 @@
           "status": "read",
           "read_record_id": "read.batch3-ms-static.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-cdn",
+          "unit": "How caching works — Azure CDN",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works",
+          "sections": [
+            "Introduction to caching",
+            "Content delivery network caching",
+            "Determining which files can be cached",
+            "Default caching behavior"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cdn-how-caching.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-cdn",
+          "unit": "Caching behavior with caching rules — Azure CDN",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/previous-versions/azure/cdn/cdn-caching-rules",
+          "sections": [
+            "Caching behavior settings",
+            "Cache expiration duration",
+            "Global and custom rule processing order"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cdn-caching-rules.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-cdn",
+          "unit": "Purge an Azure CDN endpoint — Azure CDN",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/cdn/cdn-purge-endpoint",
+          "sections": [
+            "Purge contents from an Azure CDN endpoint"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cdn-purge.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Understand the cache key — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html",
+          "sections": [
+            "Default cache key",
+            "Customize the cache key"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-cache-key.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Add custom headers to origin requests — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/add-origin-custom-headers.html",
+          "sections": [
+            "Configure CloudFront to forward the Authorization header"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-auth-header.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Manage how long content stays in the cache (expiration) — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Expiration.html",
+          "sections": [
+            "Use headers to control cache duration for individual objects",
+            "Specify the amount of time that CloudFront caches objects"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-expiration.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "Invalidate files to remove content — Amazon CloudFront",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html",
+          "sections": [
+            "Choose between invalidating files and using versioned file names"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-invalidation.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "HTTP caching — RFC 9111",
+          "unit_type": "specification",
+          "url": "https://www.rfc-editor.org/rfc/rfc9111.txt",
+          "sections": [
+            "3.5. Storing Responses to Authenticated Requests",
+            "4. Constructing Responses from Caches",
+            "4.1. Calculating Cache Keys with the Vary Header Field",
+            "4.4. Invalidating Stored Responses",
+            "5.2.2.5. no-store",
+            "5.2.2.7. private"
+          ],
+          "status": "read",
+          "read_record_id": "read.rfc9111-edge-cache.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "The Azure and CloudFront pages support cache-key, authorization, freshness and purge limits; RFC 9111 supports the shared-cache and private-cache rules. The triad formulation and the direct-origin name remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.sharding",
@@ -5325,11 +5433,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 212,
-    "read_units": 211,
+    "required_units": 220,
+    "read_units": 219,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 175
+    "ledger_records": 183
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

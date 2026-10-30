@@ -6583,9 +6583,39 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The cache key, freshness policy and authorization boundary must agree.",
-          "reason": "Source binds cache keys and lifetimes but states protected-download authorization separately."
+          "reason": "RFC 9111 section 4 states the reuse conditions, section 4.1 makes Vary fields part of the key test, and section 3.5 restricts authorization-header reuse; Azure CDN states that authorization-header requests are not cached; CloudFront warns that an Authorization header outside the key can serve one cached response to authorized and unauthorized viewers and that a minimum TTL can override private and no-store directives. The triad sentence itself is Tycho synthesis: no selected source states all three as one rule.",
+          "binding": {
+            "source_id": "src.rfc9111-enrichment",
+            "ledger_record": "read.rfc9111-edge-cache.2026-10-30",
+            "section": "4. Constructing Responses from Caches",
+            "quote": "When presented with a request, a cache MUST NOT reuse a stored response unless:",
+            "revision": "aeb52adb3279d5f23dae34f68af11bd5cef0a0aff7ffcd014c9ca93c5302cf3e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-cdn",
+              "ledger_record": "read.azure-cdn-how-caching.2026-10-30",
+              "section": "Determining which files can be cached",
+              "quote": "Requests that include authorization header will not be cached.",
+              "revision": "5ae280f568de52e593c290d013c61918320815b916ef7bf0c31e468fcbda956a"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-auth-header.2026-10-30",
+              "section": "Configure CloudFront to forward the Authorization header",
+              "quote": "When the Authorization header is not part of the cache key, CloudFront can serve the same cached response to both authorized and unauthorized viewers.",
+              "revision": "06076dc410b73bd1bf63c46c01900c8b767b1201c29073c8e440b4b002c3d891"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-expiration.2026-10-30",
+              "section": "Use headers to control cache duration for individual objects",
+              "quote": "If your minimum TTL is greater than 0, CloudFront uses the cache policy’s minimum TTL, even if the Cache-Control: no-cache, no-store, and/or private directives are present in the origin headers.",
+              "revision": "cfb1bbad63f66dcf936c4d269ecaa3e2e24871d684e8555eb46ee94ea1eb2a1a"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
@@ -6600,15 +6630,59 @@
           }
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A direct origin or a private cache may be preferable when every response is user-specific or the purge contract cannot be enforced.",
-          "reason": "Source states a per-request personalization exclusion, not a private-cache or purge-contract alternative."
+          "reason": "RFC 9111 section 5.2.2.7 lets a private cache store a response that a shared cache must not store, and section 5.2.2.5 makes no-store stricter; CloudFront offers the choice to include Authorization in the key or disable caching; Azure CDN bypass does not cache; both Azure and CloudFront bound purge and invalidation to the edge and leave downstream copies. Naming the uncached route \"direct origin\" and requiring purge-completion evidence are Tycho guidance.",
+          "binding": {
+            "source_id": "src.rfc9111-enrichment",
+            "ledger_record": "read.rfc9111-edge-cache.2026-10-30",
+            "section": "5.2.2.7. private",
+            "quote": "The unqualified private response directive indicates that a shared cache MUST NOT store the response (i.e., the response is intended for a single user).",
+            "revision": "aeb52adb3279d5f23dae34f68af11bd5cef0a0aff7ffcd014c9ca93c5302cf3e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-auth-header.2026-10-30",
+              "section": "Configure CloudFront to forward the Authorization header",
+              "quote": "Either include the Authorization header in the cache key using a cache policy, or disable caching entirely for origins that require origin-side authorization processing.",
+              "revision": "06076dc410b73bd1bf63c46c01900c8b767b1201c29073c8e440b4b002c3d891"
+            },
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-edge-cache.2026-10-30",
+              "section": "5.2.2.5. no-store",
+              "quote": "The no-store response directive indicates that a cache MUST NOT store any part of either the immediate request or the response and MUST NOT use the response to satisfy any other request.",
+              "revision": "aeb52adb3279d5f23dae34f68af11bd5cef0a0aff7ffcd014c9ca93c5302cf3e"
+            },
+            {
+              "source_id": "src.azure-cdn",
+              "ledger_record": "read.azure-cdn-caching-rules.2026-10-30",
+              "section": "Caching behavior settings",
+              "quote": "Bypass cache: Don't cache and ignore origin-provided cache-directive headers.",
+              "revision": "5e686846ea09abdd926114d382bebb405ad9ece75b606eec5780c81916f9a361"
+            },
+            {
+              "source_id": "src.azure-cdn",
+              "ledger_record": "read.azure-cdn-purge.2026-10-30",
+              "section": "Purge contents from an Azure CDN endpoint",
+              "quote": "Note that purging only clears the cached content on the content delivery network edge servers. Any downstream caches, such as proxy servers and local browser caches, might still hold a cached copy of the file.",
+              "revision": "a2cf2b83b454fa0ce7c1cf8dbbfe6640152bbc630132026ecad3b7c66971f378"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-invalidation.2026-10-30",
+              "section": "Choose between invalidating files and using versioned file names",
+              "quote": "If you invalidate the file, the user might continue to see the old version until it expires from those caches.",
+              "revision": "62930f87a51b954f89cbe31272057abf219b7224a3d7c058386443ad280b4940"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "cdn-edge-caching",
         "question": "Should content be cached at the edge close to clients rather than only at the origin?",
-        "competing_alternative": "Origin cache or direct origin. Reverse the choice when cacheability and purge cost outweigh latency benefit.",
+        "competing_alternative": "A private cache, origin cache or direct origin. Reverse the choice when responses are user-specific or the purge contract cannot be enforced.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -6617,12 +6691,54 @@
         "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.azure-cdn",
+            "ledger_record": "read.azure-cdn-how-caching.2026-10-30",
+            "revision": "5ae280f568de52e593c290d013c61918320815b916ef7bf0c31e468fcbda956a"
+          },
+          {
+            "source_id": "src.azure-cdn",
+            "ledger_record": "read.azure-cdn-caching-rules.2026-10-30",
+            "revision": "5e686846ea09abdd926114d382bebb405ad9ece75b606eec5780c81916f9a361"
+          },
+          {
+            "source_id": "src.azure-cdn",
+            "ledger_record": "read.azure-cdn-purge.2026-10-30",
+            "revision": "a2cf2b83b454fa0ce7c1cf8dbbfe6640152bbc630132026ecad3b7c66971f378"
+          },
+          {
+            "source_id": "src.cloudfront",
+            "ledger_record": "read.cloudfront-cache-key.2026-10-30",
+            "revision": "47c2adb2350549b0f192e0fb3aef953928cb3a8ed43e86c38a74ba695fe80790"
+          },
+          {
+            "source_id": "src.cloudfront",
+            "ledger_record": "read.cloudfront-auth-header.2026-10-30",
+            "revision": "06076dc410b73bd1bf63c46c01900c8b767b1201c29073c8e440b4b002c3d891"
+          },
+          {
+            "source_id": "src.cloudfront",
+            "ledger_record": "read.cloudfront-expiration.2026-10-30",
+            "revision": "cfb1bbad63f66dcf936c4d269ecaa3e2e24871d684e8555eb46ee94ea1eb2a1a"
+          },
+          {
+            "source_id": "src.cloudfront",
+            "ledger_record": "read.cloudfront-invalidation.2026-10-30",
+            "revision": "62930f87a51b954f89cbe31272057abf219b7224a3d7c058386443ad280b4940"
+          },
+          {
+            "source_id": "src.rfc9111-enrichment",
+            "ledger_record": "read.rfc9111-edge-cache.2026-10-30",
+            "revision": "aeb52adb3279d5f23dae34f68af11bd5cef0a0aff7ffcd014c9ca93c5302cf3e"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "The cacheability contract is the bounded owner for edge reuse; origin recovery sits in a separate section."
+      "notes": "Invariant and alternative bound 2026-10-30 to RFC 9111 and selected Azure CDN and CloudFront revisions; the triad formulation and direct-origin name remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.sharding",
@@ -12695,11 +12811,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 111,
-    "invariant_supported": 71,
+    "invariant_supported": 72,
     "failure_recovery_supported": 64,
-    "alternative_supported": 68,
-    "technical_partial_bounded": 19,
-    "technical_partial": 77,
+    "alternative_supported": 69,
+    "technical_partial_bounded": 20,
+    "technical_partial": 76,
     "technical_name_only": 0,
     "technical_sufficient": 49,
     "decision_partial_bounded": 96,
