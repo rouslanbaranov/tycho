@@ -118,6 +118,9 @@ class V12SearchFacetTests(unittest.TestCase):
             section_search._artifact_type_intent(["result"]), "run")
         self.assertEqual(
             section_search._artifact_type_intent(["input", "run"]), "run")
+        self.assertEqual(
+            section_search._artifact_type_intent(["decision", "runs"]),
+            "decision")
 
     def test_include_artifacts_filters_by_query(self):
         self.build()

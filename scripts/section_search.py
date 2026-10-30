@@ -521,12 +521,12 @@ def load_v12_artifacts(root):
 
 def _artifact_type_intent(terms):
     normalized = set(terms)
+    if "decision" in normalized:
+        return "decision"
     if normalized & {"run", "runs", "result", "results"}:
         return "run"
     if normalized & {"input", "inputs", "configuration", "configurations"}:
         return "scenario"
-    if "decision" in normalized:
-        return "decision"
     if "model" in normalized:
         return "model"
     return None
