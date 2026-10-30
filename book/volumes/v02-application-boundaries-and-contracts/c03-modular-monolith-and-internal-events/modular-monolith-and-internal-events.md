@@ -39,13 +39,13 @@ evidence_scope:
   status: "unknown"
   notes: "Body Source boundary records the 2026-10-30 inspection and exact revisions."
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-30"
-  reviewer: "Automated authoring agent"
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-30"
-source_inspection_date: "2026-10-30"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:-1 -->
@@ -54,12 +54,12 @@ content_verified_at: null
 
 > **Original Tycho manuscript V02/C03**, prepared 2026-10-19. Public Spring Framework/Modulith references are technology illustrations, not a requirement to use those frameworks. The fictional application and event flow were invented independently. No build, module verification, event replay or independent review has been performed.
 >
-> The content_review field records the 2026-10-30 self-check of this source binding;
-> no independent acceptance is asserted.
+> The content_review field retains the decomposition-era draft state; no independent
+> acceptance is asserted.
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Modular Monolith](../../v11-pattern-atlas/c01-application-boundaries/README.md#modular-monolith) — decision conditions and contraindications.
+> **Pattern atlas:** [Modular Monolith](../../v11-pattern-atlas/c01-application-boundaries/modular-monolith.md#modular-monolith) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.a06fd146f96b4b17a754f4d3b608ebdf:0 -->
 ## Purpose and mission
 

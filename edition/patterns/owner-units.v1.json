@@ -123,14 +123,74 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The deployable is one unit, but each module has a named owner, an allowed-call surface and a dependency test that fails a bypass.",
-          "reason": "Source discusses modular design but not a named module owner or dependency test."
+          "reason": "Spring Modulith documents API-only access, declared allowed dependencies and a verification that rejects undeclared dependencies and cycles. The named owner and single-deployable framing are Tycho definitions.",
+          "binding": {
+            "source_id": "src.spring-modulith",
+            "ledger_record": "read.spring-modulith-verification.2026-10-30",
+            "section": "Verifying Application Module Structure",
+            "quote": "all references to types that reside in application module internal packages are rejected",
+            "revision": "c1ee41282edd5866877a4d2a09d4585196a4a2ac05a672416624e4b9eb117cd4"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.spring-modulith",
+              "ledger_record": "read.spring-modulith-verification.2026-10-30",
+              "section": "Verifying Application Module Structure",
+              "quote": "dependencies to other application modules are rejected.",
+              "revision": "c1ee41282edd5866877a4d2a09d4585196a4a2ac05a672416624e4b9eb117cd4"
+            },
+            {
+              "source_id": "src.spring-modulith",
+              "ledger_record": "read.spring-modulith-fundamentals.2026-10-30",
+              "section": "Advanced Application Modules",
+              "quote": "Code within those must not be referred to from other modules.",
+              "revision": "6f45529855cf017220ca400ab72e87fc805cd31e044db44f47705a4ac16f95bd"
+            },
+            {
+              "source_id": "src.spring-modulith",
+              "ledger_record": "read.spring-modulith-fundamentals.2026-10-30",
+              "section": "Advanced Application Modules",
+              "quote": "the Java compiler is not of much use to prevent these illegal references.",
+              "revision": "6f45529855cf017220ca400ab72e87fc805cd31e044db44f47705a4ac16f95bd"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Synchronous call chains across modules and one deployment blast radius are the operational risk",
-          "reason": "Source warns about dependency tangles, not synchronous chains or deployment blast radius."
+          "reason": "Spring Modulith documents synchronous event publication, widened transactions and lost asynchronous events; the deployment blast radius is Tycho inference from the single-deployable definition.",
+          "binding": {
+            "source_id": "src.spring-modulith",
+            "ledger_record": "read.spring-modulith-events.2026-10-30",
+            "section": "Working with Application Events",
+            "quote": "As event publication happens synchronously by default",
+            "revision": "c15f574e8029e58e50346011402e03439590af4e3e6a3e15940fab2fa5472c6a"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.spring-modulith",
+              "ledger_record": "read.spring-modulith-events.2026-10-30",
+              "section": "Working with Application Events",
+              "quote": "will widen the transaction boundary and potentially cause the entire transaction to fail",
+              "revision": "c15f574e8029e58e50346011402e03439590af4e3e6a3e15940fab2fa5472c6a"
+            },
+            {
+              "source_id": "src.spring-modulith",
+              "ledger_record": "read.spring-modulith-events.2026-10-30",
+              "section": "Working with Application Events",
+              "quote": "if the listener fails for whatever reason, the event publication is lost, unless each listener actually implements its own safety net.",
+              "revision": "c15f574e8029e58e50346011402e03439590af4e3e6a3e15940fab2fa5472c6a"
+            },
+            {
+              "source_id": "src.spring-modulith",
+              "ledger_record": "read.spring-modulith-verification.2026-10-30",
+              "section": "Verifying Application Module Structure",
+              "quote": "all references to types that reside in application module internal packages are rejected",
+              "revision": "c1ee41282edd5866877a4d2a09d4585196a4a2ac05a672416624e4b9eb117cd4"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -157,12 +217,29 @@
         "source_id": "src.monolith-first",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.spring-modulith",
+            "ledger_record": "read.spring-modulith-verification.2026-10-30",
+            "revision": "c1ee41282edd5866877a4d2a09d4585196a4a2ac05a672416624e4b9eb117cd4"
+          },
+          {
+            "source_id": "src.spring-modulith",
+            "ledger_record": "read.spring-modulith-fundamentals.2026-10-30",
+            "revision": "6f45529855cf017220ca400ab72e87fc805cd31e044db44f47705a4ac16f95bd"
+          },
+          {
+            "source_id": "src.spring-modulith",
+            "ledger_record": "read.spring-modulith-events.2026-10-30",
+            "revision": "c15f574e8029e58e50346011402e03439590af4e3e6a3e15940fab2fa5472c6a"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Definitional purpose section; module-enforcement detail is delegated to module-enforcement.md."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to Spring Modulith 1.3.12 verification, fundamentals and events pages plus the existing Monolith First record; named owner, single-deployable framing and blast radius remain Tycho analysis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.microservices-architecture",
@@ -11919,11 +11996,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 65,
-    "failure_recovery_supported": 56,
+    "invariant_supported": 66,
+    "failure_recovery_supported": 57,
     "alternative_supported": 66,
-    "technical_partial_bounded": 20,
-    "technical_partial": 85,
+    "technical_partial_bounded": 21,
+    "technical_partial": 84,
     "technical_name_only": 0,
     "technical_sufficient": 40,
     "decision_partial_bounded": 105,
