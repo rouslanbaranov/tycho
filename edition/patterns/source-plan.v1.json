@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-30",
   "registry_version": "0.2.0",
-  "registry_sha256": "d626f41e227ba8e5c218c93b59c8034160b37239a5f7da8a01742970f31c0304",
-  "route_index_snapshot": "3dd8e0235f760c666bca53d9d195edf10100646bf374a4a21343498944880e16",
+  "registry_sha256": "89c5e216b040374eb188943fc7c3b42904cf2553c9b869f2254b659e02e75d7a",
+  "route_index_snapshot": "edd14330816be5f11b983551a9e85fc30cdee2d1519e6557b9870bb53818c958",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2622,9 +2622,35 @@
           "status": "read",
           "read_record_id": "read.batch3-rfc5861.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "HTTP caching — RFC 9111",
+          "unit_type": "specification",
+          "url": "https://www.rfc-editor.org/rfc/rfc9111.txt",
+          "sections": [
+            "4.2.4. Serving Stale Responses",
+            "5.5. Warning"
+          ],
+          "status": "read",
+          "read_record_id": "read.rfc9111-stale.2026-10-30",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mdn-cache-control",
+          "unit": "Cache-Control header — MDN",
+          "unit_type": "documentation-page",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control",
+          "sections": [
+            "stale-while-revalidate",
+            "Age"
+          ],
+          "status": "read",
+          "read_record_id": "read.mdn-cache-control.2026-10-30",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "The bounded window and inconclusive-validation fallback use RFC 5861; the stale-permission rule and Warning obsolescence use RFC 9111; the directive example uses MDN. The single refresh owner and refresh-failure telemetry remain Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.multi-level-caching",
@@ -5225,11 +5251,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 205,
-    "read_units": 204,
+    "required_units": 207,
+    "read_units": 206,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 168
+    "ledger_records": 170
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

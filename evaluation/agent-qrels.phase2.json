@@ -176,13 +176,13 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Stale-while-revalidate serves the current stale value while one owner refreshes it in the background, within a bounded stale window. The stale window and the refresh owner must be bounded and observable, and a failed refresh must not extend the window indefinitely.",
+          "quote": "The stale window is bounded by the declared delta-seconds, and a failed or inconclusive refresh must not extend it.",
           "rationale": "Serves stale during refresh inside a bounded window."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "A failing refresh keeps serving the same stale value; cap the stale age, surface refresh failures and fall back to a blocking read when the bound is reached.",
+          "quote": "A failed or inconclusive refresh may keep serving stale only inside the window; after the bound, the next request blocks and is handled normally.",
           "rationale": "Hard bound ends stale service with a blocking read."
         },
         {

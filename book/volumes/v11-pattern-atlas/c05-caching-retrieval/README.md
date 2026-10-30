@@ -382,45 +382,7 @@ synthetic owner guidance. The source is a public pattern/documentation unit, not
 
 ### Stale-While-Revalidate
 
-**Identity.** Stale-While-Revalidate; family Caching and retrieval; kind caching-pattern;
-priority advanced.
-
-**Decision question.** Should a stale response be served while a refresh runs in the
-background?
-
-**Good-fit conditions.** The contract tolerates bounded staleness; the stale window is
-explicit; revalidation can run in the background; failure can fall back to a blocking read.
-
-**Hard contraindications.** Reject when read-after-write is mandatory, when stale data
-would mislead a decision, or when refresh cannot be bounded.
-
-**Competing alternative.** Blocking refresh or TTL-only expiry. Reverse the choice when
-stale responses violate a business contract.
-
-**Failure and recovery.** A failed or inconclusive revalidation may keep serving stale only
-inside the window; after the bound, the next request blocks and is handled normally. A single
-refresh owner and refresh-failure telemetry are Tycho guidance, not RFC requirements; the
-owner section separates them from the HTTP rules.
-
-**Technical owner.** [Stale fills and regeneration ownership](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md#stale-while-revalidate) — stale-fill ownership is bounded, not a full HTTP cache specification.
-
-**Sources.** [src.rfc5861](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.batch3-rfc5861.2026-10-21`: sections "3. The
-stale-while-revalidate Cache-Control Extension" and "3.1. Example"; the bounded
-window, the SHOULD NOT continuation and the inconclusive-validation fallback.
-[src.rfc9111-enrichment](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.rfc9111-stale.2026-10-30`: sections "4.2.4. Serving Stale
-Responses" and "5.5. Warning"; stale only when explicitly permitted, and
-Warning obsoleted while Age remains.
-[src.mdn-cache-control](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.mdn-cache-control.2026-10-30`: the `stale-while-revalidate`
-section and the Age definition. The sources are public specification and
-documentation units, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Cache Invalidation; TTL-Based Expiration; Cache Stampede Protection;
-CDN / Edge Caching.
+See the [dedicated Stale-While-Revalidate card](stale-while-revalidate.md).
 
 ### Multi-Level Caching
 

@@ -3297,7 +3297,7 @@
         "document_id": "tycho.page.028aab692b414bcdba7713500ab6f735",
         "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
         "anchor": "stale-while-revalidate",
-        "state": "partial"
+        "state": "partial-bounded"
       },
       "atlas_owner": {
         "chapter": "V11/C05",
@@ -3305,9 +3305,9 @@
         "state": "partial-bounded"
       },
       "coverage": {
-        "technical": "partial",
+        "technical": "partial-bounded",
         "decision": "partial-bounded",
-        "overall": "partial"
+        "overall": "partial-bounded"
       },
       "confidence": "high",
       "source_units": [
@@ -3315,10 +3315,20 @@
           "source_id": "src.rfc5861",
           "unit": "RFC 5861 — stale-while-revalidate",
           "status": "read"
+        },
+        {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "HTTP caching — RFC 9111",
+          "status": "read"
+        },
+        {
+          "source_id": "src.mdn-cache-control",
+          "unit": "Cache-Control header — MDN",
+          "status": "read"
         }
       ],
       "review_status": "self-checked",
-      "notes": "Phase 3 C05 card; bounded owner section and backlink are self-checked, not independent-reviewed or sufficient."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to RFC 5861, RFC 9111 and MDN; the single refresh owner and refresh-failure telemetry remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "id": "tycho.pattern.multi-level-caching",

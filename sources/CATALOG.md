@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-30. Entries: 290.
+Inventory date: 2026-10-30. Entries: 291.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -153,6 +153,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.infinispan / supporting | [Infinispan Documentation](https://infinispan.org/documentation/) — Infinispan | Cache topology, transactions and persistence boundaries. | admitted-for-research / public-web-or-author-download |
 | src.caffeine / supporting | [Caffeine](https://github.com/ben-manes/caffeine) — Ben Manes / Caffeine contributors | Local cache admission, expiry and asynchronous loading. | admitted-for-research / public-web-or-author-download |
 | src.memcached / supporting | [Memcached Documentation](https://docs.memcached.org/) — Memcached | Cache client/server responsibilities and invalidation. | admitted-for-research / public-web-or-author-download |
+| src.mdn-cache-control / core | [Cache-Control header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control) — Mozilla | Cache-Control directive semantics for stale-while-revalidate, including the bounded reuse period and the return to normal revalidation. | admitted-for-research / public-web-or-author-download |
 
 ## Search
 
