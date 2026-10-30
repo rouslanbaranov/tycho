@@ -439,51 +439,7 @@ unit, not a benchmark.
 
 ### Idempotent Receiver
 
-**Identity.** Idempotent Receiver; family Messaging and event-driven integration; kind
-messaging-pattern; priority core.
-
-**Decision question.** Should the receiver detect duplicate deliveries and avoid duplicate
-effects?
-
-**Good-fit conditions.** Messages carry stable identity; effect and identity are recorded
-atomically; retention covers the redelivery window; concurrent duplicates are handled.
-
-**Hard contraindications.** Reject when the effect is naturally idempotent, when identity
-is unstable, or when deduplication state cannot be retained.
-
-**Competing alternative.** Natural idempotency or a transactional inbox. Reverse the
-choice when identity retention and lookup cost exceed duplicate risk.
-
-**Failure and recovery.** A crash after a separate external effect but before its
-marker can duplicate the effect; a marker written before the effect can leave an
-in-progress record that needs reconciliation. The Microsoft Learn Idempotent
-Consumer page supplies the check-then-process window, the in-progress/completed
-marker pair and the reconcile-stale-records rule. Cleanup ownership, post-expiry
-routing and the order/version policy beyond the page's caveat are Tycho guidance.
-
-**Technical owner.** [Idempotent Receiver](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md#idempotent-receiver) — deduplication authority is bounded, not a complete idempotent-receiver recipe.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-idempotent.2026-10-21: served problem/solution; publisher-abridged.
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-idempotent-consumer.2026-10-30: sections "Commit the
-processed key and the side effects atomically", "Guard against concurrent
-duplicates", "Choose a stable deduplication key", "Handle side effects that can't
-join the transaction" and "Problems and considerations". Exact quotes: "Avoid this
-failure window by writing the deduplication marker and the business side effects in
-the same transaction."; "Use a uniqueness constraint on the deduplication key such
-that two transactions can attempt to insert a key, but only one can succeed.";
-"Record the key with an in-progress state, and then perform the external action.";
-"The consumer should reconcile stale records or route unresolved cases for
-intervention before acknowledging redelivery." Revision
-`f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34`. The source is
-public documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Point-to-Point Queue; Transactional Inbox; Idempotency Key; Retry
-with Exponential Backoff.
+See the [dedicated Idempotent Receiver card](idempotent-receiver.md).
 
 ### Resequencer
 

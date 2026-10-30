@@ -6211,6 +6211,62 @@
       "read_scope": "selected public page text: Solution, Key concepts in the Saga pattern and Problems and considerations; linked pages, images and navigation excluded; digest covers the canonical extracted article text including chrome",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.microsoft-idempotent-consumer.2026-10-30",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+      "unit_label": "Idempotent Consumer pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-30",
+      "access_method": "public HTTPS GET; canonical page text extracted with scripts/source_content_hash.py; extracted-text SHA-256 verified as f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34",
+      "sections_read": [
+        "Choose a stable deduplication key",
+        "Commit the processed key and the side effects atomically",
+        "Guard against concurrent duplicates",
+        "Handle side effects that can't join the transaction",
+        "Problems and considerations"
+      ],
+      "sections_not_read": [
+        "Context and problem",
+        "Solution",
+        "When to use this pattern",
+        "Idempotent processing beyond messaging",
+        "Workload design",
+        "Example",
+        "Next step",
+        "Related resources",
+        "linked child pages and sample code",
+        "navigation and unrelated chrome (included only in the digest)",
+        "images and their interiors"
+      ],
+      "tables_figures": [
+        "the workload-design table was outside the read scope; images and diagram interiors were not inspected"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Avoid this failure window by writing the deduplication marker and the business side effects in the same transaction.",
+        "If a consumer commits both operations together or not at all, upon redelivery it either finds the marker and skips the message, or finds no marker because the transaction didn't complete and safely reprocesses the message.",
+        "Use a uniqueness constraint on the deduplication key such that two transactions can attempt to insert a key, but only one can succeed.",
+        "If the consumers share a deduplication store, key the records on a composite of the consumer identity and the message identity.",
+        "A check-then-process flow has a failure window. If a consumer processes a message and then records the key in a separate step, a crash between the two operations leaves the side effects applied but the key unrecorded, so the consumer reprocesses the next redelivery.",
+        "Record the key with an in-progress state, and then perform the external action. Update the record to completed and store the outcome. On redelivery, a completed record tells the consumer to skip repeating the call. An in-progress record signals that a previous attempt might be partially completed or is being processed by another consumer. The consumer should reconcile stale records or route unresolved cases for intervention before acknowledging redelivery.",
+        "Retain each record at least as long as the broker can still redeliver the original message.",
+        "Set a time-to-live on deduplication records that exceeds this window, so that a late redelivery still finds its marker.",
+        "Deduplication removes duplicates, but doesn't guarantee order."
+      ],
+      "claims_not_supported": [
+        "a complete repair algorithm or a post-expiry policy",
+        "tenant scoping or a specific ordering protocol beyond the order caveat",
+        "implementation behavior, throughput, latency or production outcomes",
+        "linked pages, sample code and images",
+        "independent reproduction, benchmark or local execution"
+      ],
+      "limitations": "One living Microsoft Learn page with no published version identifier; no benchmark, local execution or production observation. The canonical digest covers the full extracted page text including navigation chrome because the page has no recognized article-body marker; quoted sentences were checked against that extraction. The page does not prescribe a complete repair algorithm, a post-expiry policy, tenant scoping or a specific ordering protocol.",
+      "content_sha256": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34",
+      "read_scope": "selected public page text: Choose a stable deduplication key, Commit the processed key and the side effects atomically, Guard against concurrent duplicates, Handle side effects that can't join the transaction and Problems and considerations; linked pages, images and navigation excluded; digest covers the canonical extracted article text including chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

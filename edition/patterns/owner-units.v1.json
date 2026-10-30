@@ -3115,12 +3115,12 @@
         "heading": "Idempotent Receiver",
         "anchor": "idempotent-receiver",
         "level": 3,
-        "line": 103,
+        "line": 104,
         "unit_kind": "dedicated",
         "unit_terms": [
           "processed message IDs",
-          "Atomic (consumer",
-          "marker written before",
+          "atomic (consumer",
+          "marker-before/marker-after",
           "business-key upsert"
         ]
       },
@@ -3138,14 +3138,81 @@
           }
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Atomic (consumer, event/effect ID) uniqueness with business update",
-          "reason": "Page has no atomic (consumer,event) uniqueness with business update."
+          "state": "supported",
+          "quote": "Avoid this failure window by writing the deduplication marker and the business side effects in the same transaction.",
+          "reason": "The page requires one transaction for the marker and the business side effects, a store-level uniqueness arbitration and a consumer-scoped composite key; key derivation and collision response remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+            "section": "Commit the processed key and the side effects atomically",
+            "quote": "Avoid this failure window by writing the deduplication marker and the business side effects in the same transaction.",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Guard against concurrent duplicates",
+              "quote": "Use a uniqueness constraint on the deduplication key such that two transactions can attempt to insert a key, but only one can succeed.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Choose a stable deduplication key",
+              "quote": "If the consumers share a deduplication store, key the records on a composite of the consumer identity and the message identity.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A marker written before a separate external effect can lose it on crash; a marker written after can duplicate it. The consumer must use the external capability's idempotency/reconciliation boundary.",
-          "reason": "Page has no crash window or external reconciliation boundary."
+          "state": "supported",
+          "quote": "Record the key with an in-progress state, and then perform the external action. Update the record to completed and store the outcome. On redelivery, a completed record tells the consumer to skip repeating the call. An in-progress record signals that a previous attempt might be partially completed or is being processed by another consumer. The consumer should reconcile stale records or route unresolved cases for intervention before acknowledging redelivery.",
+          "reason": "The page supports the crash window, the in-progress/completed marker pair and stale-record reconciliation; the marker-order comparison, cleanup owner, post-expiry policy and tenant/order rules beyond the source caveat remain Tycho guidance.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+            "section": "Handle side effects that can't join the transaction",
+            "quote": "Record the key with an in-progress state, and then perform the external action. Update the record to completed and store the outcome. On redelivery, a completed record tells the consumer to skip repeating the call. An in-progress record signals that a previous attempt might be partially completed or is being processed by another consumer. The consumer should reconcile stale records or route unresolved cases for intervention before acknowledging redelivery.",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Commit the processed key and the side effects atomically",
+              "quote": "A check-then-process flow has a failure window. If a consumer processes a message and then records the key in a separate step, a crash between the two operations leaves the side effects applied but the key unrecorded, so the consumer reprocesses the next redelivery.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Commit the processed key and the side effects atomically",
+              "quote": "If a consumer commits both operations together or not at all, upon redelivery it either finds the marker and skips the message, or finds no marker because the transaction didn't complete and safely reprocesses the message.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Retain each record at least as long as the broker can still redeliver the original message.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Set a time-to-live on deduplication records that exceeds this window, so that a late redelivery still finds its marker.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "Deduplication removes duplicates, but doesn't guarantee order.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -3172,12 +3239,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-30",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section 5 explicitly describes the Idempotent Consumer model and its crash windows."
+      "notes": "Invariant and failure/recovery bound 2026-10-30 to the Microsoft Learn Idempotent Consumer page via its atomic-marker, uniqueness, check-then-process, two-phase and retention rules. Marker-order comparison, cleanup ownership, post-expiry routing and tenant scope remain Tycho guidance. All four dimensions supported; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.resequencer",
@@ -11399,11 +11473,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 109,
-    "invariant_supported": 62,
-    "failure_recovery_supported": 52,
+    "invariant_supported": 63,
+    "failure_recovery_supported": 53,
     "alternative_supported": 63,
-    "technical_partial_bounded": 22,
-    "technical_partial": 88,
+    "technical_partial_bounded": 23,
+    "technical_partial": 87,
     "technical_name_only": 0,
     "technical_sufficient": 35,
     "decision_partial_bounded": 110,
