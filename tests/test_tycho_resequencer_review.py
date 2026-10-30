@@ -91,7 +91,7 @@ class ResequencerReviewGuardTests(unittest.TestCase):
         promotions = [item["pattern_id"] for item in json.loads(
             PROMOTIONS.read_text(encoding="utf-8"))["promotions"]]
         self.assertIn("tycho.pattern.resequencer", promotions)
-        self.assertEqual(len(promotions), 50)
+        self.assertEqual(len(promotions), 51)
         self.assertEqual(self.unit["technical_coverage"], "sufficient")
         self.assertEqual(self.unit["decision_coverage"], "sufficient")
 
