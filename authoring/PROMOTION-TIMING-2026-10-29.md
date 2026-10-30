@@ -30,10 +30,10 @@ research has been 60-120 minutes.
 
 Current: 35 sufficient of 145; 7 owner-accepted of 35.
 
-Remaining to 145: 110 entries. Recent observed entries run 35-120 minutes,
-including review and remediation cycles. Using tiered estimates gives
-32-101 focused hours, or **4.0-12.6 days of continuous work**. Base is
-**6.4 days**. The dominant cost is the 54 entries at 2/4 that still need
+Remaining to 145: 110 entries. All 15 observed entries run 6-120 minutes (mean 33.5), including
+pre-optimization entries and review/remediation outliers. Using tiered
+estimates calibrated to that mean gives 42-88 focused hours, or
+**5.3-11.0 days of continuous work**. Base is **6.9 days**. The dominant cost is the 54 entries at 2/4 that still need
 two dimensions, not the three entries at 3/4.
 
 ## Report block
@@ -66,8 +66,8 @@ Microservices 10, Structured Logging 35, Strangler Fig 60, Request-Reply 120,
 Clean/Onion 45, Server-side Discovery 60, Vertical Scaling 40, Saga 35. Data:
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
-bars include review and remediation cycles. The last eight entries mean
-56 minutes (range 35-120); the dashed band forecasts the next single entry at
+bars include review and remediation cycles. Across all 15 entries the mean is
+33.5 minutes (range 6-120); the dashed band forecasts the next single entry at
 that mean, not a promise. Request-Reply is an outlier because it needed four
 delta cycles. These are timestamp estimates, not stopwatch measurements.
 
@@ -77,8 +77,8 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 Remaining tiers at 35 sufficient: 2 entries 4/4, 3 entries 3/4,
 54 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
-scenarios: optimistic **4.0**, base **6.4**, pessimistic **12.6**.
-Base assumes 90/45/30/25/20 minutes by tier. Data:
+scenarios: optimistic **5.3**, base **6.9**, pessimistic **11.0**.
+Base assumes 50/45/34/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
 `scripts/promotion_forecast_chart.py`. These are planning estimates,
 not review evidence.

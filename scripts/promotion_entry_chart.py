@@ -12,7 +12,7 @@ def main():
     data = json.loads(SRC.read_text(encoding="utf-8"))
     entries = data["entries"]
     observed = [e["minutes"] for e in entries]
-    post = observed[-7:] if len(observed) >= 7 else observed[1:]
+    post = observed
     mean = sum(post) / len(post)
     lo, hi = min(post), max(post)
     forecast_slots = 4
@@ -40,7 +40,7 @@ def main():
     fy_mean = top + plot_h - plot_h * mean / max_v
     parts.append(f'<rect x="{fx0:.1f}" y="{fy_hi:.1f}" width="{fx1-fx0:.1f}" height="{fy_lo-fy_hi:.1f}" fill="#1e5ab4" opacity="0.10"/>')
     parts.append(f'<line x1="{fx0:.1f}" y1="{fy_mean:.1f}" x2="{fx1:.1f}" y2="{fy_mean:.1f}" stroke="#1e5ab4" stroke-width="2" stroke-dasharray="6 4"/>')
-    parts.append(f'<text x="{fx0+8:.1f}" y="{fy_mean-8:.1f}" font-family="Verdana" font-size="11" fill="#1e5ab4">forecast {mean:.0f} min (range {lo}-{hi})</text>')
+    parts.append(f'<text x="{fx0+8:.1f}" y="{fy_mean-8:.1f}" font-family="Verdana" font-size="11" fill="#1e5ab4">forecast {mean:.0f} min (all {len(observed)} entries, range {lo}-{hi})</text>')
     for i, item in enumerate(entries):
         value = item["minutes"]
         x = left + slot * i + (slot - bar_w) / 2
