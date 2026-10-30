@@ -63,24 +63,25 @@ calls is acceptable.
 violates the budget, when failure domains make majority meaningless, or when concurrent
 versions cannot be ordered or repaired.
 
-**Competing alternative.** Leader-based replication, strict quorum or eventual consistency.
-Reverse the choice when quorum availability/latency cost exceeds consistency benefit, or
-when sloppy quorum is the intended availability trade-off.
+**Competing alternative.** Leader-based replication or eventual consistency. Sloppy quorum
+is the availability fallback within the pattern. Reverse the choice when quorum
+availability/latency cost exceeds consistency benefit, or when sloppy quorum is the
+intended availability trade-off.
 
 **Failure and recovery.** Intersection alone does not guarantee freshness. Cassandra read
-repair returns the most up-to-date data and repairs replicas; Dynamo reconciles divergent
-vector-clock versions and uses hinted handoff and Merkle-tree anti-entropy; Riak uses read
-repair and active anti-entropy. A highest-version selector needs an application-defined
-total order, because Dynamo and Riak can expose concurrent siblings. A membership change
-needs the old and new quorums to overlap, or an explicit sloppy-quorum trade-off; see the
-owner section.
+repair returns the most up-to-date data and repairs replicas; Dynamo reconciles causally
+unrelated versions and uses hinted handoff and Merkle-tree anti-entropy; Riak uses read
+repair and active anti-entropy. Tycho guidance: a highest-version selector needs an
+application-defined total order, because Dynamo and Riak can expose concurrent siblings;
+a membership change needs the old
+and new quorums to overlap, or an explicit sloppy-quorum trade-off. See the owner section.
 
 **Technical owner.** [Quorum-Based Reads / Writes](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md#quorum-based-reads-writes) — quorum arithmetic is bounded, not a universal consistency guarantee.
 
 **Sources.** [src.cassandra](../../../../edition/patterns/reading-ledger.v1.json)
 read records `read.batch3-cassandra-dynamo.2026-10-21` and
-`read.cassandra-read-repair.2026-10-30`: the Dynamo architecture page and the
-read-repair page, including "Tunable Consistency", "Replica Synchronization" and
+`read.cassandra-read-repair.2026-10-30`: the Cassandra "Dynamo" architecture page and
+the read-repair page, including "Tunable Consistency", "Replica Synchronization" and
 "Expectation of Monotonic Quorum Reads".
 [src.dynamo](../../../../edition/patterns/reading-ledger.v1.json)
 read record `read.dynamo-sosp2007.2026-10-30`: sections 4.4-4.7 and 4.9;

@@ -7133,9 +7133,23 @@
             {
               "source_id": "src.riak",
               "ledger_record": "read.riak-replication-properties.2026-10-30",
-              "section": "Primary Reads and Writes with PR and PW",
+              "section": "N Value and Replication",
               "quote": "Setting PR and/or PW to non-zero values produces a mode of operation called strict quorum. This mode has the advantage that the client is more likely to receive the most up-to-date values, but at the cost of a higher probability that reads or writes will fail because primary vnodes are unavailable.",
               "revision": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-replication-properties.2026-10-30",
+              "section": "N Value and Replication",
+              "quote": "A majority of the replicas must respond, that is, half plus one.",
+              "revision": "b185c0be8be5d03ef51cd696ff375901edd84b707e8fad165845b7ae689f0f30"
+            },
+            {
+              "source_id": "src.cassandra",
+              "ledger_record": "read.cassandra-read-repair.2026-10-30",
+              "section": "Read repair",
+              "quote": "The most up-to-date data is returned to the client.",
+              "revision": "104508d54a14dc5f6268504c295437ee72561733c57cc18239c2acd4712a3980"
             }
           ]
         },
@@ -7190,8 +7204,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Use this when the chosen W/R latency fits and the membership service is trustworthy.",
-          "reason": "Names the alternative and reversal.",
+          "quote": "Use this when the chosen W/R latency fits and the membership service is trustworthy. A leader can simplify ordering, but it still needs a majority for election and commit. Choose sloppy quorum only when availability during failure matters more than the strict overlap guarantee; a system that accepts eventual consistency can use lower consistency levels for throughput and latency.",
+          "reason": "Cassandra supports lower consistency levels when strong consistency is not required; Dynamo and Riak support sloppy quorum; leader replication and eventual consistency are the alternatives, with sloppy quorum as the availability fallback.",
           "binding": {
             "source_id": "src.cassandra",
             "ledger_record": "read.batch3-cassandra-dynamo.2026-10-21",
@@ -7204,7 +7218,7 @@
       "decision_evidence": {
         "atlas_section": "quorum-based-reads-writes",
         "question": "Should reads and writes require intersecting majorities to guarantee consistency?",
-        "competing_alternative": "Leader-based replication, strict quorum or eventual consistency. Reverse the choice when quorum availability/latency cost exceeds consistency benefit, or when sloppy quorum is the intended availability trade-off.",
+        "competing_alternative": "Leader-based replication or eventual consistency. Sloppy quorum is the availability fallback within the pattern. Reverse the choice when quorum availability/latency cost exceeds consistency benefit, or when sloppy quorum is the intended availability trade-off.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -9072,7 +9086,7 @@
         "heading": "Quorum Coordination",
         "anchor": "quorum-coordination",
         "level": 3,
-        "line": 231,
+        "line": 235,
         "unit_kind": "dedicated",
         "unit_terms": [
           "voting threshold",

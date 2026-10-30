@@ -174,8 +174,9 @@ make a stale response correct.
 **Invariant.** Overlap is necessary but not sufficient for freshness. Membership
 changes that move replicas can violate consistency. A strict system must require
 the old and new quorums to overlap. It must refuse authoritative commits from a
-minority and repair replicas that missed writes. That overlap rule is Tycho design
-guidance, not a claim made by the selected Cassandra, Dynamo or Riak pages. Cassandra warns
+minority and repair replicas that missed writes. The overlap rule and the
+refusal of authoritative commits from a minority are Tycho design guidance, not a claim made
+by the selected Cassandra, Dynamo or Riak pages. Cassandra warns
 that simultaneous range movements can "violate monotonic consistency and can even
 cause data loss." Dynamo transfers ranges on membership change after a
 confirmation round, and both Dynamo and Riak describe a sloppy-quorum mode that
@@ -184,14 +185,14 @@ sources therefore bound the hazard and the availability trade-off, not a univers
 overlap guarantee.
 
 **Failure and recovery.** Overlap is necessary but not sufficient for freshness:
-choose the application's version selector and repair replicas behind it. A read
-that intersects a write quorum can still return a stale value when the selected
-replica lags. Cassandra's read repair makes the replicas involved in the read
+choose the application's version selector and repair replicas behind it. A read that intersects a write quorum can still return a stale value when the write
+failed, membership was sloppy, or the selector ignores the newest replica. Cassandra's read repair makes the replicas involved in the read
 consistent and returns "the most up-to-date data"; Cassandra also calls read repair
 and hinted handoff "only best-effort" and relies on anti-entropy repair for
 eventual consistency. Dynamo returns causally unrelated versions to the client,
 then writes back a reconciled version; hinted handoff and Merkle-tree anti-entropy
-repair lagging replicas. Riak resolves vector-clock conflicts and propagates the
+repair lagging replicas. Hinted handoff, Merkle-tree anti-entropy, `allow_mult` and
+sloppy quorum are summarized from the cited sections, not quoted verbatim. Riak resolves vector-clock conflicts and propagates the
 result "via read repair to the relevant vnodes", or returns siblings when
 `allow_mult` is true. A highest-version selector is Tycho policy: Cassandra's
 last-write-wins timestamps provide a total order, while Dynamo and Riak can expose
@@ -201,7 +202,10 @@ the highest version wins.
 **Alternative.** Use this when the chosen W/R latency fits and the membership
 service is trustworthy. A leader can simplify ordering, but it still needs a
 majority for election and commit. Choose sloppy quorum only when availability
-during failure matters more than the strict overlap guarantee.
+during failure matters more than the strict overlap guarantee; a system that
+accepts eventual consistency can use lower consistency levels for throughput and
+latency. The highest-version selector, old/new overlap, minority refusal and
+sloppy-quorum trade-off are Tycho guidance.
 
 **Limits and source boundary.** The sources are documentation and a 2007 paper,
 not an implementation test. Cassandra's pages are current documentation identified
