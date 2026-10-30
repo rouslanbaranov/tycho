@@ -34,6 +34,10 @@ evidence_scope:
     - "src.kubernetes"
     - "src.kleppmann-distributed-locking"
     - "src.jepsen-consistency"
+    - "src.lamport-time"
+    - "src.mattern-vector-time"
+    - "src.kafka"
+    - "src.kafka-design"
     - "src.temporal"
   claim_ids: []
   status: "source-linked"
@@ -44,8 +48,8 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-21"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-30"
+source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
 # V11/C08 — Distributed coordination
@@ -256,26 +260,32 @@ without requiring a total order?
 
 **Good-fit conditions.** Happens-before relationships are meaningful; causal metadata such
 as vector clocks can be carried; concurrent operations may diverge but must converge once
-the same updates are visible.
+the same updates are visible; the delivery path preserves or re-establishes that metadata.
 
 **Hard contraindications.** Reject when a total order is required, when causal metadata
 cannot be kept with the operation, when clients switch servers without a session
 guarantee, or when concurrent writes have no merge rule.
 
-**Competing alternative.** Total ordering via consensus or per-key ordering. Reverse the
-choice when causal metadata cost exceeds ordering benefit.
+**Competing alternative.** Sequential consistency as the total-order model, a consensus-backed
+replicated log as one implementation, or per-key ordering. Jepsen notes that total order
+sacrifices availability and latency; Kafka guarantees order per partition and routes same-key
+events to one partition, not a topic-wide order. Reverse the choice when causal metadata
+cost exceeds the ordering benefit; the cross-partition reading is Tycho.
 
-**Failure and recovery.** Partition, reordered delivery, lost metadata and server switching
-can expose missing dependencies. Keep durable causal metadata, replay/deduplicate, and
-define a merge; if total order is mandatory, use consensus and accept its cost.
+**Failure and recovery.** A partition is survivable only while each client stays on one
+non-faulty server; switching servers can expose missing dependencies. Reordered delivery,
+lost vector metadata and lost session continuity can violate causal order. Keep durable
+causal metadata, replay/deduplicate and define a merge; Jepsen requires convergence once
+the same operations are visible. The server-switch and metadata-loss inferences are Tycho.
 
 **Technical owner.** [Causal Ordering](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#causal-ordering) — causal ordering is bounded, not a universal clock service.
 
-**Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-causal.2026-10-21: both served headings read; Example,
-convergence and sticky availability are unheaded paragraphs. The source is a public
-pattern/documentation
-unit, not a benchmark.
+**Sources.** [Reading ledger](../../../../edition/patterns/reading-ledger.v1.json):
+read.batch4-causal.2026-10-21 (`src.jepsen-consistency`), read.lamport-time.2026-10-30
+(`src.lamport-time`), read.mattern-vector-time.2026-10-30 (`src.mattern-vector-time`),
+read.kafka-introduction.2026-10-30 (`src.kafka`) and read.kafka-design.2026-10-30
+(`src.kafka-design`). The units are public papers and documentation, not benchmarks;
+no experiment was run.
 
 **Decision state.** applicable-under-conditions.
 
