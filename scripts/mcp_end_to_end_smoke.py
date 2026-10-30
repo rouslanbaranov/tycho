@@ -37,6 +37,13 @@ def main(argv=None):
          "params": {"name": "tycho_search", "arguments": {
              "query": "nested text", "section_rerank": True,
              "section_rerank_margin": 1.0}}},
+        {"jsonrpc": "2.0", "id": 7, "method": "tools/call",
+         "params": {"name": "tycho_search", "arguments": {
+             "query": "service discovery", "volume": "v11"}}},
+        {"jsonrpc": "2.0", "id": 8, "method": "tools/call",
+         "params": {"name": "tycho_search", "arguments": {
+             "query": "stock-flow offered work",
+             "include_artifacts": True}}},
     ]
     proc = subprocess.Popen(
         [sys.executable, "scripts/mcp_server.py"], cwd=args.root,
@@ -51,7 +58,7 @@ def main(argv=None):
             responses[message["id"]] = message
     tools = responses.get(2, {}).get("result", {}).get("tools", [])
     output = {"tools": len(tools), "calls": {}}
-    for request_id in (3, 4, 5, 6):
+    for request_id in (3, 4, 5, 6, 7, 8):
         message = responses.get(request_id, {})
         result = message.get("result", {})
         content = result.get("structuredContent", {})
@@ -60,6 +67,7 @@ def main(argv=None):
             "result_scope": content.get("result_scope"),
             "score_kind": (content.get("results") or [{}])[0].get("score_kind"),
             "status": content.get("status"),
+            "artifacts": len(content.get("artifacts") or []),
         }
     output["stderr_tail"] = stderr.strip().splitlines()[-2:]
     print(json.dumps(output, indent=2))
