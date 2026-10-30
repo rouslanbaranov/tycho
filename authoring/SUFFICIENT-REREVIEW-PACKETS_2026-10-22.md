@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 67 |
+| Reviewed by independent agent | 65 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 68, "reviewed-by-independent-agent": 67}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 70, "reviewed-by-independent-agent": 65}.
 
 ## Review procedure
 
@@ -199,7 +199,7 @@ blank verdict template in the machine-readable file.
 
 - **Distributed Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Lock**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -603,7 +603,7 @@ blank verdict template in the machine-readable file.
 
 - **Write-Behind / Write-Back**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Write-Through Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
