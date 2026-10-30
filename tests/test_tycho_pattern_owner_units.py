@@ -27,7 +27,7 @@ class PatternOwnerUnitTests(unittest.TestCase):
         self.assertEqual(result["entries"], 145)
         self.assertEqual(result["owner_pages"], 81)
         self.assertEqual(result["shared_pages"], 30)
-        self.assertEqual(result["sufficient"], 34)
+        self.assertEqual(result["sufficient"], 35)
         self.assertEqual(result["bounded"] + result["partial"] + result["sufficient"], 145)
         self.assertGreater(result["units"], 30)
 

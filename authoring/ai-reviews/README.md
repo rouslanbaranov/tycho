@@ -117,3 +117,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-30 | DeepSeek Reviewer | #540 Clean/Onion | pass | `2026-10-30-clean-onion-deepseek.md` | `41e6b7ec247363fb1805c637a650203c71978f31018e44d1b8005b3e8850786c` |
 | 2026-10-30 | DeepSeek Reviewer | #540 Server-Side Discovery | pass | `2026-10-30-server-side-deepseek.md` | `419fcc22717d975dc502d89b5ec9823b1417a07d646620031c9b15a7ff2a4544` |
 | 2026-10-30 | DeepSeek Reviewer | #540 Vertical Scaling | pass | `2026-10-30-vertical-scaling-deepseek.md` | `3b6341395ca7d08b2d2237a9830adcca4242a82aa083d0c9a5489ba91e49a36c` |
+| 2026-10-30 | DeepSeek Reviewer | #540 Saga | pass | `2026-10-30-saga-deepseek.md` | `b26cf6892f9aed04561c62d03749074e6516e8b83c1dfde8625cf36e54b306d5` |
