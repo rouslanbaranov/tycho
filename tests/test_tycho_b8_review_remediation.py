@@ -381,12 +381,12 @@ class B8ClaimRequestSplitterRemediationTests(unittest.TestCase):
         self.assertIn("private to the requesting thread", good)
         self.assertIn("single reply thread", good)
 
-    def test_request_reply_partial_and_other_entries_promoted(self):
-        self.assertEqual(len(self.promoted), 30)
+    def test_request_reply_and_other_entries_promoted(self):
+        self.assertEqual(len(self.promoted), 31)
         request = self.units["tycho.pattern.request-reply-messaging"]
-        self.assertNotIn("tycho.pattern.request-reply-messaging", self.promoted)
-        self.assertEqual(request["technical_coverage"], "partial-bounded")
-        self.assertEqual(request["decision_coverage"], "partial-bounded")
+        self.assertIn("tycho.pattern.request-reply-messaging", self.promoted)
+        self.assertEqual(request["technical_coverage"], "sufficient")
+        self.assertEqual(request["decision_coverage"], "sufficient")
         for pattern_id in ("tycho.pattern.claim-check", "tycho.pattern.splitter"):
             unit = self.units[pattern_id]
             self.assertIn(pattern_id, self.promoted)
