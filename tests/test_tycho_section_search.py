@@ -469,6 +469,18 @@ class SearchTests(unittest.TestCase):
             section_search.evidence(self.root, document_id="a", claim_id="b")
 
 
+    def test_query_cache_key_tracks_weights_and_artifacts(self):
+        base = ("root", "snapshot", "query", 5, None, None, None, None,
+                None, False, False, False, "snippets", None, None, None,
+                (), False, None, False, (5.0, 2.0, 0.25))
+        key = section_search._query_cache_key(*base)
+        with_artifacts = base[:-2] + (True, base[-1])
+        changed_weights = base[:-1] + ((5.0, 2.0, 0.5),)
+        self.assertNotEqual(key,
+                            section_search._query_cache_key(*with_artifacts))
+        self.assertNotEqual(key,
+                            section_search._query_cache_key(*changed_weights))
+
     def test_bm25_weights_are_bounded(self):
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("TYCHO_BM25_WEIGHTS", None)
