@@ -94,7 +94,7 @@ prescribe one algorithm for every service.
 
 **Health endpoint monitoring.** A startup probe answers "has initialization finished";
 readiness answers "may this instance receive new work"; liveness answers "must the process be
-restarted". They must not be collapsed into one endpoint. External monitoring should also
+restarted". Tycho guidance: they must not be collapsed into one endpoint. External monitoring should also
 observe user-level success and dependency state, because a green liveness probe does not
 prove readiness, correct routing or a healthy dependency.
 
@@ -109,10 +109,11 @@ that they are not ready "does not receive traffic through Kubernetes Services"; 
 liveness check makes the kubelet "kill and restart the container"; and its readiness example
 includes applications that "depend on external services after startup". Google SRE records
 that health checking "may create a failure mode in which health-checking itself makes the
-service unhealthy", and it separates process health checking for a scheduler from service
-health checking for a load balancer. AWS takes a target out of service after a bounded number
-of consecutive failures, puts it back after a bounded number of successes, and, "if all
-targets fail health checks at the same time", the load balancer "fails open". The composition
+service unhealthy". The distinction between process health checking for a scheduler and service
+health checking for a load balancer is Tycho's framing. AWS takes a target out of service after a
+bounded number of consecutive failures, puts it back after a bounded number of successes, and,
+"if all targets fail health checks at the same time in all enabled Availability Zones", the load
+balancer "fails open". The composition
 is Tycho: one shared dependency can fail every probe, so readiness removes the whole fleet
 from traffic or liveness drives a restart loop, and the load balancer may then fail open to
 the same unhealthy targets. Cached answers are composed too: Google SRE notes that resolvers
@@ -140,8 +141,8 @@ Failures" (`read.batch4-sre-cascading.2026-10-21`) and "Load Balancing at the Fr
 (`read.batch5-sre-frontend.2026-10-21`), AWS "Health checks for Application Load Balancer
 target groups" (`read.aws-elb-health-checks.2026-10-30`), AWS "Synthetic monitoring
 (canaries)" (`read.aws-synthetics-canaries.2026-10-30`) and Google SRE Workbook "Alerting on
-SLOs" (`read.sre-workbook-slos.2026-10-30`). The AWS and workbook records are proposed and
-not yet in the shared ledger. These pages describe probe, health-check and monitoring
+SLOs" (`read.sre-workbook-slos.2026-10-30`). The AWS and workbook records are recorded in the
+shared ledger. These pages describe probe, health-check and monitoring
 mechanics; none measures this page's fleet or proves that a shared dependency will be
 detected. Exact probe behavior belongs to the chosen runtime and version.
 

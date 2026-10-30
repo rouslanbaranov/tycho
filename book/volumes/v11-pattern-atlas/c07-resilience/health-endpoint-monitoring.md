@@ -57,13 +57,13 @@ operations-pattern; priority core.
 **Decision question.** Should an external monitor distinguish liveness, readiness and
 startup health?
 
-**Good-fit conditions.** Startup, readiness and liveness are separate probes; probe
+**Good-fit conditions.** Tycho guidance: startup, readiness and liveness are separate probes; probe
 semantics match the failure; restart and traffic removal are distinct; an external journey
 check is independent of the dependency it observes.
 
 **Hard contraindications.** Reject when a liveness probe would restart a healthy process
-because a shared dependency is down, when one probe is used for every failure, or when the
-external check shares the dependency under test.
+because a shared dependency is down, when Tycho guidance says one probe is used for every failure,
+or when the external check shares the dependency under test.
 
 **Competing alternative.** Process liveness plus an external journey check (a synthetic
 canary) or SLO-based alerting on customer experience. Reverse the choice when probe complexity
@@ -74,9 +74,9 @@ Tycho guidance.
 restart/ejection; cached or missing health can keep routing to a draining instance. Kubernetes
 binds readiness to traffic removal and liveness to restart; Google SRE records that health
 checking itself can make a service unhealthy; AWS removes a target after bounded consecutive
-failures and fails open when all targets fail. The shared-dependency composition and DNS-cache
-staleness are Tycho. Define no-response behavior, keep probes on an independent path, and
-bound frequency and exposure.
+failures and may fail open when all targets in all enabled Availability Zones fail. The
+shared-dependency composition and DNS-cache staleness are Tycho. Define no-response behavior,
+keep probes on an independent path, and bound frequency and exposure.
 
 **Technical owner.** [Request routing and health signals](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#health-endpoint-monitoring) — readiness/health is bounded, not a full monitoring product.
 
