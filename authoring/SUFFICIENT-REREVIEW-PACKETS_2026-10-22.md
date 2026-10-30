@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 82 |
+| Reviewed by independent agent | 81 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 53, "reviewed-by-independent-agent": 82}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 54, "reviewed-by-independent-agent": 81}.
 
 ## Review procedure
 
@@ -183,7 +183,7 @@ blank verdict template in the machine-readable file.
 
 - **Database per Service**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Dead Letter Channel / DLQ**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

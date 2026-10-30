@@ -707,20 +707,115 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Dual writes, stale replicas and cross-service queries are common; use an outbox or idempotent reconciliation for cross-service effects and verify replica freshness before joining.",
-          "reason": "Source names cross-service transaction/query problems but not dual writes, stale replicas or outbox recovery."
+          "reason": "Database per Service names cross-service transactions and joins as hard; Transactional Outbox documents atomic database-plus-message publication, an outbox relay and an idempotent consumer; Saga documents compensating local transactions. Replica lag and reconciliation as a repair loop are Tycho guidance, not source claims.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-outbox.2026-10-21",
+            "section": "Context",
+            "quote": "The command must atomically update the database and send messages in order to avoid data inconsistencies and bugs.",
+            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.batch2-outbox.2026-10-21",
+              "section": "Solution",
+              "quote": "first store the message in the database as part of the transaction that updates the business entities. A separate process then sends the messages to the message broker.",
+              "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.batch2-outbox.2026-10-21",
+              "section": "Result context",
+              "quote": "a message consumer must be idempotent, perhaps by tracking the IDs of the messages that it has already processed.",
+              "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-database-per-service.2026-10-21",
+              "section": "Resulting context",
+              "quote": "Implementing business transactions that span multiple services is not straightforward.",
+              "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-database-per-service.2026-10-21",
+              "section": "Resulting context",
+              "quote": "Implementing queries that join data that is now in multiple databases is challenging.",
+              "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.batch2-saga.2026-10-21",
+              "section": "Solution",
+              "quote": "changes made by the completed steps are undone by compensating transactions.",
+              "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-database-per-service.2026-10-21",
+              "section": "Forces",
+              "quote": "Databases must sometimes be replicated and sharded in order to scale.",
+              "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A shared database with enforced module ownership is simpler when teams release together; choose separate stores only when independent ownership, scaling or recovery justify the coordination cost.",
-          "reason": "Source calls shared database an anti-pattern, not a simpler enforced-module option."
+          "reason": "Shared database documents a single database that is simpler to operate and supports familiar ACID transactions, while warning that schema changes create development-time coupling; Monolith First favors a monolith for simpler applications and modular data/API boundaries. Enforced module ownership and the shared release-cadence condition are Tycho synthesis, and the Database per Service page calls the shared option an anti-pattern.",
+          "binding": {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-shared-database.2026-10-30",
+            "section": "Pattern: Shared database",
+            "quote": "A single database is simpler to operate",
+            "revision": "4dc5fcf1a9bdf1d4c97c3ba916f997611cebdc2bc4b87927a6bb0a61c11c5731"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-shared-database.2026-10-30",
+              "section": "Pattern: Shared database",
+              "quote": "A developer uses familiar and straightforward ACID transactions to enforce data consistency",
+              "revision": "4dc5fcf1a9bdf1d4c97c3ba916f997611cebdc2bc4b87927a6bb0a61c11c5731"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-shared-database.2026-10-30",
+              "section": "Pattern: Shared database",
+              "quote": "Development time coupling - a developer working on, for example, the OrderService will need to coordinate schema changes with the developers of other services that access the same tables.",
+              "revision": "4dc5fcf1a9bdf1d4c97c3ba916f997611cebdc2bc4b87927a6bb0a61c11c5731"
+            },
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-database-per-service.2026-10-21",
+              "section": "Related patterns",
+              "quote": "The Shared Database anti-pattern describes the problems that result from microservices sharing a database",
+              "revision": "09a42dc873ba914208f3b2dc90a28a1287b883da6080805b318ff6a28d484d31"
+            },
+            {
+              "source_id": "src.monolith-first",
+              "ledger_record": "read.monolith-first.2026-10-21",
+              "section": "Monolith First",
+              "quote": "will slow down a team, favoring a monolith for simpler applications",
+              "revision": "722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446"
+            },
+            {
+              "source_id": "src.monolith-first",
+              "ledger_record": "read.monolith-first.2026-10-21",
+              "section": "Monolith First",
+              "quote": "the API boundaries and how the data is stored",
+              "revision": "722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "database-per-service",
         "question": "Should each service own its authoritative data and expose only a contract, rather than share one database across services?",
-        "competing_alternative": "Shared database with a modular monolith, or a deliberately governed shared read model. Reverse the choice when cross-service consistency and reporting cost exceed the autonomy benefit.",
+        "competing_alternative": "A shared database with enforced module ownership is simpler when one team releases the modules together. The Shared database page lists \"A single database is simpler to operate\" and familiar ACID transactions as benefits, but warns of \"Development time coupling\" and \"Runtime coupling\"; the Database per Service page calls it \"The Shared Database anti-pattern\". The enforced-ownership condition is Tycho synthesis, not the page's free cross-service access. Reverse the choice when cross-service consistency, independent scaling or reporting cost exceed the autonomy benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -729,12 +824,34 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-saga.2026-10-21",
+            "revision": "54805df89f619c8432fd280263a88670ed66fac6cbe0b5429a1ebdc5d4cd1047"
+          },
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.batch2-outbox.2026-10-21",
+            "revision": "7b9d9b224d9b985bf03d581dcdef5c94a21f49a93f3ac1e74c6bc2104a48b3eb"
+          },
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-shared-database.2026-10-30",
+            "revision": "4dc5fcf1a9bdf1d4c97c3ba916f997611cebdc2bc4b87927a6bb0a61c11c5731"
+          },
+          {
+            "source_id": "src.monolith-first",
+            "ledger_record": "read.monolith-first.2026-10-21",
+            "revision": "722d8d78beddd9e0f6ff3e856eec94dfa2b9fa3bebcaaf4c9e80ccdd3c0e1446"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to microservices.io Database per Service, Saga, Transactional outbox and Shared database pages plus the existing Monolith First article; replica freshness and enforced shared-database ownership remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.self-contained-service",
@@ -11997,8 +12114,8 @@
     "embedded_units": 0,
     "mechanism_supported": 109,
     "invariant_supported": 66,
-    "failure_recovery_supported": 57,
-    "alternative_supported": 66,
+    "failure_recovery_supported": 58,
+    "alternative_supported": 67,
     "technical_partial_bounded": 20,
     "technical_partial": 84,
     "technical_name_only": 0,

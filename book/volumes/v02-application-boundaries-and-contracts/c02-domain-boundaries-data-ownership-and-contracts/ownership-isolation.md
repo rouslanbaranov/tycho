@@ -53,7 +53,7 @@ Object-level authorization needs server-side enforcement at the resource authori
 
 <!-- /tycho-question-source -->
 
-> **Pattern atlas:** [Database per Service](../../v11-pattern-atlas/c01-application-boundaries/README.md#database-per-service) — decision conditions and contraindications.
+> **Pattern atlas:** [Database per Service](../../v11-pattern-atlas/c01-application-boundaries/database-per-service.md#database-per-service) — decision conditions and contraindications.
 <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:7 -->
 ## 7. Selecting boundaries and proving they work
 
