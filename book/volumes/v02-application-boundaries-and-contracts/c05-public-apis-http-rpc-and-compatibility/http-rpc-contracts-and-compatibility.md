@@ -48,7 +48,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
+updated_at: "2026-10-30"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -124,20 +124,71 @@ measured evidence, and they do not create a new source claim.
 
 ### Backend for Frontend (BFF)
 
-A backend for frontend composes the API surface for one client experience. It needs a
-client owner, a composition contract, a policy for duplicated domain logic and a boundary
-that prevents the BFF from becoming a second domain authority. Use it when clients need
-materially different payloads, latency budgets or release cadences. Do not use it when one
-API contract serves all clients or when the BFF would own core business rules.
+**Mechanism and ownership.** A BFF is a separate backend for one client experience,
+owned by the frontend team: it customizes the client API and may compose several
+service calls, code duplication is a probable outcome, and cross-cutting and domain
+logic remain outside the BFF. AWS defines the pattern as "having one backend per user
+experience, instead of having only one general-purpose API backend". Microsoft says to
+"Create a separate backend service for each frontend interface, instead of using a
+single general-purpose backend for all of them" and that the pattern "customizes the
+client experience for a specific interface without affecting other interfaces". AWS
+summarizes Sam Newman's account: "the BFF is tightly coupled to a specific user
+experience, and will typically be maintained by the same team as the user interface".
+Microsoft states that "Frontend teams independently manage their own BFF service" and
+that "Code duplication is a probable outcome of this pattern. Evaluate the trade-off
+between code duplication and a better-tailored experience for each client." It also
+says "The BFF service should only handle client-specific logic related to a specific
+user experience. Cross-cutting features, such as monitoring and authorization, should
+be abstracted to maintain efficiency." Its desktop-BFF example says the service
+"aggregates multiple requests by using underlying microservices calls before responding
+to the client with a multiple page response". The microservices.io variation "defines a
+separate API gateway for each kind of client". These statements support the separate
+client-specific backend, team ownership, composition, code-duplication trade-off and
+client-specific scope. Tycho guidance, not a source claim: the composition contract is
+the explicit list of downstream calls, versions and partial-failure behavior the BFF
+exposes to its client, the duplication policy decides where repeated client-specific
+logic is acceptable, and domain authority stays with the service that owns the business
+rule, so the BFF does not become a second domain authority. Do not use it when one API
+contract serves all clients or when the BFF would own core business rules.
 
-The failure path is drift between the BFF and the domain API; version the composition and
-test the client contract. A shared API with client-side selection is the alternative when
-the differences are small and can be expressed without a new authority.
+**Failure and recovery.** A BFF is tightly coupled to one client experience and released
+with it, while the services it composes have independent lifecycles; Tycho guidance,
+not a source claim: treat divergence between the BFF composition and the domain API as
+drift, version the composition and test the client contract on every release. Microsoft
+notes that "Each individual service has its own life cycle, deployment and maintenance
+requirements, and security needs." AWS says the BFF's tight coupling is what simplifies
+"lining up releases of both the client and server components". Microsoft's reliability
+note adds that "When you isolate services to a specific frontend interface, you contain
+malfunctions. The availability of one client doesn't affect the availability of another
+client's access." Those statements support independent lifecycles, release alignment and
+per-client failure containment; they do not document a drift incident, a versioning
+scheme or a client-contract test. Tycho guidance, not a source claim: keep the domain
+contract as the shared authority rather than copying business rules into the BFF. With
+several BFFs, each composition needs its own version, observability and client matrix.
 
-**Limits.** A BFF duplicates client-specific policy and adds a deployable; its contract and
-client matrix need an owner, and a BFF that caches or authorizes objects becomes another
-authority. With several BFFs, each composition needs a shared domain contract and its own
-observability; otherwise the BFFs drift independently.
+**Alternative.** A shared API with client-side selection is the alternative when the
+differences are small and can be expressed without a new authority.
+
+**Limits.** Tycho guidance, not a source claim: a BFF duplicates client-specific policy
+and adds a deployable; its contract and client matrix need an owner, and a BFF that
+caches or authorizes objects becomes another authority. With several BFFs, each
+composition needs a shared domain contract and its own observability; otherwise the
+BFFs drift independently.
+
+**Source boundary.** Public pattern pages and a vendor blog, accessed 2026-10-30;
+living pages, not a benchmark or an executed drift test.
+
+- Microsoft, "Backends for Frontends pattern", sections "Solution", "Problems and
+  considerations", "Workload design" and "Example": canonical text revision
+  `0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f`, raw HTML
+  revision `d391b18b665844a88784473345c8ae88384d46c86e15fdb3557bb92997d6a70f`.
+- microservices.io, "API Gateway / Backends for Frontends", section "Variation:
+  Backends for frontends": record `read.microservices-api-gateway.2026-10-21`, raw
+  revision `e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d`.
+- AWS Front-End Web & Mobile, "Backends for Frontends Pattern", sections "The BFF
+  pattern" and "Conclusion": canonical text revision
+  `bfab5e7c99406c982f8bddbe077d4e2d5fc3494c6e7ef6762d82d0f3a746280c`, raw HTML
+  revision `9290394588cc569f6a8182c5199f39a5ca51fc1ac5d5709a95e9007b491e2f5d`.
 
 ### API Composition
 

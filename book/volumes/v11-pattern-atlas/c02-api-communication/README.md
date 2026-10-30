@@ -32,6 +32,7 @@ evidence_scope:
   source_ids:
     - "src.microservices-patterns"
     - "src.microsoft-cloud-patterns"
+    - "src.aws-bff"
     - "src.envoy"
     - "src.aws-api-gateway"
     - "src.azure-api-management"
@@ -193,28 +194,43 @@ kind integration pattern; priority core.
 **Decision question.** Should each client population get a tailored server contract,
 rather than share one general-purpose API?
 
-**Good-fit conditions.** Client populations have materially different interaction
-needs; a team can own each BFF; shared domain services remain authoritative; duplicated
-client-specific composition is acceptable.
+**Good-fit conditions.** The BFF composes several owner APIs for one client experience;
+client populations have materially different interaction needs; a team can own each
+BFF; shared domain services remain authoritative; duplicated client-specific composition
+is acceptable; cross-cutting policy stays outside the BFF.
 
 **Hard contraindications.** Reject the claim when one client contract is adequate; when
 BFFs would duplicate domain logic; when no team owns a BFF lifecycle; when the split
 multiplies deployments without a measured client benefit.
 
-**Competing alternative.** A shared API with client-side selection when the differences are
-small. Reverse the choice when BFF maintenance and duplication exceed the client fit
+**Competing alternative.** A shared API with client-side selection when the differences
+are small. Reverse the choice when BFF maintenance and duplication exceed the client fit
 benefit.
 
-**Failure and recovery.** Contract drift between the BFF and the domain API and duplicated
-logic is a risk. Recovery requires versioned composition and contract tests; verify the
+**Failure and recovery.** The pages document per-client malfunction isolation and
+independent service lifecycles; they do not document drift, composition versioning or
+client-contract tests. Tycho reading: independent BFF and domain-service lifecycles
+create release-alignment risk. Tycho guidance, not a source claim: treat BFF/domain
+divergence as drift, version the composition and test the client contract; verify the
 API contract boundary in the owner section.
 
 **Technical owner.** [HTTP and RPC contracts: compatibility, deadlines and retry safety](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md#backend-for-frontend-bff) — BFF tailoring has a dedicated owner section; it is bounded, not a complete API contract guide.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-bff.2026-10-21: all thirteen served headings
-read. Vendor pattern page, not a benchmark.
+record `read.microsoft-bff.2026-10-30` (supersedes
+`read.microsoft-bff.2026-10-21`): sections "Solution" and "Problems and
+considerations"; canonical revision
+`0210c2a7732bf3e43621e28c82c284f78fe7f9e02ef2a50328b9d44bcebd353f`.
+[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+record `read.microservices-api-gateway.2026-10-21`, section "Variation: Backends for
+frontends"; raw revision
+`e94bf7ae68567226222138dc2836247873d5908b63bf07ca05207377a9999d4d`.
+[src.aws-bff](../../../../edition/patterns/reading-ledger.v1.json) record
+`read.aws-bff.2026-10-30`, section "The BFF pattern"; canonical revision
+`bfab5e7c99406c982f8bddbe077d4e2d5fc3494c6e7ef6762d82d0f3a746280c`.
+Vendor pattern pages and a vendor blog, not a benchmark; exact quotes are in the owner
+section.
 
 **Decision state.** applicable-under-conditions.
 
