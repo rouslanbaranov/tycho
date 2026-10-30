@@ -35,6 +35,7 @@ evidence_scope:
     - "src.microsoft-cloud-patterns"
     - "src.aws-sqs-dlq"
     - "src.azure-service-bus-dlq"
+    - "src.hookdeck-dlq-alternatives"
   claim_ids: []
   status: "source-linked"
   notes: "All 20 cards cite read units; owner links are bounded sections, not dedicated EIP pages."
@@ -390,9 +391,10 @@ safe, when no one owns the DLQ, or when dead-lettering hides a programming error
 
 **Competing alternative.** Bounded retry with backoff and an audit record, then alert and
 stop; drop with a recorded disposition or park the work in a repair table/outbox when failure
-is deterministic. The public DLQ pages describe retry limits and diagnostic fields, not these
-comparisons; the alternatives and the reversal condition are Tycho guidance. Reverse the
-choice when replay is frequent and needs automated policy.
+is deterministic. Hookdeck's alternatives guide explicitly compares a DLQ with database
+persistence, a retry table and a transactional outbox; the guide is webhook-specific, so the
+drop variant and general transfer are Tycho guidance. Reverse the choice when replay is
+frequent and needs automated policy.
 
 **Failure and recovery.** DLQ growth and silent abandonment are common; the Azure page states
 there is no automatic cleanup and messages remain until retrieved, while AWS documents
@@ -426,6 +428,17 @@ messages."; "There's no automatic cleanup of the DLQ. Messages remain in the DLQ
 explicitly retrieve them from the DLQ and complete the dead-letter message." Revision
 `200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600`. Public Microsoft Learn
 documentation, not a benchmark.
+[src.hookdeck-dlq-alternatives](../../../../edition/patterns/reading-ledger.v1.json)
+read record read.hookdeck-dlq-alternatives.2026-10-30: sections "The Database Persistence
+Pattern", "The Retry Table Pattern", "The Transactional Outbox Pattern" and "Choosing the
+Right Approach". Exact quotes: "Instead of moving failed events to a separate queue, persist
+them directly to a database table."; "A variation of database persistence, the retry table
+pattern uses a dedicated table specifically for events that need reprocessing."; "After a
+maximum number of attempts, events move to a failed state for manual review."; "The
+transactional outbox pattern solves the dual-write problem."; "For high-scale systems with
+dedicated platform teams, traditional DLQs remain a solid choice." Revision
+`bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af`. Public vendor
+engineering guide, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

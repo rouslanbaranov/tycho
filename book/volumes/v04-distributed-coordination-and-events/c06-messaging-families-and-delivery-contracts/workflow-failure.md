@@ -29,6 +29,7 @@ evidence_scope:
     - "src.rabbitmq"
     - "src.aws-sqs-dlq"
     - "src.azure-service-bus-dlq"
+    - "src.hookdeck-dlq-alternatives"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.98616bdc3c514ea997b2cfe30ad7c070; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -226,15 +227,18 @@ committed before republishing; a blind replay is a duplicate-effect risk.
 
 **Alternative.** Bounded retry with an audit record, dropping with a recorded disposition, or
 parking the work in a repair table/outbox may be preferable when failure is deterministic or
-the broker cannot retain evidence safely. The AWS page supports a bounded retry setting:
-"To ensure that your system is resilient against errors, set the maxReceiveCount high enough
-to allow for sufficient retries." The Azure page supports a diagnostic record: "The following
-two properties (dead-letter reason and dead-letter description) are added to dead-lettered
-messages." and a repair route: "An application might let a user correct issues and resubmit
-the message." Those sentences describe retry limits, diagnostics and resubmission inside the
-DLQ mechanism. They do not compare a DLQ with bounded retry without quarantine, drop with a
-record, or a repair table/outbox. Those alternatives and the condition for reversing the DLQ
-choice are Tycho guidance, not source claims. A DLQ is a fit when the failure is inspectable
+the broker cannot retain evidence safely. Hookdeck's alternatives guide explicitly compares a
+DLQ with database persistence, a retry table and a transactional outbox: "Instead of moving
+failed events to a separate queue, persist them directly to a database table."; "A variation
+of database persistence, the retry table pattern uses a dedicated table specifically for
+events that need reprocessing."; "After a maximum number of attempts, events move to a failed
+state for manual review."; "The transactional outbox pattern solves the dual-write problem."
+The guide also states the reversal: "For high-scale systems with dedicated platform teams,
+traditional DLQs remain a solid choice." Those sentences support database persistence,
+retry-table and outbox alternatives with a bounded-attempt/record path. The AWS page supports
+the retry bound and the Azure page the diagnostic record, but neither compares these
+alternatives. The guide is webhook-specific; the drop-with-record variant and the general
+transfer beyond webhooks remain Tycho guidance. A DLQ is a fit when the failure is inspectable
 and a human or repair job can decide the terminal outcome.
 
 **Source boundary.** EIP page record `read.batch2-dlq.2026-10-21`, revision
@@ -248,6 +252,11 @@ canonical text SHA-256
 `200c9ae3c042cab7a8852b33cda0214c14b5eab177a04f2bdcc02ae665005600`; document version
 `19d4a83e-55c8-8b9c-38a0-0e9a26ba2cdb`, ms.date 2026-07-16 and updated_at 2026-07-22;
 sections "The dead-letter queue", "Moving messages to the DLQ", "Maximum delivery count"
-and "Application-level dead-lettering". All three are public documentation, not benchmarks.
-No replay, retention, redrive or repair behavior was executed.
+and "Application-level dead-lettering". Hookdeck alternatives guide read 2026-10-30; raw
+Markdown alternate SHA-256
+`bd4ed76074e2d44f3eaa3e0b8b5f85fed27b00f6867b71e5ba21c439a239d1af`; sections "The
+Database Persistence Pattern", "The Retry Table Pattern", "The Transactional Outbox
+Pattern" and "Choosing the Right Approach"; webhook-specific vendor guide with no explicit
+reuse license, short excerpts only. All four are public documentation or public vendor
+guidance, not benchmarks. No replay, retention, redrive or repair behavior was executed.
 

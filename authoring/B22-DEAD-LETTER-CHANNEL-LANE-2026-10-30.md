@@ -1,5 +1,11 @@
 # B22 — Dead Letter Channel / DLQ invariant and alternative lane
 
+> **Superseded alternative status — 2026-10-30:** the alternative findings below
+> were superseded by `B22-DLQ-ALTERNATIVE-FOLLOWUP-2026-10-30.md` after a
+> public comparison guide was found and bound. The invariant, AWS/Azure and
+> metadata sections remain valid except for the counts and hashes updated in
+> that follow-up.
+
 Status: lane-local book edit, self-checked on 2026-10-30. No shared edition
 metadata, promotion, generated artifact or owner acceptance is included. The
 entry was 2/4 at the parent HEAD: mechanism and failure/recovery were supported;
