@@ -52,6 +52,11 @@ _INDEX_VALIDATION_CACHE = OrderedDict()
 _INDEX_VALIDATION_LOCK = threading.Lock()
 _INDEX_VALIDATION_MAX = 4
 _SEARCH_CONCURRENCY = threading.BoundedSemaphore(2)
+_ARTIFACT_STOPWORDS = frozenset({
+    "a", "an", "and", "are", "as", "at", "be", "by", "does", "do",
+    "for", "from", "how", "in", "is", "it", "of", "on", "or", "that",
+    "the", "to", "what", "when", "where", "which", "why", "with",
+})
 _QUERY_CACHE_MAX = 128
 
 
@@ -435,14 +440,17 @@ def load_v12_artifacts(root):
             "evidence_status": document.get("evidence_status") or "unknown",
             "pattern_ids": sorted(patterns),
             "summary": document.get("summary") or "",
+            "questions": list(document.get("questions") or []),
+            "keywords": list(document.get("keywords") or []),
+            "topics": list(document.get("topics") or []),
         })
     artifacts.sort(key=lambda item: (str(item["artifact_type"]), str(item["id"])))
     return artifacts
 
 
 def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
-                  limit=50):
-    """Return V12 artifacts filtered by pattern, type and volume."""
+                  limit=50, terms=None):
+    """Return V12 artifacts filtered and optionally ranked by query terms."""
     pattern_ids = pattern_ids or []
     _require(isinstance(pattern_ids, (list, tuple)),
              "pattern_ids must be a list")
@@ -463,6 +471,25 @@ def v12_artifacts(root, pattern_ids=None, artifact_type=None, volume="v12",
         if pattern_ids and not set(pattern_ids).issubset(set(item["pattern_ids"])):
             continue
         artifacts.append(item)
+    if terms:
+        artifact_terms = [term for term in set(terms)
+                          if term not in _ARTIFACT_STOPWORDS and len(term) > 2]
+        scored = []
+        for item in artifacts:
+            text = " ".join(
+                [str(item.get("title") or ""),
+                 str(item.get("summary") or ""),
+                 " ".join(item.get("questions") or []),
+                 " ".join(item.get("keywords") or []),
+                 " ".join(item.get("topics") or []),
+                 " ".join(item.get("pattern_ids") or [])]).casefold()
+            hits = [term for term in artifact_terms if term in text]
+            if hits and len(hits) >= min(2, len(artifact_terms)):
+                scored.append((len(hits),
+                               sum(text.count(term) for term in hits),
+                               item))
+        scored.sort(key=lambda row: (-row[0], -row[1], str(row[2]["id"])))
+        artifacts = [row[2] for row in scored]
     return {
         "status": "ok" if artifacts else "no-results",
         "filters": {
@@ -877,9 +904,12 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             },
         }
         if include_artifacts or pattern_ids or artifact_type or volume:
+            artifact_terms = (terms if include_artifacts and not pattern_ids
+                              and artifact_type is None else None)
             artifact_payload = v12_artifacts(
                 root, pattern_ids=pattern_ids, artifact_type=artifact_type,
-                volume=volume, limit=min(max(limit * 5, 50), 200))
+                volume=volume, limit=min(max(limit * 5, 50), 200),
+                terms=artifact_terms)
         if not results and artifact_payload["artifacts"]:
             status = "ok"
             assessment = dict(assessment)
