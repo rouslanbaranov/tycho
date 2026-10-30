@@ -27,9 +27,9 @@ At margin 0.15:
 
 | Qrels | Level | Base hit@1/3/5 | Margin-gated |
 |---|---|---|---|
-| corpus v3 | page | .878/.952/.973 | **.931/.963/.973** |
-| section v3 | section | .803/.941/.979 | **.894/.952/.968** |
-| phase2 | page | .296/.611/.667 | .278/.630/.667 |
+| corpus v3 | page | .878/.952/.973 | **.920/.963/.973** |
+| section v3 | section | .803/.941/.979 | **.888/.952/.968** |
+| phase2 | page | .296/.611/.667 | .296/.630/.667 |
 | phase3 | page | .421/.632/.737 | **.474/.632/.737** |
 
 Held-out page effect is mixed; threshold was tuned on v3.

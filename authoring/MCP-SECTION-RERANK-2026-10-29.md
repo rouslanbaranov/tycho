@@ -16,7 +16,7 @@ Current default is `section_rerank=true, section_rerank_margin=0.15`. See
 On AI section qrels v3 (188 queries, 1,397 sections):
 
 - BM25 section hit@1/3/5: .803/.941/.979.
-- section_rerank: .894/.952/.973.
+- section_rerank: .888/.952/.968.
 - Difference +.0904; 95% CI [.0319, .1489]; McNemar p=.0033.
 
 The pool is built from both modes and labels are AI, so this is not a default

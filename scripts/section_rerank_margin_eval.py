@@ -54,18 +54,24 @@ def main(argv=None):
                 section_rerank=True)
         except section_search.SearchError:
             rerank = base
+        try:
+            gated = section_search.search(
+                args.root, item["question"], limit=5, abstain=False,
+                section_rerank=True, section_rerank_margin=args.margin)
+        except section_search.SearchError:
+            gated = base
         base_paths = paths(base, args.level, key_mode)
         rerank_paths = paths(rerank, args.level, key_mode)
+        gated_paths = paths(gated, args.level, key_mode)
         scores = [row.get("score", 0) for row in base.get("results", [])]
         margin = ((scores[0] - scores[1]) / scores[0]
                   if len(scores) > 1 and scores[0] else 1.0)
-        used = rerank_paths if margin < args.margin else base_paths
         row = {"id": item["id"], "split": item.get("split"),
                "margin": round(margin, 4),
-               "applied": margin < args.margin}
+               "applied": gated.get("result_scope") == "section-rerank"}
         for name, paths_ in (("base", base_paths),
                              ("rerank", rerank_paths),
-                             ("gated", used)):
+                             ("gated", gated_paths)):
             row[name] = [bool(set(paths_[:k]) & target)
                          for k in (1, 3, 5)]
         rows.append(row)

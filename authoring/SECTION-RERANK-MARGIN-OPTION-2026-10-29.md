@@ -19,9 +19,9 @@ At margin 0.15:
 
 | Qrels | Level | Base hit@1/3/5 | Margin-gated |
 |---|---|---|---|
-| corpus v3 | page | .878/.952/.973 | **.931/.963/.973** |
-| section v3 | section | .803/.941/.979 | **.894/.952/.968** |
-| phase2 | page | .296/.611/.667 | .278/.630/.667 |
+| corpus v3 | page | .878/.952/.973 | **.920/.963/.973** |
+| section v3 | section | .803/.941/.979 | **.888/.952/.968** |
+| phase2 | page | .296/.611/.667 | .296/.630/.667 |
 | phase3 | page | .421/.632/.737 | **.474/.632/.737** |
 
 On v3 page, v2 improves and phase3/V12 do not regress. Held-out page is mixed:
