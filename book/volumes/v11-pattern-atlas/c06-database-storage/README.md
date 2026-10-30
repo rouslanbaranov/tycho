@@ -31,7 +31,6 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.citus"
-    - "src.mongo-sharding"
     - "src.postgresql"
     - "src.cassandra"
     - "src.dynamo"
@@ -65,10 +64,10 @@ public article and the V05/C04 selection section.
 
 ## Pages and reasoning route
 
-Page count is content-dependent. This chapter currently uses one landing page plus a
-dedicated card page for a moved entry; a later split is an editorial change, not a plan
-failure. Start with the card, check its conditions and contraindications, then read the
-exact owner section.
+Page count is content-dependent. This chapter uses a landing page plus dedicated card
+pages for moved entries; a later split is an editorial change, not a plan failure. Start
+with the card, check its conditions and contraindications, then read the exact owner
+section.
 
 ## Entry inventory
 
@@ -77,47 +76,7 @@ none claims sufficient technical or decision coverage.
 
 ### Sharding
 
-**Identity.** Sharding; family Database and storage architecture; kind
-data-distribution-pattern; priority core.
-
-**Decision question.** Should data be split across shards by a partition key to scale
-beyond one node?
-
-**Good-fit conditions.** A stable partition key exists; cross-shard transactions are
-avoidable; routing and rebalancing are owned; hotspots can be measured; a failed
-migration has a bounded retry or rollback path.
-
-**Hard contraindications.** Reject when one node suffices, when the key creates hot
-tenants, when cross-shard joins/transactions dominate, or when a failed migration
-cannot be detected and verified.
-
-**Competing alternative.** Partitioning within one database, read replicas (hot
-standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby
-read-only replicas; MongoDB contrasts vertical scaling with horizontal scaling and its
-infrastructure complexity; Citus warns that joins cross the network boundary. Reverse
-the choice when distribution adds cross-shard coordination without relieving the
-measured constraint; that reversal rule is Tycho synthesis.
-
-**Failure and recovery.** Hotspots, hot chunks and failed migrations are documented;
-MongoDB identifies uneven load from monotonic keys, the balancer pauses reads/writes
-while updating range metadata, and reshard retries are bounded. Citus takes a brief
-write-lock while promoting a shard. Map drift, split brain, hot-key throttling and
-dual-read/verify are Tycho failure modes; verify them in the owner section.
-
-**Technical owner.** [Sharding](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md#sharding) — shard key choice and resharding cost are bounded; per-engine placement is platform-specific.
-
-**Sources.** [src.citus](../../../../edition/patterns/reading-ledger.v1.json)
-mechanism record `read.batch3-citus.2026-10-21`; proposed 2026-10-30 records
-`read.mongo-sharding`, `read.mongo-choose-key`, `read.mongo-troubleshoot-key`,
-`read.mongo-balancer`, `read.mongo-reshard`, `read.citus-cluster`,
-`read.citus-datamodel` and `read.pg18-ha`; the existing
-`read.batch3-pg-partition.2026-10-21` remains the partitioning binding. Public documentation,
-not a benchmark, cluster run or migration test.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Partitioning; Consistent Hashing; Online Data Migration; Read
-Replicas.
+See the [dedicated Sharding card](sharding.md).
 
 ### Partitioning
 

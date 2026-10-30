@@ -6855,20 +6855,80 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Hotspots, map drift, split brain and a failed migration are common; detect skew, throttle the hot key and dual-read/verify during movement.",
-          "reason": "Citus Concepts has no hotspot, map drift or failed-migration recovery procedure."
+          "state": "supported",
+          "quote": "Map drift, split brain, application-level hot-key throttling and dual-read/verify are Tycho failure modes: the selected pages document metadata replication/restore and write fencing, not drift detection, split-brain resolution, a per-key throttle or a read-verification step.",
+          "reason": "MongoDB states that a monotonically increasing key concentrates writes on a hot shard and hot chunk, that the balancer applies data-size migration thresholds and briefly pauses application reads and writes while the range location is committed, and that resharding requires a two-second application-tolerated write block with bounded retryable writes; Citus states that a shard is write-locked only briefly while metadata promotes the subscriber and that coordinator metadata can be replicated and restored. The map-drift, split-brain, per-key-throttle and dual-read/verify names are Tycho synthesis; no selected page states a drift detector, split-brain protocol, per-key throttle or read-verification procedure.",
+          "binding": {
+            "source_id": "src.mongo-sharding",
+            "ledger_record": "read.mongo-balancer.2026-10-30",
+            "section": "Range Migration and Replication",
+            "quote": "MongoDB briefly pauses all application reads and writes to the collection being migrated to on the source shard before updating the config servers with the range location.",
+            "revision": "94054402b2335b4dd8330d82b692d9d15fbd40852b3832b443d5b5384bfabb59"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.mongo-sharding",
+              "ledger_record": "read.mongo-troubleshoot-key.2026-10-30",
+              "section": "Uneven Load Distribution",
+              "quote": "New documents are generally written to the same shard and chunk. The shard and chunk that receive the writes are called hot shard and hot chunk. The hot shard changes over time. When chunks are split, the hot chunk moves to a different shard to optimize data distribution.",
+              "revision": "b88b641ccfc4b86a622fb9110be6ed724867466120872d70d27358f77fa9e12b"
+            },
+            {
+              "source_id": "src.mongo-sharding",
+              "ledger_record": "read.mongo-choose-key.2026-10-30",
+              "section": "Monotonically Changing Shard Keys",
+              "quote": "A shard key on a value that increases or decreases monotonically is more likely to distribute inserts to a single chunk within the cluster.",
+              "revision": "028080d0468f7760db4f907ec18092f6e4e66a0a7b28e6b0b380e29d0a391bae"
+            },
+            {
+              "source_id": "src.mongo-sharding",
+              "ledger_record": "read.mongo-reshard.2026-10-30",
+              "section": "Before you Begin",
+              "quote": "Your application can tolerate a period of two seconds where the affected collection blocks writes. During the time period where writes are blocked, your application experiences an increase in latency.",
+              "revision": "23518406020a852d3c31729059ef204fb0924777948babd90bd39c4e8fea3795"
+            },
+            {
+              "source_id": "src.citus",
+              "ledger_record": "read.citus-cluster.2026-10-30",
+              "section": "How it Works",
+              "quote": "Citus puts a brief write-lock on a shard only during the time it takes to update metadata to promote the subscriber shard as active.",
+              "revision": "1bf0aeeced99fa77d25aae053c6f5997beca2b1bed4e0ede2f02ce3a85415640"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Partitioning inside one database, read replicas or vertical scaling may be preferable when distribution would add cross-shard coordination without relieving the measured constraint.",
-          "reason": "Citus Concepts does not compare intra-database partitioning, replicas or vertical scaling."
+          "state": "supported",
+          "quote": "These alternatives are preferable when distribution adds cross-shard coordination without relieving the measured constraint; that decision rule is Tycho guidance, not a source claim.",
+          "reason": "PostgreSQL describes partitioning as splitting a logical table into smaller physical pieces and documents hot-standby servers that serve read-only queries while asynchronous replicas can return slightly stale results; MongoDB contrasts vertical scaling with horizontal scaling and its infrastructure complexity; Citus recommends PostgreSQL table partitioning for time-ordered data and warns that joins cross the network boundary. The retained PostgreSQL 18 Table Partitioning record read.batch3-pg-partition.2026-10-21 (revision 6f4540b0...) also supports the partitioning comparison. The selection rule is Tycho guidance; no selected page states it.",
+          "binding": {
+            "source_id": "src.citus",
+            "ledger_record": "read.citus-datamodel.2026-10-30",
+            "section": "Table Co-Location",
+            "quote": "The solution to rapidly scaling databases is to distribute them, but this creates a performance problem of its own: relational operations such as joins then need to cross the network boundary.",
+            "revision": "5081a6810d6f9e3b0ed5370af4b648aaee513657d065129593f6c531c0d654aa"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.mongo-sharding",
+              "ledger_record": "read.mongo-sharding.2026-10-30",
+              "section": "Advantages of Sharding",
+              "quote": "Vertical Scaling increases the capacity of a single server by using a more powerful CPU, adding more RAM, or expanding storage. Available technology and cloud provider hardware configurations impose a practical maximum for vertical scaling.",
+              "revision": "09c9f5c2f2d4f3d80052cbc49a35dc941b4725b53c5768ab3303fb1315e07719"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg18-ha.2026-10-30",
+              "section": "Chapter 26. High Availability, Load Balancing, and Replication",
+              "quote": "A standby server that cannot be connected to until it is promoted to a primary server is called a warm standby server, and one that can accept connections and serves read-only queries is called a hot standby server.",
+              "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "sharding",
         "question": "Should data be split across shards by a partition key to scale beyond one node?",
-        "competing_alternative": "Partitioning within one database or vertical scaling. Reverse the choice when operational shard complexity exceeds scale benefit.",
+        "competing_alternative": "Partitioning within one database, read replicas (hot standby) or vertical scaling. PostgreSQL documents partitioning and hot-standby read-only replicas; MongoDB contrasts vertical scaling with horizontal scaling and its infrastructure complexity; Citus warns that joins cross the network boundary. Reverse the choice when distribution adds cross-shard coordination without relieving the measured constraint; that reversal rule is Tycho synthesis.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -6877,12 +6937,54 @@
         "source_id": "src.citus",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.mongo-sharding",
+            "ledger_record": "read.mongo-sharding.2026-10-30",
+            "revision": "09c9f5c2f2d4f3d80052cbc49a35dc941b4725b53c5768ab3303fb1315e07719"
+          },
+          {
+            "source_id": "src.mongo-sharding",
+            "ledger_record": "read.mongo-choose-key.2026-10-30",
+            "revision": "028080d0468f7760db4f907ec18092f6e4e66a0a7b28e6b0b380e29d0a391bae"
+          },
+          {
+            "source_id": "src.mongo-sharding",
+            "ledger_record": "read.mongo-troubleshoot-key.2026-10-30",
+            "revision": "b88b641ccfc4b86a622fb9110be6ed724867466120872d70d27358f77fa9e12b"
+          },
+          {
+            "source_id": "src.mongo-sharding",
+            "ledger_record": "read.mongo-balancer.2026-10-30",
+            "revision": "94054402b2335b4dd8330d82b692d9d15fbd40852b3832b443d5b5384bfabb59"
+          },
+          {
+            "source_id": "src.mongo-sharding",
+            "ledger_record": "read.mongo-reshard.2026-10-30",
+            "revision": "23518406020a852d3c31729059ef204fb0924777948babd90bd39c4e8fea3795"
+          },
+          {
+            "source_id": "src.citus",
+            "ledger_record": "read.citus-cluster.2026-10-30",
+            "revision": "1bf0aeeced99fa77d25aae053c6f5997beca2b1bed4e0ede2f02ce3a85415640"
+          },
+          {
+            "source_id": "src.citus",
+            "ledger_record": "read.citus-datamodel.2026-10-30",
+            "revision": "5081a6810d6f9e3b0ed5370af4b648aaee513657d065129593f6c531c0d654aa"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg18-ha.2026-10-30",
+            "revision": "d698df8b9a70f099937b74505a17be21a69f53c133668a6fca28563149d56f9d"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Failure/recovery and alternative bound 2026-10-30 to MongoDB 9.0, Citus 13.0.1 and PostgreSQL 18.6; map drift, split brain, per-key throttle, dual-read/verify and the selection rule remain Tycho guidance. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.partitioning",
@@ -12882,8 +12984,8 @@
     "embedded_units": 0,
     "mechanism_supported": 111,
     "invariant_supported": 73,
-    "failure_recovery_supported": 64,
-    "alternative_supported": 70,
+    "failure_recovery_supported": 65,
+    "alternative_supported": 71,
     "technical_partial_bounded": 19,
     "technical_partial": 75,
     "technical_name_only": 0,
