@@ -424,17 +424,23 @@ priority core.
 **Decision question.** Should content be cached at the edge close to clients rather than
 only at the origin?
 
-**Good-fit conditions.** Content is cacheable and versioned; private data is excluded;
-origin protection and purge are owned; edge failure is handled.
+**Good-fit conditions.** Content is shareable and versioned; every request value
+that changes the response is in the cache key; authorization is enforced outside
+the reusable representation or bound to that key; origin protection and purge
+are owned; edge failure is handled.
 
-**Hard contraindications.** Reject when content is highly personalized or uncacheable,
-when purge cannot meet the freshness contract, or when edge configuration is unowned.
+**Hard contraindications.** Reject when every response is user-specific, when
+origin authorization depends on a header absent from the key, when purge cannot
+meet the freshness or revocation contract, or when edge configuration is
+unowned.
 
-**Competing alternative.** Origin cache or direct origin. Reverse the choice when
-cacheability and purge cost outweigh latency benefit.
+**Competing alternative.** A private cache, origin cache or direct origin.
+Reverse the choice when responses are user-specific or the purge contract
+cannot be enforced.
 
-**Failure and recovery.** Stale private content and purge failures are common; verify
-cacheability in the owner section.
+**Failure and recovery.** Stale private content, purge lag and downstream
+copies are common; test the authorization matrix, stale-on-error path and purge
+path in the owner section.
 
 **Technical owner.** [CDN / Edge Caching](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md#cdn-edge-caching) — edge caching is bounded, not a CDN product manual.
 
@@ -442,7 +448,11 @@ cacheability in the owner section.
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch3-ms-static.2026-10-21: all nine served headings read.
 The source is a public pattern/documentation
-unit, not a benchmark.
+unit, not a benchmark. Additional bindings read 2026-10-30: RFC 9111
+(`src.rfc9111-enrichment`) sections 3.5, 4, 4.1, 4.4 and 5.2.2; Azure CDN
+caching and purge pages; CloudFront cache-key, Authorization, expiration and
+invalidation pages. The owner section carries record hashes; their metadata is
+proposed in the B36 lane note, not yet registered.
 
 **Decision state.** applicable-under-conditions.
 

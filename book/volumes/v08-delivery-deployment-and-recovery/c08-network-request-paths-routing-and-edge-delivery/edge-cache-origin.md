@@ -55,7 +55,7 @@
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-30",
   "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
@@ -130,19 +130,95 @@ Parent: [network chapter](README.md). Previous: [trust boundaries](tls-gateway-b
 
 ### CDN-Edge Caching
 
-An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a
-content and authority contract, not a network location.
+An edge can reduce distance and origin work, but only for responses it may
+reuse. Azure CDN describes a content delivery network as a shared cache:
+"Dynamic resources that change frequently or are unique to an individual user
+can't be cached." CloudFront defines the cache key as "the unique identifier
+for an object in the cache" and includes only the distribution domain and URL
+path by default. Cacheability is a content and authority contract, not a
+network location.
 
-The cache key, freshness policy and authorization boundary must agree. An authorization header is
-not a complete design for private edge caching; explicit cache directives can alter reuse rules. A
-misclassified response can serve one user's private data to another, and a purge can lag the origin.
-Test the authorization matrix, the purge path and the stale-on-error behavior.
+**Invariant.** The cache key, freshness policy and authorization boundary must
+agree. RFC 9111 section 4 says a cache "MUST NOT reuse a stored response
+unless" the target URI and request method match, request header fields
+nominated by Vary match, the response is not `no-cache` without validation,
+and the response is fresh, allowed stale, or successfully validated. Section
+4.1 makes the Vary fields part of the key test. Section 3.5 says a shared cache
+"MUST NOT use a cached response to a request with an Authorization header
+field" unless a response directive permits shared storage. Azure CDN states
+that "Requests that include authorization header will not be cached."
+CloudFront warns that when the Authorization header is not part of the cache
+key, CloudFront "can serve the same cached response to both authorized and
+unauthorized viewers." CloudFront also warns that a minimum TTL greater than
+zero overrides `no-cache`, `no-store` and `private` origin directives. These
+are product-specific rules, not interchangeable defaults. Tycho guidance:
+treat key, freshness and authorization as one testable contract; do not relax
+one dimension because another appears to compensate.
 
-The cited Microsoft static-hosting unit is narrower than this CDN guidance; RFC 9111 supports
-shared-cache restrictions and validation, not product-specific CDN behavior. A direct origin or a
-private cache may be preferable when every response is user-specific or the purge contract cannot
-be enforced. Edge caching is a fit when the response is shareable and the key, freshness and
-authorization boundary are explicit.
+**Failure and recovery.** A misclassified response can serve one user's
+private data to another, and a purge can lag the origin. The visible failure
+is not only a stale object: the same key can return a representation the
+caller was never authorized to receive. Azure CDN says "Azure CDN makes no
+guarantees about minimum amount of time that the object will be stored in the
+cache" and that cached content can be evicted before expiry. CloudFront can
+serve a previously cached object when the origin is unreachable if the
+minimum or maximum TTL is greater than zero. Test the authorization matrix,
+the stale-on-error path and the purge path together. Tycho guidance: a purge
+request without completion evidence is not a proven revocation bound.
+
+**Alternative.** A direct origin or a private cache may be preferable when
+every response is user-specific or the purge contract cannot be enforced.
+RFC 9111 section 5.2.2.7 says the unqualified `private` directive tells a
+shared cache "MUST NOT store the response" while "a private cache MAY store
+the response"; section 5.2.2.5 makes `no-store` stricter. CloudFront's stated
+choice is to "include the Authorization header in the cache key using a cache
+policy" or "disable caching entirely for origins that require origin-side
+authorization processing." Azure CDN's "Bypass cache" setting does not cache.
+The purge contract is bounded on both products: Azure says downstream caches
+"might still hold a cached copy," and CloudFront says a user "might continue
+to see the old version" after invalidation. Tycho guidance: "direct origin"
+names the uncached route; require completion evidence for the key and
+authorization scopes that matter.
+
+**Limits and source boundary.** The selected pages document product
+configuration and HTTP requirements, not this book's deployment. No CDN was
+configured, no purge was run and no authorization matrix was tested. The Azure
+pages describe the retiring classic Standard-from-Microsoft service and an
+archived caching-rules page; the HTTP and product statements are bounded to
+those revisions, not to every Azure edge product.
+
+- RFC 9111, "HTTP caching", `read.rfc9111-edge-cache.2026-10-30`, served text
+  `aeb52adb3279d5f23dae34f68af11bd5cef0a0aff7ffcd014c9ca93c5302cf3e`:
+  sections 3.5, 4, 4.1, 4.4, 5.2.2.5 and 5.2.2.7.
+- Microsoft, "How caching works", `read.azure-cdn-how-caching.2026-10-30`,
+  HTML `5ae280f568de52e593c290d013c61918320815b916ef7bf0c31e468fcbda956a`,
+  ms.date 2026-02-28, commit `fe2e4465ddb694284d4bdefca0f41e9499090877`:
+  shared-cache, authorization, eviction and freshness statements.
+- Microsoft, "Control caching behavior with caching rules",
+  `read.azure-cdn-caching-rules.2026-10-30`, archived HTML
+  `5e686846ea09abdd926114d382bebb405ad9ece75b606eec5780c81916f9a361`,
+  ms.date 2025-03-31, commit `1a312008ffbf4cc43ee13967c16007eda6a11ae9`:
+  bypass, zero-duration validation and rule-change purge statements.
+- Microsoft, "Purge an Azure CDN endpoint", `read.azure-cdn-purge.2026-10-30`,
+  HTML `a2cf2b83b454fa0ce7c1cf8dbbfe6640152bbc630132026ecad3b7c66971f378`,
+  ms.date 2026-02-28, commit `fe2e4465ddb694284d4bdefca0f41e9499090877`:
+  downstream-cache and query-string purge statements.
+- Amazon, "Understand the cache key", `read.cloudfront-cache-key.2026-10-30`,
+  Markdown `47c2adb2350549b0f192e0fb3aef953928cb3a8ed43e86c38a74ba695fe80790`:
+  key definition, include-when-response-varies and user-specific-cookie
+  statements.
+- Amazon, "Add custom headers to origin requests",
+  `read.cloudfront-auth-header.2026-10-30`, Markdown
+  `06076dc410b73bd1bf63c46c01900c8b767b1201c29073c8e440b4b002c3d891`:
+  Authorization-header removal, key-mismatch and disable-caching statements.
+- Amazon, "Manage how long content stays in the cache (expiration)",
+  `read.cloudfront-expiration.2026-10-30`, Markdown
+  `cfb1bbad63f66dcf936c4d269ecaa3e2e24871d684e8555eb46ee94ea1eb2a1a`:
+  minimum-TTL override and stale-on-origin-error statements.
+- Amazon, "Invalidate files to remove content",
+  `read.cloudfront-invalidation.2026-10-30`, Markdown
+  `62930f87a51b954f89cbe31272057abf219b7224a3d7c058386443ad280b4940`:
+  downstream-cache and versioned-file statements.
 
 ### Static Content Hosting
 
