@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "status": "ai-adjudicated-not-human",
+  "snapshot": "e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa",
+  "content_commit": "448a65574c3cd9f86d8ddf02963308f431c11756",
+  "reviewer": "OpenAI Codex / model exposed by harness",
+  "query_count": 30,
+  "items": [
+    {
+      "id": "V12A-001",
+      "target_type": "model",
+      "question": "Which model specification represents individual checkout requests, including their queue, attempt deadlines, and retries?",
+      "grades": {
+        "tycho.model.checkout-des": 2,
+        "tycho.scenario.checkout-b-queue": 1,
+        "tycho.model.order-intake": 0,
+        "tycho.model.modernization-path": 0,
+        "tycho.scenario.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.model.checkout-des",
+        "tycho.scenario.checkout-b-queue"
+      ],
+      "direct": [
+        "tycho.model.checkout-des"
+      ]
+    },
+    {
+      "id": "V12A-002",
+      "target_type": "model",
+      "question": "Which model contract treats order backlog as an accumulated stock and advances it in fixed time steps?",
+      "grades": {
+        "tycho.model.order-intake": 2,
+        "tycho.scenario.order-intake-saturation": 1,
+        "tycho.model.checkout-des": 0,
+        "tycho.model.modernization-path": 0,
+        "tycho.scenario.checkout-b-queue": 0
+      },
+      "accepted": [
+        "tycho.model.order-intake",
+        "tycho.scenario.order-intake-saturation"
+      ],
+      "direct": [
+        "tycho.model.order-intake"
+      ]
+    },
+    {
+      "id": "V12A-003",
+      "target_type": "model",
+      "question": "Which model defines traffic-share changes, a dual-write backlog, and a rollback drain?",
+      "grades": {
+        "tycho.model.modernization-path": 2,
+        "tycho.scenario.modernization-staged": 1,
+        "tycho.model.checkout-des": 0,
+        "tycho.model.order-intake": 0,
+        "tycho.scenario.checkout-b-queue": 0
+      },
+      "accepted": [
+        "tycho.model.modernization-path",
+        "tycho.scenario.modernization-staged"
+      ],
+      "direct": [
+        "tycho.model.modernization-path"
+      ]
+    },
+    {
+      "id": "V12A-004",
+      "target_type": "model",
+      "question": "Which model records that priority classes and preemptive service are outside its simulated checkout boundary?",
+      "grades": {
+        "tycho.model.checkout-des": 2,
+        "tycho.scenario.checkout-b-queue": 1,
+        "tycho.model.modernization-path": 0,
+        "tycho.model.order-intake": 0,
+        "tycho.scenario.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.model.checkout-des",
+        "tycho.scenario.checkout-b-queue"
+      ],
+      "direct": [
+        "tycho.model.checkout-des"
+      ]
+    },
+    {
+      "id": "V12A-005",
+      "target_type": "model",
+      "question": "Which model specifies that offered intake equals completed, rejected, and remaining backlog at every step?",
+      "grades": {
+        "tycho.model.order-intake": 2,
+        "tycho.scenario.order-intake-saturation": 1,
+        "tycho.model.checkout-des": 0,
+        "tycho.model.modernization-path": 0,
+        "tycho.scenario.checkout-overload": 0
+      },
+      "accepted": [
+        "tycho.model.order-intake",
+        "tycho.scenario.order-intake-saturation"
+      ],
+      "direct": [
+        "tycho.model.order-intake"
+      ]
+    },
+    {
+      "id": "V12A-006",
+      "target_type": "model",
+      "question": "Which model carries a state variable for divergence between legacy and target paths?",
+      "grades": {
+        "tycho.model.modernization-path": 2,
+        "tycho.scenario.modernization-staged": 1,
+        "tycho.model.checkout-des": 0,
+        "tycho.model.order-intake": 0,
+        "tycho.scenario.checkout-b-queue": 0
+      },
+      "accepted": [
+        "tycho.model.modernization-path",
+        "tycho.scenario.modernization-staged"
+      ],
+      "direct": [
+        "tycho.model.modernization-path"
+      ]
+    },
+    {
+      "id": "V12A-007",
+      "target_type": "model",
+      "question": "Which checkout model fixes an event order using time, priority, and insertion sequence?",
+      "grades": {
+        "tycho.model.checkout-des": 2,
+        "tycho.scenario.checkout-overload": 1,
+        "tycho.model.order-intake": 0,
+        "tycho.model.modernization-path": 0,
+        "tycho.scenario.order-intake-saturation": 0
+      },
+      "accepted": [
+        "tycho.model.checkout-des",
+        "tycho.scenario.checkout-overload"
+      ],
+      "direct": [
+        "tycho.model.checkout-des"
+      ]
+    },
+    {
+      "id": "V12A-008",
+      "target_type": "scenario",
+      "question": "Which input specification uses a 200-request queue and three attempts with full-jitter exponential backoff?",
+      "grades": {
+        "tycho.scenario.checkout-b-queue": 2,
+        "tycho.run.checkout-b": 1,
+        "tycho.scenario.checkout-a-synchronous": 0,
+        "tycho.scenario.checkout-c-partitioned": 0,
+        "tycho.scenario.checkout-overload": 0
+      },
+      "accepted": [
+        "tycho.scenario.checkout-b-queue",
+        "tycho.run.checkout-b"
+      ],
+      "direct": [
+        "tycho.scenario.checkout-b-queue"
+      ]
+    },
+    {
+      "id": "V12A-009",
+      "target_type": "scenario",
+      "question": "Which checkout input configuration adds servers but assumes slower service and a higher server-hour cost?",
+      "grades": {
+        "tycho.scenario.checkout-c-partitioned": 2,
+        "tycho.run.checkout-c": 1,
+        "tycho.scenario.checkout-a-synchronous": 0,
+        "tycho.scenario.checkout-b-queue": 0,
+        "tycho.scenario.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.scenario.checkout-c-partitioned",
+        "tycho.run.checkout-c"
+      ],
+      "direct": [
+        "tycho.scenario.checkout-c-partitioned"
+      ]
+    },
+    {
+      "id": "V12A-010",
+      "target_type": "scenario",
+      "question": "Which checkout stress input offers 30 requests per second to a 12-server pool with a 40-request queue?",
+      "grades": {
+        "tycho.scenario.checkout-overload": 2,
+        "tycho.run.checkout-overload": 1,
+        "tycho.scenario.checkout-a-synchronous": 0,
+        "tycho.scenario.checkout-b-queue": 0,
+        "tycho.scenario.order-intake-saturation": 0
+      },
+      "accepted": [
+        "tycho.scenario.checkout-overload",
+        "tycho.run.checkout-overload"
+      ],
+      "direct": [
+        "tycho.scenario.checkout-overload"
+      ]
+    },
+    {
+      "id": "V12A-011",
+      "target_type": "scenario",
+      "question": "Which input record deliberately limits the checkout convergence stress case to two replications?",
+      "grades": {
+        "tycho.scenario.checkout-convergence-stress": 2,
+        "tycho.run.checkout-convergence-stress": 1,
+        "tycho.scenario.checkout-sensitivity": 0,
+        "tycho.scenario.checkout-overload": 0,
+        "tycho.scenario.checkout-a-synchronous": 0
+      },
+      "accepted": [
+        "tycho.scenario.checkout-convergence-stress",
+        "tycho.run.checkout-convergence-stress"
+      ],
+      "direct": [
+        "tycho.scenario.checkout-convergence-stress"
+      ]
+    },
+    {
+      "id": "V12A-012",
+      "target_type": "scenario",
+      "question": "Which checkout input definition draws arrival rate and service mean for an independent-input sensitivity screen?",
+      "grades": {
+        "tycho.scenario.checkout-sensitivity": 2,
+        "tycho.run.checkout-sensitivity": 1,
+        "tycho.scenario.checkout-convergence-stress": 0,
+        "tycho.scenario.checkout-b-queue": 0,
+        "tycho.scenario.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.scenario.checkout-sensitivity",
+        "tycho.run.checkout-sensitivity"
+      ],
+      "direct": [
+        "tycho.scenario.checkout-sensitivity"
+      ]
+    },
+    {
+      "id": "V12A-013",
+      "target_type": "scenario",
+      "question": "Which migration input specifies three target-traffic stages and a rollback trigger at 1,200 seconds?",
+      "grades": {
+        "tycho.scenario.modernization-staged": 2,
+        "tycho.run.modernization-staged": 1,
+        "tycho.scenario.modernization-no-cutover": 0,
+        "tycho.scenario.checkout-c-partitioned": 0,
+        "tycho.scenario.order-intake-saturation": 0
+      },
+      "accepted": [
+        "tycho.scenario.modernization-staged",
+        "tycho.run.modernization-staged"
+      ],
+      "direct": [
+        "tycho.scenario.modernization-staged"
+      ]
+    },
+    {
+      "id": "V12A-014",
+      "target_type": "scenario",
+      "question": "Which migration input holds target traffic at zero and schedules no in-horizon rollback?",
+      "grades": {
+        "tycho.scenario.modernization-no-cutover": 2,
+        "tycho.run.modernization-no-cutover": 1,
+        "tycho.scenario.modernization-staged": 0,
+        "tycho.scenario.checkout-a-synchronous": 0,
+        "tycho.scenario.order-intake-baseline": 0
+      },
+      "accepted": [
+        "tycho.scenario.modernization-no-cutover",
+        "tycho.run.modernization-no-cutover"
+      ],
+      "direct": [
+        "tycho.scenario.modernization-no-cutover"
+      ]
+    },
+    {
+      "id": "V12A-015",
+      "target_type": "scenario",
+      "question": "Which stock-flow input offers a deterministic 30 requests per second to expose saturation?",
+      "grades": {
+        "tycho.scenario.order-intake-saturation": 2,
+        "tycho.run.order-intake-saturation": 1,
+        "tycho.scenario.order-intake-baseline": 0,
+        "tycho.scenario.checkout-overload": 0,
+        "tycho.scenario.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.scenario.order-intake-saturation",
+        "tycho.run.order-intake-saturation"
+      ],
+      "direct": [
+        "tycho.scenario.order-intake-saturation"
+      ]
+    },
+    {
+      "id": "V12A-016",
+      "target_type": "run",
+      "question": "Which stored checkout result contains the insufficient-sample convergence outcome from two replications?",
+      "grades": {
+        "tycho.run.checkout-convergence-stress": 2,
+        "tycho.scenario.checkout-convergence-stress": 1,
+        "tycho.run.checkout-sensitivity": 0,
+        "tycho.run.checkout-overload": 0,
+        "tycho.run.checkout-a": 0
+      },
+      "accepted": [
+        "tycho.run.checkout-convergence-stress",
+        "tycho.scenario.checkout-convergence-stress"
+      ],
+      "direct": [
+        "tycho.run.checkout-convergence-stress"
+      ]
+    },
+    {
+      "id": "V12A-017",
+      "target_type": "run",
+      "question": "Which checkout result reports a quadratic response-surface sensitivity screen for arrival and service inputs?",
+      "grades": {
+        "tycho.run.checkout-sensitivity": 2,
+        "tycho.scenario.checkout-sensitivity": 1,
+        "tycho.run.checkout-convergence-stress": 0,
+        "tycho.run.checkout-b": 0,
+        "tycho.run.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.run.checkout-sensitivity",
+        "tycho.scenario.checkout-sensitivity"
+      ],
+      "direct": [
+        "tycho.run.checkout-sensitivity"
+      ]
+    },
+    {
+      "id": "V12A-018",
+      "target_type": "run",
+      "question": "Which recorded overload experiment shows timeout losses far greater than explicit rejections?",
+      "grades": {
+        "tycho.run.checkout-overload": 2,
+        "tycho.scenario.checkout-overload": 1,
+        "tycho.run.checkout-a": 0,
+        "tycho.run.checkout-b": 0,
+        "tycho.run.order-intake-saturation": 0
+      },
+      "accepted": [
+        "tycho.run.checkout-overload",
+        "tycho.scenario.checkout-overload"
+      ],
+      "direct": [
+        "tycho.run.checkout-overload"
+      ]
+    },
+    {
+      "id": "V12A-019",
+      "target_type": "run",
+      "question": "Which stored result corresponds to the bounded-queue checkout candidate with three retry attempts?",
+      "grades": {
+        "tycho.run.checkout-b": 2,
+        "tycho.scenario.checkout-b-queue": 1,
+        "tycho.run.checkout-a": 0,
+        "tycho.run.checkout-c": 0,
+        "tycho.run.checkout-sensitivity": 0
+      },
+      "accepted": [
+        "tycho.run.checkout-b",
+        "tycho.scenario.checkout-b-queue"
+      ],
+      "direct": [
+        "tycho.run.checkout-b"
+      ]
+    },
+    {
+      "id": "V12A-020",
+      "target_type": "run",
+      "question": "Which recorded checkout result corresponds to the partitioned 18-server candidate?",
+      "grades": {
+        "tycho.run.checkout-c": 2,
+        "tycho.scenario.checkout-c-partitioned": 1,
+        "tycho.run.checkout-a": 0,
+        "tycho.run.checkout-b": 0,
+        "tycho.run.order-intake-saturation": 0
+      },
+      "accepted": [
+        "tycho.run.checkout-c",
+        "tycho.scenario.checkout-c-partitioned"
+      ],
+      "direct": [
+        "tycho.run.checkout-c"
+      ]
+    },
+    {
+      "id": "V12A-021",
+      "target_type": "run",
+      "question": "Which run reports staged-migration divergence and rollback completion with censored non-completions?",
+      "grades": {
+        "tycho.run.modernization-staged": 2,
+        "tycho.scenario.modernization-staged": 1,
+        "tycho.run.modernization-no-cutover": 0,
+        "tycho.run.checkout-overload": 0,
+        "tycho.run.checkout-sensitivity": 0
+      },
+      "accepted": [
+        "tycho.run.modernization-staged",
+        "tycho.scenario.modernization-staged"
+      ],
+      "direct": [
+        "tycho.run.modernization-staged"
+      ]
+    },
+    {
+      "id": "V12A-022",
+      "target_type": "run",
+      "question": "Which stock-flow run records the below-capacity intake baseline with 20 requests per second offered?",
+      "grades": {
+        "tycho.run.order-intake-baseline": 2,
+        "tycho.scenario.order-intake-baseline": 1,
+        "tycho.run.order-intake-saturation": 0,
+        "tycho.run.checkout-overload": 0,
+        "tycho.run.modernization-no-cutover": 0
+      },
+      "accepted": [
+        "tycho.run.order-intake-baseline",
+        "tycho.scenario.order-intake-baseline"
+      ],
+      "direct": [
+        "tycho.run.order-intake-baseline"
+      ]
+    },
+    {
+      "id": "V12A-023",
+      "target_type": "run",
+      "question": "Which stock-flow result records about 20% rejection in the saturated intake case?",
+      "grades": {
+        "tycho.run.order-intake-saturation": 2,
+        "tycho.scenario.order-intake-saturation": 1,
+        "tycho.run.order-intake-baseline": 0,
+        "tycho.run.checkout-overload": 0,
+        "tycho.run.modernization-no-cutover": 0
+      },
+      "accepted": [
+        "tycho.run.order-intake-saturation",
+        "tycho.scenario.order-intake-saturation"
+      ],
+      "direct": [
+        "tycho.run.order-intake-saturation"
+      ]
+    },
+    {
+      "id": "V12A-024",
+      "target_type": "decision",
+      "question": "Which decision record compares the three checkout candidates against explicit cost and p95 latency limits?",
+      "grades": {
+        "tycho.decision.v12-checkout-candidate": 2,
+        "tycho.run.checkout-a": 1,
+        "tycho.run.checkout-b": 1,
+        "tycho.run.checkout-c": 1,
+        "tycho.decision.v12-modernization-cutover": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-checkout-candidate",
+        "tycho.run.checkout-a",
+        "tycho.run.checkout-b",
+        "tycho.run.checkout-c"
+      ],
+      "direct": [
+        "tycho.decision.v12-checkout-candidate"
+      ]
+    },
+    {
+      "id": "V12A-025",
+      "target_type": "decision",
+      "question": "Where is the non-quantitative requirement that the existing team can operate the checkout option recorded?",
+      "grades": {
+        "tycho.decision.v12-checkout-candidate": 2,
+        "tycho.scenario.checkout-b-queue": 1,
+        "tycho.run.checkout-b": 1,
+        "tycho.decision.v12-modernization-cutover": 0,
+        "tycho.model.modernization-path": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-checkout-candidate",
+        "tycho.scenario.checkout-b-queue",
+        "tycho.run.checkout-b"
+      ],
+      "direct": [
+        "tycho.decision.v12-checkout-candidate"
+      ]
+    },
+    {
+      "id": "V12A-026",
+      "target_type": "decision",
+      "question": "Which decision artifact lists a measured checkout arrival rate above 22 requests per second as a reason to revisit the choice?",
+      "grades": {
+        "tycho.decision.v12-checkout-candidate": 2,
+        "tycho.model.checkout-des": 1,
+        "tycho.run.checkout-b": 1,
+        "tycho.decision.v12-modernization-cutover": 0,
+        "tycho.run.modernization-staged": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-checkout-candidate",
+        "tycho.model.checkout-des",
+        "tycho.run.checkout-b"
+      ],
+      "direct": [
+        "tycho.decision.v12-checkout-candidate"
+      ]
+    },
+    {
+      "id": "V12A-027",
+      "target_type": "decision",
+      "question": "Which decision links the short-deadline, bounded-queue, and partitioned checkout alternatives to their runs?",
+      "grades": {
+        "tycho.decision.v12-checkout-candidate": 2,
+        "tycho.scenario.checkout-a-synchronous": 1,
+        "tycho.scenario.checkout-b-queue": 1,
+        "tycho.scenario.checkout-c-partitioned": 1,
+        "tycho.decision.v12-modernization-cutover": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-checkout-candidate",
+        "tycho.scenario.checkout-a-synchronous",
+        "tycho.scenario.checkout-b-queue",
+        "tycho.scenario.checkout-c-partitioned"
+      ],
+      "direct": [
+        "tycho.decision.v12-checkout-candidate"
+      ]
+    },
+    {
+      "id": "V12A-028",
+      "target_type": "decision",
+      "question": "Which decision record requires measured dual-write lag and reconciliation capacity before a cutover?",
+      "grades": {
+        "tycho.decision.v12-modernization-cutover": 2,
+        "tycho.scenario.modernization-staged": 1,
+        "tycho.model.modernization-path": 1,
+        "tycho.decision.v12-checkout-candidate": 0,
+        "tycho.run.checkout-b": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-modernization-cutover",
+        "tycho.scenario.modernization-staged",
+        "tycho.model.modernization-path"
+      ],
+      "direct": [
+        "tycho.decision.v12-modernization-cutover"
+      ]
+    },
+    {
+      "id": "V12A-029",
+      "target_type": "decision",
+      "question": "Where is responsibility for business continuity and a reconciliation runbook recorded as an external migration constraint?",
+      "grades": {
+        "tycho.decision.v12-modernization-cutover": 2,
+        "tycho.model.modernization-path": 1,
+        "tycho.scenario.modernization-staged": 1,
+        "tycho.decision.v12-checkout-candidate": 0,
+        "tycho.run.checkout-a": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-modernization-cutover",
+        "tycho.model.modernization-path",
+        "tycho.scenario.modernization-staged"
+      ],
+      "direct": [
+        "tycho.decision.v12-modernization-cutover"
+      ]
+    },
+    {
+      "id": "V12A-030",
+      "target_type": "decision",
+      "question": "Which record identifies a rehearsed rollback within the observation window as evidence needed for a staged migration?",
+      "grades": {
+        "tycho.decision.v12-modernization-cutover": 2,
+        "tycho.run.modernization-staged": 1,
+        "tycho.scenario.modernization-staged": 1,
+        "tycho.decision.v12-checkout-candidate": 0,
+        "tycho.scenario.order-intake-saturation": 0
+      },
+      "accepted": [
+        "tycho.decision.v12-modernization-cutover",
+        "tycho.run.modernization-staged",
+        "tycho.scenario.modernization-staged"
+      ],
+      "direct": [
+        "tycho.decision.v12-modernization-cutover"
+      ]
+    }
+  ],
+  "limits": "AI-adjudicated only; not human review, CI, owner acceptance or sufficient coverage."
+}

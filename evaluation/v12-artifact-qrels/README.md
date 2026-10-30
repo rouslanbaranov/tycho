@@ -1,9 +1,10 @@
 # V12 artifact qrels
 
-Status: **handoff only**. No artifact-level qrels exist.
+Status: **complete**, AI-adjudicated only. External Codex labels exist:
+[v12-artifact-qrels.v1.json](../v12-artifact-qrels.v1.json).
 
 - Handoff:
-  [V12-ARTIFACT-QRELS-HANDOFF-2026-10-30.md](../../authoring/V12-ARTIFACT-QRELS-HANDOFF-2026-10-30.md)
+  `../../authoring/V12-ARTIFACT-QRELS-HANDOFF-2026-10-30.md`
 - Codex prompt: [CODEX-PROMPT.md](CODEX-PROMPT.md)
 - Validator: `scripts/validate_v12_artifact_qrels.py`
 

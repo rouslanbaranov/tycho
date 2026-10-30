@@ -66,8 +66,8 @@ Layer-scoped:
 
 ## Open blockers
 
-- Artifact-level qrels labels do not exist; only a handoff, validator and
-  self-retrieval diagnostic.
+- Artifact qrels now exist (30 queries, 5 candidates, external Codex); it is
+  small and scenario/run top-1 is weak.
 - No production-client benchmark.
 - No MCP process pool; only an in-process semaphore.
 - No human review, independent review, CI, owner acceptance or sufficient
@@ -82,5 +82,5 @@ See [SEARCH-OPERATIONS-2026-10-30.md](SEARCH-OPERATIONS-2026-10-30.md).
 ## Verdict
 
 Search default and runtime are release-candidate ready for further external
-evaluation, but the objective is not complete while artifact labels and external
-validation are missing.
+evaluation. Artifact qrels exist, but production-client/external validation and
+sufficient coverage are still missing.

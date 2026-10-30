@@ -48,8 +48,8 @@ Layer-scoped:
 - V12 section top-1 is 17/30; V12 guard remains.
 - Atlas global top-1 .433; layer volume is the supported path.
 - Semantic hybrid (MiniLM and model2vec) is below BM25; opt-in only.
-- Artifact-level qrels labels do not exist; only a handoff and self-retrieval
-  diagnostic.
+- Artifact qrels exist (30 queries, 5 candidates, external Codex); scenario/run
+  top-1 remains weak and the set is small.
 - No production-client benchmark; local hardware only.
 - No process pool for MCP; thread cap only. A local benchmark shows 4
   processes at 9.3 s and 8 at 8.6 s for 150 queries, so process isolation is

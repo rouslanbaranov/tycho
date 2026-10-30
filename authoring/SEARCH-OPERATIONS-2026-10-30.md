@@ -51,7 +51,7 @@ It checks index/qrels snapshot, 150 queries, BM25 weights and MCP defaults.
 
 ## Known limits
 
-- Artifact-level qrels labels do not exist.
+- Artifact qrels are small (30 queries, 5 candidates); scenario/run top-1 is weak.
 - Qrels v4 pools are 4–10, not exhaustive.
 - V12 section top-1 is 17/30; guard retained.
 - No production-client benchmark or external validation.

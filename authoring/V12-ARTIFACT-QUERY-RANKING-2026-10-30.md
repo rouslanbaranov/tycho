@@ -44,7 +44,8 @@ Only `include_artifacts`, `pattern_ids` or `artifact_type` populate the payload.
 
 - Keep artifact lookup opt-in.
 - Do not claim artifact recall from self-retrieval.
-- A true artifact qrels is still needed before production acceptance.
+- External artifact qrels now exists; see
+  [V12-ARTIFACT-QRELS-EVAL-2026-10-30.md](V12-ARTIFACT-QRELS-EVAL-2026-10-30.md).
 
 ## Limits
 
