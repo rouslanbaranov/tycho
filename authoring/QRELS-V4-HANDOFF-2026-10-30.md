@@ -52,13 +52,15 @@ Do not edit `book/**`, `edition/**`, `generated/**`, indexes or hashes.
 
 ## Query set
 
-Target **150 fresh queries**:
+Target **150 fresh queries**, split into **ten bounded batches of 15** (see
+[BATCHES.md](../evaluation/qrels-v4/BATCHES.md)). Do not attempt all 150 in one
+Codex run.
 
-| Split | Count | Scope |
-|---|---:|---|
-| `book` | 90 | conceptual and operational questions answered by book pages |
-| `atlas` | 30 | pattern/card decisions from the atlas layer |
-| `v12` | 30 | V12 model, scenario, validation, evidence and decision rules |
+| Split | Count | Batches | Scope |
+|---|---:|---|---|
+| `book` | 90 | B01–B06 | conceptual and operational questions answered by book pages |
+| `atlas` | 30 | A01–A02 | pattern/card decisions from the atlas layer |
+| `v12` | 30 | V01–V02 | V12 model, scenario, validation, evidence and decision rules |
 
 Requirements:
 
@@ -116,12 +118,14 @@ Do not infer a label from a title alone. Read the page/section body.
 
 ## Output
 
-Write exactly these files:
+For **one batch**, write exactly:
 
-1. `evaluation/corpus-qrels.v4.json`
-2. `evaluation/section-qrels.v4.json`
-3. `evaluation/qrels-v4/REPORT.md`
-4. `evaluation/qrels-v4/validation.txt`
+1. `evaluation/qrels-v4/batches/<BATCH>.page.json`
+2. `evaluation/qrels-v4/batches/<BATCH>.section.json`
+3. append to `evaluation/qrels-v4/BATCH-REPORT.md`
+
+Do not create the final qrels files; the parent merges all ten batches after
+validation.
 
 Page file:
 
@@ -133,7 +137,7 @@ Page file:
   "snapshot": "<section index snapshot>",
   "content_commit": "<git HEAD>",
   "reviewer": "OpenAI Codex / model exposed by harness",
-  "query_count": 150,
+  "query_count": 15,
   "items": [
     {
       "id": "V4-B001",
@@ -159,12 +163,22 @@ IDs:
 
 ## Validation
 
-Run:
+Validate one batch (B01 example):
 
 ```sh
 python3 scripts/validate_qrels_v4.py \
-  --page evaluation/corpus-qrels.v4.json \
-  --section evaluation/section-qrels.v4.json
+  --page evaluation/qrels-v4/batches/B01.page.json \
+  --section evaluation/qrels-v4/batches/B01.section.json \
+  --book 15 --atlas 0 --v12 0
+```
+
+Use `--atlas 15` for A batches and `--v12 15` for V batches.
+
+After all ten batches, the parent runs:
+
+```sh
+python3 scripts/merge_qrels_v4_batches.py \
+  --batch-dir evaluation/qrels-v4/batches
 ```
 
 The validator checks:

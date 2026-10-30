@@ -15,7 +15,7 @@ def fail(errors, message):
     errors.append(message)
 
 
-def check_file(path, level, errors):
+def check_file(path, level, errors, expected):
     data = json.loads(path.read_text(encoding="utf-8"))
     if data.get("schema_version") != 4:
         fail(errors, f"{path}: schema_version must be 4")
@@ -48,9 +48,10 @@ def check_file(path, level, errors):
             fail(errors, f"{path}: direct mismatch for {qid}")
         if not direct:
             fail(errors, f"{path}: no direct answer for {qid}")
-    expected = {"book": 90, "atlas": 30, "v12": 30}
-    if counts != expected:
-        fail(errors, f"{path}: split counts {counts} != {expected}")
+    expected_nonzero = {key: value for key, value in expected.items()
+                        if value}
+    if counts != expected_nonzero:
+        fail(errors, f"{path}: split counts {counts} != {expected_nonzero}")
     return data
 
 
@@ -72,10 +73,15 @@ def main(argv=None):
     ap.add_argument("--page", type=Path, required=True)
     ap.add_argument("--section", type=Path, required=True)
     ap.add_argument("--root", type=Path, default=ROOT)
+    ap.add_argument("--book", type=int, default=90)
+    ap.add_argument("--atlas", type=int, default=30)
+    ap.add_argument("--v12", type=int, default=30)
     args = ap.parse_args(argv)
+    expected = {"book": args.book, "atlas": args.atlas,
+                "v12": args.v12}
     errors = []
-    page = check_file(args.page, "page", errors)
-    section = check_file(args.section, "section", errors)
+    page = check_file(args.page, "page", errors, expected)
+    section = check_file(args.section, "section", errors, expected)
     if page.get("snapshot") != section.get("snapshot"):
         fail(errors, "page/section snapshot mismatch")
     if page.get("content_commit") != section.get("content_commit"):
