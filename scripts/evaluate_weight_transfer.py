@@ -10,7 +10,8 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 import section_search
 
-WEIGHTS = {"5,2,.5": "5,2,0.5", "3,2,1": "3,2,1", "10,5,1": "10,5,1"}
+WEIGHTS = {"5,2,.5": "5,2,0.5", "3,2,1": "3,2,1", "5,2,1": "5,2,1",
+           "10,5,1": "10,5,1"}
 DATASETS = {
     "v4": ("evaluation/corpus-qrels.v4.json",
            "evaluation/section-qrels.v4.json"),
