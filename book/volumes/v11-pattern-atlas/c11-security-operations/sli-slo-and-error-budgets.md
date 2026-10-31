@@ -14,7 +14,9 @@ summary: "Decision card for SLI / SLO and Error Budgets; bounded owner evidence 
 explicit limits."
 route_hints:
   questions:
-    - "Should service health be governed by user-visible indicators,"
+    - >-
+      Should service health be governed by user-visible indicators, objectives
+      and an explicit error budget?
   prerequisites:
     - "tycho.chapter.419769c372ccaa569796954878e3bef9"
   related_ids:
@@ -34,8 +36,8 @@ evidence_scope:
   status: "source-linked"
   notes: >-
     2026-10-31 four-dimension binding to Google SRE Workbook, Google SRE Book,
-    OpenSLO and Prometheus. src.openslo is proposed; exact records and digests
-    are in the lane note and owner section.
+    OpenSLO and Prometheus. src.openslo is registered; exact records and digests
+    are in the reading ledger and the lane note.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -85,7 +87,7 @@ monitoring gap and execute the budget policy without inventing a retrospective e
 
 **Technical owner.** [SLI / SLO and Error Budgets](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md#sli-slo-and-error-budgets) — SLOs are bounded, not a complete measurement system.
 
-**Sources.** Six proposed records, not yet in the
+**Sources.** Six records in the
 [shared reading ledger](../../../../edition/patterns/reading-ledger.v1.json):
 
 - `read.sre-workbook-implementing-slos.2026-10-31` (src.sre-workbook), sections
@@ -102,7 +104,7 @@ monitoring gap and execute the budget policy without inventing a retrospective e
 - `read.prometheus-recording-rules.2026-10-31` (src.prometheus), sections "Recording rules",
   "Limiting alerts and series" and "Failed rule evaluations due to slow evaluation";
   revision `4b472352...`.
-- `read.openslo-specification.2026-10-31` (src.openslo, proposed), sections "Introduction",
+- `read.openslo-specification.2026-10-31` (src.openslo), sections "Introduction",
   "Specification / Goals", "General Schema" and "Object Types / SLO"; revision
   `0bc001c9...` at source commit `e0259752...`.
 The units are public living pages, not benchmarks or production observations. No SLO, alert

@@ -14409,7 +14409,7 @@
         "heading": "SLI-SLO and Error Budgets",
         "anchor": "sli-slo-and-error-budgets",
         "level": 3,
-        "line": 109,
+        "line": 119,
         "unit_kind": "dedicated",
         "unit_terms": [
           "good events",
@@ -14420,44 +14420,247 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Google SRE Workbook defines the SLI, the good-events/total-events ratio and the error-budget complement; Google SRE Book and OpenSLO state the target-value definition. The 99.9%/300% arithmetic is Tycho synthetic illustration.",
+          "binding": {
+            "source_id": "src.sre-workbook",
+            "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+            "section": "What to Measure: Using SLIs",
+            "quote": "we generally recommend treating the SLI as the ratio of two numbers: the number of good events divided by the total number of events.",
+            "revision": "9e2c70003b340d5ae10d9cd40684a2fdf94740be99830a560b0f1a0bafa8da06"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+              "section": "What to Measure: Using SLIs",
+              "quote": "an SLI is an indicator of the level of service that you are providing.",
+              "revision": "9e2c70003b340d5ae10d9cd40684a2fdf94740be99830a560b0f1a0bafa8da06"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+              "section": "What to Measure: Using SLIs",
+              "quote": "the SLO is a target percentage and the error budget is 100% minus the SLO.",
+              "revision": "9e2c70003b340d5ae10d9cd40684a2fdf94740be99830a560b0f1a0bafa8da06"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-slo.2026-10-31",
+              "section": "Objectives",
+              "quote": "a target value or range of values for a service level that is measured by an SLI.",
+              "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-slo.2026-10-31",
+              "section": "Choosing Targets",
+              "quote": "a rate at which the SLOs can be missed",
+              "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+            },
+            {
+              "source_id": "src.openslo",
+              "ledger_record": "read.openslo-specification.2026-10-31",
+              "section": "Object Types / SLO",
+              "quote": "a target value or a range of values for a service level that is described by a service level indicator (SLI).",
+              "revision": "0bc001c9e30e55f5b152865d1b089f4baa235c2cac2cdd1dbeb1cb93316db179"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot change retrospectively to improve the score.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "reason": "SRE Book warns about aggregation and recommends standard SLI definitions including which requests are included; the Workbook permits rolling or calendar-aligned windows. The no-retrospective-exclusion rule is Tycho governance.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-book-slo.2026-10-31",
+            "section": "Standardize Indicators",
+            "quote": "We recommend that you standardize on common definitions for SLIs so that you don’t have to reason about them from first principles each time.",
+            "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-slo.2026-10-31",
+              "section": "Aggregation",
+              "quote": "we often aggregate raw measurements. This needs to be done carefully.",
+              "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-slo.2026-10-31",
+              "section": "Standardize Indicators",
+              "quote": "Which requests are included: “HTTP GETs from black-box monitoring jobs”",
+              "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+              "section": "Choosing an Appropriate Time Window",
+              "quote": "SLOs can be defined over various time intervals, and can use either a rolling window or a calendar-aligned window (e.g., a month).",
+              "revision": "9e2c70003b340d5ae10d9cd40684a2fdf94740be99830a560b0f1a0bafa8da06"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the service**, excluding 500 deliberate overload rejections before the handler, can report misleading health.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Workbook requires an error-budget policy with named actions, defines burn rate and recommends multiwindow multi-burn-rate alerts; Prometheus documents for, keep_firing_for and skipped evaluations. The 2xx-only blind spot is Tycho.",
+          "binding": {
+            "source_id": "src.sre-workbook",
+            "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+            "section": "Establishing an Error Budget Policy",
+            "quote": "This policy should cover the specific actions that must be taken when a service has consumed its entire error budget for a given period of time, and specify who will take them.",
+            "revision": "9e2c70003b340d5ae10d9cd40684a2fdf94740be99830a560b0f1a0bafa8da06"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+              "section": "Establishing an Error Budget Policy",
+              "quote": "once you exhaust your error budget (or come close to exhausting it), you should do something in order to restore stability to your system.",
+              "revision": "9e2c70003b340d5ae10d9cd40684a2fdf94740be99830a560b0f1a0bafa8da06"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-alerting-on-slos.2026-10-31",
+              "section": "4: Alert on Burn Rate",
+              "quote": "Burn rate is how fast, relative to the SLO, the service consumes the error budget.",
+              "revision": "2defa7d7e3784be2f877b4df4872f4a9e3d2862b38e3edf36315876ed2572b06"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-alerting-on-slos.2026-10-31",
+              "section": "Conclusion",
+              "quote": "In most cases, we believe that the multiwindow, multi-burn-rate alerting technique is the most appropriate approach to defending your application’s SLOs.",
+              "revision": "2defa7d7e3784be2f877b4df4872f4a9e3d2862b38e3edf36315876ed2572b06"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-alerting-on-slos.2026-10-31",
+              "section": "Alerting Considerations",
+              "quote": "Long reset times can lead to confusion or to issues being ignored.",
+              "revision": "2defa7d7e3784be2f877b4df4872f4a9e3d2862b38e3edf36315876ed2572b06"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-alerting-rules.2026-10-31",
+              "section": "Defining alerting rules",
+              "quote": "The optional for clause causes Prometheus to wait for a certain duration between first encountering a new expression output vector element and counting an alert as firing for this element.",
+              "revision": "5c41ec67c7b4e8baeb613fc572145c51ccb4e812b659f866fd29b84607e77bbf"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-alerting-rules.2026-10-31",
+              "section": "Defining alerting rules",
+              "quote": "This can be used to prevent situations such as flapping alerts, false resolutions due to lack of data loss, etc.",
+              "revision": "5c41ec67c7b4e8baeb613fc572145c51ccb4e812b659f866fd29b84607e77bbf"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-recording-rules.2026-10-31",
+              "section": "Failed rule evaluations due to slow evaluation",
+              "quote": "If a rule group hasn't finished evaluating before its next evaluation is supposed to start (as defined by the evaluation_interval), the next evaluation will be skipped.",
+              "revision": "4b472352f06bb5c78d480e4035e9a28dba8af0e543de347a79e67ac4d31e0888"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-recording-rules.2026-10-31",
+              "section": "Failed rule evaluations due to slow evaluation",
+              "quote": "The rule_group_iterations_missed_total metric will be incremented for each missed iteration of the rule group.",
+              "revision": "4b472352f06bb5c78d480e4035e9a28dba8af0e543de347a79e67ac4d31e0888"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-slo.2026-10-31",
+              "section": "Control Measures",
+              "quote": "Monitor and measure the system’s SLIs. Compare the SLIs to the SLOs, and decide whether or not action is needed. If action is needed, figure out what needs to happen in order to meet the target. Take that action.",
+              "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Metrics or a simpler availability check may be preferable when the user journey is not measurable.",
-          "reason": "Focused external review 2026-10-27: binding does not support the full owner claim."
+          "reason": "OpenSLO defines a vendor-agnostic SLO specification and excludes platform-specific details; Prometheus recording and alerting rules are the executable alternative. The choice and reversal conditions are Tycho.",
+          "binding": {
+            "source_id": "src.openslo",
+            "ledger_record": "read.openslo-specification.2026-10-31",
+            "section": "Introduction",
+            "quote": "The goal of this project is to provide an open specification for defining SLOs to enable a common, vendor–agnostic approach to tracking and interfacing with SLOs.",
+            "revision": "0bc001c9e30e55f5b152865d1b089f4baa235c2cac2cdd1dbeb1cb93316db179"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.openslo",
+              "ledger_record": "read.openslo-specification.2026-10-31",
+              "section": "Introduction",
+              "quote": "Platform-specific implementation details are purposefully excluded from the scope of this specification.",
+              "revision": "0bc001c9e30e55f5b152865d1b089f4baa235c2cac2cdd1dbeb1cb93316db179"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-recording-rules.2026-10-31",
+              "section": "Recording rules",
+              "quote": "Recording rules allow you to precompute frequently needed or computationally expensive expressions and save their result as a new set of time series.",
+              "revision": "4b472352f06bb5c78d480e4035e9a28dba8af0e543de347a79e67ac4d31e0888"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-alerting-rules.2026-10-31",
+              "section": "Defining alerting rules",
+              "quote": "Alerting rules allow you to define alert conditions based on Prometheus expression language expressions and to send notifications about firing alerts to an external service.",
+              "revision": "5c41ec67c7b4e8baeb613fc572145c51ccb4e812b659f866fd29b84607e77bbf"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "sli-slo-and-error-budgets",
         "question": "Should service health be governed by user-visible indicators, objectives and an explicit error budget?",
-        "competing_alternative": "Synthetic checks or raw infrastructure metrics alone. Reverse the choice when measurement cost exceeds decision value.",
+        "competing_alternative": "Synthetic checks or raw infrastructure metrics alone remain a simpler alternative when the journey is not measurable. For the SLO definition, OpenSLO is a vendor-agnostic alternative to bespoke per-tool rules: it aims at \"a common, vendor–agnostic approach to tracking and interfacing with SLOs\", while \"Platform-specific implementation details are purposefully excluded from the scope of this specification.\" Prometheus recording and alerting rules are the executable alternative. **Tycho choice rule:** use OpenSLO for portability; use Prometheus rules for executable queries and alert routing. Reverse when translation cost exceeds portability benefit or the platform-specific rule is the contract.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch6-sre-slo.2026-10-21",
-        "source_id": "src.sre",
+        "ledger_record": "read.sre-workbook-implementing-slos.2026-10-31",
+        "source_id": "src.sre-workbook",
         "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.sre-workbook",
+            "ledger_record": "read.sre-workbook-alerting-on-slos.2026-10-31",
+            "revision": "2defa7d7e3784be2f877b4df4872f4a9e3d2862b38e3edf36315876ed2572b06"
+          },
+          {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-book-slo.2026-10-31",
+            "revision": "ef9a19e4e27b390f70c01422f4ad93fe6e320af30575ab1872706bcdbf703990"
+          },
+          {
+            "source_id": "src.prometheus",
+            "ledger_record": "read.prometheus-alerting-rules.2026-10-31",
+            "revision": "5c41ec67c7b4e8baeb613fc572145c51ccb4e812b659f866fd29b84607e77bbf"
+          },
+          {
+            "source_id": "src.prometheus",
+            "ledger_record": "read.prometheus-recording-rules.2026-10-31",
+            "revision": "4b472352f06bb5c78d480e4035e9a28dba8af0e543de347a79e67ac4d31e0888"
+          },
+          {
+            "source_id": "src.openslo",
+            "ledger_record": "read.openslo-specification.2026-10-31",
+            "revision": "0bc001c9e30e55f5b152865d1b089f4baa235c2cac2cdd1dbeb1cb93316db179"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "The walkthrough owns budget arithmetic and exclusion policy; no dedicated SLO section exists."
+      "notes": "All four technical dimensions bound 2026-10-31 to Google SRE Workbook Implementing SLOs and Alerting on SLOs, Google SRE Book Service Level Objectives, OpenSLO Specification, and Prometheus alerting and recording rules; coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.synthetic-monitoring",
@@ -15297,12 +15500,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 120,
-    "invariant_supported": 85,
-    "failure_recovery_supported": 80,
-    "alternative_supported": 85,
-    "technical_partial_bounded": 15,
-    "technical_partial": 62,
+    "mechanism_supported": 121,
+    "invariant_supported": 86,
+    "failure_recovery_supported": 81,
+    "alternative_supported": 86,
+    "technical_partial_bounded": 16,
+    "technical_partial": 61,
     "technical_name_only": 0,
     "technical_sufficient": 68,
     "decision_partial_bounded": 77,

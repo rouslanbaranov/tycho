@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 319.
+Inventory date: 2026-10-31. Entries: 320.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -375,6 +375,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
 | src.sre-workbook-incident-response / core | [SRE Workbook: Incident Response](https://sre.google/workbook/incident-response/) — Google SRE book authors | Support response roles, shared chronology and practice; distinguish the original tabletop proposal from executed recovery. | admitted-for-research / public-web-or-author-download |
+| src.openslo / supporting | [Specification](https://openslo.com/specification/) — OpenSLO | Vendor-agnostic SLO definition boundary for the SLI/SLO alternative dimension; specification scope, not an implementation. | admitted-for-research / public-web-or-author-download |
 
 ## Enrichment Primary Sources
 

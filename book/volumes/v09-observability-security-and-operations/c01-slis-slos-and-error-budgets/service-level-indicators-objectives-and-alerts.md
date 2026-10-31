@@ -45,16 +45,17 @@ evidence_scope:
   notes: >-
     Bounded pattern owner section for tycho.pattern.sli-slo-and-error-budgets.
     The 2026-10-31 section binds Google SRE Workbook, Google SRE Book, OpenSLO
-    and Prometheus units; src.openslo is proposed and not yet in the shared
-    register. Exact digests and limits are recorded in the lane note.
+    and Prometheus units; src.openslo is registered in the shared source
+    register. Exact digests and limits are recorded in the lane note and the
+    reading ledger.
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-31"
-  reviewer: "Automated authoring agent"
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.c987c475cc5340bcb967f4b6f963b295:-1 -->
@@ -63,8 +64,9 @@ content_verified_at: null
 
 > **Tycho chapter-owner draft V09/C01, 2026-10-19.** Public Google SRE Workbook, Prometheus and OpenTelemetry documentation inform the explanation. The workflow, numbers and examples are original fictional teaching material. No service SLO, alert rule, monitoring deployment, traffic trace, data sample or independent technical acceptance has been observed or executed.
 >
-> The content_review field records the 2026-10-31 self-check; no independent
-> acceptance is asserted.
+> The 2026-10-31 source bindings and self-check are recorded in the lane note,
+> reading ledger and owner-unit metadata; the page keeps its decomposition-era
+> review field. No independent acceptance is asserted.
 
 <!-- /tycho-question-source -->
 
