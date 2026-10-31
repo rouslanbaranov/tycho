@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "8c771acb10abb2ea0c55f1c94f7697b9484696803f9e24c281428d730a98982f",
-  "route_index_snapshot": "47e40ed73e1e08c1a73cd54f14b8b4b09d774a3423b9479215d2773c4048f55b",
+  "registry_sha256": "c8e82213e9a57bca1ee0c3bcaddf18dbde19cb848b5149d117828ddbba2cfb06",
+  "route_index_snapshot": "826ee45d9d1aa56343e4ca61f309d86ba8e27815007f90da3afc535b31eca834",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -4707,19 +4707,63 @@
       "priority": "advanced",
       "required_units": [
         {
-          "source_id": "src.morning-paper-tail-at-scale",
-          "unit": "The Tail at Scale — secondary summary",
-          "unit_type": "article",
-          "url": "https://blog.acolyer.org/2015/01/15/the-tail-at-scale/",
+          "source_id": "src.sre-cascading",
+          "unit": "Addressing Cascading Failures — public chapter",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/addressing-cascading-failures/",
           "sections": [
-            "The Tail at Scale"
+            "Cancellation propagation"
           ],
           "status": "read",
-          "read_record_id": "read.batch4-hedged.2026-10-21",
+          "read_record_id": "read.sre-cascading-hedging.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.tail-at-scale",
+          "unit": "The Tail at Scale — CACM digital edition",
+          "unit_type": "article",
+          "url": "https://mags.acm.org/communications/201302/?pg=79",
+          "sections": [
+            "Hedged requests"
+          ],
+          "status": "read",
+          "read_record_id": "read.tail-at-scale-hedged.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.grpc-hedging",
+          "unit": "Request Hedging — gRPC guide",
+          "unit_type": "documentation-page",
+          "url": "https://grpc.io/docs/guides/request-hedging/",
+          "sections": [
+            "Overview",
+            "Use cases",
+            "Configuring hedging in gRPC",
+            "Hedging policy",
+            "Throttling Hedged RPCs",
+            "Server Pushback"
+          ],
+          "status": "read",
+          "read_record_id": "read.grpc-hedging.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backoff",
+          "unit": "Timeouts, retries, and backoff with jitter — AWS Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+          "sections": [
+            "Timeouts",
+            "Retries and backoff",
+            "Jitter",
+            "Deciding when to retry"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-backoff-hedging.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public units bound 2026-10-31: Google SRE cancellation propagation, the 2013 Tail at Scale hedged-request section, gRPC request hedging and AWS retry/backoff guidance; the alternative is narrowed to measured-timeout and jittered-retry comparisons; slow-path and independent-read clauses remain unbound Tycho heuristics. read.batch4-hedged.2026-10-21 is retained as historical secondary-summary evidence."
     },
     {
       "pattern_id": "tycho.pattern.health-endpoint-monitoring",
@@ -7217,11 +7261,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 334,
-    "read_units": 333,
+    "required_units": 337,
+    "read_units": 336,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 291
+    "ledger_records": 295
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -7234,6 +7278,7 @@
     "read.batch4-jepsen.2026-10-21",
     "read.batch6-sre-workbook-monitoring.2026-10-21",
     "read.batch6-otel-traces.2026-10-21",
-    "read.batch3-pg-archiving.2026-10-21"
+    "read.batch3-pg-archiving.2026-10-21",
+    "read.batch4-hedged.2026-10-21"
   ]
 }

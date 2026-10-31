@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 328.
+Inventory date: 2026-10-31. Entries: 329.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -468,3 +468,9 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | ID / priority | Source | Planned use | Admission / access |
 |---|---|---|---|
 | src.sre-best-practices / supporting | [A Collection of Best Practices for Production Services](https://sre.google/sre-book/service-best-practices/) — Google SRE authors | Overload response choices: degraded results, load shedding and explicit client errors. | admitted-for-research / public-web-or-author-download |
+
+## Resilience
+
+| ID / priority | Source | Planned use | Admission / access |
+|---|---|---|---|
+| src.grpc-hedging / core | [Request Hedging](https://grpc.io/docs/guides/request-hedging/) — gRPC authors | Hedged request budget, cancellation, retry alternative and overload throttling. | admitted-for-research / public-web-or-author-download |

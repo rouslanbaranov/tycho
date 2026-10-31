@@ -3798,7 +3798,9 @@
       "content_sha256": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Superseded for binding by read.tail-at-scale-hedged.2026-10-31, which reads the original paper section; retained as historical secondary-summary evidence."
     },
     {
       "id": "read.batch4-fencing.2026-10-21",
@@ -12389,6 +12391,168 @@
       "limitations": "A 2017 book chapter, CC BY-NC-ND 4.0, with contextual production examples, not a benchmark or a current product description; no disaster exercise was run.",
       "content_sha256": "425eb0ec229b85678058f57cb1e4bb1c7b7bacb2e10164d4313d9cf60dc2bed7",
       "read_scope": "the Testing Disaster section only, excluding the rest of the book",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.sre-cascading-hedging.2026-10-31",
+      "source_id": "src.sre-cascading",
+      "unit_url": "https://sre.google/sre-book/addressing-cascading-failures/",
+      "unit_label": "Addressing Cascading Failures — public chapter",
+      "unit_type": "book-chapter",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T20:46:15Z; gzip transfer length 31,399 bytes; decompressed HTML 104,870 bytes; Last-Modified Thu, 08 Oct 2026 04:48:00 GMT; no ETag; raw HTML SHA-256 d67024d52d72a1254c830d3c29e6d1b2afade88e133ffcff64b94711c2aaa11a; canonical extraction of the div#content subtree with scripts/source_content_hash.py, 9,046 words / 55,929 characters.",
+      "sections_read": [
+        "Cancellation propagation"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation",
+        "the bibliography page"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "Public book chapter; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Behaviors that are dangerous in production can cause cascading failures when one component fails.",
+        "Hedged requests send delayed duplicate RPCs to other instances and cancel the now-superfluous requests after the first response.",
+        "Cancellations should be propagated through the entire stack because requests can transitively fan out."
+      ],
+      "claims_not_supported": [
+        "a universal cancellation guarantee",
+        "a benchmark or production measurement",
+        "implementation behavior in a named system"
+      ],
+      "limitations": "A book chapter, not a benchmark or production measurement. The hedged-request passage sits inside a deadline discussion and does not establish a universal cancellation guarantee or a measured threshold.",
+      "content_sha256": "11a045479e92e27f6b589a5285f971adfdf3d8ec0af0805c5855e29d848f9548",
+      "read_scope": "the section \"Cancellation propagation\" and the surrounding \"Latency and Deadlines\" context, excluding linked pages, navigation and the bibliography",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.tail-at-scale-hedged.2026-10-31",
+      "source_id": "src.tail-at-scale",
+      "unit_url": "https://mags.acm.org/communications/201302/?pg=79",
+      "unit_label": "The Tail at Scale — CACM digital edition",
+      "unit_type": "article",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T20:46:23Z; decompressed HTML 47,159 bytes; no Last-Modified or ETag; raw HTML SHA-256 16d88b045f33864acddf06fd44aebb50fb41e090a8cb47b7c2f0e093760a6227; served hidden page text 568 words / 3,625 characters, SHA-256 648a07852ac2c1e4ae767fca577f91c5f3783ad0ccaa7c25218c733d15151623; canonical text used for binding rejoins end-of-line print hyphenation, 561 words / 3,611 characters, SHA-256 8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828.",
+      "sections_read": [
+        "Hedged requests"
+      ],
+      "sections_not_read": [
+        "pages 80-82 beyond this excerpt",
+        "figures and tables",
+        "the publisher PDF"
+      ],
+      "tables_figures": [
+        "tables and figures were not reproduced"
+      ],
+      "license_notes": "Public CACM digital-edition page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A simple way to curb latency variability is to issue the same request to multiple replicas and use the result from whichever replica responds first.",
+        "One approach defers the secondary request until the first has been outstanding beyond the 95th-percentile expected latency.",
+        "The approach limits additional load to approximately 5% while shortening the latency tail in the reported example.",
+        "A 10ms hedge delay reduced the 99.9th-percentile latency for retrieving 1,000 values from 1,800ms to 74ms while sending 2% more requests.",
+        "Naive implementations typically add unacceptable additional load."
+      ],
+      "claims_not_supported": [
+        "a current production measurement",
+        "a universal threshold or hedge delay",
+        "pages 80-82",
+        "the publisher PDF"
+      ],
+      "limitations": "The article reports a 2013 CACM benchmark, not a current production measurement or a universal threshold. The representation is the public digital-edition HTML, not the print PDF; end-of-line hyphenation was rejoined only in the canonical text used for quotes.",
+      "content_sha256": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828",
+      "read_scope": "the section \"Hedged requests\", excluding later pages, figures, tables and the publisher PDF",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.grpc-hedging.2026-10-31",
+      "source_id": "src.grpc-hedging",
+      "unit_url": "https://grpc.io/docs/guides/request-hedging/",
+      "unit_label": "Request Hedging — gRPC guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; rendered page HTTP/2 200 at 2026-10-31T20:46:18Z; gzip transfer length 14,371 bytes; decompressed HTML 75,016 bytes; no Last-Modified or ETag; raw HTML SHA-256 949634b39f0158e40a52ab3193863de2979b43df4adb9c3550c4201f9c6ffdac; canonical article text 957 words / 5,951 characters, SHA-256 b9c0871d9397d8a4db1ce46b9dfa8018818bafdb77231c193cd698b7646922cf; pinned source Markdown at grpc/grpc.io commit d3573082150aa8a1363dcbd86952f8771dc287ed (2023-10-03), 6,165 bytes, 145 lines, 926 words, SHA-256 976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85.",
+      "sections_read": [
+        "Overview",
+        "Use cases",
+        "Configuring hedging in gRPC",
+        "Hedging policy",
+        "Throttling Hedged RPCs",
+        "Server Pushback"
+      ],
+      "sections_not_read": [
+        "linked language examples and implementations",
+        "images and runtime behavior"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public gRPC documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A gRPC client sends multiple copies of the same request to different backends and uses the first response it receives.",
+        "The client cancels outstanding requests and forwards the response to the application.",
+        "maxAttempts is mandatory and values greater than 5 are capped at 5.",
+        "All outstanding hedged requests are canceled when a successful response is received.",
+        "gRPC throttles hedged RPCs to prevent server overload."
+      ],
+      "claims_not_supported": [
+        "application-level effect rollback",
+        "a benchmark",
+        "language implementation behavior",
+        "the deadline over the hedge chain from a separately read section"
+      ],
+      "limitations": "Documentation, not a benchmark. The maxAttempts cap of 5 is gRPC behavior, not a universal default. The guide does not prove that a canceled loser has not committed an application effect.",
+      "content_sha256": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85",
+      "read_scope": "the six listed sections of the rendered guide and the pinned source Markdown, excluding linked examples, images and runtime behavior",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-backoff-hedging.2026-10-31",
+      "source_id": "src.aws-backoff",
+      "unit_url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+      "unit_label": "Timeouts, retries, and backoff with jitter — AWS Builders' Library",
+      "unit_type": "engineering-article",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP 301 to the Builder Center article at content id 3EumjoZascWd1oZiEgL8ORlv3qE; HTTP/2 200 at 2026-10-31T20:46:21Z; 139,053-byte HTML; no Last-Modified or ETag; raw HTML SHA-256 26c69da5738dce97491d1b5d97379ab8c7f5545758ee30cc5221c9c4e53c5922; canonical text 2,373 words / 14,549 characters, SHA-256 c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94; the page displays Published 2019-12-05 and Last modified 2019-12-05.",
+      "sections_read": [
+        "Timeouts",
+        "Retries and backoff",
+        "Jitter",
+        "Deciding when to retry"
+      ],
+      "sections_not_read": [
+        "Conclusion",
+        "Introduction",
+        "Failures Happen",
+        "linked articles",
+        "SDK behavior, service internals and benchmarks"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public AWS engineering article; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "When failures are caused by overload, retries that increase load can make matters significantly worse and delay recovery.",
+        "A timeout or failure does not necessarily mean that side effects have not happened; APIs with side effects are not safe to retry unless they provide idempotency.",
+        "Jitter adds randomness to backoff and spreads retries in time.",
+        "A local token bucket can limit retries.",
+        "A timeout should start from the latency metrics of the downstream service at an acceptable false-timeout rate."
+      ],
+      "claims_not_supported": [
+        "a formal specification",
+        "a benchmark",
+        "hedging-specific measurement",
+        "SDK or service internals"
+      ],
+      "limitations": "An engineering article, not a formal specification or benchmark. Its p99.9 example is timeout selection, not a hedge threshold, and it does not evaluate hedging directly.",
+      "content_sha256": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94",
+      "read_scope": "the four listed sections of the public article, excluding linked pages, images and unrelated chrome",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }

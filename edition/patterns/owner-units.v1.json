@@ -10366,62 +10366,227 @@
         "heading": "4. Hedging, replication and selective degradation",
         "anchor": "4-hedging-replication-and-selective-degradation",
         "level": 2,
-        "line": 85,
+        "line": 92,
         "unit_kind": "dedicated",
         "unit_terms": [
           "hedged request",
-          "additional equivalent read",
-          "cancels remaining attempts",
-          "bounded speculative budget"
+          "same read to another replica",
+          "measured latency distribution",
+          "cancellation evidence"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A **hedged request** sends an additional equivalent read to another viable replica when an earlier attempt appears unexpectedly slow, then uses an acceptable response and cancels remaining attempts.",
-          "reason": "Defines the trigger, replica choice, response selection and cancellation.",
+          "quote": "A **hedged request** sends the same read to another replica or service instance when the first attempt is slow, uses the first acceptable response, and cancels the remaining attempts.",
+          "reason": "Google SRE defines the delayed duplicate and cancellation; gRPC and the Tail at Scale paper repeat the same shape; the Tycho reading bounds it to reads.",
           "binding": {
-            "source_id": "src.morning-paper-tail-at-scale",
-            "ledger_record": "read.batch4-hedged.2026-10-21",
-            "section": "The Tail at Scale",
-            "quote": "1) Hedged requests : send the same requests to multiple servers, and use whatever response comes back first.",
-            "revision": "99b13cb7f3a928be08f051af10fcaa8887011ffab3c12a392ce93e32153b9809"
-          }
+            "source_id": "src.sre-cascading",
+            "ledger_record": "read.sre-cascading-hedging.2026-10-31",
+            "section": "Cancellation propagation",
+            "quote": "To reduce latency, some systems use \"hedged requests\" [Dea13] to send RPCs to a primary server, then some time later, send the same request to other instances of the same service in case the primary is slow in responding; once the client has received a response from any server, it sends messages to the other servers to cancel the now-superfluous requests.",
+            "revision": "11a045479e92e27f6b589a5285f971adfdf3d8ec0af0805c5855e29d848f9548"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.tail-at-scale",
+              "ledger_record": "read.tail-at-scale-hedged.2026-10-31",
+              "section": "Hedged requests",
+              "quote": "A simple way to curb latency variability is to issue the same request to multiple replicas and use the results from whichever replica responds first.",
+              "revision": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Overview",
+              "quote": "With hedging, a gRPC client sends multiple copies of the same request to different backends and uses the first response it receives. Subsequently, the client cancels any outstanding requests and forwards the response to the application.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Hedge delayed reads | Equivalent replicas; bounded speculative budget; cancellation; measured independent tails | Shared bottleneck, expensive writes, inconsistent replicas",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "record the measured percentile, the replica-equivalence check, the attempt cap and the cancellation evidence; a hedge without all four is an unbounded duplicate.",
+          "reason": "The TAS paper uses a 95th-percentile delay and reports a 99.9th-percentile effect; gRPC caps maxAttempts at 5 and throttles hedges; SRE and gRPC cancel losers and SRE requires propagation through the stack; the recording rule is Tycho.",
+          "binding": {
+            "source_id": "src.tail-at-scale",
+            "ledger_record": "read.tail-at-scale-hedged.2026-10-31",
+            "section": "Hedged requests",
+            "quote": "One such approach is to defer sending a secondary request until the first request has been outstanding for more than the 95th-percentile expected latency for this class of requests.",
+            "revision": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.tail-at-scale",
+              "ledger_record": "read.tail-at-scale-hedged.2026-10-31",
+              "section": "Hedged requests",
+              "quote": "This approach limits the additional load to approximately 5% while substantially shortening the latency tail.",
+              "revision": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828"
+            },
+            {
+              "source_id": "src.tail-at-scale",
+              "ledger_record": "read.tail-at-scale-hedged.2026-10-31",
+              "section": "Hedged requests",
+              "quote": "sending a hedging request after a 10ms delay reduces the 99.9th-percentile latency for retrieving all 1,000 values from 1,800ms to 74ms while sending just 2% more requests.",
+              "revision": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Configuring hedging in gRPC",
+              "quote": "`maxAttempts`: maximum number of in-flight requests while waiting for a successful response. This is a mandatory field, and must be specified. If the specified value is greater than `5`, gRPC uses a value of `5`.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Hedging policy",
+              "quote": "When a successful response is received (in response to any of the hedged requests), all outstanding hedged requests are canceled and the response is returned to the client application layer.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Throttling Hedged RPCs",
+              "quote": "gRPC provides a way to throttle hedged RPCs to prevent server overload.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            },
+            {
+              "source_id": "src.sre-cascading",
+              "ledger_record": "read.sre-cascading-hedging.2026-10-31",
+              "section": "Cancellation propagation",
+              "quote": "Those requests may themselves transitively fan out to many other servers, so cancellations should be propagated throughout the entire stack.",
+              "revision": "11a045479e92e27f6b589a5285f971adfdf3d8ec0af0805c5855e29d848f9548"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Hedging can double work exactly when a shared dependency is saturated; it also risks duplicate side effects if the read is not truly equivalent.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "A hedge adds a second copy of the work and can raise load when a shared dependency is saturated.",
+          "reason": "TAS and gRPC warn about additional load; AWS records retry amplification and duplicate side effects without idempotency; gRPC frames hedging as retrying before failure; the write inference and reconciliation rule are Tycho.",
+          "binding": {
+            "source_id": "src.aws-backoff",
+            "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+            "section": "Retries and backoff",
+            "quote": "When failures are caused by overload, retries that increase load can make matters significantly worse. They can even delay recovery by keeping the load high long after the original issue is resolved.",
+            "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.tail-at-scale",
+              "ledger_record": "read.tail-at-scale-hedged.2026-10-31",
+              "section": "Hedged requests",
+              "quote": "Although naive implementations of this technique typically add unacceptable additional load",
+              "revision": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Use cases",
+              "quote": "While naive implementations could add significant load to the backend servers, it is possible to get most of the latency reduction effects while increasing load only modestly.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Hedging policy",
+              "quote": "Essentially, hedging can be seen as retrying the original RPC before a failure is even received.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            },
+            {
+              "source_id": "src.aws-backoff",
+              "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+              "section": "Retries and backoff",
+              "quote": "The other problem with retries is that some remote calls have side effects. A timeout or failure doesn't necessarily mean that side effects haven't happened. If doing the side effects multiple times is undesirable, a best practice is designing APIs to be idempotent, meaning they can be safely retried.",
+              "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+            },
+            {
+              "source_id": "src.aws-backoff",
+              "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+              "section": "Deciding when to retry",
+              "quote": "In general, our view is that APIs with side effects aren't safe to retry unless they provide idempotency. This guarantees that the side effects happen only once no matter how often you retry.",
+              "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+            },
+            {
+              "source_id": "src.aws-backoff",
+              "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+              "section": "Deciding when to retry",
+              "quote": "Good API design, and care when implementing clients, is needed to prevent duplicate side-effects.",
+              "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Retry with jitter, improve the slow path, or parallelize truly independent reads may be preferable when replicas share a bottleneck or the operation is not safely repeatable.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Prefer a single bounded attempt with a timeout chosen from the measured latency distribution, or a retry with backoff, jitter and a token-bucket retry budget, when the replicas share a bottleneck or the operation is not safely repeatable.",
+          "reason": "AWS recommends timeout selection from the downstream latency percentile, jitter and a local token bucket; gRPC classifies hedging as one of two retry policies. The slow-path and independent-read clauses are Tycho heuristics and are not in the bound claim.",
+          "binding": {
+            "source_id": "src.aws-backoff",
+            "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+            "section": "Timeouts",
+            "quote": "A good practice for choosing a timeout for calls within an AWS Region is to start with the latency metrics of the downstream service. So at Amazon, when we make one service call another service, we choose an acceptable rate of false timeouts (such as 0.1%). Then, we look at the corresponding latency percentile on the downstream service (p99.9 in this example).",
+            "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-backoff",
+              "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+              "section": "Jitter",
+              "quote": "Our solution is jitter. Jitter adds some amount of randomness to the backoff to spread the retries around in time.",
+              "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+            },
+            {
+              "source_id": "src.aws-backoff",
+              "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+              "section": "Retries and backoff",
+              "quote": "We have found that we can mitigate this risk by limiting retries locally using a token bucket",
+              "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+            },
+            {
+              "source_id": "src.grpc-hedging",
+              "ledger_record": "read.grpc-hedging.2026-10-31",
+              "section": "Overview",
+              "quote": "Hedging is one of two configurable retry policies supported by gRPC.",
+              "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "hedged-requests",
         "question": "Should a duplicate request be issued after a latency threshold to reduce tail latency?",
-        "competing_alternative": "Single request with retries or deadline tuning. Reverse the choice when duplicate load and cancellation cost exceed tail benefit.",
+        "competing_alternative": "A single bounded attempt with a timeout chosen from the measured latency percentile, or a retry with backoff, jitter and a token-bucket retry budget. AWS recommends choosing a timeout from the downstream latency percentile (its example uses p99.9), jitter to spread retries, and a local token bucket to limit them. gRPC classifies hedging as one of two retry policies, so its ordinary retry policy is the competing configuration. **Tycho choice rule:** reverse when the extra copy's measured tail benefit is smaller than its added load, or when a loser can commit an effect before cancellation.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch4-hedged.2026-10-21",
-        "source_id": "src.morning-paper-tail-at-scale",
-        "unit_type": "article",
+        "ledger_record": "read.sre-cascading-hedging.2026-10-31",
+        "source_id": "src.sre-cascading",
+        "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "ledger_record": "read.tail-at-scale-hedged.2026-10-31",
+            "source_id": "src.tail-at-scale",
+            "revision": "8bcecb9e86b6485cf699b3fac7f0622f468779a74745cfc82305ea278553a828"
+          },
+          {
+            "ledger_record": "read.grpc-hedging.2026-10-31",
+            "source_id": "src.grpc-hedging",
+            "revision": "976a95ef7de5b966835ac057ef9817272c51f7e5ce40d02bd1841fe65fe29c85"
+          },
+          {
+            "ledger_record": "read.aws-backoff-hedging.2026-10-31",
+            "source_id": "src.aws-backoff",
+            "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated section; the table supplies the conditions and the main contraindication."
+      "notes": "Four dimensions bound 2026-10-31 to four public units: Google SRE cascading-failure cancellation, the 2013 Tail at Scale hedged-request section, gRPC request hedging and AWS retry/backoff guidance; the alternative is narrowed to measured-timeout and jittered-retry comparisons; coverage is self-checked, not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.health-endpoint-monitoring",
@@ -16337,11 +16502,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 91,
-    "failure_recovery_supported": 86,
-    "alternative_supported": 91,
-    "technical_partial_bounded": 15,
-    "technical_partial": 56,
+    "invariant_supported": 92,
+    "failure_recovery_supported": 87,
+    "alternative_supported": 92,
+    "technical_partial_bounded": 16,
+    "technical_partial": 55,
     "technical_name_only": 0,
     "technical_sufficient": 74,
     "decision_partial_bounded": 71,
