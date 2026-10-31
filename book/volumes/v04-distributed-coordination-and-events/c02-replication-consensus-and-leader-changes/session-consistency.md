@@ -44,23 +44,25 @@
   },
   "evidence_scope": {
     "source_ids": [
+      "src.azure-cosmos-consistency",
+      "src.mongodb-causal-consistency",
       "src.jepsen-session-models",
       "src.jepsen-monotonic-reads",
       "src.jepsen-read-your-writes"
     ],
     "claim_ids": [],
     "status": "source-linked",
-    "notes": "Selected public evidence and limits are in the page ledger and dated inspection record. Scenarios, workloads and architecture decisions are original synthetic reasoning, not production observations."
+    "notes": "Five public units inspected 2026-10-31; quotes and limits are in the B56 lane note."
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-20",
-    "reviewer": "Codex author; integration execution and independent acceptance pending",
+    "reviewed_at": "2026-10-31",
+    "reviewer": "Automated authoring agent; independent acceptance pending",
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-21",
-  "source_inspection_date": "2026-10-20",
+  "updated_at": "2026-10-31",
+  "source_inspection_date": "2026-10-31",
   "content_verified_at": null
 }
 ---
@@ -152,18 +154,78 @@ Record invocation and completion, session identifier, operation identifier, obje
 
 ### Session Consistency
 
-The product owner defines what counts as one session and which observations its users must
-retain. That choice sets the guarantee; no infrastructure default should supply it implicitly.
+**Mechanism.** Azure Cosmos DB scopes session consistency "within a single client session",
+where "reads are guaranteed to honor the read-your-writes, and write-follows-reads
+guarantees." Its mechanism is a token: "After every write operation, the client receives an
+updated Session Token from the server." The token "is used as a minimum version barrier but
+not as a specific (possibly historical) version of the data to be retrieved from the
+database", and "Session Tokens in Azure Cosmos DB are partition-bound". Jepsen scopes its
+session guarantees to a process, "a logically single-threaded program which performs
+computation and runs operations."
+**Tycho reading:** The product owner defines what counts as one session and which
+observations its users must retain. A browser tab, device, worker or anonymous request is not
+a session until the application defines how context is acquired, transferred and expired. The
+service owner publishes the token format, maximum size, lifetime and the failure callers
+receive when no replica can satisfy it. A token is evidence of an observation requirement, not
+identity or permission.
 
-The service owner publishes the token format, maximum size, lifetime and the failure callers
-receive when no replica can satisfy it. The routing layer owns the wait, reroute and rejection
-policy.
+**Invariant.** Jepsen defines read-your-writes as a per-process property: it "does not apply
+to operations performed by different processes." Monotonic reads likewise "does not apply to
+operations performed by different processes, only reads by the same process", and
+"intuitively, reads cannot go backwards." Cosmos promises read-your-writes and
+write-follows-reads inside one client session; it does not make those observations global.
+Jepsen places the session properties below causal consistency: "Causal implies writes follow
+reads and PRAM" and "PRAM implies monotonic reads".
+**Tycho rule:** That choice sets the guarantee; no infrastructure default should supply it
+implicitly. Name the required guarantee set per session (read-your-writes, monotonic reads,
+monotonic writes, writes-follow-reads) and test each independently. None implies a global
+total order, and another user may still observe an older state. Compare versions or causal
+positions; a displayed number that a later legitimate update reduces is not by itself a
+monotonic-read violation.
 
-An epoch or lineage field stops a token from crossing a leadership change as though positions
-remained comparable. A multiwriter frontier can expose two writes with no total order; the reader
-must not collapse a concurrent frontier into one scalar; reject only when the required causal
-relation or state cannot be established. External indexes
-and caches need their own watermark before claiming the same session view.
+**Failure and recovery.** MongoDB's causal-consistency page shows that a mode name does not
+fix the guarantee: "different combinations of read and write concerns provide different causal
+consistency guarantees." With durability, MongoDB requires majority reads and majority writes
+to "guarantee all four causal consistency guarantees." Those concerns keep the guarantees
+"even in circumstances (such as with a network partition) where two members in a replica set
+transiently believe that they are the primary." Cosmos describes token repair: "if the client
+is re-created, its cache of session tokens is also re-created", and if a replica lacks the
+session's data, "the client retries the request against another replica in the region." An old
+token does not pin history: "If the client uses an old session token, but newer data is
+available in the database, the system returns the latest version."
+**Tycho runbook:** Persist and validate the token, bound waits and retries, and return a
+retryable failure rather than serving an older snapshot. After client recreation or failover,
+rebuild the requirement from durable state or narrow the guarantee. An epoch or lineage field
+stops a token from crossing a leadership change as though positions remained comparable. A
+multiwriter frontier can expose two writes with no total order; the reader must not collapse a
+concurrent frontier into one scalar; reject only when the required causal relation or state
+cannot be established. External indexes and caches need their own watermark before claiming
+the same session view. Record the chosen scope and why a weaker guarantee is acceptable;
+narrow any route that cannot honor it before release, and document the token lifetime and the
+repair path for a divergent epoch.
 
-Record the chosen scope and why a weaker guarantee is acceptable. Narrow any route that cannot
-honor it before release. Document the token lifetime and the repair path for a divergent epoch.
+**Alternative.** **Tycho comparison:** causal consistency is the stronger adjacent contract.
+MongoDB's page shows that with majority reads and writes a causally consistent session
+provides "Read own writes", "Monotonic reads", "Monotonic writes" and "Writes follow reads".
+Without durability, `{ w: 1 }` writes can still "provide causal consistency", but "writes
+may be rolled back"; that is a weaker durability position, not a free upgrade. Jepsen's
+hierarchy explains the cost: causal consistency implies writes-follow-reads and PRAM;
+session guarantees sit below it, and "All models at or stronger than read your writes can be
+at most sticky available." A linearizable read path is the other alternative when the product
+needs one latest state.
+**Tycho choice rule:** The routing layer owns the wait, reroute and rejection policy. Use
+session consistency when per-client continuity is the requirement and token-aware routing is
+cheaper than global coordination; use causal consistency when cross-client causal dependencies
+must travel; use linearizable reads when a single latest state is the contract. Reverse when
+routing, token propagation or failover cost exceeds the user-visible benefit, or when the
+weaker view cannot be explained.
+
+**Bound source limits.** Five public units were read on 2026-10-31: Microsoft Learn
+"Consistency levels in Azure Cosmos DB" (Session consistency); MongoDB Manual "Causal
+Consistency and Read and Write Concerns"; and Jepsen "Consistency Models", "Read Your Writes"
+and "Monotonic Reads". They are living documentation pages, not benchmarks, specifications or
+production observations. Headers, digests and section lists are in the B56 lane note. No
+database, replica set, partition or client session was created or run; no latency, staleness
+or recovery measurement was made. The token lifetime, epoch/frontier comparison, validation
+and rejection rules are Tycho guidance, not source claims. Quotes are short
+whitespace-normalized excerpts, not full-page reproductions.

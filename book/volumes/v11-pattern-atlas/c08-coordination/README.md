@@ -34,6 +34,11 @@ evidence_scope:
     - "src.kubernetes"
     - "src.kleppmann-distributed-locking"
     - "src.jepsen-consistency"
+    - "src.azure-cosmos-consistency"
+    - "src.mongodb-causal-consistency"
+    - "src.jepsen-session-models"
+    - "src.jepsen-monotonic-reads"
+    - "src.jepsen-read-your-writes"
     - "src.lamport-time"
     - "src.mattern-vector-time"
     - "src.kafka"
@@ -48,8 +53,8 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-30"
-source_inspection_date: "2026-10-30"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C08 — Distributed coordination
@@ -262,27 +267,56 @@ coordination-pattern; priority advanced.
 **Decision question.** Should one client session preserve selected read/write observations
 across replicas?
 
-**Good-fit conditions.** A session token can route/stick; monotonic reads or
-read-your-writes are required; failover preserves the token.
+**Good-fit conditions.** The application can define a session and carry its requirement across
+requests; a replica can satisfy a token-aware read or the router can wait or reroute. Cosmos DB
+scopes the guarantee "within a single client session" and returns an updated session token
+after each write. Read-your-writes and monotonic reads are per-process properties; Jepsen
+scopes its session guarantees to a process. **Tycho condition:** name the observation set
+(read-your-writes, monotonic reads or both), token lifetime and the failure callers receive
+before the first routed read.
 
 **Hard contraindications.** Reject when global linearizability is required, when sessions
-cannot be maintained, or when failover loses session state.
+cannot be maintained, or when failover loses session state. Cosmos session tokens are
+"partition-bound", and a re-created client cache begins without them. **Tycho rule:** a sticky
+route or a token that cannot survive failover is not a session guarantee.
 
-**Competing alternative.** Strong consistency or eventual consistency without session
-guarantees. Reverse the choice when session routing/failover cost exceeds client
-experience benefit.
+**Competing alternative.** **Tycho comparison:** causal consistency is the stronger adjacent
+contract. With majority reads and writes MongoDB's causally consistent session provides "Read
+own writes", "Monotonic reads", "Monotonic writes" and "Writes follow reads". Linearizable
+reads are the strongest alternative. Jepsen notes that "All models at or stronger than read
+your writes can be at most sticky available." **Tycho choice rule:** use session consistency
+when per-client continuity is the requirement, causal consistency when cross-client
+dependencies travel, and linearizable reads when one latest state is required. Reverse when
+routing or failover cost exceeds the user-visible benefit.
 
-**Failure and recovery.** Token loss, server switching and multiwriter frontiers are
-common. Preserve the token across failover, bound waits, and return a retryable failure
-rather than serving an older snapshot.
+**Failure and recovery.** Token loss, server switching and multiwriter frontiers are common.
+MongoDB shows that majority reads and writes keep causal guarantees "even in circumstances
+(such as with a network partition) where two members in a replica set transiently believe that
+they are the primary"; weaker write concern may roll back. Cosmos retries another replica when
+the replica lacks the session's data, and returns the latest version when an old token meets
+newer data. Preserve the token across failover, bound waits, and return a retryable failure
+rather than serving an older snapshot. **Tycho runbook:** validate token scope, rebuild it
+after client recreation, and never collapse a multiwriter frontier into one scalar.
 
 **Technical owner.** [Session Consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-consistency) — session consistency is bounded, not a complete client-session protocol.
 
-**Sources.** [src.jepsen-consistency](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-jepsen.2026-10-21: section "Consistency Models". The record has no
-standalone Session guarantees section; session-specific claims rely on the page body's
-monotonic-reads/read-your-writes links, not this record. The source is a public
-pattern/documentation unit, not a benchmark.
+**Sources.** Five proposed records, not yet in the
+[shared reading ledger](../../../../edition/patterns/reading-ledger.v1.json):
+
+- `read.azure-cosmos-consistency.2026-10-31` (src.azure-cosmos-consistency, proposed),
+  section "Session consistency"; revision `2e1f621c...`.
+- `read.mongodb-causal-consistency.2026-10-31` (src.mongodb-causal-consistency, proposed),
+  sections "Causal Consistency and Read and Write Concerns" and "Scenarios"; revision
+  `4e7c1d14...`.
+- `read.jepsen-consistency-models.2026-10-31` (src.jepsen-session-models), sections
+  "Consistency Models", "Processes" and "Histories"; revision `05d547d3...`.
+- `read.jepsen-read-your-writes.2026-10-31` (src.jepsen-read-your-writes), whole page;
+  revision `c5069583...`.
+- `read.jepsen-monotonic-reads.2026-10-31` (src.jepsen-monotonic-reads), whole page;
+  revision `1c5d413f...`.
+
+The units are public living pages, not benchmarks or production observations. No database,
+replica set, partition or client session was created or run.
 
 **Decision state.** applicable-under-conditions.
 
