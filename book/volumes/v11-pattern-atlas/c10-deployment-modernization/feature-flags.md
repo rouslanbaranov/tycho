@@ -103,23 +103,23 @@ Bound snapshot age, audit overrides and remove the flag after the rollout.
 dimensions; this card cites the same records. OpenFeature *Flag Evaluation API* and *Types
 and Data Structures*, canonical text SHA-256 `d724a522...` and `e2741a64...`, records
 `read.openfeature-flag-evaluation.2026-10-31` and `read.openfeature-types.2026-10-31`
-(proposed). LaunchDarkly *Kill switch flags*, *Change history*, *Reducing technical debt
+. LaunchDarkly *Kill switch flags*, *Change history*, *Reducing technical debt
 from feature flags* and *Flag evaluation rules in server-side SDKs*, canonical text SHA-256
 `3499a831...`, `1b35ea72...`, `c31b76fe...` and `2509b3e8...`, records
 `read.launchdarkly-killswitch.2026-10-31`, `read.launchdarkly-change-history.2026-10-31`,
 `read.launchdarkly-technical-debt.2026-10-31` and
-`read.launchdarkly-flag-evaluation-rules.2026-10-31` (proposed). Microsoft Azure App
+`read.launchdarkly-flag-evaluation-rules.2026-10-31`. Microsoft Azure App
 Configuration *Feature management overview*, *.NET feature management* and *Access Azure App
 Configuration using Microsoft Entra ID*, canonical text SHA-256 `7c503850...`,
 `882b33ac...` and `2859050b...`, records
 `read.azure-feature-management-overview.2026-10-31`,
 `read.azure-feature-management-dotnet.2026-10-31` and
-`read.azure-appconfig-rbac.2026-10-31` (proposed). AWS AppConfig *Deploying feature flags and
+`read.azure-appconfig-rbac.2026-10-31`. AWS AppConfig *Deploying feature flags and
 configuration data*, *Working with deployment strategies* and *Deploying a configuration*,
 canonical text SHA-256 `07b1d0ee...`, `aa782c44...` and `ccfead7e...`, records
 `read.aws-appconfig-feature-flags.2026-10-31`,
 `read.aws-appconfig-deployment-strategies.2026-10-31` and
-`read.aws-appconfig-deploying.2026-10-31` (proposed under `src.appconfig-rollout`).
+`read.aws-appconfig-deploying.2026-10-31` under `src.appconfig-rollout`.
 The retained `src.fowler-feature-toggles` record
 `read.batch5-fowler-feature-toggles.2026-10-21` remains the mechanism context.
 Tycho-labelled rules are synthesis.

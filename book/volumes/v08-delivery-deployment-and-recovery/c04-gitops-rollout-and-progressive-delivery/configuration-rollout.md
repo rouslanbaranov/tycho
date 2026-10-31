@@ -228,14 +228,14 @@ otherwise becomes an untested interface.
 **Source boundary.** Public documentation and articles, accessed 2026-10-31. No product was
 deployed, no flag was evaluated and no canary, kill switch or rollback was executed. Quotes are
 short excerpts; Markdown emphasis, link spacing and typography are normalized where noted.
-New source ids and ledger records are proposed in the B51 lane note and are not added to the
+New source ids and ledger records are added to the
 shared register by this lane. Tycho-labelled sentences are synthesis, not source claims.
 
 - OpenFeature specification, *Flag Evaluation API* and *Types and Data Structures*;
   canonical text SHA-256 `d724a522...` and `e2741a64...`; raw HTML SHA-256
   `01ca619d...` and `2a318b0d...`; records
   `read.openfeature-flag-evaluation.2026-10-31` and
-  `read.openfeature-types.2026-10-31` proposed. Living `current` documentation with no
+  `read.openfeature-types.2026-10-31`. Living `current` documentation with no
   version selector.
 - LaunchDarkly documentation, *Kill switch flags*, *Change history*, *Reducing technical
   debt from feature flags* and *Flag evaluation rules in server-side SDKs*; canonical text
@@ -244,21 +244,21 @@ shared register by this lane. Tycho-labelled sentences are synthesis, not source
   records `read.launchdarkly-killswitch.2026-10-31`,
   `read.launchdarkly-change-history.2026-10-31`,
   `read.launchdarkly-technical-debt.2026-10-31` and
-  `read.launchdarkly-flag-evaluation-rules.2026-10-31` proposed.
+  `read.launchdarkly-flag-evaluation-rules.2026-10-31`.
 - Microsoft Azure App Configuration, *Feature management overview*, *.NET feature
   management* and *Access Azure App Configuration using Microsoft Entra ID*; canonical text
   SHA-256 `7c503850...`, `882b33ac...` and `2859050b...`; raw HTML SHA-256
   `ff46be3a...`, `b5b8621c...` and `5ba34c3a...`; records
   `read.azure-feature-management-overview.2026-10-31`,
   `read.azure-feature-management-dotnet.2026-10-31` and
-  `read.azure-appconfig-rbac.2026-10-31` proposed.
+  `read.azure-appconfig-rbac.2026-10-31`.
 - AWS AppConfig, *Deploying feature flags and configuration data*, *Working with deployment
   strategies* and *Deploying a configuration*; canonical text SHA-256 `07b1d0ee...`,
   `aa782c44...` and `ccfead7e...`; raw HTML SHA-256 `d6e54525...`,
   `c5a7eb77...` and `3eba9fa4...`; records
   `read.aws-appconfig-feature-flags.2026-10-31`,
   `read.aws-appconfig-deployment-strategies.2026-10-31` and
-  `read.aws-appconfig-deploying.2026-10-31` proposed under the existing
+  `read.aws-appconfig-deploying.2026-10-31` under the existing
   `src.appconfig-rollout` source.
 - Martin Fowler, *Feature Toggles (aka Feature Flags)*, retained record
   `read.batch5-fowler-feature-toggles.2026-10-21`; canonical text SHA-256
