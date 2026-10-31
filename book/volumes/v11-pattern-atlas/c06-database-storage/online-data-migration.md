@@ -71,19 +71,21 @@ tables, then moves reads and writes before removing the old store. **Tycho condi
 record the mapping revision, checkpoint, replay window and reconciliation rule.
 
 **Hard contraindications.** Reject when a maintenance window is acceptable, when no
-reconciliation path exists, or when migration load would exhaust the source. PostgreSQL
-`COPY FROM` inserts rows "as it progresses"; a failed command leaves them "in a deleted
-state" and does not roll them back.
+reconciliation path exists, or when the changed-row set is small enough for a quiesced
+migration. PostgreSQL `COPY FROM` inserts rows "as it progresses"; a failed command leaves
+them "in a deleted state", invisible until vacuum and still occupying space.
 
 **Competing alternative.** A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho
-shape), Flyway expand/contract, or AWS DMS full-load plus CDC. Reverse when online
-complexity exceeds downtime cost. Flyway's guidance says to "add new columns nullable,
+shape). Online implementation options include Flyway expand/contract, AWS DMS full-load plus
+CDC and dual-write. Reverse the stop-the-world choice when online complexity exceeds
+downtime cost. Flyway's guidance says to "add new columns nullable,
 dual-write, backfill, switch reads, then drop" so a partial rollout "keeps working".
 
-**Failure and recovery.** Checkpoint lag, changed mappings and cutover ambiguity are common.
+**Failure and recovery.** Checkpoint lag, changed mappings and cutover ambiguity are risks;
+changed mapping and cutover are Tycho, untested concerns.
 AWS DMS caches a checkpoint "from time to time" and can "recover a failed migration task"
-from it; a resume still needs a replay window and duplicate-tolerant apply. Verify
-acceptance in the owner section.
+from it; a resume still needs a replay window and duplicate-tolerant apply. Verify coverage
+and acceptance status in the owner section; no owner acceptance is claimed.
 
 **Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
 

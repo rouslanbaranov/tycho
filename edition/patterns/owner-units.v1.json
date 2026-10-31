@@ -8945,7 +8945,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
+          "quote": "Two tables or stores updated by independent writes are not automatically atomic just because both schema versions exist; Stripe does not claim an atomic cross-store commit, so that non-atomicity is a Tycho inference.",
           "reason": "Stripe requires both stores to be written and compares read paths; it does not claim an atomic cross-store commit. PostgreSQL distinguishes a consistent export from serial execution history and defines positional COPY mapping. The single-writer or reconciled-projection rule is Tycho.",
           "binding": {
             "source_id": "src.m9-st01",
@@ -9171,7 +9171,7 @@
       "decision_evidence": {
         "atlas_section": "online-data-migration",
         "question": "Should data be backfilled while the system continues serving reads and writes?",
-        "competing_alternative": "A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho shape), Flyway expand/contract, or AWS DMS full-load plus CDC. Reverse when online complexity exceeds downtime cost. Flyway's guidance says to \"add new columns nullable, dual-write, backfill, switch reads, then drop\" so a partial rollout \"keeps working\".",
+        "competing_alternative": "A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho shape). Online implementation options include Flyway expand/contract, AWS DMS full-load plus CDC and dual-write. Reverse the stop-the-world choice when online complexity exceeds downtime cost. Flyway's guidance says to \"add new columns nullable, dual-write, backfill, switch reads, then drop\" so a partial rollout \"keeps working\".",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

@@ -226,8 +226,9 @@ An online migration copies or transforms data while the source continues serving
 backfill takes hours, it may read records while new writes occur. A design needs an
 authoritative writer and a change-capture/reconciliation plan.
 
-**Invariant.** Two independent writers are not automatically atomic just because the schema
-includes both fields. Stripe's *Online migrations at scale* describes a "4 step dual writing
+**Invariant.** Two tables or stores updated by independent writes are not automatically atomic
+just because both schema versions exist; Stripe does not claim an atomic cross-store commit,
+so that non-atomicity is a Tycho inference. Stripe's *Online migrations at scale* describes a "4 step dual writing
 pattern": "Dual writing to the existing and new tables to keep them in sync", then moving
 reads and writes to the new table before removing the old one. It says "All new writes
 should update both stores" and "Our two tables need to stay consistent with each other at
@@ -251,7 +252,8 @@ started after the chosen CDC start point", a resume needs a replay window,
 duplicate-tolerant apply and an explicit start point.
 
 PostgreSQL `COPY FROM` "physically inserts input rows into the table as it progresses"; if
-the command fails, these rows are "left in a deleted state" and are not rolled back. A
+the command fails, these rows are "left in a deleted state", invisible until vacuum and still
+occupying space; the failed statement aborts, but the dead tuples remain. A
 `pg_dump` export is consistent, but with a data-only dump and `--disable-triggers`, an
 interrupted restore can leave catalogs "in the wrong state". **Tycho runbook:** persist the
 checkpoint with the data commit where possible, record source and mapping versions, detect
@@ -269,9 +271,10 @@ sequence is a Tycho shape, not a source procedure. Flyway's expand/contract alte
 keeps one schema readable by both application versions: "add new columns nullable,
 dual-write, backfill, switch reads, then drop", so a partial rollout "keeps working". AWS
 DMS full-load plus CDC, or Stripe's dual-write plus reconciliation, fit when the team can
-operate capture, checkpointing and reconciliation. **Tycho choice rule:** reverse the online
-choice when a maintenance window is acceptable, the changed-row set is small, or the team
-cannot operate capture, checkpoint and reconciliation.
+operate capture, checkpointing and reconciliation. **Tycho choice rule:** prefer the stop-the-world alternative when a maintenance window is
+acceptable and the changed-row set is small; reverse the online choice when the team cannot
+operate capture, checkpoint and reconciliation. Flyway expand/contract, AWS DMS full-load
+plus CDC and dual-write are online implementation options, not alternatives to online backfill.
 
 **Bound source limits.** Four public sources (six pages) were inspected on 2026-10-31:
 Stripe, *Online migrations at scale* (2017-02-02); PostgreSQL 18.6, *pg_dump* and *COPY*;
