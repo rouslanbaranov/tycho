@@ -34,6 +34,8 @@ evidence_scope:
     - "src.microservices-patterns"
     - "src.temporal"
     - "src.ietf-idempotency-key"
+    - "src.aws-idempotency"
+    - "src.stripe-idempotency"
     - "src.debezium-outbox"
     - "src.postgresql"
     - "src.postgres-logical"
@@ -42,15 +44,15 @@ evidence_scope:
     - "src.aws-cqrs"
   claim_ids: []
   status: "source-linked"
-  notes: "14 cards cite read units; owner links are bounded."
+  notes: "14 cards cite read units; Idempotency Key binds four public units."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-30"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-30"
-source_inspection_date: "2026-10-30"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C04 — Data consistency, transactions and event sourcing
@@ -301,26 +303,44 @@ kind api-pattern; priority core.
 **Decision question.** Should a client-supplied key let the server recognize retries of
 one logical request?
 
-**Good-fit conditions.** Retries are expected; key scope, payload fingerprint and retention
-window are defined; the server records the outcome atomically with the effect.
+**Good-fit conditions.** Retries are expected; the operation owner publishes key scope,
+fingerprint inputs and retention; the outcome record and effect commit together; a
+support-visible record survives the retry window.
 
 **Hard contraindications.** Reject when operations are naturally idempotent, when keys can
-collide across tenants, or when retention cannot cover the retry window.
+collide across tenants, when retention cannot cover the retry window, or when the key store
+has no expiry and cleanup owner.
 
-**Competing alternative.** Natural idempotency, a uniqueness rule or one writer. Reverse the
-choice when key storage and fingerprinting cost exceed retry risk.
+**Competing alternative.** Natural idempotency, a uniqueness constraint, a compare-and-set
+or one writer. Reverse when key storage and fingerprinting cost exceed retry risk, or when
+payload shape, caller population or retention cost changes.
 
 **Failure and recovery.** Expiry ends historical deduplication; a reused key with changed
-intent is a conflict, not idempotency. Reject mismatched fingerprints and keep the record
-for the retry window.
+intent is a conflict, not idempotency. The IETF draft separates 400 (missing key), 422
+(different payload) and 409 (original request still in progress); Stripe returns the saved
+response, including 500 errors; AWS stores the initial parameters and returns a validation
+error on mismatch; Azure keeps an in-progress/completed record and says to "reconcile stale
+records or route unresolved cases for intervention before acknowledging redelivery." Tycho:
+reject mismatched fingerprints, distinguish in-progress from expired, and keep the record for
+the retry window.
 
-**Technical owner.** [Idempotency Key](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#idempotency-key) — retry/idempotency is bounded, not a complete HTTP idempotency guide.
+**Technical owner.** [Idempotency Key](../../v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md#idempotency-key) — key ownership, fingerprint, atomic commit, conflict response and retention are source-bound; the four-part contract remains Tycho.
 
-**Sources.**
-[src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-ietf.2026-10-21: all twenty-four served headings
-read. The source is a public pattern/specification
-unit, not a benchmark.
+**Sources.** [src.ietf-idempotency-key](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.batch2-ietf.2026-10-21` (draft-07, historical) and proposed record
+`read.ietf-idempotency-key-08.2026-10-31` (draft-08, current): sections 2.2-2.7.
+[src.aws-idempotency](../../../../edition/patterns/reading-ledger.v1.json) proposed record
+`read.aws-idempotency.2026-10-31`: sections "Introduction", "Retrying and side effects",
+"Reducing client complexity", "Late arriving requests" and "Same client request ID,
+different intent". [src.stripe-idempotency](../../../../edition/patterns/reading-ledger.v1.json)
+proposed record `read.stripe-idempotent-requests.2026-10-31`: section "Idempotent requests".
+[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json) read
+record `read.microsoft-idempotent-consumer.2026-10-30` and proposed
+`read.microsoft-idempotent-consumer.2026-10-31`: sections "Choose a stable deduplication
+key", "Commit the processed key and the side effects atomically", "Guard against concurrent
+duplicates", "Handle side effects that can't join the transaction" and "Problems and
+considerations". The sources are public documentation, not benchmarks; Tycho-labelled rules
+are synthesis.
 
 **Decision state.** applicable-under-conditions.
 
