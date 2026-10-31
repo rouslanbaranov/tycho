@@ -1,4 +1,6 @@
 """Benchmark harness validation and aggregation."""
+import contextlib
+import io
 import sys
 import unittest
 from pathlib import Path
@@ -18,6 +20,15 @@ class BenchmarkTests(unittest.TestCase):
         self.assertEqual(bench.validate(corpus), [])
         self.assertEqual(sum(q["split"] == "dev" for q in corpus["questions"]), 50)
         self.assertEqual(sum(q["split"] == "holdout" for q in corpus["questions"]), 50)
+
+    def test_validate_only_needs_no_agent_command(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            rc = bench.main([
+                "--corpus", str(ROOT / "evaluation/agent-benchmark/corpus-v2.json"),
+                "--validate-only"])
+        self.assertEqual(rc, 0)
+        self.assertIn('"questions": 100', out.getvalue())
 
     def test_dual_judge_consensus_is_strict(self):
         corpus = {"questions": [{"id": "Q1", "layer_expected": "book"}]}

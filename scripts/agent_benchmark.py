@@ -176,7 +176,7 @@ def run_judge(command, row, item, timeout):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--corpus", type=Path, required=True)
-    ap.add_argument("--agent-command", required=True)
+    ap.add_argument("--agent-command")
     ap.add_argument("--judge-command")
     ap.add_argument("--judge-command-2")
     ap.add_argument("--split", choices=("dev", "holdout"))
@@ -186,6 +186,8 @@ def main(argv=None):
     ap.add_argument("--out", type=Path, default=ROOT / "evaluation/agent-benchmark/results.json")
     ap.add_argument("--validate-only", action="store_true")
     args = ap.parse_args(argv)
+    if not args.validate_only and not args.agent_command:
+        ap.error("--agent-command is required unless --validate-only")
     corpus = load_json(args.corpus)
     errors = validate(corpus)
     if errors:
