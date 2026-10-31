@@ -1,0 +1,113 @@
+{
+  "tasks": [
+    {
+      "task_id": "S1",
+      "question": "How do transactional outbox, idempotency and replay together prevent duplicate side effects? Start from entry points, then follow pages and sections.",
+      "answer": "An outbox prevents lost or phantom publication; it does not by itself prevent duplicate side effects. The entry point is the naive dual write: DB-then-broker can commit state and crash before publishing, broker-then-DB can publish an acceptance that later rolls back. The outbox replaces that with one local transaction that commits the business state and an outbox record carrying an immutable event_id (plus aggregate_id, event type/schema version and payload); a relay then publishes committed rows. This closes the dual-write window, but the relay can crash after publish and before its checkpoint, or lose the broker acknowledgement, so it retries and the broker may deliver the same event more than once; a poison row can block progress.\n\nReplay appears at several points: a consumer that applies an effect and then crashes before committing its offset is redelivered the same event; DLQ or historical replay re-delivers old events; a projection rebuild replays its log. The duplicate is neutralised by consumer-side idempotency: persist the processed event identity (scoped to the subscriber and event/effect) together with the business effect in one local transaction, so a second delivery finds the marker and becomes a no-op or returns the recorded outcome. Retention matters: the dedup marker must cover the maximum broker redelivery, DLQ and replay horizon, otherwise an expired identity is treated as a new message and the effect can duplicate. Keep the client request key, business entity ID and event ID distinct; replaying old domain events must not resend money, email or notifications unless that is an isolated new workflow.\n\nThe residual limit is external effects. If the consumer must call a payment provider or send an email, the local dedup transaction cannot cover that call: a crash between the local commit and the external send can skip it, and reversing the order can duplicate it. That requires a second durable send-intent plus the provider's idempotency/reconciliation contract, event-ID retention and replay tests. Ordering is a separate hazard: an older event arriving after a newer one can revert state, so a version/order rule is still needed. In short, the outbox removes the publication loss window, at-least-once relay and replay create duplicate opportunities, and consumer idempotency with correct identity and retention makes replay safe inside the consumer's local authority; end-to-end exactly-once is a proven property only within that authority, not a consequence of the outbox.",
+      "citations": [
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#8-decision-boundary",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects"
+      ],
+      "queries": [
+        "transactional outbox idempotency replay duplicate side effects",
+        "outbox relay publish at-least-once deduplication",
+        "outbox row same local transaction atomic commit relay publishes",
+        "consumer duplicate detection event id inbox unique constraint",
+        "replay outbox events crash retention reprocessing duplicates",
+        "exactly once end-to-end acknowledgement ambiguous outcome",
+        "outbox inbox sagas durable workflows pages reasoning route",
+        "outbox relay claims pending rows poller skip locked",
+        "processed event id retention window deduplicate replay",
+        "relay publishes committed outbox rows retry until acknowledged mark sent",
+        "stable event id idempotency key provider reconciliation ambiguous payment",
+        "outbox publisher lease duplicate publish retries order"
+      ],
+      "steps": 32
+    },
+    {
+      "task_id": "S2",
+      "question": "How do cache invalidation, stampede protection and stale reads interact, and which controls reduce each failure?",
+      "answer": "All three sit on the same cache-aside sequence: read the cache; on a miss read the authoritative value plus revision; fill a TTL-bound entry; on a write update the store and invalidate the affected entries. That sequence is not a consistency theorem, and each failure comes from a different step.\n\nInvalidation and stale reads. A write can commit while its delete fails, is lost, or is only partially propagated across caches and regions, so readers keep using the superseded copy. A slower reader can also read v1, let a writer commit v2 and delete the key, then write v1 back after the delete (the stale-fill race). Controls: write to the store then invalidate; make the invalidation intent durable at commit time (an outbox row in the same local transaction) and retry it; keep a short TTL as a bound on undetected staleness; gate fills with the source revision (compare against the cached revision or tombstone using an atomic conditional write/CAS) so an older fill cannot overwrite a newer value; and bypass caching or require strict verification for revocation- and authorisation-sensitive reads. TTL alone is not a monotonic-version guarantee.\n\nStampede. A synchronised expiry, cold start or cache outage makes many readers miss at once and issue redundant origin loads; the cache becomes a load amplifier on the origin. Controls each cover only part: in-process single-flight/coalescing (many replicas still load); a distributed refresh lease with expiry, fencing and crash recovery; jittered TTL (spreads expiry of different keys, not one hot key); bounded source admission/rate limiting with explicit wait, reject or degrade; prewarming. The invariant is to bound concurrent origin loads per key and total source work, and to expose origin-load concurrency.\n\nStale reads as a deliberate trade. Stale-while-revalidate serves the old value while one owner refreshes in the background, valid only when a bounded stale window is acceptable for that operation; a failed refresh must not extend the window indefinitely, and the cap must eventually force a blocking read or an explicit error. TTL-only expiry bounds staleness without refresh coordination but causes misses; a blocking refresh gives freshness at a latency cost.\n\nInteractions: invalidation and expiry create the misses that cause stampedes; SWR and jitter reduce stampede but redistribute or extend staleness; single-flight is local, and its followers need the leader's outcome rather than a fresh retry; a refresh lease is not a correctness lock, because an expired lease lets a paused older owner write stale data after a newer owner published. The choice is per operation: strict freshness (blocking read or version gate), bounded staleness (TTL or SWR with a declared window), or availability under overload (admission plus explicit degrade).",
+      "citations": [
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#purpose-and-mission",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ],
+      "queries": [
+        "cache invalidation stampede stale reads",
+        "thundering herd cache expiration jitter single flight",
+        "cache invalidation delete on write versioned key correctness",
+        "stale fill regeneration ownership bounded staleness",
+        "cache outage hot key origin overload admission control",
+        "single flight request coalescing lease jitter TTL refresh",
+        "read your writes monotonic reads bounded staleness version check",
+        "invalidation ordering fencing token revision conditional write",
+        "costs coalescing distributed lease mutex refresh timeout",
+        "event-driven invalidation write-through expiry negative cache",
+        "stale while revalidate background refresh bounded stale window",
+        "stampede policy bound concurrency deadline fail fast origin",
+        "distributed lease mutex one refresher per key correctness cost",
+        "write-through update source and cache consistency race",
+        "hot key shard replicate cache key fan-out"
+      ],
+      "steps": 35
+    },
+    {
+      "task_id": "S3",
+      "question": "How do queueing, admission control and load shedding interact under overload?",
+      "answer": "Queueing, admission control and load shedding are complementary controls at different points of one request path, and their interaction decides whether excess load becomes bounded waiting or collapse. Admission control decides what enters: it must run before the expensive operation, after cheap identity/validation and a deadline check, and must either reject explicitly or queue within a declared policy; entries whose useful time has expired leave before consuming the scarce worker (admission-resource #2). A bounded queue must name both item count and maximum age, because a small queue of slow operations can still exceed caller deadlines, and queue size must be chosen from observed service time and downstream saturation rather than a universal rule (admission-resource #3). Queueing absorbs a short burst but creates no capacity: with 200 operations/s offered and 150/s completed, backlog grows by 1,500 over 30 s; rejecting 50/s before the boundary can flatten backlog, but rejected users still count against user-level outcomes and the rejection path itself consumes capacity (queue-recovery #partial-failure-saturation-and-recovery). An unbounded queue turns overload into memory growth and expired work, so retention and age must be bounded and consumers idempotent. Load shedding is the refusal arm: it needs one named bottleneck, an admission point close to it, a typed rejection with retry class and protected resource, and declared criticality/fairness shares; a load balancer rejecting without that link only relocates the queue (c05 #bounded-pattern-ownership-notes). The controls interact through feedback. A rejection without retry guidance produces synchronized retry storms; retries after timeouts inflate offered attempts and can duplicate effects, so client-side self-throttling and measured rejection paths matter (admission-resource #2). Priority admission can starve ordinary work unless maximum wait and a starvation policy exist, and criticality must be authenticated and propagated or a downstream dependency sheds the wrong class (admission-resource #3). Throttling slows already-admitted work and needs a finite buffer plus upstream backpressure, otherwise pacing shifts latency and memory downstream (c05 #bounded-pattern-ownership-notes). Finally, recovery is part of the interaction: bounded probes, stability windows and a controlled re-admission ramp prevent a second collapse when load drops or a dependency recovers (overload-recovery #6). Observability must separate arrivals, admits, exits, queue age, attempts and unique operations, because steady-state identities and equal rates do not hold during backlog growth or drainage (queue-recovery #alternatives-and-applicability-boundaries). Composition that stays safe: deadline-aware admission at the boundary, a queue bounded in both count and age as the deferral buffer, shedding close to the named bottleneck when work cannot be deferred or capacity cannot expand, fair class policy, retry guidance, and hysteresis on recovery; under sustained overload, explicit refusal, degradation or provisioning beats unlimited waiting.",
+      "citations": [
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries"
+      ],
+      "queries": [
+        "queueing admission control load shedding under overload",
+        "backpressure and overload degradation",
+        "bounded queue maximum age deadline cancellation",
+        "load shedding retry hint fairness tenant"
+      ],
+      "steps": 26
+    },
+    {
+      "task_id": "S4",
+      "question": "How do schema compatibility, snapshots and migration gates interact during a safe migration?",
+      "answer": "Schema compatibility is a relation between every deployed reader/writer and persisted data, not a Boolean; snapshots make the starting point reproducible and are the recovery substrate, while migration gates decide when authority moves and when rollback stops being valid. Compatibility must be tested as a matrix over old and new APIs, background consumers, external clients, delayed events and the replay/restore process in old, expanded and destructive schema states; an additive field can still be semantically breaking if old code deserializes a fixed projection, treats unknown enum values as errors, or misreads absence (reader-writer-matrix #1; semantic-compatibility #1). The gated lifecycle is expand, migrate, contract. At S0 (snapshot/baseline) the legacy database remains the only writer and the snapshot or replay start offset and schema version are recorded; if they cannot be recorded, abort before deploying new semantics. S1 expands additively while old binaries still read and write; S2 resolves a versioned identity mapping, quarantining ambiguous records and never inventing an ID; S3 backfills in bounded, resumable batches with durable checkpoints, treating new tables as projections rather than independent authorities. S3 acceptance is more than equal row counts: it checks identity and tenant scope, field-level semantic equivalence, concurrent writes and deletes, checkpoint durability, event/CDC offset and replay horizon, referential integrity, and the exact source snapshot plus migration code version. S4 transfers authority through a fenced cutover that authorizes exactly one writer, gated on mixed-version reads, old-event replay and reservation invariants; failure routes reads back or holds for repair. S5 retires old readers and contracts (migration-retirement #3; delivery #3). Snapshots interact with these gates in three ways. The restore process is itself a compatibility row: it needs version-compatible backups and readers and must resolve historical state correctly (reader-writer-matrix #1). Restoring an older backup after deletion must happen inside an isolated reconciliation boundary and reapply retirement knowledge before exposure, because a revision-90 backup restored after retirement at revision 108 would otherwise resurrect removed content; tombstones must outlive every replay horizon, including backup age, and retirement knowledge must not be lost with the same backup (migration-retirement #deletion-across-derived-state-and-restored-backups). Finally, gates are falsifiable and each has a recovery path: snapshot before expansion, verify restore and replay, require semantic reconciliation before authority transfer, and treat contract as the irreversible gate. Rollback has a no-return boundary: once N+1 commits genuinely new-only state, or DDL drops a field N requires, image rollback is not business rollback; recovery is hold, forward repair or verified restore, and a revert command does not recover acknowledged external effects (no-return-recovery #5). Contract is safe only after an inventory of readers/writers, an approved residual-unknown policy, verified state restoration and event replay, retained old decoders, backup/projection retention obligations and authorized acceptance of irreversibility (migration-retirement #4). Unknown identity is a legitimate stop, not a failure to finish the migration; acceptance tests should crash a backfill, replay old events after cutover, roll back a binary after new-only writes, and restore/replay historical state after contract while checking business identity rather than SQL success (no-return-recovery #6).",
+      "citations": [
+        "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+        "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change"
+      ],
+      "queries": [
+        "schema compatibility and migration gates safe migration",
+        "snapshot rollback expand contract database migration",
+        "snapshot backup restore verification migration checkpoint"
+      ],
+      "steps": 34
+    }
+  ]
+}

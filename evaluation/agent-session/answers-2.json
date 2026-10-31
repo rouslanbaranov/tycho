@@ -1,0 +1,47 @@
+{
+  "status": "ai-session-not-human",
+  "answers": [
+    {
+      "task_id": "S3",
+      "answer": "Queueing, admission control and load shedding are complementary controls at different points of one request path, and their interaction decides whether excess load becomes bounded waiting or collapse. Admission control decides what enters: it must run before the expensive operation, after cheap identity/validation and a deadline check, and must either reject explicitly or queue within a declared policy; entries whose useful time has expired leave before consuming the scarce worker (admission-resource #2). A bounded queue must name both item count and maximum age, because a small queue of slow operations can still exceed caller deadlines, and queue size must be chosen from observed service time and downstream saturation rather than a universal rule (admission-resource #3). Queueing absorbs a short burst but creates no capacity: with 200 operations/s offered and 150/s completed, backlog grows by 1,500 over 30 s; rejecting 50/s before the boundary can flatten backlog, but rejected users still count against user-level outcomes and the rejection path itself consumes capacity (queue-recovery #partial-failure-saturation-and-recovery). An unbounded queue turns overload into memory growth and expired work, so retention and age must be bounded and consumers idempotent. Load shedding is the refusal arm: it needs one named bottleneck, an admission point close to it, a typed rejection with retry class and protected resource, and declared criticality/fairness shares; a load balancer rejecting without that link only relocates the queue (c05 #bounded-pattern-ownership-notes). The controls interact through feedback. A rejection without retry guidance produces synchronized retry storms; retries after timeouts inflate offered attempts and can duplicate effects, so client-side self-throttling and measured rejection paths matter (admission-resource #2). Priority admission can starve ordinary work unless maximum wait and a starvation policy exist, and criticality must be authenticated and propagated or a downstream dependency sheds the wrong class (admission-resource #3). Throttling slows already-admitted work and needs a finite buffer plus upstream backpressure, otherwise pacing shifts latency and memory downstream (c05 #bounded-pattern-ownership-notes). Finally, recovery is part of the interaction: bounded probes, stability windows and a controlled re-admission ramp prevent a second collapse when load drops or a dependency recovers (overload-recovery #6). Observability must separate arrivals, admits, exits, queue age, attempts and unique operations, because steady-state identities and equal rates do not hold during backlog growth or drainage (queue-recovery #alternatives-and-applicability-boundaries). Composition that stays safe: deadline-aware admission at the boundary, a queue bounded in both count and age as the deferral buffer, shedding close to the named bottleneck when work cannot be deferred or capacity cannot expand, fair class policy, retry guidance, and hysteresis on recovery; under sustained overload, explicit refusal, degradation or provisioning beats unlimited waiting.",
+      "citations": [
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries"
+      ],
+      "queries": [
+        "queueing admission control load shedding under overload",
+        "backpressure and overload degradation",
+        "bounded queue maximum age deadline cancellation",
+        "load shedding retry hint fairness tenant"
+      ],
+      "steps": 26
+    },
+    {
+      "task_id": "S4",
+      "answer": "Schema compatibility is a relation between every deployed reader/writer and persisted data, not a Boolean; snapshots make the starting point reproducible and are the recovery substrate, while migration gates decide when authority moves and when rollback stops being valid. Compatibility must be tested as a matrix over old and new APIs, background consumers, external clients, delayed events and the replay/restore process in old, expanded and destructive schema states; an additive field can still be semantically breaking if old code deserializes a fixed projection, treats unknown enum values as errors, or misreads absence (reader-writer-matrix #1; semantic-compatibility #1). The gated lifecycle is expand, migrate, contract. At S0 (snapshot/baseline) the legacy database remains the only writer and the snapshot or replay start offset and schema version are recorded; if they cannot be recorded, abort before deploying new semantics. S1 expands additively while old binaries still read and write; S2 resolves a versioned identity mapping, quarantining ambiguous records and never inventing an ID; S3 backfills in bounded, resumable batches with durable checkpoints, treating new tables as projections rather than independent authorities. S3 acceptance is more than equal row counts: it checks identity and tenant scope, field-level semantic equivalence, concurrent writes and deletes, checkpoint durability, event/CDC offset and replay horizon, referential integrity, and the exact source snapshot plus migration code version. S4 transfers authority through a fenced cutover that authorizes exactly one writer, gated on mixed-version reads, old-event replay and reservation invariants; failure routes reads back or holds for repair. S5 retires old readers and contracts (migration-retirement #3; delivery #3). Snapshots interact with these gates in three ways. The restore process is itself a compatibility row: it needs version-compatible backups and readers and must resolve historical state correctly (reader-writer-matrix #1). Restoring an older backup after deletion must happen inside an isolated reconciliation boundary and reapply retirement knowledge before exposure, because a revision-90 backup restored after retirement at revision 108 would otherwise resurrect removed content; tombstones must outlive every replay horizon, including backup age, and retirement knowledge must not be lost with the same backup (migration-retirement #deletion-across-derived-state-and-restored-backups). Finally, gates are falsifiable and each has a recovery path: snapshot before expansion, verify restore and replay, require semantic reconciliation before authority transfer, and treat contract as the irreversible gate. Rollback has a no-return boundary: once N+1 commits genuinely new-only state, or DDL drops a field N requires, image rollback is not business rollback; recovery is hold, forward repair or verified restore, and a revert command does not recover acknowledged external effects (no-return-recovery #5). Contract is safe only after an inventory of readers/writers, an approved residual-unknown policy, verified state restoration and event replay, retained old decoders, backup/projection retention obligations and authorized acceptance of irreversibility (migration-retirement #4). Unknown identity is a legitimate stop, not a failure to finish the migration; acceptance tests should crash a backfill, replay old events after cutover, roll back a binary after new-only writes, and restore/replay historical state after contract while checking business identity rather than SQL success (no-return-recovery #6).",
+      "citations": [
+        "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#1-check-the-real-combinations-including-old-readers",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+        "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change"
+      ],
+      "queries": [
+        "schema compatibility and migration gates safe migration",
+        "snapshot rollback expand contract database migration",
+        "snapshot backup restore verification migration checkpoint"
+      ],
+      "steps": 34
+    }
+  ]
+}

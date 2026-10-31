@@ -1,0 +1,68 @@
+{
+  "status": "ai-session-not-human",
+  "answers": [
+    {
+      "task_id": "S1",
+      "answer": "An outbox prevents lost or phantom publication; it does not by itself prevent duplicate side effects. The entry point is the naive dual write: DB-then-broker can commit state and crash before publishing, broker-then-DB can publish an acceptance that later rolls back. The outbox replaces that with one local transaction that commits the business state and an outbox record carrying an immutable event_id (plus aggregate_id, event type/schema version and payload); a relay then publishes committed rows. This closes the dual-write window, but the relay can crash after publish and before its checkpoint, or lose the broker acknowledgement, so it retries and the broker may deliver the same event more than once; a poison row can block progress.\n\nReplay appears at several points: a consumer that applies an effect and then crashes before committing its offset is redelivered the same event; DLQ or historical replay re-delivers old events; a projection rebuild replays its log. The duplicate is neutralised by consumer-side idempotency: persist the processed event identity (scoped to the subscriber and event/effect) together with the business effect in one local transaction, so a second delivery finds the marker and becomes a no-op or returns the recorded outcome. Retention matters: the dedup marker must cover the maximum broker redelivery, DLQ and replay horizon, otherwise an expired identity is treated as a new message and the effect can duplicate. Keep the client request key, business entity ID and event ID distinct; replaying old domain events must not resend money, email or notifications unless that is an isolated new workflow.\n\nThe residual limit is external effects. If the consumer must call a payment provider or send an email, the local dedup transaction cannot cover that call: a crash between the local commit and the external send can skip it, and reversing the order can duplicate it. That requires a second durable send-intent plus the provider's idempotency/reconciliation contract, event-ID retention and replay tests. Ordering is a separate hazard: an older event arriving after a newer one can revert state, so a version/order rule is still needed. In short, the outbox removes the publication loss window, at-least-once relay and replay create duplicate opportunities, and consumer idempotency with correct identity and retention makes replay safe inside the consumer's local authority; end-to-end exactly-once is a proven property only within that authority, not a consequence of the outbox.",
+      "citations": [
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#8-decision-boundary",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects"
+      ],
+      "queries": [
+        "transactional outbox idempotency replay duplicate side effects",
+        "outbox relay publish at-least-once deduplication",
+        "outbox row same local transaction atomic commit relay publishes",
+        "consumer duplicate detection event id inbox unique constraint",
+        "replay outbox events crash retention reprocessing duplicates",
+        "exactly once end-to-end acknowledgement ambiguous outcome",
+        "outbox inbox sagas durable workflows pages reasoning route",
+        "outbox relay claims pending rows poller skip locked",
+        "processed event id retention window deduplicate replay",
+        "relay publishes committed outbox rows retry until acknowledged mark sent",
+        "stable event id idempotency key provider reconciliation ambiguous payment",
+        "outbox publisher lease duplicate publish retries order"
+      ],
+      "steps": 32
+    },
+    {
+      "task_id": "S2",
+      "answer": "All three sit on the same cache-aside sequence: read the cache; on a miss read the authoritative value plus revision; fill a TTL-bound entry; on a write update the store and invalidate the affected entries. That sequence is not a consistency theorem, and each failure comes from a different step.\n\nInvalidation and stale reads. A write can commit while its delete fails, is lost, or is only partially propagated across caches and regions, so readers keep using the superseded copy. A slower reader can also read v1, let a writer commit v2 and delete the key, then write v1 back after the delete (the stale-fill race). Controls: write to the store then invalidate; make the invalidation intent durable at commit time (an outbox row in the same local transaction) and retry it; keep a short TTL as a bound on undetected staleness; gate fills with the source revision (compare against the cached revision or tombstone using an atomic conditional write/CAS) so an older fill cannot overwrite a newer value; and bypass caching or require strict verification for revocation- and authorisation-sensitive reads. TTL alone is not a monotonic-version guarantee.\n\nStampede. A synchronised expiry, cold start or cache outage makes many readers miss at once and issue redundant origin loads; the cache becomes a load amplifier on the origin. Controls each cover only part: in-process single-flight/coalescing (many replicas still load); a distributed refresh lease with expiry, fencing and crash recovery; jittered TTL (spreads expiry of different keys, not one hot key); bounded source admission/rate limiting with explicit wait, reject or degrade; prewarming. The invariant is to bound concurrent origin loads per key and total source work, and to expose origin-load concurrency.\n\nStale reads as a deliberate trade. Stale-while-revalidate serves the old value while one owner refreshes in the background, valid only when a bounded stale window is acceptable for that operation; a failed refresh must not extend the window indefinitely, and the cap must eventually force a blocking read or an explicit error. TTL-only expiry bounds staleness without refresh coordination but causes misses; a blocking refresh gives freshness at a latency cost.\n\nInteractions: invalidation and expiry create the misses that cause stampedes; SWR and jitter reduce stampede but redistribute or extend staleness; single-flight is local, and its followers need the leader's outcome rather than a fresh retry; a refresh lease is not a correctness lock, because an expired lease lets a paused older owner write stale data after a newer owner published. The choice is per operation: strict freshness (blocking read or version gate), bounded staleness (TTL or SWR with a declared window), or availability under overload (admission plus explicit degrade).",
+      "citations": [
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#purpose-and-mission",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ],
+      "queries": [
+        "cache invalidation stampede stale reads",
+        "thundering herd cache expiration jitter single flight",
+        "cache invalidation delete on write versioned key correctness",
+        "stale fill regeneration ownership bounded staleness",
+        "cache outage hot key origin overload admission control",
+        "single flight request coalescing lease jitter TTL refresh",
+        "read your writes monotonic reads bounded staleness version check",
+        "invalidation ordering fencing token revision conditional write",
+        "costs coalescing distributed lease mutex refresh timeout",
+        "event-driven invalidation write-through expiry negative cache",
+        "stale while revalidate background refresh bounded stale window",
+        "stampede policy bound concurrency deadline fail fast origin",
+        "distributed lease mutex one refresher per key correctness cost",
+        "write-through update source and cache consistency race",
+        "hot key shard replicate cache key fan-out"
+      ],
+      "steps": 35
+    }
+  ]
+}
