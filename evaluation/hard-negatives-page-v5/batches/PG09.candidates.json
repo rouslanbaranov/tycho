@@ -1,0 +1,125 @@
+{
+  "batch": "PG09",
+  "items": [
+    {
+      "id": "V4-B051",
+      "page_new": [
+        {
+          "excerpt": "# Multitenant isolation **Owning question:** How are tenant data and effects kept separate across every access path? Tenant isolation is a property of every query, cache key, queue consumer and credential, not a deployment label. The tenant scope must come from authenticated context and be enforced centrally. OWASP REST guidance treats object-level authorization as part of access control; it does not prescribe this isolation design. > **Pattern atlas:** > [Multitenant Isolation](../../v11-pattern-atlas/c11-security-operations/multitenant-isolation.md#multitenant-isolation) \u2014 decision conditions and contraindications. > [Tenant-Based Resource Isolation](../../v11-pattern-atlas/c09-scalability",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+          "title": "Multitenant isolation"
+        }
+      ],
+      "question": "What needs coordination when a tenant moves from shared storage to a dedicated database?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B052",
+      "page_new": [
+        {
+          "excerpt": "# Local transaction, outbox publication and duplicate side effects > Tycho evidence-backed technical pilot, [#39](https://github.com/rouslanbaranov/tycho/issues/39); proposed owners V04/C04\u2013C05. Source inspection: **2026-10-18**. Status: original technical explanation with specifically inspected public-source passages, **not** a running integration, verified production guarantee or independent human review.",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "title": "Local transaction, outbox publication and duplicate side effects"
+        }
+      ],
+      "question": "What should an API do when an operation key is reused for a different payload?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B053",
+      "page_new": [
+        {
+          "excerpt": "# Periodic work, leases and exactly-once publication **Owning question:** How do periodic jobs and pipelines recover when a launch is ambiguous or a lease is stale? This page belongs to [V04/C05 \u2014 Outbox, inbox, sagas and durable workflows](README.md). It owns periodic scheduling and pipeline publication, not the generic retry and effect-identity contract in `V04/C04` (`tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f`), the overload policy in `V07/C05` (`tycho.page.d9abd43bb7394c04a6bf77d4014f870d`), or the release mechanics in `V08/C04` (`tycho.page.3d13e39bb42a4458999803e40d7137cc`).",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
+          "title": "Periodic work, leases and exactly-once publication"
+        }
+      ],
+      "question": "Why does recording a processed event locally not guarantee a separate external effect occurs exactly once?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B054",
+      "page_new": [
+        {
+          "excerpt": "# API contracts and effect identity **Owning question:** Which promises belong to transport semantics and which require application deduplication? This page belongs to [V02/C05 \u2014 Public APIs, HTTP/RPC and compatibility](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:1 -->",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "title": "API contracts and effect identity"
+        }
+      ],
+      "question": "What should be tested when a duplicate request arrives after its deduplication key expires?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B055",
+      "page_new": [
+        {
+          "excerpt": "# Artifact subjects, provenance and component inventories **Owning question:** What does each evidence object describe and what does it omit? This page belongs to [V08/C02 \u2014 Supply chain and release verification](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.38bb8a14ebb54866a7004080318b47e1:1 -->",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+          "title": "Artifact subjects, provenance and component inventories"
+        }
+      ],
+      "question": "What distinguishes the recovery point objective from the recovery time objective?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B056",
+      "page_new": [
+        {
+          "excerpt": "# Multi-zone availability, multi-region disaster recovery and restore contracts > Original Tycho E14-09 technical chapter, 2026-10-19, linked to [issue #87](https://github.com/rouslanbaranov/tycho/issues/87). The plans, tables and example timeline are **fictional and proposed**, not an operated disaster recovery system or evidence of a successful restore.",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "title": "Multi-zone availability, multi-region disaster recovery and restore contracts"
+        }
+      ],
+      "question": "Why might promoting a streaming replica fail to recover an accidental deletion?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B057",
+      "page_new": [
+        {
+          "excerpt": "# V05/C02 \u2014 PostgreSQL MVCC, WAL and recovery",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/README.md",
+          "title": "V05/C02 \u2014 PostgreSQL MVCC, WAL and recovery"
+        }
+      ],
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B058",
+      "page_new": [
+        {
+          "excerpt": "# Discriminating runtime experiments **Owning question:** What controlled observation would justify changing execution or garbage collection? This page belongs to [V03/C06 \u2014 Memory, GC, CPU and blocking diagnostics](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.b6cecfd7301b408db611228b4cec59c5:5 -->",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/diagnostic-experiments.md",
+          "title": "Discriminating runtime experiments"
+        }
+      ],
+      "question": "Under independent identical downstream latencies, how does waiting for all calls change the chance of meeting a threshold?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B059",
+      "page_new": [
+        {
+          "excerpt": "# Netflix \u2014 Generational ZGC as a workload-shaped latency choice, not a universal default **Case ID:** `case.netflix.generational-zgc-vs-g1` | **M9:** E16-03 #116 | **Period:** Netflix article **2024-03-06**, JDK 21 | **Status:** drafted, technical review pending **Primary:** src.m9-n05, Danny Thomas, Netflix JVM Ecosystem Team, [Bending pause times to your will with Generational ZGC](https://netflixtechblog.com/bending-pause-times-to-your-will-with-generational-zgc-256629c9386b), exact sections \"Reduced tail latencies\", \"Efficiency\", \"Operational simplicity\", \"Memory overhead\", \"Transparent huge pages\", \"What workloads weren't a good fit?\".",
+          "path": "book/cases/netflix-generational-zgc-workloads.md",
+          "title": "Netflix \u2014 Generational ZGC as a workload-shaped latency choice, not a universal default"
+        }
+      ],
+      "question": "When can hedged reads increase overload even if they improve individual latency?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B060",
+      "page_new": [
+        {
+          "excerpt": "# Finite windows and load-generator feedback **Owning question:** Why can unfinished work and closed-loop arrivals invalidate a naive estimate? This page belongs to [V07/C01 \u2014 Queueing, Little's Law and measurement boundaries](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b:3 -->",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/finite-window.md",
+          "title": "Finite windows and load-generator feedback"
+        }
+      ],
+      "question": "How can a closed load generator make an overloaded service appear faster than externally timed demand would show?",
+      "split": "book"
+    }
+  ]
+}

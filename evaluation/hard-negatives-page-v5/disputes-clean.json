@@ -1,0 +1,196 @@
+{
+  "items": [
+    {
+      "batch": "PG01",
+      "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+      "id": "V4-A002",
+      "path": "book/application/architecture-evolution-and-extraction.md",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "title": "Architecture evolution: when to keep, modularize or extract a service"
+    },
+    {
+      "batch": "PG01",
+      "excerpt": "# API contracts and effect identity **Owning question:** Which promises belong to transport semantics and which require application deduplication? This page belongs to [V02/C05 \u2014 Public APIs, HTTP/RPC and compatibility](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:1 -->",
+      "id": "V4-A003",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "title": "API contracts and effect identity"
+    },
+    {
+      "batch": "PG02",
+      "excerpt": "<!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:-1 --> # Asynchronous APIs and streaming: demand, deadlines and cancellation > **Independent Tycho V03/C04 book draft, 2026-10-19.** This chapter compares contract and flow-control choices. Official Reactive Streams 1.0.4 and gRPC guides supply bounded public facts. The example and acceptance tests are original synthetic material; no streaming client/server, implementation or benchmark was exercised. <!-- /tycho-question-source --> > **Pattern atlas:** > [Asynchronous Request-Reply](../../v11-pattern-atlas/c02-api-communication/async-request-reply.md#asynchronous-request-reply) \u2014 decision conditions and contraindications.",
+      "id": "V4-A018",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+      "question": "When is polling a separate asynchronous status resource unnecessary for a client?",
+      "title": "Asynchronous APIs and streaming: demand, deadlines and cancellation"
+    },
+    {
+      "batch": "PG03",
+      "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+      "id": "V4-A022",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "title": "Transactional Outbox"
+    },
+    {
+      "batch": "PG03",
+      "excerpt": "# Request routing and health signals **Owning question:** Which route selects a backend, and which health signal may admit or remove it? A route decides where a request may go; a health signal decides whether an instance is eligible to receive it. Collapsing both into \"the load balancer is healthy\" hides stale routes, mixed readiness semantics and a backend that answers quickly but cannot do useful work. > **Pattern atlas:** > [Gateway Routing](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-routing) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Health Endpoint Monitoring](../../v11-pattern-atlas/c07-resilience/README.md#health-endpoint-monitoring) \u2014 de",
+      "id": "V4-A030",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "title": "Request routing and health signals"
+    },
+    {
+      "batch": "PG04",
+      "excerpt": "# Application architecture styles: modules, services and ownership boundaries > **Tycho research page \u2014 Issue #79**, proposed V02/C01\u2013C04. Public source reading: **2026-10-18**. Status: independently researched draft, *not* independently reviewed or evaluated on a deployed system. This page is original explanation and synthetic illustration; cited sources are bounded publications, not experimental performance guarantees.",
+      "id": "V4-B001",
+      "path": "book/application/architecture-styles-and-module-boundaries.md",
+      "question": "Why does a published interface specification not establish that a deployed service actually behaves that way?",
+      "title": "Application architecture styles: modules, services and ownership boundaries"
+    },
+    {
+      "batch": "PG04",
+      "excerpt": "# Adversarial requirements and candidate screening **Owning question:** Which missing evidence or hard gate must block a premature recommendation? This page belongs to [V10/C01 \u2014 Architecture requirement and workload profiles](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.868027aee4884210bea1d8a6542fbfb0:4 -->",
+      "id": "V4-B002",
+      "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/evidence-screening.md",
+      "question": "What must be fixed in advance to compare two architecture changes without shifting the decision criterion after the test?",
+      "title": "Adversarial requirements and candidate screening"
+    },
+    {
+      "batch": "PG05",
+      "excerpt": "# LinkedIn \u2014 tiered Kafka transport needs end-to-end completeness audits **Case ID:** `case.linkedin.kafka-tier-audit` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending. **Public primary:** src.m9-li01 [company engineering report](https://engineering.linkedin.com/kafka/running-kafka-scale) (2015-03-20, Todd Palino); source location: How Big is Big?; multi-datacenter tiers; Auditing Completeness; Bringing It All Together. Attributed public paraphrase, no mirrored graphs or copyrighted assets.",
+      "id": "V4-B012",
+      "path": "book/cases/linkedin-kafka-tiered-completeness.md",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "title": "LinkedIn \u2014 tiered Kafka transport needs end-to-end completeness audits"
+    },
+    {
+      "batch": "PG05",
+      "excerpt": "# Replica properties and quorum failure envelopes **Owning question:** Which partitions can make progress without allowing divergent authority? This page belongs to [V04/C02 \u2014 Replication, consensus and leader changes](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:1 -->",
+      "id": "V4-B015",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "title": "Replica properties and quorum failure envelopes"
+    },
+    {
+      "batch": "PG06",
+      "excerpt": "# Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption **ID:** `decision.build-platform-and-adoption` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-B022",
+      "path": "book/cases/decisions/build-delivery-migration.md",
+      "question": "What runtime dependency did Airbnb\u2019s generated Bazel targets sometimes miss during its Gradle migration?",
+      "title": "Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption"
+    },
+    {
+      "batch": "PG06",
+      "excerpt": "# Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-B025",
+      "path": "book/cases/decisions/data-migration-correctness.md",
+      "question": "In Netflix\u2019s Data Projects case, why could a scheduled job fail after its original owner left?",
+      "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
+    },
+    {
+      "batch": "PG06",
+      "excerpt": "# Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption **ID:** `decision.build-platform-and-adoption` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-B029",
+      "path": "book/cases/decisions/build-delivery-migration.md",
+      "question": "What is lost when a modernization baseline records repository structure but not the runtime and writer inventory?",
+      "title": "Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption"
+    },
+    {
+      "batch": "PG07",
+      "excerpt": "# Queue and resource models **Question.** How should capacity, occupancy and waiting time be related in a queue model, and when does a finite-window measurement mislead? **Short answer.** Arrival rate, service capacity, utilization and occupancy are related but not interchangeable. Little's law connects average occupancy, arrival rate and average time in system under stated conditions. A finite simulation window is not the long-run average, so the model must report the window, the warmup and the uncertainty.",
+      "id": "V4-B034",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "title": "Queue and resource models"
+    },
+    {
+      "batch": "PG08",
+      "excerpt": "# Netflix \u2014 seven years from datacenter dependency to cloud-native service architecture **Case ID:** `case.netflix.cloud-rearchitecture-2008-2016` | **M9:** E16-04 #117 | **Status:** evidence-backed historical draft **Period:** incident August 2008; project completed early January 2016; [Netflix first-party retrospective, February 12, 2016](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration), src.m9-n01.",
+      "id": "V4-B043",
+      "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+      "question": "What did Netflix\u2019s Chaos Kong regional simulation leave outside the tested failure envelope?",
+      "title": "Netflix \u2014 seven years from datacenter dependency to cloud-native service architecture"
+    },
+    {
+      "batch": "PG08",
+      "excerpt": "# Logs, authoritative audit and lineage **Owning question:** Which question is answered by each kind of record? This page belongs to [V09/C04 \u2014 Logging, audit and lineage](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:1 -->",
+      "id": "V4-B046",
+      "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+      "question": "How should a reservation problem distinguish business success from sending a notification?",
+      "title": "Logs, authoritative audit and lineage"
+    },
+    {
+      "batch": "PG10",
+      "excerpt": "# Java 21 virtual-thread pinning at tracing and synchronization boundaries **Case ID:** `case.netflix.java21-virtual-thread-carrier-starvation` **Status:** generalized risk note, not incident evidence **Primary sources:** JEP 444 and JEP 491. The publisher incident report (src.m9-n06) was not retrieved during this audit and is an unresolved citation, not evidence for any count, date or diagnosis below.",
+      "id": "V4-B061",
+      "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
+      "title": "Java 21 virtual-thread pinning at tracing and synchronization boundaries"
+    },
+    {
+      "batch": "PG10",
+      "excerpt": "# Netflix \u2014 CPU-intensive gRPC worker pools: virtual threads were slower **Case ID:** `case.netflix.grpc-cpu-workerpool-loom-regression` \u00b7 **M9:** E16-03 #116 \u00b7 **Status:** source-backed, original case draft; independent technical review pending. **Direct practitioner source:** src.m9-n02, Paul Bakker (Netflix Java Platform), *How Netflix Really Uses Java*, QCon San Francisco, **2023-10-03**. The publisher-hosted [InfoQ talk and transcript](https://www.infoq.com/presentations/netflix-java/) appeared online later; cite the **talk date** as the observed engineering state. Specifically, locate the part of the transcript describing experimentation with virtual threads, the **outgoing gRPC client",
+      "id": "V4-B063",
+      "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+      "question": "What does a bounded platform worker pool fail to bound when its submission queue is unlimited?",
+      "title": "Netflix \u2014 CPU-intensive gRPC worker pools: virtual threads were slower"
+    },
+    {
+      "batch": "PG10",
+      "excerpt": "# Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches **Case ID:** `case.meta.tao-social-graph-serving` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending. **Public primary:** src.m9-me01 [company engineering report](https://engineering.fb.com/2013/06/25/core-infra/tao-the-power-of-the-graph/) (2013-06-25 first-party Facebook/Meta engineering account); source location: TAO data model and API; Implementation; Consistency. Attributed public paraphrase, no mirrored graphs or copyrighted assets.",
+      "id": "V4-B065",
+      "path": "book/cases/meta-tao-social-graph-serving.md",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "title": "Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches"
+    },
+    {
+      "batch": "PG11",
+      "excerpt": "# Partition ownership, keys and skew **Owning question:** Which key and routing policy distribute useful work rather than row counts? This page belongs to [V05/C05 \u2014 Partitioning, sharding and rebalancing](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.0d34dd26886340b89fd4f1499d790a81:1 -->",
+      "id": "V4-B077",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+      "question": "How can a uniform-key test conceal contention on a popular resource?",
+      "title": "Partition ownership, keys and skew"
+    },
+    {
+      "batch": "PG11",
+      "excerpt": "# Semantic adapters and evolving contracts **Owning question:** How can incompatible domain meanings evolve without an atomic release? This page belongs to [V02/C02 \u2014 Domain boundaries, data ownership and contracts](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:4 -->",
+      "id": "V4-B079",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/boundary-evolution.md",
+      "question": "Why can an added API field be wire-compatible but incompatible with an old client\u2019s business behavior?",
+      "title": "Semantic adapters and evolving contracts"
+    },
+    {
+      "batch": "PG14",
+      "excerpt": "# Run and result provenance contract **Question.** What must a run record preserve so that another reader can replay it and see what the run did not establish? **Short answer.** A run record binds the model and scenario by SHA-256, records the engine version, seed base, replication count, input hash, Python and platform, invocation, metrics, convergence, uncertainty, sensitivity and limitations. It also stores a result hash over the record's substantive fields.",
+      "id": "V4-V015",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+      "question": "Why is a confidence interval across synthetic replications not a calibrated input uncertainty budget?",
+      "title": "Run and result provenance contract"
+    },
+    {
+      "batch": "PG14",
+      "excerpt": "# Bulkheads, retries and optional dependencies **Owning question:** How can failure in optional work starve core work? This page belongs to [V07/C05 \u2014 Overload protection and graceful degradation](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:4 -->",
+      "id": "V4-V019",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+      "question": "What does the V12 engine do when the queue or bulkhead reaches its admission limit?",
+      "title": "Bulkheads, retries and optional dependencies"
+    },
+    {
+      "batch": "PG15",
+      "excerpt": "# Airbnb \u2014 JVM monorepo Gradle to Bazel: coexistence before mandatory cutover **Case ID:** `case.airbnb.jvm-bazel` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer. **Public primary:** src.m9-a01 [official engineering account](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/), Airbnb Engineering first-party retrospective; source anchors: Why Bazel?; How did we migrate?; Proof of concept; results and lessons. No private materials or copyrighted graphics reproduced.",
+      "id": "V4-V027",
+      "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+      "question": "Why is the no-cutover scenario a reference case rather than a recommendation to stay on the old path forever?",
+      "title": "Airbnb \u2014 JVM monorepo Gradle to Bazel: coexistence before mandatory cutover"
+    },
+    {
+      "batch": "PG15",
+      "excerpt": "# Promotion, reconciliation and user-health gates **Owning question:** Which failure and authority boundaries separate deployment from accepted release? This page belongs to [V08/C01 \u2014 CI/CD architecture and artifact provenance](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.7921e82a71b9446790f185c818326911:4 -->",
+      "id": "V4-V030",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/promotion-rollout.md",
+      "question": "How does the V12 independent review gate differ from the locally checked validation gates?",
+      "title": "Promotion, reconciliation and user-health gates"
+    }
+  ]
+}

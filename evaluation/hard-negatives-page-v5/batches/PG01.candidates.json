@@ -1,0 +1,125 @@
+{
+  "batch": "PG01",
+  "items": [
+    {
+      "id": "V4-A001",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.31c8e450f78c451d90cb6090df330c5a:-1 --> # Anti-corruption adapters: semantic translation and safe coexistence > **Tycho book manuscript V02/C06, 2026-10-19.** Independently reviewed public pattern guidance, original synthetic examples and diagrams. No actual legacy source, internal architecture, integration test, consumer migration or independent design review was used. > > The content_review field retains the decomposition-era draft state; no independent > acceptance is asserted. <!-- /tycho-question-source --> > **Pattern atlas:** [Anti-Corruption Layer](../../v11-pattern-atlas/c01-application-boundaries/anti-corruption-layer.md#anti-corruption-layer) ",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "title": "Anti-corruption adapters: semantic translation and safe coexistence"
+        }
+      ],
+      "question": "What risk arises when a translation layer between legacy and new domains has no owner for its mappings?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A002",
+      "page_new": [
+        {
+          "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "title": "Architecture evolution: when to keep, modularize or extract a service"
+        }
+      ],
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A003",
+      "page_new": [
+        {
+          "excerpt": "# API contracts and effect identity **Owning question:** Which promises belong to transport semantics and which require application deduplication? This page belongs to [V02/C05 \u2014 Public APIs, HTTP/RPC and compatibility](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:1 -->",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "title": "API contracts and effect identity"
+        }
+      ],
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A004",
+      "page_new": [
+        {
+          "excerpt": "# Service Discovery > **Pattern atlas:** > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [discovery, load balancing and backend selection page](discovery-balancing.md#service-discovery) on 2026-10-29. Client-side discovery, server-side discovery and load balancing remain on the chapter page. Envoy fetches cluster members from a xDS management server through the endpoint discovery service. The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the discovery service. EDS carries per-host attributes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/service-discovery.md",
+          "title": "Service Discovery"
+        }
+      ],
+      "question": "What infrastructure must exist before Envoy can use the service-discovery approach described by the card?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A005",
+      "page_new": [
+        {
+          "excerpt": "# Splitter > **Pattern atlas:** > [Splitter](../../v11-pattern-atlas/c03-messaging-integration/splitter.md#splitter) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [messaging families and durable workflows page](messaging-families-and-durable-workflows.md#splitter) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Split a composite message only when its parts can make progress independently and the outcome is observable: the total count is known, or an explicit release rule or expiry records a partial result or forced closure rather than silent success. If the parts must succeed atomically, keep the compo",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
+          "title": "Splitter"
+        }
+      ],
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A006",
+      "page_new": [
+        {
+          "excerpt": "# Claim Check > **Pattern atlas:** > [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/claim-check.md#claim-check) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [workflow state and messaging failure gates page](workflow-failure.md#claim-check) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Store a large or sensitive payload outside the messaging system and send a claim check only when payload size, sensitivity or repeated serialization justifies the extra store and retrieval hop, when payload lifecycle and failure handling have owners, and when authorization can remain an independent int",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md",
+          "title": "Claim Check"
+        }
+      ],
+      "question": "What failure can arise if a claim token is published before its payload is durably stored?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A007",
+      "page_new": [
+        {
+          "excerpt": "# Outbox publication and ordering **Owning question:** Which local atomic record closes a dual-write loss window? This page belongs to [V04/C05 \u2014 Outbox, inbox, sagas and durable workflows](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:1 -->",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "title": "Outbox publication and ordering"
+        }
+      ],
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A008",
+      "page_new": [
+        {
+          "excerpt": "# Outbox publication and ordering **Owning question:** Which local atomic record closes a dual-write loss window? This page belongs to [V04/C05 \u2014 Outbox, inbox, sagas and durable workflows](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:1 -->",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "title": "Outbox publication and ordering"
+        }
+      ],
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A009",
+      "page_new": [
+        {
+          "excerpt": "# Local and distributed caching: correctness, invalidation and overload boundaries > Tycho [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84), original technical research based on publicly accessible Redis and Caffeine documentation, inspected **2026-10-19**. All scenarios and data are fictional. No measured cache hit rates, end-to-end speedup, consistency guarantee or independent review is claimed.",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "title": "Local and distributed caching: correctness, invalidation and overload boundaries"
+        }
+      ],
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A010",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:-1 --> # Cache invalidation, stampedes and hot-key failure modes > **Original Tycho V06/C02 chapter draft**, 2026-10-19. Public Caffeine refresh, Redis cache-aside and EXPIRE sources describe mechanisms. All races and load examples here are educational inventions; no cache, Redis lock, version guard, database or benchmark was run or reviewed. The earlier [combined cache research](../../../scaling/local-distributed-caching-and-invalidation.md) remains intact until claims are reconciled. <!-- /tycho-question-source --> > **Pattern atlas:** > [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/cache-invalidati",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "title": "Cache invalidation, stampedes and hot-key failure modes"
+        }
+      ],
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
+      "split": "atlas"
+    }
+  ]
+}
