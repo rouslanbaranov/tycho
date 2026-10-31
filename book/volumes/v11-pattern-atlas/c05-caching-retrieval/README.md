@@ -39,9 +39,17 @@ evidence_scope:
     - "src.rfc9111-enrichment"
     - "src.mdn-cache-control"
     - "src.microsoft-cloud-patterns"
+    - "src.cloudfront"
+    - "src.cloudflare-cache-status"
+    - "src.owasp-authorization-decisions"
   claim_ids: []
   status: "source-linked"
-  notes: "14 cards cite read units; owner links are bounded."
+  notes: >-
+    14 cards cite read units; owner links are bounded. Negative Caching binds
+    invariant, failure/recovery and alternative on 2026-10-31 to RFC 9111,
+    CloudFront status-code processing, OWASP authorization-decision guidance
+    and Cloudflare cache-by-status-code defaults; per-status TTL context is
+    retained from Google Cloud CDN.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -290,24 +298,43 @@ priority core.
 responses?
 
 **Good-fit conditions.** The failure is stable enough to cache; TTL is short; negative
-entries cannot hide a later valid result; status-specific policy exists.
+entries cannot hide a later valid result; status-specific policy exists. RFC 9111 allows
+"negative results (e.g., 404 (Not Found))" only inside its storage rules, and a shared
+cache must not reuse an authorization-bearing response unless a directive "allows it to
+be stored by a shared cache".
 
 **Hard contraindications.** Reject when failures are transient, when caching an error
-would hide recovery, or when negative entries leak existence or authorization.
+would hide recovery, or when negative entries leak existence or authorization. CloudFront
+caches a 403 only when the origin sends `Cache-Control max-age` or `Cache-Control
+s-maxage`, so a denial the origin does not explicitly mark cacheable is not a safe
+default.
 
-**Competing alternative.** Bypass, a per-principal key, or a short TTL with backoff.
-Reverse when repeated misses amplify origin load.
+**Competing alternative.** A per-principal key, a short TTL, or bypass. OWASP says to
+"Cache only for the same subject, action, resource scope, tenant, and relevant
+policy/input state, within the approved freshness limit"; Cloudflare gives 404 and 410 a
+3-minute default Edge TTL and says "All other status codes are not cached by default."
+Reverse when repeated misses amplify origin load and the denial is global for the key.
 
-**Failure and recovery.** A cached denial can outlive a create/grant or leak across principals;
-scope keys by tenant/principal, delete or version on change, bound TTL and test revocation.
+**Failure and recovery.** A cached denial can outlive a create/grant or leak across
+principals; scope keys by tenant/principal, delete or version on change, bound TTL and
+test revocation. OWASP states that "a cached permit must not outlive a required
+revocation deadline"; CloudFront's error-caching minimum TTL defaults to 10 seconds (the
+window is the larger of that minimum and any origin cache directive) and it "continues
+to retry at intervals".
 
 **Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#4-negative-caching-and-evicted-authorization) — negative-cache policy is bounded, not a universal error-cache rule.
 
-**Sources.**
-[src.google-cdn-negative-caching](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-google-negative.2026-10-21: all eleven served headings
-read. The source is a public pattern/documentation
-unit, not a benchmark.
+**Sources.** Four public units were inspected on 2026-10-31:
+`src.rfc9111-enrichment`, `src.cloudfront`,
+`src.owasp-authorization-decisions` and `src.cloudflare-cache-status`
+([reading ledger](../../../../edition/patterns/reading-ledger.v1.json)).
+Records: `read.rfc9111-negative-caching.2026-10-31`,
+`read.cloudfront-status-codes.2026-10-31`,
+`read.owasp-authorization-decisions.2026-10-31` and
+`read.cloudflare-cache-status.2026-10-31`. The retained
+`src.google-cdn-negative-caching` record `read.batch3-google-negative.2026-10-21`
+supplies the per-status TTL example. These are protocol, documentation and
+guidance units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
