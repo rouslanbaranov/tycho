@@ -104,10 +104,10 @@ compatibility window and old-reader inventory cost exceed the migration risk.
 ### Expand-and-Contract
 
 **Mechanism — three phases over a compatibility window (Tycho summary, source-bound).**
-Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain
-compatible with readers still running the previous version, and the contract phase is
-gated by observed reader absence. The protocol owns the compatibility window, the reader
-inventory and the rollback or forward-repair decision. Fowler's Parallel Change article
+Expand-and-contract is a rollout protocol, not a schema diagram: the expand and migrate
+phases must remain compatible with readers still running the previous version, while the
+contract phase is the gated removal that follows observed reader absence. The protocol owns the compatibility window, the reader
+inventory and the rollback or forward-repair decision. Danilo Sato's Parallel Change article (hosted on martinfowler.com)
 describes it as "a pattern to implement backward-incompatible changes to an interface in
 a safe manner, by breaking the change into three distinct phases: expand, migrate, and
 contract." In the expand phase you "augment the interface to support both the old and the
@@ -127,7 +127,7 @@ protocol; the lock and rewrite profile is an engine fact.
 
 **Invariant — every supported binary must read and write every committed row (Tycho
 rule, source-bound).** New writers must preserve enough old representation for old
-supported readers until a verified cutover. Fowler says "Existing clients will continue
+supported readers until a verified cutover. Sato says "Existing clients will continue
 to consume the old version, and the new changes can be introduced incrementally without
 affecting them." AWS says "Database updates must be backward compatible, so the old
 version of the application can still interact with the data," and requires that "your
@@ -164,15 +164,16 @@ representation. A `DROP COLUMN` or a destructive rewrite is not a rollback path.
 **Alternative — explicit versioning, branch by abstraction, or engine-native online
 DDL (Tycho choice rule, source-bound trade-offs).** A big-bang migration, a parallel run
 or a versioned API cutover may be preferable when no mixed-version compatibility window
-is possible or the dataset is small enough to migrate under a verified pause. Fowler
+is possible or the dataset is small enough to migrate under a verified pause. Sato
 presents parallel change as "an alternative to using an explicit version in the exposed
 API," and adds that with a large number of clients "using branch by abstraction is a
-better strategy to narrow the surface of change." MySQL's instant and in-place
-algorithms are an engine-native alternative for a single compatible change: they avoid a
-table copy and permit concurrent DML, but a type change is COPY-only and "Concurrent DML
-is not permitted." Use expand-and-contract when old and new readers must coexist and the
+better strategy to narrow the surface of change." MySQL's INSTANT algorithm is an engine-native alternative for a single compatible change:
+it avoids a table rebuild and permits concurrent DML. INPLACE may rebuild while still
+permitting DML, and COPY rebuilds and blocks concurrent DML; a type change is COPY-only and
+"Concurrent DML is not permitted." Use expand-and-contract when old and new readers must coexist and the
 change cannot be made compatible in one DDL step; use direct or online migration when
-the change is additive and the engine can complete it without blocking; use explicit
+the change is additive, readers and decoders are verified compatible, and the engine can
+complete it without blocking; use explicit
 versioning or branch by abstraction when the caller population is large or the interface
 cannot carry both meanings. Expand-and-contract is a fit when old and new readers must
 coexist; reverse when the compatibility window, reader inventory and dual-write cost
@@ -182,7 +183,7 @@ exceed the migration risk.
 reused byte-for-byte. These are documentation and articles, not benchmarks or executed
 tests. Quotes are short excerpts. Markdown escapes, emphasis, curly quotes and
 link-extraction spacing are normalized; Tycho-labelled sentences are synthesis, not
-source claims. Records (proposed unless marked retained):
+source claims. Records:
 
 - Danilo Sato, "Parallel Change," martinfowler.com, published 2014-05-13; canonical
   text SHA-256

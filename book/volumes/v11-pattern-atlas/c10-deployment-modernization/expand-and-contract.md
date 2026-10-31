@@ -65,23 +65,25 @@ migration-pattern; priority core.
 **Decision question.** Should a schema change be rolled out in expand, migrate and
 contract stages?
 
-**Good-fit conditions.** Old and new readers coexist; each phase is additive and
-backward compatible; the compatibility window and reader inventory are owned; the
+**Good-fit conditions.** Old and new readers coexist; expand and migrate are additive and
+backward compatible; contract is gated by reader absence; the compatibility window and
+reader inventory are owned; the
 backfill, validation and cutover gate are explicit; the engine's DDL lock or rewrite
 budget is known; a rollback or forward-repair path is defined.
 
 **Hard contraindications.** Reject when old and new readers cannot coexist, when the
-change requires an immediate destructive rewrite with no compatibility window, when a
-rollback cannot restore the old schema and data, or when no one owns the reader
+change requires an immediate destructive rewrite with no compatibility window, when
+neither a rollback nor a viable forward-repair path exists, or when no one owns the reader
 inventory.
 
 **Competing alternative.** Big-bang migration, parallel run, explicit API versioning,
 branch by abstraction, or engine-native online DDL for a single compatible change.
-Fowler presents parallel change as an alternative to explicit versioning and calls
-branch by abstraction better for a large client population. MySQL instant and in-place
-DDL avoids a table copy for compatible changes, but a type change is COPY-only and
-blocks concurrent DML. Reverse when no compatibility window is possible, the dataset is
-small enough to pause, or the engine can complete the change online.
+Sato presents parallel change as an alternative to explicit versioning and calls
+branch by abstraction better for a large client population. MySQL INSTANT avoids a
+rebuild for compatible changes; INPLACE may rebuild while permitting DML; COPY rebuilds
+and blocks DML, and a type change is COPY-only. Reverse when no
+compatibility window is possible, the dataset is small enough to pause, or readers and
+decoders are verified compatible and the engine can complete the change online.
 
 **Failure and recovery.** Partial backfills, old readers and destructive rewrites are
 common; hold the window, repair forward, and contract only after reader absence. AWS

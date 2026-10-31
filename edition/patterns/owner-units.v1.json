@@ -12346,7 +12346,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence.",
+          "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: the expand and migrate phases must remain compatible with readers still running the previous version, while the contract phase is the gated removal that follows observed reader absence.",
           "reason": "Fowler defines the expand, migrate and contract phases and requires the expand phase to support both versions; AWS orders schema-first and schema-last changes around the code deployment; PostgreSQL's ALTER TABLE takes an ACCESS EXCLUSIVE lock by default; MySQL instant and in-place DDL avoid a table copy for compatible changes while a type change is COPY-only. The deployment-protocol reading is Tycho.",
           "binding": {
             "source_id": "src.fowler-parallel-change",
@@ -12451,7 +12451,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A big-bang migration, a parallel run or a versioned API cutover may be preferable when no mixed-version compatibility window is possible or the dataset is small enough to migrate under a verified pause.",
+          "quote": "Use expand-and-contract when old and new readers must coexist and the change cannot be made compatible in one DDL step; use direct or online migration when the change is additive, readers and decoders are verified compatible, and the engine can complete it without blocking; use explicit versioning or branch by abstraction when the caller population is large or the interface cannot carry both meanings.",
           "reason": "Fowler presents explicit API versioning as the alternative and branch by abstraction as better for a large client population; MySQL instant and in-place DDL avoids a table copy for a single compatible change while a type change is COPY-only and blocks concurrent DML. The reversal conditions and pause rule are Tycho.",
           "binding": {
             "source_id": "src.fowler-parallel-change",
@@ -12488,7 +12488,7 @@
       "decision_evidence": {
         "atlas_section": "expand-and-contract",
         "question": "Should a schema change be rolled out in expand, migrate and contract stages?",
-        "competing_alternative": "Big-bang migration, parallel run, explicit API versioning, branch by abstraction, or engine-native online DDL for a single compatible change. Fowler presents parallel change as an alternative to explicit versioning and calls branch by abstraction better for a large client population. MySQL instant and in-place DDL avoids a table copy for compatible changes, but a type change is COPY-only and blocks concurrent DML. Reverse when no compatibility window is possible, the dataset is small enough to pause, or the engine can complete the change online.",
+        "competing_alternative": "Big-bang migration, parallel run, explicit API versioning, branch by abstraction, or engine-native online DDL for a single compatible change. Sato presents parallel change as an alternative to explicit versioning and calls branch by abstraction better for a large client population. MySQL INSTANT avoids a rebuild for compatible changes; INPLACE may rebuild while permitting DML; COPY rebuilds and blocks DML, and a type change is COPY-only. Reverse when no compatibility window is possible, the dataset is small enough to pause, or readers and decoders are verified compatible and the engine can complete the change online.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
