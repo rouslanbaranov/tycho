@@ -186,7 +186,7 @@ inside a quote are editorial wrapping. Tycho-labelled rules are synthesis, not s
 
 - IETF, *The Idempotency-Key HTTP Header Field*,
   draft-ietf-httpapi-idempotency-key-header-08, 22 October 2026, sections 2.2-2.7: raw text
-  SHA-256 `25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3`; proposed record
+  SHA-256 `25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3`; record
   `read.ietf-idempotency-key-08.2026-10-31`. The retained draft-07 record
   `read.batch2-ietf.2026-10-21` remains historical.
 - AWS Builders' Library, "Making retries safe with idempotent APIs", sections "Introduction",
@@ -194,11 +194,11 @@ inside a quote are editorial wrapping. Tycho-labelled rules are synthesis, not s
   client request ID, different intent": canonical text SHA-256
   `c18401ac35cb5d8e7e97a4d53ff3f5a7280a53097e000d50bc525a758fbbcdac`, raw HTML SHA-256
   `f1a8595955fe0900386eb9a1191184ee9e60fd117a2e7f7219ef6a5d1b2d8139`; Last-Modified
-  2026-10-27; proposed record `read.aws-idempotency.2026-10-31`.
+  2026-10-27; record `read.aws-idempotency.2026-10-31`.
 - Stripe, "Idempotent requests", section "Idempotent requests": canonical text SHA-256
   `fdda1f88aa51ec91f7655939cba5063dd8e256f20e00933209172fb3ef5d49ef`, raw HTML SHA-256
   `c1eb7968fc1fbecf85552f29f87b9dd1ec0648985e5ce42095172fd04f14d34d`; no page revision header,
-  displays API version 2026-10-28; proposed record
+  displays API version 2026-10-28; record
   `read.stripe-idempotent-requests.2026-10-31`.
 - Microsoft Azure Architecture Center, "Idempotent Consumer pattern", sections "Choose a stable
   deduplication key", "Commit the processed key and the side effects atomically", "Guard against
@@ -206,8 +206,8 @@ inside a quote are editorial wrapping. Tycho-labelled rules are synthesis, not s
   and considerations": canonical text SHA-256
   `f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34`; retained record
   `read.microsoft-idempotent-consumer.2026-10-30`; the 2026-10-31 refetch is byte-identical and
-  the added key-stability, conditional-write and natural-idempotency claims are proposed for
-  record `read.microsoft-idempotent-consumer.2026-10-31`.
+  the added key-stability, conditional-write and natural-idempotency claims are recorded in
+  `read.microsoft-idempotent-consumer.2026-10-31`.
 
 The retained `src.ietf-idempotency-key` draft-07 record remains a historical reading; this
 section binds the current draft-08 text.

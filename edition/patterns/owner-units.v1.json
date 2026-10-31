@@ -5146,44 +5146,195 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period.",
-          "reason": "Source states key uniqueness scope, not the full fingerprint/expiry mechanism."
+          "reason": "IETF draft-08 defines uniqueness ownership, non-reuse, expiry publication, fingerprint input and lifecycle responsibility; AWS, Stripe and Azure give API-level key scope and retention examples; the one-contract and tenant-scope rules are Tycho.",
+          "binding": {
+            "source_id": "src.ietf-idempotency-key",
+            "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
+            "section": "Uniqueness of Idempotency Key",
+            "quote": "Uniqueness of the key MUST be defined by the resource owner and MUST be implemented by the clients of the resource.",
+            "revision": "25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.ietf-idempotency-key",
+              "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
+              "section": "Idempotency Key Validity and Expiry",
+              "quote": "The resource SHOULD define such expiration policy and publish it in the documentation.",
+              "revision": "25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3"
+            },
+            {
+              "source_id": "src.aws-idempotency",
+              "ledger_record": "read.aws-idempotency.2026-10-31",
+              "section": "Reducing client complexity",
+              "quote": "A unique caller-provided client request identifier for idempotent operations meets this need.",
+              "revision": "c18401ac35cb5d8e7e97a4d53ff3f5a7280a53097e000d50bc525a758fbbcdac"
+            },
+            {
+              "source_id": "src.stripe-idempotency",
+              "ledger_record": "read.stripe-idempotent-requests.2026-10-31",
+              "section": "Idempotent requests",
+              "quote": "For API v1, you can remove keys from the system automatically after they’re at least 24 hours old.",
+              "revision": "fdda1f88aa51ec91f7655939cba5063dd8e256f20e00933209172fb3ef5d49ef"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Choose a stable deduplication key",
+              "quote": "The deduplication key must uniquely and consistently identify the logical message across every redelivery.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
-          "reason": "Source has no atomic outcome-record plus business-effect commit rule."
+          "reason": "AWS requires ACID recording of the idempotent token with all mutating operations; Azure requires the deduplication marker and business side effects in one transaction; IETF draft-08 states a weaker response-consistency rule but not atomic commit; the full rule is Tycho.",
+          "binding": {
+            "source_id": "src.aws-idempotency",
+            "ledger_record": "read.aws-idempotency.2026-10-31",
+            "section": "Reducing client complexity",
+            "quote": "An important consideration is that the process that combines recording the idempotent token and all mutating operations related to servicing the request must meet the properties for an atomic, consistent, isolated, and durable (ACID) operation.",
+            "revision": "c18401ac35cb5d8e7e97a4d53ff3f5a7280a53097e000d50bc525a758fbbcdac"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Commit the processed key and the side effects atomically",
+              "quote": "Avoid this failure window by writing the deduplication marker and the business side effects in the same transaction.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.ietf-idempotency-key",
+              "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
+              "section": "Idempotency Enforcement",
+              "quote": "The resource SHOULD respond with a response consistent with the request being completed according to the user's intent.",
+              "revision": "25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The owner also names the conflict response and the record a support engineer may inspect.",
-          "reason": "Source defines retry/concurrent outcomes but no support-visible outcome record."
+          "reason": "IETF draft-08 separates 400, 422 and 409 and requires a problem description; AWS stores the initial parameters and returns a validation error on mismatch; Stripe returns the saved response; Azure keeps in-progress/completed records and says to reconcile stale records; the inspectable-record fields are Tycho.",
+          "binding": {
+            "source_id": "src.ietf-idempotency-key",
+            "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
+            "section": "Error Handling",
+            "quote": "If the request is retried, while the original request is still being processed, the resource SHOULD reply with an HTTP 409 status code with body containing problem description.",
+            "revision": "25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.ietf-idempotency-key",
+              "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
+              "section": "Error Handling",
+              "quote": "If there is an attempt to reuse an idempotency key with a different request payload, the resource SHOULD reply with an HTTP 422 status code with body containing a link pointing to relevant documentation.",
+              "revision": "25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3"
+            },
+            {
+              "source_id": "src.aws-idempotency",
+              "ledger_record": "read.aws-idempotency.2026-10-31",
+              "section": "Same client request ID, different intent",
+              "quote": "In response to this situation, we return a validation error indicating a parameter mismatch between idempotent requests.",
+              "revision": "c18401ac35cb5d8e7e97a4d53ff3f5a7280a53097e000d50bc525a758fbbcdac"
+            },
+            {
+              "source_id": "src.stripe-idempotency",
+              "ledger_record": "read.stripe-idempotent-requests.2026-10-31",
+              "section": "Idempotent requests",
+              "quote": "Retries with the same key return the saved response, including 500 errors.",
+              "revision": "fdda1f88aa51ec91f7655939cba5063dd8e256f20e00933209172fb3ef5d49ef"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Handle side effects that can't join the transaction",
+              "quote": "Record the key with an in-progress state, and then perform the external action. Update the record to completed and store the outcome.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Some effects can rely on a uniqueness rule, a compare-and-set or one writer instead of a key store.",
-          "reason": "Source varies key carrier, not a uniqueness rule or single-writer alternative."
+          "reason": "Azure binds a uniqueness constraint, an atomic conditional write and a single database arbiter; IETF draft-08 separates naturally idempotent methods; Stripe says GET and DELETE are idempotent by definition; AWS shows the ResourceAlreadyExists trade-off; the choice and reversal rule is Tycho.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+            "section": "Guard against concurrent duplicates",
+            "quote": "Use a uniqueness constraint on the deduplication key such that two transactions can attempt to insert a key, but only one can succeed.",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Guard against concurrent duplicates",
+              "quote": "Use an atomic conditional write, such as an insert that fails on conflict or a set-if-absent operation, to make claiming the key a single atomic step.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Guard against concurrent duplicates",
+              "quote": "This approach makes the database the single arbiter of the conflict.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.ietf-idempotency-key",
+              "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
+              "section": "Introduction",
+              "quote": "the methods OPTIONS, HEAD, GET, PUT and DELETE are idempotent while methods POST and PATCH are not.",
+              "revision": "25dcfa45f2fcbe3d8bc00e2c8b2bf396dfe1bbcea991a535f2fedce3728ed4a3"
+            },
+            {
+              "source_id": "src.stripe-idempotency",
+              "ledger_record": "read.stripe-idempotent-requests.2026-10-31",
+              "section": "Idempotent requests",
+              "quote": "Don’t send idempotency keys in GET and DELETE requests because it has no effect. These requests are idempotent by definition.",
+              "revision": "fdda1f88aa51ec91f7655939cba5063dd8e256f20e00933209172fb3ef5d49ef"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "idempotency-key",
         "question": "Should a client-supplied key let the server recognize retries of one logical request?",
-        "competing_alternative": "Natural idempotency, a uniqueness rule or one writer. Reverse the choice when key storage and fingerprinting cost exceed retry risk.",
+        "competing_alternative": "Natural idempotency, a uniqueness constraint, a compare-and-set or one writer. Reverse when key storage and fingerprinting cost exceed retry risk, or when payload shape, caller population or retention cost changes.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch2-ietf.2026-10-21",
+        "ledger_record": "read.ietf-idempotency-key-08.2026-10-31",
         "source_id": "src.ietf-idempotency-key",
         "unit_type": "specification",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-idempotency",
+            "ledger_record": "read.aws-idempotency.2026-10-31",
+            "revision": "c18401ac35cb5d8e7e97a4d53ff3f5a7280a53097e000d50bc525a758fbbcdac"
+          },
+          {
+            "source_id": "src.stripe-idempotency",
+            "ledger_record": "read.stripe-idempotent-requests.2026-10-31",
+            "revision": "fdda1f88aa51ec91f7655939cba5063dd8e256f20e00933209172fb3ef5d49ef"
+          },
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "All four technical dimensions bound 2026-10-31 to IETF draft-08, AWS Builders' Library, Stripe and Azure Architecture Center; the key ownership, atomic-commit, conflict-response and alternative rules remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.change-data-capture-cdc",
@@ -13777,12 +13928,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 112,
-    "invariant_supported": 77,
-    "failure_recovery_supported": 71,
-    "alternative_supported": 76,
-    "technical_partial_bounded": 15,
-    "technical_partial": 71,
+    "mechanism_supported": 113,
+    "invariant_supported": 78,
+    "failure_recovery_supported": 72,
+    "alternative_supported": 77,
+    "technical_partial_bounded": 16,
+    "technical_partial": 70,
     "technical_name_only": 0,
     "technical_sufficient": 59,
     "decision_partial_bounded": 86,

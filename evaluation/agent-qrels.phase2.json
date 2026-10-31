@@ -391,14 +391,14 @@
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period. Callers choose a value only within that published contract. The owner also names the conflict response and the record a support engineer may inspect.",
-          "rationale": "Owner defines scope, fingerprint inputs and retention."
+          "quote": "An idempotency key belongs to the operation owner, who defines its scope, fingerprint inputs and retention period. Callers choose a value only within that published contract.",
+          "rationale": "Owner defines scope, fingerprint inputs and retention; callers stay within the published contract."
         },
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution. The owner treats a changed fingerprint on a reused key as a new decision rather than a replay.",
-          "rationale": "Outcome record commits with the effect; changed fingerprint is a conflict."
+          "quote": "The outcome record and business effect must commit together; a later separate write leaves a window for duplicate execution.",
+          "rationale": "The outcome record commits with the effect; a changed fingerprint on a reused key is a new decision."
         },
         {
           "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",

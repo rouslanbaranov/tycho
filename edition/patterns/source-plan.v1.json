@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "d2a924834e959f24b8c317f7b31f599b7b97da63eccb3d9b7fe85741db8e7a43",
-  "route_index_snapshot": "63db52e1c838e552e05a77ab9f08726ea9319963dde292741b4d11365b713e1c",
+  "registry_sha256": "84b5864e60376be962a998839c8c4e0cf8765bbd35316c6caba8dc6fc8af5cc3",
+  "route_index_snapshot": "b4eef6ae4bd9e170daf6b4159b86273b705d1606127d96feada720070983e0be",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2085,9 +2085,9 @@
       "required_units": [
         {
           "source_id": "src.ietf-idempotency-key",
-          "unit": "Idempotency-Key HTTP Header Field — IETF draft",
+          "unit": "The Idempotency-Key HTTP Header Field — IETF Internet-Draft 08",
           "unit_type": "specification",
-          "url": "https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-07.txt",
+          "url": "https://www.ietf.org/archive/id/draft-ietf-httpapi-idempotency-key-header-08.txt",
           "sections": [
             "Introduction",
             "Notational Conventions",
@@ -2100,26 +2100,58 @@
             "Client",
             "Resource",
             "Idempotency Enforcement",
-            "Error Handling",
-            "IANA Considerations",
-            "The Idempotency-Key HTTP Request Header Field (IANA)",
-            "Implementation Status",
-            "Implementing the Concept",
-            "Security Considerations",
-            "Examples",
-            "References",
-            "Normative References",
-            "Informative References",
-            "Appendix A. Changes from Draft-06",
-            "Acknowledgments",
-            "Authors' Addresses"
+            "Error Handling"
           ],
           "status": "read",
-          "read_record_id": "read.batch2-ietf.2026-10-21",
+          "read_record_id": "read.ietf-idempotency-key-08.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-idempotency",
+          "unit": "Making retries safe with idempotent APIs — Amazon Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/",
+          "sections": [
+            "Introduction",
+            "Retrying and side effects",
+            "Reducing client complexity",
+            "Late arriving requests",
+            "Same client request ID, different intent"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-idempotency.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.stripe-idempotency",
+          "unit": "Idempotent requests — Stripe API Reference",
+          "unit_type": "documentation-page",
+          "url": "https://docs.stripe.com/api/idempotent_requests",
+          "sections": [
+            "Idempotent requests"
+          ],
+          "status": "read",
+          "read_record_id": "read.stripe-idempotent-requests.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Idempotent Consumer pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+          "sections": [
+            "Choose a stable deduplication key",
+            "Commit the processed key and the side effects atomically",
+            "Guard against concurrent duplicates",
+            "Handle side effects that can't join the transaction",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-idempotent-consumer.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 2 public unit read; claims limited to the ledger record."
+      "notes": "All four technical dimensions bound 2026-10-31 to IETF draft-08, AWS Builders' Library, Stripe and Azure Architecture Center; the key ownership, atomic-commit, conflict-response and alternative rules remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.change-data-capture-cdc",
@@ -6118,16 +6150,17 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 260,
-    "read_units": 259,
+    "required_units": 263,
+    "read_units": 262,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 214
+    "ledger_records": 218
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
     "read.microsoft-cloud-patterns.2026-10-21",
     "read.microservices-patterns.2026-10-21",
-    "read.eip-messaging.2026-10-21"
+    "read.eip-messaging.2026-10-21",
+    "read.batch2-ietf.2026-10-21"
   ]
 }
