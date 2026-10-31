@@ -67,7 +67,7 @@ rolling window, minimum request volume and threshold comparison are defined; a h
 is bounded and safe; the fallback or fail-fast contract is defined; rejected calls are measured
 separately.
 
-**Hard contraindications.** Reject when a circuit would hide a required dependency, when the
+**Hard contraindications.** Reject when a fallback would hide the outage, when the
 caller cannot bound the call duration, or when recovery probing would overload it. Prefer a retry
 budget with jitter, a rate limit or a bounded timeout when failures are caller-specific or
 caused by local saturation.

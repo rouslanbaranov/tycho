@@ -159,8 +159,8 @@ explicit fallback or fail-fast contract; a fallback that calls the same dependen
 unbounded alternate path only hides the outage.
 
 **Alternative — retry budget, rate limit or bounded timeout (Tycho choice rule, source-bound
-trade-offs).** AWS says retries are "selfish" and warns that circuit breakers can add recovery time; it
-mitigates the risk "by limiting retries locally using a token bucket." It also says jitter "adds some amount of randomness to the backoff to spread the
+trade-offs).** AWS says retries are "selfish" and mitigates the amplification risk "by limiting retries
+locally using a token bucket." It also says jitter "adds some amount of randomness to the backoff to spread the
 retries around in time." Google SRE caps retries with per-request and per-client budgets, and caps outgoing traffic so that "requests above the
 cap fail locally without even reaching the network." SRE says that when a large subset of tasks is
 overloaded, "requests should not be retried and errors should bubble up all the way to the caller

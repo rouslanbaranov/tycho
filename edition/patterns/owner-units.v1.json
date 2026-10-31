@@ -8225,7 +8225,7 @@
         "invariant": {
           "state": "supported",
           "quote": "The sources use different threshold models rather than one shared boundary: Resilience4j compares a failure rate (\"equal or greater\" than the threshold) after a minimum call volume; Azure triggers on a failure count within a specified interval and does not state a rate threshold.",
-          "reason": "Resilience4j requires a minimum recorded call count and trips at \"equal or greater\" than the threshold; Azure requires a specified number of failures in a specified interval and says \"exceeds\". The comparison boundary remains a recorded disagreement.",
+          "reason": "Resilience4j compares a failure rate after a minimum call volume; Azure triggers on a failure count within an interval. The models differ, and the comparison rule is Tycho.",
           "binding": {
             "source_id": "src.resilience4j",
             "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
@@ -8253,7 +8253,7 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "The open state records why it opened and the cooldown; half-open admits a bounded number of probes. Azure closes when all permitted requests succeed; Resilience4j closes when the permitted-call failure rate is below the threshold, so a permitted failure can still close it. A stricter consecutive-success rule is Tycho synthesis.",
-          "reason": "Azure says Half-Open probes a recovering service, that recovery depends on external operations and that the pattern is scoped to remote services rather than local private resources; SRE ties utilization signals to local task state. The attribution rule and fail-fast contract are Tycho.",
+          "reason": "Azure lists access to local private resources as a consideration; an open caused by local saturation is Tycho's warning. Azure closes when all permitted requests succeed; Resilience4j closes by permitted-call failure rate.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
@@ -8287,7 +8287,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Use a breaker when failures are dependency-local, observable and repeated calls amplify them, whether the symptom is an error or a slow call.",
+          "quote": "AWS says retries are \"selfish\" and mitigates the amplification risk \"by limiting retries locally using a token bucket.\" It also says jitter \"adds some amount of randomness to the backoff to spread the retries around in time.\" Google SRE caps retries with per-request and per-client budgets, and caps outgoing traffic so that \"requests above the cap fail locally without even reaching the network.\"",
           "reason": "AWS limits retries locally with a token bucket, treats timeout as a budget and warns that breakers can add recovery time; Google SRE caps retries per request and per client and says overloaded requests should fail locally; Azure contrasts retry and long time-outs. The Tycho choice rule is synthesis.",
           "binding": {
             "source_id": "src.aws-backoff",
