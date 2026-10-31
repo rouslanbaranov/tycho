@@ -1,0 +1,135 @@
+{
+  "batch": "SN06",
+  "items": [
+    {
+      "id": "V4-B021",
+      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "section_new": [
+        {
+          "excerpt": "## The overload boundary The overload scenario offers 30 requests per second to a 24-request-per-second pool with a 40-request queue and a one-second deadline. The run reports: - success rate 0.6488 (95% CI 0.6443-0.6534); - timeout rate 0.3495 (95% CI 0.3451-0.3540); - rejection rate 0.0005; - mean queue length 12.79; - server utilization 0.9966. The dominant failure is timeout, not rejection. The queue is large enough to absorb arrivals but not large enough to prevent deadline expiry. A report that focuses on rejection alone would miss most of the loss: rejection is 0.05% while timeout is 35.0%.",
+          "heading": "The overload boundary",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B022",
+      "question": "What runtime dependency did Airbnb\u2019s generated Bazel targets sometimes miss during its Gradle migration?",
+      "section_new": [
+        {
+          "excerpt": "## Four-and-a-half-year transition: why coexistence was both safety net and cost The [first-party retrospective](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/) (src.m9-a01, **How did we migrate?**) differentiates *build equivalence* from *deployable runtime equivalence*. The pilot used **Viaduct**, Airbnb's complex JVM GraphQL platform, with roughly **300 product engineers editing it monthly**. Gradle and Bazel builds coexisted: local build/test improved **2\u20134\u00d7**, but many developers did not opt in until several months of missing integrations and defects were addressed. Pure benchmark speed did not create acceptable development workflow. The broader program move",
+          "heading": "Four-and-a-half-year transition: why coexistence was both safety net and cost",
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#four-and-a-half-year-transition-why-coexistence-was-both-safety-net-and-cost"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B023",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Missing evidence must fail the gate appropriately | Failure scenario | Superficial green signal | Required policy behavior | |---|---|---| | Signed artifact with wrong digest | Signature verification on unrelated object | Refuse digest mismatch; bind subject to actual bytes | | Valid signature by unauthorized identity | Cryptographic check passed | Reject issuer/identity/source or target policy mismatch | | Provenance references mutable branch only | Branch exists and CI is green | Require immutable source identity appropriate to the policy | | SBOM generated for source, not released image | Scanner says no finding | Record coverage gap; verify final built object | | Attestation omitte",
+          "heading": "5. Missing evidence must fail the gate appropriately",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/promotion-authorization.md",
+          "section_key": "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B024",
+      "question": "What extra recovery coordination can a continuously reconciling GitOps controller require during an emergency rollback?",
+      "section_new": [
+        {
+          "excerpt": "## 1. GitOps reconciles desired configuration, not business outcomes A GitOps controller observes versioned desired deployment state and tries to align cluster/runtime resources with it. A clean diff or converged resource state does not mean downstream effects, durable writes or API contracts are correct. Separate: - **source/build artifact identity**: which immutable bytes were tested and approved; - **deployment state**: which revision and configuration an authorized controller attempts to apply; - **runtime readiness**: which instances are ready to accept some work; - **traffic exposure**: which eligible requests reach old or candidate version; - **user outcome**: correctly completed effe",
+          "heading": "1. GitOps reconciles desired configuration, not business outcomes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B025",
+      "question": "In Netflix\u2019s Data Projects case, why could a scheduled job fail after its original owner left?",
+      "section_new": [
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison | | [Netflix](../netflix-casspactor-shadow-migration.md) | src.m9-n11: row-set differences and cohort selector/fallback | | [Uber](../uber-mezzanine-pg-to-schemaless.md) | src.m9-u02: query/ID seam, backfill and mirrored writes | | [Discord](../discord-cassandra-scylladb-messages.md) | src.m9-di01: token range checkpoints, tombstone final-range blocker | | [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | src.m9-me03 (May 2026): ",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B026",
+      "question": "What operational trade-off accompanies attribute-based authorization policies?",
+      "section_new": [
+        {
+          "excerpt": "## Sources, scope and known limitations | Evidence | Public source and precise read scope | Supports / limits | |---|---|---| | E01 | [arc42, Section 1: Introduction and Goals](https://docs.arc42.org/section-1/), \u00a7\u00a71.1 Requirements Overview, 1.2 Quality Goals and 1.3 Stakeholder, inspected 2026-10-18 | Prioritized architecture quality drivers and stakeholder/requirement framing, not a technology selection algorithm | | E02 | [The Site Reliability Workbook, Chapter 2: Implementing SLOs](https://sre.google/workbook/implementing-slos/), sections *Why SREs Need SLOs* and *Getting Started*, inspected 2026-10-18 | Agreed user-oriented objectives and evidence-driven reliability decisions; no achiev",
+          "heading": "Sources, scope and known limitations",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/README.md",
+          "section_key": "tycho.chapter.3d34f0b431814c9fa879a355029af2a9#sources-scope-and-known-limitations"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B027",
+      "question": "Why might routine signing-key overlap be unsafe after a private key compromise?",
+      "section_new": [
+        {
+          "excerpt": "## Normal rotation and compromise differ For routine certificate or signing-key replacement, plan overlap across producers, verifiers, caches and long-lived connections. Verify the new chain before making it the only accepted path. During compromise, continued acceptance of an old key may violate the threat contract; availability and revocation need an explicit incident decision. See [key lifecycle](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md#key-rotation-revocation-and-unavailable-authorities). **Original counterexample:** a proxy strips an external header named principal but leaves a second alternate header consumed b",
+          "heading": "Normal rotation and compromise differ",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B028",
+      "question": "Why is the age of an application insufficient evidence that its architecture caused an incident?",
+      "section_new": [
+        {
+          "excerpt": "## Partition hot spots and why a database replacement alone was insufficient The [March 6, 2023 Discord report](https://discord.com/blog/how-discord-stores-trillions-of-messages) (src.m9-di01, **Our Cassandra Troubles**) describes a specific read-amplification mechanism. Messages were partitioned by **channel ID plus fixed time bucket** and replicated across nodes. A busy channel/bucket caused high concurrent reads on the same storage replicas. Cassandra read operations had to reconcile memtables and SSTables; accumulated compaction debt and JVM pauses made service time unpredictable. The company describes its maintenance workaround of temporarily draining individual nodes, compacting, then ",
+          "heading": "Partition hot spots and why a database replacement alone was insufficient",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#partition-hot-spots-and-why-a-database-replacement-alone-was-insufficient"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B029",
+      "question": "What is lost when a modernization baseline records repository structure but not the runtime and writer inventory?",
+      "section_new": [
+        {
+          "excerpt": "## Failure matrix and required counterevidence - **Hermetic test, non-hermetic runtime:** the same code tests under Bazel but crashes on reflection, generated file discovery or incompatible dependency versions. Airbnb's real rollout surfaced these categories (src.m9-a01). Require deployment startup and representative integration parity separately. - **CI faster, releases unchanged:** approvals, environments or unstable service contracts dominate the lead-time distribution. Build speed is a local achievement, not proof of product throughput. - **Hundreds of generated PRs, many unsupported changes:** missing business-field mappings or untestable code produce superficially passing diffs; [Spoti",
+          "heading": "Failure matrix and required counterevidence",
+          "path": "book/cases/decisions/build-delivery-migration.md",
+          "section_key": "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B030",
+      "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+      "section_new": [
+        {
+          "excerpt": "## Why rigid rules were a failed modernization tactic The 2020 retrospective names a social/technical failure: a centralized architecture team initially emphasized uniform public-interface patterns; some teams reshaped their problems just to fit the prescribed approach, and the rules added friction without addressing the actual blockers. The later effort placed more emphasis on **developer motivation, pairing, reducing tooling pain and letting component owners succeed incrementally**. [src.m9-sh02, **What We Learned so Far**, **Foster the Grassroots**]. The same account distinguishes **two incomplete-state strategies**. Shopify's main monolith prioritized labeling a broad target set of subdo",
+          "heading": "Why rigid rules were a failed modernization tactic",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#why-rigid-rules-were-a-failed-modernization-tactic"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "batch": "SN10",
+  "items": [
+    {
+      "id": "V4-B061",
+      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
+      "section_new": [
+        {
+          "excerpt": "## Why this can look like a lock problem A pinned waiter holds a carrier while it waits. A signaled virtual thread that has been unmounted needs a free carrier before it can run. If every carrier is occupied by pinned waiters, the signaled thread cannot make progress even when the lock itself has been released. An observer may then see a live process, an apparently free lock and no completed requests. That is a scheduler/resource interlock, not necessarily a permanently held mutex. This diagnostic framing is Tycho synthesis. The JEPs define the pinning mechanism; they do not prescribe a production triage procedure or prove that any particular incident had this shape. ```mermaid flowchart TD ",
+          "heading": "Why this can look like a lock problem",
+          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+          "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B062",
+      "question": "How does monitor-related carrier pinning differ between JDK 21 and JDK 24?",
+      "section_new": [
+        {
+          "excerpt": "## The mechanism JEP 444 mounts a virtual thread on a carrier thread while it runs and unmounts it when it blocks on supported operations. A virtual thread that blocks inside a `synchronized` block or method, or inside a native method or foreign function, cannot unmount. The carrier stays occupied and cannot run another virtual thread. If enough carriers are pinned, the scheduler can run out of capacity even though the JVM process is alive. JEP 444 describes this as a scalability risk, not a correctness failure. JDK 21 retains monitor pinning. JEP 491 removes pinning caused by `synchronized` in a later release; native calls and foreign functions can still pin. Tracing, security, metrics and ",
+          "heading": "The mechanism",
+          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+          "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#the-mechanism"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B063",
+      "question": "What does a bounded platform worker pool fail to bound when its submission queue is unlimited?",
+      "section_new": [
+        {
+          "excerpt": "## Explicit decision rejection criteria A recommendation to change the executor is unsupported when no CPU-vs-wait profile exists, outbound client pooling already caps connections, or the target JDK/library semantics are not tested. A *larger number of cheap runnable threads* can simply create a larger backlog at the downstream service. For CPU-bound pools, a bounded platform-thread executor plus explicit queue/backpressure is the conservative comparator. For I/O-bound request orchestration, measure virtual threads and nonblocking I/O independently and preserve the security, cancellation and error contract. When neither versioned data nor a valid workload profile exists, return **insufficien",
+          "heading": "Explicit decision rejection criteria",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#explicit-decision-rejection-criteria"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B064",
+      "question": "What relationship details must be defined before interpreting a graph edge?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Use explicit edge semantics, direction and bounded traversal when the question depends on relationships. A path through a graph does not imply causal influence or permission; cycles and fan-out require explicit traversal limits. The detailed pages separate the mechanisms that make this decision conditional: - [Edge meaning and relationship questions](edge-semantics.md) \u2014 Which explicit relation is being traversed and what can a path not prove? - [Bounded graph traversal and relational alternatives](bounded-traversal.md) \u2014 What direction, cycle and result limits make the traversal question precise? - [Derived relationships and falsification](graph-prov",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "section_key": "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B065",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "section_new": [
+        {
+          "excerpt": "## 7. Public evidence and explicit product-scope boundary | Independently inspected public source | Supports | Not established | |---|---|---| | [Neo4j Cypher \u2014 Patterns](https://neo4j.com/docs/cypher-manual/current/patterns/) | Property-graph query patterns and path semantics | Implementation for fictional equipment model | | [Neo4j Cypher \u2014 Variable-length paths](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) | Bounded variable-length traversal and explosion/pruning concerns | Performance of any real graph DB under a target workload | All graph nodes, edges, diagrams, inferred rules and experiments are original invented educational examples. No graph was crea",
+          "heading": "7. Public evidence and explicit product-scope boundary",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/README.md",
+          "section_key": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#7-public-evidence-and-explicit-product-scope-boundary"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B066",
+      "question": "What evidence makes an extracted dependency edge traceable to its source?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Use explicit edge semantics, direction and bounded traversal when the question depends on relationships. A path through a graph does not imply causal influence or permission; cycles and fan-out require explicit traversal limits. The detailed pages separate the mechanisms that make this decision conditional: - [Edge meaning and relationship questions](edge-semantics.md) \u2014 Which explicit relation is being traversed and what can a path not prove? - [Bounded graph traversal and relational alternatives](bounded-traversal.md) \u2014 What direction, cycle and result limits make the traversal question precise? - [Derived relationships and falsification](graph-prov",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "section_key": "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B067",
+      "question": "When may an expanded database schema be contracted during a mixed-version rollout?",
+      "section_new": [
+        {
+          "excerpt": "## 6. Compatibility and deployment strategy jointly constrain choice | Constraint | Safer initial option to evaluate | Dangerous shortcut | |---|---|---| | Old clients cannot upgrade at once | Additive API/schema, feature negotiation, retained old readers | Breaking endpoint and storage change in one canary | | Strict downtime target with one writer | Expand-contract and measured low-lock/backfill operation | Long exclusive migration during peak load | | Heavy async event replay | Versioned event schemas and transitive historical decode tests | Deleting historic codecs after current consumer rollout | | Fast image rollback requirement | Prove N reads/writes after N+1 changes or enforce read-",
+          "heading": "6. Compatibility and deployment strategy jointly constrain choice",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B068",
+      "question": "Why can an older binary rollback fail after a new release writes a new-only state?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and mission A release can be deployed successfully yet fail when old and new binaries coexist, when records written by a new version cannot be read by older workers, or when delayed events arrive after contract removal. Progressive delivery controls **exposure**, whereas schema compatibility controls **interpretation of shared state**. Both require independently verified invariants. **Primary question:** How should rolling, canary and blue/green deployments be coordinated with schema, event and API changes so that a failed rollout is recoverable without making unsupported rollback promises? Companion chapters: [CI/CD identity and GitOps](../volumes/v08-delivery-deployment-and-reco",
+          "heading": "Purpose and mission",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#purpose-and-mission"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B069",
+      "question": "Why can a migration with valid event schemas still break an old consumer\u2019s business interpretation?",
+      "section_new": [
+        {
+          "excerpt": "## Decision and worked result Treat data evolution as a semantic compatibility and authority transition, not just a successful DDL command. A new value interpreted differently by old readers can break a mixed-version system even when every row passes schema validation. This is an editorial conclusion drawn from the linked manuscript and its original examples, not a newly executed experiment.",
+          "heading": "Decision and worked result",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
+          "section_key": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#decision-and-worked-result"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B070",
+      "question": "How can retries distort the denominator of a user-facing service indicator?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Identify the service boundary and eligible population An indicator needs a **denominator**. Consider an original fictional public equipment-reservation service. A user submits a logical attempt for a valid timeslot; it can be accepted, explicitly rejected because another reservation won, rejected for capacity, timed out, or commit without a delivered acknowledgment. A proposed availability SLI could be the fraction of *eligible logical booking decisions* returned correctly within a deadline, where the service owner must determine which rejection classes are legitimate expected outcomes. A conflict rejection may represent correct business behavior, while a capacity rejection indicates s",
+          "heading": "1. Identify the service boundary and eligible population",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/sli-population.md",
+          "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

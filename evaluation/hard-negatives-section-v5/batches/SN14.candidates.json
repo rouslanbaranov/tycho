@@ -1,0 +1,135 @@
+{
+  "batch": "SN14",
+  "items": [
+    {
+      "id": "V4-V011",
+      "question": "Why can a relative-error convergence threshold be misleading when a metric mean is close to zero?",
+      "section_new": [
+        {
+          "excerpt": "## A separate insufficient-sample case The sensitivity scenario itself is converged at a 0.00016 relative error, but it is still a screening approximation. A separate two-replication convergence-stress run has a relative error of 0.032, above the 0.02 threshold, and is marked insufficient-sample. Its wide input draws and small replication budget show the failure mode without pretending that the sensitivity screen is precise. This is deliberate. A ranking from an unstable sample can reverse; the stress run records the instability instead of hiding it.",
+          "heading": "A separate insufficient-sample case",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V012",
+      "question": "When should a V12 decision remain unsupported even though a model run converges?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and mission A single simulation run with one set of assumed inputs hides uncertainty. This chapter separates input uncertainty from sampling error, defines convergence criteria and reports which inputs matter through a sensitivity screen. The chapter answers how sampling error, convergence and sensitivity should be reported. It does not claim that an assumed distribution is a measured distribution.",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "section_key": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V013",
+      "question": "What does the V12 reverse index establish about a pattern mentioned by a decision?",
+      "section_new": [
+        {
+          "excerpt": "## What the gates do not establish - They do not establish that the source claims are true; the source ledger records what was read and what was not. - They do not establish that the models match a real system. - They do not establish that the decisions are accepted by the owner. - They do not establish CI, deployment or production behavior. - They do not promote any existing pattern.",
+          "heading": "What the gates do not establish",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V014",
+      "question": "What distinction separates verification of a simulation engine from validation for a decision?",
+      "section_new": [
+        {
+          "excerpt": "## Five evidence layers | Layer | Question | Owner | |---|---|---| | Source and claim | Does a source support the method? | Ledger and page citations | | Verification | Is the model implemented as specified? | Model spec and tests | | Calibration | Do parameters match measured reality? | Calibration record | | Simulation | What happens under the assumptions? | Scenario and run records | | Decision | Does it follow from model and constraints? | Decision record | The layers are separate. A `model-verified` label does not imply calibration. A `decision-supported` record may coexist with an `uncalibrated` model when the decision is explicitly conditional. Simulation results never promote a patte",
+          "heading": "Five evidence layers",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V015",
+      "question": "Why is a confidence interval across synthetic replications not a calibrated input uncertainty budget?",
+      "section_new": [
+        {
+          "excerpt": "## Calibration statuses V12 uses four input statuses: - **measured:** a value comes from a named measurement with a method, sample size and period. - **assumed:** a value is chosen for the model and is not a measurement. - **derived:** a value is computed from measured or assumed inputs by a stated formula. - **unknown:** no defensible value exists; the model must not invent one. A measured input without a source and a measurement record is not measured. An assumed input repeated in a decision record does not become measured. A derived input inherits the weakest status of its inputs unless the derivation itself is validated. JCGM 100 supports the measurement vocabulary: a measurement result ",
+          "heading": "Calibration statuses",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V016",
+      "question": "How does a V12 decision record treat a failed hard constraint compared with a soft preference?",
+      "section_new": [
+        {
+          "excerpt": "## V12-E: decision validity The decision records declare: - candidates and their runs; - hard, soft and non-quantitative constraints; - business-comparable metrics with units; - evidence statuses for model verification, calibration and simulation; - an explicit recommendation or a no-recommendation outcome; - non-quantitative constraints kept separate; - reversal triggers and limitations. The checkout record is decision-supported under its declared constraints. The modernization record is insufficient evidence. Both are valid outcomes.",
+          "heading": "V12-E: decision validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V017",
+      "question": "What makes a scenario metric comparable between candidates with different server counts?",
+      "section_new": [
+        {
+          "excerpt": "## The experiment Three candidates receive the same Poisson workload at 20 requests per second for 1,800 seconds after a 300-second warmup. Each uses 30 replications with the seed base 20261029. The metrics are success rate, p95 latency, throughput, cost per 1000 successful requests, rejection rate and retry amplification. The candidates differ in capacity, deadline, queue, retry and unit cost: - A: 12 servers, 0.5-second mean service, 50-request queue, 1-second timeout, one attempt, 60-request bulkhead, cost 10.0; - B: 12 servers, 0.5-second mean service, 200-request queue, 2-second timeout, three attempts, exponential backoff with full jitter, 240-request bulkhead, cost 8.0; - C: 18 server",
+          "heading": "The experiment",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V018",
+      "question": "What happens to a derived run record when its canonical model or scenario input changes?",
+      "section_new": [
+        {
+          "excerpt": "## Provenance is not a log line A timestamp and a filename do not explain a result. Provenance answers: - which model and scenario produced the result; - which engine version executed it; - which seed and how many replications; - which inputs were combined into the run; - which output metrics and convergence diagnostics were produced; - which limitations apply. PROV-O describes entities, activities and agents, with relations such as generation, use and derivation. V12 borrows that shape without claiming ontology conformance. The model and scenario are entities; the engine run is an activity; the run record is a generated entity that used the inputs. A replay is a new activity that should gen",
+          "heading": "Provenance is not a log line",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V019",
+      "question": "What does the V12 engine do when the queue or bulkhead reaches its admission limit?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Bulkheads, circuit breakers and retries have different responsibilities | Control | Primary purpose | Dangerous misuse | |---|---|---| | Admission/rate limit | Bound offered or admitted work before resource exhaustion | Hide rejected attempts from service-level outcomes | | Queue limit/deadline | Bound waiting memory and usefulness | Queue accepted irreversible writes without durable tracking | | Bulkhead | Reserve bounded workers/pools for independent classes/dependencies | Partition too tightly and waste capacity, or allow bypass | | Circuit breaker | Avoid repeated costly calls to a failing dependency; probe recovery | Treat opening the breaker as permanent recovery or a substitute ",
+          "heading": "4. Bulkheads, circuit breakers and retries have different responsibilities",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V020",
+      "question": "What prevents an already timed-out completion event from freeing a server a second time?",
+      "section_new": [
+        {
+          "excerpt": "## A worked sequence Consider a request arriving at t=0 with a one-second timeout and a service time of 0.4 seconds. If a server is free, the completion event is at t=0.4 and the timeout at t=1.0. The completion is processed first; the timeout is ignored. If the queue is full, the request is rejected at t=0 and no service event exists; the timeout event later finds a completed request and is ignored. Now consider a request that waits 0.9 seconds and then starts service with a 0.4-second service time. Its timeout is at t=1.0, before its completion at t=1.3. The timeout fires, releases the server and schedules a retry. The completion event at t=1.3 finds no in-service request and is ignored. T",
+          "heading": "A worked sequence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence"
+        }
+      ],
+      "split": "v12"
+    }
+  ]
+}
