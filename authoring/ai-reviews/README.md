@@ -145,3 +145,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer | #540 Idempotency Key | pass | `2026-10-31-idempotency-key-deepseek.md` | `81a8daaf0467558b6a7bb1297169bfe8fb68a0be39e9f9288d3ab7cb29dc4a2e` |
 | 2026-10-31 | Codex / OpenAI (gpt-5.6-sol) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-codex.md` | `f50fc94a02638fa7bd60d2da9851a1d37bd0ad252d90972013c686c643514974` |
 | 2026-10-31 | DeepSeek Reviewer (same-vendor fallback; supplementary) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-deepseek.md` | `3e5289deb8fb5cff4e8830f764a73a4eeb8a73b675ac86c7b9975384c6bd20a9` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Circuit Breaker | pass | `2026-10-31-circuit-breaker-deepseek.md` | `a227c3153af91c19347c17ae5be6fc1a6d047da222e55d727e24fdcc0398da60` |

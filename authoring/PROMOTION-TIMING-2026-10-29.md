@@ -28,9 +28,9 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 61 sufficient of 145; 7 owner-accepted of 61.
+Current: 62 sufficient of 145; 7 owner-accepted of 62.
 
-Remaining to 145: 84 entries. All 41 observed entries run 6-388 minutes (mean 51.8),
+Remaining to 145: 83 entries. All 42 observed entries run 6-388 minutes (mean 51.8),
 including pre-optimization entries and review/remediation outliers. Using tiered
 estimates calibrated to that mean gives 37-79 focused hours, or
 **4.6-9.8 days of continuous work**. Base is **6.3 days**. The dominant cost is the
@@ -69,7 +69,7 @@ Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40,
 Modular Monolith 40, Database per Service 40, BFF 40, CQRS 40,
 Bounded Context 35, Canary 38, SWR 32, Deadline 32, Quorum 32, CDN 35,
 Multi-level 33, Sharding 60, Health 45, Graceful 36, Immutable 34, Causal 323,
-Stamps 24, Polyglot 30, Queue 26, Idempotency 388, Consistent Hashing 79
+Stamps 24, Polyglot 30, Queue 26, Idempotency 388, Consistent Hashing 79, Circuit Breaker 51
 (all include reviewer/integration wait). Data:
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
@@ -83,8 +83,8 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ![Promotion forecast](promotion-forecast-2026-10-30.svg)
 
-Remaining tiers at 61 sufficient: 1 entry 4/4, 4 entries 3/4,
-31 entries 2/4, 22 entries 1/4, 26 entries 0/4. Continuous-day
+Remaining tiers at 62 sufficient: 1 entry 4/4, 4 entries 3/4,
+30 entries 2/4, 22 entries 1/4, 26 entries 0/4. Continuous-day
 scenarios: optimistic **4.6**, base **6.3**, pessimistic **9.8**.
 Base assumes 50/45/52/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
