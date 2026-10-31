@@ -37,8 +37,11 @@ evidence_scope:
     - "src.riak"
     - "src.microservices-patterns"
     - "src.flyway"
+    - "src.flyway-expand-contract"
     - "src.gh-ost"
+    - "src.m9-st01"
     - "src.aws-cqrs"
+    - "src.aws-dms"
     - "src.microsoft-cloud-patterns"
     - "src.debezium-outbox"
   claim_ids: []
@@ -46,6 +49,9 @@ evidence_scope:
   notes: >-
     13 cards cite read units; Index Table binds all four dimensions; Polyglot
     Persistence binds invariant and recovery; Backup/PITR has a dedicated card.
+    Online Data Migration binds all four dimensions on 2026-10-31 to Stripe,
+    PostgreSQL 18.6 pg_dump/COPY, the AWS DMS User Guide and Flyway
+    expand/contract guidance; the changed-mapping case remains a Tycho hazard.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -268,24 +274,40 @@ migration-pattern; priority core.
 **Decision question.** Should data be backfilled while the system continues serving reads
 and writes?
 
-**Good-fit conditions.** Writes continue during migration; dual-read/write or CDC is
-owned; validation and cutover are gated.
+**Good-fit conditions.** Writes continue during migration; one authoritative writer or a
+reconciled second write is owned; change capture and a checkpoint are operable; validation
+and cutover are gated. Stripe's "4 step dual writing pattern" dual-writes to old and new
+tables, then moves reads and writes before removing the old store. **Tycho conditions:**
+record the mapping revision, checkpoint, replay window and reconciliation rule.
 
 **Hard contraindications.** Reject when a maintenance window is acceptable, when no
-reconciliation path exists, or when migration load would exhaust the source.
+reconciliation path exists, or when migration load would exhaust the source. PostgreSQL
+`COPY FROM` inserts rows "as it progresses"; a failed command leaves them "in a deleted
+state" and does not roll them back.
 
-**Competing alternative.** Offline migration or a full export/import. Reverse the choice
-when online complexity exceeds downtime cost.
+**Competing alternative.** A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho
+shape), Flyway expand/contract, or AWS DMS full-load plus CDC. Reverse when online
+complexity exceeds downtime cost. Flyway's guidance says to "add new columns nullable,
+dual-write, backfill, switch reads, then drop" so a partial rollout "keeps working".
 
-**Failure and recovery.** Stale backfills and cutover ambiguity are common; verify
+**Failure and recovery.** Checkpoint lag, changed mappings and cutover ambiguity are common.
+AWS DMS caches a checkpoint "from time to time" and can "recover a failed migration task"
+from it; a resume still needs a replay window and duplicate-tolerant apply. Verify
 acceptance in the owner section.
 
 **Technical owner.** [Online Data Migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md#online-data-migration) — backfill acceptance is bounded, not an online migration tool guide.
 
-**Sources.** [src.gh-ost](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-gh-ost.2026-10-21: all ten served headings read. The
-source is a public pattern/documentation
-unit, not a benchmark.
+**Sources.** Six public pages were inspected on 2026-10-31: Stripe *Online migrations at
+scale*; PostgreSQL 18.6 *pg_dump* and *COPY*; AWS DMS *What is AWS Database Migration
+Service?* and *Creating tasks for ongoing replication using AWS DMS*; and Flyway *Rolling
+out updates from a single schema to multiple production databases* (expand/contract
+guidance). Read records: `read.stripe-online-migrations.2026-10-31`,
+`read.postgres-pgdump.2026-10-31`, `read.postgres-copy.2026-10-31`,
+`read.aws-dms-overview.2026-10-31`, `read.aws-dms-cdc.2026-10-31` and
+`read.flyway-expand-contract.2026-10-31`. Source ids: `src.m9-st01`, `src.postgresql`,
+`src.aws-dms`, `src.flyway-expand-contract` and the retained `src.gh-ost` (historical
+mechanism context). The units are documentation or an engineering article, not benchmarks
+or production observations.
 
 **Decision state.** applicable-under-conditions.
 

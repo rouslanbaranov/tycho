@@ -25,19 +25,27 @@ route_hints:
     - "retirement"
 evidence_scope:
   source_ids:
+    - "src.aws-dms"
     - "src.flyway"
+    - "src.flyway-expand-contract"
     - "src.gh-ost"
+    - "src.m9-st01"
+    - "src.postgresql"
   claim_ids: []
   status: "source-linked"
-  notes: "Read source-plan units; page-level, not claim-mapped."
+  notes: >-
+    Read source-plan units; page-level, not claim-mapped. Online Data Migration
+    binds its four dimensions on 2026-10-31 to Stripe, PostgreSQL 18.6 pg_dump
+    and COPY, the AWS DMS User Guide and Flyway expand/contract guidance. The
+    changed-mapping case remains a Tycho hazard, not a source-evaluated result.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-22"
-source_inspection_date: null
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # Migration stages, retention and no-return points
@@ -214,15 +222,65 @@ the data must move and old and new readers coexist during a bounded transition.
 
 ### Online Data Migration
 
-An online migration copies or transforms data while the source continues serving writes. If backfill
-takes hours, it may read records while new writes occur. A design needs an authoritative writer and a
-change-capture/reconciliation plan.
+An online migration copies or transforms data while the source continues serving writes. If
+backfill takes hours, it may read records while new writes occur. A design needs an
+authoritative writer and a change-capture/reconciliation plan.
 
-Two independent writers are not automatically atomic just because the schema includes both fields.
-A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.
-Record a resumable checkpoint, detect rows changed after the snapshot and reconcile them before
-declaring the backfill complete.
+**Invariant.** Two independent writers are not automatically atomic just because the schema
+includes both fields. Stripe's *Online migrations at scale* describes a "4 step dual writing
+pattern": "Dual writing to the existing and new tables to keep them in sync", then moving
+reads and writes to the new table before removing the old one. It says "All new writes
+should update both stores" and "Our two tables need to stay consistent with each other at
+every step." That is an application-level obligation, not one transactional commit; the
+article checks it with read-path experiments that "raise an error" when results differ.
 
-A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate
-is low or the changed-row set is small. Online migration is a fit when downtime is unacceptable and
-the team can operate capture, checkpoint and reconciliation.
+PostgreSQL's `pg_dump` also distinguishes a consistent export from execution history:
+without `--serializable-deferrable`, a dump "may reflect a state which is not consistent
+with any serial execution of the transactions eventually committed." The identity mapping
+must be single-valued and versioned; `COPY` maps fields positionally, "in order, into the
+specified column", and does not validate business meaning. **Tycho rule:** name one
+authoritative writer, or make the second write an idempotent, reconciled projection; record
+the mapping revision that produced each identity.
+
+**Failure and recovery.** A crash can leave a checkpoint behind the last committed row; a
+changed mapping can strand a subset. AWS DMS "caches checkpoint information ... from time
+to time"; the checkpoint "contains information so the replication engine knows the recovery
+point for the change stream", and can be used to "recover a failed migration task".
+Because the checkpoint is cached "from time to time", and "DMS captures transactions that
+started after the chosen CDC start point", a resume needs a replay window,
+duplicate-tolerant apply and an explicit start point.
+
+PostgreSQL `COPY FROM` "physically inserts input rows into the table as it progresses"; if
+the command fails, these rows are "left in a deleted state" and are not rolled back. A
+`pg_dump` export is consistent, but with a data-only dump and `--disable-triggers`, an
+interrupted restore can leave catalogs "in the wrong state". **Tycho runbook:** persist the
+checkpoint with the data commit where possible, record source and mapping versions, detect
+rows changed after the snapshot, and reconcile them before declaring the backfill complete.
+A changed business-key mapping must be a new revision; Flyway's rule for applied migrations
+is to "add a new change instead" of editing the old one. No selected unit tests a changed
+mapping.
+
+**Alternative.** A stop-the-world export/restore is the simplest alternative when a
+maintenance window is acceptable: quiesce writers, export with `pg_dump`, load with `COPY`,
+verify, then reopen. PostgreSQL documents `pg_dump` as making "consistent exports even if
+the database is being used concurrently", and `COPY` as moving data between tables and
+files; neither supplies a live change stream or row-level resume, and the quiesce/verify
+sequence is a Tycho shape, not a source procedure. Flyway's expand/contract alternative
+keeps one schema readable by both application versions: "add new columns nullable,
+dual-write, backfill, switch reads, then drop", so a partial rollout "keeps working". AWS
+DMS full-load plus CDC, or Stripe's dual-write plus reconciliation, fit when the team can
+operate capture, checkpointing and reconciliation. **Tycho choice rule:** reverse the online
+choice when a maintenance window is acceptable, the changed-row set is small, or the team
+cannot operate capture, checkpoint and reconciliation.
+
+**Bound source limits.** Four public sources (six pages) were inspected on 2026-10-31:
+Stripe, *Online migrations at scale* (2017-02-02); PostgreSQL 18.6, *pg_dump* and *COPY*;
+the AWS DMS *User Guide*, *What is AWS Database Migration Service?* and *Creating tasks for
+ongoing replication using AWS DMS*; and Flyway, *Rolling out updates from a single schema to
+multiple production databases* (expand/contract guidance). The sources describe documented
+behavior and intended mechanisms, not a benchmark, local reproduction or production
+observation. Records: `read.stripe-online-migrations.2026-10-31`,
+`read.postgres-pgdump.2026-10-31`, `read.postgres-copy.2026-10-31`,
+`read.aws-dms-overview.2026-10-31`, `read.aws-dms-cdc.2026-10-31` and
+`read.flyway-expand-contract.2026-10-31`. Coverage is self-checked, not independently
+reviewed.
