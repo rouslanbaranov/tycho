@@ -7245,44 +7245,191 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share of keys instead of remapping the whole keyspace.",
-          "reason": "Local Cassandra Architecture Overview has no consistent-hashing ring or key-movement text."
+          "state": "supported",
+          "quote": "A consistent hash function maps keys and nodes into one circular space. A key belongs to the first node encountered clockwise from its hash position, and each physical node normally claims many small positions, called tokens or virtual nodes, rather than one large arc.",
+          "reason": "Karger 1997 sections 4.1-4.2, Dynamo 4.2-4.3, the Cassandra 5.0 token-ring and vnode sections, and Riak 2.2.3 Vnodes bind the ring, closest-point ownership, token/vnode and clockwise-walk mechanics; the ownership-epoch rule remains Tycho.",
+          "binding": {
+            "source_id": "src.dynamo",
+            "ledger_record": "read.dynamo-consistent-hashing.2026-10-31",
+            "section": "4.2 Partitioning Algorithm",
+            "quote": "In consistent hashing [10], the output range of a hash function is treated as a fixed circular space or “ring” (i.e. the largest hash value wraps around to the smallest hash value).",
+            "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-consistent-hashing.2026-10-31",
+              "section": "4.3 Replication",
+              "quote": "instead of mapping a node to a single point in the circle, each node gets assigned to multiple points in the ring.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.karger",
+              "ledger_record": "read.karger-consistent-hashing.2026-10-31",
+              "section": "4.2 Construction",
+              "quote": "In other words, i is mapped to the bucket “closest” to i.",
+              "revision": "0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2"
+            },
+            {
+              "source_id": "src.cassandra",
+              "ledger_record": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+              "section": "Consistent Hashing using a Token Ring",
+              "quote": "Cassandra instead maps every node to one or more tokens on a continuous hash ring, and defines ownership by hashing a key onto the ring and then \"walking\" the ring in one direction, similar to the Chord algorithm.",
+              "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-vnodes.2026-10-31",
+              "section": "Vnodes",
+              "quote": "Virtual nodes, more commonly referred to as vnodes, are processes that manage partitions in the Riak ring. Each data partition in a Riak cluster has a vnode that claims that partition.",
+              "revision": "3fe623f7bbe206b9b289894607b0ff08748414a65060c6229a274ef7d986c204"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Clients and owners must agree on a versioned mapping, and a key must retain one authoritative owner at any mapping epoch.",
-          "reason": "Local text has no versioned mapping or authoritative owner per key."
+          "state": "supported",
+          "quote": "With K keys spread over N equal-share nodes, adding or removing one node should move about K/N keys: the joining or leaving node's share, not the whole keyspace.",
+          "reason": "Karger 1997 smoothness, Dynamo 4.2, the Cassandra 5.0 token-ring movement statement and Riak 2.2.3 Clusters bind the 1/N expectation; the measured moved-share rule is Tycho and the 1/N figure is not a guarantee.",
+          "binding": {
+            "source_id": "src.karger",
+            "ledger_record": "read.karger-consistent-hashing.2026-10-31",
+            "section": "4 Consistent Hashing",
+            "quote": "When a machine is added to or removed from the set of caches, the expected fraction of objects that must be moved to a new cache is the minimum needed to maintain a balanced load across the caches.",
+            "revision": "0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-consistent-hashing.2026-10-31",
+              "section": "4.2 Partitioning Algorithm",
+              "quote": "The principle advantage of consistent hashing is that departure or arrival of a node only affects its immediate neighbors and other nodes remain unaffected.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.cassandra",
+              "ledger_record": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+              "section": "Dataset Partitioning: Consistent Hashing",
+              "quote": "The main difference of consistent hashing to naive data hashing is that when the number of nodes (buckets) to hash into changes, consistent hashing only has to move a small fraction of the keys.",
+              "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-clusters.2026-10-31",
+              "section": "The Ring",
+              "quote": "The nodes of a Riak cluster each attempt to run a roughly equal number of vnodes at any given time. In the general case, this means that each node in the cluster is responsible for 1/(number of nodes) of the ring, or (number of partitions)/(number of nodes) vnodes.",
+              "revision": "ea246f176b17e21a6225d4fb9f5ba7a60fe90958ed07ef5da07efff05afbdfc5"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or version-check during the transition and record the epoch.",
-          "reason": "Local text has no ring-change, wrong-owner or dual-read transition."
+          "state": "supported",
+          "quote": "Tycho's runbook: detect hot token ranges and hot keys, bound token counts against repair and outage cost, record the ownership epoch at every membership change, and treat hinted handoff as temporary protection rather than repair.",
+          "reason": "Karger 1997 hot-spot motivation, Dynamo 4.6-4.7 and 4.9, the Cassandra 5.0 vnode outage cost and Riak 2.2.3 Adding/Removing Nodes bind the mechanics; the ownership epoch and runbook are Tycho.",
+          "binding": {
+            "source_id": "src.dynamo",
+            "ledger_record": "read.dynamo-consistent-hashing.2026-10-31",
+            "section": "4.6 Handling Failures: Hinted Handoff",
+            "quote": "In this example, if node A is temporarily down or unreachable during a write operation then a replica that would normally have lived on A will now be sent to node D.",
+            "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.dynamo",
+              "ledger_record": "read.dynamo-consistent-hashing.2026-10-31",
+              "section": "4.7 Handling permanent failures: Replica synchronization",
+              "quote": "Dynamo implements an anti-entropy (replica synchronization) protocol to keep the replicas synchronized.",
+              "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+            },
+            {
+              "source_id": "src.karger",
+              "ledger_record": "read.karger-consistent-hashing.2026-10-31",
+              "section": "Abstract",
+              "quote": "Our protocols are particularly designed for use with very large networks such as the Internet, where delays caused by hot spots can be severe.",
+              "revision": "0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2"
+            },
+            {
+              "source_id": "src.cassandra",
+              "ledger_record": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+              "section": "Multiple Tokens per Physical Node (vnodes)",
+              "quote": "Every token introduces up to 2 * (RF - 1) additional neighbors on the token ring, which means that there are more combinations of node failures where we lose availability for a portion of the token ring. The more tokens you have, the higher the probability of an outage.",
+              "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+            },
+            {
+              "source_id": "src.riak",
+              "ledger_record": "read.riak-adding-removing-nodes.2026-10-31",
+              "section": "Removing a Node From a Cluster",
+              "quote": "The second is relevant for failure scenarios in which a node has crashed and is irrecoverable and thus must be removed from the cluster from another node.",
+              "revision": "67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Explicit key-range assignment gives direct control of hot ranges; choose consistent hashing when node membership changes often and manual range planning is impractical.",
-          "reason": "Local text does not compare consistent hashing with explicit key ranges."
+          "state": "supported",
+          "quote": "Modulo hashing assigns a key to hash(key) mod N. Cassandra says adding one node \"might invalidate almost all of the mappings\"; Karger et al. describe the same central-redistribution problem for classical hash functions when machines join.",
+          "reason": "Cassandra 5.0 naive-modulo contrast and the Karger 1997 new-bucket movement bind the modulo alternative; the range and rendezvous comparisons and the choice rule are Tycho synthesis.",
+          "binding": {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+            "section": "Dataset Partitioning: Consistent Hashing",
+            "quote": "In this naive scheme, however, adding a single node might invalidate almost all of the mappings.",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.karger",
+              "ledger_record": "read.karger-consistent-hashing.2026-10-31",
+              "section": "4.2 Construction",
+              "quote": "When a new bucket is added, the only items that move are those that are now closest to one of the new bucket’s associated points. No items move between old buckets.",
+              "revision": "0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "consistent-hashing",
         "question": "Should keys and nodes share a hash ring so membership changes move only a fraction of data?",
-        "competing_alternative": "Modulo sharding or explicit range assignment. Reverse the choice when ring operations and virtual-node tuning exceed movement savings.",
+        "competing_alternative": "Explicit range assignment, modulo sharding or rendezvous (highest-random-weight) hashing. Tycho's choice rule: use consistent hashing when membership churns and per-key movement must be bounded; use ranges when range locality and operator control dominate; use modulo only for fixed cardinality; use rendezvous when a shared ring is unacceptable. Reverse the choice when ring operations and virtual-node tuning exceed the movement savings.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-cassandra-arch.2026-10-21",
-        "source_id": "src.cassandra",
-        "unit_type": "documentation-page",
+        "ledger_record": "read.karger-consistent-hashing.2026-10-31",
+        "source_id": "src.karger",
+        "unit_type": "paper",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.dynamo",
+            "ledger_record": "read.dynamo-consistent-hashing.2026-10-31",
+            "revision": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4"
+          },
+          {
+            "source_id": "src.cassandra",
+            "ledger_record": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+            "revision": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65"
+          },
+          {
+            "source_id": "src.riak",
+            "ledger_record": "read.riak-vnodes.2026-10-31",
+            "revision": "3fe623f7bbe206b9b289894607b0ff08748414a65060c6229a274ef7d986c204"
+          },
+          {
+            "source_id": "src.riak",
+            "ledger_record": "read.riak-clusters.2026-10-31",
+            "revision": "ea246f176b17e21a6225d4fb9f5ba7a60fe90958ed07ef5da07efff05afbdfc5"
+          },
+          {
+            "source_id": "src.riak",
+            "ledger_record": "read.riak-adding-removing-nodes.2026-10-31",
+            "revision": "67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "All four technical dimensions bound 2026-10-31 to Karger 1997, Dynamo SOSP 2007, Cassandra 5.0 Dynamo and three Riak KV 2.2.3 units; the ownership-epoch, measured-share, runbook and choice rules remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.leader-follower-replication",
@@ -13928,12 +14075,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 113,
-    "invariant_supported": 78,
-    "failure_recovery_supported": 72,
-    "alternative_supported": 77,
-    "technical_partial_bounded": 15,
-    "technical_partial": 70,
+    "mechanism_supported": 114,
+    "invariant_supported": 79,
+    "failure_recovery_supported": 73,
+    "alternative_supported": 78,
+    "technical_partial_bounded": 16,
+    "technical_partial": 69,
     "technical_name_only": 0,
     "technical_sufficient": 60,
     "decision_partial_bounded": 85,

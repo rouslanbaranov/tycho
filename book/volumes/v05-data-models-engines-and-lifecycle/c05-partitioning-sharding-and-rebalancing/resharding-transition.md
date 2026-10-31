@@ -182,30 +182,30 @@ comparisons are Tycho synthesis.
 **Source boundary.** Public sources accessed 2026-10-31; all are papers or living documentation,
 not benchmarks or executed cluster tests. Quotes are short excerpts. Line breaks are editorial;
 Karger PDF line-end hyphenation is joined, and Cassandra extraction spacing before punctuation is
-normalized. Tycho-labelled sentences are synthesis, not source claims. Proposed records (not yet in
-the shared ledger):
+normalized. Tycho-labelled sentences are synthesis, not source claims. Records in the shared
+reading ledger:
 
 - Karger, Lehman, Leighton, Panigrahy, Levine and Lewin, "Consistent Hashing and Random Trees:
   Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web," STOC '97,
   pp. 654-663, DOI 10.1145/258533.258660; public PDF SHA-256
   `0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2`; extracted text SHA-256
   `cdaf06a423a62b790cea18bc0adc50fbc71a4c17682f7e08b098c13c0d8fe6c4`; record
-  `read.karger-consistent-hashing.2026-10-31` (proposed).
+  `read.karger-consistent-hashing.2026-10-31`.
 - DeCandia et al., "Dynamo: Amazon's Highly Available Key-value Store," SOSP 2007, sections
   4.2, 4.3, 4.6, 4.7 and 4.9; PDF SHA-256
   `5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4`; extracted text SHA-256
   `2da247073d091ba83236b71dd9c5c56a19516f9f7b2e29258a0e3b5c4d4fb140`; record
-  `read.dynamo-consistent-hashing.2026-10-31` (proposed).
+  `read.dynamo-consistent-hashing.2026-10-31`.
 - Apache Cassandra 5.0, "Dynamo," sections "Consistent Hashing using a Token Ring" and "Multiple
   Tokens per Physical Node (vnodes)"; raw HTML SHA-256
   `6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65`; article text SHA-256
   `b613129d96ffae22bf20f43807093b18973b75d5e1b79c1b43aa2ffad4b45f39`; record
-  `read.cassandra-dynamo-consistent-hashing.2026-10-31` (proposed).
+  `read.cassandra-dynamo-consistent-hashing.2026-10-31`.
 - Riak KV 2.2.3, "Vnodes," "Clusters" and "Adding / Removing Nodes," pinned to `basho_docs`
   commit `6409dd9c93b08f0a6e959a1874b5568c88172f3a`; page SHA-256 values
   `3fe623f7bbe206b9b289894607b0ff08748414a65060c6229a274ef7d986c204`,
   `ea246f176b17e21a6225d4fb9f5ba7a60fe90958ed07ef5da07efff05afbdfc5` and
-  `67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f`; records proposed.
+  `67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f`; records read.
 - The existing `read.batch3-cassandra-arch.2026-10-21` record remains a scope limit: it
   explicitly does not support a token ring. The existing Dynamo and Riak records remain valid
   for their narrower sections and are not stretched to cover these claims.
