@@ -82,10 +82,14 @@ failures return `-32700`. Batch requests are rejected explicitly.
 
 | Tool | Operation | Hard bounds |
 |---|---|---|
-| `tycho_describe` | Collection, snapshot, pattern registry and limits | No book text |
-| `tycho_search` | Lexical BM25 over indexed sections | `limit` 1–20 |
+| `tycho_describe` | Collection, snapshot, metadata catalog, limits | No book text |
+| `tycho_search` | Lexical BM25 over indexed sections | `limit` 1–20; no offset |
+| `tycho_batch` | Multiple section reads and evidence IDs | 8 + 8 items |
+| `tycho_outline` | Topic planning route | `limit` 1–20 |
+| `tycho_compare` | Extractive cited option matrix | 2–5 options |
+| `tycho_context` | Bounded evidence bundle by role | `limit` 1–20 |
 | `tycho_read` | Bounded read from one section | 1–5,000 codepoints |
-| `tycho_page` | Bounded page body plus section map | 1–5,000 codepoints |
+| `tycho_page` | Page body, section map, frontmatter | 1–5,000 codepoints |
 | `tycho_patterns` | Draft pattern summaries and registry snapshot | `limit` 1–50 |
 | `tycho_pattern` | One draft pattern, family, card and owner citation | One ID |
 | `tycho_evidence` | Registered document/claim/source metadata | One ID only |
@@ -105,6 +109,27 @@ offsets, the page-level citation and the same continuation fields.
 All successful tool results also carry `content_trust:
 "untrusted-evidence"`. Book text is data; the adapter does not follow
 instructions found inside it.
+
+## Agent contract
+
+Every tool exposes both `inputSchema` and `outputSchema` in `tools/list`.
+Every schema property has a description. `tycho_describe` additionally returns
+`metadata` with:
+
+- closed `kind`, `evidence_status`, `artifact_type` and `volume` enums;
+- the frontmatter field catalog with type, description and boundary;
+- the search-result field catalog;
+- pagination rules for each tool;
+- the output schemas by tool name.
+
+`tycho_page` and `tycho_read` return parsed `frontmatter` and a resolved
+`related` list in addition to their bounded content. Search results include
+`summary`, `topics`, `perspectives` and `related_ids` from the route metadata.
+
+Pagination is explicit: `tycho_page` and `tycho_read` return `offset`,
+`returned_chars`, `total_chars`, `next_offset` and `truncated`; call again with
+`offset=next_offset` until it is null. `tycho_search` has no offset/cursor;
+refine the query, with a maximum of 20 results.
 
 ## Pattern registry
 
@@ -162,7 +187,9 @@ agent-adjudicated diagnostic, not proof of answer correctness:
 | `no_confident_answer` | `true` or `false` | Refusal decision |
 | `state` | `abstained`, `not-calibrated-answer` or `no-results` | Retrieval state |
 | `confident` | `false` | No answer-correctness model |
-| `basis` | evidence score, zero results or no-results | Why |
+| `basis` | evidence-score-floor, zero results or no-results | Why |
+| `score_floor` | 15.618061 | Strict lexical-score floor |
+| `model_abstain` | boolean | Legacy model probability threshold decision |
 
 The model and limits are documented in
 [ABSTENTION-EVIDENCE-GATE-2026-10-24.md](ABSTENTION-EVIDENCE-GATE-2026-10-24.md).
