@@ -9,10 +9,12 @@ topic_ids:
   - "security-architecture"
 perspectives:
   - "architecture"
-summary: "Decision card for Synthetic Monitoring; bounded owner evidence and explicit limits."
+summary: "Decision card for Synthetic Monitoring; four bound public units and explicit limits."
 route_hints:
   questions:
-    - "Should probes exercise user-visible behavior from outside the"
+    - >-
+      Should probes exercise user-visible behavior from outside the service
+      rather than rely only on internal metrics?
   prerequisites:
     - "tycho.chapter.419769c372ccaa569796954878e3bef9"
   related_ids:
@@ -24,18 +26,26 @@ route_hints:
     - "synthetic-monitoring"
 evidence_scope:
   source_ids:
-    - "src.sre-workbook"
+    - "src.sre"
+    - "src.prometheus"
+    - "src.aws-cloudwatch-synthetics"
+    - "src.azure-app-insights-availability"
   claim_ids: []
   status: "source-linked"
-  notes: "Moved card page; source binding remains in the owner unit."
+  notes: >-
+    Four public units inspected 2026-10-31: Google SRE, "Monitoring
+    Distributed Systems"; Prometheus, "Blackbox exporter"; AWS, "Synthetic
+    monitoring (canaries)"; and Azure, "Application Insights availability
+    tests". The Azure source id is proposed pending registration. No
+    promotion, sufficient coverage or owner acceptance is claimed.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-27"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-27"
-updated_at: "2026-10-27"
-source_inspection_date: "2026-10-21"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # Synthetic Monitoring
@@ -47,24 +57,40 @@ architecture; kind operations-pattern; priority core.
 service rather than rely only on internal metrics?
 
 **Good-fit conditions.** A representative journey can be probed; coverage/locations are
-known; false positives are triaged.
+known; false positives are triaged. The probe identity, target, locations, frequency and
+success criteria should be explicit. These are Tycho conditions.
 
 **Hard contraindications.** Reject when probes cannot authenticate safely, when they test
-only shallow endpoints, or when alert noise exceeds signal.
+only shallow endpoints, or when alert noise exceeds signal. These are Tycho
+contraindications.
 
 **Competing alternative.** Real-user monitoring or internal SLOs. Reverse the choice when
-synthetic coverage cost exceeds detection benefit.
+synthetic coverage cost exceeds detection benefit. Google SRE contrasts black-box with
+white-box monitoring; Azure directs operators of "nonpublic endpoints" to "monitor an
+internal health signal from inside the network and create log or metric alerts on that
+signal." **Tycho choice rule:** prefer a synthetic probe only when no real traffic
+exercises the journey; prefer internal or real-user signals when the probe cannot reach
+or safely authenticate to the path.
 
-**Failure and recovery.** Probe blindness and credential leakage are common; verify
-journey coverage in the owner section.
+**Failure and recovery.** Azure retries a failed availability test and reports "only if
+three successive attempts fail", while noting that "about 80% of failures disappear on
+retry"; AWS says canaries let you "discover issues before your customers do"; Prometheus
+exposes `probe_success` and debug output. Probe blindness and credential leakage are
+common; verify journey coverage in the owner section. **Tycho runbook:** page on
+product-visible failure, keep credential-expiry alerts distinct from product alerts, and
+re-run with debug before declaring an outage.
 
 **Technical owner.** [Burn-rate and alerts are actions, not decorations](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
 
-**Sources.** [src.sre-workbook](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch6-sre-workbook-monitoring.2026-10-21: all twenty-three
-headings read; no Synthetic Monitoring or Alerting headings exist. The source is a public
-pattern/specification
-unit, not a benchmark.
+**Sources.** Google SRE, "Monitoring Distributed Systems"
+(`read.sre-book-blackbox-monitoring.2026-10-31`); Prometheus, "Blackbox exporter"
+(`read.prometheus-blackbox-exporter.2026-10-31`); AWS, "Synthetic monitoring
+(canaries)" (`read.aws-synthetics-canaries.2026-10-30`, retained); and Azure,
+"Application Insights availability tests"
+(`read.azure-app-insights-availability.2026-10-31`, proposed). All four are public
+documentation, not benchmarks or production observations; exact URLs, revisions and
+quotes are in the lane note and owner section. No probe, canary or availability test
+was run.
 
 **Decision state.** applicable-under-conditions.
 

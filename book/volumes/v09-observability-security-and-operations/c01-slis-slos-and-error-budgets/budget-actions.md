@@ -25,18 +25,28 @@ route_hints:
     - "budget"
     - "actions"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
+    - "src.prometheus"
+    - "src.aws-cloudwatch-synthetics"
+    - "src.azure-app-insights-availability"
   claim_ids: []
-  status: "unknown"
-  notes: "Bounded question from tycho.page.c987c475cc5340bcb967f4b6f963b295; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  status: "source-linked"
+  notes: >-
+    Bounded question from tycho.page.c987c475cc5340bcb967f4b6f963b295; exact
+    inherited citation rows and limits remain in the chapter source ledger.
+    The Synthetic Monitoring section binds four public units inspected on
+    2026-10-31; src.azure-app-insights-availability is proposed pending
+    registration, and no promotion, sufficient coverage or owner acceptance is
+    claimed.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
-source_inspection_date: null
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # Error-budget decisions and revisions
@@ -123,16 +133,62 @@ measured evidence, and they do not create a new source claim.
 
 ### Synthetic Monitoring
 
-Synthetic monitoring exercises a representative user journey from outside the service. It
-needs a safe identity, a journey definition, location and frequency choices and a rule
-that separates probe failure from product failure. Use it when internal metrics cannot
-observe an external dependency, DNS, TLS or end-to-end contract. Do not use shallow
-endpoint pings as evidence for a complete journey.
+**Mechanism.** Synthetic monitoring exercises a representative user journey from outside
+the service. Google SRE, "Monitoring Distributed Systems", defines black-box monitoring as
+"Testing externally visible behavior as a user would see it" and notes that "only end-to-end
+system tests can detect that you’re serving the wrong content." The Prometheus blackbox
+exporter "allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC";
+AWS CloudWatch Synthetics canaries "follow the same routes and perform the same actions as
+a customer"; and Azure availability tests "send web requests to your application at regular
+intervals". **Tycho reading:** a probe is a measurement contract over a named journey, not
+a liveness shortcut, and a shallow endpoint ping is not evidence for a complete journey.
 
-The failure path is a probe that cannot authenticate or that tests only a trivial path;
-rotate credentials, cover the critical journey and triage probe noise separately.
-Real-user monitoring is the alternative when actual traffic provides enough coverage
-without synthetic load.
+**Invariant.** It needs a safe identity, a journey definition, location and frequency
+choices and a rule that separates probe failure from product failure. Prometheus "needs to
+be passed the target as a parameter", resolves "the target hostname on every probe and
+does not cache the result" and exposes `probe_success`; Azure applies its retry rule
+"independently at each test location" and warns that availability tests use "shared IP
+addresses", so a firewall must not rely on IP filtering alone. Add an origin header with a
+safe identity and treat credential expiry as a configuration event. AWS runs canaries "on a
+schedule". **Tycho rule:** bind who probes what, from where, how often, with which
+identity, and what counts as success before the check is trusted.
 
-**Limits.** Probe identity, journey maintenance and noise are costs; a green synthetic check is
-not proof of every user path.
+**Failure and recovery.** The failure path is a probe that cannot authenticate or that
+tests only a trivial path; rotate credentials, cover the critical journey and triage probe
+noise separately. Azure retries a failed test and reports "only if three successive
+attempts fail", yet notes that "about 80% of failures disappear on retry"; alerts are
+enabled by default. AWS says canaries let you "discover issues before your customers do".
+Prometheus exposes `probe_success` and debug output, and its security note says the
+exporter "makes requests to any target it is given". **Tycho runbook:** page on
+product-visible failure, keep credential-expiry alerts distinct from product alerts, and
+re-run with debug before declaring an outage.
+
+**Alternative.** Real-user monitoring is the alternative when actual traffic provides
+enough coverage without synthetic load. Google SRE contrasts black-box with white-box
+monitoring, which "depends on the ability to inspect the innards of the system, such as
+logs or HTTP endpoints, with instrumentation." Azure tells operators that for nonpublic
+endpoints they should "monitor an internal health signal from inside the network and
+create log or metric alerts on that signal." **Tycho choice rule:** prefer a synthetic
+probe only when no real traffic exercises the journey; prefer internal or real-user
+signals when the probe cannot reach or safely authenticate to the path; reverse when probe
+maintenance and noise exceed the detection benefit.
+
+**Bound source limits.** Four public units were inspected on 2026-10-31: Google SRE,
+"Monitoring Distributed Systems"; Prometheus, "Blackbox exporter"; AWS, "Synthetic
+monitoring (canaries)"; and Azure, "Application Insights availability tests". The exact
+units are:
+<https://sre.google/sre-book/monitoring-distributed-systems/>,
+<https://github.com/prometheus/blackbox_exporter>,
+<https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html>
+and
+<https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability>.
+The proposed or retained records are `read.sre-book-blackbox-monitoring.2026-10-31`,
+`read.prometheus-blackbox-exporter.2026-10-31`,
+`read.aws-synthetics-canaries.2026-10-30`, and
+`read.azure-app-insights-availability.2026-10-31`. They are living book, repository,
+service-guide and how-to pages, not benchmarks, measurement standards or production
+observations. The SRE chapter has no published version identifier; the Prometheus README
+is pinned to commit `f9c2f47d4f7785652ed66e391618c2f7cea1b3c9`; the Azure page records a
+source commit; the AWS page is a service overview. No probe, canary or availability test
+was created or run. The real-user comparison, choice rule and runbook remain Tycho
+guidance, not source claims.
