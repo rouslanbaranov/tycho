@@ -36,7 +36,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -109,20 +109,92 @@ Pattern atlas: [Polyglot Persistence](../../v11-pattern-atlas/c06-database-stora
 
 ### Polyglot Persistence
 
-A single authoritative registration database plus a graph/search/OLAP projection is a valid possible
-design—but then there are *two data representations*, not two automatically consistent sources of
-truth. Each store has its own schema, failure mode and rebuild cost.
+A single authoritative registration database plus a graph/search/OLAP projection is a valid
+possible design—but then there are *two data representations*, not two automatically consistent
+sources of truth. Each store has its own schema, failure mode and rebuild cost. A projection view
+may lag; the response needs a freshness contract, and the write owner must be named.
 
-Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly. A
-projection view may lag; the response needs a freshness contract. The write owner must be named,
-and a projection must be rebuildable from the authority without relying on the projection itself.
-Test a partial projection failure and a stale read, not only the happy-path query. Dual-write
-ambiguity and partial migration need an explicit reconciliation owner; a half-migrated projection
-is not a valid serving state.
+**Tycho's four-part invariant, not a vendor claim.** Define freshness, rebuild, deduplication,
+schema migration and failure recovery explicitly. Write the serving rule down before the
+projection serves traffic. The public pages support separate parts of that rule, not the whole
+rule:
 
-A single store with derived projections or query-time joins may be preferable when one engine can
-meet the query shapes and the team cannot operate a second consistency contract. Polyglot persistence is a fit when a
-specialized query engine buys measured value and the synchronization contract is owned.
+- **Freshness.** AWS says "The CQRS pattern typically results in eventual consistency between the
+  data stores." Microsoft says that with separate stores "the read data might not show the most
+  recent changes immediately. This delay results in stale data" and that "The read model is
+  eventually consistent with the write model." Tycho's rule: the owner publishes a freshness
+  bound and the caller-visible meaning of a stale read; "eventual" alone is not a bound.
+- **Rebuild.** PostgreSQL says "When logical replication of a table typically starts, PostgreSQL
+  takes a snapshot of the table's data on the publisher database and copies it to the subscriber.
+  Once complete, changes on the publisher since the initial copy are sent continually to the
+  subscriber." Microsoft says that with an event store as the authority "you can easily
+  regenerate materialized views or adapt to changes in the read model by replaying historical
+  events." Tycho's rule: rebuild reads the authority, not the projection, and records the
+  position it applied.
+- **Deduplication.** Debezium's outbox table exposes an event id: "You can use this ID, for
+  example, to remove duplicate messages." Microsoft says to "make the read-model consumer
+  idempotent to tolerate duplicate delivery." Tycho's rule: the deduplication key survives
+  redelivery, and the marker and the derived write commit together.
+- **Schema migration.** PostgreSQL warns "The database schema and DDL commands are not
+  replicated" and "Subsequent schema changes would need to be kept in sync manually." Tycho's
+  rule: projection, event and authority schemas each have a compatibility window, and an unknown
+  version is rejected rather than silently coerced.
+
+**Failure and recovery.** Tycho's rule, not a source claim. Dual-write ambiguity and partial
+migration need an explicit reconciliation owner; a half-migrated projection is not a valid
+serving state. The sources expose the failure mechanics:
+
+- A database write and a broker publish do not share one transaction. Microsoft says "Because
+  you usually can't enlist message brokers and databases into a single distributed transaction,
+  consistency problems can occur when you update the database and publish events." It recommends
+  "Use the Transactional Outbox pattern to persist the state change and event atomically".
+- A logical replication conflict that raises an error stops the pipeline. PostgreSQL says "A
+  conflict that produces an error will stop the replication; it must be resolved manually by the
+  user." It says "The resolution can be done either by changing data or permissions on the
+  subscriber so that it does not conflict with the incoming change or by skipping the
+  transaction that conflicts with the existing data."
+- Tycho's recovery sequence: stop serving the affected projection as current, record the last
+  applied position, reconcile conflicting or missing rows against the authority, rebuild when
+  the position cannot be trusted, and only then re-enable reads. A projection that is half
+  migrated fails the freshness contract and is unavailable, not merely stale.
+
+A single store with derived projections or query-time joins may be preferable when one engine
+can meet the query shapes and the team cannot operate a second consistency contract. Polyglot
+persistence is a fit when a specialized query engine buys measured value and the synchronization
+contract is owned.
+
+**Source boundary.** Public documentation accessed 2026-10-31; living pages, not a benchmark or
+an executed multi-store test. Quotes are short excerpts. Tycho-labelled sentences are synthesis,
+not source claims.
+
+- AWS, "CQRS pattern", section "CQRS pattern": canonical text revision
+  `d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258`, raw HTML
+  `4e6f93053f75665a2efce9079b551847db05c6b375075c53a0be5127bd5382e9`; retained record
+  `read.aws-cqrs.2026-10-30`.
+- Microsoft, "CQRS pattern", sections "Separate models in different data stores", "Problems and
+  considerations" and "Benefits of combining the Event Sourcing and CQRS patterns": canonical
+  text revision
+  `469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f`; retained record
+  `read.microsoft-cqrs.2026-10-30`.
+- Debezium, "Outbox Event Router", section "Basic outbox table": canonical text revision
+  `26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e`, raw HTML
+  `382f0bd0cd99f5c8206f9ba0381f3ec71f12ffe373154d351baa8823fd11ad53`; proposed record
+  `read.debezium-outbox.2026-10-31`.
+- PostgreSQL, "Logical Replication", chapter 29: canonical text revision
+  `2f803799559f1397ed6f6af2aa2fb3d04b678418e3ef5c7b901438d2062c4c1d`, raw HTML
+  `588d7a5bfa50fafada6e3bda0cfb39e979e924af84fee4bdcf40944a47ebc42f`; proposed record
+  `read.postgresql-logical-replication.2026-10-31`.
+- PostgreSQL, "29.7. Conflicts": canonical text revision
+  `14702e9d7f4291babb23509b3193a7e3720618e2c1de01f674f858e60478c4d3`, raw HTML
+  `03928cc562272d536f3067a145e2e668f123a0ccb28ff205bf799315223c4a59`; proposed record
+  `read.postgresql-logical-replication-conflicts.2026-10-31`.
+- PostgreSQL, "29.8. Restrictions": canonical text revision
+  `85de74cc6d352a20becc5282482c542367c143d18d66cb9612db2287244a179a`, raw HTML
+  `ebcbea9f2af8d99e9df1c0a981fe031177fb90a522b92745b1d1549d8687243c`; proposed record
+  `read.postgresql-logical-replication-restrictions.2026-10-31`.
+
+Tycho's rule: the projection is not authority. A stale read is a derived read with a published
+bound; a missing, conflicting or half-applied row is a failure state with an owner.
 
 ## Navigation, prerequisites and source scope
 
