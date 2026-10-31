@@ -24,6 +24,16 @@ Use volume for layer-specific queries:
 Atlas v11 reached 1.000/1.000/1.000 on qrels v4; global atlas top-1 is a
 cross-layer routing problem.
 
+## Agent retrieval
+
+MCP search defaults to `abstain=false`: return candidates and expose the
+answerability metadata. Set `abstain=true` only for strict refusal. The current
+gate has 21/100 false abstention on answerable agent tasks and 0/20 off-topic
+abstention, so strict mode is not safe as a default.
+
+Use `all_sections=false` (best section per document) for agent candidates; the
+all-sections variant did not improve section recall and reduced page diversity.
+
 ## Deployment
 
 - Start with 4 MCP server processes for concurrent clients; each is a separate

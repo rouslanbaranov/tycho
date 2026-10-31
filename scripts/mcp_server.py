@@ -341,10 +341,11 @@ def search_schema():
             },
             "abstain": {
                 "type": "boolean",
-                "default": True,
+                "default": False,
                 "description": (
-                    "Apply the calibrated refusal policy; set false only for "
-                    "diagnostics."
+                    "Return candidates by default for agent use. Set true only "
+                    "for strict calibrated refusal; current gate has false "
+                    "abstention on answerable queries."
                 ),
             },
             "snapshot_id": {
@@ -1350,7 +1351,7 @@ class TychoMcpServer:
         if section_rerank and (volume == "v12"
                                or "v12" in query.casefold()):
             section_rerank = False
-        abstain = arg_bool(args, "abstain", True)
+        abstain = arg_bool(args, "abstain", False)
         mode = arg_string(args, "mode", maximum=20) or "strict"
         if mode not in ("strict", "exploratory"):
             raise ProtocolFailure(-32602, "mode must be strict or exploratory")
