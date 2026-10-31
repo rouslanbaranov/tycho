@@ -1,0 +1,17 @@
+{
+  "task_id": "Q037",
+  "answer": "Interpreting a graph edge requires a declared graph schema, not just a drawn arrow: the fact that a line exists does not make the relation a fact. Before interpretation, define (1) node identity and node type for both endpoints plus the relationship type and its meaning; (2) direction and the roles each endpoint plays; (3) cardinality, including whether multiple parallel relationships between the same nodes are allowed; (4) temporal validity and version of the relation, what \"current\" means, and the edge's freshness and deprecation/removal rule; (5) authorization and visibility of nodes and edges, since edge labels, scope attributes and relationship counts can leak information even when hidden node content is not returned; (6) whether the relationship is authoritative or derived, with provenance: source file/version or admitted document, extraction/inference method and date, confidence or evidence status, and ownership of conflict resolution; and (7) deletion, cycle, duplicate and integrity policies. The traversal question must then be fixed too: allowed edge types and direction, maximum hops and returned results, whether paths may repeat nodes or relationships, snapshot/time filters, required node and edge filters including permission checks, the expected output (all paths, any path, shortest path or reachable IDs), and what to do when budget or provenance is missing. A derived edge should carry its inspected source identity, relation meaning and snapshot membership; an update can mark a relationship stale or unknown rather than treating absence of re-inspection as removal, and deleting a stale edge must not erase the historical reason it existed. Only after these details are fixed can a path be read as a potential dependency chain: a valid path is not proof of causal influence, permission or current source support, and a syntactically correct traversal can still answer the wrong temporal question.",
+  "citations": [
+    "tycho.page.ae4febbe43f941f78d825613e126419b#1-clarify-the-meaning-of-an-edge",
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+    "tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance",
+    "tycho.page.64f398c0535345258b1fdf5eebbf4438#original-stale-edge-counterexample",
+    "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#engineering-walkthrough-a-bounded-dependency-path-is-not-proof-of-causation",
+    "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

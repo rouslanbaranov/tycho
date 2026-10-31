@@ -1,0 +1,16 @@
+{
+  "task_id": "Q033",
+  "answer": "A missing sampled trace is weak negative evidence, not proof about a write. Tracing reconstructs a selected execution story from sampled spans, so a missing span may mean that no work occurred, that instrumentation failed, or that the sampling policy intentionally discarded it; unsampled requests and collector/exporter drops produce the same gap. It therefore cannot establish that a write did not commit, and it also cannot establish that one did: even a present trace with a successful span status does not prove that the database transaction committed or that the downstream external effect was correct. What the gap can legitimately tell an investigator is that trace coverage is incomplete and that this path cannot be reconstructed from traces, so it must be recorded as an evidence gap rather than filled with a guessed span. To decide whether the write committed, the investigator should define the business invariant, query authoritative committed state and revisions at a consistent point, obtain idempotency and event identities, and reconcile logs, traces, audit coverage and dropped windows against those records. Retries can change trace IDs for one logical operation, so trace counts must not be treated as business-operation counts. Where the durable record is incomplete, the result should be reported as uncertain.",
+  "citations": [
+    "tycho.page.f921597aae854c6996459fc025a9bca3#purpose-and-mission",
+    "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#5-failure-chronology-traces-present-business-truth-missing",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

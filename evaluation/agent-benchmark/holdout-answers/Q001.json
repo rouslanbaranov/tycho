@@ -1,0 +1,17 @@
+{
+  "task_id": "Q001",
+  "answer": "Chaos Kong simulated regional loss only at the application/traffic-control level: it made one region behave as unavailable for a chosen service and routing test, but did not actually switch off the region or AWS infrastructure. Outside the tested failure envelope therefore remained real provider-side physical outages and metadata/storage/control-plane failures; globally shared identity, cross-region control planes and durable datastores; universal multi-region data integrity, complete write-ownership mechanics and proof of no lost writes; other AWS failure modes and later Netflix systems; and boundary cases such as existing sessions, in-flight writes and global dependencies. The 2015 DynamoDB incident is supporting historical context, not a controlled test, so a passing simulation cannot be generalized into proof that a real AWS region outage cannot affect customers.",
+  "citations": [
+    "tycho.page.b256d263efff488c8cf549e116be9683#pressure-a-green-single-service-test-can-miss-regional-dependencies",
+    "tycho.page.b256d263efff488c8cf549e116be9683#architecture-states-and-test-boundary",
+    "tycho.page.b256d263efff488c8cf549e116be9683#historical-result-versus-experiment-design",
+    "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+    "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+    "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#applied-m9-evidence-what-transfers-and-what-does-not"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

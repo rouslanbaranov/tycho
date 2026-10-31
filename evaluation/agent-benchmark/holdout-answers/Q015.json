@@ -1,0 +1,19 @@
+{
+  "task_id": "Q015",
+  "answer": "Treat priority as a bounded, authenticated class policy, not a pure ordering hint. (1) Reserve capacity for critical work: define class levels, per-level queue capacity and an explicit share of workers or slots, and make the admitting scheduler enforce the reservation; a class label on a shared pool is not a boundary. A priority queue only orders ready work and does not preempt a running handler, so a high-class item can still wait behind a slow low-class execution; bound execution or isolate lanes. (2) Authenticate and propagate criticality: keep it separate from the deadline and from client-asserted priority, verify at each hop that lower classes are rejected before higher ones, and cap each tenant's share so one tenant cannot occupy the high-class lane. (3) Make the anti-starvation contract explicit: declare which classes may overtake, a maximum wait and a starvation policy; add aging or a maximum-wait rule so low classes make progress, because without a wait bound the policy is simply starvation. Every admitted class needs a bounded wait and a declared rejection point; no class may wait without a deadline. Weighted fair scheduling or per-tenant outstanding-work limits can reserve progress for other classes, but weights alone do not cap the cost of one operation or prevent starvation unless scheduling and admission rules do; choose request-count versus resource-cost fairness explicitly and give expensive work a separate budget. (4) Prefer isolation or a different policy when priority cannot be authenticated or starvation is unacceptable: admission-controlled FIFO, separate lanes per class, a shared queue with reserved capacity, or bulkheads that reserve bounded workers per class. (5) Operate and verify: track offered, admitted, rejected and completed work per class and tenant, queue age, rejection shares and shed work by class so silent starvation cannot masquerade as health; use fair re-admission and a controlled ramp during recovery; and test that a quiet low-class tenant still makes progress under sustained high-class load. Reverse the priority choice when inversion and starvation exceed the latency benefit for critical work. These are conditional design rules, and the corpus reports no executed load test, so wait bounds, weights and class capacities must be measured for the actual service.",
+  "citations": [
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#bounded-pattern-ownership-notes",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

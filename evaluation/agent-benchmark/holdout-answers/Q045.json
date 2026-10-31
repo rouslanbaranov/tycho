@@ -1,0 +1,17 @@
+{
+  "task_id": "Q045",
+  "answer": "Only as a separate, final phase after the mixed-version coexistence window has actually closed - never while old and new versions still serve traffic or can still write. Contraction is admissible when: (1) every old writer, reader, background consumer and retained-event/replay consumer is demonstrably retired, evidenced by a capability inventory and observed reader absence rather than a calendar date, a green deployment, or the belief that all pods run the new image (mobile/partner clients, queues, batch jobs, database views and backups can retain older semantics); (2) backfill and reconciliation are complete on semantic grounds - identities, field meanings and residual unknowns resolved - and the replay/restore horizon is verified so retention and restoration obligations remain satisfiable; and (3) the irreversible consequence is explicitly authorized with an approved recovery strategy, because dropping the old column or decoder destroys the easiest rollback path, and past that point recovery is forward repair or a tested restore, not image rollback (a revert command is not business rollback). Any incompatible persisted write, uncertain mapping, or still-mixed fleet holds the transition. The contraction DDL must also fit the lock/rewrite/replica-lag budget, and if the compatibility-window and old-reader inventory cost outweighs the risk, a big-bang migration, parallel run or versioned API cutover is the alternative.",
+  "citations": [
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#bounded-pattern-ownership-notes",
+    "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+    "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

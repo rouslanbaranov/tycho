@@ -1,0 +1,19 @@
+{
+  "task_id": "Q011",
+  "answer": "Fix the decision rule before either change is built or run, and record it in the experiment contract. At minimum:\n\n1) The claim and its discriminating signal. State that under scenario X change Y improves user-visible metric Z without violating invariants, plus the expected signature: which metric should move if the hypothesis is true and which independent metric would contradict it.\n2) The measurement boundary and denominator. Fix the clock start, what counts as a logical request, which systems/resources are included, and which timeout/rejection populations enter the denominator. Distinguish attempts from logical operations and admitted from offered demand; record percentile latency and error rate per operation class, not aggregate averages. If a metric silently excludes timed-out requests, that is a stopping condition rather than a result.\n3) The comparison set and fairness conditions. An unchanged or smallest-safe baseline and a materially distinct candidate, run on the same dataset revision, arrival schedule, key skew, old/new client mix, resource ceilings and cache warm/cold state. Using different application or data revisions between contenders is a stopping condition, not evidence, so both changes must be measured under identical workload and cost boundaries.\n4) The threshold, the minimum effect that will change the decision, and the uncertainty band: number of trials, order randomization, noise level and the acceptable range. A benefit smaller than documented measurement noise cannot be turned into a win afterwards, so the effect size is fixed in advance.\n5) The gates that outrank preference and the outcomes that are allowed. Hard gates (permissions, correctness, durable state, compatibility, recovery) are evaluated before any weighted comparison; a candidate that fails a gate is rejected regardless of measured gains, and preferences are compared only among viable candidates. MEASURE_FIRST, INSUFFICIENT_EVIDENCE and REJECTED_BY_GATE are legitimate conclusions, and the narrowest next measurement must be named instead of picking the attractive option.\n6) The evidence record and revision trigger: exact tool versions and configuration, raw observations, analysis scripts, failed checks, rejected alternatives, and the condition that would reopen the decision in a versioned decision record.\n\nPre-registering the criterion prevents adjusting the threshold until a preferred candidate wins, but it does not make a weak benchmark valid: the fixture must still represent accurately observed demand and correctness.",
+  "citations": [
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#4-a-worked-fictional-experiment-cache-versus-query-repair",
+    "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+    "tycho.page.dff5d6affea243cca3c426d04d290802#6-evidence-first-research-does-not-mean-evidence-free-certainty",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#experiment-sequence",
+    "tycho.page.f05854fcc406435bbf38a192bc7ab2f1#engineering-walkthrough-a-hard-requirement-reverses-a-previously-preferred-adr",
+    "tycho.page.3c865baa588744ecbaac307c81c4b25c#1-name-the-decision-before-selecting-a-style"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

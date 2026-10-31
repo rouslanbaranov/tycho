@@ -1,0 +1,18 @@
+{
+  "task_id": "Q005",
+  "answer": "Equal row counts prove only that the two row multisets have the same cardinality at the moment of measurement; they do not prove the target contains the source's rows. A missing row can be exactly offset by a duplicate: a source snapshot {A, B, C} and a target {A, B, B} both have three rows, and equal aggregate sums can hide compensating value errors. Count comparison detects some missing or excess records but is blind to equal loss and duplication, and to wrong values under keys that still exist. Identity and content need separate checks: key-set comparison finds missing or extra identities but not incorrect values; a per-key canonical digest catches value differences only when encoding, schema interpretation and comparison windows agree, and can still miss a shared conversion bug or omitted fields; relationship invariants and representative user journeys test business outcomes that no cardinality check covers. Counts are also only meaningful inside a pinned observation boundary. Comparing a live source at revision 120 with a lagging target at 110 produces expected differences, and a valid comparison tuple records source snapshot, schema version, partition identity, job revision, equality rule and freshness window. Different filters, deduplication or soft-delete rules, lossy null/value canonicalization, or mismatched time windows can make counts match for the wrong reason. Finally, \"complete\" is ambiguous: copy finished, count matched, checksum matched and business-equivalent are different claims. A green shadow comparison establishes agreement only for observed jobs and windows; it does not prove every mutation race, unobserved consumer, downstream interpretation, or convergence after authority flips. A defensible completeness argument states the invariant under test (identity, value equality, operation order, referential consistency, exactly-once effects, bounded freshness), compares per-key values and invariants in both set-difference directions, classifies and repairs discrepancies, and repeats evidence after cutover. Equal counts can be a necessary smoke test, never sufficient proof.",
+  "citations": [
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "Q079",
+  "answer": "V12's convergence rule computes relative error = se / |mean| and declares a run converged when that ratio is at most 0.02. Because the denominator is the metric mean, the ratio measures proportional precision, not absolute precision. When the mean is near zero, the denominator shrinks: a standard error that is tiny in absolute terms can still exceed 2% of the mean, so a well-estimated near-zero metric is labeled insufficient-sample even though its absolute uncertainty is negligible. The distortion runs both ways: a large-mean metric can pass the same threshold while carrying a much larger absolute error, so relative errors are not comparable across metrics whose means differ greatly. At mean = 0 the ratio is undefined, and as the mean approaches zero it becomes unbounded and highly sensitive to sampling noise and to the mean crossing zero, so convergence status can flip even when the underlying estimate is stable. The page accordingly calls the relative-error threshold a decision aid, not a universal rule: it states that a metric near zero can have a small absolute error and a large relative error, and that a metric with a wide business tolerance can accept a larger relative error. Stability should be judged against the decision-relevant effect, using the standard error and confidence interval plus an absolute or decision-relevant tolerance, rather than the ratio alone; otherwise the threshold can fail adequate small metrics and hide large absolute errors behind favorable ratios.",
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "task_id": "Q071",
+  "answer": "A liveness probe answers one narrow question — whether the process itself is alive and able to make progress — so restarting is the indicated action only for a process-local failure. A shared dependency being unavailable does not answer that question. It is an external condition that a restart cannot repair: the replacement process meets the same dependency, fails the same check, and is restarted again, producing a restart loop that consumes capacity without restoring service (a false positive, not a recovery).\n\nThe coupling is also a failure-domain error. A shared dependency fails for every replica at once, so a liveness check that includes it converts one correlated external fault into simultaneous failures of all otherwise-healthy instances. The orchestrator then mass-restarts or ejects them, turning a dependency degradation into a wider outage: warm caches and in-flight work are lost, capacity drops exactly when retries and reconnects rise, and the recovery surge adds load to the still-unavailable dependency. The book states this directly: a shared dependency failure can fail every probe and cause mass ejection or restart, and a liveness endpoint should not restart every healthy process because one shared dependency is unavailable.\n\nThe correct separation is startup = initialization complete, readiness = may receive traffic, liveness = must restart. Dependency state belongs in readiness (stop sending traffic, or serve a declared fallback or degraded mode) and in external journey/SLO monitoring, not in process lifecycle. A circuit breaker or bounded timeout around the dependency contains its failure without killing the worker. Keep shared-dependency checks out of liveness, bound probe timeouts and frequency, and require consecutive failures before acting, because probe false positives and shared-dependency coupling are common. A green liveness probe still does not prove readiness, correct routing or a healthy dependency, and exact probe behavior depends on the chosen runtime/version.",
+  "citations": [
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+    "tycho.page.1810c1f1f11648bdba66aafa5da60d33#bounded-pattern-ownership-notes",
+    "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "task_id": "Q059",
+  "answer": "A lost acknowledgment is not evidence that the job was rejected: the outcome is ambiguous/unknown, and a client recovers it by re-presenting the same identity and then reading back recorded state, never by resubmitting as new work.\n\n1) Retain a client-generated identity before sending. Use one logical operation key, scoped to the principal/tenant and bound to the normalized payload, and keep it (with any returned job identity) in durable client state. Distinguish it from the transport attempt ID, the resource/business ID and the event ID; a fresh key per retry defeats recovery. [effect-identity #2; intent-identity #1]\n\n2) Retry with the same key and the same parameters. A service that owns a durable operation record resolves the key to the already-committed operation and returns the existing job identity/outcome instead of enqueuing a second job; reusing the key with materially different parameters must be rejected as a conflict rather than answered with the stale prior result. [effect-identity #2; intent-identity #3]\n\n3) Read back status through a status-lookup/reconciliation operation. Asynchronous request-reply returns a location reference to an endpoint the client can poll; the status resource records the operation outcome and remains queryable, so the client discovers committed, in-progress or rejected without re-executing. The chapter's minimal contract lists this explicitly: expose status lookup/reconciliation where an acknowledgment may be lost. [dedup-authority #4; async-request-reply card; async page notes]\n\n4) Handle the still-running case. If the original attempt is still executing, the server needs a concurrency-safe in-progress / wait / conflict / result-lookup protocol, so a retry arriving before completion receives a definite answer instead of a duplicate commit. [intent-identity #3]\n\n5) Respect the conditions that make recovery possible: atomic first-write on (key, payload) across replicas (a read-then-insert or in-memory map fails), durable dispatch state/outbox, tenant and authorization scoping, and a declared retention window. After the key-retention horizon deduplication memory may be gone, so define a bounded retry window plus an outcome-lookup/expiry policy and reconcile old cases by durable business identity. [effect-identity #2 table; retry-retention #6; dedup-authority #4]\n\nLimits: the book states this as a proposed application contract and original synthetic sequences, not an executed experiment; no recovery test was run, and HTTP method idempotence alone does not supply outcome discovery.",
+  "citations": [
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#bounded-pattern-ownership-notes",
+    "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

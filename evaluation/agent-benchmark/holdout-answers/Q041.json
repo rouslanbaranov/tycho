@@ -1,0 +1,20 @@
+{
+  "task_id": "Q041",
+  "answer": "An index is a derived view, not a record of one moment. When it is assembled from revisions captured at different times, it flattens time: results are keyed by document and section, not by a shared as-of state. Each retrieved section can be authentic, yet any pair may come from revisions that never coexisted. That is misleading in several connected ways.\n\nFirst, the index manufactures relations that no single state contains.[1] Co-occurrence, agreement and contradiction become artifacts of assembly: a claim repeated in two revisions can look like independent corroboration when it is one lineage, and an old and a new version of the same page can appear side by side as if they were separate sources. The result is an internally plausible answer whose support is counterfactual.\n\nSecond, provenance breaks.[2][3] If a hit is not bound to a revision-bound snapshot and an access scope, its citation resolves to \"the document\" rather than to the state that was actually read. Cited versus actually read, direct evidence versus inference, freshness, authorization scope, and version mismatch all become indistinguishable. A stale snippet or old citation may no longer support the claim it is attached to, and a pinned result alone still cannot certify semantic truth.\n\nThird, stale and withdrawn material stays retrievable.[4][5] Edits, tombstones or deletions, old-ID redirects, permission changes, partial shard failures and old caches can leave superseded or revoked text searchable. An index that lags after a deletion can show withdrawn material; a shard failure can silently return a partial answer. A high BM25 rank is not evidence that the older revision remains authoritative, and analyzer or tokenizer changes between generations compound the mismatch.[6]\n\nFourth, ranking and evaluation hide the defect.[7][8][9] Citation support requires exact, current and admissible sections, not merely a listed source; freshness lag is a source-revision consistency problem. If judgments, qrels and queries are not pinned to the same source snapshot, boundaries and permission filters, the measured quality is not reproducible and the test can reward retrieving text that never existed together. Renamed or deleted content, contradictory editions, version-specific false friends and stale refresh windows must be represented explicitly, with snapshot and version identity on each label.\n\nThe practical consequence is confident, citable-looking answers whose evidence cannot be replayed against any real state. The mitigation is to pin one index generation to one admitted source revision and access scope, bind every result to a revision-bound ID and section span with freshness and authorization metadata, invalidate stale snippets on change or deletion, surface contradictions and version mismatch instead of silently merging them, and evaluate against a frozen snapshot with explicit time/version constraints and deliberate stale-citation cases.",
+  "citations": [
+    "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+    "tycho.page.990dac261357498fa433cf98e87817d3#5-permission-and-provenance-are-part-of-retrieval-correctness",
+    "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#4-versioned-provenance-and-cross-collection-isolation",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#7-failure-recovery-and-indexing-consistency",
+    "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+    "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+    "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

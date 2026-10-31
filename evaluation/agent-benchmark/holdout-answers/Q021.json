@@ -1,0 +1,14 @@
+{
+  "task_id": "Q021",
+  "answer": "In Discord's legacy search fleet, a shard could be healthy yet incomplete because the loss happened upstream of Elasticsearch. Realtime indexing fed the search index asynchronously through a Redis-backed queue; when search-node failures built a backlog, Redis became CPU-saturated and began dropping messages. Those messages never entered the index pipeline, so they were absent from the index rather than temporarily unavailable, and querying a healthy shard later could not recover them. \"Healthy\" describes cluster/shard state, not whether every produced message was successfully indexed. Fan-out bulk ingestion amplified the pressure: a 50-message batch could target 50 nodes, and one unavailable node failed the whole batch and forced retries. Discord later replaced Redis with a backlog-retaining PubSub queue and grouped bulk writes by destination, but the source leaves queue redelivery/idempotency, prolonged-outage retention, and consistent index checkpoints unvalidated, and does not establish a reliable source store for regenerating every lost item. Completeness therefore requires ingest-offset/record reconciliation, not only green shard health.",
+  "citations": [
+    "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet",
+    "tycho.page.95bf2e08c056472f92faf870de8f1357#source-reported-new-topology-and-recovery-limits",
+    "tycho.page.95bf2e08c056472f92faf870de8f1357#original-pressure-and-baseline"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "task_id": "Q075",
+  "answer": "Replay records the Python version and platform string in the run provenance, alongside the engine name/version and deterministic flag, model and scenario SHA-256, seed base and replication count, input hash, invocation, metrics/convergence/uncertainty/sensitivity, and a result hash. The environment archive is bounded: there is no full environment lock, container image, dependency lock or complete artifact archive, so a library or platform change can still alter behavior. The stored platform and Python strings only make a cross-environment difference visible. They do not guarantee bit-identical behavior across platforms: replay proves the stored inputs, engine version and seed reproduce the stored metrics on the same platform family, not that another platform will produce bit-identical floats, and presenting a one-platform replay as a guarantee for every platform is the cross-platform overclaim failure mode.",
+  "citations": [
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

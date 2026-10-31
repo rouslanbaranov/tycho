@@ -1,0 +1,16 @@
+{
+  "task_id": "Q065",
+  "answer": "Endpoint discovery publishes membership and per-host attributes (weight, canary status, zone) on an eventually consistent control path; it does not assert that a member can serve a request now. A registry entry can be stale in both directions: a removed or draining instance can linger in a last-known set, and a newly published instance can be starting, unready or hung, so discovery alone never yields an eligible backend. Active health checking closes that gap. It separates startup, readiness and liveness so an initialized-but-unready or draining process is not admitted; it bounds detection latency through explicit probe frequency and timeouts instead of waiting for the next membership update; it separates instance-local faults from shared dependency failures so one dependency outage does not eject the whole fleet; and it forces a drain before removal rather than trusting a cached healthy answer. The checks must also be independent of what they observe: probes should run on a path that does not depend on the ingress, DNS or control plane, because when discovery is stale or unavailable the last-known set may still serve reads but cannot grant write authority, and silence is not evidence of health, so fail-open or fail-closed is chosen per dependency.",
+  "citations": [
+    "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+    "tycho.page.b503488c20a947b581ef45e84ea735d6#overview",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

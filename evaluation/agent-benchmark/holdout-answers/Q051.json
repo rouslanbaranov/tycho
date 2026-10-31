@@ -1,0 +1,19 @@
+{
+  "task_id": "Q051",
+  "answer": "Before static content is moved off the application origin onto an edge/CDN host, the edge side must already own a defined set of responsibilities; the decision card makes an unowned edge configuration a hard contraindication. Concretely: (1) the publication pipeline - upload validation and version verification for each release, plus one version authority when a second origin or duplicated manifest exists; (2) the cacheability contract - an explicit cache key, freshness/lifetime policy and a controlled invalidation/purge path with a bounded stale window and propagation time, remembering that a purge lags the origin and CDN purges do not clear browser caches; (3) the authorization boundary - caching never replaces access enforcement, and changing, deleting or restricting origin content does not invalidate copies already served, so private or edge-signed assets need an explicit key and authorization contract; (4) origin protection and rewarming - prewarming critical assets per release, verifying propagation, keeping an origin failover, bounded concurrent fills, retry budgets and a deliberate stale-response policy; (5) rollback and version retention - a retained version that covers the rollback window, garbage collection only after that window, a tombstone or purge proof for a deleted object, and versioned rollback rather than mutating a cached object; and (6) accountable edge ownership per offloaded function - an owner, a versioned policy, a defined failure mode, fail-closed behavior and a tested bypass path, with acceptance tests covering the authorization matrix, purge path, stale-on-error and revocation. If edge configuration, purge or versioning cannot be owned to that standard, the design's stated alternative is to keep serving static content from the application origin.",
+  "citations": [
+    "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+    "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#origin-protection-and-rewarming",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#acceptance-and-evidence-boundary",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+    "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

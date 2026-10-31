@@ -1,0 +1,426 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q003",
+      "question": "What runtime dependency did Airbnb\u2019s generated Bazel targets sometimes miss during its Gradle migration?",
+      "layer_expected": "book",
+      "answer": "Airbnb's generated Bazel targets inferred dependencies mainly from Java/Kotlin/Scala source imports, so they sometimes missed runtime dependencies for classes loaded by reflection from configuration. Those reflective runtime dependencies are invisible to static-import analysis, so the generated targets omitted the artifacts that the deployable needed at runtime; Airbnb reported that roughly 100 of about 700 services initially failed startup/integration checks during Bazel-built deploy verification (largely reflective classes or version mismatches).",
+      "citations": [
+        "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+        "tycho.page.c766e3289b95429bb158fb168f7bd0b9#four-and-a-half-year-transition-why-coexistence-was-both-safety-net-and-cost",
+        "tycho.page.c766e3289b95429bb158fb168f7bd0b9#detailed-mechanics-and-ownership",
+        "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence"
+      ],
+      "core_claims": [
+        "5. Progressive promotion and stop conditions",
+        "Actual failures: static imports are not full runtime dependencies",
+        "Four-and-a-half-year transition: why coexistence was both safety net and cost",
+        "Provenance and acceptance boundary"
+      ],
+      "optional_claims": [
+        "2. Workflow and runner topology"
+      ],
+      "required_evidence": [
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+        "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+        "tycho.page.c766e3289b95429bb158fb168f7bd0b9#four-and-a-half-year-transition-why-coexistence-was-both-safety-net-and-cost",
+        "tycho.page.c766e3289b95429bb158fb168f7bd0b9#provenance-and-acceptance-boundary",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology"
+      ]
+    },
+    {
+      "task_id": "Q011",
+      "question": "What must be fixed in advance to compare two architecture changes without shifting the decision criterion after the test?",
+      "layer_expected": "book",
+      "answer": "Fix the decision rule before either change is built or run, and record it in the experiment contract. At minimum:\n\n1) The claim and its discriminating signal. State that under scenario X change Y improves user-visible metric Z without violating invariants, plus the expected signature: which metric should move if the hypothesis is true and which independent metric would contradict it.\n2) The measurement boundary and denominator. Fix the clock start, what counts as a logical request, which systems/resources are included, and which timeout/rejection populations enter the denominator. Distinguish attempts from logical operations and admitted from offered demand; record percentile latency and error rate per operation class, not aggregate averages. If a metric silently excludes timed-out requests, that is a stopping condition rather than a result.\n3) The comparison set and fairness conditions. An unchanged or smallest-safe baseline and a materially distinct candidate, run on the same dataset revision, arrival schedule, key skew, old/new client mix, resource ceilings and cache warm/cold state. Using different application or data revisions between contenders is a stopping condition, not evidence, so both changes must be measured under identical workload and cost boundaries.\n4) The threshold, the minimum effect that will change the decision, and the uncertainty band: number of trials, order randomization, noise level and the acceptable range. A benefit smaller than documented measurement noise cannot be turned into a win afterwards, so the effect size is fixed in advance.\n5) The gates that outrank preference and the outcomes that are allowed. Hard gates (permissions, correctness, durable state, compatibility, recovery) are evaluated before any weighted comparison; a candidate that fails a gate is rejected regardless of measured gains, and preferences are compared only among viable candidates. MEASURE_FIRST, INSUFFICIENT_EVIDENCE and REJECTED_BY_GATE are legitimate conclusions, and the narrowest next measurement must be named instead of picking the attractive option.\n6) The evidence record and revision trigger: exact tool versions and configuration, raw observations, analysis scripts, failed checks, rejected alternatives, and the condition that would reopen the decision in a versioned decision record.\n\nPre-registering the criterion prevents adjusting the threshold until a preferred candidate wins, but it does not make a weak benchmark valid: the fixture must still represent accurately observed demand and correctness.",
+      "citations": [
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#4-a-worked-fictional-experiment-cache-versus-query-repair",
+        "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+        "tycho.page.dff5d6affea243cca3c426d04d290802#6-evidence-first-research-does-not-mean-evidence-free-certainty",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#experiment-sequence",
+        "tycho.page.f05854fcc406435bbf38a192bc7ab2f1#engineering-walkthrough-a-hard-requirement-reverses-a-previously-preferred-adr",
+        "tycho.page.3c865baa588744ecbaac307c81c4b25c#1-name-the-decision-before-selecting-a-style"
+      ],
+      "core_claims": [
+        "Engineering walkthrough \u2014 An apparently faster architecture that fails a hard invariant",
+        "3. Define the experiment contract before the result",
+        "4. Turn qualities into adversarial scenarios",
+        "Why the two patches need two separate quality gates"
+      ],
+      "optional_claims": [
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4#purpose-and-mission",
+        "tycho.page.06b70cb83d4f490ea9ef698a025e7684#engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+        "tycho.page.4e96abb6d4504ef1b09cbc355485108a#4-turn-qualities-into-adversarial-scenarios",
+        "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates",
+        "tycho.page.76244dbe2bd44035b7154f821191f6f2#purpose-and-mission",
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#two-incompatible-architecture-choices-for-a-hypothetical-legacy-gateway",
+        "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment"
+      ]
+    },
+    {
+      "task_id": "Q019",
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "layer_expected": "book",
+      "answer": "A planned controlled cutover is unsuitable \u2014 and should be rejected rather than scheduled \u2014 when an essential source-side precondition cannot be met: the source write pipeline cannot be paused (no downtime window to quiesce writes) or replication completeness cannot be verified (the team cannot confirm that outstanding source changes have drained and data freshness has reached zero before switching writes). The atlas card states these as hard contraindications, not risks to be managed inside the window, and lists its good-fit conditions as an available downtime window, completed schema/backfill, active CDC replication and a configurable reverse fallback. The bounded cutover procedure adds the source-side steps this implies: verify pipeline health and DLQ state, resolve DLQ errors before pausing writes, confirm no replication events pass after pausing, then switch connection strings and monitor reverse replication. When the source cannot be paused or drained-and-verified, move authority incrementally instead \u2014 Strangler Fig replacement or branch-by-abstraction through an owned seam \u2014 so each step stays reversible. Even when the gates are met, row counts, checksums and freshness comparisons do not prove business equivalence, and freshness evidence needs production-like source update patterns, so the card remains a self-checked decision aid, not a benchmark-grade verification.",
+      "citations": [
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta"
+      ],
+      "core_claims": [
+        "Modernization plan",
+        "Parallel Run",
+        "Decision transfer, negative cases and synthetic ADR",
+        "Controlled Cutover"
+      ],
+      "optional_claims": [
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#purpose-and-mission",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#decision-transfer-negative-cases-and-synthetic-adr",
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.b369cf77ebee40c6a35f45effefe473d#alternative-architecture-and-stop-conditions",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications"
+      ]
+    },
+    {
+      "task_id": "Q027",
+      "question": "What separates a state-authority boundary from a separately deployed process?",
+      "layer_expected": "book",
+      "answer": "Separate the two questions. A process boundary is defined by independence of operation: it marks where an application can fail, be deployed, scaled and rolled back as a unit. A state-authority boundary is defined by correctness: it marks where a business invariant is finally enforced and which component (with which acceptance, commit or write rule) owns the authoritative write. The book keeps state authority separate from an authorization boundary (where access to the effect must be validated) and a data-exchange boundary (where a versioned contract must be preserved); these boundaries can coincide but should be modeled separately.\n\nDeployment is only one axis of architecture. The book distinguishes business/domain, code/module, runtime/deployment and data ownership/coordination boundaries, and warns that a separate process does not by itself establish a good domain boundary. A service may own several processes and one process may contain several modules, so deployment units and authority owners have no guaranteed one-to-one mapping. A single deployable can hold well-separated modules with deliberate interfaces and defined data ownership while still sharing deployment and process/runtime failure exposure.\n\nSplitting a process therefore does not settle authority; it forces authority to be stated. In the reservation example, splitting command ingestion from authoritative slot allocation is sensible for isolation \"only if the acceptance contract, duplicate identity and state owner are well defined\", and naming a service does not remove the need for a database consistency model. Where one invariant spans two locally ACID transactions, the design should keep all required state in one local data authority when possible, or define explicit durable intermediate states and compensation contracts when independent business authorities are non-negotiable.\n\nAuthority can also span several processes, which shows that process count is not the boundary. Under consensus the boundary is the quorum/commit rule: a minority partition cannot commit authoritatively, and the voting threshold is computed from the configured replica set, not from the number of processes that happen to answer. Lease and fencing authority are likewise enforced at the destination: the resource owner, not the lock client, decides whether an epoch is enforced, and without that destination check the mechanism is a coordination signal rather than mutual exclusion.\n\nA practical discriminator is to ask both questions independently: (1) which invariant is at stake, which write rule decides acceptance, and which component can reject a conflicting write; (2) which artifact can be released, scaled or rolled back alone. Separate processes over one leader, quorum or single-writer rule are one authority boundary; one process enforcing two independent invariants with no shared atomic commit contains two authority boundaries. Independent deployment must be justified by a need for independent change and failure isolation plus explicit contracts, and it pays remote-call and behavior-migration costs; naming or topology alone is not evidence of an authority boundary. Limits: the treatment is explanatory with synthetic scenarios, states that boundaries can coincide, and offers no runtime experiment or universal mapping.",
+      "citations": [
+        "tycho.page.15ffb7535c424b0eac6445cddaeb4a25#3-ownership-boundaries-are-not-deployment-boundaries",
+        "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+        "tycho.page.c226850223614886b61b7cb36c7d5032#2-monolith-does-not-mean-unstructured-code",
+        "tycho.page.c226850223614886b61b7cb36c7d5032#4-service-orientation-versus-microservice-packaging",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+        "tycho.page.3c78e2b17ac74973b2ae658977843c2a#engineering-walkthrough-the-cancel-versus-accept-invariant-crosses-a-transaction-boundary"
+      ],
+      "core_claims": [
+        "4. Transaction boundary determines which outcome is correct",
+        "3. Fictional architecture example: community tool reservations",
+        "3. Ownership boundaries are not deployment boundaries"
+      ],
+      "optional_claims": [
+        "Decision and worked result",
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9d4f989ec9304e418f60f1ad7248094a#decision-and-worked-result",
+        "tycho.page.07bb1f96bdd94195ac8e31644527a217#4-transaction-boundary-determines-which-outcome-is-correct",
+        "tycho.page.13760750168f4e339d5d014e189828af#3-fictional-architecture-example-community-tool-reservations",
+        "tycho.page.15ffb7535c424b0eac6445cddaeb4a25#3-ownership-boundaries-are-not-deployment-boundaries",
+        "tycho.page.4318e542ac7e445b9e8b3150effd2cff#purpose-and-mission",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields"
+      ]
+    },
+    {
+      "task_id": "Q035",
+      "question": "How can retries distort the denominator of a user-facing service indicator?",
+      "layer_expected": "book",
+      "answer": "Retries break the link between the event a user experiences and the event the indicator counts, so the denominator stops measuring the user population and starts measuring attempt traffic. Five mechanisms compound.\n\n1) The denominator's unit changes. If the denominator counts HTTP/RPC attempts instead of logical intents, every retry enlarges it. The SLI chapter requires \"intent identity rather than HTTP attempt count across retries\" and states that \"a counter of attempted requests can be a useful measurement; it is not the same denominator as successful unique booking decisions if clients retry.\" Load-measurement guidance distinguishes four rates that coexist in one window: scheduled arrivals, transmitted attempts (including configured retries), admitted operations, and completed useful operations; it warns that counting attempts as distinct successes \"can falsely inflate throughput.\" Choosing one of these as the denominator silently redefines what the indicator promises.\n\n2) Retries enter numerator and denominator asymmetrically, so the ratio drifts. One intent that fails twice and succeeds on the third attempt contributes one good and two bad events under attempt counting, but one good event under intent counting; a client that exhausts its retry budget contributes N bad attempts for a single failed intent. Repeated failures are therefore diluted by the growing attempt population, and later successes dilute them again; a duplicate replay that returns a recorded outcome can even be counted as a second success. The same traffic yields a different indicator value \u2014 and different error-budget burn \u2014 depending only on the counting unit.\n\n3) Survivorship: retried failures can vanish before counting. Client give-ups, cancellations and work rejected before the handler never reach the counter. An instrumentation design that counts \"only HTTP 2xx responses among requests admitted into the service, excluding 500 deliberate overload rejections before the handler, can report misleading health\"; backpressure without observation means \"the system rejects work but does not count it, so the success rate looks better than the user experience\"; and timeouts or disconnects do not imply the server committed nothing. When retries mask a failure, the hidden attempts leave the denominator, which then samples only intents that received some response \u2014 a biased, survivorship-filtered population.\n\n4) Retries reshape the population being measured, not merely its size. Retry amplification is total attempts divided by offered requests. In the modelled A/B/C comparison, a policy with amplification 1.079 still had an 11.1% timeout rate, while another held amplification at 1.004 with 0.9996 success; a retry storm adds attempts precisely when the service is weakest. A per-attempt ratio can thus look flat or improving while user-visible outcomes degrade, because the indicator is partly measuring retry policy rather than service behavior.\n\n5) Counted or excluded, the denominator is a declared decision that retries invalidate. Denominator, good-outcome classes and exclusion rules must be agreed before measurement, because otherwise \"changing the denominator can manufacture an apparent improvement\"; an objective may stop representing user experience \"if retries are introduced,\" so numerator, denominator, units, target and data-source revision must be kept together. The defensible repair is to bound retries by a total deadline and attempt budget, instrument actual attempt counts, derive the SLI from an authoritative logical operation ID spanning retries with attempt, admission and final-outcome states, and recompute burn under both definitions while recording who authorizes any change \u2014 a comparison the book itself labels \"proposed, not run.\"\n\nCaveat: the numeric examples are fictional teaching arithmetic and discrete-event model output, not observed SLOs, alerts or production measurements.",
+      "citations": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+        "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets"
+      ],
+      "core_claims": [
+        "1. Identify the service boundary and eligible population",
+        "3. Measure the right signals at the right level",
+        "5. An original synthetic error-budget decision"
+      ],
+      "optional_claims": [
+        "Decision and worked result",
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#decision-and-worked-result",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#purpose-and-mission",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q043",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "layer_expected": "book",
+      "answer": "Replication duplicates an existing write authority; it does not divide it. In the sharding vocabulary, a shard is a subset of an authoritative keyspace assigned to storage owners, while a replica is an additional copy under defined replication/failover semantics whose stated limit is new independent write capacity or global linearizability.[1] A leader-follower design makes the same point mechanically: one leader accepts writes and appends them to a replicated log, followers apply that log in order, and reads may be served by the leader or by a follower only under an explicit freshness contract. The extra copies therefore consume the same ordered write stream; they do not create a second authority that could accept conflicting writes in parallel.[2]\n\nQuorum acknowledgment sharpens the cost. A write is acknowledged by W voters and a read consults R voters; in a majority cluster the quorum is floor(N/2)+1, and election and commit also need a majority. Adding a voting member can raise the required votes without increasing tolerated failures: moving from three voters to four raises the required votes from two to three.[3] Placement adds further cost, because spreading voters across regions adds round-trip time to every quorum decision and leaders concentrate proposal and acknowledgment traffic; a leaderless read may avoid the worst of that latency, but a strongly consistent write cannot.[4] More replicas can therefore add coordination work and latency, and at best buy read capacity, durability copies and failover options. The replica-types table states this directly: an independent read replica provides more read capacity and recovery options, while leader-based consensus replication gives shared committed-log decisions only while quorum and assumptions hold, not client progress without sufficient voters.[5] Asynchronous replication can avoid quorum overhead for read-mostly workloads, but it still applies one leader's ordered stream and weakens the lag/durability contract rather than multiplying write paths.[2]\n\nThe sharding guidance draws the conclusion explicitly: read replicas usually do not expand single-authority write serialization capacity.[6] Write capacity grows by creating more independent authorities, that is, by partitioning the keyspace into additional shards, not by copying one authority. Even that only helps when the workload can actually be split. In the synthetic hot-key case, a popular workshop remains a 1,500/s single-owner workload even after more shards are added, and distributing the other 500 attempts/s across shards does not split it; the binding limit is single-owner serialization, locks, service time and queueing at one authoritative shard, not the number of copies.[7] Multi-writer replication can accept concurrent writes in different locations, but it does not automatically yield globally serializable, conflict-free outcomes, so it changes the consistency contract rather than adding capacity to the same authority.[5]",
+      "citations": [
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+        "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#5-alternatives-before-sharding",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps"
+      ],
+      "core_claims": [
+        "Pages and reasoning route",
+        "6. Recovery under additional load"
+      ],
+      "optional_claims": [
+        "Decision and worked result",
+        "Integrated decision and reading route",
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.24729e8d9b7247b298956ab144c15225#pages-and-reasoning-route",
+        "tycho.chapter.3e2e1da8f99c4a7ba05121baf1ef4d91#decision-and-worked-result",
+        "tycho.chapter.4a127ad6ab514ede9ff74394e5174f9c#decision-and-worked-result",
+        "tycho.page.0b493340594c4c4392c5d93940a7f319#integrated-decision-and-reading-route",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+        "tycho.page.1e89567050974052b13ba62b3b44484f#6-recovery-under-additional-load",
+        "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas"
+      ]
+    },
+    {
+      "task_id": "Q051",
+      "question": "Which edge-hosting responsibilities must be owned before static content is offloaded?",
+      "layer_expected": "atlas",
+      "answer": "Before static content is moved off the application origin onto an edge/CDN host, the edge side must already own a defined set of responsibilities; the decision card makes an unowned edge configuration a hard contraindication. Concretely: (1) the publication pipeline - upload validation and version verification for each release, plus one version authority when a second origin or duplicated manifest exists; (2) the cacheability contract - an explicit cache key, freshness/lifetime policy and a controlled invalidation/purge path with a bounded stale window and propagation time, remembering that a purge lags the origin and CDN purges do not clear browser caches; (3) the authorization boundary - caching never replaces access enforcement, and changing, deleting or restricting origin content does not invalidate copies already served, so private or edge-signed assets need an explicit key and authorization contract; (4) origin protection and rewarming - prewarming critical assets per release, verifying propagation, keeping an origin failover, bounded concurrent fills, retry budgets and a deliberate stale-response policy; (5) rollback and version retention - a retained version that covers the rollback window, garbage collection only after that window, a tombstone or purge proof for a deleted object, and versioned rollback rather than mutating a cached object; and (6) accountable edge ownership per offloaded function - an owner, a versioned policy, a defined failure mode, fail-closed behavior and a tested bypass path, with acceptance tests covering the authorization matrix, purge path, stale-on-error and revocation. If edge configuration, purge or versioning cannot be owned to that standard, the design's stated alternative is to keep serving static content from the application origin.",
+      "citations": [
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#origin-protection-and-rewarming",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#acceptance-and-evidence-boundary",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview"
+      ],
+      "core_claims": [
+        "Cache Invalidation",
+        "Static Content Hosting",
+        "Valet Key"
+      ],
+      "optional_claims": [
+        "Entry inventory",
+        "Bounded pattern ownership notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes",
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+        "tycho.page.b2c3d4e5f60718293a4b5c6d7e8f9012#overview",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ]
+    },
+    {
+      "task_id": "Q059",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "layer_expected": "atlas",
+      "answer": "A lost acknowledgment is not evidence that the job was rejected: the outcome is ambiguous/unknown, and a client recovers it by re-presenting the same identity and then reading back recorded state, never by resubmitting as new work.\n\n1) Retain a client-generated identity before sending. Use one logical operation key, scoped to the principal/tenant and bound to the normalized payload, and keep it (with any returned job identity) in durable client state. Distinguish it from the transport attempt ID, the resource/business ID and the event ID; a fresh key per retry defeats recovery. [effect-identity #2; intent-identity #1]\n\n2) Retry with the same key and the same parameters. A service that owns a durable operation record resolves the key to the already-committed operation and returns the existing job identity/outcome instead of enqueuing a second job; reusing the key with materially different parameters must be rejected as a conflict rather than answered with the stale prior result. [effect-identity #2; intent-identity #3]\n\n3) Read back status through a status-lookup/reconciliation operation. Asynchronous request-reply returns a location reference to an endpoint the client can poll; the status resource records the operation outcome and remains queryable, so the client discovers committed, in-progress or rejected without re-executing. The chapter's minimal contract lists this explicitly: expose status lookup/reconciliation where an acknowledgment may be lost. [dedup-authority #4; async-request-reply card; async page notes]\n\n4) Handle the still-running case. If the original attempt is still executing, the server needs a concurrency-safe in-progress / wait / conflict / result-lookup protocol, so a retry arriving before completion receives a definite answer instead of a duplicate commit. [intent-identity #3]\n\n5) Respect the conditions that make recovery possible: atomic first-write on (key, payload) across replicas (a read-then-insert or in-memory map fails), durable dispatch state/outbox, tenant and authorization scoping, and a declared retention window. After the key-retention horizon deduplication memory may be gone, so define a bounded retry window plus an outcome-lookup/expiry policy and reconcile old cases by durable business identity. [effect-identity #2 table; retry-retention #6; dedup-authority #4]\n\nLimits: the book states this as a proposed application contract and original synthetic sequences, not an executed experiment; no recovery test was run, and HTTP method idempotence alone does not supply outcome discovery.",
+      "citations": [
+        "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#bounded-pattern-ownership-notes",
+        "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines"
+      ],
+      "core_claims": [
+        "Engineering walkthrough \u2014 New leader, old client and a lost acknowledgment",
+        "Transactional Outbox",
+        "Claim Check",
+        "Request-Reply Messaging"
+      ],
+      "optional_claims": [
+        "3. Original synthetic sequence: double-submit on equipment booking"
+      ],
+      "required_evidence": [
+        "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.page.b21078a397214496a24305a2f016b021#overview",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+        "tycho.page.fbb4bc905d02495dbe3d7675d8670235#1-four-interaction-contracts"
+      ]
+    },
+    {
+      "task_id": "Q067",
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
+      "layer_expected": "atlas",
+      "answer": "An explicit late-message rejection disposition: messages that arrive after the resequencer has advanced past the gap must be rejected as stale (the old-message rejection path), not silently dropped and not re-inserted ahead of already-delivered messages. The corpus treats this as a declared contract field, not an implementation default: once a gap timeout fires, the resequencer 'disregards the current expected sequence number and moves to the next expected number', so any message for the skipped sequence becomes late by definition. The published mechanism states that with old-message rejection enabled the implementation 'throws for an exchange older than the last delivered message', which is the documented form of that disposition. Because rejection is destructive, the guidance adds that dropped or rejected sequence numbers must be recorded (evidence), and that duplicate handling is a separate declared rule rather than a broker default. If continuity is mandatory or the buffer cannot be bounded, the affected ordering scope must fail rather than admit the late message out of order. Two caveats bound this answer: the disposition is a decision the contract owner must name, and partitioning by key is the alternative when global order is unnecessary.",
+      "citations": [
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+        "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+      ],
+      "core_claims": [
+        "Resequencer",
+        "Message Filter",
+        "Engineering walkthrough \u2014 Late correction after checkpoint and restore",
+        "Splitter"
+      ],
+      "optional_claims": [
+        "Entry inventory"
+      ],
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+        "tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview",
+        "tycho.page.2c928286b62944769a4b0cab9fad6139#overview",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ]
+    },
+    {
+      "task_id": "Q075",
+      "question": "What environment details are recorded for replay, and what cross-platform guarantee do they not provide?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Replay records the Python version and platform string in the run provenance, alongside the engine name/version and deterministic flag, model and scenario SHA-256, seed base and replication count, input hash, invocation, metrics/convergence/uncertainty/sensitivity, and a result hash. The environment archive is bounded: there is no full environment lock, container image, dependency lock or complete artifact archive, so a library or platform change can still alter behavior. The stored platform and Python strings only make a cross-environment difference visible. They do not guarantee bit-identical behavior across platforms: replay proves the stored inputs, engine version and seed reproduce the stored metrics on the same platform family, not that another platform will produce bit-identical floats, and presenting a one-platform replay as a guarantee for every platform is the cross-platform overclaim failure mode.",
+      "citations": [
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves"
+      ],
+      "core_claims": [
+        "Pages and reasoning route",
+        "Provenance is not a log line",
+        "What replay proves",
+        "Replay"
+      ],
+      "optional_claims": [
+        "Determinism rules"
+      ],
+      "required_evidence": [
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#pages-and-reasoning-route",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves"
+      ]
+    },
+    {
+      "task_id": "Q083",
+      "question": "Why does a p95 checkout latency comparison require request-level events rather than only a fluid model?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A p95 checkout comparison needs request-level events because the percentile is a property of a distribution of individual requests, which a fluid (stock-and-flow) model does not contain.\n\n1) A percentile needs a population of observations. The book defines a percentile as a value of a distribution, not a single request's maximum, and requires naming the measurement boundary (client-observed request, ingress-to-egress, queue wait, dependency call), the observation window, whether timed-out requests are included, and whether successful, rejected and failed requests share one population.\n\n2) The fluid model is structurally incapable of the number, not merely imprecise. At 20 requests/second against 24 requests/second of capacity it yields utilization 0.833, a stable backlog and an approximate mean time in system from Little's law (L = lambda * W), which is a relation among averages, not a per-request identity. The worked comparison reports p95 as n/a for both stock-flow cases while the discrete-event checkout model reports p95, success and timeout rates measured from completed requests.\n\n3) The decision chooses the resolution. Stock-and-flow answers backlog growth under overload; discrete-event represents individual requests and event ordering, so it can carry queueing, deadlines, retries and tail latency. 'Which candidate meets a 1.5-second p95 constraint' makes the request-level distribution the object of the decision, so the coarser model cannot answer it, and a discrete-event model is chosen for that reason rather than for sophistication.\n\n4) The comparison is a p95-versus-outcome trade that only per-request events can attribute. With identical offered load and capacity: A p95 0.870 s, success 0.9218, timeout 0.0778; B p95 1.206 s, success 0.9996, timeout 0.0041; C p95 1.769 s, success 0.9679. B has a worse p95 than A yet completes far more requests; A wins on p95 but misses the implied success threshold and C is eliminated by cost and latency. Screening p95 as a hard quantitative constraint alongside cost therefore works only when the percentile is conditioned on each request's outcome.\n\nLimits: these figures are synthetic, uncalibrated model output over a finite horizon with warmup; a finite window is not a long-run average, so a p95 claim must state its window, warmup and uncertainty and must not be read as production measurement.",
+      "citations": [
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits"
+      ],
+      "core_claims": [
+        "Example: candidate B run",
+        "Why the distinction matters",
+        "Little's law and its finite-window caveat",
+        "Resource semantics"
+      ],
+      "optional_claims": [
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.6006603befaacfc1baadc486a0f7007a#purpose-and-mission",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences"
+      ]
+    },
+    {
+      "task_id": "Q091",
+      "question": "How does a V12 decision record treat a failed hard constraint compared with a soft preference?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A V12 decision record treats the two asymmetrically and keeps them in separate fields. A hard constraint is a must-satisfy gate: a candidate that exceeds one is eliminated outright, even if it has the highest success rate or the best composite score; the record does not downgrade the failure to a small penalty or trade it away, and 'score to the rescue' is named as a failure mode. A soft constraint is only a tradable preference: it cannot rescue an eliminated candidate, it shapes the trade-off among candidates that already pass every hard constraint, and the record presents that prioritization as a decision rather than as a fact produced by the simulation. In the V12 checkout record, hard cost (C4) and p95-latency (C5) constraints eliminate C (cost 3.63 > 3.0; p95 1.769 s > 1.5 s) before A and B are compared; both survivors pass, and B is recommended by a declared preference for success rate and cost per success over A's lower latency inside the ceiling. A non-quantitative constraint such as operability (C3) is handled differently again: while unverified it leaves the recommendation conditional, and if a hard constraint cannot be evaluated the record should return insufficient evidence rather than force a recommendation.",
+      "citations": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes"
+      ],
+      "core_claims": [
+        "A decision tree",
+        "Comparative decision worked example",
+        "V12-E: decision validity",
+        "Hard constraints versus preferences"
+      ],
+      "optional_claims": [
+        "Purpose and mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ]
+    },
+    {
+      "task_id": "Q099",
+      "question": "Why is the no-cutover scenario a reference case rather than a recommendation to stay on the old path forever?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The no-cutover baseline is a counterfactual control, not an architecture recommendation. It reuses the same workload and model but keeps target share at zero and never triggers rollback, so its zero divergence and zero backlog hold by construction; it exists to price the modeled cost of not shifting traffic and to isolate what the staged shift adds (divergence risk and a rollback requirement). It is explicitly not an A/B test of two production systems, and it cannot support staying on the legacy path forever because it does not achieve modernization: the model excludes the business reason for modernization, and treating its zero divergence as a verdict is a named failure mode ('baseline as winner'); equally, because both paths serve the synthetic load, equal modeled throughput does not show the target adds no value. The comparison therefore returns insufficient evidence and a measurement agenda (instrument dual-write lag, measure reconciliation throughput, rehearse rollback, measure sustained divergence, re-run with measured inputs) - a 'not yet, measure' outcome rather than 'stay forever'.",
+      "citations": [
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result"
+      ],
+      "core_claims": [
+        "Pages and reasoning route",
+        "Results",
+        "Failure modes",
+        "Coexistence is a state, not a date"
+      ],
+      "optional_claims": [
+        "The modernization example"
+      ],
+      "required_evidence": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#pages-and-reasoning-route",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do"
+      ]
+    }
+  ]
+}
