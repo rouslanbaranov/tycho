@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 320.
+Inventory date: 2026-10-31. Entries: 322.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -150,6 +150,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.microsoft-sql-server / core | [Create indexes with included columns](https://learn.microsoft.com/en-us/sql/relational-databases/indexes/create-indexes-with-included-columns?view=sql-server-ver17) — Microsoft Learn | Bounded SQL Server included-column unit for the index-table invariant and failure bound. | admitted-for-research / public-web-or-author-download |
 | src.use-the-index-luke / core | [Index-Only Scan: Avoiding Table Access](https://use-the-index-luke.com/sql/clustering/index-only-scan-covering-index) — Markus Winand | Bounded practitioner book chapter for the index-table failure/recovery and alternative bindings. | admitted-for-research / public-web-or-author-download |
 | src.aws-dynamodb-gsi / core | [Overloading Global Secondary Indexes in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-gsi-overloading.html) — Amazon Web Services | Bounded DynamoDB GSI overloading unit for the index-table alternative. | admitted-for-research / public-web-or-author-download |
+| src.azure-cosmos-consistency / supporting | [Consistency levels in Azure Cosmos DB](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — Microsoft | Session scope, session-token barrier, partition-bound tokens and token repair for the session-consistency mechanism and failure dimensions. | admitted-for-research / public-web-or-author-download |
+| src.mongodb-causal-consistency / supporting | [Causal Consistency and Read and Write Concerns](https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/) — MongoDB | Four causal guarantees, read/write concern combinations, durability and partition behavior for the failure and alternative dimensions. | admitted-for-research / public-web-or-author-download |
 
 ## Caching
 

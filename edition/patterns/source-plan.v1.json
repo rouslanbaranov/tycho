@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "f4f958588cfe5e4c28fcfeb6066f3f541bfa14dbea20cc8a2034ca6efabfe271",
-  "route_index_snapshot": "e428d4875cd0fbe652df4d37316a4bf62be6a7d2017262b4d20922c71517a3fc",
+  "registry_sha256": "2dd884ff2446a7e7181b17fa0c159d275f0dd83eeb3e1a6e5122bd34227117f1",
+  "route_index_snapshot": "79393f5ca3111f8f9381041a128f17d27a4c029d0b9c0e8c91be345fe8d026b6",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -5034,19 +5034,76 @@
       "priority": "advanced",
       "required_units": [
         {
-          "source_id": "src.jepsen-consistency",
+          "source_id": "src.azure-cosmos-consistency",
+          "unit": "Consistency levels in Azure Cosmos DB — Microsoft Learn",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels",
+          "sections": [
+            "Session consistency",
+            "Guarantees associated with consistency levels",
+            "Consistency guarantees in practice"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-cosmos-consistency.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.mongodb-causal-consistency",
+          "unit": "Causal Consistency and Read and Write Concerns — MongoDB Manual",
+          "unit_type": "documentation-page",
+          "url": "https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/",
+          "sections": [
+            "Causal Consistency and Read and Write Concerns",
+            "Scenarios",
+            "Read Concern \"majority\" and Write concern \"majority\"",
+            "Read Concern \"majority\" and Write concern {w: 1}",
+            "Read Concern \"local\" and Write concern {w: 1}",
+            "Read Concern \"local\" and Write concern \"majority\""
+          ],
+          "status": "read",
+          "read_record_id": "read.mongodb-causal-consistency.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.jepsen-session-models",
           "unit": "Consistency Models — Jepsen",
           "unit_type": "documentation-page",
           "url": "https://jepsen.io/consistency/models",
           "sections": [
-            "Consistency Models"
+            "Consistency Models",
+            "Processes",
+            "Histories"
           ],
           "status": "read",
-          "read_record_id": "read.batch4-jepsen.2026-10-21",
+          "read_record_id": "read.jepsen-consistency-models.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.jepsen-read-your-writes",
+          "unit": "Read Your Writes — Jepsen",
+          "unit_type": "documentation-page",
+          "url": "https://jepsen.io/consistency/models/read-your-writes",
+          "sections": [
+            "Read Your Writes"
+          ],
+          "status": "read",
+          "read_record_id": "read.jepsen-read-your-writes.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.jepsen-monotonic-reads",
+          "unit": "Monotonic Reads — Jepsen",
+          "unit_type": "documentation-page",
+          "url": "https://jepsen.io/consistency/models/monotonic-reads",
+          "sections": [
+            "Monotonic Reads"
+          ],
+          "status": "read",
+          "read_record_id": "read.jepsen-monotonic-reads.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Five public units read 2026-10-31; session-token mechanics, session-guarantee scope, partition/failure behavior and causal alternative bound; no benchmark or independent reproduction."
     },
     {
       "pattern_id": "tycho.pattern.distributed-workflow-orchestration",
@@ -6907,11 +6964,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 314,
-    "read_units": 313,
+    "required_units": 318,
+    "read_units": 317,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 268
+    "ledger_records": 273
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -6920,6 +6977,7 @@
     "read.eip-messaging.2026-10-21",
     "read.batch2-ietf.2026-10-21",
     "read.batch4-rabbit-priority.2026-10-21",
-    "read.batch6-sre-slo.2026-10-21"
+    "read.batch6-sre-slo.2026-10-21",
+    "read.batch4-jepsen.2026-10-21"
   ]
 }

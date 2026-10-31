@@ -3760,7 +3760,9 @@
       "content_sha256": "85f79b18698cc55da52178ee26e9f3cd75d9be05491b1537971d95e65ad28910",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Superseded as the Session Consistency card citation by the 2026-10-31 Cosmos, MongoDB and Jepsen reads; retained as historical 2026-10-21 evidence."
     },
     {
       "id": "read.batch4-hedged.2026-10-21",
@@ -11409,6 +11411,194 @@
       "limitations": "Living v1 specification; the v2alpha draft, SDK pages, examples and implementation links are excluded; a specification is not an implementation and no SLO was validated or executed.",
       "content_sha256": "0bc001c9e30e55f5b152865d1b089f4baa235c2cac2cdd1dbeb1cb93316db179",
       "read_scope": "the specification sections listed in the plan entry, excluding the v2alpha draft and implementation links"
+    },
+    {
+      "access_date": "2026-10-31",
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "reviewer": "Automated authoring agent",
+      "status": "read",
+      "id": "read.azure-cosmos-consistency.2026-10-31",
+      "source_id": "src.azure-cosmos-consistency",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels",
+      "unit_label": "Consistency levels in Azure Cosmos DB — Microsoft Learn",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-10-31; two fetches byte-identical; canonical text extracted with scripts/source_content_hash.py; HTTP/2 200; 74,323-byte text/html; Last-Modified 2026-08-24T17:08:46Z; ETag \"5bV6f9IdejXHP1tXaDgtA5ZWrrY=\"; git_commit_id dc5113c982922833db342676722a746af13c4000; ms.date 2025-09-03; updated_at 2026-04-27T13:06:00Z; raw HTML SHA-256 0597c357f1c4ca1c74b16bae3eb945a895cb82f4d1cd3f45311d0ab4f9d36372; canonical text 21,656 characters / 3,359 words, SHA-256 2e1f621cf3345f8c2f85d042666f810369827f00bdfda1f139da6acfb7c2661e",
+      "sections_read": [
+        "Session consistency",
+        "Guarantees associated with consistency levels",
+        "Consistency guarantees in practice"
+      ],
+      "sections_not_read": [
+        "linked articles, images and code samples",
+        "the Cosmos SLA page",
+        "navigation chrome as a unit"
+      ],
+      "claims_supported": [
+        "Session consistency is scoped \"within a single client session\" and guarantees read-your-writes and write-follows-reads.",
+        "After every write the client receives an updated session token that acts as a minimum version barrier.",
+        "Session tokens are partition-bound and a re-created client loses its cached tokens.",
+        "A replica without the session data causes a retry against another replica, and an old token does not pin historical data."
+      ],
+      "claims_not_supported": [
+        "linked pages, images and code samples",
+        "a benchmark, production observation or SLA measurement",
+        "account, container or replica behavior observed directly"
+      ],
+      "limitations": "Living Microsoft Learn page; Last-Modified, ms.date and updated_at disagree, so the digest pins the served 2026-10-31 representation rather than one editorial date; no Cosmos account, database, container or replica was created.",
+      "content_sha256": "2e1f621cf3345f8c2f85d042666f810369827f00bdfda1f139da6acfb7c2661e",
+      "read_scope": "the Session consistency, guarantees and practice sections listed in the plan entry, excluding linked pages, images and code"
+    },
+    {
+      "access_date": "2026-10-31",
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "reviewer": "Automated authoring agent",
+      "status": "read",
+      "id": "read.mongodb-causal-consistency.2026-10-31",
+      "source_id": "src.mongodb-causal-consistency",
+      "unit_url": "https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/",
+      "unit_label": "Causal Consistency and Read and Write Concerns — MongoDB Manual",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-10-31; two fetches byte-identical; canonical text extracted with scripts/source_content_hash.py; HTTP/2 200; 802,240-byte text/html; no Last-Modified; ETag W/\"g4rp7ukjjph66a\"; docs selector v20260520 (current); raw HTML SHA-256 d193346e331a97de24fb0cde94ffc0551cd4a5009f0d3562d2b35b5a30a25895; canonical text 14,274 characters / 2,688 words, SHA-256 4e7c1d1453a8cf58b271fba77530fc51ff5fd0fa794bf49beaca09fc3ec2aa7b; alternate .md representation 23,400 bytes, SHA-256 7f98deefebaa7bcbbce814662bfaa99a40085f757bee2478b8f6f287e9b31fe5",
+      "sections_read": [
+        "Causal Consistency and Read and Write Concerns",
+        "Scenarios",
+        "Read Concern \"majority\" and Write concern \"majority\"",
+        "Read Concern \"majority\" and Write concern {w: 1}",
+        "Read Concern \"local\" and Write concern {w: 1}",
+        "Read Concern \"local\" and Write concern \"majority\""
+      ],
+      "sections_not_read": [
+        "linked pages and examples",
+        "navigation chrome and images",
+        "the wider MongoDB manual"
+      ],
+      "claims_supported": [
+        "Different combinations of read and write concerns provide different causal consistency guarantees.",
+        "With durability, majority reads and majority writes guarantee all four causal consistency guarantees: read own writes, monotonic reads, monotonic writes and writes follow reads.",
+        "Majority concerns keep the guarantees during a network partition where two members transiently believe they are primary.",
+        "Weaker write concern can provide causal consistency in some situations while allowing writes to be rolled back."
+      ],
+      "claims_not_supported": [
+        "a replica set, partition or rollback executed for this record",
+        "linked pages and images",
+        "a universal mapping from concern names to every deployment topology"
+      ],
+      "limitations": "Living MongoDB documentation page with no Last-Modified date or source commit; \"v20260520 (current)\" is the served docs selector, not a server release; the .md alternate was used for structure only; no replica set, partition or rollback was run.",
+      "content_sha256": "4e7c1d1453a8cf58b271fba77530fc51ff5fd0fa794bf49beaca09fc3ec2aa7b",
+      "read_scope": "the page, Scenarios and the four read/write concern scenario sections listed in the plan entry, excluding linked pages and images"
+    },
+    {
+      "access_date": "2026-10-31",
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "reviewer": "Automated authoring agent",
+      "status": "read",
+      "id": "read.jepsen-consistency-models.2026-10-31",
+      "source_id": "src.jepsen-session-models",
+      "unit_url": "https://jepsen.io/consistency/models",
+      "unit_label": "Consistency Models — Jepsen",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-10-31; two fetches byte-identical; canonical text extracted with scripts/source_content_hash.py; HTTP/2 200; 15,395-byte text/html; ETag 1f343f81d2c0677d49dcc3f2fb0f9e1b18eb9ed2; no Last-Modified; raw HTML SHA-256 f3a5bfc1da60ad8370994483e0f2d8fb31cd8aeaa5c0a788ff434d6daa66def3; canonical text 9,640 characters / 1,513 words, SHA-256 05d547d348c632f51c38378fcabe3d081979a086379d5fcd22cf111c106fa72b",
+      "sections_read": [
+        "Consistency Models",
+        "Processes",
+        "Histories"
+      ],
+      "sections_not_read": [
+        "linked model pages",
+        "the clickable map image",
+        "references"
+      ],
+      "claims_supported": [
+        "A consistency model is a set of histories and each model constrains which histories are allowed.",
+        "A process is a logically single-threaded program that performs computation and runs operations.",
+        "Causal consistency implies writes-follow-reads and PRAM, and PRAM implies monotonic reads.",
+        "All models at or stronger than read-your-writes can be at most sticky available."
+      ],
+      "claims_not_supported": [
+        "a history executed or checked with a Jepsen test",
+        "linked model pages and references",
+        "a benchmark or production observation"
+      ],
+      "limitations": "The ETag is an opaque served-representation identifier, not a repository commit; no date is exposed; linked model pages, the clickable map image and references were excluded; no history was executed.",
+      "content_sha256": "05d547d348c632f51c38378fcabe3d081979a086379d5fcd22cf111c106fa72b",
+      "read_scope": "the Consistency Models, Processes and Histories sections, excluding linked model pages and the map image"
+    },
+    {
+      "access_date": "2026-10-31",
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "reviewer": "Automated authoring agent",
+      "status": "read",
+      "id": "read.jepsen-read-your-writes.2026-10-31",
+      "source_id": "src.jepsen-read-your-writes",
+      "unit_url": "https://jepsen.io/consistency/models/read-your-writes",
+      "unit_label": "Read Your Writes — Jepsen",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-10-31; two fetches byte-identical; canonical text extracted with scripts/source_content_hash.py; HTTP/2 200; 3,421-byte text/html; ETag 003844a6e58c80c59e7c60d581063b392a603c27; no Last-Modified; raw HTML SHA-256 e5dda3007c47eb020678cf0bdf877cce3313405bb7c7b90bf5b78ea9b24aa067; canonical text 1,102 characters / 193 words, SHA-256 c5069583ab906ea821842e6c410688bc6ece7b23d19246da549d6bb319cca7c8",
+      "sections_read": [
+        "Read Your Writes"
+      ],
+      "sections_not_read": [
+        "Linked Viotti-Vukolic paper"
+      ],
+      "claims_supported": [
+        "Read-your-writes applies within one process and does not apply to operations performed by different processes.",
+        "The page gives a formal session-order condition over writes and reads.",
+        "All models at or stronger than read-your-writes can be at most sticky available."
+      ],
+      "claims_not_supported": [
+        "the linked formal paper was not read",
+        "a history executed or checked",
+        "a benchmark or production observation"
+      ],
+      "limitations": "The ETag is an opaque served-representation identifier, not a repository commit; no date is exposed; the page cites the formal Viotti-Vukolic sentence but the linked paper was not read.",
+      "content_sha256": "c5069583ab906ea821842e6c410688bc6ece7b23d19246da549d6bb319cca7c8",
+      "read_scope": "the whole page, excluding the linked paper"
+    },
+    {
+      "access_date": "2026-10-31",
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "reviewer": "Automated authoring agent",
+      "status": "read",
+      "id": "read.jepsen-monotonic-reads.2026-10-31",
+      "source_id": "src.jepsen-monotonic-reads",
+      "unit_url": "https://jepsen.io/consistency/models/monotonic-reads",
+      "unit_label": "Monotonic Reads — Jepsen",
+      "unit_type": "documentation-page",
+      "access_method": "public HTTPS GET on 2026-10-31; two fetches byte-identical; canonical text extracted with scripts/source_content_hash.py; HTTP/2 200; 3,435-byte text/html; ETag f2e880fc217f5cdda5198e7df3b1f2b54dc94d0b; no Last-Modified; raw HTML SHA-256 f99c2d210c563ba6653bef7d812dd384c77ff8a29be5bd805828ac47b6ae667e; canonical text 996 characters / 186 words, SHA-256 1c5d413f43eec6ed25ebcdc3066cd84ce2e9612fa80638b06df2f47bc077f902",
+      "sections_read": [
+        "Monotonic Reads"
+      ],
+      "sections_not_read": [
+        "Linked Viotti-Vukolic paper"
+      ],
+      "claims_supported": [
+        "Monotonic reads applies to reads by the same process and does not apply to operations performed by different processes.",
+        "Reads cannot go backwards.",
+        "The page gives a formal visibility condition over reads by one process."
+      ],
+      "claims_not_supported": [
+        "the linked formal paper was not read",
+        "a history executed or checked",
+        "a benchmark or production observation"
+      ],
+      "limitations": "The ETag is an opaque served-representation identifier, not a repository commit; no date is exposed; the page cites the formal Viotti-Vukolic sentence but the linked paper was not read.",
+      "content_sha256": "1c5d413f43eec6ed25ebcdc3066cd84ce2e9612fa80638b06df2f47bc077f902",
+      "read_scope": "the whole page, excluding the linked paper"
     }
   ]
 }

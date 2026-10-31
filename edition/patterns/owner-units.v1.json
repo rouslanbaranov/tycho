@@ -11094,7 +11094,7 @@
         "heading": "Session Consistency",
         "anchor": "session-consistency",
         "level": 3,
-        "line": 153,
+        "line": 155,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The product owner defines",
@@ -11105,44 +11105,137 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The product owner defines what counts as one session and which observations its users must retain.",
-          "reason": "Jepsen Consistency Models does not define a session or owner scope."
+          "reason": "Bound 2026-10-31 to the Azure Cosmos DB session-consistency section (session scope, read-your-writes and write-follows-reads, session token) with Jepsen's process definition; owner scope, token lifetime and failure contract remain Tycho.",
+          "binding": {
+            "source_id": "src.azure-cosmos-consistency",
+            "ledger_record": "read.azure-cosmos-consistency.2026-10-31",
+            "section": "Session consistency",
+            "quote": "reads are guaranteed to honor the read-your-writes, and write-follows-reads guarantees.",
+            "revision": "2e1f621cf3345f8c2f85d042666f810369827f00bdfda1f139da6acfb7c2661e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.jepsen-session-models",
+              "ledger_record": "read.jepsen-consistency-models.2026-10-31",
+              "section": "Processes",
+              "quote": "a logically single-threaded program which performs computation and runs operations.",
+              "revision": "05d547d348c632f51c38378fcabe3d081979a086379d5fcd22cf111c106fa72b"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "That choice sets the guarantee; no infrastructure default should supply it implicitly.",
-          "reason": "Text defines model implication but not product-owner guarantee choice."
+          "reason": "Bound 2026-10-31 to Jepsen's per-process read-your-writes and monotonic-reads definitions with the causal/PRAM implication; the product-owner guarantee choice and independent test rule remain Tycho.",
+          "binding": {
+            "source_id": "src.jepsen-read-your-writes",
+            "ledger_record": "read.jepsen-read-your-writes.2026-10-31",
+            "section": "Read Your Writes",
+            "quote": "does not apply to operations performed by different processes.",
+            "revision": "c5069583ab906ea821842e6c410688bc6ece7b23d19246da549d6bb319cca7c8"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.jepsen-monotonic-reads",
+              "ledger_record": "read.jepsen-monotonic-reads.2026-10-31",
+              "section": "Monotonic Reads",
+              "quote": "intuitively, reads cannot go backwards.",
+              "revision": "1c5d413f43eec6ed25ebcdc3066cd84ce2e9612fa80638b06df2f47bc077f902"
+            },
+            {
+              "source_id": "src.jepsen-session-models",
+              "ledger_record": "read.jepsen-consistency-models.2026-10-31",
+              "section": "Consistency Models",
+              "quote": "Causal implies writes follow reads and PRAM",
+              "revision": "05d547d348c632f51c38378fcabe3d081979a086379d5fcd22cf111c106fa72b"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "must not collapse a concurrent frontier into one scalar",
-          "reason": "Text has no session frontier or rejection rule."
+          "reason": "Bound 2026-10-31 to MongoDB's read/write concern combinations and partition behavior plus Cosmos token recreation and replica retry; the epoch/frontier comparison and rejection rules remain Tycho.",
+          "binding": {
+            "source_id": "src.mongodb-causal-consistency",
+            "ledger_record": "read.mongodb-causal-consistency.2026-10-31",
+            "section": "Causal Consistency and Read and Write Concerns",
+            "quote": "different combinations of read and write concerns provide different causal consistency guarantees.",
+            "revision": "4e7c1d1453a8cf58b271fba77530fc51ff5fd0fa794bf49beaca09fc3ec2aa7b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-cosmos-consistency",
+              "ledger_record": "read.azure-cosmos-consistency.2026-10-31",
+              "section": "Session consistency",
+              "quote": "the client retries the request against another replica in the region.",
+              "revision": "2e1f621cf3345f8c2f85d042666f810369827f00bdfda1f139da6acfb7c2661e"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The routing layer owns the wait, reroute and rejection policy.",
-          "reason": "Text relates models by implication, not session routing or reroute."
+          "reason": "Bound 2026-10-31 to MongoDB's four causal guarantees and Jepsen's sticky-availability limit and model hierarchy; the routing choice rule and product comparison remain Tycho.",
+          "binding": {
+            "source_id": "src.mongodb-causal-consistency",
+            "ledger_record": "read.mongodb-causal-consistency.2026-10-31",
+            "section": "Causal Consistency and Read and Write Concerns",
+            "quote": "guarantee all four causal consistency guarantees.",
+            "revision": "4e7c1d1453a8cf58b271fba77530fc51ff5fd0fa794bf49beaca09fc3ec2aa7b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.jepsen-session-models",
+              "ledger_record": "read.jepsen-consistency-models.2026-10-31",
+              "section": "Consistency Models",
+              "quote": "All models at or stronger than read your writes can be at most sticky available.",
+              "revision": "05d547d348c632f51c38378fcabe3d081979a086379d5fcd22cf111c106fa72b"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "session-consistency",
         "question": "Should one client session preserve selected read/write observations across replicas?",
-        "competing_alternative": "Strong consistency or eventual consistency without session guarantees. Reverse the choice when session routing/failover cost exceeds client experience benefit.",
+        "competing_alternative": "**Tycho comparison:** causal consistency is the stronger adjacent contract. With majority reads and writes MongoDB's causally consistent session provides \"Read own writes\", \"Monotonic reads\", \"Monotonic writes\" and \"Writes follow reads\". Linearizable reads are the strongest alternative. Jepsen notes that \"All models at or stronger than read your writes can be at most sticky available.\" **Tycho choice rule:** use session consistency when per-client continuity is the requirement, causal consistency when cross-client dependencies travel, and linearizable reads when one latest state is required. Reverse when routing or failover cost exceeds the user-visible benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch4-jepsen.2026-10-21",
-        "source_id": "src.jepsen-consistency",
+        "ledger_record": "read.azure-cosmos-consistency.2026-10-31",
+        "source_id": "src.azure-cosmos-consistency",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.mongodb-causal-consistency",
+            "ledger_record": "read.mongodb-causal-consistency.2026-10-31",
+            "revision": "4e7c1d1453a8cf58b271fba77530fc51ff5fd0fa794bf49beaca09fc3ec2aa7b"
+          },
+          {
+            "source_id": "src.jepsen-session-models",
+            "ledger_record": "read.jepsen-consistency-models.2026-10-31",
+            "revision": "05d547d348c632f51c38378fcabe3d081979a086379d5fcd22cf111c106fa72b"
+          },
+          {
+            "source_id": "src.jepsen-read-your-writes",
+            "ledger_record": "read.jepsen-read-your-writes.2026-10-31",
+            "revision": "c5069583ab906ea821842e6c410688bc6ece7b23d19246da549d6bb319cca7c8"
+          },
+          {
+            "source_id": "src.jepsen-monotonic-reads",
+            "ledger_record": "read.jepsen-monotonic-reads.2026-10-31",
+            "revision": "1c5d413f43eec6ed25ebcdc3066cd84ce2e9612fa80638b06df2f47bc077f902"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Token section explains how session requirements are carried and enforced; later sections cover costs and alternatives."
+      "notes": "Token section explains how session requirements are carried and enforced; the dedicated card was registered 2026-10-31 after the four source bindings."
     },
     {
       "pattern_id": "tycho.pattern.distributed-workflow-orchestration",
@@ -15500,12 +15593,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 121,
-    "invariant_supported": 86,
-    "failure_recovery_supported": 81,
-    "alternative_supported": 86,
-    "technical_partial_bounded": 15,
-    "technical_partial": 61,
+    "mechanism_supported": 122,
+    "invariant_supported": 87,
+    "failure_recovery_supported": 82,
+    "alternative_supported": 87,
+    "technical_partial_bounded": 16,
+    "technical_partial": 60,
     "technical_name_only": 0,
     "technical_sufficient": 69,
     "decision_partial_bounded": 76,
