@@ -35,6 +35,8 @@ evidence_scope:
     - "src.sre-overload"
     - "src.grpc-deadlines"
     - "src.grpc-protocol"
+    - "src.microsoft-cloud-patterns"
+    - "src.aws-sqs"
     - "src.rabbitmq"
     - "src.morning-paper-tail-at-scale"
     - "src.kubernetes"
@@ -44,12 +46,12 @@ evidence_scope:
   notes: "16 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-30"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-30"
-source_inspection_date: "2026-10-30"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C07 — Resilience and fault tolerance
@@ -376,26 +378,39 @@ resilience-pattern; priority core.
 **Decision question.** Should work be buffered in a queue so producers and consumers can
 run at different rates?
 
-**Good-fit conditions.** Bursts exceed consumer capacity; queue durability, retention/age
-bounds and idempotent consumers are owned; latency is acceptable.
+**Good-fit conditions.** Bursts exceed consumer capacity; queue durability, a backlog
+age/retention bound and idempotent consumers are owned; the caller can defer the result;
+latency is acceptable.
 
 **Hard contraindications.** Reject when the caller needs a synchronous result, when
-backlog would violate a deadline, or when the queue becomes an unbounded hiding place.
+backlog would violate a deadline, when the broker does not persist accepted messages, or
+when the queue becomes an unbounded hiding place.
 
-**Competing alternative.** Direct synchronous calls or admission control. Reverse the
-choice when queue delay and backlog risk exceed smoothing benefit.
+**Competing alternative.** Direct synchronous calls or admission control, including
+shedding when work cannot be deferred. Reverse the choice when queue delay and backlog risk
+exceed smoothing benefit; shedding is the alternative when deferral has no value.
 
-**Failure and recovery.** Unbounded backlog, expired work and duplicate effects after ambiguous
-acknowledgment are possible; bound age, reject early and drain.
+**Failure and recovery.** Unbounded backlog, expired work and duplicate effects after
+ambiguous acknowledgment are possible; bound age, reject early and drain. Azure says
+"Monitor queue depth and scale consumers within safe limits, or shed work at the producer";
+AWS says that messages beyond the maximum retention period are deleted automatically;
+Google SRE says requests above a cap fail locally. Tycho's rule is to reject before enqueue
+when backlog age crosses its bound, not to let memory or retention expire the work.
 
-**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — admission and drain guidance is synthetic; the cited guide covers reliability mechanics only.
+**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — mechanism, durability and retention are source-bound; the four-part admission rule and shedding choice remain Tycho.
 
-**Sources.** [src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch4-rabbit-reliability.2026-10-21: sections "Acknowledgements and
-Confirms", "Data Safety on the Publisher Side", "Data Safety on the Consumer Side". The source
-supports reliability mechanics only;
-admission and drain guidance is synthetic. The source is a public pattern/documentation unit,
-not a benchmark.
+**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
+read record `read.microsoft-queue-based-load-leveling.2026-10-31`: sections "Solution",
+"Problems and considerations" and "When to use this pattern".
+[src.aws-sqs](../../../../edition/patterns/reading-ledger.v1.json) read record
+`read.aws-sqs-welcome.2026-10-31`: sections "Benefits of using Amazon SQS",
+"Basic Amazon SQS architecture" and "Message lifecycle".
+[src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json) retained record
+`read.sre-overload.2026-10-21`: sections "Handling Overload", "Per-Customer Limits" and
+"Client-Side Throttling". The retained
+[src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json) record
+`read.batch4-rabbit-reliability.2026-10-21` remains a supporting reliability citation only.
+The sources are public documentation, not benchmarks; Tycho-labelled rules are synthesis.
 
 **Decision state.** applicable-under-conditions.
 

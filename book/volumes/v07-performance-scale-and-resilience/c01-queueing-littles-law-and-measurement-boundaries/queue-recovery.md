@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-10-31"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -134,18 +134,82 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Queue-Based Load Leveling
 
-The admission rule of a bounded queue decides four things that the queue cannot decide for itself:
+**Mechanism — bounded queue admission rule (Tycho synthesis).** A bounded queue between
+arrival and processing can absorb a short burst while workers drain at a sustainable rate. The
+admission rule of a bounded queue decides four things that the queue cannot decide for itself:
 which producers may enqueue, the maximum accepted backlog age, what "accepted" means durably,
 and which worker pool drains it. Size the queue from observed peak arrival minus sustained drain,
-not from an average.
-An unbounded queue is not a capacity plan. Shedding is preferable when work cannot be deferred.
-The cited RabbitMQ guide supports reliability mechanics; admission and drain guidance here is
-synthetic.
+not from an average. An unbounded queue is not a capacity plan.
 
+Microsoft's Azure Architecture Center describes the buffer mechanism: "Place a queue between the
+task and the service. The task and the service run asynchronously." and "The queue acts as a
+buffer and stores the message until the service retrieves it." The source states the pattern; the
+four-part admission rule is Tycho synthesis, not a Microsoft claim.
+
+**Invariant — an enqueue acknowledgement must be durable (Tycho rule, source-bound premise).**
 An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect
 identity and retries the enqueue. Workers commit their outcome and queue offset together, or
-deduplicate by effect identity, so a redelivery after an ambiguous ack cannot repeat a side effect.
+deduplicate by effect identity, so a redelivery after an ambiguous ack cannot repeat a side
+effect. The public pages support the premise and the redelivery mechanics, not the full
+invariant:
 
-When backlog age crosses its bound, reject new work before enqueue or shed it at the worker; do not
-let the queue grow until memory or retention expires it. A backlog incident runbook names the
-producer to pause, the age threshold, and the drain-rate check that says when to resume.
+- Azure says: "This pattern depends on queue durability to prevent message loss. If the broker
+  doesn't persist messages to durable storage, a crash or capacity limit can cause enqueued data
+  to be lost before consumers process it."
+- Azure also says: "Most queue services deliver messages with at-least-once semantics, which
+  means that consumers can receive the same message more than once. Design consumer logic to be
+  idempotent so that processing the same message multiple times produces the same outcome and
+  avoids problems such as duplicate records or repeated charges."
+- AWS says: "Durability – For the safety of your messages, Amazon SQS stores them on multiple
+  servers." and "A producer (Component 1) sends message A to a queue, and the message is
+  distributed across the Amazon SQS servers redundantly."
+
+The durable-ack rule and the outcome/offset commit rule are Tycho synthesis; Azure and AWS
+describe durability and at-least-once delivery, not this page's enqueue retry policy.
+
+**Failure and recovery — backlog age bound, reject or shed (Tycho rule, source-bound
+mechanics).** When backlog age crosses its bound, reject new work before enqueue or shed it at
+the worker; do not let the queue grow until memory or retention expires it. A backlog incident
+runbook names the producer to pause, the age threshold, and the drain-rate check that says when
+to resume. Azure says: "If your average producer rate exceeds the consumer rate, the queue
+continues to grow and latency increases. Monitor queue depth and scale consumers within safe
+limits, or shed work at the producer." AWS says: "Amazon SQS automatically deletes messages that
+have been in a queue for more than the maximum message retention period." and "The consumer
+(Component 2) deletes message A from the queue to prevent the message from being received and
+processed again when the visibility timeout expires." Google SRE says: "Requests above the cap
+fail locally without even reaching the network." The age threshold, runbook steps and pause
+decision are Tycho synthesis; the sources describe growth, retention, redelivery and local
+rejection, not a universal age bound.
+
+**Alternative — shedding when work cannot be deferred (Tycho choice rule).** Shedding is
+preferable when work cannot be deferred. Google SRE says: "However, under extreme overload, the
+service might not even be able to compute and serve degraded responses. At this point it may have
+no immediate option but to serve errors." Azure says: "Monitor queue depth and scale consumers
+within safe limits, or shed work at the producer." The choice rule is Tycho: when a caller needs
+a synchronous result, when a deadline makes deferred work worthless, or when backlog age cannot
+be bounded, reject at admission instead of growing the queue. When work can be deferred, leveling
+is the alternative; shedding is not a synonym for leveling.
+
+**Source boundary.** Public documentation accessed 2026-10-31; living pages, not a benchmark or
+an executed queue test. Quotes are short excerpts. Tycho-labelled sentences are synthesis, not
+source claims.
+
+- Microsoft, "Queue-Based Load Leveling pattern", sections "Solution", "Problems and
+  considerations" and "When to use this pattern": canonical text revision
+  `9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2`, raw HTML
+  `1a335ca1fbf19abc1aafd6d41a286e2ad528ddf621a1bee943a0d45adbea860a`; git commit
+  `d73cd1632ffa489eff78a16bba4d101c510a1810`; ms.date 2026-06-09; page updated 2026-08-15;
+  serving Last-Modified 2026-08-24; record
+  `read.microsoft-queue-based-load-leveling.2026-10-31` (proposed).
+- AWS, "What is Amazon Simple Queue Service?", sections "Benefits of using Amazon SQS",
+  "Basic Amazon SQS architecture" and "Message lifecycle": canonical text revision
+  `ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61`, raw HTML
+  `3dbc6575cd6c3c459aeeab8869798bcc42041d8b19545fca3630b2a0af0e0108`; no published version;
+  Last-Modified 2026-10-31; record `read.aws-sqs-welcome.2026-10-31` (proposed).
+- Google SRE, "Handling Overload", sections "Handling Overload", "Per-Customer Limits" and
+  "Client-Side Throttling": retained record `read.sre-overload.2026-10-21`, raw HTML
+  `945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e`; canonical text
+  `8154963544456669d31fb2666db9f6a6a91ea0d4135d01d30e41922172a71bf2`.
+
+The retained RabbitMQ record remains a supporting reliability citation only; it does not support
+the admission rule, age bound or choice rule.
