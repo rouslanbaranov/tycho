@@ -1,3 +1,7 @@
+> **Dated inventory — 2026-10-29.** The “17 owner-accepted” reference is
+> historical; the owner-accepted file currently lists **7** entries. Current
+> promotion state is in [the 2026-10-31 hand-off](HANDOFF-2026-10-31.md).
+
 # Frozen split inventory — 2026-10-29
 
 Status: planning only. Read-only inventory at HEAD

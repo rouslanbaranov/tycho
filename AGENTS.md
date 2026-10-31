@@ -245,3 +245,11 @@ tool invocation that retrieves sources, or change.
     or a reused default duration. Derive the remaining count and tier distribution
     from `owner-units.v1.json`, regenerate the forecast SVG, and label intervals
     between commits as measured intervals, not stopwatch measurements.
+
+37. **Every task runs inside a goal.** Before starting a task, check whether an
+    active goal exists. If no goal exists, create one with `max_goal_rounds: 1000`
+    before doing any work, then work autonomously and continuously until the
+    objective is achieved. Do not stop for routine confirmation or intermediate
+    status reports; report only when the goal is complete or when a real blocker
+    requires owner input. If a goal is already active, continue under it. This rule
+    never overrides an explicit owner instruction to stop or pause.
