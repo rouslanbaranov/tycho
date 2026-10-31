@@ -3600,7 +3600,9 @@
       "content_sha256": "6fb58a128cbc8adc2734604cd3ddca1c0fd43b7ad3ba2f3eb76204f2ecf37df9",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Superseded as the Priority Queue card citation by the 2026-10-31 RabbitMQ priority read; retained as historical 2026-10-21 evidence."
     },
     {
       "id": "read.batch4-k8s-probes.2026-10-21",
@@ -10919,6 +10921,238 @@
       "limitations": "Short official topic; it states the overloading idea and default quota, not a measured evaluation. No table or GSI was created.",
       "content_sha256": "1d1a982b843ee7d8cca03b06eecb19efc0c67a135acd020fb91a8d35da32fc1a",
       "read_scope": "the whole short topic, excluding linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.rabbitmq-priority-queues.2026-10-31",
+      "source_id": "src.rabbitmq",
+      "unit_url": "https://www.rabbitmq.com/docs/priority",
+      "unit_label": "Priority Support in Queues — RabbitMQ documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; HTTP/2 200; served Date 2026-10-31T17:01:09Z; 57,138-byte decoded text/html; no Last-Modified; ETag W/\"156c44d42d25101b08d798ed7bff7c9c\"; raw HTML SHA-256 33dbbae94a1c62a8c4fc84cadc5ebe6fbd351fe3b519c5b2af4f89027bc9021f; canonical text 13,684 characters / 2,189 words, SHA-256 4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45; two fetches byte-identical",
+      "sections_read": [
+        "Priority Support in Queues",
+        "Pre-requisites",
+        "What is a Priority Queue",
+        "Before Adopting Priority Queues: Consider the Alternatives",
+        "Declaration and Supported Priority Ranges",
+        "Classic Queues",
+        "Configuring the Maximum Number of Priorities",
+        "Using Client-provided Optional Arguments",
+        "Quorum Queues",
+        "Priorities Are Always Enabled",
+        "Priority Queue Behaviour",
+        "Quorum Queue Specifics",
+        "Per-Priority Message Counts",
+        "Redelivery of Returned Messages",
+        "Priority-Aware Message Expiration",
+        "Low Message Priority and the Resource Starvation Problem",
+        "Maximum Number of Priorities and Resource Usage",
+        "How Priority Queues Work with Consumers",
+        "Example",
+        "Now Add Priorities",
+        "Interaction with Other Features",
+        "Why Policy Definition is not Supported for Priority Queues"
+      ],
+      "sections_not_read": [
+        "linked RabbitMQ tutorials, client API pages and examples as separate units",
+        "navigation chrome as a unit"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public RabbitMQ documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Classic and quorum queues support priorities.",
+        "Priority queues deliver ready messages by priority; larger publisher-assigned integers indicate higher priority.",
+        "Classic queues take x-max-priority in [1, 255]; quorum queues expose 0-31 and ignore x-max-priority.",
+        "Queue declaration fixes the priority count; missing priority defaults to 4 for quorum and 0 for classic.",
+        "Starvation, strict-priority delay, prefetch inversion, max-length drops and TTL-head behavior are documented."
+      ],
+      "claims_not_supported": [
+        "a benchmark or production observation",
+        "linked pages",
+        "implementation behavior"
+      ],
+      "limitations": "One living documentation page version 4.4 at retrieval, not a benchmark or release-tagged specification; the digest pins the 2026-10-31 representation, not every RabbitMQ release. No broker was run.",
+      "content_sha256": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45",
+      "read_scope": "the sections listed in the plan entry, excluding linked pages and navigation chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.microsoft-priority-queue-pattern.2026-10-31",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/priority-queue",
+      "unit_label": "Priority Queue pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; HTTP/2 200; 63,858-byte text/html; Last-Modified 2026-09-17T05:03:54Z; ETag \"DH7Jopyv59XUz+WCrc5vDmL+kqY=\"; ms.date 2026-08-11; updated_at 2026-09-17T05:02:00Z; git_commit_id 96c2e16cbf46d319d4e9b15e285f462de05e29e2; raw HTML SHA-256 b979c68fe300b12e250067e69409e989bea6e482c1b08628c29fbd436519d534; canonical text 12,954 characters / 1,872 words, SHA-256 da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde",
+      "sections_read": [
+        "Context and problem",
+        "Solution",
+        "Single queue",
+        "Multiple queues",
+        "Single consumer pool",
+        "Multiple consumer pools",
+        "Problems and considerations",
+        "General recommendations",
+        "Multiple queue recommendations",
+        "When to use this pattern",
+        "Workload design",
+        "Example"
+      ],
+      "sections_not_read": [
+        "Next steps",
+        "Related resources",
+        "feedback and site chrome",
+        "linked pages, images and the GitHub sample deployment"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Priority is assigned by the application or producer.",
+        "Single-queue and multiple-queue approaches exist; consumer pools differ in isolation.",
+        "A single pool can delay lower priorities indefinitely; age-based promotion is recommended.",
+        "The Service Bus example uses a custom Priority application property, SQL filters and subscriptions.",
+        "Strict cross-priority ordering dependencies are contraindications."
+      ],
+      "claims_not_supported": [
+        "a benchmark or production observation",
+        "linked pages",
+        "implementation behavior"
+      ],
+      "limitations": "One living pattern page without a semantic version; it documents a pattern and a Service Bus example, not a native Service Bus priority field. No topic, filter or subscription was created.",
+      "content_sha256": "da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde",
+      "read_scope": "the sections listed in the plan entry, excluding linked pages, sample code and site chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.azure-service-bus-amqp-message-mapping.2026-10-31",
+      "source_id": "src.azure-service-bus-amqp",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide",
+      "unit_label": "AMQP 1.0 in Azure Service Bus and Event Hubs protocol guide — Azure Service Bus",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; HTTP/2 200; 102,686-byte text/html; Last-Modified 2026-10-24T22:16:01Z; ETag \"RK1ukalJWzu5YPxlYuPYhgDOWtk=\"; ms.date 2024-11-18; updated_at 2026-10-13; git_commit_id bb63da0dc31787d3949b8217dfd538f641e78c00; raw HTML SHA-256 7048def99d18f4c4bad3784fe92a8456051631574bc633c13ee0fec75823e883; canonical text 40,179 characters / 6,042 words, SHA-256 a1d6a361f205a21ff53f6323a87ad27dd9dd5efc15f136c8d829f896e16cbaab",
+      "sections_read": [
+        "Messages",
+        "Header",
+        "Properties"
+      ],
+      "sections_not_read": [
+        "Goals",
+        "What is AMQP?",
+        "Basic AMQP scenarios",
+        "Transaction capability",
+        "Advanced Service Bus capabilities",
+        "related content",
+        "linked pages",
+        "code samples and images"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The guide maps standard AMQP message properties to the Service Bus API set.",
+        "The priority header row has no usage entry and no Service Bus API name.",
+        "Application-defined properties belong in the AMQP application-properties map.",
+        "ttl maps to TimeToLive and delivery-count maps to DeliveryCount."
+      ],
+      "claims_not_supported": [
+        "a benchmark or production observation",
+        "linked pages",
+        "implementation behavior"
+      ],
+      "limitations": "One section of a long protocol guide; it documents the mapping, not a native Service Bus priority feature or a broker experiment. No message was sent and no priority header was exercised.",
+      "content_sha256": "a1d6a361f205a21ff53f6323a87ad27dd9dd5efc15f136c8d829f896e16cbaab",
+      "read_scope": "the Messages section including Header and Properties, excluding other sections and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-sqs-queue-types.2026-10-31",
+      "source_id": "src.aws-sqs",
+      "unit_url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html",
+      "unit_label": "Amazon SQS queue types — Amazon SQS Developer Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; HTTP/1.1 200; 23,591-byte text/html; Last-Modified 2026-10-31T03:34:37Z; ETag \"DEYh/DqMmoxHOA+bd2gt3VNjdMU=\"; raw HTML SHA-256 c6210c4d6ba382b7801c5576a22d9338028b96cd1fe4beff707b4d0c05f3dd3d; canonical text 5,786 characters / 905 words, SHA-256 c9ccf72844c5180d80502042f9abf7766b8af7e194f217065ddf50a43f540609",
+      "sections_read": [
+        "Amazon SQS queue types"
+      ],
+      "sections_not_read": [
+        "linked FIFO, high-throughput, batching and quota pages",
+        "navigation chrome and images"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "SQS supports standard and FIFO queues.",
+        "Standard queues provide best-effort ordering.",
+        "FIFO queues preserve order within each message group and allow parallel groups.",
+        "The page defines no message-priority field or priority queue."
+      ],
+      "claims_not_supported": [
+        "a benchmark or production observation",
+        "linked pages",
+        "implementation behavior"
+      ],
+      "limitations": "One living AWS documentation page with no published version identifier; the digest includes served navigation chrome. No queue was created and no message was sent or received.",
+      "content_sha256": "c9ccf72844c5180d80502042f9abf7766b8af7e194f217065ddf50a43f540609",
+      "read_scope": "the whole page, excluding linked pages, navigation chrome and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-sqs-fair-queues.2026-10-31",
+      "source_id": "src.aws-sqs",
+      "unit_url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fair-queues.html",
+      "unit_label": "Amazon SQS fair queues — Amazon SQS Developer Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; HTTP/1.1 200; 22,622-byte text/html; Last-Modified 2026-10-31T03:34:35Z; ETag \"oVl95SiV/oQcNWFINihy+1sWm9w=\"; raw HTML SHA-256 ab0a62a5e64d732cba5d3b072469183ea01305f01ef797bc700cf43e1a1fdfc7; canonical text 6,351 characters / 1,000 words, SHA-256 9d0821490fbdd48ed28c195c3b5bdc466d800d34383b1caf36dd802ec0e7ca5f",
+      "sections_read": [
+        "Amazon SQS fair queues",
+        "Steady state",
+        "Noisy neighbor impact",
+        "Mitigation with fair queues",
+        "How to use fair queues",
+        "When to use fair queues",
+        "Fair queues CloudWatch metrics"
+      ],
+      "sections_not_read": [
+        "linked \"How Amazon SQS fair queues work\" detail page",
+        "CloudWatch metrics reference",
+        "images and navigation chrome"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Fair queues mitigate noisy-neighbor impact in multi-tenant queues.",
+        "Dwell time measures arrival-to-processing time and is used to rebalance delivery.",
+        "SQS prioritizes delivery for other tenants when one tenant has disproportionate in-flight messages.",
+        "Fair queues do not limit consumption per tenant.",
+        "MessageGroupId is only a tenant identifier on standard queues and does not enforce ordering."
+      ],
+      "claims_not_supported": [
+        "a benchmark or production observation",
+        "linked pages",
+        "implementation behavior"
+      ],
+      "limitations": "One living AWS documentation page with no published version identifier; fair queues are tenant fairness, not a priority field, aging knob or per-tenant quota. No queue was created or exercised.",
+      "content_sha256": "9d0821490fbdd48ed28c195c3b5bdc466d800d34383b1caf36dd802ec0e7ca5f",
+      "read_scope": "the sections listed in the plan entry, excluding linked pages, metrics reference and images",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }

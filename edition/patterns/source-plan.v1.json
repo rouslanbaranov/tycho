@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "bdb4419a757c79b6436471219d625b588ceacd1da8db198abe0730895687b082",
-  "route_index_snapshot": "b379f9ae187d3d8670b6b36e26615bc77a1b8e6ae575aa4a9bd44ed7cfac6e32",
+  "registry_sha256": "fdd963808d04b4da24616a6083f4b3a315ed691c20e6b8ed3f1ce485c31e1928",
+  "route_index_snapshot": "13c77a9708d8d2c7a77d8effe07b2d2c4d658d70a04481ae161c7ebe13cc3adc",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -4557,11 +4557,78 @@
             "Why Policy Definition is not Supported for Priority Queues"
           ],
           "status": "read",
-          "read_record_id": "read.batch4-rabbit-priority.2026-10-21",
+          "read_record_id": "read.rabbitmq-priority-queues.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Priority Queue pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/priority-queue",
+          "sections": [
+            "Context and problem",
+            "Solution",
+            "Single queue",
+            "Multiple queues",
+            "Single consumer pool",
+            "Multiple consumer pools",
+            "Problems and considerations",
+            "General recommendations",
+            "Multiple queue recommendations",
+            "When to use this pattern",
+            "Workload design",
+            "Example"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-priority-queue-pattern.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-service-bus-amqp",
+          "unit": "AMQP 1.0 in Azure Service Bus and Event Hubs protocol guide — Azure Service Bus",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide",
+          "sections": [
+            "Messages",
+            "Header",
+            "Properties"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-service-bus-amqp-message-mapping.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-sqs",
+          "unit": "Amazon SQS queue types — Amazon SQS Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-queue-types.html",
+          "sections": [
+            "Amazon SQS queue types"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-sqs-queue-types.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-sqs",
+          "unit": "Amazon SQS fair queues — Amazon SQS Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-fair-queues.html",
+          "sections": [
+            "Amazon SQS fair queues",
+            "Steady state",
+            "Noisy neighbor impact",
+            "Mitigation with fair queues",
+            "How to use fair queues",
+            "When to use fair queues",
+            "Fair queues CloudWatch metrics"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-sqs-fair-queues.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 public unit read; claims limited to the ledger record."
+      "notes": "Five public units read 2026-10-31; all four technical dimensions bound to RabbitMQ priority support, the Azure Priority Queue pattern, Service Bus AMQP message mapping, SQS queue types and SQS fair queues; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.hedged-requests",
@@ -6762,17 +6829,18 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 305,
-    "read_units": 304,
+    "required_units": 309,
+    "read_units": 308,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 257
+    "ledger_records": 262
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
     "read.microsoft-cloud-patterns.2026-10-21",
     "read.microservices-patterns.2026-10-21",
     "read.eip-messaging.2026-10-21",
-    "read.batch2-ietf.2026-10-21"
+    "read.batch2-ietf.2026-10-21",
+    "read.batch4-rabbit-priority.2026-10-21"
   ]
 }

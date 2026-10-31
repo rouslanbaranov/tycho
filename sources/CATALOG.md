@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 318.
+Inventory date: 2026-10-31. Entries: 319.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -444,6 +444,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.azure-service-bus-dlq / core | [Overview of Service Bus dead-letter queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues) — Microsoft Learn | Service Bus dead-letter purpose, delivery-count bound, diagnostic fields and application-level rejection. | admitted-for-research / public-web-or-author-download |
 | src.hookdeck-dlq-alternatives / supporting | [Alternatives to Dead-Letter Queues for Webhook Reliability](https://hookdeck.com/webhooks/guides/alternatives-to-dead-letter-queues) — Hookdeck | Explicit vendor guide comparison of DLQs with database persistence, retry table and transactional outbox. | admitted-for-research / public-web-or-author-download |
 | src.aws-sqs / core | [What is Amazon Simple Queue Service?](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) — Amazon Web Services | Queue durability, producer/consumer lifecycle, retention and visibility-timeout mechanics for Queue-Based Load Leveling. | admitted-for-research / public-web-or-author-download |
+| src.azure-service-bus-amqp / core | [AMQP 1.0 in Azure Service Bus and Event Hubs](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-amqp-protocol-guide) — Microsoft Learn | Bounded AMQP message-mapping unit for the Priority Queue invariant: the native Service Bus priority boundary and application-properties routing. | admitted-for-research / public-web-or-author-download |
 
 ## Api
 

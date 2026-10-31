@@ -9973,7 +9973,7 @@
         "heading": "Priority Queue",
         "anchor": "priority-queue",
         "level": 3,
-        "line": 179,
+        "line": 187,
         "unit_kind": "dedicated",
         "unit_terms": [
           "broker-side ordering",
@@ -9984,44 +9984,186 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A priority queue is a broker-side ordering policy",
-          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
+          "reason": "RabbitMQ defines classic and quorum priority queues, publisher-assigned priorities and queue declaration arguments; the Azure pattern defines the application-assigned form.",
+          "binding": {
+            "source_id": "src.rabbitmq",
+            "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+            "section": "What is a Priority Queue",
+            "quote": "Classic and quorum queues in RabbitMQ support priorities.",
+            "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.rabbitmq",
+              "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+              "section": "What is a Priority Queue",
+              "quote": "Priority queues deliver messages in the order of message priorities.",
+              "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+            },
+            {
+              "source_id": "src.rabbitmq",
+              "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+              "section": "Using Client-provided Optional Arguments",
+              "quote": "To declare a priority queue, use the x-max-priority optional queue argument.",
+              "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-priority-queue-pattern.2026-10-31",
+              "section": "Solution",
+              "quote": "The application or producer that sends a request assigns a priority value to the message, and consumers process the messages by priority.",
+              "revision": "da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The queue must define class levels, per-level capacity and the broker's actual priority support.",
-          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
+          "reason": "The Service Bus AMQP guide maps no native priority header and directs application properties to the AMQP map; the Azure pattern and RabbitMQ declaration rules bound the class set and default.",
+          "binding": {
+            "source_id": "src.azure-service-bus-amqp",
+            "ledger_record": "read.azure-service-bus-amqp-message-mapping.2026-10-31",
+            "section": "Messages",
+            "quote": "Any property that application needs to define should be mapped to AMQP's application-properties map.",
+            "revision": "a1d6a361f205a21ff53f6323a87ad27dd9dd5efc15f136c8d829f896e16cbaab"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.rabbitmq",
+              "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+              "section": "Why Policy Definition is not Supported for Priority Queues",
+              "quote": "Priority queues can never change the number of priorities they support after queue declaration",
+              "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+            },
+            {
+              "source_id": "src.rabbitmq",
+              "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+              "section": "Quorum Queues",
+              "quote": "Messages without a priority property are treated as priority 4 (classic queues default to 0).",
+              "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-priority-queue-pattern.2026-10-31",
+              "section": "Example",
+              "quote": "Service Bus uses SQL filters to route each message to the high-priority or low-priority subscription, based on its Priority value.",
+              "revision": "da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Add aging or a maximum-wait rule so low classes make progress",
-          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
+          "reason": "RabbitMQ documents starvation, strict quorum delay and prefetch inversion; Azure recommends age-based promotion; SQS fair queues expose age without capping tenant consumption.",
+          "binding": {
+            "source_id": "src.rabbitmq",
+            "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+            "section": "Low Message Priority and the Resource Starvation Problem",
+            "quote": "In the context of priority queues, this means that only messages with higher priorities are delivered, and lower-priority messages are never delivered.",
+            "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.rabbitmq",
+              "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+              "section": "Low Message Priority and the Resource Starvation Problem",
+              "quote": "Starting with RabbitMQ 4.3, quorum queues implement strict priority with no such interleaving: a sustained stream of higher-priority messages will delay lower-priority ones indefinitely.",
+              "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-priority-queue-pattern.2026-10-31",
+              "section": "General recommendations",
+              "quote": "Consider low-priority processing. Decide whether all high-priority items must be processed before any lower-priority items. If possible, dynamically increase the priority of old messages to ensure that low-priority messages eventually get processed.",
+              "revision": "da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde"
+            },
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-fair-queues.2026-10-31",
+              "section": "Mitigation with fair queues",
+              "quote": "Amazon SQS does not limit the consumption rate per tenant.",
+              "revision": "9d0821490fbdd48ed28c195c3b5bdc466d800d34383b1caf36dd802ec0e7ca5f"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "An admission-controlled FIFO or separate lanes per class avoids starvation when priority is unverifiable.",
-          "reason": "Local representation is a Cloudflare challenge page; the RabbitMQ unit text is absent."
+          "reason": "AWS documents FIFO ordering within a message group and tenant-fair queues; RabbitMQ and Azure recommend multiple queues or separate lanes.",
+          "binding": {
+            "source_id": "src.aws-sqs",
+            "ledger_record": "read.aws-sqs-queue-types.2026-10-31",
+            "section": "Amazon SQS queue types",
+            "quote": "FIFO queues ensure that you receive messages in the order they are sent within each message group.",
+            "revision": "c9ccf72844c5180d80502042f9abf7766b8af7e194f217065ddf50a43f540609"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-fair-queues.2026-10-31",
+              "section": "Amazon SQS fair queues",
+              "quote": "Amazon SQS fair queues automatically mitigates the noisy-neighbor impact in multi-tenant queues that contain messages from multiple logical entities, such as customers, client applications, or message types.",
+              "revision": "9d0821490fbdd48ed28c195c3b5bdc466d800d34383b1caf36dd802ec0e7ca5f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-priority-queue-pattern.2026-10-31",
+              "section": "Multiple queues",
+              "quote": "Multiple queues separate messages by priority.",
+              "revision": "da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde"
+            },
+            {
+              "source_id": "src.rabbitmq",
+              "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
+              "section": "Low Message Priority and the Resource Starvation Problem",
+              "quote": "Workloads that need a guaranteed share of attention for lower-priority traffic should use separate queues per priority class",
+              "revision": "4ca982ad871d4c03eabc5545059ce945bade5ee5da444132361401119438dc45"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "priority-queue",
         "question": "Should queued work be ordered by business priority rather than arrival?",
-        "competing_alternative": "FIFO with admission control. Reverse the choice when priority inversion or starvation exceeds latency benefit.",
+        "competing_alternative": "Admission-controlled FIFO, separate lanes per class, or tenant-fair queues. SQS FIFO preserves order within a message group: \"FIFO queues ensure that you receive messages in the order they are sent within each message group.\" SQS fair queues rebalance dwell time across tenants and do not limit consumption per tenant. Reverse the choice when priority inversion or starvation exceeds latency benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch4-rabbit-priority.2026-10-21",
+        "ledger_record": "read.rabbitmq-priority-queues.2026-10-31",
         "source_id": "src.rabbitmq",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-priority-queue-pattern.2026-10-31",
+            "revision": "da8e65b90263acd29305315fdba36da3e6b4127e688532f1132ed681eb4c1fde"
+          },
+          {
+            "source_id": "src.azure-service-bus-amqp",
+            "ledger_record": "read.azure-service-bus-amqp-message-mapping.2026-10-31",
+            "revision": "a1d6a361f205a21ff53f6323a87ad27dd9dd5efc15f136c8d829f896e16cbaab"
+          },
+          {
+            "source_id": "src.aws-sqs",
+            "ledger_record": "read.aws-sqs-queue-types.2026-10-31",
+            "revision": "c9ccf72844c5180d80502042f9abf7766b8af7e194f217065ddf50a43f540609"
+          },
+          {
+            "source_id": "src.aws-sqs",
+            "ledger_record": "read.aws-sqs-fair-queues.2026-10-31",
+            "revision": "9d0821490fbdd48ed28c195c3b5bdc466d800d34383b1caf36dd802ec0e7ca5f"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Embedded in the queue/limit/priority section; heading is not the catalog name."
+      "notes": "All four technical dimensions bound 2026-10-31 to RabbitMQ priority support, the Azure Priority Queue pattern, Service Bus AMQP message mapping, SQS queue types and SQS fair queues; coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.hedged-requests",
@@ -15155,12 +15297,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 119,
-    "invariant_supported": 84,
-    "failure_recovery_supported": 79,
-    "alternative_supported": 84,
-    "technical_partial_bounded": 15,
-    "technical_partial": 63,
+    "mechanism_supported": 120,
+    "invariant_supported": 85,
+    "failure_recovery_supported": 80,
+    "alternative_supported": 85,
+    "technical_partial_bounded": 16,
+    "technical_partial": 62,
     "technical_name_only": 0,
     "technical_sufficient": 67,
     "decision_partial_bounded": 78,
