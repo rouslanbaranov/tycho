@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "a88275a79901c8f833c8c383d3634427acad971c021151bec62328dc349441a2",
-  "route_index_snapshot": "85f2fffd7be5574228bfde9b2c534014ff0e1479c30ce082998e471cd5082c57",
+  "registry_sha256": "66b040c052ef0847469a792671e36778fff48de3dbba266caa025e1f69e31bdb",
+  "route_index_snapshot": "b0a6d7f4c27ecd58e5717ff94157ec3a2f3aa2f1e58af017cc9812d15ec2b573",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -5946,21 +5946,107 @@
       "priority": "core",
       "required_units": [
         {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Tenant Isolation — SaaS Lens",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/tenant-isolation.html",
+          "sections": [
+            "Tenant Isolation"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Pool isolation — SaaS Lens",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/pool-isolation.html",
+          "sections": [
+            "Pool isolation",
+            "Pool model pros and cons",
+            "Pros",
+            "Cons"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-saas-lens-pool-isolation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Preventing cross tenant access — SaaS Lens",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/preventing-cross-tenant-access.html",
+          "sections": [
+            "Preventing cross tenant access"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Multi-tenancy — Kubernetes documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kubernetes.io/docs/concepts/security/multi-tenancy/",
+          "sections": [
+            "Use cases",
+            "Multiple teams",
+            "Multiple customers",
+            "Terminology",
+            "Tenants",
+            "Isolation",
+            "Control plane isolation",
+            "Namespaces",
+            "Access controls",
+            "Quotas",
+            "Data Plane Isolation",
+            "Network isolation",
+            "Storage isolation",
+            "Sandboxing containers",
+            "Node Isolation",
+            "Additional Considerations",
+            "API Priority and Fairness",
+            "Quality-of-Service (QoS)",
+            "DNS",
+            "Operators",
+            "Implementations",
+            "Namespace per tenant",
+            "Virtual control plane per tenant"
+          ],
+          "status": "read",
+          "read_record_id": "read.k8s-multitenancy.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18: 5.9. Row Security Policies",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+          "sections": [
+            "5.9. Row Security Policies"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-rowsecurity.2026-10-31",
+          "blocked_reason": null
+        },
+        {
           "source_id": "src.microsoft-multitenant",
-          "unit": "Architectural Approaches for a Multitenant Solution — Microsoft Learn",
+          "unit": "Architectural approaches for a multitenant solution — Azure Architecture Center",
           "unit_type": "documentation-page",
           "url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview",
           "sections": [
+            "Introduction",
             "Deployment Stamps pattern",
             "Intended audience",
             "Related resource"
           ],
           "status": "read",
-          "read_record_id": "read.batch5-ms-multitenant.2026-10-21",
+          "read_record_id": "read.ms-multitenant-approaches.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 5 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public sources (six units) bound 2026-10-31: AWS SaaS Lens tenant isolation, pool isolation and serverless tenant scoping; Kubernetes multi-tenancy; PostgreSQL row security; and Microsoft multitenant approaches. The earlier Microsoft record read.batch5-ms-multitenant.2026-10-21 is retained as historical context."
     },
     {
       "pattern_id": "tycho.pattern.rolling-deployment",
@@ -7480,11 +7566,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 351,
-    "read_units": 350,
+    "required_units": 356,
+    "read_units": 355,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 311
+    "ledger_records": 317
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -7501,6 +7587,7 @@
     "read.batch4-hedged.2026-10-21",
     "read.batch8-postgres-logical.2026-10-22",
     "read.batch2-debezium-outbox.2026-10-21",
-    "read.batch3-gh-ost.2026-10-21"
+    "read.batch3-gh-ost.2026-10-21",
+    "read.batch5-ms-multitenant.2026-10-21"
   ]
 }

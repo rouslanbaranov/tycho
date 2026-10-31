@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 339.
+Inventory date: 2026-10-31. Entries: 340.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -245,6 +245,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.nist-sp-800-162 / supporting | [Guide to Attribute Based Access Control (ABAC) Definition and Considerations](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf) — NIST | ABAC policy decision/enforcement points, policy administration and implementation considerations. | admitted-for-research / public-web-or-author-download |
 | src.openid-federation / supporting | [OpenID Federation 1.0](https://openid.net/specs/openid-federation-1_0.html) — OpenID Foundation | Federation trust anchors, Entity Statements, trust chains, metadata and key rollover. | admitted-for-research / public-web-or-author-download |
 | src.owasp-authorization-decisions / supporting | [Authorization Decisions and Output Handling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Decisions_And_Output_Handling_Cheat_Sheet.html) — OWASP | Authorization-decision reuse bounds, revocation deadline and fail-closed guidance for the negative-caching entry. | admitted-for-research / public-web-or-author-download |
+| src.aws-saas-lens / supporting | [AWS Well-Architected SaaS Lens](https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/tenant-isolation.html) — Amazon Web Services | Tenant isolation, pool isolation and serverless tenant-scoping guidance for the tenant-based resource isolation entry. | admitted-for-research / public-web-or-author-download |
 
 ## Quality
 

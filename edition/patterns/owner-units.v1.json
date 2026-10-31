@@ -13400,59 +13400,383 @@
         "heading": "Tenant-Based Resource Isolation",
         "anchor": "tenant-based-resource-isolation",
         "level": 2,
-        "line": 71,
+        "line": 75,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Tenant-Based Resource Isolation"
+          "bounded share",
+          "tenant boundary",
+          "capacity theft"
         ]
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Kubernetes namespaces, ResourceQuotas, limits, storage classes and claims bound compute and storage and keep the namespace scope explicit; the AWS pool page describes shared compute and tenant-indexed storage; the Azure overview frames shared versus isolated resources; the AWS serverless example exchanges JWT-supplied context for tenant-scoped credentials. Primary binding: Kubernetes Quotas.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.k8s-multitenancy.2026-10-31",
+            "section": "Quotas",
+            "quote": "Quotas prevent a single tenant from consuming greater than their allocated share of resources",
+            "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Quotas",
+              "quote": "to manage resource usage of tenant workloads",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Quotas",
+              "quote": "Limits are the upper bound for the amount of resources that a container can consume.",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Quotas",
+              "quote": "a tenant cannot monopolize a cluster's resources or overwhelm its control plane",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Storage isolation",
+              "quote": "to ensure that a PersistentVolume cannot be reused across different namespaces",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Namespaces",
+              "quote": "helps segment a tenant's workload into a logical and distinct management unit",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+              "section": "Pool isolation",
+              "quote": "tenants are consuming infrastructure that is shared by all tenants",
+              "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+              "section": "Pool isolation",
+              "quote": "a table indexed by individual tenant identifiers",
+              "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+            },
+            {
+              "source_id": "src.microsoft-multitenant",
+              "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
+              "section": "Introduction",
+              "quote": "you can share every resource in your solution among all of your tenants",
+              "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+            },
+            {
+              "source_id": "src.microsoft-multitenant",
+              "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
+              "section": "Introduction",
+              "quote": "you can deploy isolated resources for every tenant",
+              "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+              "section": "Preventing cross tenant access",
+              "quote": "our code will use the context of the current tenant (supplied via a JWT)",
+              "revision": "7b52f51473f2297430c24f55c9c8260206c65c008e9d5751441ab3919fe4fbc3"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+              "section": "Preventing cross tenant access",
+              "quote": "to acquire a new set of tenant-scoped credentials from AWS Security Token Service (AWS STS)",
+              "revision": "7b52f51473f2297430c24f55c9c8260206c65c008e9d5751441ab3919fe4fbc3"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "AWS states the cross-tenant prohibition and its severity; PostgreSQL enforces per-user row visibility with default-deny and per-row evaluation; Kubernetes scopes RBAC, network and storage; the AWS serverless example scopes runtime credentials. The four-path enumeration and cache/queue scoping are Tycho synthesis.",
+          "binding": {
+            "source_id": "src.aws-saas-lens",
+            "ledger_record": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+            "section": "Tenant Isolation",
+            "quote": "ensure that each tenant is prevented from accessing another tenant's resources",
+            "revision": "35f895c1980a949a664bde8685a514cd85c34342a72346bd381d9c5b1eb9ae91"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+              "section": "Tenant Isolation",
+              "quote": "Crossing this boundary in any form would represent a significant and potentially unrecoverable event",
+              "revision": "35f895c1980a949a664bde8685a514cd85c34342a72346bd381d9c5b1eb9ae91"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+              "section": "Tenant Isolation",
+              "quote": "each SaaS architecture needs to ensure that it has put in place the constructs that are needed to ensure that each tenant's resources have been effectively isolated",
+              "revision": "35f895c1980a949a664bde8685a514cd85c34342a72346bd381d9c5b1eb9ae91"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "on a per-user basis, which rows can be returned by normal queries or inserted, updated, or deleted",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "If no policy exists for the table, a default-deny policy is used",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "will be evaluated for each row prior to any conditions or functions coming from the user's query",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Access controls",
+              "quote": "ensure that each tenant has the appropriate access to only the namespaces they need",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Access controls",
+              "quote": "Role-based access control (RBAC) is commonly used to enforce authorization",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Network isolation",
+              "quote": "By default, all pods in a Kubernetes cluster are allowed to communicate with each other",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+              "section": "Preventing cross tenant access",
+              "quote": "you must apply isolation scoping at runtime in the implementation of your multi-tenant functions",
+              "revision": "7b52f51473f2297430c24f55c9c8260206c65c008e9d5751441ab3919fe4fbc3"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Kubernetes documents network traffic and shared node services as residuals left by quotas and node isolation and requires a Delete reclaim policy to stop volume reuse; AWS records noisy-neighbour and all-tenant outage consequences and asks for graceful recovery; PostgreSQL documents superuser, BYPASSRLS, owner and whole-table bypasses and a fail-closed row_security error; the AWS serverless example pushes isolation into function code. No selected unit tests a cache or worker leak.",
+          "binding": {
+            "source_id": "src.kubernetes",
+            "ledger_record": "read.k8s-multitenancy.2026-10-31",
+            "section": "Quotas",
+            "quote": "Quotas cannot protect against all kinds of resource sharing, such as network traffic.",
+            "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Storage isolation",
+              "quote": "to ensure that a PersistentVolume cannot be reused across different namespaces",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Node Isolation",
+              "quote": "the kubelet and (unless using virtual control planes) the API service are still shared services",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Node Isolation",
+              "quote": "to move laterally within the cluster",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+              "section": "Cons",
+              "quote": "The more resources are shared, the more chances there are for one tenant to impact the experience of another.",
+              "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+              "section": "Cons",
+              "quote": "an outage will likely impact all the tenants",
+              "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+              "section": "Cons",
+              "quote": "gracefully recover from failures",
+              "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+              "section": "Preventing cross tenant access",
+              "quote": "does push part of the isolation model into the code",
+              "revision": "7b52f51473f2297430c24f55c9c8260206c65c008e9d5751441ab3919fe4fbc3"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "always bypass the row security system",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "Table owners normally bypass row security as well",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "are not subject to row security",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "you can set the row_security configuration parameter to off",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+              "section": "5.9. Row Security Policies",
+              "quote": "throw an error if any query's results would get filtered by a policy",
+              "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
           "quote": "A shared pool with tenant-scoped predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or compliance risk dominates.",
-          "reason": "Contrasts a shared pool with tenant predicates against dedicated resources.",
+          "reason": "Microsoft contrasts single-tenant and multitenant Deployment Stamps, including the isolation/noisy-neighbour benefit and the unshareable infrastructure cost; Kubernetes frames namespace-per-tenant against virtual-control-plane-per-tenant; the AWS pool page records the loss of ordinary networking and IAM boundaries. The choice rule is Tycho.",
           "binding": {
             "source_id": "src.microsoft-multitenant",
-            "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
+            "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
             "section": "Deployment Stamps pattern",
-            "quote": "You can also apply the Deployment Stamps pattern to create multitenant stamps. This approach supports resource sharing and reduces infrastructure costs.",
-            "revision": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f"
-          }
+            "quote": "This pattern provides the highest level of isolation and helps to avoid the noisy neighbor problem.",
+            "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-multitenant",
+              "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
+              "section": "Deployment Stamps pattern",
+              "quote": "the noisy neighbor problem still might occur",
+              "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+            },
+            {
+              "source_id": "src.microsoft-multitenant",
+              "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
+              "section": "Deployment Stamps pattern",
+              "quote": "that infrastructure can't be shared with other tenants",
+              "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+            },
+            {
+              "source_id": "src.microsoft-multitenant",
+              "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
+              "section": "Deployment Stamps pattern",
+              "quote": "This approach supports resource sharing and reduces infrastructure costs",
+              "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Namespace per tenant",
+              "quote": "you should consider isolating each workload in its own namespace",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.kubernetes",
+              "ledger_record": "read.k8s-multitenancy.2026-10-31",
+              "section": "Virtual control plane per tenant",
+              "quote": "provide each tenant a virtual control-plane that enables segmentation of cluster-wide API resources",
+              "revision": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841"
+            },
+            {
+              "source_id": "src.aws-saas-lens",
+              "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+              "section": "Pool isolation",
+              "quote": "typical networking and IAM constructs cannot be relied upon to create boundaries between tenants",
+              "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "tenant-based-resource-isolation",
         "question": "Should tenants receive isolated compute/data/networking quotas rather than share one unbounded pool?",
-        "competing_alternative": "Shared pool with per-tenant rate limits. Reverse the choice when isolation cost exceeds noisy-neighbor risk.",
+        "competing_alternative": "Shared pool with per-tenant rate limits, or a dedicated deployment stamp. Reverse the choice when isolation cost exceeds noisy-neighbor risk.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch5-ms-multitenant.2026-10-21",
-        "source_id": "src.microsoft-multitenant",
+        "ledger_record": "read.k8s-multitenancy.2026-10-31",
+        "source_id": "src.kubernetes",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-saas-lens",
+            "ledger_record": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+            "revision": "35f895c1980a949a664bde8685a514cd85c34342a72346bd381d9c5b1eb9ae91"
+          },
+          {
+            "source_id": "src.aws-saas-lens",
+            "ledger_record": "read.aws-saas-lens-pool-isolation.2026-10-31",
+            "revision": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0"
+          },
+          {
+            "source_id": "src.aws-saas-lens",
+            "ledger_record": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+            "revision": "7b52f51473f2297430c24f55c9c8260206c65c008e9d5751441ab3919fe4fbc3"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgres-rowsecurity.2026-10-31",
+            "revision": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364"
+          },
+          {
+            "source_id": "src.microsoft-multitenant",
+            "ledger_record": "read.ms-multitenant-approaches.2026-10-31",
+            "revision": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Four dimensions bound 2026-10-31 to AWS SaaS Lens tenant, pool and serverless isolation, Kubernetes multi-tenancy, PostgreSQL row security and Microsoft multitenant approaches; the cache/queue instance and quota-enforcement rule are Tycho synthesis; no cross-tenant test was executed; coverage is self-checked, not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.rolling-deployment",
@@ -15460,7 +15784,7 @@
         "heading": "Multitenant Isolation",
         "anchor": "multitenant-isolation-1",
         "level": 2,
-        "line": 90,
+        "line": 158,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Multitenant Isolation"
@@ -17160,7 +17484,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "keep",
       "rationale": "Tenant-based and multitenant isolation have dedicated bounded units on the isolation page."
     },
@@ -17229,12 +17553,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 123,
-    "invariant_supported": 95,
-    "failure_recovery_supported": 90,
+    "mechanism_supported": 124,
+    "invariant_supported": 96,
+    "failure_recovery_supported": 91,
     "alternative_supported": 95,
-    "technical_partial_bounded": 15,
-    "technical_partial": 52,
+    "technical_partial_bounded": 16,
+    "technical_partial": 51,
     "technical_name_only": 0,
     "technical_sufficient": 78,
     "decision_partial_bounded": 67,

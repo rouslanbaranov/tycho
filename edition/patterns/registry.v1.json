@@ -5903,7 +5903,7 @@
         "document_id": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb",
         "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
         "anchor": "tenant-based-resource-isolation",
-        "state": "partial"
+        "state": "partial-bounded"
       },
       "atlas_owner": {
         "chapter": "V11/C09",
@@ -5911,20 +5911,45 @@
         "state": "partial-bounded"
       },
       "coverage": {
-        "technical": "partial",
+        "technical": "partial-bounded",
         "decision": "partial-bounded",
-        "overall": "partial"
+        "overall": "partial-bounded"
       },
-      "confidence": "medium",
+      "confidence": "high",
       "source_units": [
         {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Tenant Isolation — SaaS Lens",
+          "status": "read"
+        },
+        {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Pool isolation — SaaS Lens",
+          "status": "read"
+        },
+        {
+          "source_id": "src.aws-saas-lens",
+          "unit": "Preventing cross tenant access — SaaS Lens",
+          "status": "read"
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Multi-tenancy — Kubernetes documentation",
+          "status": "read"
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18: 5.9. Row Security Policies",
+          "status": "read"
+        },
+        {
           "source_id": "src.microsoft-multitenant",
-          "unit": "Architectural Approaches for a Multitenant Solution — Microsoft Learn",
+          "unit": "Architectural approaches for a multitenant solution — Azure Architecture Center",
           "status": "read"
         }
       ],
       "review_status": "self-checked",
-      "notes": "Phase 3 C09 card; bounded owner section and backlink are self-checked, not independent-reviewed or sufficient."
+      "notes": "Tenant-Based Resource Isolation dedicated card; mechanism, invariant, failure/recovery and alternative are bound on 2026-10-31 to AWS SaaS Lens tenant, pool and serverless guidance, Kubernetes multi-tenancy, PostgreSQL row security and Microsoft multitenant approaches. The cache/worker and queue scoping rules and the quota-enforcement test are Tycho synthesis; no cross-tenant test was executed. Coverage remains partial-bounded and self-checked; promotion is not part of this lane."
     },
     {
       "id": "tycho.pattern.rolling-deployment",

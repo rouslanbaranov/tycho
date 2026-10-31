@@ -4516,7 +4516,9 @@
       "content_sha256": "7703a01de01a5465ab16eafbaa61e8d797064032152d0f12b3b0fc8931dbb56f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained as the earlier Microsoft Deployment Stamps context for the tenant-based resource isolation entry; the 2026-10-31 record supplies the current binding and no card cites this record as its only support."
     },
     {
       "id": "read.batch5-ibm-immutable.2026-10-21",
@@ -13225,6 +13227,265 @@
       "limitations": "Living product documentation; no zone was configured.",
       "content_sha256": "7d9efa9b923873fc6f97994a83d1f104b8450a40650a0ed7ba56ad366a01fff3",
       "read_scope": "the full served Markdown page, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-saas-lens-tenant-isolation.2026-10-31",
+      "source_id": "src.aws-saas-lens",
+      "unit_url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/tenant-isolation.html",
+      "unit_label": "Tenant Isolation — SaaS Lens",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; Markdown alternate served by AWS inspected; two fetches byte-identical",
+      "sections_read": [
+        "Tenant Isolation"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "no AWS environment was configured"
+      ],
+      "tables_figures": [
+        "no tables or figures analyzed"
+      ],
+      "license_notes": "Public architecture guidance; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "each tenant must be prevented from accessing another tenant's resources",
+        "crossing the tenant boundary is significant and potentially unrecoverable",
+        "each SaaS architecture must ensure that tenant resources are effectively isolated"
+      ],
+      "claims_not_supported": [
+        "quota mechanics",
+        "cache keys",
+        "worker partitions",
+        "recovery procedure",
+        "benchmark"
+      ],
+      "limitations": "Short framing page; it states no quota mechanism, cache key, worker partition or recovery procedure. No environment was configured.",
+      "content_sha256": "35f895c1980a949a664bde8685a514cd85c34342a72346bd381d9c5b1eb9ae91",
+      "read_scope": "the full served Markdown page, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-saas-lens-pool-isolation.2026-10-31",
+      "source_id": "src.aws-saas-lens",
+      "unit_url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/pool-isolation.html",
+      "unit_label": "Pool isolation — SaaS Lens",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; Markdown alternate served by AWS inspected; two fetches byte-identical",
+      "sections_read": [
+        "Pool isolation",
+        "Pool model pros and cons",
+        "Pros",
+        "Cons"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "no pooled environment was built"
+      ],
+      "tables_figures": [
+        "Figure 17 pool-isolation diagram described in text; not reproduced"
+      ],
+      "license_notes": "Public architecture guidance; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "tenants in a pool consume infrastructure shared by all tenants",
+        "shared storage can be a table indexed by individual tenant identifiers",
+        "ordinary networking and IAM constructs cannot be relied upon as tenant boundaries",
+        "noisy-neighbour impact and all-tenant outage scope",
+        "graceful recovery from failures is required"
+      ],
+      "claims_not_supported": [
+        "cache or worker keying",
+        "implementation behavior",
+        "benchmark"
+      ],
+      "limitations": "Living architecture guidance; it describes the pooled model and its consequences, not a cache/worker keying protocol or a measurement.",
+      "content_sha256": "f3278a3291b95cf0d2fe217a4af2d86e81f4b03df6af168ef69affd312e703b0",
+      "read_scope": "the full served Markdown page, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-saas-lens-preventing-cross-tenant.2026-10-31",
+      "source_id": "src.aws-saas-lens",
+      "unit_url": "https://docs.aws.amazon.com/wellarchitected/latest/saas-lens/preventing-cross-tenant-access.html",
+      "unit_label": "Preventing cross tenant access — SaaS Lens",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; Markdown alternate served by AWS inspected; two fetches byte-identical",
+      "sections_read": [
+        "Preventing cross tenant access"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "no serverless function was deployed"
+      ],
+      "tables_figures": [
+        "Figure 2 runtime-acquired tenant scope diagram described in text; not reproduced"
+      ],
+      "license_notes": "Public architecture guidance; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "a pooled execution role must apply isolation scoping at runtime",
+        "tenant context is supplied via a JWT",
+        "JWT context is exchanged for tenant-scoped credentials",
+        "isolation work is pushed into function code"
+      ],
+      "claims_not_supported": [
+        "cache or queue design",
+        "deployed function behavior",
+        "benchmark"
+      ],
+      "limitations": "A serverless example, not a general cache or queue design; it describes intended provider guidance, not a benchmark. No function was deployed.",
+      "content_sha256": "7b52f51473f2297430c24f55c9c8260206c65c008e9d5751441ab3919fe4fbc3",
+      "read_scope": "the full served Markdown page, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.k8s-multitenancy.2026-10-31",
+      "source_id": "src.kubernetes",
+      "unit_url": "https://kubernetes.io/docs/concepts/security/multi-tenancy/",
+      "unit_label": "Multi-tenancy — Kubernetes documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31 of the content commit 56db43a06302ec920fbd53b4f276fb0878b1a74f representation; two fetches byte-identical",
+      "sections_read": [
+        "Use cases",
+        "Multiple teams",
+        "Multiple customers",
+        "Terminology",
+        "Tenants",
+        "Isolation",
+        "Control plane isolation",
+        "Namespaces",
+        "Access controls",
+        "Quotas",
+        "Data Plane Isolation",
+        "Network isolation",
+        "Storage isolation",
+        "Sandboxing containers",
+        "Node Isolation",
+        "Additional Considerations",
+        "API Priority and Fairness",
+        "Quality-of-Service (QoS)",
+        "DNS",
+        "Operators",
+        "Implementations",
+        "Namespace per tenant",
+        "Virtual control plane per tenant"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "no cluster was created"
+      ],
+      "tables_figures": [
+        "tables and figures in inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Kubernetes documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "namespaces segment a tenant workload into a management unit",
+        "quotas bound a tenant share and limits bound container consumption",
+        "RBAC, network policies and storage classes scope access",
+        "storage and network effects escape quota control",
+        "node isolation still shares kubelet and API services",
+        "namespace-per-tenant and virtual-control-plane-per-tenant implementations",
+        "hard and soft multi-tenancy form a spectrum"
+      ],
+      "claims_not_supported": [
+        "cache or queue isolation",
+        "a guarantee of hard multi-tenancy",
+        "a tested cluster"
+      ],
+      "limitations": "Configuration guidance, not a guarantee; hard and soft multi-tenancy are a spectrum; quotas cannot protect network traffic; node isolation still shares the kubelet and API service. No cluster was created.",
+      "content_sha256": "1d535523a0692d7d656d87bcdc3efdf0d6ceb43ea02bee8a62a9149188075841",
+      "read_scope": "the full served Markdown page at the pinned content commit, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgres-rowsecurity.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/ddl-rowsecurity.html",
+      "unit_label": "PostgreSQL 18: 5.9. Row Security Policies",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31 on PostgreSQL 18.6; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "5.9. Row Security Policies"
+      ],
+      "sections_not_read": [
+        "linked CREATE POLICY and ALTER TABLE pages",
+        "source code",
+        "images",
+        "no database was configured or tested"
+      ],
+      "tables_figures": [
+        "tables and figures in the page were read in text form; not reproduced"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "row visibility is defined per user for normal queries and writes",
+        "a missing policy yields default-deny",
+        "policy expressions are evaluated per row before user query conditions",
+        "superusers, BYPASSRLS roles and table owners bypass row security",
+        "whole-table operations are not subject to row security",
+        "the row_security parameter can turn filtering into an error"
+      ],
+      "claims_not_supported": [
+        "recovery procedure",
+        "performance measurement",
+        "tested database behavior"
+      ],
+      "limitations": "Feature documentation; bypass and whole-table exceptions are documented, not defeated; no recovery procedure or performance measurement is supplied; no database was configured or tested.",
+      "content_sha256": "7121afa0bff4b9a94f7f1a547fc5856b83ac6152566f1bd859c28f74f46b8364",
+      "read_scope": "the full served page body, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.ms-multitenant-approaches.2026-10-31",
+      "source_id": "src.microsoft-multitenant",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/guide/multitenant/approaches/overview",
+      "unit_label": "Architectural approaches for a multitenant solution — Azure Architecture Center",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; served HTML article body inspected; two fetches byte-identical",
+      "sections_read": [
+        "Introduction",
+        "Deployment Stamps pattern",
+        "Intended audience",
+        "Related resource"
+      ],
+      "sections_not_read": [
+        "linked service-specific approach pages",
+        "images",
+        "no Azure deployment was inspected"
+      ],
+      "tables_figures": [
+        "diagram descriptions were read in text form; images not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "shared versus isolated resources across compute, storage, data, networking and identity",
+        "single-tenant stamps provide the highest isolation and avoid the noisy neighbor problem",
+        "multitenant stamps still carry noisy-neighbour risk",
+        "unshareable infrastructure is the main cost of stamps",
+        "resource sharing reduces infrastructure costs"
+      ],
+      "claims_not_supported": [
+        "service-specific implementation guidance",
+        "a deployed stamp",
+        "benchmark"
+      ],
+      "limitations": "A section overview; the single-tenant and multitenant stamp trade-offs are stated, but service-level implementation details were not read.",
+      "content_sha256": "a9575f30cd494c541772bafbeee1bc025d65c7b7ef03f19f8f1f3fd193adc4be",
+      "read_scope": "the article body, excluding linked service-specific pages and images",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }
