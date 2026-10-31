@@ -112,6 +112,25 @@ Tycho is not affiliated with, endorsed by, or derived from any third party's
 internal systems. Read [the independence policy](governance/INDEPENDENCE.md)
 before contributing. Every contributor must follow [AGENTS.md](AGENTS.md).
 
+## Name and inspiration
+
+The project name is a homage to Tycho Station from *The Expanse*. In the source
+material, Tycho Station is the largest mobile construction platform in the Sol
+system and the Belt headquarters of Tycho Manufacturing and Engineering
+Concern: a shipyard and engineering hub, not a scientific research station. The
+name may also echo Tycho Brahe, but the station's described role is industrial.
+
+The project borrows the name as a reference to ambitious, inspectable
+engineering. It does not treat the series as a source of technical facts;
+Tycho's knowledge base is built from public engineering sources and original
+synthetic examples. The project is independent and not affiliated with the
+rights holders.
+
+Public references:
+
+- [Tycho Station — The Expanse Wiki](https://expanse.fandom.com/wiki/Tycho_Station)
+- [Syfy](https://www.syfy.com/blogs/the-expanse-explore-the-solar-systems-biggest-space-station)
+
 ## Start here
 
 - [Read the book](book/README.md)
