@@ -1,0 +1,315 @@
+{
+  "batch": "SR01",
+  "items": [
+    {
+      "id": "V4-A001",
+      "question": "What risk arises when a translation layer between legacy and new domains has no owner for its mappings?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Anti-corruption adapters protect meaning, not just JSON fields An anti-corruption layer translates between domain models whose semantic rules differ. This need can arise even with the same protocol and database engine; it does not require a microservice. The independently published [Microsoft anti-corruption layer pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/anti-corruption-layer) explains incremental coexistence and specifically notes latency, extra maintenance and consistency costs. A separate [V02/C06 chapter](../c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md) owns the detailed translation topology and ad",
+          "heading": "4. Anti-corruption adapters protect meaning, not just JSON fields",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/boundary-evolution.md",
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields"
+        },
+        {
+          "excerpt": "## 2. Original synthetic case: an equipment catalogue migration A fictional community equipment catalogue is being rewritten while clients still query a legacy inventory feed. In the invented legacy feed, a row can have a product-level identity, display status \u201copen\u201d, a last-refresh timestamp and several inventory locations. The new domain distinguishes a physical item's *allocatable identity*, inspection restrictions and committed reservation. A simplistic one-to-one row mapping confuses product visibility with physical-unit availability. ```mermaid flowchart LR C[\"New reservation domain\"] --> P[\"New domain port\"] P --> A[\"ACL: identity, status and version translation\"] A --> L[\"Legacy inve",
+          "heading": "2. Original synthetic case: an equipment catalogue migration",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "section_key": "tycho.page.e5195a1aafa640359f05aebc08744584#2-original-synthetic-case-an-equipment-catalogue-migration"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Domain-Driven Design and Bounded Context A bounded context has one accountable model owner and one accepted vocabulary. A named domain expert co-owns that vocabulary and arbitrates disputed meanings. The model owner may reject a term carrying a conflicting invariant, even when another team introduced it. These notes are synthetic design guidance, not measured evidence. The context map records each relationship, translation direction and mapping maintainer. Treat it as an ownership artifact that changes with the model, not a diagram produced once for review. Keep deployment choices separate from model boundaries: one deployable can host several contexts,",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Layered Architecture Layering is a dependency rule: presentation may call application, application may call domain, and domain calls neither. Put that rule in build checks, not only in a diagram. The owner of each layer names its public surface and the test that catches a bypass. A layer that only forwards calls, a cyclic import, or shared mutable data crossing the boundary is evidence that the layer is not a real change boundary. Detect these ",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/layered-hexagonal-ports-and-adapters.md",
+          "section_key": "tycho.page.77b512c4e2e946bd92d70b4a714600c8#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A002",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "section_new": [
+        {
+          "excerpt": "## 6. Cross-model trade-off matrix | Model / representative engine | Strong workload fit | Central boundary and failure cost | Measure before adopting | Ledger support | |---|---|---|---|---| | Embedded SQL \u2014 SQLite | Local/offline transactional storage with bounded process integration | Local file/device availability; networking/sync must be built separately | Concurrent writer behavior, backup and local I/O | E01 | | Server relational \u2014 PostgreSQL | Relational invariants, joins and mixed transactional queries | Connection/lock/index/WAL bottlenecks; replica lag and failover | Actual query plans, transactions, write/read mix, recovery | Tycho synthesis; no separate source row | | Distribute",
+          "heading": "6. Cross-model trade-off matrix",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix"
+        },
+        {
+          "excerpt": "## Public evidence and limitations | ID | Exact public source and inspected section, 2026-10-19 | Supports / limitations | |---|---|---| | E01 | [Caffeine Wiki \u2014 Eviction](https://github.com/ben-manes/caffeine/wiki/Eviction), **Size-Based, Time-Based, Reference-Based** | Local eviction/expiration modes, not guaranteed global cache consistency | | E02 | [Caffeine Wiki \u2014 Refresh](https://github.com/ben-manes/caffeine/wiki/Refresh), refreshing vs eviction | Old-value retention while asynchronous refresh occurs; current wiki not pinned to a library tag | | E03 | [Redis Docs \u2014 Cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/), **When to use, Why it is hard, How Redis suppo",
+          "heading": "Public evidence and limitations",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#public-evidence-and-limitations"
+        },
+        {
+          "excerpt": "## 4. Deduplication is only as strong as its authority boundary An in-memory set can deduplicate within one live process but fails across replicas, restarts and retained events. A durable database uniqueness constraint or state-machine conditional write can enforce one logical-effect record when scoped to the correct business domain. A minimal conceptual contract is: 1. Authenticate and authorize each request. 2. Derive the normalized identity/semantic parameters and check them against any retained prior operation. 3. In one suitable durable authority boundary, decide **new, in-progress, committed, rejected, or incompatible duplicate**. 4. Commit the business effect and durable outcome corre",
+          "heading": "4. Deduplication is only as strong as its authority boundary",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary"
+        },
+        {
+          "excerpt": "## 4. Choose the correct core boundary An application core must still choose between: - **pure domain rules** (e.g., interval overlap predicate) that can be evaluated deterministically; - **application orchestration** (identity/authorization, repository lookup, command sequence); - **transactional authority** (atomic read-check-write or equivalent conditional state change); - **external interaction** (notification, storage, payments, queues, which can fail independently). Ports do not make a multi-resource transaction atomic. If a database commit succeeds but an external message is lost, the core needs a durable event/publication strategy where the contract requires it; adding an interface m",
+          "heading": "4. Choose the correct core boundary",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/dependencies-ports.md",
+          "section_key": "tycho.page.f375bfcea48045d2a5d1f46014ca7758#4-choose-the-correct-core-boundary"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A003",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "section_new": [
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Reconnect cannot recover unpersisted stream items **Synthetic scenario:** a device-status server streams numbered updates over gRPC to a remote consumer. The network drops after the server sends sequence 41 but before the consumer can acknowledge it; the server emits 42 while the client is offline. Transport flow-control windows influence buffered bytes **while connected** but do not constitute a durable event log or replay cursor. | Contract decision | Option A: transient live feed | Option B: resumable durable subscription | |---|---|---| | Owner of buffered state | Process/session with bounded bytes | Named storage/log with retention and sequence identity | | ",
+          "heading": "Engineering walkthrough \u2014 Reconnect cannot recover unpersisted stream items",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+          "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items"
+        },
+        {
+          "excerpt": "## 3. Original synthetic sequence: double-submit on equipment booking A fictional application accepts a request to reserve one physical unit for a specific interval. The server commits reservation **R7** for logical operation key **K42**, but the response is lost. The client repeats K42 with equivalent parameters. ```mermaid sequenceDiagram participant C as Client participant A as API participant D as Durable authority C->>A: POST reservation, operation K42, payload P A->>D: Atomically resolve-or-commit K42/P D-->>A: Committed reservation R7 A--xC: Response lost C->>A: Retry K42/P A->>D: Resolve existing outcome K42/P D-->>A: Same durable outcome R7 A-->>C: R7, not a second reservation ``` *",
+          "heading": "3. Original synthetic sequence: double-submit on equipment booking",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/intent-identity.md",
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 New leader, old client and a lost acknowledgment **Original three-node quorum illustration:** nodes A, B and C replicate one state machine. A was leader. A's network connection to B and C fails; B and C may form a quorum and eventually select a new leader. A can remain reachable to some clients, but must not be allowed to commit new authoritative writes without a valid quorum/term contract. A client whose response was lost before the partition cannot decide whether its operation committed. | Failure point | Safety claim requiring proof | Liveness limitation | |---|---|---| | A isolated from B,C | Quorum/term enforcement prevents conflicting committed log entries ",
+          "heading": "Engineering walkthrough \u2014 New leader, old client and a lost acknowledgment",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md",
+          "section_key": "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment"
+        },
+        {
+          "excerpt": "## 1. Four interaction contracts | Interface form | Producer/consumer relationship | Required decision | |---|---|---| | Unary request/response | One request, one final result or error | Deadline, retry-safe outcome, response semantics | | Server streaming | One request produces a sequence over time | Receiver demand, partial completion, order and cancellation | | Client streaming | A client sends a sequence to one service | Maximum input, validation, final acknowledgment and interruption | | Bidirectional streaming | Both ends produce messages over a shared stream | Simultaneous flow control, protocol state, ordering and reconnection | | Durable asynchronous job | Accepted task outlives the",
+          "heading": "1. Four interaction contracts",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/stream-contracts.md",
+          "section_key": "tycho.page.fbb4bc905d02495dbe3d7675d8670235#1-four-interaction-contracts"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A004",
+      "question": "What infrastructure must exist before Envoy can use the service-discovery approach described by the card?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route | Page | Question | |---|---| | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? | | [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? | | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? | | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? | | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functi",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. Where a section names an admitted source, that source supports the bounded claims; limits and deployment notes remain synthetic and create no new source claim. Immutable Infrastructure moved to a dedicated owner note on 2026-10-29; this page retains the two colocated-helper notes below. ### Ambassador The source describes an ambassador service, by analogy, as follows: \"Think of an ambassador service as an out-of-process proxy that's colocated with the client.\" It can send network requests on behalf of a consumer service or application and offload m",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+          "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## 1. Why write-ahead logging exists PostgreSQL 17 \u00a728.3 **Write-Ahead Logging (WAL)** explains the durability approach: record modifications into a log before the affected data pages must be written to their permanent table/index files. WAL records and commit policies permit recovery after a crash without forcing every changed page to disk at transaction commit. WAL is both a recovery mechanism and a foundation for replication approaches. [E01] ```mermaid flowchart LR Client[\"Client transaction\"] --> Buffer[\"Modified in-memory pages\"] Buffer --> WAL[\"Write-ahead log records\"] WAL --> Commit{\"WAL/commit durability settings satisfied?\"} Commit --> Reply[\"COMMIT acknowledgement\"] Buffer --> Fl",
+          "heading": "1. Why write-ahead logging exists",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists"
+        },
+        {
+          "excerpt": "## 2. Evaluate the baseline before choosing a target The canonical [requirements/workload chapter](../c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md) establishes what an architecture must achieve. The [legacy baseline](../c02-baseline-analysis-for-existing-software/legacy-baseline-and-modernization-evidence.md) establishes which parts of the existing system must coexist during change. Their outputs become a decision envelope: ```mermaid flowchart TD R[\"Outcome, workload, invariants\"] --> B[\"Baseline state and operational ownership\"] B --> H{\"Hard gate violated?\"} H -->|Yes| X[\"Eliminate candidate\"] H -->|Unknown| E[\"Evidence request and ",
+          "heading": "2. Evaluate the baseline before choosing a target",
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "section_key": "tycho.page.2176fe3dcdf24a199d1656cba602e8e1#2-evaluate-the-baseline-before-choosing-a-target"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A005",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence; the Aggregator and Scatter-Gather alternatives carry separate source bindings recorded in their cards and owner units. ### Aggregator An aggregator fans in related results from multiple participants and returns one composed result. It needs correlation, a completeness condition and an aggregation algorithm. Tycho guidance, not a source claim: add a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses. Define the expected participant set, a completion ",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#resequencer) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Use a resequencer only when the message contract declares a required order, a reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition have owners. Partition by key instead when global order is unnecessary; when the buffer cannot be bounded, reject the resequence",
+          "heading": "Resequencer",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+          "section_key": "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+        },
+        {
+          "excerpt": "## Query patterns determine when data duplication is justified The design keeps ordinary guild messages indexed by **guild ID**, enabling localized guild queries. Search across all of a user's direct-message conversations could not efficiently be implemented by fanning out one query to every DM. Discord therefore introduced a separate **user-ID-sharded direct-message cell** so one user's messages could be retrieved in one logical search path. A two-person direct message then has **two indexed copies**, one per recipient, a deliberately accepted storage amplification for the new user-facing cross-DM search. [src.m9-di02, **Supporting new search use cases**]. A different corner case required t",
+          "heading": "Query patterns determine when data duplication is justified",
+          "path": "book/cases/discord-search-index-cells.md",
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#query-patterns-determine-when-data-duplication-is-justified"
+        },
+        {
+          "excerpt": "## Why event order is part of the model Two events at the same timestamp can produce different results depending on which is processed first. A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp. If the completion is processed first, the request succeeds. If the timeout is processed first, the request fails and may retry. A model that relies on dictionary iteration order or an unstable sort is not reproducible. The V12 event queue orders by time, then priority, then insertion sequence. The insertion sequence is a monotonically increasing integer, so the order is total and deterministic.",
+          "heading": "Why event order is part of the model",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A006",
+      "question": "What failure can arise if a claim token is published before its payload is durably stored?",
+      "section_new": [
+        {
+          "excerpt": "## What changed in the migration plan The first company proposal would have **dual-written** new messages, sent newer reads to ScyllaDB using a time cutoff, and migrated old data in the background. The publisher says a conventional Spark migrator estimated roughly **three months**. Instead the team reused its Rust database client to build a token-range migrator with **SQLite checkpoints**; the new estimate was **nine days**, making a simpler whole-database cutover feasible. An observed peak transfer rate was **up to 3.2 million messages/second**\u2014a peak *migration* throughput, not production request capacity. [src.m9-di01, **A Very Big Migration**]. | Phase | Source-reported action | Correctn",
+          "heading": "What changed in the migration plan",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Session Consistency The product owner defines what counts as one session and which observations its users must retain. That choice sets the guarantee; no infrastructure default should supply it implicitly. The service owner publishes the token format, maximum size, lifetime and the failure callers receive when no replica can satisfy it. The routing layer owns the wait, reroute and rejection policy. An epoch or lineage field stops a token from crossing a leadership change as though positions remained comparable. A multiwriter frontier can expose two writes with no total order; the reader must not collapse a concurrent frontier into one scalar; reject onl",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Make a claim falsifiable before building a harness \u201cSurvives retries\u201d is too vague to test. State a safety property over observable operations, the failures under which it must hold, and the conditions needed for progress. Safety forbids a bad state; liveness requires eventual progress under stated fairness and recovery assumptions. A system can preserve safety by refusing every request, so both matter. This original example studies a service that publishes a catalogue entry and an associated search event. The authoritative database stores entry state and an outbox record in one transaction. A worker delivers events to an external index. The scope excludes arbitrary corruption of the data",
+          "heading": "Make a claim falsifiable before building a harness",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "section_key": "tycho.page.ac84c140be153d3b1f5752ffbd38cb5b#make-a-claim-falsifiable-before-building-a-harness"
+        },
+        {
+          "excerpt": "## Questions and chapters | Chapter | Owning question | |---|---| | [V05/C01 \u2014 Relational modeling and transaction isolation](c01-relational-modeling-and-transaction-isolation/README.md) | Which invariants and anomalies are relevant to the data contract? | | [V05/C02 \u2014 PostgreSQL MVCC, WAL and recovery](c02-postgresql-mvcc-wal-and-recovery/README.md) | What are the consequences of durability, vacuum and replication mechanisms? | | [V05/C03 \u2014 Query planning, indexes and access paths](c03-query-planning-indexes-and-access-paths/README.md) | Which read/write trade-offs explain an observed query plan? | | [V05/C04 \u2014 Alternative data models and stores](c04-alternative-data-models-and-stores/READM",
+          "heading": "Questions and chapters",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/README.md",
+          "section_key": "tycho.volume.01d303aaa7984edaac4127884592dd75#questions-and-chapters"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A007",
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Failure and recovery matrix | Failure timing | Committed state / outbox | External event / user-visible effect | Recovery contract / evidence required | |---|---|---|---| | Before commit | Neither should commit in the proposed local transaction | No authoritative successful registration | Verify transaction rollback and uniqueness/seat invariant | | After local commit, before reply | Both may exist; client sees timeout | Client cannot infer whether registration succeeded | Retry with same K and recover committed R; prove no duplicate R | | After commit, before relay publication | Both exist, broker may know nothing | Notification delayed; local registration remains authoritative | Reco",
+          "heading": "4. Failure and recovery matrix",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix"
+        },
+        {
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+          "heading": "Transactional Outbox",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview"
+        },
+        {
+          "excerpt": "## Purpose and decision question A relational database can commit an authoritative state change inside one local transaction. An unrelated message broker or external service is usually *not part of the same atomic commit*. A long-running workflow crossing several independent owners therefore needs explicit persistent state, publication and failure contracts. A distributed event architecture is not made reliable by drawing an arrow from a transaction to a queue. Four patterns address different questions: - **Transactional outbox:** how can the local state change and a durable intent to publish one event be committed atomically? - **Inbox/idempotent consumer:** how can a downstream owner apply",
+          "heading": "Purpose and decision question",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](outbox-inbox-sagas-and-durable-workflows.md) | How are state changes coordinated without claiming global atomicity? | | [Transactional Outbox owner note](transactional-outbox.md) | How is publication intent committed and relayed without a shared atomic transaction? | | [Outbox publication and ordering](outbox-publication.md) | Which local atomic record closes a dual-write loss window? | | [",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/README.md",
+          "section_key": "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b#pages-and-reasoning-route"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A008",
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
+      "section_new": [
+        {
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+          "heading": "Transactional Outbox",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview"
+        },
+        {
+          "excerpt": "## 1. Boundaries: why the naive dual write is unsafe Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive design is two independent effects: 1. Commit a database record. 2. Publish an event to an external broker. Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor ",
+          "heading": "1. Boundaries: why the naive dual write is unsafe",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe"
+        },
+        {
+          "excerpt": "## Crash windows | Crash point | Persisted evidence | Recovery | |---|---|---| | Before upload starts | Pending K, no verified object | Resume or expire pending intent | | After upload, before completion call | Candidate object and pending K | Verify exact candidate and resume | | During validation | Pending K and validation attempt | Repeat safe validation under the same identity | | After publish commit, before response | Published K and its object reference | Return existing result for K | | After publication, before event delivery | Published row and durable outbox entry | Relay event without recreating publication | An object-created notification is a useful wake-up signal, not the auth",
+          "heading": "Crash windows",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows"
+        },
+        {
+          "excerpt": "## 5. Durable workflow selection is conditional One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coordinator may help with long waits, retries and auditability, but its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration. **Choreography risks:** difficult-to-discover implicit coupling, unbounded event chains, conflicting compensations, and tracing that describes correlation but not durable business truth. **Orchestration risks:** ",
+          "heading": "5. Durable workflow selection is conditional",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A009",
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Distinguish authoritative state from cached copies and define freshness, eviction and invalidation behavior. A successful cache hit can return an inadmissibly stale value; cache availability is not authoritative correctness. The detailed pages separate the mechanisms that make this decision conditional: - [Authority, freshness and cache placement](cache-authority.md) \u2014 Which state remains authoritative when a local or distributed cache is used? - [Eviction, refresh and cache-aside races](refresh-semantics.md) \u2014 Which read/write interleaving invalidates a naive freshness promise? - [Cache cost, failure and acceptance](cache-acceptance.md) \u2014 When should",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## 3. Local cache eviction and refresh are different actions The [Caffeine Eviction wiki](https://github.com/ben-manes/caffeine/wiki/Eviction) documents size/weight and time-based eviction, including expire-after-write and expire-after-access. The [Caffeine Refresh wiki](https://github.com/ben-manes/caffeine/wiki/Refresh) distinguishes asynchronous refresh from eviction and notes that refresh-after-write eligibility generally triggers an actual reload only when a key is queried. This difference is architectural: - **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit; - **expire-after-access:** frequently accessed values may remain resident",
+          "heading": "3. Local cache eviction and refresh are different actions",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#3-local-cache-eviction-and-refresh-are-different-actions"
+        },
+        {
+          "excerpt": "## 2. Three basic placements | Placement | Can help | Costs and correctness gap | |---|---|---| | No cache | Simplest authority/read path when origin is fast and affordable | Every query reaches origin, possibly expensive | | Per-process local cache | Very low read overhead, no cache network call | Each replica warms independently; divergent contents, memory/GC cost, lost state on restart | | Shared distributed cache | Many application replicas share reusable keyspace and memory | Added network/auth/HA dependency; cache node loss and consistency rules | | Multi-level local + shared | Avoid remote cache on hot local hits and reduce origin work on misses | Two invalidation/expiration layers, c",
+          "heading": "2. Three basic placements",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+          "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#2-three-basic-placements"
+        },
+        {
+          "excerpt": "## 5. Cache-loss and source-protection policy Losing the cache might cause every request to hit the source. \u201cFallback to DB\u201d is not automatically a safe policy when the source cannot handle full offered traffic. ```mermaid flowchart TD R[\"Offered reads\"] --> C{\"Eligible cache hit?\"} C -->|Yes| O[\"Return valid cached value\"] C -->|No| B{\"Per-key/source admission available?\"} B -->|Yes| L[\"Coalesced authoritative load\"] L --> V[\"Version-gated fill and bounded TTL\"] V --> O B -->|No| D[\"Explicit wait, reject or approved stale response\"] ``` **Text alternative:** a cache miss checks scarce source capacity and same-key load sharing. Admitted loads may fill the cache only under a valid version rul",
+          "heading": "5. Cache-loss and source-protection policy",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A010",
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
+      "section_new": [
+        {
+          "excerpt": "## Migration mechanics and reliability The published article describes the architecture, not a complete original cutover chronology. A comparable design must define cache fill concurrency and hot-key suppression, shard ownership and replication; validate read-your-writes where required, make consistency mode explicit and plan primary-region switching. Those extra transition gates are Tycho synthesis. **Synthetic acceptance plan for a different legacy stack:** baseline real workload and maintenance cost; specify the one invariant that cannot change; stage compatible dual routes/data or immutable job inputs; compare source and target results including timestamps and retries; define rate-limit,",
+          "heading": "Migration mechanics and reliability",
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Read-Through Cache A read-through cache loads a miss from the source on behalf of the caller and stores the result, so the application never performs the fill itself. A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the source. Slow fills and error masking make the cache appear healthy while the source degrades; bound fill concurrency, timeouts and error transla",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## 2. Feedback signals and the hot-key trap A policy must choose a signal that reflects the **scarce resource** limiting useful progress: | Proposed metric | Useful when | Deceptive when | |---|---|---| | Average CPU utilization | Work is CPU-bound and can be spread across replicas | Requests wait on DB locks or remote I/O; average hides one hot process | | Memory pressure | Resource limit and cache footprint are known | More memory only retains more stale objects or delays leaks | | Queue length / age | Each item has bounded work and service level is defined | A single blocked key/consumer prevents queue progress | | Active requests | Per-request work and admitted load are stable enough | L",
+          "heading": "2. Feedback signals and the hot-key trap",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+          "section_key": "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Command-Side Replica A command-side replica serves reads that must observe the latest accepted command state while the read projections still lag. The query is routed to a replica of the command-side store, and the reply reports the applied position it observed. The replica must apply a committed command before it answers a query that claims to include that command; otherwise the result is stale. Replication delay or failover can serve an older",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "atlas"
+    }
+  ]
+}

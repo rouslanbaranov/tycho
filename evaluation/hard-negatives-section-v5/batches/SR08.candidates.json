@@ -1,0 +1,315 @@
+{
+  "batch": "SR08",
+  "items": [
+    {
+      "id": "V4-B041",
+      "question": "Why does embedding SQLite in an application not by itself provide a networked multi-region database service?",
+      "section_new": [
+        {
+          "excerpt": "## Placement, IaC and operational contract Cross-region deployment must reproduce more than code: - network routing, DNS/certificates, identities/secrets, state/backup permissions and egress; - source code/release artifacts and immutable provenance, database schema/CDC/event versions, retention and write roles; - runbook owner, on-call/approval channel, maintenance access and control-plane unavailability fallback; - tenant and personal-data residency rules with actual jurisdiction/version evidence, not assumed replication permission. Infrastructure as code with source control reduces manual divergence only if the state backend, provider API, credentials and artifacts remain operable during t",
+          "heading": "Placement, IaC and operational contract",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract"
+        },
+        {
+          "excerpt": "## Adopt only for matching access patterns (Tycho original) An unrelated application should first count **positive and negative relationship lookups**, the number of association elements actually returned, cache churn, hot-item skew, required ordering, write freshness and multi-region semantics. A service-specific association facade plus multi-tier cache may be attractive when reads are dominated by *creation-time locality* and fixed-point/range/count access. Ordinary SQL plus a managed cache may be simpler when datasets are small, association queries are variable or strong multi-record transactions dominate. A general graph database is another option **for applications that genuinely need a",
+          "heading": "Adopt only for matching access patterns (Tycho original)",
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original"
+        },
+        {
+          "excerpt": "## Failure containment and migration ownership Netflix credits replication, redundancy, graceful degradation and repeated fault exercises for improvements in availability, while explicitly acknowledging that cloud infrastructure also fails. That assertion is stronger than \u201cAWS itself eliminated outages\u201d and narrower than a measured causal effect for a particular circuit breaker. The retrospective does **not** publish incident counts, complete chaos-testing methods or a fleet-wide rollback protocol. **Tycho analytical transition architecture for an unrelated system:** first identify the true single points of failure (runtime, database, release, region and human operating process); test smalle",
+          "heading": "Failure containment and migration ownership",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership"
+        },
+        {
+          "excerpt": "## 5. Route R4: modernization objective \u2192 measured improvement **Synthetic objective:** lower incident recovery time and regional exposure. The existing service has a durable primary database in one region, daily backups and one application deployment; restore times and data-loss windows were never measured. A tempting proposal is instant multi-region active/active deployment. The proposal is **inadmissible without conflict resolution, authoritative writer/election/fencing, cross-region network failure policy, data reconciliation and actual replica lag evidence**. Compare: | Option | Possible value | Hidden risk and test | |---|---|---| | Retain single region, improve restore/backup discipli",
+          "heading": "5. Route R4: modernization objective \u2192 measured improvement",
+          "path": "book/decisions/requirements-to-transition-decision-playbooks.md",
+          "section_key": "tycho.page.a726b2ab751b44dea1a659556ed4f4c6#5-route-r4-modernization-objective-measured-improvement"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B042",
+      "question": "When can embedding related records in a document become a poor fit for their lifecycle?",
+      "section_new": [
+        {
+          "excerpt": "## Navigation, prerequisites and source scope | Route | Destination | |---|---| | Parent and source ledger | [Chapter introduction and exact source rows](README.md#chapter-source-ledger) | | Previous / prerequisite | [Read preceding context](storage-model-alternatives-and-workload-fit.md) | | Next | [Continue the reasoning](specialized-models.md) | | Integrated question | [Original scenario and limits](storage-model-alternatives-and-workload-fit.md) | The source material keeps its original published/inferred/synthetic/unverified distinctions. Chapter-wide citations are shared reference context, not proof that every cited source supports every sentence on this page. Freshly inspected text is ",
+          "heading": "Navigation, prerequisites and source scope",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/transactional-models.md",
+          "section_key": "tycho.page.7b980e671a324f769064bc5233761c62#navigation-prerequisites-and-source-scope"
+        },
+        {
+          "excerpt": "## Canonical researched pages | Reader question | Page | Primary evidence | |---|---|---| | Which relational identities, constraints and isolation guarantees preserve business invariants? | [Relational modeling and transaction isolation](../volumes/v05-data-models-engines-and-lifecycle/c01-relational-modeling-and-transaction-isolation/relational-modeling-and-transaction-isolation.md) | V05/C01, PostgreSQL 17 \u00a7\u00a75,13, original concurrency counterexample; not executed | | What governs index selection, planner statistics and estimated-versus-actual query behavior? | [PostgreSQL indexes, statistics and query plans](../volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-ac",
+          "heading": "Canonical researched pages",
+          "path": "book/data/README.md",
+          "section_key": "tycho.landing.984c44f8dbd44d8e89105b4d31787636#canonical-researched-pages"
+        },
+        {
+          "excerpt": "## 4. Operating cost is a lifecycle, not a monthly instance fee Include: - recurring compute/storage/network/replication and idle redundancy; - event, audit and trace retention/transfer; - CI, dependency update, security scanning and test environment capacity; - scheduled change/release effort and support of old clients; - incident detection, restoration drills, credential/key rotation; - migration double-running, data reformatting and rollback/repair; - staff training and long-lived maintenance of bespoke control mechanisms; - decommissioning and data retention after features are retired. The [AWS cost principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) en",
+          "heading": "4. Operating cost is a lifecycle, not a monthly instance fee",
+          "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/lifecycle-cost.md",
+          "section_key": "tycho.page.b8d02f9b40c44c729e2b99e01a8b0dbf#4-operating-cost-is-a-lifecycle-not-a-monthly-instance-fee"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](storage-model-alternatives-and-workload-fit.md) | When are document, wide-column, KV, distributed SQL or analytical stores useful? | | [Relational, embedded and transactional key-value models](transactional-models.md) | Which transaction and locality requirements distinguish these storage choices? | | [Document, wide-column and analytical access](specialized-models.md) | Which access patter",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/README.md",
+          "section_key": "tycho.chapter.4a127ad6ab514ede9ff74394e5174f9c#pages-and-reasoning-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B043",
+      "question": "What did Netflix\u2019s Chaos Kong regional simulation leave outside the tested failure envelope?",
+      "section_new": [
+        {
+          "excerpt": "## Failure containment and migration ownership Netflix credits replication, redundancy, graceful degradation and repeated fault exercises for improvements in availability, while explicitly acknowledging that cloud infrastructure also fails. That assertion is stronger than \u201cAWS itself eliminated outages\u201d and narrower than a measured causal effect for a particular circuit breaker. The retrospective does **not** publish incident counts, complete chaos-testing methods or a fleet-wide rollback protocol. **Tycho analytical transition architecture for an unrelated system:** first identify the true single points of failure (runtime, database, release, region and human operating process); test smalle",
+          "heading": "Failure containment and migration ownership",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Draw the outcome boundary before selecting a component boundary: name the caller, authoritative effect, external decision owner and recovery lookup. A third-party timeout can leave an external effect committed while the local request is unresolved; moving the dependency outside a diagram does not remove that obligation. The detailed pages separate the mechanisms that make this decision conditional: - [Outcomes and system context](outcomes-context.md) \u2014 Which user outcome and external actors define the problem boundary? - [Authority and external dependencies](authority-dependencies.md) \u2014 Who owns each state transition and what can an external dependenc",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/problem-framing-and-system-boundaries.md",
+          "section_key": "tycho.page.4318e542ac7e445b9e8b3150effd2cff#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Decision and boundary Netflix's platform story is not a simple technology flip from RxJava to Spring Boot. Paul Bakker describes a change of *where* composition complexity belongs: client-specific backends formerly did elaborate fan-out across microservices, often using Groovy and reactive primitives; later GraphQL federation introduced schema-guided composition boundaries while the Java platform became a more consistent paved road for services. At the same time, the system remains distributed, its gateway can still use reactive I/O, and individual transports still differ. The platform team is responsible for frameworks, libraries, upgrades and integration, not the business domain decisio",
+          "heading": "Decision and boundary",
+          "path": "book/cases/netflix-java-platform-convergence.md",
+          "section_key": "tycho.page.b95df0f6a3ee4355939f65193b11d8c9#decision-and-boundary"
+        },
+        {
+          "excerpt": "## What Netflix actually reported The Netflix gateway write-up describes significant persistent-connection scalability benefits with Zuul 2. But the production outcome was not a uniform CPU-efficiency win. For the API-facing, computation-heavier cluster, CPU efficiency did **not** materially improve. For a logging cluster doing less work per request, the company reported about **25% throughput improvement with associated CPU-use reduction**. This is precisely why a simple 'no gain' or 'Netty 10x better' summary is false. [src.m9-n07: \"Results of Zuul 2 in Production\"]. | Measurement | Observed result | External-validity boundary | |---|---|---| | Persistent connections | Higher scalable conn",
+          "heading": "What Netflix actually reported",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B044",
+      "question": "Why does fencing an old regional writer not itself recover a commit missing from the promoted replica?",
+      "section_new": [
+        {
+          "excerpt": "## Original proposed region recovery flow ~~~mermaid sequenceDiagram participant U as Client participant A as Region A: original writer participant W as Region B: standby participant R as Recovery controller participant B as Backups / immutable checkpoints U->>A: Last acknowledged logical operation K A->>W: Asynchronous data replication Note over A,W: Region A becomes unreachable R->>R: Assess user impact, state lag, approval R->>A: Attempt fencing / exclusion of old writer R->>B: Identify latest correct recovery point R->>W: Restore/promote only after write-safety gate W->>B: Reconcile journal, request/event identity R->>U: Route to verified surviving endpoint U->>W: Repeat K after ambiguou",
+          "heading": "Original proposed region recovery flow",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#original-proposed-region-recovery-flow"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A fictional release uses a signed artifact and a small canary. The canary writes a value old binaries cannot interpret. Later a zone fails while the former writer remains reachable. Artifact authenticity, safe exposure, data compatibility and exclusive recovery authority are four separate questions. Follow the cutover chain from source/build identity through digest verification and authorized promotion to mixed-version execution. Place replicas with shared dependencies visible. Define stop conditions, no-return points, writer fencing, reconciliation and user-level recovery clocks before declaring a rollout or region switch successful.",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/README.md",
+          "section_key": "tycho.volume.cb10070ba233477fae8aa5d18e74fee8#a-worked-cross-chapter-synthesis"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Two zones, one shared dependency and no real isolation **Original synthetic deployment:** three API replicas are spread across zones A and B. All replicas use one identity endpoint and one database writer reachable only through a zone-A dependency chain. When zone A fails, replicas in B may remain healthy at process level but cannot authorize or commit reservations; a zone-spread label did not eliminate the shared failure domain. | Dependency | Claimed independence | Hidden coupling to falsify | |---|---|---| | App replicas | Different compute zones | Both require one failed regional load-balancing/control endpoint | | Booking data | One authoritative database | ",
+          "heading": "Engineering walkthrough \u2014 Two zones, one shared dependency and no real isolation",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md",
+          "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation"
+        },
+        {
+          "excerpt": "## 3. Response actions are architecture choices | Mitigation | Can protect | Can damage if applied blindly | |---|---|---| | Stop unsafe writers | Prevent new incorrect durable effects | Block legitimate essential work; unprocessed commands may need replay | | Reduce admitted work | Bound overload/retry amplification | Explicit rejection semantics and client backoff become necessary | | Isolate faulty dependency | Preserve unaffected journeys | Partial responses must not imply complete authoritative truth | | Roll back deployable version | Undo a code/config regression if state compatible | Persisted schema/events may not be readable by old code | | Fail over a region/instance | Recover from",
+          "heading": "3. Response actions are architecture choices",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-contract.md",
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B045",
+      "question": "What must happen before an old region can safely regain authority after failover?",
+      "section_new": [
+        {
+          "excerpt": "## The question: what survives which loss? A service can survive a failed container yet lose all user state when its single database fails. It can span three availability zones yet be unavailable during a region-wide routing or identity outage. Conversely, a cross-region copy of an inconsistent state is not a valid recovery point merely because replication completed. Define each required **failure class** and loss boundary before choosing any topology: - single process/host/VM loss, rack/node-group loss, one zone unavailable, zonal network isolation; - partial region-control-plane outage while data plane operates, regional data-plane outage, complete region loss; - logical data corruption, d",
+          "heading": "The question: what survives which loss?",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Geode Geode places identical regional nodes behind a global routing layer so clients can use a nearby healthy region. It needs a data replication and consistency contract, a regional health signal, a routing rule and an explicit failover authority. Use it when locality or regional survival is material and the data model can reconcile cross-region state. Do not use it when a single region meets the objective or when routing would hide divergent ",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Reversible transfer and refusal criteria For a different Raft-replicated MySQL store, perform a **separate version-upgrade gate** before engine conversion; pin binary/client/backup revisions and capture representative SQL, query plans, object identity, checksums and per-class p95/p99. Promote one converted follower only after backup recovery, complete table enumeration, query-value comparisons and plan/capacity checks; retain another region on the old engine until read/write, replica-lag and failover tests pass. Test OOM during conversion and interrupted promotion, not only clean startups. Only remove the last old-region escape path with a documented recovery/forward-fix procedure. **Stop",
+          "heading": "Reversible transfer and refusal criteria",
+          "path": "book/cases/uber-mysql-to-myrocks.md",
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria"
+        },
+        {
+          "excerpt": "## 1. Define the invariant before naming consistency Imagine a wholly synthetic booking system with one workshop of ten seats. The invariant is not \"use ACID\"; it is **number of confirmed allocations must not exceed configured capacity**, under concurrency, retry and failure. Other requirements may permit an availability projection to lag or a confirmation notification to arrive later. The critical question is who can commit the authoritative allocation and what happens after ambiguous client outcomes. | Concern | Required definition | Common category error | |---|---|---| | Local transaction isolation | Which concurrent reads/writes can affect the invariant? | \"No dirty reads\" means full se",
+          "heading": "1. Define the invariant before naming consistency",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B046",
+      "question": "How should a reservation problem distinguish business success from sending a notification?",
+      "section_new": [
+        {
+          "excerpt": "## 2. Separate business context from technical context A **business context** answers who exchanges what *meaningful information or effect* with the system. A **technical context** answers through which channels or protocols it may be realized. Their boundaries should correspond, but they are not interchangeable. Original business-level context (illustrative, not a C4-compliant rendering guarantee): ```mermaid flowchart LR R[\"Requester\"] -->|Request slot; read decision| S[\"Workshop reservation system\"] A[\"Workshop administrator\"] -->|Manage availability and exceptions| S S -->|Optional confirmation request| N[\"External notification provider\"] S <-->|Optional inventory validation| I[\"External",
+          "heading": "2. Separate business context from technical context",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/outcomes-context.md",
+          "section_key": "tycho.page.de62a6f0e5a145aea3798ee69715f033#2-separate-business-context-from-technical-context"
+        },
+        {
+          "excerpt": "## 2. Original synthetic example: community workshop reservation Three modules inside a single application: - **Catalogue** publishes equipment descriptions and approved configurations. - **Reservation** owns exclusive allocation, cancellation and durable command identities. - **Notification** owns opt-in messages; successful delivery must not determine whether a reservation was accepted. ```mermaid flowchart TB C[\"Client\"] --> R[\"Reservation public module API\"] R --> D[(\"Reservation-owned state\")] R --> E[\"ReservationAccepted domain event\"] E --> N[\"Notification module listener\"] E --> O[\"Optional analytics/projection listener\"] R --> X[\"Catalogue public interface\"] ``` **Text alternative:*",
+          "heading": "2. Original synthetic example: community workshop reservation",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md",
+          "section_key": "tycho.page.07bb1f96bdd94195ac8e31644527a217#2-original-synthetic-example-community-workshop-reservation"
+        },
+        {
+          "excerpt": "## 5. Problem framing produces explicit unknowns A good architecture description does not erase uncertainty to improve the diagram's appearance. Use a boundary register: | Open question | Why it changes architecture | Evidence or experiment needed | |---|---|---| | Can reservations complete without catalog availability? | Defines whether catalog is a mandatory critical dependency | Signed behavior contract and offline/outage test | | How long may a requester await final confirmation? | Determines synchronous versus accepted/pending lifecycle | User-journey requirement and latency observation window | | Does an expired timeslot automatically cancel an accepted booking? | Determines state mach",
+          "heading": "5. Problem framing produces explicit unknowns",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/evidence-contract.md",
+          "section_key": "tycho.page.b6be128c3e714ac68ef3311a30d65141#5-problem-framing-produces-explicit-unknowns"
+        },
+        {
+          "excerpt": "## 3. Distributed transactions are a protocol choice, not an automatic extension A global two-phase commit protocol coordinates prepare/commit decisions across participants capable of supporting that exact protocol. It may simplify some cross-resource atomicity requirements, but participants and the coordinator need documented recovery behavior; coordinator/participant failure and locks may affect progress. Do not assume an arbitrary SaaS API, queue and database support a shared atomic transaction merely because an application uses the word \"transaction\". When independent services own separate stores and cross-service 2PC is unavailable or unsuitable, a **saga** can model a business process ",
+          "heading": "3. Distributed transactions are a protocol choice, not an automatic extension",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/distributed-protocols.md",
+          "section_key": "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B047",
+      "question": "What separates a state-authority boundary from a separately deployed process?",
+      "section_new": [
+        {
+          "excerpt": "## A worked separation The checkout comparison has: - source support for queueing and event semantics from SimPy and Little's law; - model verification for conservation, boundary cases and event ordering; - uncalibrated arrival and service-time inputs; - simulation evidence from 30 seeded replications per candidate; - a decision-supported outcome for candidate B under the declared constraints; - an explicit statement that the operability constraint and production behavior are not established. A reader who wants to deploy B still needs a measured pilot, a cost review and an operational readiness check. The decision record tells them what to measure, not what to assume.",
+          "heading": "A worked separation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation"
+        },
+        {
+          "excerpt": "## 1. Four patterns frequently mixed together Martin Fowler's 2017 *What do you mean by \"Event-Driven\"?* distinguishes event notification, event-carried state transfer, event sourcing and CQRS and explicitly notes CQRS does not logically require events. His 2011 CQRS article cautions that read/write separation brings complexity and is not a default design for most systems. [E01, E02] | Mechanism | What is stored or communicated | Not automatically guaranteed | |---|---|---| | Event notification | Announces that something has happened, often requiring consumers to query authority | Consumer already has sufficient payload or the event is an authoritative history | | Event-carried state transfe",
+          "heading": "1. Four patterns frequently mixed together",
+          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#1-four-patterns-frequently-mixed-together"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Plan coexistence, authority transfer, no-return conditions and recovery as real intermediate operating states. Rolling back an image cannot undo new-only durable effects; transition safety requires a separate forward-repair path. The detailed pages separate the mechanisms that make this decision conditional: - [State authority and coexistence transitions](authority-states.md) \u2014 Which owner is authoritative in every real intermediate configuration? - [Rollback limits and semantic reconciliation](rollback-data.md) \u2014 Which durable differences survive reverting the deployed binary? - [Migration mechanisms and no-return gates](cutover-gates.md) \u2014 What evid",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## 2. Three credible modernization options ### Option A: keep the deployment, improve the architecture When domain and transaction cohesion are strong, isolate internal modules, publish contracts, enforce dependency direction, protect data ownership and add tests. This preserves an in-process interaction model while reducing accidental coupling. Cockburn's 2005 ports-and-adapters report directly motivates isolation of application logic from presentation and database technology, including the ability to test with alternate adapters. [E01] Good candidates: poor module encapsulation, slow code reviews caused by accidental dependencies, UI/batch interface churn, data persistence technology leaka",
+          "heading": "2. Three credible modernization options",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B048",
+      "question": "How can a boundary register expose an unknown that would change a design decision?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and question How do users, request rates, business transactions, concurrency, data volume, skew and growth determine which architecture change can actually increase useful throughput? The answer begins with **offered work and finite resources**, not registered-user counts. The canonical [queueing chapter](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) owns the deeper Little's Law derivation.",
+          "heading": "Purpose and question",
+          "path": "book/performance/workload-shape-and-scalability-laws.md",
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#purpose-and-question"
+        },
+        {
+          "excerpt": "## Conflict is sometimes the correct result A multivalue register can retain concurrent titles until a person resolves them. A last-writer register chooses one according to a deterministic total order; clock order is not evidence of user intent. A timestamp tie needs a documented deterministic tie-breaker, and a clock adjustment must not accidentally make a future update permanently dominant. A useful offline document separates mergeable text or annotations from authoritative transitions such as publication, permissions and finite-resource assignment. The server can accept an edit into a pending branch while refusing to claim that a revoked client still has publication rights. ```mermaid flo",
+          "heading": "Conflict is sometimes the correct result",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/multiwriter-conflicts.md",
+          "section_key": "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result"
+        },
+        {
+          "excerpt": "## Chosen architectural change Shopify's follow-up discusses an evolving codebase in which domain components and dependency checking are strengthened iteratively, while acknowledging remaining work. Packwerk and Rails packaging are tools in the larger migration; governance, ownership and exception reduction matter more than a magic static checker. ```mermaid flowchart LR A[Implicit cross-package Rails references] --> B[Component API and exceptions register] B --> C[Gradually enforced package boundaries] ``` **Diagram alternative:** Implicit cross-package Rails references evolved through Component API and exceptions register toward Gradually enforced package boundaries. This is a deliberately",
+          "heading": "Chosen architectural change",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#chosen-architectural-change"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](reactor-webflux-r2dbc-and-backpressure.md) | How do backpressure, scheduling and blocking boundaries affect execution? | | [Nonblocking execution and demand](demand-blocking.md) | Which demand boundary actually controls a producer and where can blocking escape it? | | [Schedulers, context and reactive database access](scheduler-context.md) | Which scheduling and context assumptions must hol",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/README.md",
+          "section_key": "tycho.chapter.b9bf60e22dc04878a05aeca98610b5d1#pages-and-reasoning-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B049",
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "section_new": [
+        {
+          "excerpt": "## The trust question Draw each hop and name its authenticated peer. In a client \u2192 edge \u2192 gateway \u2192 application path, the certificate seen by the client normally identifies the TLS endpoint it contacted. It does not by itself authenticate the final application process or authorize a particular object. If encryption terminates at a proxy, the next connection needs its own declared protection. RFC 9110 section 4.3.4 describes certificate verification for HTTPS. OWASP's REST guidance calls for HTTPS, endpoint access control and validated token claims. Neither source certifies an arbitrary proxy configuration.",
+          "heading": "The trust question",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/tls-gateway-boundaries.md",
+          "section_key": "tycho.page.37a28a568f7e987941749e198c03439a#the-trust-question"
+        },
+        {
+          "excerpt": "## 1. Separate four isolation dimensions | Axis | Requirement to establish | A dangerous assumption | |---|---|---| | Identity/authorization | Principal, tenant membership, object ownership, permitted effect | Authenticated automatically means entitled to all objects | | Data isolation | Which records and indexes may be read, written, exported or restored together | Every query remembers a WHERE tenant_id filter | | Resource isolation | Which compute, connection, queue, cache and quota capacity may be shared | One tenant's workload cannot delay another's | | Lifecycle/operations | Who upgrades, backs up, deletes, rekeys and restores a tenant's state | A shared restore can safely rewind one t",
+          "heading": "1. Separate four isolation dimensions",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+          "section_key": "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision](sbom-attestation-and-release-verification.md) | How are reproducibility, signatures and promotion controls established? | | [Artifact subjects, provenance and component inventories](provenance-subjects.md) | What does each evidence object describe and what does it omit? | | [Authorized promotion and missing evidence](promotion-authorization.md) | Why is authentic evidence insufficient to authorize an artifact in ev",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/README.md",
+          "section_key": "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## 1. Model assets, principals and actions For a wholly invented workshop registration service, protect: participant contact data, capacity counters, committed registrations, audit evidence, signing keys, deployment credentials, backup contents and administrative mutation interfaces. Model these separately: | Principal or object | Meaning | Ambiguous boundary requiring explicit policy | |---|---|---| | Human participant | Person interacting through a client | A valid login does not authorize reading someone else's registration | | API client | Application presenting authorization credentials | Client authentication alone does not identify the end user or authorize every resource | | Service ",
+          "heading": "1. Model assets, principals and actions",
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B050",
+      "question": "Which extra isolation concern remains when tenants share a connection pool but data permissions are correct?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Boundaries of network and service isolation | Control | Intended protection | What it does NOT prove | |---|---|---| | TLS / mutual TLS | Connection confidentiality, integrity and authenticated endpoint depending on configuration | Authorization for a particular business object | | Ingress/gateway authentication | Filter unauthenticated traffic and apply coarse policy | Every internal path or async consumer enforces business permissions | | Network policies / segments | Restrict permitted network reachability | A reachable compromised service cannot abuse permitted actions | | Container/VM isolation | Bound process/runtime reach and some resource ownership | Correct tenant-level applic",
+          "heading": "5. Boundaries of network and service isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation"
+        },
+        {
+          "excerpt": "## Tenant-Based Resource Isolation Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit. No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract. A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier. Network quotas and isolation \u2014 routing, egress and cross-tenant reachability \u2014 are part of the contract; compute-only quotas do not isolate network effects. A shared pool with tenant-scoped predicates is cheaper at low sc",
+          "heading": "Tenant-Based Resource Isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+          "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation"
+        },
+        {
+          "excerpt": "## Common dependencies and cost The router, identity service, configuration publisher, network and any outbound dependency remain shared risks. Cached verified identity and placement can preserve some steady-state service under bounded staleness, but permissions and expiry rules still apply. Outbound calls receive per-cell connection and deadline budgets; otherwise the isolated workers can all block on one shared pool. The illustrative fleet reserves 8 \u00d7 32 = 256 effective cores. At a hypothetical cost c per effective core-hour, compute alone is 256c per hour, before router, storage, worker isolation and standby recovery capacity. If the average load is half peak, planned headroom increases ",
+          "heading": "Common dependencies and cost",
+          "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/multitenant-project.md",
+          "section_key": "tycho.page.4856fd39b7e1bfa3b7430427192179fa#common-dependencies-and-cost"
+        },
+        {
+          "excerpt": "## 3. Common storage and placement designs | Deployment/data model | Potential advantage | Isolation and operational cost | |---|---|---| | Shared application + shared tables, tenant key | Efficient resource reuse and simpler global deployment | Every query/join/index/cache/background job needs enforced tenant scope; shared quotas and noisy neighbors | | Shared application + schema/database per tenant | Easier isolation, restore or migration at data boundary in some engines | Schema/version fan-out, connection pools, orchestration and mapping complexity | | Dedicated application/runtime and datastore | Stronger physical/resource failure isolation | High per-tenant operating cost, upgrades an",
+          "heading": "3. Common storage and placement designs",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+          "section_key": "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

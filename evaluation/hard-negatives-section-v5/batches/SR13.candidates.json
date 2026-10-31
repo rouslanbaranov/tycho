@@ -1,0 +1,315 @@
+{
+  "batch": "SR13",
+  "items": [
+    {
+      "id": "V4-V001",
+      "question": "How should a stock-flow model account for offered work at every integration step?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route - [Stock-and-flow modeling versus stock-to-flow shorthand](stock-and-flow-vs-stock-to-flow.md): accumulation, rates, units and the error of conflating a stock with a flow. - [Model scope, boundary and abstraction](model-scope-and-abstraction.md): what to include, what to omit and how to state the validity domain. - [Evidence and validation vocabulary](evidence-and-validation-vocabulary.md): the five layers and the labels that must never be conflated. Read the stock-and-flow page first if the question is about accumulation or delay. Read the scope page before choosing a model family. Read the vocabulary page before writing a decision record.",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Worked comparison | Case | Lambda | Capacity | Success | p95 | Timeout | |---|---|---|---|---|---| | Baseline stock-flow | 20 | 24 | 1.000 | n/a | 0.000 | | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 | | Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 | | Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 | | Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 | The table is deliberately compact. The stock-flow model has no individual p95; the checkout model does. Candidate B has a higher p95 than A because it waits longer before timing out, but it completes far more requests and costs less per success.",
+          "heading": "Worked comparison",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison"
+        },
+        {
+          "excerpt": "## The accounting At each step, the offered traffic is split between legacy and target. The model serves up to each path's capacity: target_served = min(arrival * target_share * dt, target_capacity * dt) legacy_served = min(arrival * (1 - target_share) * dt, legacy_capacity * dt) rejected = offered - target_served - legacy_served The dual-write backlog grows with target throughput times the declared lag and drains at the reconciliation capacity: backlog += target_served * dual_write_lag backlog -= min(backlog, reconciliation_capacity * dt) Divergence accumulates when the backlog exceeds the drain capacity. It is a synthetic proxy, not a measured data-quality metric.",
+          "heading": "The accounting",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting"
+        },
+        {
+          "excerpt": "## Purpose and mission \u201cTen thousand users\u201d is not a sufficient workload specification. A system may have ten thousand accounts and almost no concurrent work; another with the same account count may receive a short burst of writes against one state key. Architecture decisions need a model of **arrivals, logical operations, concurrency, resource demand, key skew and time**. A good model makes assumptions visible and can be disproved by real observations. This foundational chapter describes how to define those quantities and estimate offered work without converting user population into requests per second by an invented universal constant. The [V10 architecture requirement profile](../../v10-d",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md",
+          "section_key": "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#purpose-and-mission"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V002",
+      "question": "Why does a p95 checkout latency comparison require request-level events rather than only a fluid model?",
+      "section_new": [
+        {
+          "excerpt": "## Hard constraints versus preferences A hard constraint is a condition a candidate must satisfy. If candidate C exceeds a declared cost ceiling, C is eliminated even if it has the highest success rate. A soft constraint is a preference that can be traded. A non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team or a regulatory approval. The V12 checkout record uses two hard quantitative constraints (cost and p95 latency) and one non-quantitative constraint (operability). C is eliminated by the cost and latency constraints. B and A both pass. B wins on success rate and cost per successful request; A wins on p95 latency but does not meet ",
+          "heading": "Hard constraints versus preferences",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/decision-record.md",
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A synthetic checkout service receives 20 requests per second for 30 minutes after a five-minute warmup. Three candidates use the same arrivals, duration, seed scheme and metrics: - A: direct capacity with a one-second deadline and no retry budget; - B: a bounded queue, a two-second deadline and a small retry budget; - C: more servers, a slower mean service time and a higher unit cost. Under the declared assumptions, B succeeds on 0.9996 of offered requests with a 1.206-second p95 latency and 1.34 relative cost units per 1000 successes. A succeeds on 0.9218 with a 0.870-second p95 and 1.81 cost units. C succeeds on 0.9679 but exceeds the declared 3.0 cost a",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+        },
+        {
+          "excerpt": "## Why reliability was not automatically improved In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of ev",
+          "heading": "Why reliability was not automatically improved",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved"
+        },
+        {
+          "excerpt": "## 8. Safe selection process and insufficient evidence A credible selection compares: 1. Invariants, transaction scope, security/compliance and authorized deletion/retention. 2. Canonical queries and write patterns with actual request volume/distribution and peak/failure changes. 3. Data size and growth by cardinality, key, index and partition rather than total rows alone. 4. Read consistency, freshness, cross-system coordination, conflict/retry and migration obligations. 5. Operational cost: staffing, backup/restoration, topology, upgrades, support and license constraints. 6. Measured performance on comparable representative datasets, with cache/warmup, concurrent writes and failure drills.",
+          "heading": "8. Safe selection process and insufficient evidence",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+          "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#8-safe-selection-process-and-insufficient-evidence"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V003",
+      "question": "Which scenario inputs must remain aligned to compare checkout candidates fairly?",
+      "section_new": [
+        {
+          "excerpt": "## Machine artifacts The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contracts | `edition/v12/scenarios/` | Workload, configuration, seeds and metrics | | Run records | `edition/v12/runs/` | Metrics, convergence, hashes and limits | | Decision records | `edition/v12/decisions/` | Candidates, constraints and outcome | | Source ledger | `edition/v12/reading-ledger.v1.json` | Read units, hashes and omissions | | Reverse index | `edition/v12/reverse-index.v1.json` | Derived pattern-to-artifact lookup | Reproduce a s",
+          "heading": "Machine artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts"
+        },
+        {
+          "excerpt": "## Example: candidate B run The candidate B run has 30 replications, a success rate of 0.9996 with a 95% CI of 0.9995-0.9997, a p95 latency of 1.206 seconds, and a relative error of 0.00003. The convergence status is converged against a 0.02 threshold. The uncertainty method is replication; there are no correlated inputs. The limitations say the workload is synthetic and the confidence intervals use a normal approximation. The run's model hash is the SHA-256 of checkout-des.json; the scenario hash is the SHA-256 of checkout-b-queue.json. If either file changes, replay fails before producing a new number.",
+          "heading": "Example: candidate B run",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](requirements-and-workload-architecture-profiles.md) | What inputs are required before comparing candidate patterns? | | [Outcomes, constraints and workload intake](intake-invariants.md) | Which inputs must be explicit before candidate architectures are compared? | | [Adversarial requirements and candidate screening](evidence-screening.md) | Which missing evidence or hard gate must block a p",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/README.md",
+          "section_key": "tycho.chapter.289750444f8040d292a474e3876046a1#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## The replay command From the repository root: ~~~text python3 scripts/v12_engine.py replay \\ --run edition/v12/runs/checkout-b-queue.json \\ --model edition/v12/models/checkout-des.json \\ --scenario edition/v12/scenarios/checkout-b-queue.json ~~~ The command checks the stored model and scenario hashes, reruns the scenario and compares the recomputed result hash. It fails if the model, scenario or output has drifted.",
+          "heading": "The replay command",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-replay-command"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V004",
+      "question": "What evidence must a V12 model contract attach to an input labeled measured?",
+      "section_new": [
+        {
+          "excerpt": "## What replay proves Replay proves that the stored inputs, engine version and seed produce the stored metrics on the same platform family. It does not prove that the model is valid, that the inputs are measured or that the decision is correct. A replay that matches is a reproducibility check, not a truth check. Platform strings can differ across operating systems and Python builds. V12 stores the platform string and the Python version so a mismatch is visible. The engine's metrics are deterministic for the same inputs and seeds; the environment string is evidence, not a guarantee of bit-identical behavior on every platform.",
+          "heading": "What replay proves",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves"
+        },
+        {
+          "excerpt": "## Pages and reasoning route - [Stock-and-flow modeling versus stock-to-flow shorthand](stock-and-flow-vs-stock-to-flow.md): accumulation, rates, units and the error of conflating a stock with a flow. - [Model scope, boundary and abstraction](model-scope-and-abstraction.md): what to include, what to omit and how to state the validity domain. - [Evidence and validation vocabulary](evidence-and-validation-vocabulary.md): the five layers and the labels that must never be conflated. Read the stock-and-flow page first if the question is about accumulation or delay. Read the scope page before choosing a model family. Read the vocabulary page before writing a decision record.",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## How the contract is validated The V12 validator checks four things: 1. The object matches the strict JSON Schema for model specifications. 2. The identifier is unique and starts with tycho.model. 3. Every scenario that names the model resolves to this identifier. 4. Every parameter with evidence status measured has a source and a measurement record. The validator cannot check that a source actually supports a parameter. That is an editorial and review task. The contract only prevents an obvious mismatch between the label and the record.",
+          "heading": "How the contract is validated",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated"
+        },
+        {
+          "excerpt": "## Correlated inputs Independent draws are a modelling assumption, not a neutral default. In the modernization scenario, a longer dual-write lag plausibly coincides with a lower reconciliation capacity: the same operational pressure produces both. V12 declares a negative correlation of -0.4 between those inputs and labels the uncertainty method as a Gaussian copula. The engine's sampling applies the declared correlation to the input draws. It does not infer a correlation from data. A model that ignores a known correlation produces an output distribution that is too narrow and a decision that looks more certain than it is.",
+          "heading": "Correlated inputs",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V005",
+      "question": "Why does the V12 result hash include limitations and convergence information along with metrics?",
+      "section_new": [
+        {
+          "excerpt": "## The reproducibility contract The V12 run record stores: - model and scenario SHA-256; - engine name and version; - seed base and replication count; - an input hash over the model, scenario and engine version; - Python and platform strings; - the invocation; - metrics, convergence, uncertainty and sensitivity; - a result hash over the substantive fields. The model and scenario files are the canonical inputs. The run record is derived. A change to either input invalidates the run until it is regenerated.",
+          "heading": "The reproducibility contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract"
+        },
+        {
+          "excerpt": "## A run's life cycle ~~~mermaid flowchart LR M[\"Load model\"] --> S[\"Load scenario\"] S --> V[\"Check model and scenario IDs\"] V --> R[\"Run replications\"] R --> I[\"Check invariants\"] I --> A[\"Aggregate metrics\"] A --> C[\"Convergence and sensitivity\"] C --> H[\"Hash result\"] H --> W[\"Write run record\"] ~~~ Text alternative: the engine loads a model and scenario, checks their identifiers, runs the declared replications, checks invariants, aggregates metrics, computes convergence and sensitivity, hashes the result and writes the record.",
+          "heading": "A run's life cycle",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#a-run-s-life-cycle"
+        },
+        {
+          "excerpt": "## Evidence ledger - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports verification, validation, data and conceptual validity. It does not establish V12 operational validity. - JCGM 100:2008 (source src.jcgm-100; see the V12 reading ledger) supports measurement result, uncertainty and coverage vocabulary. It does not establish a V12 uncertainty budget. - [Owen, Monte Carlo chapters](https://artowen.su.domains/mc/) supports sampling error and convergence vocabulary. It does not establish a calibrated V12 input distribution.",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-ledger"
+        },
+        {
+          "excerpt": "## A stopping rule A practical stopping rule is: 1. Run a pilot with at least 10 replications. 2. Estimate the standard error of the primary metric. 3. Compute the required n for the target relative error. 4. Run to that n or to a declared budget, whichever is smaller. 5. Record the achieved error and whether the target was met. V12 does not adapt n during a run. The scenario declares the replication count, and the run reports the achieved error. This keeps the result reproducible; an adaptive stopping rule would need its own seeded decision log.",
+          "heading": "A stopping rule",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V006",
+      "question": "How does the V12 event queue break ties between events scheduled at the same time?",
+      "section_new": [
+        {
+          "excerpt": "## Verification checklist and next bounded research - [x] One canonical reader question and named measurement boundary. - [x] Long-run mean formula, units and exact finite-window counterexample. - [x] Open-versus-closed distinction tied to identified official documentation. - [x] Normal, burst/overload, dependency saturation and recovery cases. - [x] Synthetic numbers and outcomes clearly separated from empirical measurements. - [x] At least one valid **insufficient-evidence** answer. - [ ] User-independent human/subject expert review (not claimed). - [ ] Benchmark / service instrumentation / real capacity test (not claimed). - [ ] Full book metadata schema / graph / indexed retrieval (plann",
+          "heading": "Verification checklist and next bounded research",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/README.md",
+          "section_key": "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#verification-checklist-and-next-bounded-research"
+        },
+        {
+          "excerpt": "## A different security principal, not a longer-lived human token Netflix introduced *Data Projects*: logical containers grouping related assets (tables, jobs, secrets) and a project-owned, durable identity which workloads may assume. Grants to people, groups, applications and CI jobs are assigned project-level roles; an optional IAM role may be exchanged using the platform identity for AWS tasks. The workflow manager can mint identity for authorized scheduled work rather than borrowing a departed engineer's credentials. Under the feature called **gravity**, new assets created by a project workload are attached automatically to the project. [src.m9-n17, 'Enter Data Projects', 'Grants and Rol",
+          "heading": "A different security principal, not a longer-lived human token",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#a-different-security-principal-not-a-longer-lived-human-token"
+        },
+        {
+          "excerpt": "## Synthetic migration sequence and fault-injection oracles 1. **Classify execution:** profile runnable CPU, blocking calls, network waits, timed-out downstreams, event-loop tasks, queue ages and hidden monitor wait for one representative workload window. 2. **Keep workload lanes separate:** route CPU-intensive transformations to a capacity-bounded pool; isolate JDBC on a compatible executor; reserve event-loop threads for nonblocking callbacks; preserve identity and timeout budgets across handoffs. 3. **Pin versions:** JDK minor/collector, tracing libraries, Tomcat/Netty, HTTP/gRPC dependencies and transport contracts must remain fixed during the first scheduling comparison. 4. **Prove fail",
+          "heading": "Synthetic migration sequence and fault-injection oracles",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#synthetic-migration-sequence-and-fault-injection-oracles"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Subscriber demand does not protect an unseen blocking queue **Original fictional streaming endpoint:** a Reactor service subscribes to a database-backed event stream and transforms updates for WebSocket clients. A downstream subscriber requests `n=1` item at a time, but a library callback invokes a blocking JDBC query on an event-loop thread and enqueues unbounded work before the publisher honors demand. The public Reactive Streams request protocol only coordinates compliant participants; it does not cap an unrelated driver pool or hidden queue. | Boundary | Normal behavior | Fault injection / observation | |---|---|---| | Publisher \u2192 subscriber | Emit within rec",
+          "heading": "Engineering walkthrough \u2014 Subscriber demand does not protect an unseen blocking queue",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c03-reactive-streams-demand-and-cancellation/reactor-webflux-r2dbc-and-backpressure.md",
+          "section_key": "tycho.page.114da51171c2474ebd56ee3bebad3bcb#engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V007",
+      "question": "What happens to the timeout when the V12 discrete-event model retries an attempt?",
+      "section_new": [
+        {
+          "excerpt": "# Event ordering and timeouts **Question.** Which event-ordering and timeout rules must be fixed so that two runs with the same seed produce the same outcome? **Short answer.** A discrete-event engine must define a total order over events, schedule timeouts explicitly, cancel stale events and record how a retry resets a deadline. V12 uses (time, priority, insertion sequence) and a per-attempt timeout event.",
+          "heading": "Event ordering and timeouts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#overview"
+        },
+        {
+          "excerpt": "## Retry amplification If every request is attempted 1.05 times on average, the service load is 5% higher than the offered load. If every request is attempted three times, the load can be three times higher. The retry amplification metric is total attempts divided by offered requests. V12 reports it for every discrete-event run. The A/B/C comparison shows the difference: - A has no retry budget: retry amplification 1.000, timeout rate 0.0778, success 0.9218. - B has three attempts with exponential backoff and full jitter: retry amplification 1.004, timeout rate 0.0041, success 0.9996. - C has two attempts with linear backoff: retry amplification 1.079, timeout rate 0.111, success 0.9679. B's",
+          "heading": "Retry amplification",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification"
+        },
+        {
+          "excerpt": "## What this volume does and does not do It does: - state a model boundary, state variables, units, parameters and validity limits; - execute deterministic reference cases and seeded discrete-event simulations; - report uncertainty, convergence and sensitivity rather than one number; - compare candidates on identical workloads and business-comparable metrics; - record a recommendation, a no-recommendation outcome or an explicit `insufficient-evidence` outcome; - preserve hashes, seeds and replay instructions for every stored run. It does not: - promote, demote or re-review an existing pattern; - claim that a simulation proves production behavior; - treat a source claim as a calibrated parame",
+          "heading": "What this volume does and does not do",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do"
+        },
+        {
+          "excerpt": "## Abstraction is a choice about resolution Three model families cover most V12 questions: - **Stock-and-flow** for accumulation, feedback, delay and capacity. It is cheap to run and good for showing conservation and backlog growth. It does not represent individual request latency. - **Discrete-event** for queueing, deadlines, retries and tail latency. It represents individual requests and event ordering. It costs more to verify and can hide numerical detail behind a plausible average. - **Hybrid** for a staged path where traffic shares, reconciliation backlog and rollback coexist. It is a purposeful simplification, not a claim that the underlying system is fluid. The choice is not a maturit",
+          "heading": "Abstraction is a choice about resolution",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V008",
+      "question": "Which queue disciplines and resource controls does the V12 checkout engine model?",
+      "section_new": [
+        {
+          "excerpt": "## The replay command From the repository root: ~~~text python3 scripts/v12_engine.py replay \\ --run edition/v12/runs/checkout-b-queue.json \\ --model edition/v12/models/checkout-des.json \\ --scenario edition/v12/scenarios/checkout-b-queue.json ~~~ The command checks the stored model and scenario hashes, reruns the scenario and compares the recomputed result hash. It fails if the model, scenario or output has drifted.",
+          "heading": "The replay command",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-replay-command"
+        },
+        {
+          "excerpt": "## Worked comparison | Case | Lambda | Capacity | Success | p95 | Timeout | |---|---|---|---|---|---| | Baseline stock-flow | 20 | 24 | 1.000 | n/a | 0.000 | | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 | | Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 | | Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 | | Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 | The table is deliberately compact. The stock-flow model has no individual p95; the checkout model does. Candidate B has a higher p95 than A because it waits longer before timing out, but it completes far more requests and costs less per success.",
+          "heading": "Worked comparison",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison"
+        },
+        {
+          "excerpt": "## Navigation - Parent: [V12/C03 - Deterministic and DES](../README.md) - Next: [Queue and resource models](queue-and-resource-models.md) - Engine: scripts/v12_engine.py",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#navigation"
+        },
+        {
+          "excerpt": "## Pages and reasoning route - [Reference engine architecture](reference-engine-architecture.md): modules, event queue, seeds and provenance. - [Queue and resource models](queue-and-resource-models.md): capacity, utilization, Little's law and finite-window measurement. - [Event ordering and timeouts](event-ordering-and-timeouts.md): the event calendar, tie-breaking, cancellation and stale events. - [Retries and backpressure](retries-and-backpressure.md): retry budgets, backoff, amplification and load shedding. Read the engine page for implementation, the queue page for the arithmetic, the ordering page for determinism and the retry page for overload behavior.",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V009",
+      "question": "Why do more simulation replications not remove uncertainty about the input distribution?",
+      "section_new": [
+        {
+          "excerpt": "## Why over-partitioning and wide partitions can both harm the same system The [June 3, 2026 first-party report](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (src.m9-n12, **Picking the Partitioning Strategy**, **The Problem with the Current Approach**) says TimeSeries provisioning used workload inputs plus **Monte Carlo simulations** to choose time slices and buckets. That approach assumes the future distribution resembles the input estimates. Actual datasets can be very different months later, or a small number of valid IDs can receive disproportionate traffic. Both extremes matter. An oversized partition may ",
+          "heading": "Why over-partitioning and wide partitions can both harm the same system",
+          "path": "book/cases/netflix-cassandra-dynamic-time-series-splits.md",
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system"
+        },
+        {
+          "excerpt": "## Standard error For n independent replications with sample standard deviation s, the standard error of the mean is: se = s / sqrt(n) A 95% confidence interval under a normal approximation is: mean +/- 1.96 * se The interval is narrower when n is larger or the output is less variable. It does not become more valid if the replications are correlated or the output distribution is heavy-tailed. V12 uses the normal approximation across replications. For 30 replications the approximation is reasonable for a bounded metric such as success rate. For a heavy-tailed latency, it can understate the tail uncertainty. The decision record records that limit.",
+          "heading": "Standard error",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error"
+        },
+        {
+          "excerpt": "## JCGM 100 and uncertainty language JCGM 100 describes a measurement result as a measured value plus an uncertainty, with a coverage interval at a stated coverage probability. It distinguishes Type A and Type B uncertainty components and shows how to combine them. V12 uses the vocabulary but not the full method. A uniform range in a scenario is not a Type A or Type B component. It is an assumed input range. A confidence interval across replications is a sampling interval, not a metrological coverage interval. The page says so to prevent a reader from treating a synthetic interval as a calibrated uncertainty budget.",
+          "heading": "JCGM 100 and uncertainty language",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language"
+        },
+        {
+          "excerpt": "## Why the first idea failed in production Uber's distributed Docstore/Schemaless database services have stateless query engines which plan and route work and stateful storage nodes with shard leadership and Raft replication. A proposed per-caller quota layer in the **stateless query tier** assigned cost to queries from their return-byte count and relied on Redis to share quotas. A full scan returning a single row cost the same as a point lookup; quotas remained static while workload skew and hotspots evolved. The Redis round trip added a reliability dependency, and query nodes did not possess current health signals for all storage partitions. The authors report that this approach **did not ",
+          "heading": "Why the first idea failed in production",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V010",
+      "question": "How does the V12 quadratic sensitivity screen differ from a full Sobol analysis?",
+      "section_new": [
+        {
+          "excerpt": "## Sensitivity and uncertainty The candidate B sensitivity screen reports arrival rate first-order 0.361 and total-order 0.464, service mean first-order 0.536 and total-order 0.639. The screen is a quadratic approximation over 48 rows. It says service time explains more of the fitted variance in the sampled range. It does not prove that service time is the dominant production factor. The sensitivity scenario is converged at a 0.00016 relative error. A separate two-replication convergence-stress run is insufficient-sample at 0.032. The decision record does not use the sensitivity ranking to support a production claim; it uses it to identify what to measure first.",
+          "heading": "Sensitivity and uncertainty",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty"
+        },
+        {
+          "excerpt": "## Scope The engine implements: - a fixed-step stock-and-flow backlog model with exact request conservation; - a discrete-event checkout model with capacity, queueing, timeouts, retries and backpressure; - a staged modernization model with dual-write lag, reconciliation and rollback; - seeded replications and Monte Carlo aggregation; - a quadratic response-surface sensitivity screen; - canonical JSON hashing and a replay command. It does not implement a general-purpose simulation language, distributed execution, a graphical interface, a database or a production scheduler. A model family that needs a new mechanism gets a new explicit contract, not an unrecorded engine extension.",
+          "heading": "Scope",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#scope"
+        },
+        {
+          "excerpt": "## 5. Separate evidence classes to prevent false certainty Use a small, reusable evidence ledger for any consequential profile claim: | Evidence state | What the profile may assert | |---|---| | Stakeholder requirement | A desired behavior exists; not that it is currently achieved | | Instrumented observation | A measured ratio or event for a specified population/time/source/version | | Reproduced test | Behavior occurred in a bounded setup; not a timeless production guarantee | | Public vendor/standard text | How a protocol or implementation claims to behave at an identified version | | Derived model | A mathematical or architecture inference under stated assumptions | | Unknown | A missing",
+          "heading": "5. Separate evidence classes to prevent false certainty",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/evidence-screening.md",
+          "section_key": "tycho.page.4e96abb6d4504ef1b09cbc355485108a#5-separate-evidence-classes-to-prevent-false-certainty"
+        },
+        {
+          "excerpt": "## Evidence ledger - [SimPy 4.1 documentation](https://simpy.readthedocs.io/en/latest/) supports resource capacity, queueing, priority and preemption vocabulary. It does not establish the V12 resource implementation. - Kim and Whitt, Statistical Analysis with Little's Law (source src.little-law; see the reading ledger) supports the finite-window caveat and batch-means approach. It does not validate the V12 workload. - [Sargent, WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports internal-validity and sensitivity checks. It does not establish a production capacity.",
+          "heading": "Evidence ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#evidence-ledger"
+        }
+      ],
+      "split": "v12"
+    }
+  ]
+}

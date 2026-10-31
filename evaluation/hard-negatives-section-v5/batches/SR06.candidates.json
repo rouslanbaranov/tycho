@@ -1,0 +1,315 @@
+{
+  "batch": "SR06",
+  "items": [
+    {
+      "id": "V4-B021",
+      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### SLI-SLO and Error Budgets An SLI is a measured ratio of good events to valid events; an SLO is the target for that ratio over a window, and the error budget is the allowed failure quantity. The measurement contract precedes the number, because a green indicator built on the wrong denominator is worse than no indicator. A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**. Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot c",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Why this can look like a lock problem A pinned waiter holds a carrier while it waits. A signaled virtual thread that has been unmounted needs a free carrier before it can run. If every carrier is occupied by pinned waiters, the signaled thread cannot make progress even when the lock itself has been released. An observer may then see a live process, an apparently free lock and no completed requests. That is a scheduler/resource interlock, not necessarily a permanently held mutex. This diagnostic framing is Tycho synthesis. The JEPs define the pinning mechanism; they do not prescribe a production triage procedure or prove that any particular incident had this shape. ```mermaid flowchart TD ",
+          "heading": "Why this can look like a lock problem",
+          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+          "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
+        },
+        {
+          "excerpt": "## Admission must optimize useful completed work, not accepted requests A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks. A controller should count **completed useful operations** and successful critical classes, not just ingress QPS or aggregate reject rate. It should also expose why individual requests were rejected, and whether old low-priority work made critical traffic miss deadlines. **Synthetic comparison test:** replay equivalent read, write, scan, long-lived background and hot-key traffic at a fixed offered load. Use priority classes with immutab",
+          "heading": "Admission must optimize useful completed work, not accepted requests",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests"
+        },
+        {
+          "excerpt": "## Partial failure, saturation and recovery Assume a synthetic 30-second interval: - Clients **offer 200 operations/s**. - Workers **complete 150 operations/s**, and initial in-flight backlog is zero. - No requests are abandoned, shed or retried inside this boundary. Admitted and offered rate are equal, so **backlog grows by** `(200 - 150) \u00d7 30 = 1,500` operations. This is exact balance for the hypothetical interval, **not** a valid claim that the growing queue is in steady state or that `L = 200 \u00d7 W` predicts a fixed response time during it. Change the admission policy: if **50 operations/s** are rejected *before* they enter this boundary and the remaining **150/s** are completed, backlog n",
+          "heading": "Partial failure, saturation and recovery",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B022",
+      "question": "What runtime dependency did Airbnb\u2019s generated Bazel targets sometimes miss during its Gradle migration?",
+      "section_new": [
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Airbnb](../airbnb-jvm-monorepo-bazel.md) | src.m9-a01: Gradle/Bazel coexistence and RBE speed/CSAT report | | [Spotify](../spotify-tech-migration-long-tail.md) | src.m9-sp01: Backstage, prioritized migration ownership and long-tail | | [Uber](../uber-doma-domains.md) | src.m9-u01: coordination costs when services and teams proliferate | **Why the apparent conflict is useful:** Airbnb evaluated developers opting into Bazel while Gradle continued; Spotify coordinated a long-tail across autonomous squads. Uber's DOMA points to a third failure: cross-service change spans ",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/build-delivery-migration.md",
+          "section_key": "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## Applied M9 evidence: what transfers and what does not These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision. **Case lens \u2014 [Airbnb \u2014 Bazel JVM build migration](../../../cases/airbnb-jvm-monorepo-bazel.md)**. **Relevant mechanism or architectural contrast:** Build-system coexistence and controlled migration are engineering work separate from selecting Bazel. **Not established by this report/playbook:** Airbnb's historical premerge times and bui",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "section_key": "tycho.page.7921e82a71b9446790f185c818326911#applied-m9-evidence-what-transfers-and-what-does-not"
+        },
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Spotify long-tail](../spotify-tech-migration-long-tail.md) | src.m9-sp01 (2020): automation as a fleet-migration tactic, not an AI-agent outcome | | [Spotify Honk](../spotify-honk-data-consumer-migration.md) | src.m9-sp02/src.m9-sp03 (2025\u201326): >1,500 reported merged PRs overall; 240 rolled-out dataset PRs, Scio exclusion, test gaps and owner review | | [Shopify Helix](../shopify-helix-checkpoint-gated-native-migration.md) | src.m9-sh04 (2026): checkpoint-level behavior, visual and two adversarial gates, human sign-off by default | | [Stripe](../stripe-online-subscrip",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/agentic-migration-safety.md",
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## The actual 2017-to-2020 transition in migration governance The [June 25, 2020 Spotify Engineering post](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) (src.m9-sp01, **Going back in time**, **More carrot, less stick**) traces the problem to **2017**, when infrastructure teams independently emailed deadlines and deprecations to around **300 globally distributed engineering squads**. Messages sometimes lacked usable upgrade instructions; teams had to triage many incompatible priorities without one reliable view of why an upgrade mattered. Migrations that should have taken weeks sometimes stretched for months. This is a **work ownership and attention-budget failure*",
+          "heading": "The actual 2017-to-2020 transition in migration governance",
+          "path": "book/cases/spotify-tech-migration-long-tail.md",
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B023",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "section_new": [
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Authentic artifact, incomplete evidence and denied promotion **Synthetic release case:** an artifact digest D is accompanied by build provenance referring to D, an SBOM generated from its dependency closure and a signature. Verification succeeds cryptographically but the SBOM omits a dynamically downloaded dependency, while the signer identity is outside the organization's approved builder policy. **No release authorization follows solely from cryptographic validity.** | Verification question | Required check | Unsafe inference | |---|---|---| | Subject | Every attestation identifies the exact immutable digest D | Matching filename is equivalent to matching bytes",
+          "heading": "Engineering walkthrough \u2014 Authentic artifact, incomplete evidence and denied promotion",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/README.md",
+          "section_key": "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#engineering-walkthrough-authentic-artifact-incomplete-evidence-and-denied-promotion"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Keep source revision, build identity, artifact digest, promotion and user-health acceptance as separate release boundaries. A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct. The detailed pages separate the mechanisms that make this decision conditional: - [Build boundaries and artifact identity](build-identity.md) \u2014 Which source, runner and artifact evidence supports a reproducible release? - [Promotion, reconciliation and user-health gates](promotion-rollout.md) \u2014 Which failure and authority boundaries separate deployment from accepted release? [Chapter introduction, ordered",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "section_key": "tycho.page.7921e82a71b9446790f185c818326911#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Verify artifact identity and provenance against an authorization policy; distinguish signatures, attestations and component inventories. A valid signature from an unapproved identity, or an SBOM for another digest, must not authorize promotion. The detailed pages separate the mechanisms that make this decision conditional: - [Artifact subjects, provenance and component inventories](provenance-subjects.md) \u2014 What does each evidence object describe and what does it omit? - [Authorized promotion and missing evidence](promotion-authorization.md) \u2014 Why is authentic evidence insufficient to authorize an artifact in every environment? [Chapter introduction, ",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+          "section_key": "tycho.page.38bb8a14ebb54866a7004080318b47e1#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Decision and worked result Keep source revision, build identity, artifact digest, promotion and user-health acceptance as separate release boundaries. A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct. This is an editorial conclusion drawn from the linked manuscript and its original examples, not a newly executed experiment.",
+          "heading": "Decision and worked result",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/README.md",
+          "section_key": "tycho.chapter.8a2d2a79846d4567bb3d33957e19977f#decision-and-worked-result"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B024",
+      "question": "What extra recovery coordination can a continuously reconciling GitOps controller require during an emergency rollback?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Define exposure, analysis, stop and recovery conditions across both application versions and shared data. A small canary can write incompatible state visible to all old instances; limiting traffic alone does not bound that effect. The detailed pages separate the mechanisms that make this decision conditional: - [Desired state, release identity and exposure](desired-state-exposure.md) \u2014 Which state does a reconciler control and which outcome remains outside it? - [Canary acceptance and shared-state damage](canary-compatibility.md) \u2014 How can a small rollout create effects that a binary rollback cannot undo? [Chapter introduction, ordered pages and full ",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](gitops-canary-and-progressive-rollout.md) | How do rolling, blue/green, canary, rollback and analysis gates differ? | | [Dark Launching-Shadow Traffic owner note](dark-launching-shadow-traffic.md) | How does mirrored traffic stay non-authoritative and side-effect bounded? | | [Desired state, release identity and exposure](desired-state-exposure.md) | Which state does a reconciler control an",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/README.md",
+          "section_key": "tycho.chapter.5e4761e1a3e34c2f8023ec8ac4fa81d5#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Purpose and mission A release can be deployed successfully yet fail when old and new binaries coexist, when records written by a new version cannot be read by older workers, or when delayed events arrive after contract removal. Progressive delivery controls **exposure**, whereas schema compatibility controls **interpretation of shared state**. Both require independently verified invariants. **Primary question:** How should rolling, canary and blue/green deployments be coordinated with schema, event and API changes so that a failed rollout is recoverable without making unsupported rollback promises? Companion chapters: [CI/CD identity and GitOps](../volumes/v08-delivery-deployment-and-reco",
+          "heading": "Purpose and mission",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Controller failure and safe rollback PID regulation is only as good as its observations, sampling rate and bounded output. A delayed follower-lag signal could cause over-admission into a replica that cannot commit; stale error telemetry can drive oscillation. Another test is a false-priority producer attempting to mark noncritical work as critical. Protect the policy at a trusted ingress boundary, not by trusting a user-supplied header. A reversible rollout can initially run Cinnamon in **decision-only shadow mode**, recording hypothetical shed reasons. Canary actual admission on a small tenant/partition cohort while leaving fixed baseline protection available. Raise scope only after obse",
+          "heading": "Controller failure and safe rollback",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B025",
+      "question": "In Netflix\u2019s Data Projects case, why could a scheduled job fail after its original owner left?",
+      "section_new": [
+        {
+          "excerpt": "## Applied M9 evidence: what transfers and what does not These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision. **Case lens \u2014 [Netflix \u2014 Data Project identity](../../../cases/netflix-data-project-durable-workload-identity.md)**. **Relevant mechanism or architectural contrast:** Workload identity can outlive departing human owners; entitlement, execution and ownership identities need separate migration. **Not established by this report/playbook:**",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/authorization-boundaries-and-multitenancy.md",
+          "section_key": "tycho.page.31cda61d174248eaa326559d256ce352#applied-m9-evidence-what-transfers-and-what-does-not"
+        },
+        {
+          "excerpt": "## What made legacy backup identification brittle The [May 18, 2026 first-party account](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1) (src.m9-n11, **Casspactor: The Engine We Outgrew**, **Fragile Metadata Dependencies**) reports approximately **1,200 data movements/day** and **3 PB transferred** in the stated legacy operating scale. The post does not provide an independently reproducible distribution of object sizes, exact comparison duration for the 3 PB figure or per-job cost. These numbers are scale context, **not** benchmark targets for another company. The old Casspactor path combined multiple metadata services to decide which Cassandra b",
+          "heading": "What made legacy backup identification brittle",
+          "path": "book/cases/netflix-casspactor-shadow-migration.md",
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#what-made-legacy-backup-identification-brittle"
+        },
+        {
+          "excerpt": "## Before/after and source-supported outcome ```mermaid flowchart LR A[Outgoing gRPC client tasks] --> B[CPU-heavy worker pool] B --> C[Bounded platform-thread executor] C --> D[Useful CPU processing] B --> E[Virtual-thread per-task experiment] E --> F[CPU work still needs carrier threads] F --> G[Extra scheduling overhead] D --> H[Baseline throughput and latency] G --> I[Reported few-percent regression] ``` **Text alternative:** the outgoing gRPC worker queue could execute CPU-heavy tasks on bounded platform threads or try virtual threads. The latter path does not remove required CPU instructions; in the practitioner-reported experiment it performed somewhat worse. Diagram is an original ar",
+          "heading": "Before/after and source-supported outcome",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#before-after-and-source-supported-outcome"
+        },
+        {
+          "excerpt": "## Why reliability was not automatically improved In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of ev",
+          "heading": "Why reliability was not automatically improved",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B026",
+      "question": "What operational trade-off accompanies attribute-based authorization policies?",
+      "section_new": [
+        {
+          "excerpt": "## 7. Public sources and nonclaims | Source reviewed | Supports | Not demonstrated | |---|---|---| | [AWS Well-Architected: Cost Optimization design principles](https://docs.aws.amazon.com/wellarchitected/latest/framework/cost-dp.html) | Cost attribution, consumption, outcome efficiency and operation | Current provider pricing or a real bill | | [AWS Well-Architected: Demand/supply resources](https://docs.aws.amazon.com/wellarchitected/2024-06-27/framework/cost-mandem.html) | Workload-aligned supply, buffers/throttling, scaling-lag consideration | Economic viability of the invented options | | [AWS Cost Based on Workload Metrics](https://docs.aws.amazon.com/wellarchitected/latest/framework/c",
+          "heading": "7. Public sources and nonclaims",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/README.md",
+          "section_key": "tycho.chapter.b7924b3db65949df952fbb5ca706236c#7-public-sources-and-nonclaims"
+        },
+        {
+          "excerpt": "## Questions and chapters | Chapter | Owning question | |---|---| | [V01/C01 \u2014 Problem framing and system boundaries](c01-problem-framing/README.md) | Which actors, outcomes, interfaces and external failure dependencies define the system? | | [V01/C02 \u2014 Workload and demand models](c02-workload-and-demand-models/README.md) | How do active users, offered arrivals, concurrency, operation mix and skew differ? | | [V01/C03 \u2014 Quality attributes and trade-offs](c03-quality-attributes-and-trade-offs/README.md) | How are performance, availability, consistency, cost, security and changeability made measurable? | | [V01/C04 \u2014 Evidence, hypotheses and architecture experiments](c04-evidence-hypotheses-an",
+          "heading": "Questions and chapters",
+          "path": "book/volumes/v01-requirements-and-architecture/README.md",
+          "section_key": "tycho.volume.4d10f5c93f3b4356a553c8732e513a38#questions-and-chapters"
+        },
+        {
+          "excerpt": "## Purpose and mission Performance decisions buy *capacity over time*, not just a lower measured p99. More replicas can reduce queueing and absorb uneven demand while increasing total resource cost, per-instance connection pressure and operational work. A larger instance can improve one CPU-bound operation without changing an upstream quota or serialized data key. The economic question is: **What is the least costly configuration that satisfies correctness, user-visible service targets, recovery and operational constraints across the actual demand distribution?** It is different from \u201cWhich option has the lowest price per virtual machine?\u201d The owning question is which experiments confirm or ",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
+          "section_key": "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Navigation and prerequisites | Route | Destination | |---|---| | Parent | [V01 \u2014 Requirements, quality attributes and architecture fundamentals](../README.md) | | Previous | [V01/C03 \u2014 Quality attributes and trade-offs](../c03-quality-attributes-and-trade-offs/README.md) | | Next | [V01/C05 \u2014 Architecture descriptions and decision records](../c05-architecture-descriptions-and-decision-records/README.md) | | Prerequisite | [V01/C03 \u2014 Quality attributes and trade-offs](../c03-quality-attributes-and-trade-offs/README.md) | | Source reading | [Page-local evidence and versions](architecture-evidence-hypotheses-and-experiments.md) |",
+          "heading": "Navigation and prerequisites",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/README.md",
+          "section_key": "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4#navigation-and-prerequisites"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B027",
+      "question": "Why might routine signing-key overlap be unsafe after a private key compromise?",
+      "section_new": [
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Compromised build worker and a tempting image rollback **Original hypothetical attack/failure:** a pipeline resolves the correct source revision but runs on a compromised shared worker. The worker produces an artifact with unexpected bytes and a generated signature from a key available to that same compromised job. A signed artifact can still be unauthorized if builder identity, key policy or provenance verification is wrong. An image-only rollback may additionally be incompatible with durable schema writes. | Gate | Required independent trust decision | Negative case | |---|---|---| | Source admission | Authorized repository/ref, protected change approvals | Bui",
+          "heading": "Engineering walkthrough \u2014 Compromised build worker and a tempting image rollback",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "section_key": "tycho.page.7921e82a71b9446790f185c818326911#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback"
+        },
+        {
+          "excerpt": "## 1. Boundaries: why the naive dual write is unsafe Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive design is two independent effects: 1. Commit a database record. 2. Publish an event to an external broker. Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor ",
+          "heading": "1. Boundaries: why the naive dual write is unsafe",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe"
+        },
+        {
+          "excerpt": "## 2. Why shard-key selection cannot be made from average RPS A candidate key should be evaluated against: - **Cardinality and skew:** are most keys independent, or does one customer/workshop dominate writes? - **Access-path fit:** can the main query identify its shard without scatter-gather across all owners? - **Co-location:** which entities must share an atomic state transition, JOIN, deletion/retention or business invariant? - **Growth:** what happens when a shard approaches storage, index or write contention limits? - **Migration:** can an old and new routing scheme coexist during data copy and cutover? - **Security/data residency:** may two tenants or countries share physical storage u",
+          "heading": "2. Why shard-key selection cannot be made from average RPS",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps"
+        },
+        {
+          "excerpt": "## Source and review limits All performance and adoption counts are attributed to Spotify and their publication dates. The company did not report in this article a controlled escaped-defect benchmark or complete migration rate across all consumers. Agent-produced code or internal prompts cannot be imported into Tycho without rights. Case remains a **draft pending #114 per-claim admission and #121 independent review**; avoid introducing private employer examples.",
+          "heading": "Source and review limits",
+          "path": "book/cases/spotify-honk-data-consumer-migration.md",
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#source-and-review-limits"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B028",
+      "question": "Why is the age of an application insufficient evidence that its architecture caused an incident?",
+      "section_new": [
+        {
+          "excerpt": "## 6. After-action analysis: avoid a single invented root cause The [SRE Postmortem Culture](https://sre.google/sre-book/postmortem-culture/) emphasizes documenting impact, timeline, contributing conditions and follow-up actions rather than blaming individuals. A correct after-action record may show multiple contributing causes: one bad config, an untested schema interaction, monitoring blind spots and inadequate failover verification. For the synthetic index scenario, a useful **hypothesis for prevention** is that the ingest consumer should reject an unrecognized mapping before publication; an independent source-to-index freshness invariant might detect lag; a repair procedure needs stable ",
+          "heading": "6. After-action analysis: avoid a single invented root cause",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause"
+        },
+        {
+          "excerpt": "## Applicability and counterindications **Use this evidence when:** a real system has the same dominant constraint, the relevant execution model/data semantics have been measured and its team can operate the new architecture. **Do not generalize when:** Two independently written stores can diverge with retry races or partial failure. Identical outputs can still reflect a shared semantic bug; backfills need live-write ordering. Avoid a big-bang cutover when you cannot reconcile every mutation class. **Independent decision dimensions to measure:** Missing/extra rows per cohort and snapshot, referential/business invariants, shadow mismatch root causes, dual-write conflict count, backlog age, ro",
+          "heading": "Applicability and counterindications",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications"
+        },
+        {
+          "excerpt": "## Why the decision is insufficient evidence The decision record compares the staged path with the baseline. The staged path has a non-zero divergence and an incomplete rollback. The baseline has neither. A decision to cut over would need to show that the divergence is acceptable and the rollback is achievable. The model cannot show either because the inputs are assumed over wide ranges. The correct next step is measurement: 1. Instrument dual-write lag in a bounded environment. 2. Measure reconciliation throughput under target load. 3. Rehearse a rollback and record its duration. 4. Measure divergence over a sustained shadow period. 5. Re-run the scenario with measured inputs.",
+          "heading": "Why the decision is insufficient evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Index divergence masquerading as a database latency incident **Original fictional incident timeline:** users complain that search results show a deleted product and fail after opening it. A dashboard concurrently reports high API p99. The initial on-call diagnosis is \"slow PostgreSQL\", but the actual harmful path may be an outdated search index followed by repeated failed lookup/retry; database CPU is not sufficient causal evidence. | Hypothetical time | Observation (not interpretation) | Response gate | |---|---|---| | T0 | Correct source row removed; index revision has not advanced | Record authoritative source/index generations and effect scope | | T+5m | Spik",
+          "heading": "Engineering walkthrough \u2014 Index divergence masquerading as a database latency incident",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B029",
+      "question": "What is lost when a modernization baseline records repository structure but not the runtime and writer inventory?",
+      "section_new": [
+        {
+          "excerpt": "## Proposed volumes and chapter ownership ### V01 \u2014 Requirements, quality attributes and architecture fundamentals **Mission:** translate a problem into observable behavior, constraints and competing qualities without naming a solution prematurely. | Draft chapter | Canonical question | |---|---| | C01 \u2014 Problem framing and system boundaries | Which actors, outcomes, interfaces and external failure dependencies define the system? | | C02 \u2014 Workload and demand models | How do active users, offered arrivals, concurrency, operation mix and skew differ? | | C03 \u2014 Quality attributes and trade-offs | How are performance, availability, consistency, cost, security and changeability made measurable? ",
+          "heading": "Proposed volumes and chapter ownership",
+          "path": "book/PROPOSED-STRUCTURE.md",
+          "section_key": "tycho.landing.1a9054fd18f64dfe911f34a4d17458c0#proposed-volumes-and-chapter-ownership"
+        },
+        {
+          "excerpt": "## Original decision record for an unrelated UI modernization **Hypothetical baseline:** a cross-platform mobile product has shared-state screens, device-specific APIs, multiple languages, accessibility requirements and an independently released backend. Native Swift and Kotlin may improve OS integration but create duplicated maintenance and two sets of platform-specific defects. The alternatives are (a) keep the existing shared runtime and modernize it, (b) extract only the device-specific feature layer, or (c) rebuild native screens incrementally behind stable API contracts. The decision should not be \u201cAI makes code cheap.\u201d It should depend on native-platform capability, responsiveness, bu",
+          "heading": "Original decision record for an unrelated UI modernization",
+          "path": "book/cases/shopify-helix-checkpoint-gated-native-migration.md",
+          "section_key": "tycho.page.5b4cd43052b647abb7cb161381ebdcc5#original-decision-record-for-an-unrelated-ui-modernization"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Complete intake without choosing a style first **Original fictional platform:** 10,000 registered accounts, a short launch-day surge proposed at 120 distinct booking intents/s, one exclusive-resource invariant and partner clients that cannot all upgrade together. \"Cloud native\" is not a requirement. The actual observed arrival distribution, retry amplification, hot-key share and current release lead time are unknown. | Kind | Assumed requirement | Gate and missing evidence | |---|---|---| | Functional | One confirmed allocation per physical item and interval | Concurrency, lost acknowledgment and unique state-owner tests | | Workload | 20-second burst of 120 new ",
+          "heading": "Engineering walkthrough \u2014 Complete intake without choosing a style first",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/requirements-and-workload-architecture-profiles.md",
+          "section_key": "tycho.page.868027aee4884210bea1d8a6542fbfb0#engineering-walkthrough-complete-intake-without-choosing-a-style-first"
+        },
+        {
+          "excerpt": "## 3. Second example: runtime modernization without data loss **Synthetic objective:** retire an aging runtime while continuing to accept existing external clients. Unknowns are language/framework compatibility, data format, old-client lifetime, contract owner and acceptable downtime. **Target candidate:** a supported runtime in the same deployment with unchanged public API. This may be simpler than service decomposition. If internal implementation changes cannot be made atomically, adopt branch-by-abstraction or a compatible migration step, **without changing the externally visible state owner by default**. ### Target is not transition | Time | Versions present | Data and client contract | ",
+          "heading": "3. Second example: runtime modernization without data loss",
+          "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/workload-runtime.md",
+          "section_key": "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B030",
+      "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Second example: runtime modernization without data loss **Synthetic objective:** retire an aging runtime while continuing to accept existing external clients. Unknowns are language/framework compatibility, data format, old-client lifetime, contract owner and acceptable downtime. **Target candidate:** a supported runtime in the same deployment with unchanged public API. This may be simpler than service decomposition. If internal implementation changes cannot be made atomically, adopt branch-by-abstraction or a compatible migration step, **without changing the externally visible state owner by default**. ### Target is not transition | Time | Versions present | Data and client contract | ",
+          "heading": "3. Second example: runtime modernization without data loss",
+          "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/workload-runtime.md",
+          "section_key": "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss"
+        },
+        {
+          "excerpt": "## Synthetic legacy system and decision problem A company has a JVM monorepo with 45-minute CI waits but a separate polyrepo fleet where upgrades linger across teams. The first is a computational reproducibility/latency problem; the second is an adoption/ownership problem. They require different controls.",
+          "heading": "Synthetic legacy system and decision problem",
+          "path": "book/cases/decisions/build-delivery-migration.md",
+          "section_key": "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#synthetic-legacy-system-and-decision-problem"
+        },
+        {
+          "excerpt": "## The actual 2017-to-2020 transition in migration governance The [June 25, 2020 Spotify Engineering post](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) (src.m9-sp01, **Going back in time**, **More carrot, less stick**) traces the problem to **2017**, when infrastructure teams independently emailed deadlines and deprecations to around **300 globally distributed engineering squads**. Messages sometimes lacked usable upgrade instructions; teams had to triage many incompatible priorities without one reliable view of why an upgrade mattered. Migrations that should have taken weeks sometimes stretched for months. This is a **work ownership and attention-budget failure*",
+          "heading": "The actual 2017-to-2020 transition in migration governance",
+          "path": "book/cases/spotify-tech-migration-long-tail.md",
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance"
+        },
+        {
+          "excerpt": "## 6. Validate the problem boundary before scaling the design A bounded review should verify: 1. **Completeness of partners:** can every required input/output be attributed to a known actor or external system, without putting an external platform inside the team-owned boundary? 2. **User-visible meaning:** can stakeholders state the accepted, rejected, pending and unknown outcomes without referencing implementation classes? 3. **State ownership:** is there exactly one authority (or an explicitly coordinated model) for each invariant? 4. **Trust boundaries:** which caller may request each effect, and where does enforcement happen? 5. **Failure semantics:** what happens when each neighbor fail",
+          "heading": "6. Validate the problem boundary before scaling the design",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/evidence-contract.md",
+          "section_key": "tycho.page.b6be128c3e714ac68ef3311a30d65141#6-validate-the-problem-boundary-before-scaling-the-design"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}
