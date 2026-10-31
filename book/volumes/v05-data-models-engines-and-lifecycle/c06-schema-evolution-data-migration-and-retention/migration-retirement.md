@@ -252,8 +252,8 @@ started after the chosen CDC start point", a resume needs a replay window,
 duplicate-tolerant apply and an explicit start point.
 
 PostgreSQL `COPY FROM` "physically inserts input rows into the table as it progresses"; if
-the command fails, these rows are "left in a deleted state", invisible until vacuum and still
-occupying space; the failed statement aborts, but the dead tuples remain. A
+the command fails, these rows are "left in a deleted state", invisible, with dead tuples
+occupying space until vacuum; the failed statement aborts, but the dead tuples remain. A
 `pg_dump` export is consistent, but with a data-only dump and `--disable-triggers`, an
 interrupted restore can leave catalogs "in the wrong state". **Tycho runbook:** persist the
 checkpoint with the data commit where possible, record source and mapping versions, detect

@@ -12,7 +12,7 @@ perspectives:
   - "architecture"
   - "evaluation"
 summary: >-
-  Decision card for Online Data Migration; all four dimensions source-bound;
+  Decision card for Online Data Migration; source-anchored with a Tycho stop-the-world composition;
   coverage remains partial-bounded, no promotion.
 route_hints:
   questions:
@@ -73,16 +73,16 @@ record the mapping revision, checkpoint, replay window and reconciliation rule.
 **Hard contraindications.** Reject when a maintenance window is acceptable, when no
 reconciliation path exists, or when the changed-row set is small enough for a quiesced
 migration. PostgreSQL `COPY FROM` inserts rows "as it progresses"; a failed command leaves
-them "in a deleted state", invisible until vacuum and still occupying space.
+them "in a deleted state", invisible, with dead tuples occupying space until vacuum.
 
 **Competing alternative.** A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho
 shape). Online implementation options include Flyway expand/contract, AWS DMS full-load plus
-CDC and dual-write. Reverse the stop-the-world choice when online complexity exceeds
-downtime cost. Flyway's guidance says to "add new columns nullable,
+CDC and dual-write. Reverse the online choice when online complexity exceeds downtime
+cost. Flyway's guidance says to "add new columns nullable,
 dual-write, backfill, switch reads, then drop" so a partial rollout "keeps working".
 
-**Failure and recovery.** Checkpoint lag, changed mappings and cutover ambiguity are risks;
-changed mapping and cutover are Tycho, untested concerns.
+**Failure and recovery.** Checkpoint lag and changed mappings are risks; changed mapping is a
+Tycho, untested concern.
 AWS DMS caches a checkpoint "from time to time" and can "recover a failed migration task"
 from it; a resume still needs a replay window and duplicate-tolerant apply. Verify coverage
 and acceptance status in the owner section; no owner acceptance is claimed.

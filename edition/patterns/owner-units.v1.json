@@ -9171,7 +9171,7 @@
       "decision_evidence": {
         "atlas_section": "online-data-migration",
         "question": "Should data be backfilled while the system continues serving reads and writes?",
-        "competing_alternative": "A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho shape). Online implementation options include Flyway expand/contract, AWS DMS full-load plus CDC and dual-write. Reverse the stop-the-world choice when online complexity exceeds downtime cost. Flyway's guidance says to \"add new columns nullable, dual-write, backfill, switch reads, then drop\" so a partial rollout \"keeps working\".",
+        "competing_alternative": "A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho shape). Online implementation options include Flyway expand/contract, AWS DMS full-load plus CDC and dual-write. Reverse the online choice when online complexity exceeds downtime cost. Flyway's guidance says to \"add new columns nullable, dual-write, backfill, switch reads, then drop\" so a partial rollout \"keeps working\".",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
