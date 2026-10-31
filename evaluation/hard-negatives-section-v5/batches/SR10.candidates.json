@@ -1,0 +1,315 @@
+{
+  "batch": "SR10",
+  "items": [
+    {
+      "id": "V4-B061",
+      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and mission A thread is an execution mechanism, not a unit of business demand. An executor schedules tasks, but architecture still must specify who owns each task, which result the parent requires, how long work may live, and what happens if the caller leaves or a sibling fails. Many logical tasks can wait without running on a CPU; increasing their number does not give the database more connection capacity. The companion [platform and virtual threads](../c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md) chapter owns detailed Java version/throughput trade-offs. This chapter owns task coordination, cancellation, locks and scarce resource budge",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+          "section_key": "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4#purpose-and-mission"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A fictional endpoint fans out to two dependencies and then writes through a bounded database pool. Replacing worker threads changes waiting overhead, while the database permits and the caller's time budget remain finite. Diagnose which resource is limiting before attributing the outcome to the programming model. Trace admission, task lifetime, scheduling, buffered work, connection acquisition and the external effect. Assign an owner and a limit at each boundary. Compare blocking, virtual-thread and reactive approaches against the same cancellation and downstream-capacity contract rather than assuming one runtime model dominates every workload.",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/README.md",
+          "section_key": "tycho.volume.c4854b444d7c480e9616c5bf06f4db08#a-worked-cross-chapter-synthesis"
+        },
+        {
+          "excerpt": "## Evidence and status - **[E01] Published primary specification, JDK 21:** [OpenJDK JEP 444](https://openjdk.org/jeps/444), *The thread-per-request style*, *Implications of virtual threads*, *Scheduling virtual threads*, *Executing virtual threads*, *JDK Flight Recorder*. Supports execution/pinning contracts, not local throughput. - **[E02] Primary JDK 24 implementation review:** [OpenJDK core-libs-dev review, 2024-11-06](https://mail.openjdk.org/pipermail/core-libs-dev/2024-November/134177.html), *Summary of changes*, *Unmount virtual thread while holding monitors*. Does not prove application-level freedom from pinning. - **[E03] Primary JDK 24 release target:** [inside.java notice, 2024-1",
+          "heading": "Evidence and status",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/README.md",
+          "section_key": "tycho.chapter.d5b789c9cd7e4cb693c22943423531c2#evidence-and-status"
+        },
+        {
+          "excerpt": "## Why replacing a pool looked appealing Virtual threads preserve direct-looking synchronous Java programming while allowing many *I/O-blocked* requests to yield their carrier platform threads. A migration from a bounded OS-thread executor to a per-task virtual-thread executor can therefore reduce the need for large platform-thread pools when tasks spend much of their lives waiting for sockets. The Netflix practitioner account gives an immediate counterexample. A platform-team experiment replaced the worker pool used with **outgoing gRPC calls**, anticipating reduced scheduling overhead. Its work was **CPU intensive**, however; changing the thread abstraction introduced overhead without crea",
+          "heading": "Why replacing a pool looked appealing",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#why-replacing-a-pool-looked-appealing"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B062",
+      "question": "How does monitor-related carrier pinning differ between JDK 21 and JDK 24?",
+      "section_new": [
+        {
+          "excerpt": "## Contrasting historical evidence | Case or mechanism | What its source does and does not establish | |---|---| | [Netflix gateway](../netflix-zuul2-nonblocking-gateway.md) | src.m9-n07: Zuul2 gained connection scale; CPU gain differed by cluster | | [Java 21 pinning][pin] | JEP 444/491 mechanism; no incident counts | | [Netflix gRPC worker pool](../netflix-grpc-cpu-workerpool-virtual-thread-regression.md) | src.m9-n02: 2023 practitioner account of a CPU-intensive outgoing gRPC worker pool that became a **few percent slower** after trying virtual threads; no exact benchmark published | | [Cloudflare](../cloudflare-super-slurper-queues.md) | src.m9-cf01: I/O copy fan-out via queues/workers, ",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## Evidence and status - **[E01] Published primary specification, JDK 21:** [OpenJDK JEP 444](https://openjdk.org/jeps/444), *The thread-per-request style*, *Implications of virtual threads*, *Scheduling virtual threads*, *Executing virtual threads*, *JDK Flight Recorder*. Supports execution/pinning contracts, not local throughput. - **[E02] Primary JDK 24 implementation review:** [OpenJDK core-libs-dev review, 2024-11-06](https://mail.openjdk.org/pipermail/core-libs-dev/2024-November/134177.html), *Summary of changes*, *Unmount virtual thread while holding monitors*. Does not prove application-level freedom from pinning. - **[E03] Primary JDK 24 release target:** [inside.java notice, 2024-1",
+          "heading": "Evidence and status",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c02-java-execution-and-virtual-threads/README.md",
+          "section_key": "tycho.chapter.d5b789c9cd7e4cb693c22943423531c2#evidence-and-status"
+        },
+        {
+          "excerpt": "## Three contrasting execution models 1. **Bounded platform-thread pool:** preferable for a CPU-intensive worker where the number of simultaneously useful executions is constrained by cores, and queue/admission limits need explicit operational control. 2. **Per-task virtual threads:** a candidate when many tasks block on network/disk I/O, provided the target JDK and tracing/dependency stack do not pin carriers in dangerous blocking regions. Virtual-thread count is **not** a downstream concurrency or rate limit. 3. **Asynchronous/reactive network event loops:** suitable for persistent-connection handling and certain fan-out workloads with guaranteed nonblocking callbacks. Netflix's Zuul 2 (sr",
+          "heading": "Three contrasting execution models",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#three-contrasting-execution-models"
+        },
+        {
+          "excerpt": "## Canonical reading route | Question | Page | Primary versioned evidence | |---|---|---| | Who owns a spawned task, and how do cancellation, task scopes and pooled resources interact? | [Threads, tasks and structured coordination](../volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md) | V03/C01; Java 25 preview API, executor best-effort interruption and fictional test plan | | When are unary, client/server/bidirectional streams and durable jobs appropriate? | [Asynchronous APIs, streaming and cancellation](../volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-str",
+          "heading": "Canonical reading route",
+          "path": "book/execution/README.md",
+          "section_key": "tycho.landing.e181d96c75784f818a330bb0f266520c#canonical-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B063",
+      "question": "What does a bounded platform worker pool fail to bound when its submission queue is unlimited?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Circuit Breaker A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The threshold needs a minimum request volume so one failure does not trip a quiet dependency. The open state records why it opened and the cooldown; half-open limits concurrent probes and closes only after consecutive successes. Rejected calls are not dependency failures and need their own metric. A breaker must not replace timeout, backpressure or a retry budget, and an open caused by local resource exhaustion hides the real bottleneck. An open breaker needs an expl",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Cell-Based Architecture A cell serves a bounded population with its own capacity and failure domain. A cell-based architecture runs multiple copies of the serving stack, each with a routing key and a data partition, so one cell's failure affects only its population. The boundary is only real if every dependency is cell-scoped. A shared database, queue, cache, control plane or configuration publisher can make all cells fail together; trace every dependency a tenant can exhaust or corrupt and test the blast radius. Operations need per-cell capacity, routing, evacuation and reassignment, plus a control plane that survives one cell's loss. A single deployme",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Queue-Based Load Leveling The admission rule of a bounded queue decides four things that the queue cannot decide for itself: which producers may enqueue, the maximum accepted backlog age, what \"accepted\" means durably, and which worker pool drains it. Size the queue from observed peak arrival minus sustained drain, not from an average. An unbounded queue is not a capacity plan. Shedding is preferable when work cannot be deferred. The cited RabbitMQ guide supports reliability mechanics; admission and drain guidance here is synthetic. An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect identity and retries the enq",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md",
+          "section_key": "tycho.page.a648fc495dab474489d17d01e2c5dd92#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## A capacity-and-correctness decision matrix For the **synthetic gateway with 40,000 mostly idle TLS connections**, track active/waiting time per connection, server-side response latency, event-loop runnable delay, native/socket memory and cross-route interference. Netty can multiplex I/O, but CPU-heavy authentication and blocking JDBC must be routed to **separate bounded executors** with explicit queue/admission limits. A nonblocking network stack does not make blocking JDBC operations nonblocking. For an independent **I/O-bound Java request service** that uses simple sequential code, a virtual-thread-per-request model may improve maintainability and concurrency **only if** the chosen JDK ",
+          "heading": "A capacity-and-correctness decision matrix",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B064",
+      "question": "What relationship details must be defined before interpreting a graph edge?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](graph-data-models-and-traversal.md) | When is explicit typed connectivity preferable to lexical or vector similarity? | | [Edge meaning and relationship questions](edge-semantics.md) | Which explicit relation is being traversed and what can a path not prove? | | [Bounded graph traversal and relational alternatives](bounded-traversal.md) | What direction, cycle and result limits make the tra",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/README.md",
+          "section_key": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## 1. A trace, a span and a request are different entities | Identity | What it describes | What it does not prove | |---|---|---| | Trace ID | Correlates selected spans for one distributed trace | All effects, users or messages were recorded | | Span ID and parent | A named timed operation and immediate relationship | Child timing is entirely CPU execution | | Span link | Relationship to another span or asynchronous context | Guaranteed causal consistency or exactly-once delivery | | Request/operation ID | Stable logical business intent where application defines one | Equivalent to a trace ID across all retries | | Data/event identity | Durable domain effect with revision/sequence when requ",
+          "heading": "1. A trace, a span and a request are different entities",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/trace-causality.md",
+          "section_key": "tycho.page.aac0f46189b74948bedfc30a81ec80e5#1-a-trace-a-span-and-a-request-are-different-entities"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Interpret traces as sampled, propagated observations with explicit trust and asynchronous boundaries. A missing span does not prove no effect occurred, and untrusted baggage must not become an authorization decision. The detailed pages separate the mechanisms that make this decision conditional: - [Trace identity and causal interpretation](trace-causality.md) \u2014 What execution relationship can a span and its timing establish? - [Propagation, sampling and untrusted context](sampling-trust.md) \u2014 What does a missing span or forged context prevent a trace from proving? [Chapter introduction, ordered pages and full source ledger](README.md). Original source",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "section_key": "tycho.page.f921597aae854c6996459fc025a9bca3#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## 3. OpenLineage records data-flow relationships, not business approval [OpenLineage's core specification](https://github.com/OpenLineage/OpenLineage/blob/main/spec/OpenLineage.md) describes Jobs, Runs, input/output Datasets and extensible Facets. Runs represent executions of jobs; data-flow metadata relates those executions to datasets and their change over time. The [OpenLineage job lineage facet](https://openlineage.io/docs/spec/facets/job-facets/lineage/) can model explicit flow relationships without inferring that each input contributes to every output. This matters in multi-output processing: na\u00efvely creating all possible input/output edges misrepresents the data provenance. **Synthet",
+          "heading": "3. OpenLineage records data-flow relationships, not business approval",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B065",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded data and query semantics | TAO construct / operation in src.m9-me01 | Supported meaning | Deliberate limitation | |---|---|---| | Object | Unique ID, type and named fields | A generic SQL join API is not exposed | | Association | Typed, directed link between objects; multiple types allowed between same pair | Rich arbitrary graph pattern matching is **not** offered | | Inverse association type | Optionally created/deleted automatically for related directed link | Must preserve intended relationship semantics, not every association is necessarily bidirectional | | Association point read | Find `(id1, type, id2)` | Not a complete arbitrary multi-hop reachability query | | Associatio",
+          "heading": "Bounded data and query semantics",
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 A bounded dependency path is not proof of causation **Original fictional equipment graph:** nodes are physical `Unit`, `Module` and `Supplier`; edges `DEPENDS_ON` have direction, effective date and source identity. Query: \"Which currently operational units depend on a part supplied by vendor X within at most three transitions?\" A graph path of unlimited depth risks cycles, irrelevant historical dependencies and unbounded query cost. Graph design must define whether dependencies are direct or inferred, what \"current\" means, and which edge source/version supports it. A Cypher-style bounded expansion such as `(unit)-[:DEPENDS_ON*1..3]->(part)` is meaningful only und",
+          "heading": "Engineering walkthrough \u2014 A bounded dependency path is not proof of causation",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+          "section_key": "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#engineering-walkthrough-a-bounded-dependency-path-is-not-proof-of-causation"
+        },
+        {
+          "excerpt": "## Negative evidence, costs and alternatives Services are not magically independent when gateways leak internal data models. Additional gateways can become central points of change; layer violations cannot be fixed by drawing boxes. This does not prove that a small monolith should be decomposed. **Alternatives:** retain/tune the legacy architecture if capacity and correctness already meet requirements; incrementally constrain its internal dependency graph; adopt the described transition only if its own reported bottleneck exists; otherwise conclude **insufficient evidence** rather than copying the brand's solution. These are synthetic architecture alternatives and must not be presented as al",
+          "heading": "Negative evidence, costs and alternatives",
+          "path": "book/cases/uber-doma-domains.md",
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#negative-evidence-costs-and-alternatives"
+        },
+        {
+          "excerpt": "## 5. OLAP, time series and graph data **ClickHouse MergeTree** official docs describe immutable sorted data parts, background merges, sparse primary index/data pruning and an `ORDER BY` sorting key. This architecture is especially relevant to high-volume analytical scans and aggregates, but it should not be assumed to support a transactional seat-allocation invariant with the same semantics as an OLTP database. [E06] A **time-series model** emphasizes event timestamp, ingestion order, retention/downsampling and range aggregations. It can live in PostgreSQL or a columnar/TS-specialized system. \"Time-series\" describes the query and lifecycle problem, **not a unique storage consistency guarant",
+          "heading": "5. OLAP, time series and graph data",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/specialized-models.md",
+          "section_key": "tycho.page.ee2dd008d4f445eaa9b20998f855a786#5-olap-time-series-and-graph-data"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B066",
+      "question": "What evidence makes an extracted dependency edge traceable to its source?",
+      "section_new": [
+        {
+          "excerpt": "## 5. What could justify distribution \u2014 and what cannot? Appropriate evidence for **exploring** an independently deployed service boundary includes a cohesive business capability with an externally clear contract, an established team able to operate it, materially independent release/change pressure, and measured or otherwise validated benefits that exceed additional network and operational costs. Evidence **against immediate distribution** may include unstable domain boundaries, substantial synchronous chatty calls, data invariants that currently depend on one local transaction, scarce on-call/observability capacity, and no proven need for independent deployment. Fowler's *Monolith First* e",
+          "heading": "5. What could justify distribution \u2014 and what cannot?",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot"
+        },
+        {
+          "excerpt": "## 6. Candidate evaluation under realistic requirements | Evidence / requirement | Keep modular | Extract optional notifications | Extract reservation authority | |---|---|---|---| | Strong local allocation invariant | Favorable if transaction remains local | Unchanged if notifications are post-commit | Requires authoritative state transfer and race tests | | Separate release cadence | Shared rollout | May improve one capability's release autonomy | Only if client/data versions independently supported | | Fault isolation | One process may have shared failure modes | Optional dependency can be bulkheaded | Remote data owner adds availability dependency | | Uneven load | Scale one executable o",
+          "heading": "6. Candidate evaluation under realistic requirements",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-contracts.md",
+          "section_key": "tycho.page.cdb86c0b91a6489f979689ab08efad35#6-candidate-evaluation-under-realistic-requirements"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](graph-data-models-and-traversal.md) | When is explicit typed connectivity preferable to lexical or vector similarity? | | [Edge meaning and relationship questions](edge-semantics.md) | Which explicit relation is being traversed and what can a path not prove? | | [Bounded graph traversal and relational alternatives](bounded-traversal.md) | What direction, cycle and result limits make the tra",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/README.md",
+          "section_key": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Subsequent evidence: why \u201cmodular monolith\u201d is not 100% complete The separate [September 16, 2020 follow-up](https://shopify.engineering/shopify-monolith) (src.m9-sh02, **What We're Building Right Now**) reports **37 components** in the main monolith, with Packwerk enforcing dependency and privacy restrictions for **about one third**. Strong component isolation remained unfinished and source teams were still reducing cycles. The blog also describes specific **storefront-rendering** and **credit-card-vaulting** extractions as exceptions motivated by high-throughput/read-only workload or sensitive-data boundaries. Thus a modular-monolith policy **coexisted with selected services**; \u201cShopify",
+          "heading": "Subsequent evidence: why \u201cmodular monolith\u201d is not 100% complete",
+          "path": "book/cases/shopify-modular-monolith.md",
+          "section_key": "tycho.page.aed8b635f57f41dfa63c897a8d1caca8#subsequent-evidence-why-modular-monolith-is-not-100-complete"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B067",
+      "question": "When may an expanded database schema be contracted during a mixed-version rollout?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and mission A successful deployment can fail when an older process reads data written by a newer process. The database engine may accept new DDL, but the application can still misinterpret a status field or require a removed column. **Compatibility is a relation between deployed reader/writer versions and persisted information**, not a single green \u201cschema compatible\u201d Boolean. This chapter owns **mixed-version reader/writer compatibility and operational schema-change constraints**. [V05/C06 semantic schema migration](../../v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md) owns domain identity mapping",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "section_key": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission"
+        },
+        {
+          "excerpt": "## 3. Explicit state machine for transitional safety ```mermaid stateDiagram-v2 [*] --> OldStable OldStable --> CompatibleSchema: Add backward compatible schema CompatibleSchema --> MixedVersions: Start N+1 behind controlled traffic MixedVersions --> Observe: Validate user SLIs and invariants Observe --> MixedVersions: Continue measured exposure Observe --> OldStable: Route back if data remains readable by N Observe --> ForwardRepair: Incompatible writes or partial migration ForwardRepair --> Observe: Repair and revalidate Observe --> NewStable: Promote N+1 and retire N NewStable --> Cleanup: Remove obsolete schema after compatibility window Cleanup --> [*] ``` Text alternative: begin with s",
+          "heading": "3. Explicit state machine for transitional safety",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety"
+        },
+        {
+          "excerpt": "## Purpose and mission A database schema is a contract between stored historical state and all readers/writers able to interpret it. Changing a column name is often trivial syntax; changing the meaning or identity of data may be difficult or irreversible. A safe schema lifecycle must preserve **business meaning**, versioned provenance and recoverability through its transition. This chapter owns **data modeling changes, backfill consistency, identity mapping, migration checkpoints and removal of retired data**. [V08/C05 mixed-version database compatibility](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "section_key": "tycho.page.357c2d162bd44f3aa06a995a1e691551#purpose-and-mission"
+        },
+        {
+          "excerpt": "## 3. Expand, migrate, contract as gated lifecycle [Danilo Sato's Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) describes an expand/migrate/contract approach for interfaces. Applying it to a database requires **additional explicit transactional/data requirements** not established by that method alone. ```mermaid stateDiagram-v2 [*] --> Baseline: freeze identity semantics and known writers Baseline --> Expand: additive compatible model Expand --> Map: versioned identity resolution Map --> Backfill: bounded resumable batches Backfill --> Reconcile: semantic counts, relation and status checks Reconcile --> Contract: old readers / replays proven retired Backfill --> Repair",
+          "heading": "3. Expand, migrate, contract as gated lifecycle",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B068",
+      "question": "Why can an older binary rollback fail after a new release writes a new-only state?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Failure chronology: request outcomes can diverge from deployment status ```mermaid sequenceDiagram participant Client participant Router as Traffic router participant Old as Release N participant New as Release N+1 participant DB as Shared data store participant Observe as Outcome monitoring Client->>Router: Register for workshop Router->>New: Canary request New->>DB: Write new-format record DB-->>New: Local commit acknowledged New-->>Router: Reply times out Observe->>Observe: Tail latency and failures increase Observe-->>Router: Stop promotion / assess rollback Router->>Old: Route subsequent traffic to N Old->>DB: Read N+1-format record DB-->>Old: Record shape incompatible with N Note",
+          "heading": "4. Failure chronology: request outcomes can diverge from deployment status",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 New-only persisted effects turn image rollback into forward repair **Original fictional migration:** a catalogue has one legacy identity field and an external API that still serves old clients. The target separates models from physical units. An engineer plans to introduce new binaries and treat container image rollback as the recovery strategy even after clients start writing new-only identity states. | Transition | Authority and compatibility | Reversible response | |---|---|---| | S0 baseline | Old writer, old schema/decoder, recorded snapshot and operation horizon | Restore pinned baseline under actual data policy | | S1 expand | Old writer authoritative; new",
+          "heading": "Engineering walkthrough \u2014 New-only persisted effects turn image rollback into forward repair",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair"
+        },
+        {
+          "excerpt": "## 6. A correct migration must test failure and recovery ### Failure A \u2014 response acknowledgment is lost A contributor edits photo metadata; the transaction commits but the response disappears. The client retries. Correct behavior requires a durable operation identity or other safe retry contract; otherwise two update effects or duplicate notifications may result. [Outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) explains why local transaction boundaries do not cover external notifications. ### Failure B \u2014 old and new clients interpret the same field differently A previously optional metadata field becomes mandatory under the new implementation. Old clients c",
+          "heading": "6. A correct migration must test failure and recovery",
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/migration-falsification.md",
+          "section_key": "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#6-a-correct-migration-must-test-failure-and-recovery"
+        },
+        {
+          "excerpt": "## 5. Evolving a boundary without an atomic fleet-wide release Producer and consumer can run different versions during rollout. The interface needs **wire compatibility**, **semantic compatibility** and **state compatibility**, not just a syntactically valid payload. | Change | Potentially safe | Needs explicit verification | |---|---|---| | Add optional display-only field | Old clients may ignore it | Actual parser strictness and data exposure | | Rename business status | New code can translate old wire names | Old persisted/event meanings and replays | | Split entity identity into model/unit | May correct previous modeling ambiguity | Migration mapping, unknown identities and old reference",
+          "heading": "5. Evolving a boundary without an atomic fleet-wide release",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/boundary-evolution.md",
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B069",
+      "question": "Why can a migration with valid event schemas still break an old consumer\u2019s business interpretation?",
+      "section_new": [
+        {
+          "excerpt": "## A versioned transformation contract for each consumer cohort The src.m9-sp03 article distinguishes **discovering affected repositories**, **generating patches**, **testing their semantic correctness**, and **merging/rolling out**. These are different acceptance states. The cited lineage population of about **1,800 direct pipelines** is an impact estimate for two datasets; it must not be reported as the set successfully changed. The **240 rolled-out PRs** are a narrower migration cohort, not proof every PR merged, every affected pipeline migrated or every data value preserved business meaning. For a different platform, each eligible transformation should have a versioned contract containin",
+          "heading": "A versioned transformation contract for each consumer cohort",
+          "path": "book/cases/spotify-honk-data-consumer-migration.md",
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort"
+        },
+        {
+          "excerpt": "## 1. Distinguish syntactic change from semantic change | Change | Syntactic requirement | Domain integrity requirement | |---|---|---| | Add optional display field | Older rows can represent absence | Missing does not imply an invented business value | | Rename external identity | Reader accepts old and new names during transition | Both names resolve to the same durable logical entity | | Split one field into two | New columns and mapping function | Original cases map without ambiguity or loss | | Change enum/status meaning | Codec accepts versioned old/new labels | Old accepted state is not misread as pending/rejected | | Split a table into entities | Data-copy and foreign keys | Historic",
+          "heading": "1. Distinguish syntactic change from semantic change",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/semantic-compatibility.md",
+          "section_key": "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Treat data evolution as a semantic compatibility and authority transition, not just a successful DDL command. A new value interpreted differently by old readers can break a mixed-version system even when every row passes schema validation. The detailed pages separate the mechanisms that make this decision conditional: - [Schema shape and preserved meaning](semantic-compatibility.md) \u2014 Which old/new representation change can silently alter a domain invariant? - [Migration stages, retention and no-return points](migration-retirement.md) \u2014 Which authority and validation gates permit old data or contracts to be retired? [Chapter introduction, ordered page",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "section_key": "tycho.page.357c2d162bd44f3aa06a995a1e691551#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Four distinct consistency proofs for another platform A comparable migration must specify more than the set-equality formula, because different data paths can agree on the wrong result: | Verification dimension | What to compare | Adversarial case | |---|---|---| | **Backup input identity** | Manifest revision, SSTable coverage, schema/topology and reference time | Connector A reads a later backup after topology change | | **Logical row identity** | Both old-minus-new and new-minus-old rows, including schema-normalized keys | Equal row counts hide duplicates and omissions | | **Meaning over time** | TTL reference instant, tombstones, expiring rows, ordering and consistency rule | Same phy",
+          "heading": "Four distinct consistency proofs for another platform",
+          "path": "book/cases/netflix-casspactor-shadow-migration.md",
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B070",
+      "question": "How can retries distort the denominator of a user-facing service indicator?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### SLI-SLO and Error Budgets An SLI is a measured ratio of good events to valid events; an SLO is the target for that ratio over a window, and the error budget is the allowed failure quantity. The measurement contract precedes the number, because a green indicator built on the wrong denominator is worse than no indicator. A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this window has 30, **consuming 300% of the target's error allowance**. Whether user cancellations, blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed before measurement; exclusion policy cannot c",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+          "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Purpose and mission A useful service-level indicator needs telemetry that preserves the intended meaning. Transport and storage choices determine what information survives collection, aggregation, label filtering, retention and backend failure. Even perfect dashboards cannot correct instrumentation that uses the wrong event denominator, while unbounded metric labels can consume substantial resources and expose sensitive identifiers. This chapter owns **how signals are represented, transferred, stored and operated**. [SLIs, SLOs and error budgets](../c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md) owns the user-visible definition and alert decision. [Trac",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md",
+          "section_key": "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Quantified reported outcome, with non-transferable denominators As published, Discord reports **twice the legacy indexing throughput**, **median search latency from 500 ms to below 100 ms**, **p99 from about 1 second to below 500 ms**, and **40 Elasticsearch clusters with thousands of indices**, while indexing **trillions** of messages. It also reports automated cluster upgrades/rolling restarts with no service impact during its observation. [src.m9-di02, **How are things going?**]. The blog does not give enough reproducible benchmark method, traffic composition, hardware mix, sample duration or independent replication to generalize the multipliers. **Critical disambiguation:** these numb",
+          "heading": "Quantified reported outcome, with non-transferable denominators",
+          "path": "book/cases/discord-search-index-cells.md",
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#quantified-reported-outcome-with-non-transferable-denominators"
+        },
+        {
+          "excerpt": "## 3. Define denominators and avoid coordinated omission Four different rates can coexist during one window: - **Scheduled arrivals:** logical operations intended by the workload fixture. - **Transmitted attempts:** actual requests emitted by the generator, including configured retries. - **Admitted operations:** server-accepted work before queue/service. - **Completed useful operations:** correct business outcomes within the selected time window. A single logical operation may produce multiple attempts. Timeouts and client disconnects do not automatically imply the server committed nothing. A test should retain operation identity and terminal state when possible; counting attempts as distin",
+          "heading": "3. Define denominators and avoid coordinated omission",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c03-load-test-methods-and-benchmark-validity/arrival-design.md",
+          "section_key": "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

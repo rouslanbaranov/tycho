@@ -1,0 +1,388 @@
+{
+  "items": [
+    {
+      "excerpt": "## Bounded pattern ownership notes ### Domain-Driven Design and Bounded Context A bounded context has one accountable model owner and one accepted vocabulary. A named domain expert co-owns that vocabulary and arbitrates disputed meanings. The model owner may reject a term carrying a conflicting invariant, even when another team introduced it. These notes are synthetic design guidance, not measured evidence. The context map records each relationship, translation direction and mapping maintainer. Treat it as an ownership artifact that changes with the model, not a diagram produced once for review. Keep deployment choices separate from model boundaries: one deployable can host several contexts,",
+      "heading": "Bounded pattern ownership notes",
+      "id": "V4-A001",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-authority.md",
+      "question": "What risk arises when a translation layer between legacy and new domains has no owner for its mappings?",
+      "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes"
+    },
+    {
+      "excerpt": "## Engineering walkthrough \u2014 Reconnect cannot recover unpersisted stream items **Synthetic scenario:** a device-status server streams numbered updates over gRPC to a remote consumer. The network drops after the server sends sequence 41 but before the consumer can acknowledge it; the server emits 42 while the client is offline. Transport flow-control windows influence buffered bytes **while connected** but do not constitute a durable event log or replay cursor. | Contract decision | Option A: transient live feed | Option B: resumable durable subscription | |---|---|---| | Owner of buffered state | Process/session with bounded bytes | Named storage/log with retention and sequence identity | | ",
+      "heading": "Engineering walkthrough \u2014 Reconnect cannot recover unpersisted stream items",
+      "id": "V4-A003",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#engineering-walkthrough-reconnect-cannot-recover-unpersisted-stream-items"
+    },
+    {
+      "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#resequencer) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Use a resequencer only when the message contract declares a required order, a reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition have owners. Partition by key instead when global order is unnecessary; when the buffer cannot be bounded, reject the resequence",
+      "heading": "Resequencer",
+      "id": "V4-A005",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "section_key": "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+    },
+    {
+      "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence; the Aggregator and Scatter-Gather alternatives carry separate source bindings recorded in their cards and owner units. ### Aggregator An aggregator fans in related results from multiple participants and returns one composed result. It needs correlation, a completeness condition and an aggregation algorithm. Tycho guidance, not a source claim: add a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses. Define the expected participant set, a completion ",
+      "heading": "Bounded pattern ownership notes",
+      "id": "V4-A005",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes"
+    },
+    {
+      "excerpt": "## 2. Three basic placements | Placement | Can help | Costs and correctness gap | |---|---|---| | No cache | Simplest authority/read path when origin is fast and affordable | Every query reaches origin, possibly expensive | | Per-process local cache | Very low read overhead, no cache network call | Each replica warms independently; divergent contents, memory/GC cost, lost state on restart | | Shared distributed cache | Many application replicas share reusable keyspace and memory | Added network/auth/HA dependency; cache node loss and consistency rules | | Multi-level local + shared | Avoid remote cache on hot local hits and reduce origin work on misses | Two invalidation/expiration layers, c",
+      "heading": "2. Three basic placements",
+      "id": "V4-A009",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/cache-authority.md",
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
+      "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#2-three-basic-placements"
+    },
+    {
+      "excerpt": "## 3. Local cache eviction and refresh are different actions The [Caffeine Eviction wiki](https://github.com/ben-manes/caffeine/wiki/Eviction) documents size/weight and time-based eviction, including expire-after-write and expire-after-access. The [Caffeine Refresh wiki](https://github.com/ben-manes/caffeine/wiki/Refresh) distinguishes asynchronous refresh from eviction and notes that refresh-after-write eligibility generally triggers an actual reload only when a key is queried. This difference is architectural: - **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit; - **expire-after-access:** frequently accessed values may remain resident",
+      "heading": "3. Local cache eviction and refresh are different actions",
+      "id": "V4-A009",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
+      "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#3-local-cache-eviction-and-refresh-are-different-actions"
+    },
+    {
+      "excerpt": "## 2. Local in-process cache: fast reads, isolated knowledge The public **Caffeine** project wiki's **Eviction** page documents size-bound caching and expiration policies such as `expireAfterWrite`, `expireAfterAccess` and variable expiration. Its **Refresh** page distinguishes refresh from eviction: with refresh a previously stored value can continue being returned while an asynchronous load is in progress; refresh eligibility does not itself initiate work until queried. [E01, E02] ```mermaid stateDiagram-v2 [*] --> Absent Absent --> Fresh: Initial load Fresh --> RefreshEligible: Refresh interval reached RefreshEligible --> Refreshing: Next eligible read schedules refresh Refreshing --> Fre",
+      "heading": "2. Local in-process cache: fast reads, isolated knowledge",
+      "id": "V4-A009",
+      "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
+      "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#2-local-in-process-cache-fast-reads-isolated-knowledge"
+    },
+    {
+      "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Cache Invalidation Cache invalidation removes a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy. On a write, write the change to the data store, then remove the affected cache entry. The next read repopulates the cache from the data store. This keeps the write path simple. A reader can experience a cache miss or briefly see stale data immediately after a write. Many caching systems let you con",
+      "heading": "Bounded pattern ownership notes",
+      "id": "V4-A011",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+      "question": "Why can removing an origin asset leave an old copy available after an edge purge?",
+      "section_key": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+    },
+    {
+      "excerpt": "## 5. Original synthetic failure: one optional dependency poisons core work A fictional public trail guide serves a **required** trail description and an **optional** community photo suggestion. Both initially use one shared worker pool. During a picture-service slowdown, photo calls hold most workers; required trail descriptions fail their deadlines even though authoritative trail records remain healthy. **Candidate A:** enlarge the shared pool. It might only increase calls to the failing photo dependency and thread/buffer use. **Candidate B:** give optional images a separate small concurrency budget, deadline and circuit breaker; serve core trail information without the optional image when",
+      "heading": "5. Original synthetic failure: one optional dependency poisons core work",
+      "id": "V4-A013",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+      "question": "What should happen to the user response if the candidate fails during a parallel run?",
+      "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work"
+    },
+    {
+      "excerpt": "## 1. Boundaries: why the naive dual write is unsafe Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive design is two independent effects: 1. Commit a database record. 2. Publish an event to an external broker. Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor ",
+      "heading": "1. Boundaries: why the naive dual write is unsafe",
+      "id": "V4-A014",
+      "path": "book/distributed/transactional-outbox-and-idempotency.md",
+      "question": "Why is mirrored production traffic unsafe for a shadow service that performs live writes?",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe"
+    },
+    {
+      "excerpt": "## 1. Constraints must be typed and owned | Constraint type | What a design must make explicit | What unknown blocks | |---|---|---| | Runtime/lifecycle | Supported language, framework, operating system and dependency versions | Unsafe unmaintained component or untested runtime upgrade | | Deployability | Release window, mixed-version overlap, artifact identity, rollback/forward repair | Big-bang changes with unknown old clients | | Operations | Monitoring, incident response, on-call skill, maintenance cadence | A design with no sustainable operator | | Capacity/latency | Defined offered load and business correctness/time SLO | Arbitrary replica, database or queue sizing | | Recovery | Permi",
+      "heading": "1. Constraints must be typed and owned",
+      "id": "V4-A017",
+      "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/feasibility-gates.md",
+      "question": "What lifecycle risk must be addressed when an application depends on a colocated sidecar?",
+      "section_key": "tycho.page.8284605817fc48dba499425b0d908df0#1-constraints-must-be-typed-and-owned"
+    },
+    {
+      "excerpt": "## 1. Define the scarce resource and the acceptance outcome Potential constraints include CPU, thread/connection pools, DB locks, broker quotas, external API limits, expensive query operators, request buffers and sustained storage I/O. More application instances do not relax a shared database quota or single-key transaction bottleneck. Protect the resource that actually limits **useful completed operations**. Distinguish these outcomes: | Event | Meaning | Client behavior | |---|---|---| | Accepted and completed | Authoritative logical operation reached defined correct result | Use result and do not duplicate effect | | Rejected before acceptance | No durable work accepted, assuming that bou",
+      "heading": "1. Define the scarce resource and the acceptance outcome",
+      "id": "V4-A018",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+      "question": "When is polling a separate asynchronous status resource unnecessary for a client?",
+      "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome"
+    },
+    {
+      "excerpt": "## Health endpoint monitoring **Health endpoint monitoring.** A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\". They must not be collapsed into one endpoint. External monitoring should also observe user-level success and dependency state, because a green liveness probe does not prove readiness, correct routing or a healthy dependency. Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable. **Failure and recovery.** A shared dependency failure can fail ",
+      "heading": "Health endpoint monitoring",
+      "id": "V4-A019",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "question": "Why does endpoint discovery still need active health checks?",
+      "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring"
+    },
+    {
+      "excerpt": "# Service Discovery > **Pattern atlas:** > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [discovery, load balancing and backend selection page](discovery-balancing.md#service-discovery) on 2026-10-29. Client-side discovery, server-side discovery and load balancing remain on the chapter page. Envoy fetches cluster members from a xDS management server through the endpoint discovery service. The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the discovery service. EDS carries per-host attributes",
+      "heading": "Service Discovery",
+      "id": "V4-A019",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/service-discovery.md",
+      "question": "Why does endpoint discovery still need active health checks?",
+      "section_key": "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview"
+    },
+    {
+      "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+      "heading": "Transactional Outbox",
+      "id": "V4-A022",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview"
+    },
+    {
+      "excerpt": "## Purpose and decision question A relational database can commit an authoritative state change inside one local transaction. An unrelated message broker or external service is usually *not part of the same atomic commit*. A long-running workflow crossing several independent owners therefore needs explicit persistent state, publication and failure contracts. A distributed event architecture is not made reliable by drawing an arrow from a transaction to a queue. Four patterns address different questions: - **Transactional outbox:** how can the local state change and a durable intent to publish one event be committed atomically? - **Inbox/idempotent consumer:** how can a downstream owner apply",
+      "heading": "Purpose and decision question",
+      "id": "V4-A022",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question"
+    },
+    {
+      "excerpt": "## Bounded pattern ownership notes ### CDN-Edge Caching An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a content and authority contract, not a network location. The cache key, freshness policy and authorization boundary must agree. An authorization header is not a complete design for private edge caching; explicit cache directives can alter reuse rules. A misclassified response can serve one user's private data to another, and a purge can lag the origin. Test the authorization matrix, the purge path and the stale-on-error behavior. The cited Microsoft static-hosting unit is narrower than this CDN guidance; RFC 9111 supports shared-cache rest",
+      "heading": "Bounded pattern ownership notes",
+      "id": "V4-A025",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
+      "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes"
+    },
+    {
+      "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Parallel Run Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative. Parallel run must not execute both implementations when the operation has side effects, such as sending an email or charging a card. Use it for side-effect-free logic when output equality can be checked. A candidate failure must never affect the response. Keep the old authority until cutover. For op",
+      "heading": "Bounded pattern ownership notes",
+      "id": "V4-A028",
+      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+    },
+    {
+      "excerpt": "## The actual design variables: code ownership versus deployment autonomy The three company reports answer **different starting problems**. [Shopify's February 2019 monolith decision](../shopify-modular-monolith.md) (src.m9-sh01) favored domain boundaries inside a shared Rails application, accepting one broad release unit while reducing accidental cross-domain dependencies. The [2020 component follow-up](../shopify-packwerk-boundary-evolution.md) (src.m9-sh02) still recorded incomplete enforcement and selective service extraction. [Netflix's 2016 cloud migration](../netflix-seven-year-cloud-rearchitecture.md) (src.m9-n01) responded to concentrated failure and global growth over seven years, ",
+      "heading": "The actual design variables: code ownership versus deployment autonomy",
+      "id": "V4-B004",
+      "path": "book/cases/decisions/monolith-vs-services.md",
+      "question": "In Shopify\u2019s 2019 componentization account, how did Wedge surface cross-component dependencies?",
+      "section_key": "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9#the-actual-design-variables-code-ownership-versus-deployment-autonomy"
+    },
+    {
+      "excerpt": "## 1. Divide wall-clock latency before selecting a remedy A request's elapsed time may include: - waiting to be admitted to a queue/executor and waiting to borrow a connection; - actually running application instructions on a CPU; - waiting for locks, network, disk or an external API; - pauses or scheduling delays from JVM/runtime/OS behavior; - response serialization and delivery. A CPU profile mainly attributes **CPU-running sampled time**; it does not by itself show all waiting. Wall-clock samples can show blocked and sleeping stacks, with their own measurement biases. A distributed trace provides time bounds for instrumented spans, but does not automatically distinguish CPU use from a bl",
+      "heading": "1. Divide wall-clock latency before selecting a remedy",
+      "id": "V4-B007",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/latency-diagnosis.md",
+      "question": "In Netflix\u2019s 2024 GC account, how could request pauses amplify load beyond the original slow request?",
+      "section_key": "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy"
+    },
+    {
+      "excerpt": "## Why reliability was not automatically improved In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of ev",
+      "heading": "Why reliability was not automatically improved",
+      "id": "V4-B008",
+      "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+      "question": "Why can a Java process exceed a memory limit while heap occupancy looks stable?",
+      "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved"
+    },
+    {
+      "excerpt": "## 2. Feedback signals and the hot-key trap A policy must choose a signal that reflects the **scarce resource** limiting useful progress: | Proposed metric | Useful when | Deceptive when | |---|---|---| | Average CPU utilization | Work is CPU-bound and can be spread across replicas | Requests wait on DB locks or remote I/O; average hides one hot process | | Memory pressure | Resource limit and cache footprint are known | More memory only retains more stale objects or delays leaks | | Queue length / age | Each item has bounded work and service level is defined | A single blocked key/consumer prevents queue progress | | Active requests | Per-request work and admitted load are stable enough | L",
+      "heading": "2. Feedback signals and the hot-key trap",
+      "id": "V4-B009",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+      "question": "Why is a CPU flame graph insufficient by itself to explain a request delayed by blocking?",
+      "section_key": "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap"
+    },
+    {
+      "excerpt": "## Two incompatible architecture choices for a hypothetical legacy gateway For a legacy entry service with relatively few connections and heavy per-request transformation, an existing blocking or bounded-thread gateway may satisfy all objectives with less risk. For very many persistent idle connections and asynchronous downstream waits, Netty/event-loop I/O may materially reduce resource cost. For a mixed request population, isolate request classes and quantify: blocked wait time; active connection count; event-loop queue delay; completed requests/CPU; per-class p99; retry volume; cancelled but still running upstream work; trace and authorization-context errors; and leaked buffers. The **sel",
+      "heading": "Two incompatible architecture choices for a hypothetical legacy gateway",
+      "id": "V4-B009",
+      "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+      "question": "Why is a CPU flame graph insufficient by itself to explain a request delayed by blocking?",
+      "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#two-incompatible-architecture-choices-for-a-hypothetical-legacy-gateway"
+    },
+    {
+      "excerpt": "## 4. Cancellation is not rollback, and reconnect is not replay The [gRPC cancellation guide](https://grpc.io/docs/guides/cancellation/) explains that when clients cancel or deadlines expire, servers should stop work and propagate the signal where possible; application code may need to cooperate. This cannot undo an already committed write or external effect. A reconnecting stream must define: - cursor/checkpoint or stable event ID, if replay is supported; - exact ordering scope (one connection, one partition, one entity or total order); - delivery mode and gap/duplicate handling; - expiration and retention after which resume cannot succeed; - whether a stream acknowledgment means transport ",
+      "heading": "4. Cancellation is not rollback, and reconnect is not replay",
+      "id": "V4-B012",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/resume-cancellation.md",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "section_key": "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay"
+    },
+    {
+      "excerpt": "## 3. Indexes trade read access against writes, storage and maintenance PostgreSQL 17's [Indexes](https://www.postgresql.org/docs/17/indexes.html) documents multiple families: B-tree, hash, GiST, SP-GiST, GIN and BRIN, plus multicolumn, expression and partial indexes. The existence of an index does **not** force the planner to use it. It also cannot automatically satisfy every predicate or grouping mode. ```mermaid flowchart TD Query[\"Actual query and predicate/order\"] --> Statistics[\"Table/index statistics\"] Statistics --> Planner{\"Planner cost estimates\"} Planner --> Seq[\"Sequential scan\"] Planner --> Index[\"Index / index-only scan\"] Planner --> Bitmap[\"Bitmap index + heap scan\"] Seq --> E",
+      "heading": "3. Indexes trade read access against writes, storage and maintenance",
+      "id": "V4-B014",
+      "path": "book/data/postgresql-mvcc-indexes-and-query-plans.md",
+      "question": "How do range and hash partitioning differ in their exposure to sequential writes and range queries?",
+      "section_key": "tycho.page.9176c39f97f544f884666e291ae38b90#3-indexes-trade-read-access-against-writes-storage-and-maintenance"
+    },
+    {
+      "excerpt": "## 1. Model the query and distribution first Original fictional case: a community tool catalogue stores tools, bookings and descriptive tags. Representative requests: - find one tool by stable identifier; - list currently available devices for one site and date; - search by term or tag; - list most recently updated public descriptions; - display all reservations for one member during a bounded period. These workloads do not necessarily benefit from the **same index**. A primary-key lookup, range filter, full-text query and ordered pagination impose different access patterns and selectivity. An index design question should include: - columns/operator predicates and sort order; - total table s",
+      "heading": "1. Model the query and distribution first",
+      "id": "V4-B014",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+      "question": "How do range and hash partitioning differ in their exposure to sequential writes and range queries?",
+      "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first"
+    },
+    {
+      "excerpt": "## 2. Majority quorum arithmetic and the failure envelope In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1. A **3-voter** cluster requires 2 votes, and can normally make progress with one unavailable voter if remaining voters can communicate and have necessary log state. A **5-voter** cluster requires 3. Adding an extra voting member can actually increase the quorum without increasing tolerated failures\u2014for example 3 voters \u2192 4 voters raises required votes from 2 to 3. This arithmetic assumes the quorum protocol and membership-change rules are correct. It is **not a proof that any arbitrary implementation guarantees safety**. **Alternative.** A leader-ba",
+      "heading": "2. Majority quorum arithmetic and the failure envelope",
+      "id": "V4-B015",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope"
+    },
+    {
+      "excerpt": "## 5. Applicability, alternatives and insufficient evidence Use replicated consensus when several fault-prone nodes must agree on an ordered configuration, leader lease/epoch, log, or authoritative state with explicit failure assumptions. Avoid introducing an application-level consensus cluster simply to publish a best-effort notification or to generate globally increasing business IDs if a simpler authoritative database transaction or single-writer contract meets the requirement. A legitimate alternative can be one durable local database with a single authoritative writer, eventual replicated read models, per-aggregate ordered streams or conflict reconciliation. The decision is driven by in",
+      "heading": "5. Applicability, alternatives and insufficient evidence",
+      "id": "V4-B015",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "section_key": "tycho.page.d664f65295644726ae1234a982f81fa8#5-applicability-alternatives-and-insufficient-evidence"
+    },
+    {
+      "excerpt": "## Original ranked-set counterexample \u2014 authorization is not optional relevance Suppose an exact hypothetical ranking is A, B, C, D, E. The caller may read only D and E. A candidate stage that retrieves three items and then removes unauthorized results returns nothing. A search over the authorized population can return D and E. The difference follows from the declared sets; it is not an observed result for an ANN library or a promise about any engine's planner. Increasing the candidate budget may help find authorized results in this example, but it must never change what is authorized. Conversely, filtering early is not enough to prove recall: the index, model and permitted population still ",
+      "heading": "Original ranked-set counterexample \u2014 authorization is not optional relevance",
+      "id": "V4-B017",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-filters.md",
+      "question": "What does recall at k measure when the relevant set has been judged incompletely?",
+      "section_key": "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance"
+    },
+    {
+      "excerpt": "## 5. Quality metrics: retrieval is not answer quality | Dimension | Meaning and measurement | Error if omitted | |---|---|---| | **Recall@k** | Fraction of independently judged relevant items found among top k | Miss key dependency while top result looks similar | | **Precision@k** | Fraction of top k judged relevant | Drown context in irrelevant pages | | **MRR / nDCG@k** | Ranking order and graded relevance on judged questions | Strong evidence buried below shallow context | | **ANN recall@k** | Match of approximate neighbors to exact vector baseline under same filter/model | Mistake vector algorithm accuracy for human relevance | | **Answer correctness** | Independently checked conclusio",
+      "heading": "5. Quality metrics: retrieval is not answer quality",
+      "id": "V4-B017",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/hybrid-evaluation.md",
+      "question": "What does recall at k measure when the relevant set has been judged incompletely?",
+      "section_key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality"
+    },
+    {
+      "excerpt": "## Overload controls and failure containment **Autoscaling** is a delayed feedback loop, not an instantaneous capacity guarantee. Specify the measured signal (for example, queue age or admitted concurrency), observation interval, startup and warm-up delay, minimum and maximum replicas, and a scale-down stabilization rule. Test a burst shorter than the full provisioning delay: an autoscaler cannot protect that interval by adding instances that are not yet ready. Scaling application replicas may also exhaust a fixed downstream connection or rate-limit budget. **Admission control** must be applied before expensive work. Define a bounded in-flight limit and queue, a deadline-aware rejection poli",
+      "heading": "Overload controls and failure containment",
+      "id": "V4-B020",
+      "path": "book/performance/workload-profiles-and-capacity-experiments.md",
+      "question": "How can a priority queue protect critical work while avoiding indefinite starvation of other classes?",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment"
+    },
+    {
+      "excerpt": "## The overload boundary The overload scenario offers 30 requests per second to a 24-request-per-second pool with a 40-request queue and a one-second deadline. The run reports: - success rate 0.6488 (95% CI 0.6443-0.6534); - timeout rate 0.3495 (95% CI 0.3451-0.3540); - rejection rate 0.0005; - mean queue length 12.79; - server utilization 0.9966. The dominant failure is timeout, not rejection. The queue is large enough to absorb arrivals but not large enough to prevent deadline expiry. A report that focuses on rejection alone would miss most of the loss: rejection is 0.05% while timeout is 35.0%.",
+      "heading": "The overload boundary",
+      "id": "V4-B021",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
+      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary"
+    },
+    {
+      "excerpt": "## Admission must optimize useful completed work, not accepted requests A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks. A controller should count **completed useful operations** and successful critical classes, not just ingress QPS or aggregate reject rate. It should also expose why individual requests were rejected, and whether old low-priority work made critical traffic miss deadlines. **Synthetic comparison test:** replay equivalent read, write, scan, long-lived background and hot-key traffic at a fixed offered load. Use priority classes with immutab",
+      "heading": "Admission must optimize useful completed work, not accepted requests",
+      "id": "V4-B021",
+      "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests"
+    },
+    {
+      "excerpt": "## Decision and worked result Keep source revision, build identity, artifact digest, promotion and user-health acceptance as separate release boundaries. A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct. This is an editorial conclusion drawn from the linked manuscript and its original examples, not a newly executed experiment.",
+      "heading": "Decision and worked result",
+      "id": "V4-B023",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/README.md",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "section_key": "tycho.chapter.8a2d2a79846d4567bb3d33957e19977f#decision-and-worked-result"
+    },
+    {
+      "excerpt": "## Integrated decision and reading route Verify artifact identity and provenance against an authorization policy; distinguish signatures, attestations and component inventories. A valid signature from an unapproved identity, or an SBOM for another digest, must not authorize promotion. The detailed pages separate the mechanisms that make this decision conditional: - [Artifact subjects, provenance and component inventories](provenance-subjects.md) \u2014 What does each evidence object describe and what does it omit? - [Authorized promotion and missing evidence](promotion-authorization.md) \u2014 Why is authentic evidence insufficient to authorize an artifact in every environment? [Chapter introduction, ",
+      "heading": "Integrated decision and reading route",
+      "id": "V4-B023",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "section_key": "tycho.page.38bb8a14ebb54866a7004080318b47e1#integrated-decision-and-reading-route"
+    },
+    {
+      "excerpt": "## Integrated decision and reading route Keep source revision, build identity, artifact digest, promotion and user-health acceptance as separate release boundaries. A successful pipeline run does not prove that the intended artifact was deployed or that its persisted effects remain correct. The detailed pages separate the mechanisms that make this decision conditional: - [Build boundaries and artifact identity](build-identity.md) \u2014 Which source, runner and artifact evidence supports a reproducible release? - [Promotion, reconciliation and user-health gates](promotion-rollout.md) \u2014 Which failure and authority boundaries separate deployment from accepted release? [Chapter introduction, ordered",
+      "heading": "Integrated decision and reading route",
+      "id": "V4-B023",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "section_key": "tycho.page.7921e82a71b9446790f185c818326911#integrated-decision-and-reading-route"
+    },
+    {
+      "excerpt": "## Purpose and mission A release can be deployed successfully yet fail when old and new binaries coexist, when records written by a new version cannot be read by older workers, or when delayed events arrive after contract removal. Progressive delivery controls **exposure**, whereas schema compatibility controls **interpretation of shared state**. Both require independently verified invariants. **Primary question:** How should rolling, canary and blue/green deployments be coordinated with schema, event and API changes so that a failed rollout is recoverable without making unsupported rollback promises? Companion chapters: [CI/CD identity and GitOps](../volumes/v08-delivery-deployment-and-reco",
+      "heading": "Purpose and mission",
+      "id": "V4-B024",
+      "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+      "question": "What extra recovery coordination can a continuously reconciling GitOps controller require during an emergency rollback?",
+      "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#purpose-and-mission"
+    },
+    {
+      "excerpt": "## Failure matrix and required counterevidence - **Hermetic test, non-hermetic runtime:** the same code tests under Bazel but crashes on reflection, generated file discovery or incompatible dependency versions. Airbnb's real rollout surfaced these categories (src.m9-a01). Require deployment startup and representative integration parity separately. - **CI faster, releases unchanged:** approvals, environments or unstable service contracts dominate the lead-time distribution. Build speed is a local achievement, not proof of product throughput. - **Hundreds of generated PRs, many unsupported changes:** missing business-field mappings or untestable code produce superficially passing diffs; [Spoti",
+      "heading": "Failure matrix and required counterevidence",
+      "id": "V4-B029",
+      "path": "book/cases/decisions/build-delivery-migration.md",
+      "question": "What is lost when a modernization baseline records repository structure but not the runtime and writer inventory?",
+      "section_key": "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#failure-matrix-and-required-counterevidence"
+    },
+    {
+      "excerpt": "## 6. Validate the problem boundary before scaling the design A bounded review should verify: 1. **Completeness of partners:** can every required input/output be attributed to a known actor or external system, without putting an external platform inside the team-owned boundary? 2. **User-visible meaning:** can stakeholders state the accepted, rejected, pending and unknown outcomes without referencing implementation classes? 3. **State ownership:** is there exactly one authority (or an explicitly coordinated model) for each invariant? 4. **Trust boundaries:** which caller may request each effect, and where does enforcement happen? 5. **Failure semantics:** what happens when each neighbor fail",
+      "heading": "6. Validate the problem boundary before scaling the design",
+      "id": "V4-B030",
+      "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/evidence-contract.md",
+      "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+      "section_key": "tycho.page.b6be128c3e714ac68ef3311a30d65141#6-validate-the-problem-boundary-before-scaling-the-design"
+    },
+    {
+      "excerpt": "## 4. Candidate transition states\u2014not just a target diagram ```mermaid stateDiagram-v2 [*] --> Inventory Inventory --> ModuleContract: Establish internal API and data owner ModuleContract --> DualCompatibility: Add stable external contract and tests DualCompatibility --> Shadow: Run synthetic/representative parallel verification Shadow --> LimitedTraffic: Route controlled traffic to new owner LimitedTraffic --> Shadow: Revert routing while state is compatible LimitedTraffic --> ForwardRepair: Contract or data divergence ForwardRepair --> LimitedTraffic: Reconcile and reverify LimitedTraffic --> Extracted: Retire old implementation only after acceptance Extracted --> [*] ``` Text alternative:",
+      "heading": "4. Candidate transition states\u2014not just a target diagram",
+      "id": "V4-B032",
+      "path": "book/application/architecture-evolution-and-extraction.md",
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram"
+    },
+    {
+      "excerpt": "## Modernization plan Version contracts \u2192 establish old source authority \u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old only after proven zero callers. **Reversal triggers / insufficient evidence:** If the new model cannot preserve legacy business semantics, redesign domain/API contract with consumers before cutover rather than forcing opaque equality.",
+      "heading": "Modernization plan",
+      "id": "V4-B033",
+      "path": "book/cases/decisions/data-migration-correctness.md",
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+    },
+    {
+      "excerpt": "## Decision transfer, negative cases and synthetic ADR **Synthetic requirement:** migrate a transactional reporting feed while thousands of dashboards must remain available. Choose a job-level lifecycle with explicit old/new side-by-side materialization, consistent snapshot cuts, row identity as well as checksums for critical entities, fresh-data lag p95/p99, and an owner-approved change of production authority. Use canary batches and fall back before retiring the old implementation. **Alternative A \u2014 big bang:** may be viable only for a tiny noncritical batch that can be re-run deterministically without consumer SLA, but wrong for thousands of continuously consumed tables. **Alternative B \u2014",
+      "heading": "Decision transfer, negative cases and synthetic ADR",
+      "id": "V4-B033",
+      "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#decision-transfer-negative-cases-and-synthetic-adr"
+    },
+    {
+      "excerpt": "## Engineering walkthrough \u2014 Short-window queue growth is not steady-state Little's Law **Original synthetic arrival trace:** for 20 seconds, 120 new requests per second reach a bounded service capable of 80 correct completions per second. Suppose it rejects none during the first 20 seconds. With no initial backlog, the queued/in-flight surplus grows at roughly `(120\u221280)\u00d720 = 800` requests, before considering cancellations or finite buffers. It is **invalid** to infer that `L = \u03bbW` gives a stable average W by substituting 120 offered requests/s and a transient L of 800: arrival and departure boundaries differ and the finite window is not stationary. If no new requests arrive at second 20 and",
+      "heading": "Engineering walkthrough \u2014 Short-window queue growth is not steady-state Little's Law",
+      "id": "V4-B034",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law"
+    },
+    {
+      "excerpt": "## The basic quantities - Arrival rate (lambda): requests per second offered to the queue. - Service capacity (mu): requests per second the server pool can complete when busy. - Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server class, or lambda / (c * mu) for c identical servers. - Queue length: requests waiting for a server. - In-system count: waiting plus in service. - Time in system: from first arrival to terminal outcome. For the checkout baseline, lambda is 20 requests per second, c is 12 and the mean service time is 0.5 seconds. The service capacity is 12 / 0.5 = 24 requests per second, so the utilization is 20 / 24 = 0.833. The measured server utili",
+      "heading": "The basic quantities",
+      "id": "V4-B034",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+    },
+    {
+      "excerpt": "## Coexistence is a state, not a date A modernization path usually has several states: - legacy only; - dual write: both paths receive writes, with a reconciliation process; - shadow: the target receives traffic but does not own the authoritative response; - cutover: the target owns the authoritative response; - rollback: traffic returns to the legacy path while the target drains. Each state has different failure modes. A dual-write state can diverge silently. A shadow state can look healthy while the target's write path is untested. A cutover state can expose a reconciliation backlog that was hidden by legacy ownership. The V12 modernization model represents the states as a stage schedule a",
+      "heading": "Coexistence is a state, not a date",
+      "id": "V4-B034",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date"
+    },
+    {
+      "excerpt": "## Modernization plan Version contracts \u2192 establish old source authority \u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old only after proven zero callers. **Reversal triggers / insufficient evidence:** If the new model cannot preserve legacy business semantics, redesign domain/API contract with consumers before cutover rather than forcing opaque equality.",
+      "heading": "Modernization plan",
+      "id": "V4-B036",
+      "path": "book/cases/decisions/data-migration-correctness.md",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+    },
+    {
+      "excerpt": "## Abstraction is a choice about resolution Three model families cover most V12 questions: - **Stock-and-flow** for accumulation, feedback, delay and capacity. It is cheap to run and good for showing conservation and backlog growth. It does not represent individual request latency. - **Discrete-event** for queueing, deadlines, retries and tail latency. It represents individual requests and event ordering. It costs more to verify and can hide numerical detail behind a plausible average. - **Hybrid** for a staged path where traffic shares, reconciliation backlog and rollback coexist. It is a purposeful simplification, not a claim that the underlying system is fluid. The choice is not a maturit",
+      "heading": "Abstraction is a choice about resolution",
+      "id": "V4-B036",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution"
+    },
+    {
+      "excerpt": "## Engineering pressure A blocking request-per-connection gateway can be simple and effective when each request completes quickly. Persistent downstream connections change the arithmetic: a connection with low activity may still occupy a worker in a blocking implementation, and the load balancer's resource budget becomes tied to waiting rather than useful work. Netflix's existing gateway platform was exposed to growing device and persistent-connection needs. The migration targeted **concurrent connection scalability** and I/O handling, not a universally faster CPU implementation. [src.m9-n07: motivation and \"Results of Zuul 2 in Production\"].",
+      "heading": "Engineering pressure",
+      "id": "V4-B037",
+      "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#engineering-pressure"
+    }
+  ]
+}

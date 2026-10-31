@@ -1,0 +1,315 @@
+{
+  "batch": "SR02",
+  "items": [
+    {
+      "id": "V4-A011",
+      "question": "Why can removing an origin asset leave an old copy available after an edge purge?",
+      "section_new": [
+        {
+          "excerpt": "## Original worked example A fictional catalogue exposes versioned public thumbnails and restricted source images. Public thumbnail URLs include immutable content versions. Restricted originals are fetched through an access decision and must not accidentally share a public-cache route. Changing visibility from public to private is a revocation problem: removing the database's public flag does not erase every distributed copy already served. Define the observable contract. A public immutable asset may tolerate an old URL until retirement. A restricted object may require authorization on every access, a capability with bounded lifetime, or an edge policy whose propagation bound is acceptable. ",
+          "heading": "Original worked example",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example"
+        },
+        {
+          "excerpt": "## Pages and reasoning route | Page | Question | |---|---| | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? | | [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? | | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? | | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? | | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functi",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Cache Invalidation Cache invalidation removes a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy. On a write, write the change to the data store, then remove the affected cache entry. The next read repopulates the cache from the data store. This keeps the write path simple. A reader can experience a cache miss or briefly see stale data immediately after a write. Many caching systems let you con",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "section_key": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Why the queue architecture is not automatically the best choice A local batch copier can be safer and cheaper for a limited fixed transfer set. A durable queued architecture adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and versioned historical job data. It is attractive only when its extra operational cost buys useful concurrency and restartability at scale. The Cloudflare source supports distributed high-volume copy throughput, but it does not establish correctness for every schema or metadata translation. For a **synthetic object migration**, Tycho's acceptance contract would pin source bucket/version and desti",
+          "heading": "Why the queue architecture is not automatically the best choice",
+          "path": "book/cases/cloudflare-super-slurper-queues.md",
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A012",
+      "question": "What version-retention condition helps static hosting support rollback?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route | Page | Question | |---|---| | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? | | [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? | | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? | | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? | | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functi",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "# Immutable Infrastructure > **Pattern atlas:** > [Immutable Infrastructure](../../v11-pattern-atlas/c10-deployment-modernization/README.md#immutable-infrastructure) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [control planes, placement and reversibility page](static-stability.md#immutable-infrastructure) on 2026-10-29. The static-stability walkthrough remains on the chapter page. Immutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts, so each instance is reproducible from a recorded artifact. Every running instance must be reproducible from a recorded artifact digest, and dr",
+          "heading": "Immutable Infrastructure",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/immutable-infrastructure.md",
+          "section_key": "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview"
+        },
+        {
+          "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+          "heading": "Edge caching, private content and origin recovery",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#overview"
+        },
+        {
+          "excerpt": "# Service Discovery > **Pattern atlas:** > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [discovery, load balancing and backend selection page](discovery-balancing.md#service-discovery) on 2026-10-29. Client-side discovery, server-side discovery and load balancing remain on the chapter page. Envoy fetches cluster members from a xDS management server through the endpoint discovery service. The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the discovery service. EDS carries per-host attributes",
+          "heading": "Service Discovery",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/service-discovery.md",
+          "section_key": "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A013",
+      "question": "What should happen to the user response if the candidate fails during a parallel run?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Original synthetic failure: one optional dependency poisons core work A fictional public trail guide serves a **required** trail description and an **optional** community photo suggestion. Both initially use one shared worker pool. During a picture-service slowdown, photo calls hold most workers; required trail descriptions fail their deadlines even though authoritative trail records remain healthy. **Candidate A:** enlarge the shared pool. It might only increase calls to the failing photo dependency and thread/buffer use. **Candidate B:** give optional images a separate small concurrency budget, deadline and circuit breaker; serve core trail information without the optional image when",
+          "heading": "5. Original synthetic failure: one optional dependency poisons core work",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work"
+        },
+        {
+          "excerpt": "## 2. Functional roles and a single source of operational truth Use a scalable incident role model, adapted to team size: - **Incident coordinator:** owns shared situation awareness, priorities, delegation, decision log and next checkpoint; does not have to execute every change. - **Operations lead:** owns approved intervention, health verification and rollback/forward recovery steps; reduces the danger of multiple responders changing the same system independently. - **Communications lead:** states impact, what is known/unknown and updates affected parties at an appropriate cadence; does not invent ETAs or root causes. - **Investigation lead(s):** gather read-only evidence, form competing hy",
+          "heading": "2. Functional roles and a single source of operational truth",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-contract.md",
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Parallel Run Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative. Parallel run must not execute both implementations when the operation has side effects, such as sending an email or charging a card. Use it for side-effect-free logic when output equality can be checked. A candidate failure must never affect the response. Keep the old authority until cutover. For op",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## 4. When rollback means less than users think A code rollback is reversible only if: 1. Older binaries still correctly interpret persisted state produced by newer binaries. 2. External clients and asynchronous consumers still accept the older response/event contract. 3. Effects committed during the new release can be reconciled or safely replayed. 4. The old route is still operational and authorized. 5. The rollback itself doesn't reintroduce a known security or correctness defect. If a new version has written a field with novel meaning, the older version may parse it but make wrong decisions. If the system has sent an irreversible notification or performed an external effect, re-deploying",
+          "heading": "4. When rollback means less than users think",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/rollback-data.md",
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A014",
+      "question": "Why is mirrored production traffic unsafe for a shadow service that performs live writes?",
+      "section_new": [
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison | | [Netflix](../netflix-casspactor-shadow-migration.md) | src.m9-n11: row-set differences and cohort selector/fallback | | [Uber](../uber-mezzanine-pg-to-schemaless.md) | src.m9-u02: query/ID seam, backfill and mirrored writes | | [Discord](../discord-cassandra-scylladb-messages.md) | src.m9-di01: token range checkpoints, tombstone final-range blocker | | [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | src.m9-me03 (May 2026): ",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## Preconditions and what the published gates cannot prove by themselves | Gate | What Meta says it checked | Known epistemic limit | |---|---|---| | Record set size | Row count comparison | Two unequal sets can have identical counts | | Content fingerprint | Checksum comparison | Collisions/omitted columns/versioned canonicalization require own policy; matching checksum does not prove all data semantics | | Freshness | New landing latency no worse | Needs production-like source update patterns, measurement window and downstream consumers | | Resources | New compute/storage use comparable or improved | Capital cost, engineering time and operational ownership beyond reported utilization need ",
+          "heading": "Preconditions and what the published gates cannot prove by themselves",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves"
+        },
+        {
+          "excerpt": "## Why the data copy did not overload the live database The article distinguishes two populations. **Newly created or updated** subscriptions enter the new representation during ordinary requests once dual writing is enabled, with controlled ramp-up. **Older, untouched** subscriptions need a separate backfill. Enumerating all missing subscriptions by scanning live production tables would add unacceptable load. Stripe instead described a database snapshot available to an **offline Hadoop cluster**, and **Scalding/MapReduce** jobs to enumerate source IDs requiring copying. A fleet of migration processes copied the identified records in parallel. Running the offline enumeration again after comp",
+          "heading": "Why the data copy did not overload the live database",
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#why-the-data-copy-did-not-overload-the-live-database"
+        },
+        {
+          "excerpt": "## 1. Boundaries: why the naive dual write is unsafe Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive design is two independent effects: 1. Commit a database record. 2. Publish an event to an external broker. Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor ",
+          "heading": "1. Boundaries: why the naive dual write is unsafe",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A015",
+      "question": "What limits the exposure from a leaked credential issued for direct storage access?",
+      "section_new": [
+        {
+          "excerpt": "# Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity **Case ID:** `case.netflix.durable-data-project-identity` \u00b7 **Issue:** E16-05 #118 \u00b7 **Status:** evidence-bounded draft; independent acceptance pending. **Primary:** src.m9-n17, Amer Hesson, Marcelo Mayworm, James Mulcahy and Brittany Truong, [Netflix TechBlog, 2026-05-11](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e). Exact source sections: **Problem 1**, **Problem 2**, **Enter Data Projects**, **Grants and Roles**, **The Identity Umbrella**, **Securing Data Workflows**, **Data Projects: Durable Identity**, **Success Stories**, **Using Data Projects**, **Wh",
+          "heading": "Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#overview"
+        },
+        {
+          "excerpt": "## Address, access and retention are different properties An object key names a storage location. An unguessable key is not a complete authorization design. A temporary download capability may permit use until its expiry under the service's validation rules; revoking a catalogue permission does not automatically invalidate every issued capability. State whether immediate revocation, bounded exposure or public distribution is required. **Original fictional requirement:** workshop attendees can download a recording for seven days, while the owner can retire it immediately from the catalogue. A temporary bearer link valid for the whole seven days cannot satisfy immediate retirement unless anoth",
+          "heading": "Address, access and retention are different properties",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties"
+        },
+        {
+          "excerpt": "## 5. Permission and provenance are part of retrieval correctness If the caller cannot read a document, its title, section count, relevance score, embedded neighbor relationships or citation may also leak information. Authorization must constrain the actual search result and follow-up source retrieval; caching a previous authorized user's result is not a shortcut. Provenance records must distinguish: - the source **cited** from the source **actually read**; - source revision or access date and the question's version requirement; - direct evidence from synthesized inference; - missing/contradictory sources from positive answers. The book chapter [Safe agent-accessible knowledge](../../v09-obs",
+          "heading": "5. Permission and provenance are part of retrieval correctness",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "section_key": "tycho.page.990dac261357498fa433cf98e87817d3#5-permission-and-provenance-are-part-of-retrieval-correctness"
+        },
+        {
+          "excerpt": "## Deletion across derived state and restored backups **Enrichment contract:** explain what an application deletion completes, which copies remain, and how recovery avoids republishing retired data. This is an engineering lifecycle model, not a legal retention determination. Begin with a copy inventory: authoritative rows and blobs; read replicas; change logs and outbox entries; search/vector projections; caches; exports; operational logs; and historical backups. Define the allowed retained content and access for each owner. Removing one database row cannot itself prove removal of all copies. ### Original retirement protocol A fictional catalogue retires document D at source revision 108. A ",
+          "heading": "Deletion across derived state and restored backups",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#deletion-across-derived-state-and-restored-backups"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A016",
+      "question": "What kind of request should not be retried automatically by an ambassador proxy without an effect-safety contract?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Define behavioral compatibility, operation identity, end-to-end budgets and caller-visible unknown outcomes alongside the wire format. A lost response after commit is compatible with transport failure; blindly replaying a state-changing request may create another effect. The detailed pages separate the mechanisms that make this decision conditional: - [API contracts and effect identity](effect-identity.md) \u2014 Which promises belong to transport semantics and which require application deduplication? - [Deadlines, cancellation and retry budgets](deadlines-retries.md) \u2014 How should one end-to-end time budget bound nested calls and retries? - [Behavioral com",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Entry inventory Each level-three heading is a stable atlas anchor. Owner links are bounded sections; none claims sufficient technical or decision coverage. ### API Gateway **Identity.** API Gateway; family API and service communication; kind integration pattern; priority core. **Decision question.** Should external clients enter through a managed gateway that owns routing, authentication and cross-cutting edge policy? **Good-fit conditions.** Multiple clients or backends share edge concerns; routing, TLS, authentication or rate policy must be consistent; the gateway can be operated and observed as a critical component; backend authority remains explicit. **Hard contraindications.** Reject",
+          "heading": "Entry inventory",
+          "path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
+          "section_key": "tycho.chapter.9825cb82eb2142754c638aea1ba8d845#entry-inventory"
+        },
+        {
+          "excerpt": "## 2. HTTP method semantics are not business-effect deduplication [RFC 9110, \u00a79.2.1\u20139.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) defines the semantics of safe and idempotent methods. A safe method is intended not to request a state-changing effect. Idempotency describes the intended server-side effect of repeating an identical request; it does not require the responses, timing or logging events to be identical. PUT, DELETE and safe methods are idempotent by their specified semantics. POST has no general automatic-retry guarantee. Three distinct notions must not be merged: 1. **HTTP method contract:** Is the requested operation safe or idempotent according to its semantic",
+          "heading": "2. HTTP method semantics are not business-effect deduplication",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication"
+        },
+        {
+          "excerpt": "## A worked boundary decision **Original fictional scenario:** an image catalogue adds an edge cache and a reverse proxy. During a rollout, old connections continue reaching a draining backend, a new certificate is trusted at the edge but not on the internal hop, and a timed-out write is retried. Adding another replica solves none of those contracts by itself. The design must name the resolver/discovery owner, backend selector, termination points and effect identity.",
+          "heading": "A worked boundary decision",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#a-worked-boundary-decision"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A017",
+      "question": "What lifecycle risk must be addressed when an application depends on a colocated sidecar?",
+      "section_new": [
+        {
+          "excerpt": "## Address, access and retention are different properties An object key names a storage location. An unguessable key is not a complete authorization design. A temporary download capability may permit use until its expiry under the service's validation rules; revoking a catalogue permission does not automatically invalidate every issued capability. State whether immediate revocation, bounded exposure or public distribution is required. **Original fictional requirement:** workshop attendees can download a recording for seven days, while the owner can retire it immediately from the catalogue. A temporary bearer link valid for the whole seven days cannot satisfy immediate retirement unless anoth",
+          "heading": "Address, access and retention are different properties",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+          "section_key": "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties"
+        },
+        {
+          "excerpt": "## 1. Constraints must be typed and owned | Constraint type | What a design must make explicit | What unknown blocks | |---|---|---| | Runtime/lifecycle | Supported language, framework, operating system and dependency versions | Unsafe unmaintained component or untested runtime upgrade | | Deployability | Release window, mixed-version overlap, artifact identity, rollback/forward repair | Big-bang changes with unknown old clients | | Operations | Monitoring, incident response, on-call skill, maintenance cadence | A design with no sustainable operator | | Capacity/latency | Defined offered load and business correctness/time SLO | Arbitrary replica, database or queue sizing | | Recovery | Permi",
+          "heading": "1. Constraints must be typed and owned",
+          "path": "book/volumes/v01-requirements-and-architecture/c06-capacity-operational-constraints-and-total-cost/feasibility-gates.md",
+          "section_key": "tycho.page.8284605817fc48dba499425b0d908df0#1-constraints-must-be-typed-and-owned"
+        },
+        {
+          "excerpt": "## Applied M9 evidence: what transfers and what does not These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision. **Case lens \u2014 [Discord \u2014 Search index cells](../../../cases/discord-search-index-cells.md)**. **Relevant mechanism or architectural contrast:** Index cells, queue changes and shard-key evolution address different search availability and growth constraints. **Not established by this report/playbook:** Search-cell results do not establish",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "section_key": "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#applied-m9-evidence-what-transfers-and-what-does-not"
+        },
+        {
+          "excerpt": "## What can actually be concluded The source supports a **historical practitioner account of platform standardization with incremental coexistence**, not a universally successful prescription to adopt federation, Spring Boot or Java 21. It reports a service-dependent JVM efficiency improvement, difficult framework compatibility work, a deliberate shift of API composition responsibility and multiple workload-specific runtime exceptions. The broader causal hypothesis\u2014that reducing repeated integration and domain-specific fan-out helps a large multi-team fleet\u2014must be tested against the actual team's topology, release independence, client mix, security boundaries and debugging capacity. For a s",
+          "heading": "What can actually be concluded",
+          "path": "book/cases/netflix-java-platform-convergence.md",
+          "section_key": "tycho.page.b95df0f6a3ee4355939f65193b11d8c9#what-can-actually-be-concluded"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A018",
+      "question": "When is polling a separate asynchronous status resource unnecessary for a client?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Four interaction contracts | Interface form | Producer/consumer relationship | Required decision | |---|---|---| | Unary request/response | One request, one final result or error | Deadline, retry-safe outcome, response semantics | | Server streaming | One request produces a sequence over time | Receiver demand, partial completion, order and cancellation | | Client streaming | A client sends a sequence to one service | Maximum input, validation, final acknowledgment and interruption | | Bidirectional streaming | Both ends produce messages over a shared stream | Simultaneous flow control, protocol state, ordering and reconnection | | Durable asynchronous job | Accepted task outlives the",
+          "heading": "1. Four interaction contracts",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/stream-contracts.md",
+          "section_key": "tycho.page.fbb4bc905d02495dbe3d7675d8670235#1-four-interaction-contracts"
+        },
+        {
+          "excerpt": "## 5. Which interface approach fits the decision? | Option | Often justified by | Additional questions / contraindications | |---|---|---| | HTTP resource API | Broad client ecosystem, caching or resource-oriented semantics, independently documented HTTP contracts | Does a command have durable identity? Are cache/auth/status semantics correct? | | gRPC unary RPC | Strongly typed service contracts, generated clients and explicit RPC deadline/cancellation/retry tools | Are all clients/platforms supported? What happens under reconnect or changing proto fields? | | gRPC streaming | Long-lived ordered message exchanges and flow-control semantics needed by the application | What are cancellation, ",
+          "heading": "5. Which interface approach fits the decision?",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#5-which-interface-approach-fits-the-decision"
+        },
+        {
+          "excerpt": "## 1. Define the scarce resource and the acceptance outcome Potential constraints include CPU, thread/connection pools, DB locks, broker quotas, external API limits, expensive query operators, request buffers and sustained storage I/O. More application instances do not relax a shared database quota or single-key transaction bottleneck. Protect the resource that actually limits **useful completed operations**. Distinguish these outcomes: | Event | Meaning | Client behavior | |---|---|---| | Accepted and completed | Authoritative logical operation reached defined correct result | Use result and do not duplicate effect | | Rejected before acceptance | No durable work accepted, assuming that bou",
+          "heading": "1. Define the scarce resource and the acceptance outcome",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome"
+        },
+        {
+          "excerpt": "## Purpose and mission Security architecture answers **what resource is protected, against which capabilities and actors, at which enforcement boundaries, with what failure behavior and audit evidence**. Authentication, authorization, tenancy separation, encryption, transport security and incident recoverability are distinct; one successful mechanism cannot be substituted for another. Decision question: How should an application enforce least privilege and isolate its data and operations when requests cross clients, API gateways, services, asynchronous workers, databases and administrative control planes? A defensible design begins with the assets and threats, not a vendor identity product o",
+          "heading": "Purpose and mission",
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#purpose-and-mission"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A019",
+      "question": "Why does endpoint discovery still need active health checks?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Service Discovery See the [dedicated Service Discovery owner note](service-discovery.md). ### Client-Side Discovery The caller obtains the membership view from a registry/control plane, caches it and selects a backend. The client is now part of the routing authority, so its cache age and selection policy are production concerns. It also needs a refresh budget and a stale-cache alarm. A client that never refreshes its view can keep sending traffic to a removed instance. Stale membership can send traffic to a removed instance even when the address remains reachable. Bound the cache age, refresh budget and stale-cache alarm, and use a last-known set only f",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Health endpoint monitoring **Health endpoint monitoring.** A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\". They must not be collapsed into one endpoint. External monitoring should also observe user-level success and dependency state, because a green liveness probe does not prove readiness, correct routing or a healthy dependency. Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable. **Failure and recovery.** A shared dependency failure can fail ",
+          "heading": "Health endpoint monitoring",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring"
+        },
+        {
+          "excerpt": "## Pages and reasoning route | Page | Question | |---|---| | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? | | [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? | | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? | | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? | | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functi",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Detailed migration experiment for a fictitious mixed estate **Build execution wave:** select one complex but actively supported JVM service, not a trivial hello-world project. Run Gradle and Bazel against pinned source and dependency snapshots, matching compilation, test discovery, generated resources, runtime classpaths, reflection and startup/health checks. Measure both cold and warm cache, local and remote worker behavior, action queue delays, aggregate CI cost and independent developer experience. If startup or serialization parity fails, do not use a faster unit-test result to justify production rollout. Track why non-hermetic tasks failed, and retain the old artifact generation path",
+          "heading": "Detailed migration experiment for a fictitious mixed estate",
+          "path": "book/cases/decisions/build-delivery-migration.md",
+          "section_key": "tycho.decision.54dff384ace3468490c46b1d00b0dcf6#detailed-migration-experiment-for-a-fictitious-mixed-estate"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A020",
+      "question": "When should a message router be preferred to a pass-or-discard filter?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](messaging-families-and-durable-workflows.md) | What are the consequences of acknowledgement, retention and consumer state? | | [Consumer requirements and messaging families](message-selection.md) | Which ownership, retention and replay contract selects a messaging family? | | [Workflow state and messaging failure gates](workflow-failure.md) | When does a queue need an additional durable bus",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
+          "section_key": "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "# Pipes and Filters > **Pattern atlas:** > [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/pipes-and-filters.md#pipes-and-filters) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#pipes-and-filters) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Compose processing as ordered stages only when each stage has an independent contract and the pipeline owns ordering, partial completion and recovery. If one stage needs the whole transaction, or per-stage latency and coordination exceed the value of isolation, keep one",
+          "heading": "Pipes and Filters",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/pipes-and-filters.md",
+          "section_key": "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview"
+        },
+        {
+          "excerpt": "## Architecture transfer, rollback and stop criteria A hypothetical high-volume message service should first profile read/write amplification, hot-key skew, compaction queues, quorum availability and GC pauses. A safer staged plan uses a request-coalescing pilot (with per-identity security gates and bounded waiters), engine-specific reverse-query tests, migration snapshots/replayable token-range checkpoints, exhaustive enumeration plus sampled **value** comparisons, and long-running read/write cutover canaries. Define a source-of-truth owner and monitor dual-store drift before cleanup. **Refuse immediate cutover** when new engine support for required query directions is missing; the final to",
+          "heading": "Architecture transfer, rollback and stop criteria",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#architecture-transfer-rollback-and-stop-criteria"
+        },
+        {
+          "excerpt": "## Purpose and mission A semantic embedding maps text, code or another input to a numerical vector. A distance operation can identify **nearby representations** but says nothing by itself about technical truth, source freshness, ACLs or correctness of a proposed architecture. Approximate nearest-neighbor (ANN) indexing exchanges some accuracy or operational cost for latency/throughput trade-offs. **Primary question:** How should a system select exact/vector index strategies, measure ANN recall and candidate filtering effects, and preserve precise source evidence when using embeddings in a knowledge book? <!-- /tycho-question-source -->",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-hnsw-faiss-pgvector.md",
+          "section_key": "tycho.page.7a67fd6346a54eff97784465c22bbc74#purpose-and-mission"
+        }
+      ],
+      "split": "atlas"
+    }
+  ]
+}

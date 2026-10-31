@@ -1,0 +1,315 @@
+{
+  "batch": "SR05",
+  "items": [
+    {
+      "id": "V4-B011",
+      "question": "Why can adding Kafka partitions leave one heavily used message key as a throughput bottleneck?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Quarkus 3.27: choosing worker, reactive or virtual handler Quarkus 3.27's *Virtual Thread support reference \u2014 Use @RunOnVirtualThread with Quarkus REST* shows three models: synchronous work on worker threads, `Uni`-returning reactive handlers on event loops, and eligible synchronous handlers annotated `@RunOnVirtualThread`. The documentation notes that virtual-thread handlers can await a Mutiny `Uni` while freeing carriers when the underlying client supports it. [E03] In Quarkus 3.27 messaging, execution mode also affects **ordering**. The virtual-thread messaging guide says `@RunOnVirtualThread` can enable concurrent processing and no longer preserves the default sequential per-channe",
+          "heading": "3. Quarkus 3.27: choosing worker, reactive or virtual handler",
+          "path": "book/execution/vertx-netty-quarkus-mutiny-and-rxjava.md",
+          "section_key": "tycho.page.883194a820194482bc2508c8e4568d86#3-quarkus-3-27-choosing-worker-reactive-or-virtual-handler"
+        },
+        {
+          "excerpt": "## Navigation and prerequisites | Route | Destination | |---|---| | Parent | [V04 \u2014 Distributed coordination and event integration](../README.md) | | Previous | [V04/C06 \u2014 Messaging families and delivery contracts](../c06-messaging-families-and-delivery-contracts/README.md) | | Next | [V04/C08 \u2014 Stateful/event-time stream processing](../c08-stateful-event-time-stream-processing/README.md) | | Prerequisite | [V04/C06 \u2014 Messaging families and delivery contracts](../c06-messaging-families-and-delivery-contracts/README.md) | | Source reading | [Page-local evidence and versions](kafka-partitions-replication-and-contracts.md) |",
+          "heading": "Navigation and prerequisites",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/README.md",
+          "section_key": "tycho.chapter.24729e8d9b7247b298956ab144c15225#navigation-and-prerequisites"
+        },
+        {
+          "excerpt": "## Adjacent canonical research - [Queueing and capacity](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md) \u2014 arrival rate, residence time, in-flight work and overload. - [Kafka ordering and consumer contracts](../volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md) \u2014 message partition and effect ordering, independent of Java scheduling. - [Outbox and idempotency](../distributed/transactional-outbox-and-idempotency.md) \u2014 retry/commit ambiguity. - [Application boundaries](../application/README.md) \u2014 why module and service ownership prec",
+          "heading": "Adjacent canonical research",
+          "path": "book/execution/README.md",
+          "section_key": "tycho.landing.e181d96c75784f818a330bb0f266520c#adjacent-canonical-research"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Horizontal Scaling Horizontal scaling multiplies processing replicas; vertical scaling changes resources available to existing replicas. Adding replicas is not useful unless the work can be partitioned and the new replica becomes ready inside the demand window. Neither can increase throughput past a serial or externally fixed bottleneck. A new replica may start cold, contend on a shared dependency or amplify connection churn; test scale-out under a burst and bound the work each replica can claim. Instances must serve any request without local session state, or the shared state must be externalized; otherwise adding replicas only multiplies the bottlenec",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B012",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "section_new": [
+        {
+          "excerpt": "## 1. From a database change to a replayable input A relational database may already own an authoritative business state. A CDC pipeline observes changes after a commit and publishes records to consumers. PostgreSQL 17's logical-replication documentation describes publication/subscription and the logical change stream under PostgreSQL's configured replication mechanisms. Debezium **3.6** Outbox Event Router documents a concrete transform for outbox-table change events, including default event ID/header and aggregate key handling. [E01, E02] ```mermaid flowchart LR API[\"Business command\"] --> TX[\"DB transaction: authority + outbox\"] TX --> WAL[(\"Committed source log / change stream\")] WAL -->",
+          "heading": "1. From a database change to a replayable input",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/cdc-state.md",
+          "section_key": "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input"
+        },
+        {
+          "excerpt": "## 4. Cancellation is not rollback, and reconnect is not replay The [gRPC cancellation guide](https://grpc.io/docs/guides/cancellation/) explains that when clients cancel or deadlines expire, servers should stop work and propagate the signal where possible; application code may need to cooperate. This cannot undo an already committed write or external effect. A reconnecting stream must define: - cursor/checkpoint or stable event ID, if replay is supported; - exact ordering scope (one connection, one partition, one entity or total order); - delivery mode and gap/duplicate handling; - expiration and retention after which resume cannot succeed; - whether a stream acknowledgment means transport ",
+          "heading": "4. Cancellation is not rollback, and reconnect is not replay",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/resume-cancellation.md",
+          "section_key": "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay"
+        },
+        {
+          "excerpt": "## Canonical authored pages | Question | Page | Public source scope | |---|---|---| | How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](../volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md) | Selected Apache Kafka 4.1 docs, gRPC core concepts | | When do task queues, durable subjects/streams or long-running workflows make sense? | [Messaging families and durable workflows](../volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-wo",
+          "heading": "Canonical authored pages",
+          "path": "book/integration/README.md",
+          "section_key": "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830#canonical-authored-pages"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Treat event time, watermarks, retained state, checkpointing and replay as one declared processing contract. A consistent processor checkpoint cannot recover an expired input or reverse an independently committed external effect. The detailed pages separate the mechanisms that make this decision conditional: - [CDC, task state and changelog replay](cdc-state.md) \u2014 Which records make an input and local processor state recoverable? - [Checkpoints, watermarks and late data](checkpoints-time.md) \u2014 Which state boundary and late-data policy define a corrected result? - [Processor selection and recovery experiments](processor-recovery.md) \u2014 Which topology and",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B013",
+      "question": "In Netflix\u2019s time-series case, how did future-slice rebucketing differ from splitting a few wide historical IDs?",
+      "section_new": [
+        {
+          "excerpt": "## How to design an actual controlled comparison For an unrelated Java application with a mixed outbound gRPC stack, hold constant the service version, JDK patch, gRPC/Netty and tracing dependencies, caller mix, reply sizes, deadline budget and downstream concurrency limit. Vary **only** the worker executor initially: | Proposed measurement | What it isolates | Failure signal | |---|---|---| | CPU time per **completed** outgoing gRPC operation | Whether task scheduling improves useful compute efficiency | Increased CPU/work at unchanged I/O waits | | Runnable vs blocked time by worker type | Whether the workload actually benefits from parking/unmounting | CPU saturation with almost no blocki",
+          "heading": "How to design an actual controlled comparison",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#how-to-design-an-actual-controlled-comparison"
+        },
+        {
+          "excerpt": "## Applied M9 evidence: what transfers and what does not These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision. **Case lens \u2014 [Uber \u2014 MyRocks](../../../cases/uber-mysql-to-myrocks.md)**. **Relevant mechanism or architectural contrast:** Storage-engine choice must include operational write amplification, workload shape and production rollout gates. **Not established by this report/playbook:** Company-reported MyRocks savings do not transfer to arb",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "section_key": "tycho.page.c75a11f9786442a5b5456f11c2412df4#applied-m9-evidence-what-transfers-and-what-does-not"
+        },
+        {
+          "excerpt": "## Legacy removal gate and oppositional decision A **smaller alternative** is to strengthen Casspactor's backup manifest selection, add a dedicated skew handler and retain existing interfaces when the connector family is narrow. A **layered replacement** becomes compelling only when multiple data models need different transforms and the shared old engine repeatedly fails correctness/scale boundaries. The choice should follow observable source manifest failures, intermediate-storage cost and repeatable comparison results rather than the company label. Retire the old connector only after every active job cohort has a supported replacement and the recovery path is tested *without* that old conn",
+          "heading": "Legacy removal gate and oppositional decision",
+          "path": "book/cases/netflix-casspactor-shadow-migration.md",
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#legacy-removal-gate-and-oppositional-decision"
+        },
+        {
+          "excerpt": "## Failure cases and alternative choices A **per-job service account** may be preferable for a small fleet with strict isolation and simple rotation. A **team-wide identity** may ease migration but amplifies cross-project blast radius. A **project-owned identity** is defensible when project data boundaries remain stable across staffing changes and the platform can prove delegation/revocation semantics. None is universally safest without grants, job count, owner churn and blast-radius evidence. **Stop conditions:** project grants collapse incompatible confidentiality boundaries, orphaned assets receive unexpected access, token revocation is not testable, emergency recovery depends on a depart",
+          "heading": "Failure cases and alternative choices",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#failure-cases-and-alternative-choices"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B014",
+      "question": "How do range and hash partitioning differ in their exposure to sequential writes and range queries?",
+      "section_new": [
+        {
+          "excerpt": "## Selection matrix: which migration method is justified? | Dominant constraint | Candidate path | Why an alternative fails | Evidence needed | |---|---|---|---| | Millions of mutable records, many independent legacy consumers, no outage window | Dual representation, backfill, shadow reads, phased read/write authority | Single atomic big-bang cutover is impractical without a globally synchronized consumer release | Consumer inventory, mutation parity, reconciliation, rollback horizon | | Repeatable snapshot-to-table analytics job | Parallel legacy/new runs, two-sided row-set comparison, per-job selector | OLTP dual write adds needless live-state coupling | Reproducible input manifest, determ",
+          "heading": "Selection matrix: which migration method is justified?",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified"
+        },
+        {
+          "excerpt": "## 1. Model the query and distribution first Original fictional case: a community tool catalogue stores tools, bookings and descriptive tags. Representative requests: - find one tool by stable identifier; - list currently available devices for one site and date; - search by term or tag; - list most recently updated public descriptions; - display all reservations for one member during a bounded period. These workloads do not necessarily benefit from the **same index**. A primary-key lookup, range filter, full-text query and ordered pagination impose different access patterns and selectivity. An index design question should include: - columns/operator predicates and sort order; - total table s",
+          "heading": "1. Model the query and distribution first",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c03-query-planning-indexes-and-access-paths/access-selectivity.md",
+          "section_key": "tycho.page.d66b60c435cc4f8480c15cc6e400b369#1-model-the-query-and-distribution-first"
+        },
+        {
+          "excerpt": "## Two distinct migrations and their source-reported safety gates The underlying datastore used shards mapped to physical partitions, with multiple Raft-backed replicas within one region and replication to other geographic regions. The 5.7\u21928.0 binary upgrade followed **follower \u2192 other followers \u2192 leader, then next partition, then next region**. An engine migration, however, needed a **newly built replica and table conversion** rather than just replacing a binary. The difference matters to availability, data checks and how rollback is possible. | Gate in src.m9-u03 | Source-reported sequence | What can still fail | |---|---|---| | Candidate build | Add a MySQL 8.0 node by XtraBackup; collect",
+          "heading": "Two distinct migrations and their source-reported safety gates",
+          "path": "book/cases/uber-mysql-to-myrocks.md",
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#two-distinct-migrations-and-their-source-reported-safety-gates"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Consistent Hashing Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share of keys instead of remapping the whole keyspace. Clients and owners must agree on a versioned mapping, and a key must retain one authoritative owner at any mapping epoch. A ring change temporarily routes a key to the wrong owner or serves an incomplete copy; dual-read or version-check during the transition and record the epoch.",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B015",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "section_new": [
+        {
+          "excerpt": "## 6. Recovery under additional load A degraded site can receive both its original workload and redirected traffic, while retries and backlog replay add more pressure. The public Google SRE chapter **Addressing Cascading Failures** discusses overloaded components, retries, limited resources and recovery challenges. [E04] For an **invented** capacity thought experiment: - Region A and region B normally each handle **60 successful requests/s**. - A fails, and traffic routing asks B to handle **120 offered requests/s**. - Nothing in \"B normally handles 60/s\" proves B can sustain 120/s or that database/write capacity can follow. - In case B completes only **90/s** while all 120/s are admitted, b",
+          "heading": "6. Recovery under additional load",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#6-recovery-under-additional-load"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 A burst ends before new replicas become useful **Original hypothetical control loop:** arrival intensity doubles for 40 seconds. Metrics take 15 seconds to capture and be sampled; the controller decision takes 10 more; node scheduling takes 20; application startup and data warm-up need another 25. The first additional healthy capacity would therefore become useful around `15+10+20+25=70` seconds after the triggering change\u2014**after the burst ends**. These invented delays are not documented Kubernetes defaults or observed service timings. | Stage | Clock from onset (synthetic) | Required observation | |---|---:|---| | Measurement + controller | 0\u201325 s | Distinguish",
+          "heading": "Engineering walkthrough \u2014 A burst ends before new replicas become useful",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful"
+        },
+        {
+          "excerpt": "## 5. Applicability, alternatives and insufficient evidence Use replicated consensus when several fault-prone nodes must agree on an ordered configuration, leader lease/epoch, log, or authoritative state with explicit failure assumptions. Avoid introducing an application-level consensus cluster simply to publish a best-effort notification or to generate globally increasing business IDs if a simpler authoritative database transaction or single-writer contract meets the requirement. A legitimate alternative can be one durable local database with a single authoritative writer, eventual replicated read models, per-aggregate ordered streams or conflict reconciliation. The decision is driven by in",
+          "heading": "5. Applicability, alternatives and insufficient evidence",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+          "section_key": "tycho.page.d664f65295644726ae1234a982f81fa8#5-applicability-alternatives-and-insufficient-evidence"
+        },
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison | | [Netflix](../netflix-casspactor-shadow-migration.md) | src.m9-n11: row-set differences and cohort selector/fallback | | [Uber](../uber-mezzanine-pg-to-schemaless.md) | src.m9-u02: query/ID seam, backfill and mirrored writes | | [Discord](../discord-cassandra-scylladb-messages.md) | src.m9-di01: token range checkpoints, tombstone final-range blocker | | [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | src.m9-me03 (May 2026): ",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B016",
+      "question": "In Discord\u2019s search-indexing case, why could a healthy search shard still miss messages after an outage?",
+      "section_new": [
+        {
+          "excerpt": "## Other companies (#118) - [Uber DOMA](uber-doma-domains.md) - [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md) - [Uber MyRocks](uber-mysql-to-myrocks.md) - [Uber Cinnamon dynamic overload protection and fairness](uber-cinnamon-admission-and-fairness.md) - [Shopify modular monolith](shopify-modular-monolith.md) - [Shopify component governance](shopify-packwerk-boundary-evolution.md) - [Shopify Helix gate-driven AI native migration](shopify-helix-checkpoint-gated-native-migration.md) - [Airbnb Bazel JVM build migration](airbnb-jvm-monorepo-bazel.md) - [Stripe online data migration](stripe-online-subscriptions-migration.md) - [Discord ScyllaDB messages](discord-cassandra-sc",
+          "heading": "Other companies (#118)",
+          "path": "book/cases/README.md",
+          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118"
+        },
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Netflix ZGC](../netflix-generational-zgc-workloads.md) | src.m9-n05: G1, old ZGC, generational ZGC and Parallel contrasts | | [Netflix HotSpot](../netflix-hotspot-false-true-sharing.md) | src.m9-n18: throughput constrained by sharing below the Java code | | [Discord datastore](../discord-cassandra-scylladb-messages.md) | src.m9-di01: Java Cassandra GC was one operational factor, but Scylla migration also involved data-service changes | **Why the apparent conflict is useful:** Netflix reported generational ZGC helping its online service workload, yet described batch co",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## The data semantics made the cutover tractable The target organized JSON-style cell data by **trip UUID**, column name and optional timestamp. Its fixed initial logical shard count was typically **4,096**, with shards movable among MySQL hosts for online capacity balancing. The model was **append-only**: a cell was not changed after being written. That property enabled application-defined idempotent and commutative operations for retries and replay. When a target shard was temporarily unavailable, writes could enter a **pending table on another healthy MySQL node** and be replayed later. Secondary indexes were themselves sharded and could be versioned/backfilled before an alias switch. [sr",
+          "heading": "The data semantics made the cutover tractable",
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#the-data-semantics-made-the-cutover-tractable"
+        },
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison | | [Netflix](../netflix-casspactor-shadow-migration.md) | src.m9-n11: row-set differences and cohort selector/fallback | | [Uber](../uber-mezzanine-pg-to-schemaless.md) | src.m9-u02: query/ID seam, backfill and mirrored writes | | [Discord](../discord-cassandra-scylladb-messages.md) | src.m9-di01: token range checkpoints, tombstone final-range blocker | | [Meta](../meta-ingestion-shadow-migration-lifecycle.md) | src.m9-me03 (May 2026): ",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B017",
+      "question": "What does recall at k measure when the relevant set has been judged incompletely?",
+      "section_new": [
+        {
+          "excerpt": "## Original ranked-set counterexample \u2014 authorization is not optional relevance Suppose an exact hypothetical ranking is A, B, C, D, E. The caller may read only D and E. A candidate stage that retrieves three items and then removes unauthorized results returns nothing. A search over the authorized population can return D and E. The difference follows from the declared sets; it is not an observed result for an ANN library or a promise about any engine's planner. Increasing the candidate budget may help find authorized results in this example, but it must never change what is authorized. Conversely, filtering early is not enough to prove recall: the index, model and permitted population still ",
+          "heading": "Original ranked-set counterexample \u2014 authorization is not optional relevance",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c04-vector-embeddings-and-nearest-neighbor-retrieval/vector-filters.md",
+          "section_key": "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance"
+        },
+        {
+          "excerpt": "## 2. Reciprocal Rank Fusion handles incompatible score scales BM25 scores, cosine distances and model reranker logits have different numerical scales. Adding them directly is unsafe unless calibrated using real relevance data. Elasticsearch's public [Reciprocal Rank Fusion](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion) documentation defines the rank-only RRF score for each document: \\[ \\mathrm{RRF}(d)=\\sum_{r \\in \\mathcal R}\\frac{1}{k+\\operatorname{rank}_{r}(d)} \\] where \\(\\mathcal R\\) are ranked source lists, and documents missing from a list contribute zero. The \\(k\\) constant is a ranking hyperparameter, not the \"number of documents.\" [E01] ### Tin",
+          "heading": "2. Reciprocal Rank Fusion handles incompatible score scales",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c05-hybrid-retrieval-and-reranking/fusion-signals.md",
+          "section_key": "tycho.page.b919c3c84861491c82334b6e00bf443e#2-reciprocal-rank-fusion-handles-incompatible-score-scales"
+        },
+        {
+          "excerpt": "## 8. Source ledger and explicit Tycho scope | Public source inspected | Narrow claim supported | Unproven | |---|---|---| | [NIST TREC relevance judgments](https://trec.nist.gov/data/reljudge_eng.html) | qrels, test collections and judged relevance limitations | Complete truth set for hypothetical documents | | [BEIR evaluation framework](https://github.com/beir-cellar/beir) | Standard lexical/dense retrieval comparison using nDCG, MAP, Recall, Precision | Benchmark scores for the Tycho corpus | All queries, scores, data, diagrams, source snapshots and tests here are original hypothetical examples. No index, embeddings, graph, training, test fixture, evaluation run or independent expert rev",
+          "heading": "8. Source ledger and explicit Tycho scope",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/README.md",
+          "section_key": "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9#8-source-ledger-and-explicit-tycho-scope"
+        },
+        {
+          "excerpt": "## Contradictions, stop conditions and what to refuse - **\"Virtual threads are nonblocking.\"** Not in every relevant sense: synchronized monitor regions or native library behavior can pin carriers on some JDKs, and CPU-bound work still consumes CPU. - **\"Reactive always wins CPU.\"** Zuul's logging cluster and API cluster had different efficiency profiles; nonblocking I/O reduces *waiting overhead*, not arbitrary computation. - **\"Queues guarantee exactly once.\"** The Cloudflare case explicitly includes at-least-once delivery and requires object-level deduplication. - **\"One architecture applies to every service.\"** The four precedents are compatible once workload type and resource pressure a",
+          "heading": "Contradictions, stop conditions and what to refuse",
+          "path": "book/cases/decisions/reactive-vs-virtual-threads.md",
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#contradictions-stop-conditions-and-what-to-refuse"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B018",
+      "question": "Why can an index assembled from document revisions that never coexisted produce misleading evidence?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Incremental indexing and the stale citation problem A document page may change title, content, source revision, security status or canonical owner. If an index holds old contents after a source edit, an agent can receive **wrong or stale evidence**. The indexing pipeline must explicitly handle change detection, tombstones/deletions, old-ID redirects, partial failures and rollback/rebuild. ```mermaid stateDiagram-v2 [*] --> Discovered Discovered --> Indexed: Canonical page and revision extracted Indexed --> Stale: Page/source revision changed Stale --> Reindexed: Apply versioned delta and validate Reindexed --> Indexed: Atomically publish updated search generation Indexed --> Deleted: S",
+          "heading": "4. Incremental indexing and the stale citation problem",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/index-lifecycle.md",
+          "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem"
+        },
+        {
+          "excerpt": "## A configuration change is a distributed transition A feature flag selects behavior; a dynamic parameter changes an operating limit. Neither becomes simultaneous merely because its value sits outside a binary. Processes fetch at different times, disconnected workers retain old snapshots, and a rollback can encounter writes produced by the new behavior. Define the scope of consistency before choosing a configuration service. This original design assumes an authoritative configuration publisher, authenticated readers, asynchronous snapshot delivery, and durable application data outside the configuration store. Every snapshot has a monotonically increasing revision, a payload digest, an activ",
+          "heading": "A configuration change is a distributed transition",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md",
+          "section_key": "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition"
+        },
+        {
+          "excerpt": "## Four-and-a-half-year transition: why coexistence was both safety net and cost The [first-party retrospective](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/) (src.m9-a01, **How did we migrate?**) differentiates *build equivalence* from *deployable runtime equivalence*. The pilot used **Viaduct**, Airbnb's complex JVM GraphQL platform, with roughly **300 product engineers editing it monthly**. Gradle and Bazel builds coexisted: local build/test improved **2\u20134\u00d7**, but many developers did not opt in until several months of missing integrations and defects were addressed. Pure benchmark speed did not create acceptable development workflow. The broader program move",
+          "heading": "Four-and-a-half-year transition: why coexistence was both safety net and cost",
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#four-and-a-half-year-transition-why-coexistence-was-both-safety-net-and-cost"
+        },
+        {
+          "excerpt": "## 4. Versioned provenance and cross-collection isolation A reference result should identify: - immutable or revision-bound knowledge snapshot and document ID; - bounded section/range and canonical local/public source reference; - evidence confidence and verification freshness as separate states; - authorization scope and whether a linked source was actually inspected; - relevant contradictions, missing support or version mismatch. Indexes, caches and citations are alternate **views of the same authorized content**, not independent permissions. A cache key must reflect principal/tenant scopes or serve only deliberately public results. A search index built from multiple collections must never",
+          "heading": "4. Versioned provenance and cross-collection isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/collection-privacy.md",
+          "section_key": "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#4-versioned-provenance-and-cross-collection-isolation"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B019",
+      "question": "Why did Uber\u2019s initial query-tier quota scheme misprice some expensive storage operations?",
+      "section_new": [
+        {
+          "excerpt": "## Costs, measured outcomes and historical scope The publisher reports **over 30% less disk usage across migrated workloads**, but admits **higher CPU and disk I/O on some instances**. A capacity reduction without matching CPU/compaction/SSD-wear and recovery evidence is not a universal reduction in total cost of ownership. As of the **2022** publication, Uber reported **all Schemaless** migrated and **only some Docstore** instances; continued Docstore migration, performance tuning and stronger MyRocks backup/recovery remained future work. Do not reinterpret the article as a 2026 all-fleet state, a free 30% TCO reduction or a controlled p99 improvement. | Analytical alternative for another l",
+          "heading": "Costs, measured outcomes and historical scope",
+          "path": "book/cases/uber-mysql-to-myrocks.md",
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#costs-measured-outcomes-and-historical-scope"
+        },
+        {
+          "excerpt": "## Measured historical results and negative evidence The article reports that the initial storage system went from idea to production in **about five months**, the final focused migration wave spanned **six weeks**, and the final routing switch happened roughly **one month before Halloween 2014**. It describes a non-event cutover, then a further capacity doubling without downtime; these are **company retrospective statements**, not an audited service SLO, a universal five-month delivery forecast or proof of zero latent data defects. Hundreds of millions of rows, **more than 100 services**, and many engineers are original migration *scope* figures, not parallel read throughput benchmarks. **F",
+          "heading": "Measured historical results and negative evidence",
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#measured-historical-results-and-negative-evidence"
+        },
+        {
+          "excerpt": "## 3. Common storage and placement designs | Deployment/data model | Potential advantage | Isolation and operational cost | |---|---|---| | Shared application + shared tables, tenant key | Efficient resource reuse and simpler global deployment | Every query/join/index/cache/background job needs enforced tenant scope; shared quotas and noisy neighbors | | Shared application + schema/database per tenant | Easier isolation, restore or migration at data boundary in some engines | Schema/version fan-out, connection pools, orchestration and mapping complexity | | Dedicated application/runtime and datastore | Stronger physical/resource failure isolation | High per-tenant operating cost, upgrades an",
+          "heading": "3. Common storage and placement designs",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c07-authorization-boundaries-and-multitenancy/isolation-axes.md",
+          "section_key": "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs"
+        },
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Netflix](../netflix-seven-year-cloud-rearchitecture.md) | src.m9-n01: seven-year cloud decomposition after concentrated datacenter failures | | [Shopify](../shopify-modular-monolith.md) | src.m9-sh01: one deployable app and explicit component boundaries | | [Uber](../uber-doma-domains.md) | src.m9-u01: governance and gateways for an existing many-service fleet | **Why the apparent conflict is useful:** Netflix's original incident and global replatforming justify a different scale of change; Uber's DOMA starts from the opposite initial state\u2014too many independently depl",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/monolith-vs-services.md",
+          "section_key": "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9#contrasting-historical-evidence"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B020",
+      "question": "How can a priority queue protect critical work while avoiding indefinite starvation of other classes?",
+      "section_new": [
+        {
+          "excerpt": "## Admission must optimize useful completed work, not accepted requests A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks. A controller should count **completed useful operations** and successful critical classes, not just ingress QPS or aggregate reject rate. It should also expose why individual requests were rejected, and whether old low-priority work made critical traffic miss deadlines. **Synthetic comparison test:** replay equivalent read, write, scan, long-lived background and hot-key traffic at a fixed offered load. Use priority classes with immutab",
+          "heading": "Admission must optimize useful completed work, not accepted requests",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests"
+        },
+        {
+          "excerpt": "## Overload controls and failure containment **Autoscaling** is a delayed feedback loop, not an instantaneous capacity guarantee. Specify the measured signal (for example, queue age or admitted concurrency), observation interval, startup and warm-up delay, minimum and maximum replicas, and a scale-down stabilization rule. Test a burst shorter than the full provisioning delay: an autoscaler cannot protect that interval by adding instances that are not yet ready. Scaling application replicas may also exhaust a fixed downstream connection or rate-limit budget. **Admission control** must be applied before expensive work. Define a bounded in-flight limit and queue, a deadline-aware rejection poli",
+          "heading": "Overload controls and failure containment",
+          "path": "book/performance/workload-profiles-and-capacity-experiments.md",
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment"
+        },
+        {
+          "excerpt": "## Three failures and explicit recovery **Tenant burst.** A tenant submits 10,000 units/s. Its local work and concurrency budgets reject or defer the excess before it occupies all cell workers. Its retries consume the same tenant budget and retain operation identifiers. Router retries cannot escape into other cells. Fair scheduling protects other admitted populations within the cell, while cell boundaries limit broader contention. **Poison input.** A small input triggers pathological parsing and defeats the initial cost estimate. Workers enforce a real execution/memory boundary and release concurrency after cancellation has actually stopped work. If cancellation cannot contain the parser, is",
+          "heading": "Three failures and explicit recovery",
+          "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/multitenant-project.md",
+          "section_key": "tycho.page.4856fd39b7e1bfa3b7430427192179fa#three-failures-and-explicit-recovery"
+        },
+        {
+          "excerpt": "## Entry inventory Each level-three heading is a stable atlas anchor. Owner links are bounded sections; none claims sufficient technical or decision coverage. ### Circuit Breaker **Identity.** Circuit Breaker; family Resilience and fault tolerance; kind resilience-pattern; priority core. **Decision question.** Should calls to a failing dependency be rejected early until it recovers? **Good-fit conditions.** Failures are observable; a half-open probe is bounded and safe; the fallback is defined; state is local or shared deliberately. **Hard contraindications.** Reject when failures are caller-specific, when a circuit would hide a required dependency, or when recovery probing would overload th",
+          "heading": "Entry inventory",
+          "path": "book/volumes/v11-pattern-atlas/c07-resilience/README.md",
+          "section_key": "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

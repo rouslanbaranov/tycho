@@ -1,0 +1,315 @@
+{
+  "batch": "SR12",
+  "items": [
+    {
+      "id": "V4-B081",
+      "question": "How can an API prevent a stale full-object update from silently erasing another user\u2019s change?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Problem framing produces explicit unknowns A good architecture description does not erase uncertainty to improve the diagram's appearance. Use a boundary register: | Open question | Why it changes architecture | Evidence or experiment needed | |---|---|---| | Can reservations complete without catalog availability? | Defines whether catalog is a mandatory critical dependency | Signed behavior contract and offline/outage test | | How long may a requester await final confirmation? | Determines synchronous versus accepted/pending lifecycle | User-journey requirement and latency observation window | | Does an expired timeslot automatically cancel an accepted booking? | Determines state mach",
+          "heading": "5. Problem framing produces explicit unknowns",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/evidence-contract.md",
+          "section_key": "tycho.page.b6be128c3e714ac68ef3311a30d65141#5-problem-framing-produces-explicit-unknowns"
+        },
+        {
+          "excerpt": "## Prevent replacement, not only duplication S3 conditional writes support create-if-absent and ETag-based preconditions for particular write APIs. They protect the scoped object operation; they do not commit a separate database row. Other stores may differ. Prefer an immutable version-bound reference where the required store supports it. If the application reads by a mutable name, another writer can change the bytes between verification and later use. Restrict who can overwrite/delete verified candidates, or enforce a version/precondition protocol spanning the check and publication assumptions. Revalidate policy when a pending record changes ownership.",
+          "heading": "Prevent replacement, not only duplication",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication"
+        },
+        {
+          "excerpt": "## At-least-once semantics: four actual duplicate defenses Cloudflare names *two* duplicate causes: the delivery contract of Queues (**at least once**) and failures/late acknowledgments to Durable Objects after an object was already transferred. The source's **Challenges** section names concrete safeguards rather than assuming \u201cexactly-once queue\u201d: 1. **Listing sequence identifiers:** a source listing is sequential through continuation tokens; numbering operations prevents competing duplicate enumerations and allows redundant retries to be short-circuited. 2. **Per-key transfer lock:** consumers lock an object identity while processing; successful completion removes the key from the tracking",
+          "heading": "At-least-once semantics: four actual duplicate defenses",
+          "path": "book/cases/cloudflare-super-slurper-queues.md",
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses"
+        },
+        {
+          "excerpt": "## RTO, RPO and their measurement boundaries **RTO (Recovery Time Objective)**: the approved maximum period a named user capability can be unavailable for the declared disaster class. An operational measurement must say when the incident timer starts (user impact, confirmed failover decision or injection) and what verified user-visible state counts as restored. Do not start the timer only after the slow detection or approval phase. **RPO (Recovery Point Objective)**: the maximum accepted loss of committed, relevant state relative to a chosen pre-failure boundary. Define the last known durable *correct* business event; asynchronous replicas can be behind, and continuous replication may faithf",
+          "heading": "RTO, RPO and their measurement boundaries",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B082",
+      "question": "Why do ordered Lamport clock values not prove a causal relationship between two events?",
+      "section_new": [
+        {
+          "excerpt": "## Why the data copy did not overload the live database The article distinguishes two populations. **Newly created or updated** subscriptions enter the new representation during ordinary requests once dual writing is enabled, with controlled ramp-up. **Older, untouched** subscriptions need a separate backfill. Enumerating all missing subscriptions by scanning live production tables would add unacceptable load. Stripe instead described a database snapshot available to an **offline Hadoop cluster**, and **Scalding/MapReduce** jobs to enumerate source IDs requiring copying. A fleet of migration processes copied the identified records in parallel. Running the offline enumeration again after comp",
+          "heading": "Why the data copy did not overload the live database",
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#why-the-data-copy-did-not-overload-the-live-database"
+        },
+        {
+          "excerpt": "## 1. Boundaries: why the naive dual write is unsafe Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive design is two independent effects: 1. Commit a database record. 2. Publish an event to an external broker. Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor ",
+          "heading": "1. Boundaries: why the naive dual write is unsafe",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Interpret traces as sampled, propagated observations with explicit trust and asynchronous boundaries. A missing span does not prove no effect occurred, and untrusted baggage must not become an authorization decision. The detailed pages separate the mechanisms that make this decision conditional: - [Trace identity and causal interpretation](trace-causality.md) \u2014 What execution relationship can a span and its timing establish? - [Propagation, sampling and untrusted context](sampling-trust.md) \u2014 What does a missing span or forged context prevent a trace from proving? [Chapter introduction, ordered pages and full source ledger](README.md). Original source",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md",
+          "section_key": "tycho.page.f921597aae854c6996459fc025a9bca3#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Canonical researched pages | Engineering question | Canonical content | Evidence state | |---|---|---| | What survives leader changes, minority partitions and quorum reconfiguration? | [Replication, quorum and leader change](../volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md) | V04/C02; Raft/etcd public protocol scope and synthetic failure matrix; no cluster exercised | | What is causality, and when does a replicated log need consensus? | [Causality, ordering and consensus](../volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causality-ordering-and-consensus.md) | Lamport ",
+          "heading": "Canonical researched pages",
+          "path": "book/distributed/README.md",
+          "section_key": "tycho.landing.ddbfbbbe1a85406faa2705102378beea#canonical-researched-pages"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B083",
+      "question": "When might ordering updates per key avoid the cost of one global sequence?",
+      "section_new": [
+        {
+          "excerpt": "# Resequencer **Decision.** Buffer and release out-of-order messages only when an ordering requirement, a reliable sequence domain, and a bounded buffer with a gap timeout and a late-message disposition have owners. Partition by key instead when global order is unnecessary. **Identity.** Resequencer; family Messaging and event-driven integration; kind messaging-pattern; priority advanced. **Decision question.** Should out-of-order messages be buffered and released in an acceptable order? **Good-fit conditions.** The message contract declares which order is required. Sequence numbers are reliable and scoped to the ordering domain, with known predecessors and successors. The pending backlog is",
+          "heading": "Resequencer",
+          "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/resequencer.md",
+          "section_key": "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview"
+        },
+        {
+          "excerpt": "## Distinct runtime algorithms, not one global rewrite | Mechanism observed in src.m9-n12 | When it acts | What it changes | What it cannot fix | |---|---|---|---| | Dataset-level Time Slice worker | Background inspection of histogram percentiles | Partition strategy for **future** time slices | Historical wide partitions already written | | Per-ID hot-partition detector | **Read path** bytes exceed configured threshold | Emits Kafka event with time slice, ID, existing buckets, immutability and version | Current request may already be slow; per-read detection does not prevent first spike | | Async planner + split strategy | Full read of source partition, checkpoints in `wide_row` metadata | ",
+          "heading": "Distinct runtime algorithms, not one global rewrite",
+          "path": "book/cases/netflix-cassandra-dynamic-time-series-splits.md",
+          "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#distinct-runtime-algorithms-not-one-global-rewrite"
+        },
+        {
+          "excerpt": "## 2. Publication schema and ordering boundaries [Debezium Outbox Event Router 3.6](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html) documents an example event ID, aggregate type, aggregate ID, event type and payload. The aggregate ID can become the Kafka message key and help preserve per-partition order. These are *product configuration semantics*, not a guarantee of global ordering or arbitrary exactly-once effects. Distinguish: - transaction commit order; - an aggregate's version or domain sequence; - connector capture and relay time; - broker partition offset; - consumer application time; - business effect completion. If event E6 reaches a consume",
+          "heading": "2. Publication schema and ordering boundaries",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#2-publication-schema-and-ordering-boundaries"
+        },
+        {
+          "excerpt": "## 2. Stampede at a synchronized expiry A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads. **Illustrative fiction:** one key receives 600 reads/s. Its TTL expires and 300 clients overlap before the first origin read returns. Without per-key coalescing or a source admission budget, the origin may receive hundreds of near-identical queries even though normally it receives few. These are invented counts, not observed measurements. Potential countermeasures: | Technique | Can reduce | Required caveat | |---|---|---| | Single-flight within process | Multiple concurrent source loads per key on ",
+          "heading": "2. Stampede at a synchronized expiry",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B084",
+      "question": "Why can a minority partition of a five-voter Raft group not commit new log entries?",
+      "section_new": [
+        {
+          "excerpt": "## 2. Kafka's partition is an ordering and load unit Apache Kafka 4.1 Design sections **The Producer \u2014 Load balancing**, **The Consumer \u2014 Consumer Position**, **Message Delivery Semantics** and **Replication** describe how a topic is partitioned, records have positions in a partition, and consumer state tracks positions. Partition ordering does **not** establish total ordering across the whole topic. [E02] ```mermaid flowchart LR Producer[\"Keyed event producer\"] --> Routing{\"Partition selection by key\"} Routing --> P0[\"Partition 0: append log\"] Routing --> P1[\"Partition 1: append log\"] Routing --> P2[\"Partition 2: append log\"] P0 --> CG[\"Consumer group: assigned reader\"] P1 --> CG P2 --> CG ",
+          "heading": "2. Kafka's partition is an ordering and load unit",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/partitions-producers.md",
+          "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit"
+        },
+        {
+          "excerpt": "## 1. Why write-ahead logging exists PostgreSQL 17 \u00a728.3 **Write-Ahead Logging (WAL)** explains the durability approach: record modifications into a log before the affected data pages must be written to their permanent table/index files. WAL records and commit policies permit recovery after a crash without forcing every changed page to disk at transaction commit. WAL is both a recovery mechanism and a foundation for replication approaches. [E01] ```mermaid flowchart LR Client[\"Client transaction\"] --> Buffer[\"Modified in-memory pages\"] Buffer --> WAL[\"Write-ahead log records\"] WAL --> Commit{\"WAL/commit durability settings satisfied?\"} Commit --> Reply[\"COMMIT acknowledgement\"] Buffer --> Fl",
+          "heading": "1. Why write-ahead logging exists",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists"
+        },
+        {
+          "excerpt": "## Entry inventory Each level-three heading is a stable atlas anchor. Owner links are bounded sections; none claims sufficient technical or decision coverage. ### Leader Election **Identity.** Leader Election; family Distributed coordination; kind coordination-pattern; priority core. **Decision question.** Should one node be chosen to coordinate work while others stand by? **Good-fit conditions.** A single coordinator is useful; terms/epochs are available; failover and stale leaders are handled; clients can observe leadership. **Hard contraindications.** Reject when work is safely partitioned without a leader, when election cannot be made safe, or when leader failover would block progress. *",
+          "heading": "Entry inventory",
+          "path": "book/volumes/v11-pattern-atlas/c08-coordination/README.md",
+          "section_key": "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory"
+        },
+        {
+          "excerpt": "## Why the first idea failed in production Uber's distributed Docstore/Schemaless database services have stateless query engines which plan and route work and stateful storage nodes with shard leadership and Raft replication. A proposed per-caller quota layer in the **stateless query tier** assigned cost to queries from their return-byte count and relied on Redis to share quotas. A full scan returning a single row cost the same as a point lookup; quotas remained static while workload skew and hotspots evolved. The Redis round trip added a reliability dependency, and query nodes did not possess current health signals for all storage partitions. The authors report that this approach **did not ",
+          "heading": "Why the first idea failed in production",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B085",
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](queueing-littles-law.md) | What do arrival, throughput, mean response and in-flight counts imply? | | [Population boundaries and Little's Law](measurement-boundary.md) | When are occupancy, throughput and mean residence time comparable? | | [Finite windows and load-generator feedback](finite-window.md) | Why can unfinished work and closed-loop arrivals invalidate a naive estimate? | | [Over",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/README.md",
+          "section_key": "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Questions and chapters | Chapter | Owning question | |---|---| | [V07/C01 \u2014 Queueing, Little's Law and measurement boundaries](c01-queueing-littles-law-and-measurement-boundaries/README.md) | What do arrival, throughput, mean response and in-flight counts imply? | | [V07/C02 \u2014 Contention, saturation and scaling laws](c02-contention-saturation-and-scaling-laws/README.md) | When does coordination dominate additional capacity? | | [V07/C03 \u2014 Load-test methods and benchmark validity](c03-load-test-methods-and-benchmark-validity/README.md) | How do open/closed arrivals, warmup and coordinated omission bias conclusions? | | [V07/C04 \u2014 Tail latency, fan-out and time budgets](c04-tail-latency-fan",
+          "heading": "Questions and chapters",
+          "path": "book/volumes/v07-performance-scale-and-resilience/README.md",
+          "section_key": "tycho.volume.f7679623ca274bff8a00389d409d68c6#questions-and-chapters"
+        },
+        {
+          "excerpt": "## Measurement model For a stable boundary, Little's Law relates mean in-flight work L, admitted throughput \u03bb and mean residence time W: **L = \u03bbW**. This is an accounting relationship under its assumptions, not a saturation prediction. See [the canonical mechanism and finite-window caveats](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md). Queueing delay grows as utilization approaches a bottleneck's capacity, but service-time variability and arrival burstiness affect tails. The Universal Scalability Law is a *model to fit against observations*, not a law that identifies contention or coherence costs from a single da",
+          "heading": "Measurement model",
+          "path": "book/performance/workload-profiles-and-capacity-experiments.md",
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model"
+        },
+        {
+          "excerpt": "## Little's law and its finite-window caveat Little's law states that, under its conditions, the long-run average number in system equals the arrival rate times the average time in system: L = lambda * W. It is a relation among averages, not a per-request identity and not a guarantee for a short window. Kim and Whitt's paper makes the finite-window problem explicit. Measurements over a finite interval are neither long-run averages nor stationary expectations. Edge effects matter when the system does not start and end empty. The paper recommends a statistical approach, batch means and confidence intervals, and shows how to estimate and remove some edge bias. V12 uses Little's law in two place",
+          "heading": "Little's law and its finite-window caveat",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B086",
+      "question": "How can unfinished work at the end of an observation window distort a queueing estimate?",
+      "section_new": [
+        {
+          "excerpt": "## Little's law and its finite-window caveat Little's law states that, under its conditions, the long-run average number in system equals the arrival rate times the average time in system: L = lambda * W. It is a relation among averages, not a per-request identity and not a guarantee for a short window. Kim and Whitt's paper makes the finite-window problem explicit. Measurements over a finite interval are neither long-run averages nor stationary expectations. Edge effects matter when the system does not start and end empty. The paper recommends a statistical approach, batch means and confidence intervals, and shows how to estimate and remove some edge bias. V12 uses Little's law in two place",
+          "heading": "Little's law and its finite-window caveat",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+        },
+        {
+          "excerpt": "## Purpose and mission \u201cTen thousand users\u201d is not a sufficient workload specification. A system may have ten thousand accounts and almost no concurrent work; another with the same account count may receive a short burst of writes against one state key. Architecture decisions need a model of **arrivals, logical operations, concurrency, resource demand, key skew and time**. A good model makes assumptions visible and can be disproved by real observations. This foundational chapter describes how to define those quantities and estimate offered work without converting user population into requests per second by an invented universal constant. The [V10 architecture requirement profile](../../v10-d",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md",
+          "section_key": "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Workload numbers: preserve their units and date The March 2015 report states **over 800 billion messages produced per day**, **over 175 TB input per day**, **over 650 TB consumed per day**, a busy-period intake of **over 13 million messages/sec** or **2.75 GB/sec**, and **more than 1,100 brokers across more than 60 clusters**. These have *different denominators and observation windows*: consumer volume can exceed input because Kafka supports many readers of one event. Daily averages cannot be used as peak throughput, and 2015 figures cannot be interpreted as the organization's 2026 topology or Kafka's vendor-independent capacity specification. [src.m9-li01: How Big is Big?] Do not calcula",
+          "heading": "Workload numbers: preserve their units and date",
+          "path": "book/cases/linkedin-kafka-tiered-completeness.md",
+          "section_key": "tycho.page.9f1f71a670f345e9898fe78167b48cda#workload-numbers-preserve-their-units-and-date"
+        },
+        {
+          "excerpt": "## 4. Event time, watermarks and late data are business policies Streaming data can be observed at a different time from when the event occurred. A **watermark** or event-time windowing policy tells operators how much lateness they expect and when to finalize a result. This topic requires exact installed release and API evidence before implementation; the present section provides only a **conceptual synthetic model**, not an asserted Flink 2.1 watermark algorithm. Consider a fictional count of booking events for a 10-minute window. One client submits an event with timestamp 09:55, but network delay causes it to arrive at 10:12. If the application's window was finalized earlier, the operator ",
+          "heading": "4. Event time, watermarks and late data are business policies",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/checkpoints-time.md",
+          "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B087",
+      "question": "Why does a bounded queue smooth a brief burst but fail to create sustainable processing capacity?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Why test-tool latency can be deceptively low A closed workload generator that waits for a response before issuing the next request reduces offered load when the system stalls. A test can therefore hide the backlog users would create under externally timed arrivals. Observe the demand schedule and **offered/admitted/completed rates separately**, not only completed-response histograms. Latency under open arrivals, bounded connection pools, drops, timeouts and queue age gives a different service picture. For a representative evaluation: - Define user-visible start/end points, full journey and correctness assertions before choosing percentile targets. - Preserve a repeatable arrival schedu",
+          "heading": "5. Why test-tool latency can be deceptively low",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-experiments.md",
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low"
+        },
+        {
+          "excerpt": "## 3. Queues, limits and priority create new contracts A bounded queue must name both **number of items** and **maximum age**. A small queue of slow operations can still exceed caller deadlines. An old task may be useless even if the system has capacity after the peak; cancel it only where cancellation semantics and any committed effects permit. Choose concurrency/queue limits from observed service-time and downstream saturation behavior rather than a universal rule. A token bucket rate limiter constrains arrival over time according to configured tokens and burst capacity; a concurrency semaphore limits simultaneous resident work. These solve related but different problems. Neither prevents ",
+          "heading": "3. Queues, limits and priority create new contracts",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Circuit Breaker A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The threshold needs a minimum request volume so one failure does not trip a quiet dependency. The open state records why it opened and the cooldown; half-open limits concurrent probes and closes only after consecutive successes. Rejected calls are not dependency failures and need their own metric. A breaker must not replace timeout, backpressure or a retry budget, and an open caused by local resource exhaustion hides the real bottleneck. An open breaker needs an expl",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md",
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A fictional service stays within its mean response target until a short burst coincides with a slow dependency. Queues grow, retries multiply demand, and extra replicas become ready after the burst. A stable average computed over the entire run conceals the failed user journeys. Build a capacity envelope from a declared arrival process and measured boundary. Relate occupancy and rates carefully, then inspect contention, arrival-model bias, critical paths, overload and scaling delay. Compare alternatives using correct outcomes over total cost, including peak and degraded operation.",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v07-performance-scale-and-resilience/README.md",
+          "section_key": "tycho.volume.f7679623ca274bff8a00389d409d68c6#a-worked-cross-chapter-synthesis"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B088",
+      "question": "Why is a trace ID not a reliable substitute for a durable business operation ID?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Durable workflow selection is conditional One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coordinator may help with long waits, retries and auditability, but its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration. **Choreography risks:** difficult-to-discover implicit coupling, unbounded event chains, conflicting compensations, and tracing that describes correlation but not durable business truth. **Orchestration risks:** ",
+          "heading": "5. Durable workflow selection is conditional",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional"
+        },
+        {
+          "excerpt": "## Why the data copy did not overload the live database The article distinguishes two populations. **Newly created or updated** subscriptions enter the new representation during ordinary requests once dual writing is enabled, with controlled ramp-up. **Older, untouched** subscriptions need a separate backfill. Enumerating all missing subscriptions by scanning live production tables would add unacceptable load. Stripe instead described a database snapshot available to an **offline Hadoop cluster**, and **Scalding/MapReduce** jobs to enumerate source IDs requiring copying. A fleet of migration processes copied the identified records in parallel. Running the offline enumeration again after comp",
+          "heading": "Why the data copy did not overload the live database",
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#why-the-data-copy-did-not-overload-the-live-database"
+        },
+        {
+          "excerpt": "## Why reliability was not automatically improved In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of ev",
+          "heading": "Why reliability was not automatically improved",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved"
+        },
+        {
+          "excerpt": "## Legacy security and reliability failure Netflix's data warehouse had **millions of tables** and **tens of thousands of scheduled workloads**, according to the May 2026 report. Access management was primarily per-asset, and many asynchronous jobs ran under their human creator's identity. An organization reallocation required rewriting many ACLs, leading either to support backlogs or overly broad grants. A scheduled job could also fail when the person whose delegated identity it used changed teams or left; replacing that person with another operator frequently revealed missing permissions in a chain of failures. This was simultaneously a **least-privilege, ownership and service-continuity**",
+          "heading": "Legacy security and reliability failure",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#legacy-security-and-reliability-failure"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B089",
+      "question": "What can a missing sampled trace tell an investigator about a possibly committed write?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Trace context and causality boundaries The W3C Trace Context recommendation standardizes the traceparent and tracestate propagation headers for interoperable distributed tracing. Traceparent identifies a position in a trace, while tracestate may carry vendor-related information. The specification also discusses privacy and malicious-header risks. [E01] A **span** represents a named operation with start/end timestamps and attributes; it may have a parent or one or more links to other contexts. These records can model nested synchronous calls and causal associations across asynchronous processing, but **a span's existence is not proof that a database transaction committed**. Consider a s",
+          "heading": "1. Trace context and causality boundaries",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries"
+        },
+        {
+          "excerpt": "## Workload before collector: what the source can actually tell us [Netflix's March 2024 GC report](../netflix-generational-zgc-workloads.md) (src.m9-n05) reports a significant **request-tail and retry-amplification** problem in latency-sensitive Java services. A stop-the-world pause can cause an upstream request timeout, trigger retries/hedging and thus increase work after the original pause ends. The publication distinguishes **G1**, **older non-generational ZGC**, **Generational ZGC**, and **Parallel GC**. Mixing them would produce a false architectural conclusion: older ZGC was about **36% more CPU-intensive** than G1 in one comparison, **generational** ZGC was around **10% better** than",
+          "heading": "Workload before collector: what the source can actually tell us",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us"
+        },
+        {
+          "excerpt": "## Insufficient evidence is not a model failure A model can be: - verified: the engine preserves its invariants; - converged: the sampling error is small; - executable: the run replays; and still fail to support a decision. The missing evidence is about the world, not the code. Examples: - the dual-write lag is assumed over a wide range and never measured; - a hard constraint depends on a regulatory approval that has not been obtained; - two stakeholders disagree about the objective, so no metric ranking is valid; - a candidate's rollback has never been rehearsed; - the observed divergence exceeds the business threshold in every scenario. A decision record that forces a recommendation in the",
+          "heading": "Insufficient evidence is not a model failure",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+        },
+        {
+          "excerpt": "# Distributed Tracing **Identity.** Distributed Tracing; family Security, isolation and operational architecture; kind observability-pattern; priority core. **Decision question.** Should requests carry a trace context so spans across services can be correlated? **Good-fit conditions.** Context propagation is possible; sampling policy is explicit; sensitive data is excluded; storage/retention are owned. **Hard contraindications.** Reject when one service suffices, when context cannot cross a boundary, or when trace data would leak sensitive payloads. **Competing alternative.** Structured logs with request IDs. Reverse the choice when cross-service latency diagnosis justifies trace infrastruct",
+          "heading": "Distributed Tracing",
+          "path": "book/volumes/v11-pattern-atlas/c11-security-operations/distributed-tracing.md",
+          "section_key": "tycho.page.ff387baa8697be02afec1be6807b858f#overview"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B090",
+      "question": "Why must externally supplied trace baggage not determine tenant authorization?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Trace context and causality boundaries The W3C Trace Context recommendation standardizes the traceparent and tracestate propagation headers for interoperable distributed tracing. Traceparent identifies a position in a trace, while tracestate may carry vendor-related information. The specification also discusses privacy and malicious-header risks. [E01] A **span** represents a named operation with start/end timestamps and attributes; it may have a parent or one or more links to other contexts. These records can model nested synchronous calls and causal associations across asynchronous processing, but **a span's existence is not proof that a database transaction committed**. Consider a s",
+          "heading": "1. Trace context and causality boundaries",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries"
+        },
+        {
+          "excerpt": "## Integrated decision and reading route Verify artifact identity and provenance against an authorization policy; distinguish signatures, attestations and component inventories. A valid signature from an unapproved identity, or an SBOM for another digest, must not authorize promotion. The detailed pages separate the mechanisms that make this decision conditional: - [Artifact subjects, provenance and component inventories](provenance-subjects.md) \u2014 What does each evidence object describe and what does it omit? - [Authorized promotion and missing evidence](promotion-authorization.md) \u2014 Why is authentic evidence insufficient to authorize an artifact in every environment? [Chapter introduction, ",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+          "section_key": "tycho.page.38bb8a14ebb54866a7004080318b47e1#integrated-decision-and-reading-route"
+        },
+        {
+          "excerpt": "## Why the first idea failed in production Uber's distributed Docstore/Schemaless database services have stateless query engines which plan and route work and stateful storage nodes with shard leadership and Raft replication. A proposed per-caller quota layer in the **stateless query tier** assigned cost to queries from their return-byte count and relied on Redis to share quotas. A full scan returning a single row cost the same as a point lookup; quotas remained static while workload skew and hotspots evolved. The Redis round trip added a reliability dependency, and query nodes did not possess current health signals for all storage partitions. The authors report that this approach **did not ",
+          "heading": "Why the first idea failed in production",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision](sbom-attestation-and-release-verification.md) | How are reproducibility, signatures and promotion controls established? | | [Artifact subjects, provenance and component inventories](provenance-subjects.md) | What does each evidence object describe and what does it omit? | | [Authorized promotion and missing evidence](promotion-authorization.md) | Why is authentic evidence insufficient to authorize an artifact in ev",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/README.md",
+          "section_key": "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#pages-and-reasoning-route"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+{
+  "batch": "SR07",
+  "items": [
+    {
+      "id": "V4-B031",
+      "question": "In Meta\u2019s ingestion migration, where did the candidate job write during the initial shadow phase?",
+      "section_new": [
+        {
+          "excerpt": "## Data-authority decision guard: Stripe versus Meta **Stripe src.m9-st01 (2017):** expand/dual-write from old Customer array to new Subscription rows; backfill; use Scientist read comparisons; route **all reads to the new representation before changing write authority**, then remove obsolete writes and data after callers are migrated. **Meta src.m9-me03 (2026):** output-equivalence gates on shadow ingestion; switch the **new ingestion job to the production table while the old job begins producing shadow output**; keep comparing and backfilling; on CDC bad-partition detection stop unsafe delta propagation or reconstruct an affected target snapshot and roll back; only then retire the old job.",
+          "heading": "Data-authority decision guard: Stripe versus Meta",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta"
+        },
+        {
+          "excerpt": "## Applied M9 evidence: what transfers and what does not These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision playbook is **original synthetic analysis**, not a company decision. **Case lens \u2014 [Netflix \u2014 Casspactor shadow migration](../../../cases/netflix-casspactor-shadow-migration.md)**. **Relevant mechanism or architectural contrast:** Backup identity, shadow comparisons and fallback are distinct evidence gates for pipeline migration. **Not established by this report/playbook:** Comparing row sets alone does ",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "section_key": "tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not"
+        },
+        {
+          "excerpt": "## Migration mechanics and reliability The published article describes the architecture, not a complete original cutover chronology. A comparable design must define cache fill concurrency and hot-key suppression, shard ownership and replication; validate read-your-writes where required, make consistency mode explicit and plan primary-region switching. Those extra transition gates are Tycho synthesis. **Synthetic acceptance plan for a different legacy stack:** baseline real workload and maintenance cost; specify the one invariant that cannot change; stage compatible dual routes/data or immutable job inputs; compare source and target results including timestamps and retries; define rate-limit,",
+          "heading": "Migration mechanics and reliability",
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability"
+        },
+        {
+          "excerpt": "## Other companies (#118) - [Uber DOMA](uber-doma-domains.md) - [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md) - [Uber MyRocks](uber-mysql-to-myrocks.md) - [Uber Cinnamon dynamic overload protection and fairness](uber-cinnamon-admission-and-fairness.md) - [Shopify modular monolith](shopify-modular-monolith.md) - [Shopify component governance](shopify-packwerk-boundary-evolution.md) - [Shopify Helix gate-driven AI native migration](shopify-helix-checkpoint-gated-native-migration.md) - [Airbnb Bazel JVM build migration](airbnb-jvm-monorepo-bazel.md) - [Stripe online data migration](stripe-online-subscriptions-migration.md) - [Discord ScyllaDB messages](discord-cassandra-sc",
+          "heading": "Other companies (#118)",
+          "path": "book/cases/README.md",
+          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B032",
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "section_new": [
+        {
+          "excerpt": "## Selection matrix: which migration method is justified? | Dominant constraint | Candidate path | Why an alternative fails | Evidence needed | |---|---|---|---| | Millions of mutable records, many independent legacy consumers, no outage window | Dual representation, backfill, shadow reads, phased read/write authority | Single atomic big-bang cutover is impractical without a globally synchronized consumer release | Consumer inventory, mutation parity, reconciliation, rollback horizon | | Repeatable snapshot-to-table analytics job | Parallel legacy/new runs, two-sided row-set comparison, per-job selector | OLTP dual write adds needless live-state coupling | Reproducible input manifest, determ",
+          "heading": "Selection matrix: which migration method is justified?",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified"
+        },
+        {
+          "excerpt": "## 4. Candidate transition states\u2014not just a target diagram ```mermaid stateDiagram-v2 [*] --> Inventory Inventory --> ModuleContract: Establish internal API and data owner ModuleContract --> DualCompatibility: Add stable external contract and tests DualCompatibility --> Shadow: Run synthetic/representative parallel verification Shadow --> LimitedTraffic: Route controlled traffic to new owner LimitedTraffic --> Shadow: Revert routing while state is compatible LimitedTraffic --> ForwardRepair: Contract or data divergence ForwardRepair --> LimitedTraffic: Reconcile and reverify LimitedTraffic --> Extracted: Retire old implementation only after acceptance Extracted --> [*] ``` Text alternative:",
+          "heading": "4. Candidate transition states\u2014not just a target diagram",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram"
+        },
+        {
+          "excerpt": "## Admission must optimize useful completed work, not accepted requests A retryable request with a deadline shorter than predicted queue wait can create harm if accepted: its caller has already abandoned it by the time the store consumes CPU, memory and locks. A controller should count **completed useful operations** and successful critical classes, not just ingress QPS or aggregate reject rate. It should also expose why individual requests were rejected, and whether old low-priority work made critical traffic miss deadlines. **Synthetic comparison test:** replay equivalent read, write, scan, long-lived background and hot-key traffic at a fixed offered load. Use priority classes with immutab",
+          "heading": "Admission must optimize useful completed work, not accepted requests",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests"
+        },
+        {
+          "excerpt": "## Read comparison is an architectural interface, not a dashboard For read migration, the team used **GitHub Scientist** to evaluate both the incumbent and candidate code paths in production while exposing the incumbent response. Diffs and experimental exceptions were reported so the new path could be corrected before taking live read authority. The *served result* versus *experimental result* distinction is crucial: a broken candidate cannot be allowed to corrupt an otherwise healthy production request merely because it is shadowed. A robust implementation in a **different** system needs a comparison normalization contract: identity, ordering where observable, null/default semantics, trial/",
+          "heading": "Read comparison is an architectural interface, not a dashboard",
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B033",
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "section_new": [
+        {
+          "excerpt": "## 6. Alternative migration mechanisms and contraindications | Mechanism | Fits when | Can fail when | |---|---|---| | Internal branch by abstraction | An internal interface can route old/new implementations with one deployable | Components cannot be separated without untested side effects | | Strangler fa\u00e7ade | Requests can be intercepted and routed by capability | Internal callers bypass fa\u00e7ade or it becomes a bottleneck | | Expand/migrate/contract | Supported readers/writers can coexist during additive schema phases | Old client semantics changed despite schema compatibility | | Shadow reads | Side-effect-free comparisons are possible without user exposure | Shadow requests accidentally m",
+          "heading": "6. Alternative migration mechanisms and contraindications",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications"
+        },
+        {
+          "excerpt": "## Modernization plan Version contracts \u2192 establish old source authority \u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old only after proven zero callers. **Reversal triggers / insufficient evidence:** If the new model cannot preserve legacy business semantics, redesign domain/API contract with consumers before cutover rather than forcing opaque equality.",
+          "heading": "Modernization plan",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+        },
+        {
+          "excerpt": "## Decision transfer, negative cases and synthetic ADR **Synthetic requirement:** migrate a transactional reporting feed while thousands of dashboards must remain available. Choose a job-level lifecycle with explicit old/new side-by-side materialization, consistent snapshot cuts, row identity as well as checksums for critical entities, fresh-data lag p95/p99, and an owner-approved change of production authority. Use canary batches and fall back before retiring the old implementation. **Alternative A \u2014 big bang:** may be viable only for a tiny noncritical batch that can be re-run deterministically without consumer SLA, but wrong for thousands of continuously consumed tables. **Alternative B \u2014",
+          "heading": "Decision transfer, negative cases and synthetic ADR",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#decision-transfer-negative-cases-and-synthetic-adr"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Fallback The owner of the primary outcome also owns its fallback, because only that owner can judge whether an alternate preserves the same correctness contract. A dependency team's proposal needs explicit acceptance. Document the trigger and caller-visible label. A plausible substitute that hides its limits is a correctness failure; do not let the alternate impersonate the primary. A read-only fallback may serve a display; a fallback that writes needs duplicate protection, reconciliation and a repair procedure. State the fallback freshness, authority and caller-visible label, and require it to be cheaper, independently safe and independent of the faile",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B034",
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "section_new": [
+        {
+          "excerpt": "## Results The staged run reports: - success rate 1.0; - throughput 10 requests per second; - mean dual-write backlog 4,242.0 records; - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1; - rollback seconds mean 1,080, with non-completions censored at 1,200 seconds after the trigger. The baseline reports: - success rate 1.0; - throughput 10 requests per second; - zero divergence and zero backlog; - no rollback requirement. The baseline is not a recommendation to remain on the legacy path forever. It is a reference for the modeled cost of not shifting traffic. The staged path adds divergence risk and a rollback requirement; it does not add modeled throughp",
+          "heading": "Results",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#results"
+        },
+        {
+          "excerpt": "## The basic quantities - Arrival rate (lambda): requests per second offered to the queue. - Service capacity (mu): requests per second the server pool can complete when busy. - Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server class, or lambda / (c * mu) for c identical servers. - Queue length: requests waiting for a server. - In-system count: waiting plus in service. - Time in system: from first arrival to terminal outcome. For the checkout baseline, lambda is 20 requests per second, c is 12 and the mean service time is 0.5 seconds. The service capacity is 12 / 0.5 = 24 requests per second, so the utilization is 20 / 24 = 0.833. The measured server utili",
+          "heading": "The basic quantities",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+        },
+        {
+          "excerpt": "## Pages and reasoning route - [Coexistence and rollback](coexistence-and-rollback.md): parallel run, dual write, reconciliation backlog and rollback drain. - [Modernization-path experiment](modernization-path-experiment.md): the staged scenario, the no-cutover baseline and the observed results. Read the coexistence page for the model semantics. Read the experiment page for the comparison and the reason the decision record returns insufficient evidence.",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Short-window queue growth is not steady-state Little's Law **Original synthetic arrival trace:** for 20 seconds, 120 new requests per second reach a bounded service capable of 80 correct completions per second. Suppose it rejects none during the first 20 seconds. With no initial backlog, the queued/in-flight surplus grows at roughly `(120\u221280)\u00d720 = 800` requests, before considering cancellations or finite buffers. It is **invalid** to infer that `L = \u03bbW` gives a stable average W by substituting 120 offered requests/s and a transient L of 800: arrival and departure boundaries differ and the finite window is not stationary. If no new requests arrive at second 20 and",
+          "heading": "Engineering walkthrough \u2014 Short-window queue growth is not steady-state Little's Law",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B035",
+      "question": "Which traffic-share schedule is declared in the synthetic staged modernization experiment?",
+      "section_new": [
+        {
+          "excerpt": "## Reversible two-stage experiment and falsification **Stage 1 \u2014 source-code cohort (synthetic):** choose ten noncritical, representative repositories with approved test oracles. The number ten is an *illustrative cohort size*, not a company outcome. Pin source and tool revisions, predefine allowed diffs and invariants, evaluate dry-run patches, compare against independent manual review, and record post-merge reverts over a declared interval. If human correction repeatedly changes the business semantics of an automated mapping, the transformation contract has failed; stop expanding the cohort. **Stage 2 \u2014 persistent state (synthetic):** keep old data authoritative while backfilling a target ",
+          "heading": "Reversible two-stage experiment and falsification",
+          "path": "book/cases/decisions/agentic-migration-safety.md",
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification"
+        },
+        {
+          "excerpt": "# Coexistence and rollback **Question.** Which coexistence, reconciliation and rollback states must a modernization model expose before a cutover can be called supported? **Short answer.** A staged model must show the traffic share on each path, the dual-write backlog, the reconciliation capacity, the accumulated divergence and the rollback drain. A cutover is supported only when those states stay inside declared limits and the rollback completes within the observation window.",
+          "heading": "Coexistence and rollback",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#overview"
+        },
+        {
+          "excerpt": "## A cell is a boundary in the dependency graph A cell serves a bounded population with its own capacity and failure domain. Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher. Trace every dependency that a tenant can exhaust, corrupt or stall, and state which failures cross the boundary. This original design assumes a request can be assigned to a tenant, tenant state has an authoritative home, and placement can be changed through a controlled migration. It uses a thin routing layer, per-cell serving resources, and a control plane for provisioning and migration. Existing placement remains usable when the control plane",
+          "heading": "A cell is a boundary in the dependency graph",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A synthetic checkout service receives 20 requests per second for 30 minutes after a five-minute warmup. Three candidates use the same arrivals, duration, seed scheme and metrics: - A: direct capacity with a one-second deadline and no retry budget; - B: a bounded queue, a two-second deadline and a small retry budget; - C: more servers, a slower mean service time and a higher unit cost. Under the declared assumptions, B succeeds on 0.9996 of offered requests with a 1.206-second p95 latency and 1.34 relative cost units per 1000 successes. A succeeds on 0.9218 with a 0.870-second p95 and 1.81 cost units. C succeeds on 0.9679 but exceeds the declared 3.0 cost a",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B036",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "section_new": [
+        {
+          "excerpt": "## Results The staged run reports: - success rate 1.0; - throughput 10 requests per second; - mean dual-write backlog 4,242.0 records; - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1; - rollback seconds mean 1,080, with non-completions censored at 1,200 seconds after the trigger. The baseline reports: - success rate 1.0; - throughput 10 requests per second; - zero divergence and zero backlog; - no rollback requirement. The baseline is not a recommendation to remain on the legacy path forever. It is a reference for the modeled cost of not shifting traffic. The staged path adds divergence risk and a rollback requirement; it does not add modeled throughp",
+          "heading": "Results",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#results"
+        },
+        {
+          "excerpt": "## Modernization plan Version contracts \u2192 establish old source authority \u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old only after proven zero callers. **Reversal triggers / insufficient evidence:** If the new model cannot preserve legacy business semantics, redesign domain/API contract with consumers before cutover rather than forcing opaque equality.",
+          "heading": "Modernization plan",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+        },
+        {
+          "excerpt": "## V12-E: decision validity The decision records declare: - candidates and their runs; - hard, soft and non-quantitative constraints; - business-comparable metrics with units; - evidence statuses for model verification, calibration and simulation; - an explicit recommendation or a no-recommendation outcome; - non-quantitative constraints kept separate; - reversal triggers and limitations. The checkout record is decision-supported under its declared constraints. The modernization record is insufficient evidence. Both are valid outcomes.",
+          "heading": "V12-E: decision validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+        },
+        {
+          "excerpt": "## Abstraction is a choice about resolution Three model families cover most V12 questions: - **Stock-and-flow** for accumulation, feedback, delay and capacity. It is cheap to run and good for showing conservation and backlog growth. It does not represent individual request latency. - **Discrete-event** for queueing, deadlines, retries and tail latency. It represents individual requests and event ordering. It costs more to verify and can hide numerical detail behind a plausible average. - **Hybrid** for a staged path where traffic shares, reconciliation backlog and rollback coexist. It is a purposeful simplification, not a claim that the underlying system is fluid. The choice is not a maturit",
+          "heading": "Abstraction is a choice about resolution",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B037",
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "section_new": [
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Netflix ZGC](../netflix-generational-zgc-workloads.md) | src.m9-n05: G1, old ZGC, generational ZGC and Parallel contrasts | | [Netflix HotSpot](../netflix-hotspot-false-true-sharing.md) | src.m9-n18: throughput constrained by sharing below the Java code | | [Discord datastore](../discord-cassandra-scylladb-messages.md) | src.m9-di01: Java Cassandra GC was one operational factor, but Scylla migration also involved data-service changes | **Why the apparent conflict is useful:** Netflix reported generational ZGC helping its online service workload, yet described batch co",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## Why rigid rules were a failed modernization tactic The 2020 retrospective names a social/technical failure: a centralized architecture team initially emphasized uniform public-interface patterns; some teams reshaped their problems just to fit the prescribed approach, and the rules added friction without addressing the actual blockers. The later effort placed more emphasis on **developer motivation, pairing, reducing tooling pain and letting component owners succeed incrementally**. [src.m9-sh02, **What We Learned so Far**, **Foster the Grassroots**]. The same account distinguishes **two incomplete-state strategies**. Shopify's main monolith prioritized labeling a broad target set of subdo",
+          "heading": "Why rigid rules were a failed modernization tactic",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#why-rigid-rules-were-a-failed-modernization-tactic"
+        },
+        {
+          "excerpt": "## What made legacy backup identification brittle The [May 18, 2026 first-party account](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1) (src.m9-n11, **Casspactor: The Engine We Outgrew**, **Fragile Metadata Dependencies**) reports approximately **1,200 data movements/day** and **3 PB transferred** in the stated legacy operating scale. The post does not provide an independently reproducible distribution of object sizes, exact comparison duration for the 3 PB figure or per-job cost. These numbers are scale context, **not** benchmark targets for another company. The old Casspactor path combined multiple metadata services to decide which Cassandra b",
+          "heading": "What made legacy backup identification brittle",
+          "path": "book/cases/netflix-casspactor-shadow-migration.md",
+          "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#what-made-legacy-backup-identification-brittle"
+        },
+        {
+          "excerpt": "## Actual security and rollout boundaries | Part | Company-reported design | What remains uncertain | |---|---|---| | Container/roles | Project grants cover users, teams, applications and CI | Precise implementation of policy inheritance, revocation timing and emergency breaks not in the article | | Durable execution | Maestro is an authorized Trusted Workload Manager that mints workload identities | Specific cryptographic token lifetime, issuer keys and service-to-service authorization internals not disclosed | | AWS use | Optional IAM role for Spark/EMR can be exchanged through Netflix identity | Cannot infer all cloud permissions are minimized automatically | | Asset grouping | Generated ",
+          "heading": "Actual security and rollout boundaries",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#actual-security-and-rollout-boundaries"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B038",
+      "question": "Which architectural view depicts a request\u2019s error branches and state transitions over time?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Decision cases: same traffic, different constraints Suppose two wholly fictional registration products each see *offered* 120 requests/s during a peak. That number alone does not select an application style. - **System A** has a small cohesive team, a stable single local transaction for capacity allocation, infrequent deployment and tight operating budget. A modular monolith with enforced boundaries may be a viable candidate if performance and recovery tests meet its targets. - **System B** has independent capabilities, different release schedules, separate ownership, tested APIs, mature telemetry and sufficient operational support. A bounded service split might be feasible if downstre",
+          "heading": "4. Decision cases: same traffic, different constraints",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "section_key": "tycho.page.b5d667aa6dac4a98a7c6ba8b10852897#4-decision-cases-same-traffic-different-constraints"
+        },
+        {
+          "excerpt": "## 1. Specify service-level meaning before signal collection An SLI is a precisely counted and windowed property of user-relevant service behavior. An SLO is a selected target over that property and observation window; it is not a measured result unless actual events are recorded under the declared boundary. For a fictional workshop registration system, a useful availability SLI could be: successful eligible registration outcomes / eligible registration attempts But the metric is undefined without specifying: whether duplicate idempotent retries count once, whether client cancellation counts, how admission rejection is classified, whether timeout after DB commit is success or uncertain, how ",
+          "heading": "1. Specify service-level meaning before signal collection",
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#1-specify-service-level-meaning-before-signal-collection"
+        },
+        {
+          "excerpt": "## Migration safety as a decision framework A compatible gateway transition typically requires dual-stack requests and response validation, explicit filter execution guarantees, backpressure, end-to-end trace propagation across asynchronous boundaries, and canaries covering long-lived and short connections. These are **Tycho's recommended transition gates**, not a claim that Netflix ran this exact checklist. An isolated canary should compare: inbound active connections; event-loop utilization; pending tasks; queue depth; per-route p95/p99; upstream errors/timeouts; filters' thread-affinity assumptions; request identity/security context; GC and heap pressure; and CPU per standardized request ",
+          "heading": "Migration safety as a decision framework",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#migration-safety-as-a-decision-framework"
+        },
+        {
+          "excerpt": "## 2. Route R1: a new requirement \u2192 feasible architecture **Synthetic requirement:** an event-registration system has a strict confirmed-capacity invariant and must tolerate brief upstream retry storms. No actual offered RPS, database transaction holding time or client retry policy is supplied. **Candidates** | Alternative | Potential fit | Contraindication | Proof needed | |---|---|---|---| | Keep a modular monolith and one transactional owner | One database can atomically check capacity and insert registration | Single-writer throughput/availability constraints may be violated | Observe lock waits, business SLIs, restore and horizontal-read needs | | Separate HTTP admission tier, retain si",
+          "heading": "2. Route R1: a new requirement \u2192 feasible architecture",
+          "path": "book/decisions/requirements-to-transition-decision-playbooks.md",
+          "section_key": "tycho.page.a726b2ab751b44dea1a659556ed4f4c6#2-route-r1-a-new-requirement-feasible-architecture"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B039",
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "section_new": [
+        {
+          "excerpt": "## What an architect should actually copy The reusable principle is a **migration dependency graph**, not an AWS mandate. Establish failure boundaries, inventory transactional/data ownership, make interfaces stable, and isolate workloads into reversibly migrated slices. For a hypothetical company, keep the original stack functioning while new components accumulate; migrate write ownership only with transactional correctness guarantees and explicit read comparison. Build rollout controls, dependency tracing and change rollback before increasing service count. These are Tycho's proposed controls\u2014not an assertion that every Netflix team used an identical choreography. **Counterdecision:** a 20-",
+          "heading": "What an architect should actually copy",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy"
+        },
+        {
+          "excerpt": "## 3. Different diagrams answer different questions A single \"architecture diagram\" often combines people, components, build modules, Kubernetes pods and database internals into one uninterpretable picture. A reader needs a consistent abstraction level and clearly labelled relationships. The official **C4 model** introduction distinguishes system context, container, component and code views; its purpose is to progressively show scope and ownership rather than force all levels into one drawing. C4 is **notation- and tooling-independent**; this book uses Mermaid to make these explanations editable and accessible, but a Mermaid flowchart should not be mislabelled a formally complete C4 diagram ",
+          "heading": "3. Different diagrams answer different questions",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "section_key": "tycho.page.b5d667aa6dac4a98a7c6ba8b10852897#3-different-diagrams-answer-different-questions"
+        },
+        {
+          "excerpt": "## Purpose and mission Choosing between a layered application, a modular monolith, service orientation and microservices is not a vote about modernity. The engineering question is **which responsibilities and ownership boundaries must remain coherent, which changes must be independent, and which costs can the system and team support**. A useful architectural description states how functionality is divided, where data and invariants live, how components interact, what deploys independently, and what can fail independently. This page establishes those distinctions and reviews the conditions that could justify each style. Detailed extraction/modernization belongs to a separate page; detailed di",
+          "heading": "Purpose and mission",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#purpose-and-mission"
+        },
+        {
+          "excerpt": "## 2. Three credible modernization options ### Option A: keep the deployment, improve the architecture When domain and transaction cohesion are strong, isolate internal modules, publish contracts, enforce dependency direction, protect data ownership and add tests. This preserves an in-process interaction model while reducing accidental coupling. Cockburn's 2005 ports-and-adapters report directly motivates isolation of application logic from presentation and database technology, including the ability to test with alternate adapters. [E01] Good candidates: poor module encapsulation, slow code reviews caused by accidental dependencies, UI/batch interface churn, data persistence technology leaka",
+          "heading": "2. Three credible modernization options",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B040",
+      "question": "How did Discord\u2019s data-service layer reduce redundant reads for a hot message channel?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Runtime layers are not equivalent products **Netty** is a network application framework with channels, pipelines, handlers and `EventLoopGroup` implementations. It is not itself a business workflow engine, SQL database or an automatic Reactive Streams backpressure protocol. The Netty 4.x user guide's *Writing a Discard Server* section uses separate boss/worker `NioEventLoopGroup` roles and explains how channels are assigned to event loops. This is a documented example, not a claim that every Netty deployment must use exactly two groups. [E01] **Vert.x** provides event-driven, multi-event-loop application APIs. Its core guide describes the multi-reactor pattern, the invariant that a par",
+          "heading": "1. Runtime layers are not equivalent products",
+          "path": "book/execution/vertx-netty-quarkus-mutiny-and-rxjava.md",
+          "section_key": "tycho.page.883194a820194482bc2508c8e4568d86#1-runtime-layers-are-not-equivalent-products"
+        },
+        {
+          "excerpt": "# Request-Reply Messaging **Decision.** Use messaging Request-Reply when a request and its reply travel as separate messages on separate channels and the requestor can wait or handle a callback. In the Synchronous Block case, the request thread waits for the reply, which implies one outstanding request or a reply channel private to the requesting thread. In the Asynchronous Callback case, the source states: \"This approach enables multiple outstanding requests to share a single reply channel, and a single reply thread to process replies for multiple request threads.\" Both the Synchronous Block messaging approach and a direct Remote Procedure Invocation block the caller's thread; the decision ",
+          "heading": "Request-Reply Messaging",
+          "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md",
+          "section_key": "tycho.page.b21078a397214496a24305a2f016b021#overview"
+        },
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Netflix ZGC](../netflix-generational-zgc-workloads.md) | src.m9-n05: G1, old ZGC, generational ZGC and Parallel contrasts | | [Netflix HotSpot](../netflix-hotspot-false-true-sharing.md) | src.m9-n18: throughput constrained by sharing below the Java code | | [Discord datastore](../discord-cassandra-scylladb-messages.md) | src.m9-di01: Java Cassandra GC was one operational factor, but Scylla migration also involved data-service changes | **Why the apparent conflict is useful:** Netflix reported generational ZGC helping its online service workload, yet described batch co",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "# Request-Reply Messaging > **Pattern atlas:** > [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [workflow state and messaging failure gates page](workflow-failure.md#request-reply-messaging) on 2026-10-29. The other ownership notes remain on the chapter page. Send a pair of Request-Reply messages, each on its own channel. The requestor sends a request and waits for a reply; the replier receives the request and responds. The request channel and reply channel are separate. The requestor waits for the reply; the re",
+          "heading": "Request-Reply Messaging",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md",
+          "section_key": "tycho.page.7327a6422143416f8ff012e5c168ed5a#overview"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

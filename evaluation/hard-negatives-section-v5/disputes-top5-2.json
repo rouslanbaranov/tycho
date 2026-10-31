@@ -1,0 +1,388 @@
+{
+  "items": [
+    {
+      "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](architecture-views-and-decision-records.md) | What belongs in diagrams, views, assumptions, ADRs and source-linked evidence? | | [Concerns and architectural views](concerns-views.md) | Which concern is answered by a context, building-block, runtime or deployment view? | | [Identity and evolving decision records](identity-adrs.md) | How do stable identities and ADRs keep several views cohere",
+      "heading": "Pages and reasoning route",
+      "id": "V4-B039",
+      "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/README.md",
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "section_key": "tycho.chapter.abcbb298887b49e79525ca00fead8926#pages-and-reasoning-route"
+    },
+    {
+      "excerpt": "## Integrated decision and reading route Choose a storage model from access patterns, invariant scope and operating constraints, keeping migration costs visible. Replacing an engine does not remove a hot logical key or a cross-owner transaction requirement. The detailed pages separate the mechanisms that make this decision conditional: - [Relational, embedded and transactional key-value models](transactional-models.md) \u2014 Which transaction and locality requirements distinguish these storage choices? - [Document, wide-column and analytical access](specialized-models.md) \u2014 Which access pattern justifies specialized modeling and what is lost? - [Cross-model comparison and synchronization](multi-",
+      "heading": "Integrated decision and reading route",
+      "id": "V4-B042",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+      "question": "When can embedding related records in a document become a poor fit for their lifecycle?",
+      "section_key": "tycho.page.c75a11f9786442a5b5456f11c2412df4#integrated-decision-and-reading-route"
+    },
+    {
+      "excerpt": "## The question: what survives which loss? A service can survive a failed container yet lose all user state when its single database fails. It can span three availability zones yet be unavailable during a region-wide routing or identity outage. Conversely, a cross-region copy of an inconsistent state is not a valid recovery point merely because replication completed. Define each required **failure class** and loss boundary before choosing any topology: - single process/host/VM loss, rack/node-group loss, one zone unavailable, zonal network isolation; - partial region-control-plane outage while data plane operates, regional data-plane outage, complete region loss; - logical data corruption, d",
+      "heading": "The question: what survives which loss?",
+      "id": "V4-B045",
+      "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+      "question": "What must happen before an old region can safely regain authority after failover?",
+      "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss"
+    },
+    {
+      "excerpt": "## 5. Problem framing produces explicit unknowns A good architecture description does not erase uncertainty to improve the diagram's appearance. Use a boundary register: | Open question | Why it changes architecture | Evidence or experiment needed | |---|---|---| | Can reservations complete without catalog availability? | Defines whether catalog is a mandatory critical dependency | Signed behavior contract and offline/outage test | | How long may a requester await final confirmation? | Determines synchronous versus accepted/pending lifecycle | User-journey requirement and latency observation window | | Does an expired timeslot automatically cancel an accepted booking? | Determines state mach",
+      "heading": "5. Problem framing produces explicit unknowns",
+      "id": "V4-B046",
+      "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/evidence-contract.md",
+      "question": "How should a reservation problem distinguish business success from sending a notification?",
+      "section_key": "tycho.page.b6be128c3e714ac68ef3311a30d65141#5-problem-framing-produces-explicit-unknowns"
+    },
+    {
+      "excerpt": "## 1. Separate four different architectural axes | Dimension | Core question | Misleading shortcut to avoid | |---|---|---| | **Business/domain boundary** | Which concepts, rules and invariants belong together, with one consistent language? | Treat every database table or REST endpoint as a bounded context | | **Code/module boundary** | Which implementation details are hidden behind an explicit contract? | Call a package tree \"modular\" without checking its dependency edges | | **Runtime/deployment boundary** | Which artifacts or processes can be released, scaled and rolled back independently? | Assume a separate process automatically establishes a good domain boundary | | **Data ownership an",
+      "heading": "1. Separate four different architectural axes",
+      "id": "V4-B047",
+      "path": "book/application/architecture-styles-and-module-boundaries.md",
+      "question": "What separates a state-authority boundary from a separately deployed process?",
+      "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes"
+    },
+    {
+      "excerpt": "## 1. Model assets, principals and actions For a wholly invented workshop registration service, protect: participant contact data, capacity counters, committed registrations, audit evidence, signing keys, deployment credentials, backup contents and administrative mutation interfaces. Model these separately: | Principal or object | Meaning | Ambiguous boundary requiring explicit policy | |---|---|---| | Human participant | Person interacting through a client | A valid login does not authorize reading someone else's registration | | API client | Application presenting authorization credentials | Client authentication alone does not identify the end user or authorize every resource | | Service ",
+      "heading": "1. Model assets, principals and actions",
+      "id": "V4-B049",
+      "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions"
+    },
+    {
+      "excerpt": "## Source-to-claim ledger | ID | Versioned source and examined section | Bounded support | |---|---|---| | E01 | [PostgreSQL 17 Logical Replication](https://www.postgresql.org/docs/17/logical-replication.html), overview/publication and subscriber introduction | A public PostgreSQL mechanism for propagating committed changes, not a specific connector's operational guarantee | | E02 | [Debezium 3.6 Outbox Event Router](https://debezium.io/documentation/reference/3.6/transformations/outbox-event-router.html), **Basic outbox table; Basic configuration; selective transformation** | Outbox-to-Kafka routed messages, event ID/key fields and transform limitations | | E03 | [Kafka 4.1 Streams Architec",
+      "heading": "Source-to-claim ledger",
+      "id": "V4-B053",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/README.md",
+      "question": "Why does recording a processed event locally not guarantee a separate external effect occurs exactly once?",
+      "section_key": "tycho.chapter.566e576a945b44628386d520214d6c4a#source-to-claim-ledger"
+    },
+    {
+      "excerpt": "## 2. HTTP method semantics are not business-effect deduplication [RFC 9110, \u00a79.2.1\u20139.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) defines the semantics of safe and idempotent methods. A safe method is intended not to request a state-changing effect. Idempotency describes the intended server-side effect of repeating an identical request; it does not require the responses, timing or logging events to be identical. PUT, DELETE and safe methods are idempotent by their specified semantics. POST has no general automatic-retry guarantee. Three distinct notions must not be merged: 1. **HTTP method contract:** Is the requested operation safe or idempotent according to its semantic",
+      "heading": "2. HTTP method semantics are not business-effect deduplication",
+      "id": "V4-B054",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+      "question": "What should be tested when a duplicate request arrives after its deduplication key expires?",
+      "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication"
+    },
+    {
+      "excerpt": "## Exact public evidence ledger | ID | PostgreSQL 17 documentation; actual inspected scope | Supports and boundaries | |---|---|---| | E01 | [\u00a728.3 WAL introduction](https://www.postgresql.org/docs/17/wal-intro.html), recovery and WAL ordering rationale | WAL supports crash recovery when configured correctly; not inherently zero loss on total-site failure | | E02 | [\u00a726.2 Log-Shipping Standby Servers](https://www.postgresql.org/docs/17/warm-standby.html), streaming replication, async/synchronous concepts and \u00a726.2.8 | Replica roles, streaming progress and synchronous durability/availability trade-offs | | E03 | [Chapter 31 Logical Replication](https://www.postgresql.org/docs/17/logical-repli",
+      "heading": "Exact public evidence ledger",
+      "id": "V4-B057",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/README.md",
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "section_key": "tycho.chapter.b4272c1342514a40afce9d3872a9664c#exact-public-evidence-ledger"
+    },
+    {
+      "excerpt": "## 2. Replication is not historical recovery Consider three distinct incidents: 1. **One instance lost:** another valid replica may take over with correct membership/fencing. 2. **Entire region lost:** recover in an independent failure domain, maybe from replicas or retained backups depending on actual loss. 3. **Bad deletion or data corruption:** live replicas may faithfully copy the bad transaction; a historical restore point and business-effect reconciliation are needed. The [PostgreSQL 17 PITR documentation](https://www.postgresql.org/docs/17/continuous-archiving.html) describes base backups plus appropriate WAL coverage and warns that archive lag increases data-loss risk. Merely storing",
+      "heading": "2. Replication is not historical recovery",
+      "id": "V4-B057",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/objectives-strategies.md",
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "section_key": "tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery"
+    },
+    {
+      "excerpt": "## Observable failure and recovery mechanisms behind the GC choice The [March 2024 primary article](https://netflixtechblog.com/bending-pause-times-to-your-will-with-generational-zgc-256629c9386b) (src.m9-n05, **Reduced tail latencies**) describes an **amplification mechanism**, not simply a local pause histogram: GC stalls on a request can trip client-side deadlines; cancellation, retries, hedging and fallbacks then increase the offered work. Eliminating long pauses can therefore improve end-to-end reliability even when the pause reduction alone seems small. The authors show one cluster's before/after cancellation-rate chart, but the case cannot legitimately derive fleet-wide numerical canc",
+      "heading": "Observable failure and recovery mechanisms behind the GC choice",
+      "id": "V4-B059",
+      "path": "book/cases/netflix-generational-zgc-workloads.md",
+      "question": "When can hedged reads increase overload even if they improve individual latency?",
+      "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice"
+    },
+    {
+      "excerpt": "## Counterexample and handoff Little's Law does not choose a pool size or predict p99. A closed-loop generator can hide external demand, and autoscaling cannot erase elapsed startup delay. Pass the admitted workload, failure headroom and recovery criteria into deployment design rather than carrying a single optimistic throughput number.",
+      "heading": "Counterexample and handoff",
+      "id": "V4-B060",
+      "path": "book/volumes/v07-performance-scale-and-resilience/README.md",
+      "question": "How can a closed load generator make an overloaded service appear faster than externally timed demand would show?",
+      "section_key": "tycho.volume.f7679623ca274bff8a00389d409d68c6#counterexample-and-handoff"
+    },
+    {
+      "excerpt": "## Why replacing a pool looked appealing Virtual threads preserve direct-looking synchronous Java programming while allowing many *I/O-blocked* requests to yield their carrier platform threads. A migration from a bounded OS-thread executor to a per-task virtual-thread executor can therefore reduce the need for large platform-thread pools when tasks spend much of their lives waiting for sockets. The Netflix practitioner account gives an immediate counterexample. A platform-team experiment replaced the worker pool used with **outgoing gRPC calls**, anticipating reduced scheduling overhead. Its work was **CPU intensive**, however; changing the thread abstraction introduced overhead without crea",
+      "heading": "Why replacing a pool looked appealing",
+      "id": "V4-B061",
+      "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
+      "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#why-replacing-a-pool-looked-appealing"
+    },
+    {
+      "excerpt": "## Purpose and mission A thread is an execution mechanism, not a unit of business demand. An executor schedules tasks, but architecture still must specify who owns each task, which result the parent requires, how long work may live, and what happens if the caller leaves or a sibling fails. Many logical tasks can wait without running on a CPU; increasing their number does not give the database more connection capacity. The companion [platform and virtual threads](../c02-java-execution-and-virtual-threads/platform-threads-executors-and-virtual-threads.md) chapter owns detailed Java version/throughput trade-offs. This chapter owns task coordination, cancellation, locks and scarce resource budge",
+      "heading": "Purpose and mission",
+      "id": "V4-B061",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
+      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
+      "section_key": "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4#purpose-and-mission"
+    },
+    {
+      "excerpt": "## Why this can look like a lock problem A pinned waiter holds a carrier while it waits. A signaled virtual thread that has been unmounted needs a free carrier before it can run. If every carrier is occupied by pinned waiters, the signaled thread cannot make progress even when the lock itself has been released. An observer may then see a live process, an apparently free lock and no completed requests. That is a scheduler/resource interlock, not necessarily a permanently held mutex. This diagnostic framing is Tycho synthesis. The JEPs define the pinning mechanism; they do not prescribe a production triage procedure or prove that any particular incident had this shape. ```mermaid flowchart TD ",
+      "heading": "Why this can look like a lock problem",
+      "id": "V4-B061",
+      "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
+      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
+      "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
+    },
+    {
+      "excerpt": "## Integrated decision and reading route Use explicit edge semantics, direction and bounded traversal when the question depends on relationships. A path through a graph does not imply causal influence or permission; cycles and fan-out require explicit traversal limits. The detailed pages separate the mechanisms that make this decision conditional: - [Edge meaning and relationship questions](edge-semantics.md) \u2014 Which explicit relation is being traversed and what can a path not prove? - [Bounded graph traversal and relational alternatives](bounded-traversal.md) \u2014 What direction, cycle and result limits make the traversal question precise? - [Derived relationships and falsification](graph-prov",
+      "heading": "Integrated decision and reading route",
+      "id": "V4-B064",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
+      "question": "What relationship details must be defined before interpreting a graph edge?",
+      "section_key": "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route"
+    },
+    {
+      "excerpt": "## 7. Public evidence and explicit product-scope boundary | Independently inspected public source | Supports | Not established | |---|---|---| | [Neo4j Cypher \u2014 Patterns](https://neo4j.com/docs/cypher-manual/current/patterns/) | Property-graph query patterns and path semantics | Implementation for fictional equipment model | | [Neo4j Cypher \u2014 Variable-length paths](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) | Bounded variable-length traversal and explosion/pruning concerns | Performance of any real graph DB under a target workload | All graph nodes, edges, diagrams, inferred rules and experiments are original invented educational examples. No graph was crea",
+      "heading": "7. Public evidence and explicit product-scope boundary",
+      "id": "V4-B065",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/README.md",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "section_key": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#7-public-evidence-and-explicit-product-scope-boundary"
+    },
+    {
+      "excerpt": "## Four distinct consistency proofs for another platform A comparable migration must specify more than the set-equality formula, because different data paths can agree on the wrong result: | Verification dimension | What to compare | Adversarial case | |---|---|---| | **Backup input identity** | Manifest revision, SSTable coverage, schema/topology and reference time | Connector A reads a later backup after topology change | | **Logical row identity** | Both old-minus-new and new-minus-old rows, including schema-normalized keys | Equal row counts hide duplicates and omissions | | **Meaning over time** | TTL reference instant, tombstones, expiring rows, ordering and consistency rule | Same phy",
+      "heading": "Four distinct consistency proofs for another platform",
+      "id": "V4-B069",
+      "path": "book/cases/netflix-casspactor-shadow-migration.md",
+      "question": "Why can a migration with valid event schemas still break an old consumer\u2019s business interpretation?",
+      "section_key": "tycho.page.50b3410cae7d4032babb15542e748cac#four-distinct-consistency-proofs-for-another-platform"
+    },
+    {
+      "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](service-level-indicators-objectives-and-alerts.md) | Which user outcomes are measured and how do budgets guide changes? | | [Eligible events, SLIs and objectives](sli-population.md) | Which user population and observation boundary define the promised outcome? | | [Error-budget decisions and revisions](budget-actions.md) | What action should a budget trigger and when should the objective be ",
+      "heading": "Pages and reasoning route",
+      "id": "V4-B071",
+      "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/README.md",
+      "question": "What is the difference between an observed service indicator and its objective?",
+      "section_key": "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#pages-and-reasoning-route"
+    },
+    {
+      "excerpt": "## Canonical chapters 1. [Service-level indicators, objectives and error-budget decisions](../volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md) \u2014 **V09/C01** user-visible eligible populations, SLI/SLO contracts, budgets, action/alert decisions and failure examples. 2. [Metrics ingestion, cardinality and time-series retention](../volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md) \u2014 **V09/C02** telemetry representations, delta/cumulative temporality, ingestion/data-loss risks, TSDB cardinality/retention and or",
+      "heading": "Canonical chapters",
+      "id": "V4-B071",
+      "path": "book/observability/README.md",
+      "question": "What is the difference between an observed service indicator and its objective?",
+      "section_key": "tycho.landing.b7ea8fb13ebb4079af2333e475f97106#canonical-chapters"
+    },
+    {
+      "excerpt": "## Purpose and mission What compatibility windows and irreversibility constraints exist? This chapter owns that question within data models, engines and lifecycle. Read the mechanism together with its stated invariant, failure assumptions and evidence limits before applying the result to another system.",
+      "heading": "Purpose and mission",
+      "id": "V4-B075",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
+      "question": "What evidence should gate an irreversible migration of authoritative state?",
+      "section_key": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#purpose-and-mission"
+    },
+    {
+      "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](workload-demand-and-arrival-models.md) | How do active users, offered arrivals, concurrency, operation mix and skew differ? | | [Population, arrival and admission models](arrivals-population.md) | How do user population and arrival process change offered work? | | [Demand arithmetic and skew](demand-skew.md) | What does a demand estimate conceal about operation mix, bursts and hot keys? | |",
+      "heading": "Pages and reasoning route",
+      "id": "V4-B077",
+      "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/README.md",
+      "question": "How can a uniform-key test conceal contention on a popular resource?",
+      "section_key": "tycho.chapter.316b50ac3db440ae82c0986b896ff468#pages-and-reasoning-route"
+    },
+    {
+      "excerpt": "## Integrated decision and reading route Separate offered attempts, admitted work, successful outcomes, concurrency and per-operation demand before estimating capacity. Two equally sized user populations can impose different bursts and hot-key pressure; average requests per second conceals that difference. The detailed pages separate the mechanisms that make this decision conditional: - [Population, arrival and admission models](arrivals-population.md) \u2014 How do user population and arrival process change offered work? - [Demand arithmetic and skew](demand-skew.md) \u2014 What does a demand estimate conceal about operation mix, bursts and hot keys? - [Workload contracts for architecture choices](wo",
+      "heading": "Integrated decision and reading route",
+      "id": "V4-B077",
+      "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md",
+      "question": "How can a uniform-key test conceal contention on a popular resource?",
+      "section_key": "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route"
+    },
+    {
+      "excerpt": "## Purpose and mission When two systems use different models, simply making their APIs exchangeable can preserve hidden semantic incompatibilities. An old interface may call a request \u201caccepted\u201d before durability is established, while a new domain considers acceptance a durable business promise. Translating the word without translating its meaning is dangerous. An **anti-corruption layer (ACL)** mediates between a consumer's canonical domain model and another subsystem's model. Its purpose is to prevent foreign assumptions from spreading into core business logic, while preserving externally required behavior. It is not by definition a standalone service, a universal fa\u00e7ade, or a message queu",
+      "heading": "Purpose and mission",
+      "id": "V4-B079",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+      "question": "Why can an added API field be wire-compatible but incompatible with an old client\u2019s business behavior?",
+      "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission"
+    },
+    {
+      "excerpt": "## Measurement model For a stable boundary, Little's Law relates mean in-flight work L, admitted throughput \u03bb and mean residence time W: **L = \u03bbW**. This is an accounting relationship under its assumptions, not a saturation prediction. See [the canonical mechanism and finite-window caveats](../volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md). Queueing delay grows as utilization approaches a bottleneck's capacity, but service-time variability and arrival burstiness affect tails. The Universal Scalability Law is a *model to fit against observations*, not a law that identifies contention or coherence costs from a single da",
+      "heading": "Measurement model",
+      "id": "V4-B085",
+      "path": "book/performance/workload-profiles-and-capacity-experiments.md",
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model"
+    },
+    {
+      "excerpt": "## 3. Logging is operational evidence, not an unlimited audit trail | Property | Operational log | Dedicated authoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often best-effort, sampled/filtered/short retention | Explicit durability, retention, access, integrity and failure policy | | Identity | Component/time/trace correlation | Principal, actor/delegation, action, target, policy decision, time and immutable event ID | | Ordering | May be delayed, duplicated and reordered | Stable per-authority sequence/hash or external evidence with documented ordering ",
+      "heading": "3. Logging is operational evidence, not an unlimited audit trail",
+      "id": "V4-B088",
+      "path": "book/observability/trace-context-lineage-and-audit.md",
+      "question": "Why is a trace ID not a reliable substitute for a durable business operation ID?",
+      "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+    },
+    {
+      "excerpt": "## 5. Durable workflow selection is conditional One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coordinator may help with long waits, retries and auditability, but its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration. **Choreography risks:** difficult-to-discover implicit coupling, unbounded event chains, conflicting compensations, and tracing that describes correlation but not durable business truth. **Orchestration risks:** ",
+      "heading": "5. Durable workflow selection is conditional",
+      "id": "V4-B088",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+      "question": "Why is a trace ID not a reliable substitute for a durable business operation ID?",
+      "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional"
+    },
+    {
+      "excerpt": "## 1. Trace context and causality boundaries The W3C Trace Context recommendation standardizes the traceparent and tracestate propagation headers for interoperable distributed tracing. Traceparent identifies a position in a trace, while tracestate may carry vendor-related information. The specification also discusses privacy and malicious-header risks. [E01] A **span** represents a named operation with start/end timestamps and attributes; it may have a parent or one or more links to other contexts. These records can model nested synchronous calls and causal associations across asynchronous processing, but **a span's existence is not proof that a database transaction committed**. Consider a s",
+      "heading": "1. Trace context and causality boundaries",
+      "id": "V4-B089",
+      "path": "book/observability/trace-context-lineage-and-audit.md",
+      "question": "What can a missing sampled trace tell an investigator about a possibly committed write?",
+      "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries"
+    },
+    {
+      "excerpt": "## Pages and reasoning route - [Stock-and-flow modeling versus stock-to-flow shorthand](stock-and-flow-vs-stock-to-flow.md): accumulation, rates, units and the error of conflating a stock with a flow. - [Model scope, boundary and abstraction](model-scope-and-abstraction.md): what to include, what to omit and how to state the validity domain. - [Evidence and validation vocabulary](evidence-and-validation-vocabulary.md): the five layers and the labels that must never be conflated. Read the stock-and-flow page first if the question is about accumulation or delay. Read the scope page before choosing a model family. Read the vocabulary page before writing a decision record.",
+      "heading": "Pages and reasoning route",
+      "id": "V4-V001",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+      "question": "How should a stock-flow model account for offered work at every integration step?",
+      "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#pages-and-reasoning-route"
+    },
+    {
+      "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](requirements-and-workload-architecture-profiles.md) | What inputs are required before comparing candidate patterns? | | [Outcomes, constraints and workload intake](intake-invariants.md) | Which inputs must be explicit before candidate architectures are compared? | | [Adversarial requirements and candidate screening](evidence-screening.md) | Which missing evidence or hard gate must block a p",
+      "heading": "Pages and reasoning route",
+      "id": "V4-V003",
+      "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/README.md",
+      "question": "Which scenario inputs must remain aligned to compare checkout candidates fairly?",
+      "section_key": "tycho.chapter.289750444f8040d292a474e3876046a1#pages-and-reasoning-route"
+    },
+    {
+      "excerpt": "## The replay command From the repository root: ~~~text python3 scripts/v12_engine.py replay \\ --run edition/v12/runs/checkout-b-queue.json \\ --model edition/v12/models/checkout-des.json \\ --scenario edition/v12/scenarios/checkout-b-queue.json ~~~ The command checks the stored model and scenario hashes, reruns the scenario and compares the recomputed result hash. It fails if the model, scenario or output has drifted.",
+      "heading": "The replay command",
+      "id": "V4-V003",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+      "question": "Which scenario inputs must remain aligned to compare checkout candidates fairly?",
+      "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-replay-command"
+    },
+    {
+      "excerpt": "## Pages and reasoning route - [Stock-and-flow modeling versus stock-to-flow shorthand](stock-and-flow-vs-stock-to-flow.md): accumulation, rates, units and the error of conflating a stock with a flow. - [Model scope, boundary and abstraction](model-scope-and-abstraction.md): what to include, what to omit and how to state the validity domain. - [Evidence and validation vocabulary](evidence-and-validation-vocabulary.md): the five layers and the labels that must never be conflated. Read the stock-and-flow page first if the question is about accumulation or delay. Read the scope page before choosing a model family. Read the vocabulary page before writing a decision record.",
+      "heading": "Pages and reasoning route",
+      "id": "V4-V004",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+      "question": "What evidence must a V12 model contract attach to an input labeled measured?",
+      "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#pages-and-reasoning-route"
+    },
+    {
+      "excerpt": "## A stopping rule A practical stopping rule is: 1. Run a pilot with at least 10 replications. 2. Estimate the standard error of the primary metric. 3. Compute the required n for the target relative error. 4. Run to that n or to a declared budget, whichever is smaller. 5. Record the achieved error and whether the target was met. V12 does not adapt n during a run. The scenario declares the replication count, and the run reports the achieved error. This keeps the result reproducible; an adaptive stopping rule would need its own seeded decision log.",
+      "heading": "A stopping rule",
+      "id": "V4-V005",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+      "question": "Why does the V12 result hash include limitations and convergence information along with metrics?",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule"
+    },
+    {
+      "excerpt": "## The reproducibility contract The V12 run record stores: - model and scenario SHA-256; - engine name and version; - seed base and replication count; - an input hash over the model, scenario and engine version; - Python and platform strings; - the invocation; - metrics, convergence, uncertainty and sensitivity; - a result hash over the substantive fields. The model and scenario files are the canonical inputs. The run record is derived. A change to either input invalidates the run until it is regenerated.",
+      "heading": "The reproducibility contract",
+      "id": "V4-V005",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+      "question": "Why does the V12 result hash include limitations and convergence information along with metrics?",
+      "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract"
+    },
+    {
+      "excerpt": "## Machine artifacts The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contracts | `edition/v12/scenarios/` | Workload, configuration, seeds and metrics | | Run records | `edition/v12/runs/` | Metrics, convergence, hashes and limits | | Decision records | `edition/v12/decisions/` | Candidates, constraints and outcome | | Source ledger | `edition/v12/reading-ledger.v1.json` | Read units, hashes and omissions | | Reverse index | `edition/v12/reverse-index.v1.json` | Derived pattern-to-artifact lookup | Reproduce a s",
+      "heading": "Machine artifacts",
+      "id": "V4-V005",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+      "question": "Why does the V12 result hash include limitations and convergence information along with metrics?",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts"
+    },
+    {
+      "excerpt": "## Failure modes - **Unstable tie-breaking.** Two events at the same time depend on hash order. - **Timeout resets on retry omitted.** A retry inherits an expired deadline and fails immediately. - **Timeout not cancelled on completion.** A completed request is later marked failed. - **Double release.** A timeout and a completion both free the same server, increasing capacity beyond the configured pool. - **Floating-point equality.** Events at 1.0 and 1.0000000001 are treated as equal or not equal without a declared tolerance. V12 rounds scheduled times to 12 decimal places and compares event times as floats. That is sufficient for the synthetic scenarios; a model with very small time units w",
+      "heading": "Failure modes",
+      "id": "V4-V006",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+      "question": "How does the V12 event queue break ties between events scheduled at the same time?",
+      "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+    },
+    {
+      "excerpt": "## Abstraction is a choice about resolution Three model families cover most V12 questions: - **Stock-and-flow** for accumulation, feedback, delay and capacity. It is cheap to run and good for showing conservation and backlog growth. It does not represent individual request latency. - **Discrete-event** for queueing, deadlines, retries and tail latency. It represents individual requests and event ordering. It costs more to verify and can hide numerical detail behind a plausible average. - **Hybrid** for a staged path where traffic shares, reconciliation backlog and rollback coexist. It is a purposeful simplification, not a claim that the underlying system is fluid. The choice is not a maturit",
+      "heading": "Abstraction is a choice about resolution",
+      "id": "V4-V007",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+      "question": "What happens to the timeout when the V12 discrete-event model retries an attempt?",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution"
+    },
+    {
+      "excerpt": "## Worked comparison | Case | Lambda | Capacity | Success | p95 | Timeout | |---|---|---|---|---|---| | Baseline stock-flow | 20 | 24 | 1.000 | n/a | 0.000 | | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 | | Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 | | Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 | | Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 | The table is deliberately compact. The stock-flow model has no individual p95; the checkout model does. Candidate B has a higher p95 than A because it waits longer before timing out, but it completes far more requests and costs less per success.",
+      "heading": "Worked comparison",
+      "id": "V4-V008",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+      "question": "Which queue disciplines and resource controls does the V12 checkout engine model?",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison"
+    },
+    {
+      "excerpt": "## Why over-partitioning and wide partitions can both harm the same system The [June 3, 2026 first-party report](https://medium.com/netflix-techblog/dynamically-splitting-wide-partitions-in-cassandra-for-time-series-workloads-0eded064f456) (src.m9-n12, **Picking the Partitioning Strategy**, **The Problem with the Current Approach**) says TimeSeries provisioning used workload inputs plus **Monte Carlo simulations** to choose time slices and buckets. That approach assumes the future distribution resembles the input estimates. Actual datasets can be very different months later, or a small number of valid IDs can receive disproportionate traffic. Both extremes matter. An oversized partition may ",
+      "heading": "Why over-partitioning and wide partitions can both harm the same system",
+      "id": "V4-V009",
+      "path": "book/cases/netflix-cassandra-dynamic-time-series-splits.md",
+      "question": "Why do more simulation replications not remove uncertainty about the input distribution?",
+      "section_key": "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#why-over-partitioning-and-wide-partitions-can-both-harm-the-same-system"
+    },
+    {
+      "excerpt": "## What this volume does and does not do It does: - state a model boundary, state variables, units, parameters and validity limits; - execute deterministic reference cases and seeded discrete-event simulations; - report uncertainty, convergence and sensitivity rather than one number; - compare candidates on identical workloads and business-comparable metrics; - record a recommendation, a no-recommendation outcome or an explicit `insufficient-evidence` outcome; - preserve hashes, seeds and replay instructions for every stored run. It does not: - promote, demote or re-review an existing pattern; - claim that a simulation proves production behavior; - treat a source claim as a calibrated parame",
+      "heading": "What this volume does and does not do",
+      "id": "V4-V009",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+      "question": "Why do more simulation replications not remove uncertainty about the input distribution?",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do"
+    },
+    {
+      "excerpt": "## Sensitivity and uncertainty The candidate B sensitivity screen reports arrival rate first-order 0.361 and total-order 0.464, service mean first-order 0.536 and total-order 0.639. The screen is a quadratic approximation over 48 rows. It says service time explains more of the fitted variance in the sampled range. It does not prove that service time is the dominant production factor. The sensitivity scenario is converged at a 0.00016 relative error. A separate two-replication convergence-stress run is insufficient-sample at 0.032. The decision record does not use the sensitivity ranking to support a production claim; it uses it to identify what to measure first.",
+      "heading": "Sensitivity and uncertainty",
+      "id": "V4-V010",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+      "question": "How does the V12 quadratic sensitivity screen differ from a full Sobol analysis?",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty"
+    },
+    {
+      "excerpt": "## Scope The engine implements: - a fixed-step stock-and-flow backlog model with exact request conservation; - a discrete-event checkout model with capacity, queueing, timeouts, retries and backpressure; - a staged modernization model with dual-write lag, reconciliation and rollback; - seeded replications and Monte Carlo aggregation; - a quadratic response-surface sensitivity screen; - canonical JSON hashing and a replay command. It does not implement a general-purpose simulation language, distributed execution, a graphical interface, a database or a production scheduler. A model family that needs a new mechanism gets a new explicit contract, not an unrecorded engine extension.",
+      "heading": "Scope",
+      "id": "V4-V010",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+      "question": "How does the V12 quadratic sensitivity screen differ from a full Sobol analysis?",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#scope"
+    },
+    {
+      "excerpt": "## Sensitivity and uncertainty The candidate B sensitivity screen reports arrival rate first-order 0.361 and total-order 0.464, service mean first-order 0.536 and total-order 0.639. The screen is a quadratic approximation over 48 rows. It says service time explains more of the fitted variance in the sampled range. It does not prove that service time is the dominant production factor. The sensitivity scenario is converged at a 0.00016 relative error. A separate two-replication convergence-stress run is insufficient-sample at 0.032. The decision record does not use the sensitivity ranking to support a production claim; it uses it to identify what to measure first.",
+      "heading": "Sensitivity and uncertainty",
+      "id": "V4-V011",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/comparative-decision-worked-example.md",
+      "question": "Why can a relative-error convergence threshold be misleading when a metric mean is close to zero?",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty"
+    },
+    {
+      "excerpt": "## V12-C: statistical validity The run records report seeds, replications, standard errors, confidence intervals and a convergence status. The sensitivity run reports a quadratic response-surface screen and is converged. A separate two-replication convergence-stress run is marked insufficient-sample. The modernization scenario declares correlated inputs, and its run reports the Gaussian-copula method and correlated_inputs true. A run that fails the 0.02 relative-error threshold is not used as converged evidence.",
+      "heading": "V12-C: statistical validity",
+      "id": "V4-V011",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+      "question": "Why can a relative-error convergence threshold be misleading when a metric mean is close to zero?",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity"
+    },
+    {
+      "excerpt": "## V12-C: statistical validity The run records report seeds, replications, standard errors, confidence intervals and a convergence status. The sensitivity run reports a quadratic response-surface screen and is converged. A separate two-replication convergence-stress run is marked insufficient-sample. The modernization scenario declares correlated inputs, and its run reports the Gaussian-copula method and correlated_inputs true. A run that fails the 0.02 relative-error threshold is not used as converged evidence.",
+      "heading": "V12-C: statistical validity",
+      "id": "V4-V012",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+      "question": "When should a V12 decision remain unsupported even though a model run converges?",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity"
+    },
+    {
+      "excerpt": "## The Monte Carlo procedure 1. State the model and the output metric. 2. Declare a distribution or range for each uncertain input, with its evidence status. 3. Declare correlations between inputs, or state that they are independent. 4. Generate a sample matrix with a recorded seed. 5. Run the model for each row and each replication. 6. Report the output mean, standard error and confidence interval. 7. Decompose the output variance into main and interaction terms. 8. Record the assumptions, the sample size and the limits. The V12 engine implements steps 4-7. The scenario contract records steps 1-3; the run record records steps 4-8.",
+      "heading": "The Monte Carlo procedure",
+      "id": "V4-V015",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+      "question": "Why is a confidence interval across synthetic replications not a calibrated input uncertainty budget?",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-monte-carlo-procedure"
+    },
+    {
+      "excerpt": "## Evidence and limits The source ledger records the exact unit, representation hash, sections read, omissions and limits for each admitted source. The engine tests exercise conservation, boundary cases, event ordering, retries, convergence and sensitivity ranking. Those tests prove the implemented reference cases; they do not validate a real system. All numeric workloads in this volume are synthetic. The confidence intervals use a normal approximation across replications. The sensitivity screen uses a quadratic response-surface decomposition, not a full pick-freeze Sobol analysis. Calibration is `uncalibrated` for every model. Independent review and owner acceptance remain separate decision",
+      "heading": "Evidence and limits",
+      "id": "V4-V015",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+      "question": "Why is a confidence interval across synthetic replications not a calibrated input uncertainty budget?",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits"
+    },
+    {
+      "excerpt": "## V12-E: decision validity The decision records declare: - candidates and their runs; - hard, soft and non-quantitative constraints; - business-comparable metrics with units; - evidence statuses for model verification, calibration and simulation; - an explicit recommendation or a no-recommendation outcome; - non-quantitative constraints kept separate; - reversal triggers and limitations. The checkout record is decision-supported under its declared constraints. The modernization record is insufficient evidence. Both are valid outcomes.",
+      "heading": "V12-E: decision validity",
+      "id": "V4-V016",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+      "question": "How does a V12 decision record treat a failed hard constraint compared with a soft preference?",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+    }
+  ]
+}

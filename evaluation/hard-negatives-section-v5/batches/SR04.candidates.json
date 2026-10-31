@@ -1,0 +1,315 @@
+{
+  "batch": "SR04",
+  "items": [
+    {
+      "id": "V4-B001",
+      "question": "Why does a published interface specification not establish that a deployed service actually behaves that way?",
+      "section_new": [
+        {
+          "excerpt": "## Contrasting historical evidence | Actual company case | What its primary source does and does not establish | |---|---| | [Netflix](../netflix-seven-year-cloud-rearchitecture.md) | src.m9-n01: seven-year cloud decomposition after concentrated datacenter failures | | [Shopify](../shopify-modular-monolith.md) | src.m9-sh01: one deployable app and explicit component boundaries | | [Uber](../uber-doma-domains.md) | src.m9-u01: governance and gateways for an existing many-service fleet | **Why the apparent conflict is useful:** Netflix's original incident and global replatforming justify a different scale of change; Uber's DOMA starts from the opposite initial state\u2014too many independently depl",
+          "heading": "Contrasting historical evidence",
+          "path": "book/cases/decisions/monolith-vs-services.md",
+          "section_key": "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9#contrasting-historical-evidence"
+        },
+        {
+          "excerpt": "## Conditional updates, pagination and callback contracts **Enrichment contract:** show how an API remains behaviorally coherent while state changes concurrently. Wire compatibility alone does not preserve what a caller thought it was modifying or enumerating. ### Original lost-update example Clients A and B read fictional workshop revision 12. A changes the title; B changes the capacity using an old full-object representation. An unconditional replacement by B can erase A's title change. Require a precondition tied to the state B actually read and make the check atomic with mutation at the authoritative owner. RFC 9110 sections 8.8 and 13 define validators and conditional requests. If-Match",
+          "heading": "Conditional updates, pagination and callback contracts",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts"
+        },
+        {
+          "excerpt": "## Why a contract instead of a diagram A diagram can show the shape of a model and still leave every decision hidden. Is the backlog measured in requests or batches? Is the service rate a constant or a distribution? Was the arrival rate measured or assumed? The diagram does not say. A contract forces those choices into named fields that a validator can check and a reader can challenge. The contract does not prove the model is useful. It makes the model's claims inspectable.",
+          "heading": "Why a contract instead of a diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/model-specification.md",
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram"
+        },
+        {
+          "excerpt": "## 3. Fictional architecture example: community tool reservations Imagine a simple equipment booking application. An external client requests a timeslot. A reservation component enforces exclusivity and writes the authoritative record. A notification component later sends optional confirmation. This is an invented design, not observed production software. ### Static responsibility view ```mermaid flowchart LR U[\"Client\"] --> API[\"Reservation API / use cases\"] API --> S[\"Reservation rule + authority port\"] S --> DB[(\"Authoritative reservation store\")] API --> N[\"Notification contract\"] N --> O[\"Optional external delivery\"] ``` Text alternative: client invokes a reservation API; one reservatio",
+          "heading": "3. Fictional architecture example: community tool reservations",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#3-fictional-architecture-example-community-tool-reservations"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B002",
+      "question": "What must be fixed in advance to compare two architecture changes without shifting the decision criterion after the test?",
+      "section_new": [
+        {
+          "excerpt": "## Why the two patches need two separate quality gates Padding the adjacent fields changed **memory layout**; bypassing the contentious cache update changed JDK *behavior*. The source team guarded the second change with a JVM flag. A safe adoption procedure must therefore test (1) unchanged Java behavior with altered memory layout and (2) altered cache behavior under representative class-hierarchy and concurrency patterns as **different interventions**; the numeric outcomes remain in the earlier fix table. For another runtime, the test matrix must include class-loader changes, concurrent subtype checks, dynamically generated proxy types, long-running mixed workloads, end-to-end correctness a",
+          "heading": "Why the two patches need two separate quality gates",
+          "path": "book/cases/netflix-hotspot-false-true-sharing.md",
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#why-the-two-patches-need-two-separate-quality-gates"
+        },
+        {
+          "excerpt": "## What can actually be concluded The source supports a **historical practitioner account of platform standardization with incremental coexistence**, not a universally successful prescription to adopt federation, Spring Boot or Java 21. It reports a service-dependent JVM efficiency improvement, difficult framework compatibility work, a deliberate shift of API composition responsibility and multiple workload-specific runtime exceptions. The broader causal hypothesis\u2014that reducing repeated integration and domain-specific fan-out helps a large multi-team fleet\u2014must be tested against the actual team's topology, release independence, client mix, security boundaries and debugging capacity. For a s",
+          "heading": "What can actually be concluded",
+          "path": "book/cases/netflix-java-platform-convergence.md",
+          "section_key": "tycho.page.b95df0f6a3ee4355939f65193b11d8c9#what-can-actually-be-concluded"
+        },
+        {
+          "excerpt": "## Two incompatible architecture choices for a hypothetical legacy gateway For a legacy entry service with relatively few connections and heavy per-request transformation, an existing blocking or bounded-thread gateway may satisfy all objectives with less risk. For very many persistent idle connections and asynchronous downstream waits, Netty/event-loop I/O may materially reduce resource cost. For a mixed request population, isolate request classes and quantify: blocked wait time; active connection count; event-loop queue delay; completed requests/CPU; per-class p99; retry volume; cancelled but still running upstream work; trace and authorization-context errors; and leaked buffers. The **sel",
+          "heading": "Two incompatible architecture choices for a hypothetical legacy gateway",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#two-incompatible-architecture-choices-for-a-hypothetical-legacy-gateway"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Index divergence masquerading as a database latency incident **Original fictional incident timeline:** users complain that search results show a deleted product and fail after opening it. A dashboard concurrently reports high API p99. The initial on-call diagnosis is \"slow PostgreSQL\", but the actual harmful path may be an outdated search index followed by repeated failed lookup/retry; database CPU is not sufficient causal evidence. | Hypothetical time | Observation (not interpretation) | Response gate | |---|---|---| | T0 | Correct source row removed; index revision has not advanced | Record authoritative source/index generations and effect scope | | T+5m | Spik",
+          "heading": "Engineering walkthrough \u2014 Index divergence masquerading as a database latency incident",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-response-and-operational-change.md",
+          "section_key": "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B003",
+      "question": "When should an architecture experiment stop instead of drawing a conclusion from apparently favorable latency?",
+      "section_new": [
+        {
+          "excerpt": "## Three architectures that should not be conflated | Option for an evolving Rails application | Boundary and failure semantics | Why it might be selected or rejected | |---|---|---| | Unstructured shared monolith | One deployed runtime, arbitrary internal dependencies and uncertain data ownership | Cheapest near-term ops; changes can trigger unexpected cross-domain regressions | | Modular monolith | Shared release/failure domain, but explicit domain APIs, restricted internal references and separately owned models | Good when runtime independence is less valuable than simpler deployment, shared refactoring and explicit ownership | | Extracted microservices | Independently deployed/scaled ser",
+          "heading": "Three architectures that should not be conflated",
+          "path": "book/cases/shopify-modular-monolith.md",
+          "section_key": "tycho.page.aed8b635f57f41dfa63c897a8d1caca8#three-architectures-that-should-not-be-conflated"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](architecture-evidence-hypotheses-and-experiments.md) | What do sources, estimates, simulations and measurements actually prove? | | [Evidence classes and competing hypotheses](evidence-hypotheses.md) | Which evidence class supports a claim and which alternative explanation remains possible? | | [Discriminating architecture experiments](experiment-contract.md) | What observation would distin",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/README.md",
+          "section_key": "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision](tail-latency-fanout-and-deadline-budgets.md) | Why can p99 degrade despite adequate mean capacity? | | [Percentiles, correlation and critical paths](tails-critical-path.md) | How do serial work and fan-out change end-to-end tail behavior? | | [Deadlines, hedging and bounded degradation](deadline-hedging.md) | When can an extra attempt improve a tail without exhausting the protected resource? | | [Latency measuremen",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/README.md",
+          "section_key": "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Failure modes - **Peeking.** The analyst stops when the interval looks favorable, which invalidates the nominal coverage. - **Correlated replications.** A shared random stream makes the standard error too small. - **Heavy-tail denial.** A latency tail is summarized by a mean and a normal interval. - **Threshold shopping.** The relative-error threshold is changed after seeing the result. - **Convergence without calibration.** A stable estimate of a biased model is still biased.",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B004",
+      "question": "In Shopify\u2019s 2019 componentization account, how did Wedge surface cross-component dependencies?",
+      "section_new": [
+        {
+          "excerpt": "## The actual design variables: code ownership versus deployment autonomy The three company reports answer **different starting problems**. [Shopify's February 2019 monolith decision](../shopify-modular-monolith.md) (src.m9-sh01) favored domain boundaries inside a shared Rails application, accepting one broad release unit while reducing accidental cross-domain dependencies. The [2020 component follow-up](../shopify-packwerk-boundary-evolution.md) (src.m9-sh02) still recorded incomplete enforcement and selective service extraction. [Netflix's 2016 cloud migration](../netflix-seven-year-cloud-rearchitecture.md) (src.m9-n01) responded to concentrated failure and global growth over seven years, ",
+          "heading": "The actual design variables: code ownership versus deployment autonomy",
+          "path": "book/cases/decisions/monolith-vs-services.md",
+          "section_key": "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9#the-actual-design-variables-code-ownership-versus-deployment-autonomy"
+        },
+        {
+          "excerpt": "## What an architect should actually copy The reusable principle is a **migration dependency graph**, not an AWS mandate. Establish failure boundaries, inventory transactional/data ownership, make interfaces stable, and isolate workloads into reversibly migrated slices. For a hypothetical company, keep the original stack functioning while new components accumulate; migrate write ownership only with transactional correctness guarantees and explicit read comparison. Build rollout controls, dependency tracing and change rollback before increasing service count. These are Tycho's proposed controls\u2014not an assertion that every Netflix team used an identical choreography. **Counterdecision:** a 20-",
+          "heading": "What an architect should actually copy",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy"
+        },
+        {
+          "excerpt": "## The migration surface: preserve semantics, not merely annotations The April 2024 [engineering account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389) (src.m9-n09, **Framework Architecture with Spring GraphQL**) names the compatibility seam more precisely. DGS retained its schema provider and data-fetcher wiring. Its query executor became a compatibility interface delegating to Spring GraphQL; Spring GraphQL handled the HTTP/WebSocket request paths previously maintained by DGS. Applications could therefore preserve common DGS annotations and schema/code-generation workflows while changing the underlying transport a",
+          "heading": "The migration surface: preserve semantics, not merely annotations",
+          "path": "book/cases/netflix-dgs-spring-graphql-convergence.md",
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations"
+        },
+        {
+          "excerpt": "## Original decision record for an unrelated UI modernization **Hypothetical baseline:** a cross-platform mobile product has shared-state screens, device-specific APIs, multiple languages, accessibility requirements and an independently released backend. Native Swift and Kotlin may improve OS integration but create duplicated maintenance and two sets of platform-specific defects. The alternatives are (a) keep the existing shared runtime and modernize it, (b) extract only the device-specific feature layer, or (c) rebuild native screens incrementally behind stable API contracts. The decision should not be \u201cAI makes code cheap.\u201d It should depend on native-platform capability, responsiveness, bu",
+          "heading": "Original decision record for an unrelated UI modernization",
+          "path": "book/cases/shopify-helix-checkpoint-gated-native-migration.md",
+          "section_key": "tycho.page.5b4cd43052b647abb7cb161381ebdcc5#original-decision-record-for-an-unrelated-ui-modernization"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B005",
+      "question": "What controls can make module ownership enforceable inside a single deployable?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](modular-monolith-and-internal-events.md) | Which coupling and deployment constraints fit an in-process architecture? | | [Module boundaries and deployment choice](module-enforcement.md) | How can one deployable enforce ownership without imitating remote services? | | [Internal events and transaction timing](events-transactions.md) | What can happen between local commit, event handling and p",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/README.md",
+          "section_key": "tycho.chapter.5de52a840c14448c946a65c924f28487#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## 3. Worked applicability cards: deployment and communication ### Modular monolith or internal modules **Applies if:** cohesive capabilities and shared state can live within one deployable, changes can be isolated through enforceable module boundaries and independent deployment provides little measured value. **Benefits:** local transactional boundaries can remain simple, operational surfaces are fewer and cross-module calls do not require distributed-network fault handling. **Costs:** release/unit scaling may remain coarse, and ownership can degrade if internal boundaries are not enforced. **Contraindications:** hard runtime-isolation requirements or proven need for independent deployment ",
+          "heading": "3. Worked applicability cards: deployment and communication",
+          "path": "book/volumes/v10-decision-support-and-modernization/c03-pattern-applicability-and-contraindications/pattern-cards.md",
+          "section_key": "tycho.page.2176fe3dcdf24a199d1656cba602e8e1#3-worked-applicability-cards-deployment-and-communication"
+        },
+        {
+          "excerpt": "## 3. Ownership boundaries are not deployment boundaries A system context diagram says who interacts; it does not prove which processes, repositories, teams or servers implement the behavior. A process boundary is where an application can fail and deploy independently. A **state-authority boundary** is where a business invariant is finally enforced. An **authorization boundary** is where access to that effect must be validated. A **data-exchange boundary** is where a versioned contract must be preserved. These can coincide, but should be modeled separately. For the fictional reservation system, splitting command ingestion from authoritative slot allocation may be sensible for isolation only ",
+          "heading": "3. Ownership boundaries are not deployment boundaries",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/authority-dependencies.md",
+          "section_key": "tycho.page.15ffb7535c424b0eac6445cddaeb4a25#3-ownership-boundaries-are-not-deployment-boundaries"
+        },
+        {
+          "excerpt": "## Purpose and mission Business concepts are not naturally partitioned into one universal data model. \"Available\", \"reserved\" and \"delivered\" can each mean different things to a catalogue, a reservation capability and a delivery coordinator. Architecture fails when we assume that the same word implies the same invariant, owner or state transition everywhere. A **domain boundary** defines the meaning and scope of a model. A **module boundary** controls implementation dependencies. A **data ownership boundary** decides who can authoritatively change state. An **API/event contract** communicates chosen facts between boundaries. A **deployment boundary** decides what can be released or fail inde",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md",
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B006",
+      "question": "Why can a post-commit in-memory event lose a required follow-up after the primary transaction succeeds?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Why write-ahead logging exists PostgreSQL 17 \u00a728.3 **Write-Ahead Logging (WAL)** explains the durability approach: record modifications into a log before the affected data pages must be written to their permanent table/index files. WAL records and commit policies permit recovery after a crash without forcing every changed page to disk at transaction commit. WAL is both a recovery mechanism and a foundation for replication approaches. [E01] ```mermaid flowchart LR Client[\"Client transaction\"] --> Buffer[\"Modified in-memory pages\"] Buffer --> WAL[\"Write-ahead log records\"] WAL --> Commit{\"WAL/commit durability settings satisfied?\"} Commit --> Reply[\"COMMIT acknowledgement\"] Buffer --> Fl",
+          "heading": "1. Why write-ahead logging exists",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/wal-durability.md",
+          "section_key": "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists"
+        },
+        {
+          "excerpt": "## 1. Boundaries: why the naive dual write is unsafe Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive design is two independent effects: 1. Commit a database record. 2. Publish an event to an external broker. Without an independently established cross-system atomic transaction, a failure between the two steps may leave a committed registration without its notification. Reversing the order creates the converse risk: a consumer can see an event for a registration that never committed. Neither REST success nor ",
+          "heading": "1. Boundaries: why the naive dual write is unsafe",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe"
+        },
+        {
+          "excerpt": "## A worked cross-chapter synthesis A fictional booking commits locally, publishes an event and triggers an independent notification. Kill the publisher after local commit, then lose an acknowledgment after consumer processing. These two failures expose separate uncertainty windows even when the normal-path diagram contains one arrow. Choose the invariant and authoritative commit boundary before discussing a delivery guarantee. Follow causality, replicated authority, retry identity, publication intent, receiver state and stream recovery separately. An outbox can retain publication intent; the receiver still needs a durable effect and deduplication contract within its own transaction boundary",
+          "heading": "A worked cross-chapter synthesis",
+          "path": "book/volumes/v04-distributed-coordination-and-events/README.md",
+          "section_key": "tycho.volume.c0927de8450647c49e2d33774eeb60be#a-worked-cross-chapter-synthesis"
+        },
+        {
+          "excerpt": "## 4. Choreography, orchestration and the concurrency trap | Dimension | Choreography | Orchestration | |---|---|---| | Coordination | Distributed reaction to published business events | Central workflow state issues commands to participants | | Simplicity benefit | Fewer explicit central coordinator concepts for short flows | Easier to inspect one explicit end-to-end state machine | | Primary cost | Harder to infer complete flow, loops and recovery from many handlers | Coordinator persistence, availability, versioning and lifecycle ownership | | Failure recovery | Participants must retain enough state to resume/reconcile | Orchestrator must retain decisions, retries, timeouts and compensati",
+          "heading": "4. Choreography, orchestration and the concurrency trap",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/distributed-protocols.md",
+          "section_key": "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#4-choreography-orchestration-and-the-concurrency-trap"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B007",
+      "question": "In Netflix\u2019s 2024 GC account, how could request pauses amplify load beyond the original slow request?",
+      "section_new": [
+        {
+          "excerpt": "## Competing diagnoses and falsifiable tests | Hypothesis for a new service | Initial diagnostic | Evidence that would argue against it | |---|---|---| | Application method uses excessive CPU | Sampling profile by Java method and request class | Similar execution profiles across high/low latency cohorts despite different CPI | | Garbage collector or allocation pressure | GC pause, allocation and safepoint events at matched load | No cohort-correlated GC behavior, with CPU pipeline stall counters diverging | | Host placement or network variance | Per-host work, NUMA locality, cache, NIC and request classification | Host differences remain tied to process/VM initialization rather than traffic ",
+          "heading": "Competing diagnoses and falsifiable tests",
+          "path": "book/cases/netflix-hotspot-false-true-sharing.md",
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests"
+        },
+        {
+          "excerpt": "## The migration surface: preserve semantics, not merely annotations The April 2024 [engineering account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389) (src.m9-n09, **Framework Architecture with Spring GraphQL**) names the compatibility seam more precisely. DGS retained its schema provider and data-fetcher wiring. Its query executor became a compatibility interface delegating to Spring GraphQL; Spring GraphQL handled the HTTP/WebSocket request paths previously maintained by DGS. Applications could therefore preserve common DGS annotations and schema/code-generation workflows while changing the underlying transport a",
+          "heading": "The migration surface: preserve semantics, not merely annotations",
+          "path": "book/cases/netflix-dgs-spring-graphql-convergence.md",
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations"
+        },
+        {
+          "excerpt": "## 1. Divide wall-clock latency before selecting a remedy A request's elapsed time may include: - waiting to be admitted to a queue/executor and waiting to borrow a connection; - actually running application instructions on a CPU; - waiting for locks, network, disk or an external API; - pauses or scheduling delays from JVM/runtime/OS behavior; - response serialization and delivery. A CPU profile mainly attributes **CPU-running sampled time**; it does not by itself show all waiting. Wall-clock samples can show blocked and sleeping stacks, with their own measurement biases. A distributed trace provides time bounds for instrumented spans, but does not automatically distinguish CPU use from a bl",
+          "heading": "1. Divide wall-clock latency before selecting a remedy",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/latency-diagnosis.md",
+          "section_key": "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 High latency with low JVM heap pressure **Original hypothetical diagnostic:** enabling virtual-thread request handling coincides with doubled p99 and rising RSS memory while GC pause duration remains low. An engineer immediately blames the garbage collector and selects a new collection algorithm. Yet the dominant delay may be a database connection queue; RSS growth might instead arise from native buffers, thread stacks, direct memory or container-level accounting. | Evidence requested | Supports which diagnosis | Does *not* establish | |---|---|---| | JVM JFR allocation, GC pause and safepoints | Heap allocation/collection contribution | Native RSS cause or remot",
+          "heading": "Engineering walkthrough \u2014 High latency with low JVM heap pressure",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+          "section_key": "tycho.page.b6cecfd7301b408db611228b4cec59c5#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B008",
+      "question": "Why can a Java process exceed a memory limit while heap occupancy looks stable?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and mission A slow Java service may be limited by CPU execution, heap allocation and garbage collection, native memory, thread/executor contention, blocking I/O or a saturated dependency. The same user-visible latency curve can arise from each of these causes. **Thread count, low CPU utilization and heap occupancy are observations\u2014not diagnoses and not automatic evidence for reactive programming, virtual threads or a new garbage collector.** The central task is to identify **where elapsed time is spent**, which resource is saturated, and what evidence would falsify the leading cause. This chapter introduces a reproducible symptom-to-mechanism diagnostic workflow. The execution-mod",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/cpu-memory-gc-and-blocking-diagnostics.md",
+          "section_key": "tycho.page.b6cecfd7301b408db611228b4cec59c5#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Why replacing a pool looked appealing Virtual threads preserve direct-looking synchronous Java programming while allowing many *I/O-blocked* requests to yield their carrier platform threads. A migration from a bounded OS-thread executor to a per-task virtual-thread executor can therefore reduce the need for large platform-thread pools when tasks spend much of their lives waiting for sockets. The Netflix practitioner account gives an immediate counterexample. A platform-team experiment replaced the worker pool used with **outgoing gRPC calls**, anticipating reduced scheduling overhead. Its work was **CPU intensive**, however; changing the thread abstraction introduced overhead without crea",
+          "heading": "Why replacing a pool looked appealing",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#why-replacing-a-pool-looked-appealing"
+        },
+        {
+          "excerpt": "## 2. Local in-process cache: fast reads, isolated knowledge The public **Caffeine** project wiki's **Eviction** page documents size-bound caching and expiration policies such as `expireAfterWrite`, `expireAfterAccess` and variable expiration. Its **Refresh** page distinguishes refresh from eviction: with refresh a previously stored value can continue being returned while an asynchronous load is in progress; refresh eligibility does not itself initiate work until queried. [E01, E02] ```mermaid stateDiagram-v2 [*] --> Absent Absent --> Fresh: Initial load Fresh --> RefreshEligible: Refresh interval reached RefreshEligible --> Refreshing: Next eligible read schedules refresh Refreshing --> Fre",
+          "heading": "2. Local in-process cache: fast reads, isolated knowledge",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#2-local-in-process-cache-fast-reads-isolated-knowledge"
+        },
+        {
+          "excerpt": "## Why reliability was not automatically improved In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths. These are publisher-identified failure classes, not a confirmed list of ev",
+          "heading": "Why reliability was not automatically improved",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B009",
+      "question": "Why is a CPU flame graph insufficient by itself to explain a request delayed by blocking?",
+      "section_new": [
+        {
+          "excerpt": "## Partition hot spots and why a database replacement alone was insufficient The [March 6, 2023 Discord report](https://discord.com/blog/how-discord-stores-trillions-of-messages) (src.m9-di01, **Our Cassandra Troubles**) describes a specific read-amplification mechanism. Messages were partitioned by **channel ID plus fixed time bucket** and replicated across nodes. A busy channel/bucket caused high concurrent reads on the same storage replicas. Cassandra read operations had to reconcile memtables and SSTables; accumulated compaction debt and JVM pauses made service time unpredictable. The company describes its maintenance workaround of temporarily draining individual nodes, compacting, then ",
+          "heading": "Partition hot spots and why a database replacement alone was insufficient",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#partition-hot-spots-and-why-a-database-replacement-alone-was-insufficient"
+        },
+        {
+          "excerpt": "## 2. Feedback signals and the hot-key trap A policy must choose a signal that reflects the **scarce resource** limiting useful progress: | Proposed metric | Useful when | Deceptive when | |---|---|---| | Average CPU utilization | Work is CPU-bound and can be spread across replicas | Requests wait on DB locks or remote I/O; average hides one hot process | | Memory pressure | Resource limit and cache footprint are known | More memory only retains more stale objects or delays leaks | | Queue length / age | Each item has bounded work and service level is defined | A single blocked key/consumer prevents queue progress | | Active requests | Per-request work and admitted load are stable enough | L",
+          "heading": "2. Feedback signals and the hot-key trap",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/scaling-delay.md",
+          "section_key": "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap"
+        },
+        {
+          "excerpt": "## Two incompatible architecture choices for a hypothetical legacy gateway For a legacy entry service with relatively few connections and heavy per-request transformation, an existing blocking or bounded-thread gateway may satisfy all objectives with less risk. For very many persistent idle connections and asynchronous downstream waits, Netty/event-loop I/O may materially reduce resource cost. For a mixed request population, isolate request classes and quantify: blocked wait time; active connection count; event-loop queue delay; completed requests/CPU; per-class p99; retry volume; cancelled but still running upstream work; trace and authorization-context errors; and leaked buffers. The **sel",
+          "heading": "Two incompatible architecture choices for a hypothetical legacy gateway",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#two-incompatible-architecture-choices-for-a-hypothetical-legacy-gateway"
+        },
+        {
+          "excerpt": "## Competing diagnoses and falsifiable tests | Hypothesis for a new service | Initial diagnostic | Evidence that would argue against it | |---|---|---| | Application method uses excessive CPU | Sampling profile by Java method and request class | Similar execution profiles across high/low latency cohorts despite different CPI | | Garbage collector or allocation pressure | GC pause, allocation and safepoint events at matched load | No cohort-correlated GC behavior, with CPU pipeline stall counters diverging | | Host placement or network variance | Per-host work, NUMA locality, cache, NIC and request classification | Host differences remain tied to process/VM initialization rather than traffic ",
+          "heading": "Competing diagnoses and falsifiable tests",
+          "path": "book/cases/netflix-hotspot-false-true-sharing.md",
+          "section_key": "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#competing-diagnoses-and-falsifiable-tests"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B010",
+      "question": "How did LinkedIn\u2019s Kafka Audit compare message counts along its multi-cluster path?",
+      "section_new": [
+        {
+          "excerpt": "## Other companies (#118) - [Uber DOMA](uber-doma-domains.md) - [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md) - [Uber MyRocks](uber-mysql-to-myrocks.md) - [Uber Cinnamon dynamic overload protection and fairness](uber-cinnamon-admission-and-fairness.md) - [Shopify modular monolith](shopify-modular-monolith.md) - [Shopify component governance](shopify-packwerk-boundary-evolution.md) - [Shopify Helix gate-driven AI native migration](shopify-helix-checkpoint-gated-native-migration.md) - [Airbnb Bazel JVM build migration](airbnb-jvm-monorepo-bazel.md) - [Stripe online data migration](stripe-online-subscriptions-migration.md) - [Discord ScyllaDB messages](discord-cassandra-sc",
+          "heading": "Other companies (#118)",
+          "path": "book/cases/README.md",
+          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118"
+        },
+        {
+          "excerpt": "## Canonical authored pages | Question | Page | Public source scope | |---|---|---| | How are Kafka partition records, consumer offsets, ISR/replica failures and producer/Kafka transactions bounded? | [Kafka partitions and delivery contracts](../volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/kafka-partitions-replication-and-contracts.md) | Selected Apache Kafka 4.1 docs, gRPC core concepts | | When do task queues, durable subjects/streams or long-running workflows make sense? | [Messaging families and durable workflows](../volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-wo",
+          "heading": "Canonical authored pages",
+          "path": "book/integration/README.md",
+          "section_key": "tycho.landing.816c847b8daa4d67a3fe1e3a8cbe3830#canonical-authored-pages"
+        },
+        {
+          "excerpt": "## Question-driven reading | Architecture question | Start here | Continue with | |---|---|---| | How do we define success and error budget for a user journey? | [SLIs, SLOs and budgets](../volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md) | [Workload measurement](../performance/workload-profiles-and-capacity-experiments.md) | | Why did metric-store cost increase unexpectedly? | [Metric pipelines and retention](../volumes/v09-observability-security-and-operations/c02-metrics-ingestion-cardinality-and-time-series-storage/metric-pipelines-cardinality-and-retention.md) | [Capacity controls](../performance/workloa",
+          "heading": "Question-driven reading",
+          "path": "book/observability/README.md",
+          "section_key": "tycho.landing.b7ea8fb13ebb4079af2333e475f97106#question-driven-reading"
+        },
+        {
+          "excerpt": "## What changed in the migration plan The first company proposal would have **dual-written** new messages, sent newer reads to ScyllaDB using a time cutoff, and migrated old data in the background. The publisher says a conventional Spark migrator estimated roughly **three months**. Instead the team reused its Rust database client to build a token-range migrator with **SQLite checkpoints**; the new estimate was **nine days**, making a simpler whole-database cutover feasible. An observed peak transfer rate was **up to 3.2 million messages/second**\u2014a peak *migration* throughput, not production request capacity. [src.m9-di01, **A Very Big Migration**]. | Phase | Source-reported action | Correctn",
+          "heading": "What changed in the migration plan",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

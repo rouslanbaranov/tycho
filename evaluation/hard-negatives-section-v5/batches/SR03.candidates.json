@@ -1,0 +1,315 @@
+{
+  "batch": "SR03",
+  "items": [
+    {
+      "id": "V4-A021",
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](messaging-families-and-durable-workflows.md) | What are the consequences of acknowledgement, retention and consumer state? | | [Consumer requirements and messaging families](message-selection.md) | Which ownership, retention and replay contract selects a messaging family? | | [Workflow state and messaging failure gates](workflow-failure.md) | When does a queue need an additional durable bus",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
+          "section_key": "tycho.chapter.23e79f6cb03b4206a5c82494bc5c2928#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Engineering walkthrough \u2014 Late correction after checkpoint and restore **Original synthetic event-time scenario:** an aggregate computes total reservations per business day from a CDC log. Event E5 reports a booking at event time 10:01 but arrives after the operator has advanced its watermark beyond that window. Another event cancels the booking later. A checkpoint captures operator state and source positions, but a checkpoint alone does not decide whether a late business correction should be discarded, sent as an update or routed to a reconciliation stream. | Boundary | Owner and question | Failure to detect | |---|---|---| | Source CDC | Database transaction position and stable change i",
+          "heading": "Engineering walkthrough \u2014 Late correction after checkpoint and restore",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore"
+        },
+        {
+          "excerpt": "## Why the distinction matters A backlog is a stock measured in requests. An arrival rate is a flow measured in requests per second. A service rate is another flow. The change in backlog over a small interval is the difference between the two flows: backlog(t + dt) = backlog(t) + arrivals(dt) - completions(dt) If a diagram labels both the backlog and the arrival rate as \"requests\", the model has lost its units. A reviewer cannot tell whether a value of 20 means twenty waiting requests or twenty requests arriving each second. The first is a state; the second is a rate. The MIT system-dynamics lectures make the same point in hydraulic terms: stocks are accumulations, flows are rates, and stock",
+          "heading": "Why the distinction matters",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "section_key": "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. The Pipes and Filters and Resequencer notes have moved to dedicated source-bound owner pages. ### Resequencer See the [dedicated Resequencer owner note](resequencer.md). ### Content-Based Router A content-based router chooses a destination from message content. It needs a versioned predicate set, a default or dead-letter path and an owner for rule changes. Predicate fields must be authenticated or validated; routing on an untrusted field lets the p",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A022",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and decision question A relational database can commit an authoritative state change inside one local transaction. An unrelated message broker or external service is usually *not part of the same atomic commit*. A long-running workflow crossing several independent owners therefore needs explicit persistent state, publication and failure contracts. A distributed event architecture is not made reliable by drawing an arrow from a transaction to a queue. Four patterns address different questions: - **Transactional outbox:** how can the local state change and a durable intent to publish one event be committed atomically? - **Inbox/idempotent consumer:** how can a downstream owner apply",
+          "heading": "Purpose and decision question",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question"
+        },
+        {
+          "excerpt": "## 4. Failure and recovery matrix | Failure timing | Committed state / outbox | External event / user-visible effect | Recovery contract / evidence required | |---|---|---|---| | Before commit | Neither should commit in the proposed local transaction | No authoritative successful registration | Verify transaction rollback and uniqueness/seat invariant | | After local commit, before reply | Both may exist; client sees timeout | Client cannot infer whether registration succeeded | Retry with same K and recover committed R; prove no duplicate R | | After commit, before relay publication | Both exist, broker may know nothing | Notification delayed; local registration remains authoritative | Reco",
+          "heading": "4. Failure and recovery matrix",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix"
+        },
+        {
+          "excerpt": "## 1. Two unsafe dual-write orders Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker then DB** can publish a purported acceptance and later roll back the reservation. [Richardson's Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox) records publication intent together with the business state in a **single local** transaction, then uses a relay. It explicitly notes that a relay may send a message more than once. ```mermaid flowchart LR C[\"Command with effect ID\"] --> TX",
+          "heading": "1. Two unsafe dual-write orders",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders"
+        },
+        {
+          "excerpt": "## 5. Durable workflow selection is conditional One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coordinator may help with long waits, retries and auditability, but its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration. **Choreography risks:** difficult-to-discover implicit coupling, unbounded event chains, conflicting compensations, and tracing that describes correlation but not durable business truth. **Orchestration risks:** ",
+          "heading": "5. Durable workflow selection is conditional",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A023",
+      "question": "Why can synchronized expiry make a short cache TTL expensive during a traffic burst?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Stampede, hot keys and failure admission When a popular key expires, thousands of concurrent request handlers can all fall through to a slower database, overwhelming a backend that normally handles only a fraction of the offered read traffic. Possible safeguards, each with separate correctness/operational costs: - **Single-flight/coalescing:** within one instance, combine concurrent cache misses for the same key into one source load. - **Distributed lease/mutex:** one refresh owner per key, with expiry, fencing/version rules and safe recovery when the owner crashes. A simplistic Redis lock without a correctness model is not globally sufficient. - **Stale-while-revalidate:** permit prev",
+          "heading": "4. Stampede, hot keys and failure admission",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission"
+        },
+        {
+          "excerpt": "## 2. Stampede at a synchronized expiry A cache stampede occurs when many concurrent readers miss or decide that a cached value needs refreshing, then issue many redundant expensive origin loads. **Illustrative fiction:** one key receives 600 reads/s. Its TTL expires and 300 clients overlap before the first origin read returns. Without per-key coalescing or a source admission budget, the origin may receive hundreds of near-identical queries even though normally it receives few. These are invented counts, not observed measurements. Potential countermeasures: | Technique | Can reduce | Required caveat | |---|---|---| | Single-flight within process | Multiple concurrent source loads per key on ",
+          "heading": "2. Stampede at a synchronized expiry",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry"
+        },
+        {
+          "excerpt": "## Purpose and mission A cache may perform well under ordinary traffic and become a **load amplifier** precisely during a key expiration, a write burst or an outage. Expiring an entry and asking all waiting clients to refetch it can overload a healthy authoritative store. Invalidating after a write can also be undone by a slower in-flight read filling an obsolete value. This chapter owns concurrent cache correctness and overload boundaries. [V06/C01 cache placement and freshness](../c01-local-and-distributed-caching/local-and-distributed-cache-design.md) owns local/shared/no-cache choice and base TTL/refresh semantics. [V07/C05 overload protection](../../v07-performance-scale-and-resilience/",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "section_key": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#purpose-and-mission"
+        },
+        {
+          "excerpt": "## Origin protection and rewarming After widespread expiry, many edge locations may refill together. The origin needs bounded concurrent fills, retry budgets and a deliberate stale-response policy. A cache hit-rate average conceals one expensive class of misses. Estimate origin demand by class: in an invented workload of 2,000 requests/s with a 2% miss rate, 40 origin fetches/s is only a mean; correlated expiry can temporarily approach the full offered rate. Versioned URLs simplify invalidation for immutable bytes but increase retained objects and make garbage collection a separate task. Mutable names allow in-place updates but require a freshness and validation policy. Neither option replac",
+          "heading": "Origin protection and rewarming",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#origin-protection-and-rewarming"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A024",
+      "question": "What transient read behavior can remain immediately after a cache invalidation on write?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Read-Through Cache A read-through cache loads a miss from the source on behalf of the caller and stores the result, so the application never performs the fill itself. A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss, and concurrent fills must not stampede the source. Slow fills and error masking make the cache appear healthy while the source degrades; bound fill concurrency, timeouts and error transla",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## 3. Distributed cache and cache-aside policy Redis's public **Cache-aside** use-case documentation illustrates a common flow: read cache, load source on miss, write cache with expiry; when the application writes to the source, invalidate cache entries that could be stale. It also discusses cache stampede when many requests miss a popular key. The page is **a solution guide, not an independently benchmarked capacity promise** for Tycho. [E03] ```mermaid sequenceDiagram participant Reader participant Redis as Shared cache participant DB as Authoritative store Reader->>Redis: GET item X Redis-->>Reader: Miss Reader->>DB: SELECT current X DB-->>Reader: Value + version Reader->>Redis: SET X ver",
+          "heading": "3. Distributed cache and cache-aside policy",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### TTL-Based Expiration TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed merely because the clock passed; the next reader performs the load or waits for a refresh. A TTL reduces the period during which data might be out of date. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL does the opposite. Jitter the expiry across keys to avoid synchronized bursts. Explicit ",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## 1. The stale-fill-after-invalidation race **Original synthetic sequence:** cache key tool:42 has no value. Reader A begins an authoritative read of version v1. Meanwhile writer B commits v2 and deletes the key. The older reader completes and stores v1 after the delete; future readers may see obsolete data. ```mermaid sequenceDiagram participant A as Reader A participant DB as Authoritative store participant B as Writer B participant C as Cache A->>C: GET tool:42 \u2014 miss A->>DB: Read value (v1 snapshot) B->>DB: Commit v2 B->>C: DEL tool:42 DB-->>A: v1 result A->>C: SET tool:42=v1, TTL Note over A,C: Obsolete value resurrected after invalidation ``` **Text alternative:** reader A starts load",
+          "heading": "1. The stale-fill-after-invalidation race",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+          "section_key": "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A025",
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
+      "section_new": [
+        {
+          "excerpt": "# Static Content Hosting > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/static-content-hosting.md#static-content-hosting) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [edge cache and origin page](edge-cache-origin.md#static-content-hosting) on 2026-10-29. The CDN and origin walkthrough remains on the chapter page. Static content hosting places static resources in a storage service that serves them directly, reducing load on the application compute that handles other requests. The host must own upload validation, origin protection and prewarming for a release. A retained version is the rollback p",
+          "heading": "Static Content Hosting",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
+          "section_key": "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview"
+        },
+        {
+          "excerpt": "## Pages and reasoning route | Page | Question | |---|---| | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? | | [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? | | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? | | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? | | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functi",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Compute models and their real trade-offs | Model | Isolation and ownership boundary | Relative advantages when conditions fit | Constraints, failure questions and disqualifiers | |---|---|---|---| | **Bare metal / dedicated host** | Physical machine and its firmware/storage/network plus chosen OS | Direct device control, predictable specialized capacity, hardware/locality requirements | Provision and repair time, host loss, replacement inventory, OS patching, storage replication, team operation burden | | **Virtual machine** | Guest OS with hypervisor and virtualized devices; placement is still physical | Established OS/kernel isolation and explicit runtime image lifecycle; can host legac",
+          "heading": "Compute models and their real trade-offs",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs"
+        },
+        {
+          "excerpt": "## 3. A model for contention and coordination overhead Neil J. Gunther's [general theory of computational scalability](https://arxiv.org/abs/0808.1431) discusses rational scalability functions and a synchronous throughput bound. A commonly used *normalized* form of the Universal Scalability Law is C(N) = N / [1 + \u03b1(N\u22121) + \u03b2N(N\u22121)]. Here N is a relative concurrency/processor count; \u03b1 and \u03b2 are empirical fitting parameters interpreted (with important model qualifications) as contention and coherence/coordination penalties. The expression is **not** a mechanism detector. Fitted coefficients cannot prove that a particular lock, network link or cache-invalidation flow is the cause. The curve may ",
+          "heading": "3. A model for contention and coordination overhead",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A026",
+      "question": "Which edge-hosting responsibilities must be owned before static content is offloaded?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### CDN-Edge Caching An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a content and authority contract, not a network location. The cache key, freshness policy and authorization boundary must agree. An authorization header is not a complete design for private edge caching; explicit cache directives can alter reuse rules. A misclassified response can serve one user's private data to another, and a purge can lag the origin. Test the authorization matrix, the purge path and the stale-on-error behavior. The cited Microsoft static-hosting unit is narrower than this CDN guidance; RFC 9111 supports shared-cache rest",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "# Static Content Hosting > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/static-content-hosting.md#static-content-hosting) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [edge cache and origin page](edge-cache-origin.md#static-content-hosting) on 2026-10-29. The CDN and origin walkthrough remains on the chapter page. Static content hosting places static resources in a storage service that serves them directly, reducing load on the application compute that handles other requests. The host must own upload validation, origin protection and prewarming for a release. A retained version is the rollback p",
+          "heading": "Static Content Hosting",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
+          "section_key": "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview"
+        },
+        {
+          "excerpt": "## Gateway Aggregation Gateway aggregation composes several owner responses into one client response at the edge. It fits a read-mostly view with a small, stable shape where the gateway is already the trust boundary. Each downstream call carries its own deadline and authorization. Fan out in parallel, cap retries per dependency and for the whole aggregate, and expose which dependency failed; a gateway retry must not multiply load across every participant. A partial response needs a versioned shape that marks missing parts rather than silently omitting them. Do not aggregate when strong consistency across owners is required, one slow dependency exhausts the gateway, the composition is a hidde",
+          "heading": "Gateway Aggregation",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+        },
+        {
+          "excerpt": "## Entry inventory Each level-three heading is a stable atlas anchor. Owner links are bounded sections; none claims sufficient technical or decision coverage. ### API Gateway **Identity.** API Gateway; family API and service communication; kind integration pattern; priority core. **Decision question.** Should external clients enter through a managed gateway that owns routing, authentication and cross-cutting edge policy? **Good-fit conditions.** Multiple clients or backends share edge concerns; routing, TLS, authentication or rate policy must be consistent; the gateway can be operated and observed as a critical component; backend authority remains explicit. **Hard contraindications.** Reject",
+          "heading": "Entry inventory",
+          "path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
+          "section_key": "tycho.chapter.9825cb82eb2142754c638aea1ba8d845#entry-inventory"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A027",
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](target-and-transition-architecture-states.md) | What is safe during coexistence, migration, rollback and recovery? | | [State authority and coexistence transitions](authority-states.md) | Which owner is authoritative in every real intermediate configuration? | | [Rollback limits and semantic reconciliation](rollback-data.md) | Which durable differences survive reverting the deployed binary?",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/README.md",
+          "section_key": "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## Modernization plan Version contracts \u2192 establish old source authority \u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old only after proven zero callers. **Reversal triggers / insufficient evidence:** If the new model cannot preserve legacy business semantics, redesign domain/API contract with consumers before cutover rather than forcing opaque equality.",
+          "heading": "Modernization plan",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+        },
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Expand-and-Contract Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence. The protocol owns the compatibility window, the reader inventory and the rollback or forward-repair decision. New writers must preserve enough old representation for old supported readers until a verified cutover. Incompatible writes hold the rollout and may require forward repair rather than redeploying N. The compatibility window needs an owner, a reader inventory and a measured cutover gate; a matrix without real reader eviden",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Failure matrix: detection through restored user journey | Failure/drill | Recovery method hypothesis | Evidence needed before saying it meets RTO/RPO | Do-not-proceed condition | |---|---|---|---| | Single instance/zone | Pre-warmed healthy replicas route around failure | Load under loss, data owner/quorum, latency/error and correct completions | Remaining zones lack capacity or are dependent on failed management | | Region A unavailable | Restore/promote Region B using tested role/fencing and recovery state | Incident start time, lag, write-role ownership, traffic switch and read/write checks | Original write authority cannot be fenced, business reconciliation unknown | | Corruption repl",
+          "heading": "Failure matrix: detection through restored user journey",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A028",
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "section_new": [
+        {
+          "excerpt": "## 3. A model for contention and coordination overhead Neil J. Gunther's [general theory of computational scalability](https://arxiv.org/abs/0808.1431) discusses rational scalability functions and a synchronous throughput bound. A commonly used *normalized* form of the Universal Scalability Law is C(N) = N / [1 + \u03b1(N\u22121) + \u03b2N(N\u22121)]. Here N is a relative concurrency/processor count; \u03b1 and \u03b2 are empirical fitting parameters interpreted (with important model qualifications) as contention and coherence/coordination penalties. The expression is **not** a mechanism detector. Fitted coefficients cannot prove that a particular lock, network link or cache-invalidation flow is the cause. The curve may ",
+          "heading": "3. A model for contention and coordination overhead",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead"
+        },
+        {
+          "excerpt": "## What a green shadow comparison cannot guarantee src.m9-me03 documents **job-level authority transitions**: legacy production/new shadow, followed by new production/legacy reverse shadow, then cleanup. This choreography solves a different problem from changing all reads before writes in Stripe's mutable subscription migration. There is no safe universal \u201cdual-write\u201d shortcut that represents both histories. For a different warehouse, materialized output can match row count and checksum while *still* diverging semantically when time windows differ, null/value canonicalization is lossy or the fingerprint excludes business-critical fields. Model each comparison as a tuple of `source snapshot +",
+          "heading": "What a green shadow comparison cannot guarantee",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee"
+        },
+        {
+          "excerpt": "## 4. Candidate transition states\u2014not just a target diagram ```mermaid stateDiagram-v2 [*] --> Inventory Inventory --> ModuleContract: Establish internal API and data owner ModuleContract --> DualCompatibility: Add stable external contract and tests DualCompatibility --> Shadow: Run synthetic/representative parallel verification Shadow --> LimitedTraffic: Route controlled traffic to new owner LimitedTraffic --> Shadow: Revert routing while state is compatible LimitedTraffic --> ForwardRepair: Contract or data divergence ForwardRepair --> LimitedTraffic: Reconcile and reverify LimitedTraffic --> Extracted: Retire old implementation only after acceptance Extracted --> [*] ``` Text alternative:",
+          "heading": "4. Candidate transition states\u2014not just a target diagram",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram"
+        },
+        {
+          "excerpt": "## Bounded plan and alternatives A proposed first exploration bounds one entry, two clients, two event generations, duplicate delivery and a crash before or after each durable boundary. An implementation harness would then vary delivery order, response loss, worker restart and index reset. Acceptance requires no safety counterexample within the declared exploration bounds and eventual convergence once the recovery premises hold. This page contains a specification sketch and hand-derived trace. No TLA+ specification, TLC run, simulation, implementation history or exhaustive state exploration was executed. Its concrete value is an inspectable contract and a reproducible defect hypothesis. Use ",
+          "heading": "Bounded plan and alternatives",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "section_key": "tycho.page.ac84c140be153d3b1f5752ffbd38cb5b#bounded-plan-and-alternatives"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A029",
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Structured Logging Structured logging emits events with stable field names and types so records can be queried and compared without parsing free text. Field names, meaning and redaction rules must be versioned, and sensitive values must be excluded before emission. Schema drift or an unredacted field breaks queries or leaks data; validate the schema at the emitter and review field allowlists when adding events. Unstructured text parsed at query",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
+          "section_key": "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## 1. Separate semantics before selecting storage | Evidence type | Primary question | Essential property | Failure or misuse | |---|---|---|---| | Operational log | What did this runtime report, and why? | Timestamp, level, context, safe attributes | Log drop interpreted as no event | | Trace/span | Which instrumented work was causally correlated? | Trace/span identity, sampling/export scope | Trace regarded as every business write | | Business audit | Who was authorized to change what authoritative state, and what committed? | Durable event/effect identity and integrity policy | Asynchronous log missing after commit | | Dataset lineage | Which job/run consumed or produced which dataset or ",
+          "heading": "1. Separate semantics before selecting storage",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage"
+        },
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](logs-audit-and-data-lineage.md) | How do security audit, event lineage and operational logs differ? | | [Logs, authoritative audit and lineage](record-semantics.md) | Which question is answered by each kind of record? | | [Retention, integrity and contradictory records](record-integrity.md) | Which record must survive a failure before an authorized effect can be asserted? |",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/README.md",
+          "section_key": "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#pages-and-reasoning-route"
+        },
+        {
+          "excerpt": "## 5. Privacy, audit and retention boundaries Agent interactions may include user questions, selected snippets, query filters, result IDs, tool traces and tool arguments. These records can reveal interests or sensitive content even if the book prose itself is public. A reference design should: - minimize retained query/input text and avoid logging credentials, tokens or raw confidential documents; - define what metadata is necessary for incident diagnosis and abuse detection; - limit audit access and retention, and allow investigation without exporting private content indiscriminately; - label and redact any untrusted remote source content appropriately, rather than treating it as safe to pu",
+          "heading": "5. Privacy, audit and retention boundaries",
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/collection-privacy.md",
+          "section_key": "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A030",
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Health, Readiness and Liveness Checks Health checks answer different questions: liveness asks whether the process should be restarted, readiness asks whether it should receive traffic, and startup asks whether initialization has completed. Each needs its own endpoint, timeout and failure action. Use them when the runtime can separate process health from dependency readiness. Do not use a liveness check to test a shared dependency, because a dep",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "section_key": "tycho.page.1810c1f1f11648bdba66aafa5da60d33#bounded-pattern-ownership-notes"
+        },
+        {
+          "excerpt": "## Failure and recovery | Failure | Design consequence | Discriminating observation | |---|---|---| | Resolver unavailable | Decide whether a bounded cached answer remains usable | Successful new connections versus resolver errors, by cache age | | Removed backend still cached | Removal and connection shutdown require coordinated policy | Attempts to the removed endpoint after route publication | | Every backend probes a shared failed dependency | Ejecting all instances can make local capacity unusable | Shared dependency failures versus instance-local faults | | Fresh discovery is unavailable | A last-known endpoint set may permit reads, but cannot grant write authority | Membership age, re",
+          "heading": "Failure and recovery",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery"
+        },
+        {
+          "excerpt": "## 2. Redundancy must be combined with correct traffic routing Original fictional example: a public tool catalogue serves read-only descriptions and accepts reservations. The proposed design has two independently placed API replicas and an authoritative database cluster with documented quorum/replication behavior. ```mermaid flowchart LR U[\"Eligible client operations\"] --> G[\"Gateway + health-aware routing\"] G --> A[\"API replica in zone A\"] G --> B[\"API replica in zone B\"] A --> D[(\"Authoritative state quorum / owner\")] B --> D D --> S[\"Independent historical recovery source\"] ``` **Text alternative:** two API replicas in separate placement domains may improve tolerance of one compute zone f",
+          "heading": "2. Redundancy must be combined with correct traffic routing",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#2-redundancy-must-be-combined-with-correct-traffic-routing"
+        },
+        {
+          "excerpt": "## 6. Recovery and hysteresis must be deliberate When load drops or a dependency becomes healthy, prematurely reopening traffic can cause a second collapse. Circuit-breaker recovery may use bounded probes; admission thresholds may need stability windows and progressive recovery. However, an excessive cooldown can strand healthy capacity. Review the actual demand and dependency recovery curve, not a generic constant. Failure and restoration conditions should include: - dependency/probe success and bounded error-rate sample; - backlog, queue age, retries and in-flight state, not only CPU; - completeness of accepted operations and reconciliation of unknown outcomes; - fair re-admission and a co",
+          "heading": "6. Recovery and hysteresis must be deliberate",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-recovery.md",
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate"
+        }
+      ],
+      "split": "atlas"
+    }
+  ]
+}
