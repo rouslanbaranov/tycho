@@ -1,5 +1,16 @@
 # Current state — Tycho
 
+> **Current promotion snapshot — 2026-10-31 (authoritative):** **60 of 145** entries
+> are technical/decision `sufficient`; **7** are owner-accepted (2026-10-28).
+> **85** entries remain. Timing covers 40 promotion cycles: mean **51.2 min**
+> (range 6-388, including reviewer/integration wait); forecast **4.5 / 6.2 / 9.7**
+> days (optimistic/base/pessimistic). The dated audit notes below describe the
+> 2026-10-21 baseline and are historical. B47 Consistent Hashing is **not**
+> promoted; its partial integration is preserved on
+> `wip/b47-consistent-hashing-integration`. See
+> [the 2026-10-31 hand-off](HANDOFF-2026-10-31.md).
+
+
 > **Review-policy change — 2026-10-27:** the human-review gate is retired for future work.
 > For book-content or atlas-structure changes, independent review is performed by a
 > different AI harness from a different vendor, read-only and pinned to HEAD. Tooling,
