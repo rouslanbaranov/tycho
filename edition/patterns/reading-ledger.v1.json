@@ -5135,7 +5135,9 @@
       "content_sha256": "cc529913e4400bf21371fbf6f5c74aa7c21b9b6380725f319a6d287028a49065",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained as historical PostgreSQL logical-replication evidence after the 2026-10-31 CDC rebinding; superseded as the CDC primary by read.postgres-logical-decoding.2026-10-31."
     },
     {
       "id": "read.batch9-pg-matview-refresh.2026-10-22",
@@ -12553,6 +12555,255 @@
       "limitations": "An engineering article, not a formal specification or benchmark. Its p99.9 example is timeout selection, not a hedge threshold, and it does not evaluate hedging directly.",
       "content_sha256": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94",
       "read_scope": "the four listed sections of the public article, excluding linked pages, images and unrelated chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.debezium-architecture.2026-10-31",
+      "source_id": "src.debezium-architecture",
+      "unit_url": "https://debezium.io/documentation/reference/stable/architecture.html",
+      "unit_label": "Debezium Architecture — public documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T21:16:39Z and again at 2026-10-31T21:19:59Z; 49,727-byte HTML; Last-Modified Sat, 31 Oct 2026 04:20:50 GMT; no ETag served; raw HTML SHA-256 ebb9cc73840733436ff6fa9b2ccd2886ac59e06e00cee886766f72be130eb13c on both fetches; canonical article text 2,990 characters / 467 words, SHA-256 edcad02fd693cf95959d5dd2bf70644f160b36994f831e785cf49d0d11ecd142, identical on both fetches.",
+      "sections_read": [
+        "Debezium Architecture",
+        "Debezium Server",
+        "Debezium Engine"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "navigation and unrelated chrome"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Debezium documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Most commonly, you deploy Debezium by means of Apache Kafka Connect.",
+        "Source connectors such as Debezium send records into Kafka.",
+        "The PostgreSQL connector reads from a logical replication stream."
+      ],
+      "claims_not_supported": [
+        "a benchmark",
+        "a production observation",
+        "connector implementation behavior",
+        "linked pages"
+      ],
+      "limitations": "A living stable documentation page with no pinned release identifier; it describes deployment and connector placement, not a guarantee, benchmark or production observation.",
+      "content_sha256": "edcad02fd693cf95959d5dd2bf70644f160b36994f831e785cf49d0d11ecd142",
+      "read_scope": "the complete short article, excluding linked pages, images, navigation and unrelated chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.debezium-postgresql.2026-10-31",
+      "source_id": "src.debezium-postgresql",
+      "unit_url": "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+      "unit_label": "Debezium connector for PostgreSQL — public documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T21:16:39Z and again at 2026-10-31T21:19:59Z; 575,506-byte HTML; Last-Modified Sat, 31 Oct 2026 04:20:50 GMT; no ETag served; raw HTML SHA-256 4c88d7583ab5070a300354fc95118ca0fc67a585cc6c9a6d6f954102423c6dd1 on the first fetch and 32259ec6b1830c770b92ac169a02071544baebe111f23c43dac387197d93304e on the second, differing only in two Cloudflare email-protection tokens inside one JSON code sample; canonical article text 260,457 characters / 37,943 words, SHA-256 395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547, identical on both fetches.",
+      "sections_read": [
+        "Overview",
+        "Snapshots",
+        "Streaming changes",
+        "Transaction metadata",
+        "Change event keys",
+        "truncate events",
+        "WAL disk space consumption",
+        "Monitoring",
+        "Behavior when things go wrong"
+      ],
+      "sections_not_read": [
+        "data type mappings",
+        "custom converters",
+        "most connector configuration properties",
+        "deployment examples",
+        "linked pages and images"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Debezium documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The connector produces a change event for every row-level insert, update, and delete operation that was captured and sends change event records for each table in a separate Kafka topic.",
+        "The Kafka Connect process asynchronously writes the change event records in the same order in which they were generated to the appropriate Kafka topic.",
+        "If the connector stops for any reason, upon restart the connector continues reading the WAL where it last left off, and a snapshot that did not complete begins again.",
+        "Debezium provides at least once delivery and can emit duplicate change events during recovery.",
+        "A replication slot must remain intact: never drop a replication slot on the primary server or you will lose data.",
+        "Ordering is guaranteed only for topics that use a single partition.",
+        "Logical decoding does not support DDL changes."
+      ],
+      "claims_not_supported": [
+        "exactly-once end-to-end delivery",
+        "a benchmark",
+        "a failure drill",
+        "connector implementation",
+        "sections not listed as read"
+      ],
+      "limitations": "A living documentation page; it states intended behavior, not a benchmark, production observation or independent reproduction. The full article text was hashed, but only the listed sections were read.",
+      "content_sha256": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547",
+      "read_scope": "the listed sections of the publicly served page, excluding type mappings, configuration options, examples, linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgres-logical-decoding.2026-10-31",
+      "source_id": "src.postgres-logical-decoding",
+      "unit_url": "https://www.postgresql.org/docs/current/logicaldecoding-explanation.html",
+      "unit_label": "PostgreSQL 18 47.2 Logical Decoding Concepts",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T18:19:50Z and again at 2026-10-31T19:52:53Z; 28,842-byte HTML; no Last-Modified or ETag served; raw HTML SHA-256 e630b8f8f5a9d54b242d18f6a89ca6e5377de4fed67db00b948659de4867b41e on both fetches; canonical text 10,581 characters / 1,622 words, SHA-256 110100f9a62614e0d0472bb87b55b7919f97bbc1078559fd80beeb719265d46b, identical on both fetches.",
+      "sections_read": [
+        "47.2.1 Logical Decoding",
+        "47.2.2 Replication Slots",
+        "47.2.5 Exported Snapshots"
+      ],
+      "sections_not_read": [
+        "47.1 Logical Decoding examples",
+        "47.2.3 synchronization note",
+        "47.2.4 output-plugin note",
+        "47.3-47.10",
+        "SQL examples"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Logical decoding is the process of extracting all persistent changes to a database's tables into a coherent, easy to understand format.",
+        "A logical slot represents a stream of changes that can be replayed to a client in the order they were made on the origin server.",
+        "A logical slot emits each change once in normal operation, but a crash can return it to an earlier LSN and resend recent changes.",
+        "Replication slots persist across crashes and retain required resources even without a connection.",
+        "A newly created replication slot exports a snapshot that marks the change-stream boundary."
+      ],
+      "claims_not_supported": [
+        "SQL execution",
+        "connector behavior",
+        "a benchmark"
+      ],
+      "limitations": "PostgreSQL 18 current documentation; no SQL was executed and no replication slot was created.",
+      "content_sha256": "110100f9a62614e0d0472bb87b55b7919f97bbc1078559fd80beeb719265d46b",
+      "read_scope": "sections 47.2.1, 47.2.2 and 47.2.5 of the publicly served page, excluding linked sections and examples",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgres-slot-retention.2026-10-31",
+      "source_id": "src.postgres-replication-config",
+      "unit_url": "https://www.postgresql.org/docs/current/runtime-config-replication.html",
+      "unit_label": "PostgreSQL 18 19.6 Replication settings",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T15:50:39Z and again at 2026-10-31T14:40:27Z; 60,421-byte HTML; no Last-Modified or ETag served; raw HTML SHA-256 116d1b8a365a2d4041c8ea12d8ca01daa3dd6878d5c1a180ff197281018e7d1f on both fetches; canonical text 28,301 characters / 4,406 words, SHA-256 3b73becf0b4589da4e76213e09044db30bdc3de4307c9c5617933f83db11f57a, identical on both fetches.",
+      "sections_read": [
+        "19.6.2 Primary Server, max_slot_wal_keep_size and idle_replication_slot_timeout"
+      ],
+      "sections_not_read": [
+        "19.6.1 Sending Servers",
+        "19.6.3 Standby Servers",
+        "19.6.4 Subscribers"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "max_slot_wal_keep_size bounds the WAL files that replication slots may retain in pg_wal at checkpoint time.",
+        "With the default -1, replication slots may retain an unlimited amount of WAL files.",
+        "When restart_lsn falls behind by more than the configured size, the standby may no longer continue replication because required WAL was removed.",
+        "Replication slots that remain inactive for longer than idle_replication_slot_timeout are invalidated."
+      ],
+      "claims_not_supported": [
+        "a deployment-specific retention setting",
+        "a benchmark"
+      ],
+      "limitations": "Documentation of parameters and defaults, not a tested deployment or a claim that a particular retention size is safe.",
+      "content_sha256": "3b73becf0b4589da4e76213e09044db30bdc3de4307c9c5617933f83db11f57a",
+      "read_scope": "the max_slot_wal_keep_size and idle_replication_slot_timeout entries in 19.6.2 Primary Server, with surrounding replication context",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.kafka-connect-offsets.2026-10-31",
+      "source_id": "src.kafka-connect-guide",
+      "unit_url": "https://kafka.apache.org/41/kafka-connect/connector-development-guide/",
+      "unit_label": "Kafka Connect 4.1 Connector Development Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T21:18:15Z and again at 2026-10-31T21:20:00Z; 91,776-byte HTML; Last-Modified Wed, 28 Oct 2026 19:19:52 GMT; ETag \"16680-65eeb72921a8d\"; raw HTML SHA-256 f4c2240e45c1c1810593d44d8136c526ed5e03e100d16dc781e7fd3f57624904 on both fetches; canonical text 27,314 characters / 4,060 words, SHA-256 8edc639a984e1701c304d2e3bd15bde87451c6b47e5937c16d30dc59121f5cfb, identical on both fetches.",
+      "sections_read": [
+        "Core Concepts and APIs",
+        "Streams and Records",
+        "Task Example - Source Task",
+        "Resuming from Previous Offsets",
+        "Exactly-once source connectors"
+      ],
+      "sections_not_read": [
+        "connector code examples beyond the quoted mapping",
+        "dynamic streams",
+        "configuration validation",
+        "schema details",
+        "linked pages"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Apache Kafka documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "SourceConnectors import data from another system, for example a relational database into Kafka.",
+        "One possible mapping uses a timestamp column to generate queries incrementally returning new data, with the last queried timestamp as the offset.",
+        "Records carry stream IDs and offsets that the framework periodically commits so processing can resume after a failure.",
+        "Offset commits are automated by the framework, but the connector must seek back to the right position in the input stream.",
+        "Exactly-once source support requires meaningful source offsets and resumption at the exact position without dropping or duplicating messages."
+      ],
+      "claims_not_supported": [
+        "end-to-end exactly-once for a named connector",
+        "a benchmark",
+        "connector code beyond the quoted mapping"
+      ],
+      "limitations": "Kafka 4.1 documentation; exactly-once source support is conditional on connector design and is not a claim that a particular CDC connector provides it.",
+      "content_sha256": "8edc639a984e1701c304d2e3bd15bde87451c6b47e5937c16d30dc59121f5cfb",
+      "read_scope": "the five listed sections of the publicly served guide, excluding code details beyond the quoted mapping and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.kafka-connect-overview.2026-10-31",
+      "source_id": "src.kafka-connect",
+      "unit_url": "https://kafka.apache.org/41/kafka-connect/overview/",
+      "unit_label": "Kafka Connect 4.1 Overview",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T21:18:15Z and again at 2026-10-31T21:20:00Z; 58,591-byte HTML; Last-Modified Wed, 28 Oct 2026 19:19:52 GMT; ETag \"e4df-65eeb72921e75\"; raw HTML SHA-256 81f1b446f52bde5f90a726b1612927e591f238aae7b69822177f76aeb47b2276 on both fetches; canonical text 1,757 characters / 265 words, SHA-256 1ff3963b0c6f83ea94e39a359c52f6b6995a300772b707c35b1f2e85f34ce288, identical on both fetches.",
+      "sections_read": [
+        "Overview",
+        "feature list",
+        "automatic offset management"
+      ],
+      "sections_not_read": [
+        "linked user guide",
+        "connector implementation pages"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Apache Kafka documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Kafka Connect is a tool for scalably and reliably streaming data between Apache Kafka and other systems.",
+        "Kafka Connect can ingest entire databases or collect metrics from application servers into Kafka topics.",
+        "Automatic offset management lets Kafka Connect manage the offset commit process with a little information from connectors."
+      ],
+      "claims_not_supported": [
+        "connector-specific behavior",
+        "a benchmark"
+      ],
+      "limitations": "A short overview page; it states intended framework behavior, not a guarantee for a particular connector.",
+      "content_sha256": "1ff3963b0c6f83ea94e39a359c52f6b6995a300772b707c35b1f2e85f34ce288",
+      "read_scope": "the overview and feature list of the publicly served page, excluding the linked user guide and connector pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }

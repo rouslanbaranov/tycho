@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "b6ee8d8835674598a1d72a677c8db1144c22373c8e29f35dc584ff05ab3eb864",
-  "route_index_snapshot": "826ee45d9d1aa56343e4ca61f309d86ba8e27815007f90da3afc535b31eca834",
+  "registry_sha256": "41e485b0ce6dad9542128d5c4662fbccd1f4aa658d5d8cc0614adc193ef3a247",
+  "route_index_snapshot": "3486557e87fc28c461161597e02783b7753cc02efbc006a06ecd965d5f4d4595",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2227,33 +2227,110 @@
       "priority": "core",
       "required_units": [
         {
-          "source_id": "src.postgres-logical",
-          "unit": "Chapter 29. Logical Replication",
+          "source_id": "src.debezium-architecture",
+          "unit": "Debezium Architecture — public documentation",
           "unit_type": "documentation-page",
-          "url": "https://www.postgresql.org/docs/current/logical-replication.html",
+          "url": "https://debezium.io/documentation/reference/stable/architecture.html",
           "sections": [
-            "Chapter 29. Logical Replication"
+            "Debezium Architecture",
+            "Debezium Server",
+            "Debezium Engine"
           ],
           "status": "read",
-          "read_record_id": "read.batch8-postgres-logical.2026-10-22",
+          "read_record_id": "read.debezium-architecture.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.debezium-postgresql",
+          "unit": "Debezium connector for PostgreSQL — public documentation",
+          "unit_type": "documentation-page",
+          "url": "https://debezium.io/documentation/reference/stable/connectors/postgresql.html",
+          "sections": [
+            "Overview",
+            "Snapshots",
+            "Streaming changes",
+            "Transaction metadata",
+            "Change event keys",
+            "truncate events",
+            "WAL disk space consumption",
+            "Monitoring",
+            "Behavior when things go wrong"
+          ],
+          "status": "read",
+          "read_record_id": "read.debezium-postgresql.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgres-logical-decoding",
+          "unit": "PostgreSQL 18 47.2 Logical Decoding Concepts",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/logicaldecoding-explanation.html",
+          "sections": [
+            "47.2.1 Logical Decoding",
+            "47.2.2 Replication Slots",
+            "47.2.5 Exported Snapshots"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-logical-decoding.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgres-replication-config",
+          "unit": "PostgreSQL 18 19.6 Replication settings",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/runtime-config-replication.html",
+          "sections": [
+            "19.6.2 Primary Server, max_slot_wal_keep_size and idle_replication_slot_timeout"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-slot-retention.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-connect-guide",
+          "unit": "Kafka Connect 4.1 Connector Development Guide",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/kafka-connect/connector-development-guide/",
+          "sections": [
+            "Core Concepts and APIs",
+            "Streams and Records",
+            "Task Example - Source Task",
+            "Resuming from Previous Offsets",
+            "Exactly-once source connectors"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka-connect-offsets.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-connect",
+          "unit": "Kafka Connect 4.1 Overview",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/kafka-connect/overview/",
+          "sections": [
+            "Overview",
+            "feature list",
+            "automatic offset management"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka-connect-overview.2026-10-31",
           "blocked_reason": null
         },
         {
           "source_id": "src.debezium-outbox",
-          "unit": "Outbox Event Router — Debezium documentation",
+          "unit": "Outbox Event Router — Debezium documentation (2026-10-31 binding)",
           "unit_type": "documentation-page",
           "url": "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
           "sections": [
             "Outbox Event Router",
-            "Configuration",
-            "Example"
+            "Basic outbox table"
           ],
           "status": "read",
-          "read_record_id": "read.batch2-debezium-outbox.2026-10-21",
+          "read_record_id": "read.debezium-outbox-binding.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "PostgreSQL logical replication read for general log-based CDC; the Debezium outbox unit is retained as a comparison and is not the card citation."
+      "notes": "Six public units bound 2026-10-31: Debezium architecture and PostgreSQL connector documentation, PostgreSQL 18 logical decoding and replication-slot settings, and Kafka Connect overview and connector-development offset guidance. The retained Debezium outbox unit supports the alternative. read.batch8-postgres-logical.2026-10-22 is retained in foundation records as historical evidence. The invariant is conditional on key/partition and transaction metadata; dual-write reconciliation remains an unbound heuristic."
     },
     {
       "pattern_id": "tycho.pattern.materialized-view",
@@ -7261,11 +7338,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 337,
-    "read_units": 336,
+    "required_units": 342,
+    "read_units": 341,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 295
+    "ledger_records": 301
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -7279,6 +7356,8 @@
     "read.batch6-sre-workbook-monitoring.2026-10-21",
     "read.batch6-otel-traces.2026-10-21",
     "read.batch3-pg-archiving.2026-10-21",
-    "read.batch4-hedged.2026-10-21"
+    "read.batch4-hedged.2026-10-21",
+    "read.batch8-postgres-logical.2026-10-22",
+    "read.batch2-debezium-outbox.2026-10-21"
   ]
 }

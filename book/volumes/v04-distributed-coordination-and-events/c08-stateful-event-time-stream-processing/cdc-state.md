@@ -51,7 +51,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-20"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 # CDC, task state and changelog replay

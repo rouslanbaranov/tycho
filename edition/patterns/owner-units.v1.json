@@ -5507,62 +5507,305 @@
         "heading": "Change Data Capture (CDC)",
         "anchor": "change-data-capture-cdc",
         "level": 3,
-        "line": 129,
+        "line": 154,
         "unit_kind": "dedicated",
         "unit_terms": [
           "change data capture reads",
           "replayable stream",
-          "per-key order",
-          "snapshot-to-stream gap"
+          "replication slot",
+          "transaction metadata"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
           "quote": "Change data capture reads the database's own change log and turns committed row changes into a replayable stream.",
-          "reason": "Defines reading the database change log as a replayable stream.",
+          "reason": "PostgreSQL defines logical decoding as extracting persistent changes; Debezium architecture places a source connector on a logical replication stream and emits one change event per captured row-level operation. The committed-change reading is Tycho.",
           "binding": {
-            "source_id": "src.postgres-logical",
-            "ledger_record": "read.batch8-postgres-logical.2026-10-22",
-            "section": "Chapter 29. Logical Replication",
-            "quote": "When logical replication of a table typically starts, PostgreSQL takes a snapshot of the table's data on the publisher database and copies it to the subscriber. Once complete, changes on the publisher since the initial copy are sent continually to the subscriber.",
-            "revision": "cc529913e4400bf21371fbf6f5c74aa7c21b9b6380725f319a6d287028a49065"
-          }
+            "source_id": "src.postgres-logical-decoding",
+            "ledger_record": "read.postgres-logical-decoding.2026-10-31",
+            "section": "47.2.1 Logical Decoding",
+            "quote": "Logical decoding is the process of extracting all persistent changes to a database's tables into a coherent, easy to understand format which can be interpreted without detailed knowledge of the database's internal state.",
+            "revision": "110100f9a62614e0d0472bb87b55b7919f97bbc1078559fd80beeb719265d46b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.debezium-architecture",
+              "ledger_record": "read.debezium-architecture.2026-10-31",
+              "section": "Debezium Architecture",
+              "quote": "The PostgreSQL connector reads from a logical replication stream.",
+              "revision": "edcad02fd693cf95959d5dd2bf70644f160b36994f831e785cf49d0d11ecd142"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Overview",
+              "quote": "The connector produces a change event for every row-level insert, update, and delete operation that was captured and sends change event records for each table in a separate Kafka topic.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The stream must preserve per-key order and transaction grouping",
-          "reason": "Source states order/transactional consistency, not a durable capture offset/resume invariant."
+          "state": "supported",
+          "quote": "The stream must preserve per-key order and transaction grouping.",
+          "reason": "A logical slot replays changes in origin order; Kafka Connect writes records in generated order; Debezium uses the primary key as the event key and emits BEGIN/END plus total_order and data_collection_order metadata. The key/partition rule and idempotent apply are Tycho; no unit proves global order.",
+          "binding": {
+            "source_id": "src.postgres-logical-decoding",
+            "ledger_record": "read.postgres-logical-decoding.2026-10-31",
+            "section": "47.2.2 Replication Slots",
+            "quote": "In the context of logical replication, a slot represents a stream of changes that can be replayed to a client in the order they were made on the origin server.",
+            "revision": "110100f9a62614e0d0472bb87b55b7919f97bbc1078559fd80beeb719265d46b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Streaming changes",
+              "quote": "The Kafka Connect process asynchronously writes the change event records in the same order in which they were generated to the appropriate Kafka topic.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Change event keys",
+              "quote": "For a given table, the change event's key has a structure that contains a field for each column in the primary key of the table at the time the event was created.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Transaction metadata",
+              "quote": "For every transaction BEGIN and END, Debezium generates an event that contains the following fields:",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Transaction metadata",
+              "quote": "The absolute position of the event among all events generated by the transaction.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "truncate events",
+              "quote": "Ordering is guaranteed only for topics that use a single partition.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Overview",
+              "quote": "Logical decoding does not support DDL changes. This means that the connector is unable to report DDL change events back to consumers.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Connector lag, slot retention, schema changes and a snapshot-to-stream gap are common.",
-          "reason": "Source names conflict possibility but no gap recovery or reconciliation rule."
+          "reason": "Debezium records the WAL offset, restarts from it, can emit duplicates during recovery and exposes lag and slot fields; PostgreSQL warns that slots retain resources and can invalidate. The monitoring and resnapshot procedure is Tycho.",
+          "binding": {
+            "source_id": "src.debezium-postgresql",
+            "ledger_record": "read.debezium-postgresql.2026-10-31",
+            "section": "Overview",
+            "quote": "If the connector stops for any reason (including communication failures, network problems, or crashes), upon restart the connector continues reading the WAL where it last left off. This includes snapshots. If the connector stops during a snapshot, the connector begins a new snapshot when it restarts.",
+            "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Snapshots",
+              "quote": "If the connector fails, is rebalanced, or stops after Step 1 begins but before Step 5 completes, upon restart the connector begins a new snapshot.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Snapshots",
+              "quote": "After the connector completes its initial snapshot, the PostgreSQL connector continues streaming from the position that it read in Step 2. This ensures that the connector does not miss any updates.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Streaming changes",
+              "quote": "Periodically, Kafka Connect records the most recent offset in another Kafka topic.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Streaming changes",
+              "quote": "For the PostgreSQL connector, the LSN recorded in each change event is the offset.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Behavior when things go wrong",
+              "quote": "Debezium is a distributed system that captures all changes in multiple upstream databases; it never misses or loses an event.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "Behavior when things go wrong",
+              "quote": "Debezium, like Kafka, provides at least once delivery of change events.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.debezium-postgresql",
+              "ledger_record": "read.debezium-postgresql.2026-10-31",
+              "section": "WAL disk space consumption",
+              "quote": "The LSN up to which the connector has received data is available in the confirmed_flush_lsn column of the server's pg_replication_slots view. Data that is older than this LSN is no longer available, and the database is responsible for reclaiming the disk space.",
+              "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+            },
+            {
+              "source_id": "src.postgres-logical-decoding",
+              "ledger_record": "read.postgres-logical-decoding.2026-10-31",
+              "section": "47.2.2 Replication Slots",
+              "quote": "The current position of each slot is persisted only at checkpoint, so in the case of a crash the slot might return to an earlier LSN, which will then cause recent changes to be sent again when the server restarts.",
+              "revision": "110100f9a62614e0d0472bb87b55b7919f97bbc1078559fd80beeb719265d46b"
+            },
+            {
+              "source_id": "src.postgres-logical-decoding",
+              "ledger_record": "read.postgres-logical-decoding.2026-10-31",
+              "section": "47.2.2 Replication Slots",
+              "quote": "Replication slots persist across crashes and know nothing about the state of their consumer(s). They will prevent removal of required resources even when there is no connection using them.",
+              "revision": "110100f9a62614e0d0472bb87b55b7919f97bbc1078559fd80beeb719265d46b"
+            },
+            {
+              "source_id": "src.postgres-replication-config",
+              "ledger_record": "read.postgres-slot-retention.2026-10-31",
+              "section": "19.6.2 Primary Server, max_slot_wal_keep_size and idle_replication_slot_timeout",
+              "quote": "Specify the maximum size of WAL files that replication slots are allowed to retain in the pg_wal directory at checkpoint time.",
+              "revision": "3b73becf0b4589da4e76213e09044db30bdc3de4307c9c5617933f83db11f57a"
+            },
+            {
+              "source_id": "src.postgres-replication-config",
+              "ledger_record": "read.postgres-slot-retention.2026-10-31",
+              "section": "19.6.2 Primary Server, max_slot_wal_keep_size and idle_replication_slot_timeout",
+              "quote": "Otherwise, if restart_lsn of a replication slot falls behind the current LSN by more than the given size, the standby using the slot may no longer be able to continue replication due to removal of required WAL files.",
+              "revision": "3b73becf0b4589da4e76213e09044db30bdc3de4307c9c5617933f83db11f57a"
+            },
+            {
+              "source_id": "src.kafka-connect-guide",
+              "ledger_record": "read.kafka-connect-offsets.2026-10-31",
+              "section": "Streams and Records",
+              "quote": "In addition to the key and value, records (both those generated by sources and those delivered to sinks) have associated stream IDs and offsets. These are used by the framework to periodically commit the offsets of data that have been processed so that in the event of failures, processing can resume from the last committed offsets, avoiding unnecessary reprocessing and duplication of events.",
+              "revision": "8edc639a984e1701c304d2e3bd15bde87451c6b47e5937c16d30dc59121f5cfb"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be preferable when log access is unavailable or the team cannot operate a connector.",
-          "reason": "Source does not name outbox, dual-write or scheduled extraction alternatives."
+          "state": "supported",
+          "quote": "A transactional outbox plus relay or scheduled extraction may be preferable when log access is unavailable or the team cannot operate a connector. Dual-write with reconciliation remains an unbound Tycho heuristic.",
+          "reason": "The outbox unit states the outbox pattern, event-ID deduplication and partition-order key; Kafka Connect documents timestamp-column incremental extraction and framework-managed offsets. Dual-write is not evaluated by any selected unit.",
+          "binding": {
+            "source_id": "src.debezium-outbox",
+            "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+            "section": "Outbox Event Router",
+            "quote": "An outbox pattern implementation avoids inconsistencies between a service's internal state (as typically persisted in its database) and state in events consumed by services that need the same data.",
+            "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.debezium-outbox",
+              "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+              "section": "Outbox Event Router",
+              "quote": "The outbox pattern is a way to safely and reliably exchange data between multiple (micro) services.",
+              "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+            },
+            {
+              "source_id": "src.debezium-outbox",
+              "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+              "section": "Basic outbox table",
+              "quote": "Contains the unique ID of the event. In an outbox message, this value is a header. You can use this ID, for example, to remove duplicate messages.",
+              "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+            },
+            {
+              "source_id": "src.debezium-outbox",
+              "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+              "section": "Basic outbox table",
+              "quote": "This is important for maintaining correct order in Kafka partitions.",
+              "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+            },
+            {
+              "source_id": "src.kafka-connect-guide",
+              "ledger_record": "read.kafka-connect-offsets.2026-10-31",
+              "section": "Core Concepts and APIs",
+              "quote": "One possible mapping uses a timestamp column to generate queries incrementally returning new data, and the last queried timestamp can be used as the offset.",
+              "revision": "8edc639a984e1701c304d2e3bd15bde87451c6b47e5937c16d30dc59121f5cfb"
+            },
+            {
+              "source_id": "src.kafka-connect",
+              "ledger_record": "read.kafka-connect-overview.2026-10-31",
+              "section": "Overview",
+              "quote": "Kafka Connect is a tool for scalably and reliably streaming data between Apache Kafka and other systems.",
+              "revision": "1ff3963b0c6f83ea94e39a359c52f6b6995a300772b707c35b1f2e85f34ce288"
+            },
+            {
+              "source_id": "src.kafka-connect",
+              "ledger_record": "read.kafka-connect-overview.2026-10-31",
+              "section": "Overview",
+              "quote": "Automatic offset management - with just a little information from connectors, Kafka Connect can manage the offset commit process automatically",
+              "revision": "1ff3963b0c6f83ea94e39a359c52f6b6995a300772b707c35b1f2e85f34ce288"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "change-data-capture-cdc",
         "question": "Should database changes be captured as a replayable stream instead of dual-written by the application?",
-        "competing_alternative": "Transactional outbox plus relay, dual-write with reconciliation or scheduled batch extraction. Reverse when log access is unavailable, the source cannot retain a slot, or connector operations exceed the replay benefit.",
+        "competing_alternative": "A transactional outbox plus relay, or scheduled extraction. Dual-write with reconciliation remains an unbound heuristic. Debezium's Outbox Event Router says an outbox implementation \"avoids inconsistencies between a service's internal state ... and state in events consumed by services that need the same data\"; its event ID can \"remove duplicate messages,\" and its event key is \"important for maintaining correct order in Kafka partitions.\" Kafka Connect documents a source connector that \"would import a relational database into Kafka\" and a mapping that \"uses a timestamp column to generate queries incrementally returning new data\"; that is a scheduled-extraction shape, not a log tail. No bound unit evaluates dual-write with reconciliation. **Tycho choice rule:** reverse the CDC choice when log access is unavailable, the source cannot retain a slot, schema changes cannot be governed, or connector operations exceed the replay benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch8-postgres-logical.2026-10-22",
-        "source_id": "src.postgres-logical",
+        "ledger_record": "read.postgres-logical-decoding.2026-10-31",
+        "source_id": "src.postgres-logical-decoding",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "ledger_record": "read.debezium-architecture.2026-10-31",
+            "source_id": "src.debezium-architecture",
+            "revision": "edcad02fd693cf95959d5dd2bf70644f160b36994f831e785cf49d0d11ecd142"
+          },
+          {
+            "ledger_record": "read.debezium-postgresql.2026-10-31",
+            "source_id": "src.debezium-postgresql",
+            "revision": "395a57ba6eca7820dc72092c270d46332738e53035fc191d1df2007b97a7d547"
+          },
+          {
+            "ledger_record": "read.postgres-slot-retention.2026-10-31",
+            "source_id": "src.postgres-replication-config",
+            "revision": "3b73becf0b4589da4e76213e09044db30bdc3de4307c9c5617933f83db11f57a"
+          },
+          {
+            "ledger_record": "read.kafka-connect-offsets.2026-10-31",
+            "source_id": "src.kafka-connect-guide",
+            "revision": "8edc639a984e1701c304d2e3bd15bde87451c6b47e5937c16d30dc59121f5cfb"
+          },
+          {
+            "ledger_record": "read.kafka-connect-overview.2026-10-31",
+            "source_id": "src.kafka-connect",
+            "revision": "1ff3963b0c6f83ea94e39a359c52f6b6995a300772b707c35b1f2e85f34ce288"
+          },
+          {
+            "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+            "source_id": "src.debezium-outbox",
+            "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section 1 explains committed-change observation and cursor gaps; later sections cover Kafka Streams state."
+      "notes": "Four dimensions bound 2026-10-31 to Debezium architecture and PostgreSQL connector docs, PostgreSQL 18 logical decoding and replication-slot settings, Kafka Connect offset guidance and the Debezium outbox unit; invariant order is conditional; dual-write remains an unbound heuristic; coverage is self-checked."
     },
     {
       "pattern_id": "tycho.pattern.materialized-view",
@@ -16502,11 +16745,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 92,
-    "failure_recovery_supported": 87,
-    "alternative_supported": 92,
-    "technical_partial_bounded": 15,
-    "technical_partial": 55,
+    "invariant_supported": 93,
+    "failure_recovery_supported": 88,
+    "alternative_supported": 93,
+    "technical_partial_bounded": 16,
+    "technical_partial": 54,
     "technical_name_only": 0,
     "technical_sufficient": 75,
     "decision_partial_bounded": 70,

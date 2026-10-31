@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "c8e82213e9a57bca1ee0c3bcaddf18dbde19cb848b5149d117828ddbba2cfb06",
-    "ledger_sha256": "84e426edfe21f010840520572e00c2a6990c6436154ba5da94254d5e3d71d440",
-    "card_batches_sha256": "46ff0f49c281719cbe49fcb0b49ae57c027d16d8ebb848c01a3e0f4ffa005b24",
-    "route_index_sha256": "f11c0b88cb71e768d22645f6e9266acb91c7af871528671963c5504852b18d3c",
-    "coverage_sha256": "298ca7b811f3d3393eefa012d4df8863dc2909084a2dc0a2ec527ae3e807ab26"
+    "registry_sha256": "41e485b0ce6dad9542128d5c4662fbccd1f4aa658d5d8cc0614adc193ef3a247",
+    "ledger_sha256": "5e5a8ce89f934c2b7fab5af275c96177d16059007558cfc06cf509710fb272be",
+    "card_batches_sha256": "d8238084e0a625c194f4f4af713d26b96e1edb40ff61479ebd779d97a95665f6",
+    "route_index_sha256": "b44d852df491e82267690c9eeeb3379526f938a7295891d23791202399c9fb17",
+    "coverage_sha256": "315b2f89d8216cce11ece62864a5f214181166f7ee2824cbf290dfb3d4758076"
   },
   "dimensions": [
     "identity",
@@ -24,7 +24,7 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 513,
+    "pages": 514,
     "entries": 145,
     "cards": 145,
     "routes": 536,
@@ -3200,6 +3200,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.b92e251caf4b47d58bd3101fde058206",
+      "path": "book/volumes/v11-pattern-atlas/c04-consistency-events/change-data-capture-cdc.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.5c7d91711de3463eba59be2b16c607e4",
       "path": "book/volumes/v11-pattern-atlas/c04-consistency-events/cqrs.md",
       "kind": "page",
@@ -4191,11 +4198,11 @@
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ],
@@ -5359,18 +5366,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should a duplicate request be issued after a latency threshold to reduce tail latency?"
@@ -7682,13 +7689,13 @@
     },
     {
       "pattern_id": "tycho.pattern.change-data-capture-cdc",
-      "technical": "partial",
+      "technical": "partial-bounded",
       "decision": "partial-bounded",
-      "overall": "partial",
+      "overall": "partial-bounded",
       "card": true,
-      "owner_state": "partial",
+      "owner_state": "partial-bounded",
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ]
@@ -8271,14 +8278,14 @@
     },
     {
       "pattern_id": "tycho.pattern.hedged-requests",
-      "technical": "partial-bounded",
-      "decision": "partial-bounded",
-      "overall": "partial-bounded",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
       "card": true,
-      "owner_state": "partial-bounded",
+      "owner_state": "sufficient",
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },
