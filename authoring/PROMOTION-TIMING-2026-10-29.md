@@ -28,12 +28,12 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 59 sufficient of 145; 7 owner-accepted of 59.
+Current: 60 sufficient of 145; 7 owner-accepted of 60.
 
-Remaining to 145: 86 entries. All 39 observed entries run 6-303 minutes (mean 41.8), including
+Remaining to 145: 85 entries. All 40 observed entries run 6-303 minutes (mean 46.8), including
 pre-optimization entries and review/remediation outliers. Using tiered
 estimates calibrated to that mean gives 37-79 focused hours, or
-**4.0-8.3 days of continuous work**. Base is **5.8 days**. The dominant cost is the 30 entries at 2/4 that still need
+**3.9-8.2 days of continuous work**. Base is **5.7 days**. The dominant cost is the 29 entries at 2/4 that still need
 two dimensions, not the three entries at 3/4.
 
 ## Report block
@@ -64,11 +64,11 @@ Promotion window estimates, minutes: TTL 43, Fencing 6, Gatekeeper 7,
 Health 7, Multi-Leader 8, Message Filter 11, Least Privilege 15,
 Microservices 10, Structured Logging 35, Strangler Fig 60, Request-Reply 120,
 Clean/Onion 45, Server-side Discovery 60, Vertical Scaling 40, Saga 35,
-Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monolith 40, Database per Service 40, BFF 40, CQRS 40, Bounded Context 35, Canary 38, SWR 32, Deadline 32, Quorum 32, CDN 35, Multi-level 33, Sharding 60, Health 45, Graceful 36, Immutable 34, Causal 303 (includes reviewer wait), Stamps 23, Polyglot 30, Queue 21. Data:
+Idempotent 40, DLQ 45, 2PC 50, Scatter-Gather 35, API Gateway 40, Modular Monolith 40, Database per Service 40, BFF 40, CQRS 40, Bounded Context 35, Canary 38, SWR 32, Deadline 32, Quorum 32, CDN 35, Multi-level 33, Sharding 60, Health 45, Graceful 36, Immutable 34, Causal 303 (includes reviewer wait), Stamps 23, Polyglot 30, Queue 21, Idempotency 240 (includes reviewer wait). Data:
 `authoring/promotion-entry-timing-2026-10-29.json`; rendered by
 `scripts/promotion_entry_chart.py`. The first bar is pre-optimization; later
-bars include review and remediation cycles. Across all 39 entries the mean is
-41.8 minutes (range 6-303); recent entries use measured intervals between promotion commits; the dashed band forecasts the next single entry at
+bars include review and remediation cycles. Across all 40 entries the mean is
+46.8 minutes (range 6-303); recent entries use measured intervals between promotion commits; the dashed band forecasts the next single entry at
 that mean, not a promise. Request-Reply is an outlier because it needed four
 delta cycles. These are timestamp estimates, not stopwatch measurements.
 
@@ -76,9 +76,9 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ![Promotion forecast](promotion-forecast-2026-10-30.svg)
 
-Remaining tiers at 59 sufficient: 1 entry 4/4, 4 entries 3/4,
-30 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
-scenarios: optimistic **4.0**, base **5.8**, pessimistic **8.3**.
+Remaining tiers at 60 sufficient: 1 entry 4/4, 4 entries 3/4,
+29 entries 2/4, 22 entries 1/4, 29 entries 0/4. Continuous-day
+scenarios: optimistic **3.9**, base **5.7**, pessimistic **8.2**.
 Base assumes 50/45/34/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
 `scripts/promotion_forecast_chart.py`. These are planning estimates,

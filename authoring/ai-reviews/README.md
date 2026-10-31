@@ -142,3 +142,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer | #540 Deployment Stamps | pass | `2026-10-31-deployment-stamps-deepseek.md` | `1120fb60de445fe290d7f0ecefc16b80ff807effc992f084377346c6a7b5c8a1` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Polyglot Persistence | pass | `2026-10-31-polyglot-persistence-deepseek.md` | `93e553eec4c284195cb2efd8ce262a8dbd00257cedb6c0b72e77e52c549d91ab` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Queue-Based Load Leveling | pass | `2026-10-31-queue-based-load-leveling-deepseek.md` | `ea73e1b1f5de2564d0d928022f42d32e7a4de720e8b63c465b4b524d251150ae` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Idempotency Key | pass | `2026-10-31-idempotency-key-deepseek.md` | `81a8daaf0467558b6a7bb1297169bfe8fb68a0be39e9f9288d3ab7cb29dc4a2e` |
