@@ -28,19 +28,26 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.aws-backoff"
+    - "src.grpc-hedging"
     - "src.sre-cascading"
     - "src.tail-at-scale"
   claim_ids: []
   status: "source-linked"
-  notes: "Bounded question from tycho.page.eb130a7f820544a2ba0e0883c0ce587b; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  notes: >-
+    Bounded question from tycho.page.eb130a7f820544a2ba0e0883c0ce587b; four
+    public units inspected 2026-10-31: Google SRE cascading-failure
+    cancellation, the 2013 Tail at Scale hedged-request section, gRPC request
+    hedging, and AWS retry/backoff guidance. Exact inherited citation rows and
+    limits remain in the chapter source ledger. New synthetic additions are
+    separately labelled.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
-source_inspection_date: null
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # Deadlines, hedging and bounded degradation
@@ -84,30 +91,113 @@ An implementation-aware deadline design records:
 <!-- tycho-question-source:tycho.page.eb130a7f820544a2ba0e0883c0ce587b:4 -->
 ## 4. Hedging, replication and selective degradation
 
-A **hedged request** sends an additional equivalent read to another viable replica when an earlier attempt appears unexpectedly slow, then uses an acceptable response and cancels remaining attempts. It can reduce an independent slow-replica tail; it can also double work exactly when a shared dependency is already saturated. The 2013 *Tail at Scale* paper describes deferred hedges and other tail-tolerance mechanisms; it is not evidence that hedging is safe in all deployments.
+A **hedged request** sends the same read to another replica or service instance when
+the first attempt is slow, uses the first acceptable response, and cancels the
+remaining attempts. Google SRE's
+[cascading-failures chapter](https://sre.google/sre-book/addressing-cascading-failures/)
+says systems send "RPCs to a primary server, then some time later, send the same
+request to other instances of the same service" and then "cancel the
+now-superfluous requests." The 2013 *Tail at Scale* paper calls this a hedge and
+reports that deferring the second request until the first has been outstanding
+beyond the 95th-percentile expected latency limited the extra load to about 5% in
+its example. [gRPC's request-hedging guide](https://grpc.io/docs/guides/request-hedging/)
+implements the same shape: multiple copies of the same request go to different
+backends, the first response wins, and outstanding copies are canceled.
 
-| Mitigation | Needed condition | Failure / contraindication |
-|---|---|---|
-| Improve slow path | The slow suboperation is identified in traces and controlled samples | Tuning a fast dependency changes no parent critical path |
-| Parallelize independent reads | Outputs truly independent and resources available | Fan-out increases load, pool contention and tail exposure |
-| Hedge delayed reads | Equivalent replicas; bounded speculative budget; cancellation; measured independent tails | Shared bottleneck, expensive writes, inconsistent replicas |
-| Retry with jitter | Transient failure, safely repeatable effect and spare capacity | Retries magnify overload; caller deadline already expired |
-| Return partial / cached result | Business semantics explicitly permit stale or absent optional data | Incomplete mandatory result presented as valid |
-| Shed excess work | Defined admission priority, bounded queue and explicit caller outcome | Rejection without backoff creates retry storm |
-| Async durable job | User need not block until completion; job state survives crash | Reinterpreting a synchronous contract without client agreement |
+**Invariant.** A hedge is defensible only when four conditions hold together.
+(1) The replicas must be equivalent for the operation: the paper issues the same
+request to multiple replicas, gRPC sends it to different backends, and SRE sends it
+to other instances of the same service. (2) The speculation must be bounded:
+gRPC makes `maxAttempts` mandatory and caps values above 5 at 5, and its retry
+throttling cancels further hedges when the token count falls to the threshold.
+(3) Cancellation must stop the losers: SRE says the client sends cancellation
+messages for the now-superfluous requests and that cancellation should propagate
+through the stack; gRPC cancels outstanding requests when a response arrives.
+(4) The delay must come from the measured latency distribution of that request
+class, not a guess: the paper uses the 95th percentile and reports a
+99.9th-percentile effect in its benchmark. **Tycho rule:** record the measured
+percentile, the replica-equivalence check, the attempt cap and the cancellation
+evidence; a hedge without all four is an unbounded duplicate.
 
-**Hedged failure and recovery.** Hedging can double work exactly when a shared dependency
-is saturated; it also risks duplicate side effects if the read is not truly equivalent.
-Cap the speculative budget, cancel losers promptly, measure whether replicas have
-independent tails, and disable hedging when saturation is shared. If cancellation cannot
-stop the duplicate, treat the operation as unsafe until its effect is idempotent.
+The decision aid below is Tycho guidance; the labelled paragraphs are the bound
+claims.
 
-**Alternative.** Retry with jitter, improve the slow path, or parallelize truly
-independent reads may be preferable when replicas share a bottleneck or the operation is
-not safely repeatable. Reverse the hedging choice when its doubled work exceeds the tail
-benefit or the path is already deadline-bound.
+- **Hedge a delayed read.** Require equivalent replicas, bounded attempts,
+  cancellation and a delay from a measured latency percentile. A shared
+  bottleneck, an expensive write or non-equivalent replicas contraindicate it.
+- **Single measured timeout.** Choose the timeout from the downstream latency
+  percentile; a timeout below normal latency or late work that still consumes
+  capacity is a failure.
+- **Retry with backoff.** Retry only a transient, safely repeatable effect with a
+  retry budget; retries amplify overload and a caller deadline can expire first.
+- **Partial or cached result.** Return it only when semantics permit stale or
+  missing optional data; an incomplete mandatory result presented as valid is a
+  failure.
+- **Shed excess work.** Require admission priority, a bounded queue and an
+  explicit caller outcome; rejection without backoff creates a retry storm.
+- **Async durable job.** Use it when the caller need not block and job state
+  survives a crash; do not reinterpret a synchronous contract without agreement.
 
-Speculative duplicate **writes** are not a general tail-latency technique. Different replicas may accept divergent effects, and a client receiving one reply cannot assume the other attempt did nothing. See [outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md) and [HTTP/RPC operation identity](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md) before recommending retries for effects.
+**Failure and recovery.** A hedge adds a second copy of the work and can raise load
+when a shared dependency is saturated. The paper warns that naive implementations
+"add unacceptable additional load"; gRPC says they "could add significant load to
+the backend servers" and provides throttling "to prevent server overload"; AWS says
+retries under overload "can make matters significantly worse" and "can even delay
+recovery". Duplicate effects are a separate hazard. gRPC describes hedging as
+"retrying the original RPC before a failure is even received"; AWS warns that a
+timeout or failure "doesn't necessarily mean that side effects haven't happened"
+and that APIs with side effects "aren't safe to retry unless they provide
+idempotency" because duplicate side effects are possible. **Tycho inference:** a
+hedged write can therefore duplicate an effect even when the client accepts only one
+response; treat a speculative write as unsafe until the effect has an idempotency
+identity and cancellation is shown to stop committed work. Disable the hedge when
+replicas share a bottleneck, when the operation is not safely repeatable, or when
+cancellation cannot stop the duplicate.
+
+**Alternative.** Prefer a single bounded attempt with a timeout chosen from the
+measured latency distribution, or a retry with backoff, jitter and a token-bucket
+retry budget, when the replicas share a bottleneck or the operation is not safely
+repeatable. AWS recommends choosing a timeout from the downstream latency
+percentile (its example uses p99.9) and describes jitter as spreading retries in
+time and a local token bucket as limiting them. gRPC classifies hedging as one of
+two retry policies, so its ordinary retry policy is the competing configuration.
+**Tycho choice rule:** reverse the hedge when the extra copy's measured tail benefit
+is smaller than its added load, or when a loser can commit an effect before
+cancellation.
+
+**Unbound heuristics.** Improving a known slow suboperation or parallelizing truly
+independent reads can also help, but neither is a substitute for the hedge's
+equivalence and cancellation conditions; this page keeps both as Tycho guidance
+because the bound units do not test them.
+
+Speculative duplicate **writes** are not a general tail-latency technique. Different
+replicas may accept divergent effects, and a client receiving one reply cannot
+assume the other attempt did nothing. See
+[outbox/idempotency](../../../distributed/transactional-outbox-and-idempotency.md)
+and
+[HTTP/RPC operation identity](../../v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md)
+before recommending retries for effects.
+
+**Bound source limits.** Four public units were inspected on 2026-10-31: Google
+SRE, *Addressing Cascading Failures*, section *Cancellation propagation*; Dean and
+Barroso, *The Tail at Scale*, CACM February 2013, section *Hedged requests*; gRPC,
+*Request Hedging*; and AWS Builders' Library, *Timeouts, Retries, and Backoff with
+Jitter*. The exact units are
+<https://sre.google/sre-book/addressing-cascading-failures/>,
+<https://mags.acm.org/communications/201302/?pg=79>,
+<https://grpc.io/docs/guides/request-hedging/> and
+<https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/>.
+Bound and retained records: `read.sre-cascading-hedging.2026-10-31`,
+`read.tail-at-scale-hedged.2026-10-31`, `read.grpc-hedging.2026-10-31` and
+`read.aws-backoff-hedging.2026-10-31`; `read.batch4-sre-cascading.2026-10-21` and
+`read.aws-builders-timeouts-retries.2026-10-31` are retained records. The units
+are a book chapter, a research article, documentation and an engineering article,
+not benchmarks or production observations. The measured-percentile example is the
+paper's 2013 benchmark, not a prediction for another deployment. The operational
+rule to record the percentile, equivalence check, attempt cap and cancellation
+evidence is Tycho guidance; the sources do not establish a universal hedge delay,
+attempt count or cancellation guarantee. The slow-path and independent-read options
+are Tycho heuristics, not bound claims.
 
 <!-- /tycho-question-source -->
 
