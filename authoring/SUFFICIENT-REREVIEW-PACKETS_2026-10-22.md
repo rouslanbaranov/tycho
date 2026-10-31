@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 53 |
+| Reviewed by independent agent | 52 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 82, "reviewed-by-independent-agent": 53}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 83, "reviewed-by-independent-agent": 52}.
 
 ## Review procedure
 
@@ -251,7 +251,7 @@ blank verdict template in the machine-readable file.
 
 - **Feature Flags / Feature Toggles**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Federated Identity**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

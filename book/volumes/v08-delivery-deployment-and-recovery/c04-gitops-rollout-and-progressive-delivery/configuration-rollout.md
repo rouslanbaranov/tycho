@@ -43,9 +43,7 @@
   "evidence_scope": {
     "source_ids": [
       "src.appconfig-rollout",
-      "src.appconfig-validation",
-      "src.fowler-feature-toggles",
-      "src.aws-branch"
+      "src.appconfig-validation"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -59,7 +57,7 @@
   },
   "authored_at": "2026-10-20",
   "updated_at": "2026-10-31",
-  "source_inspection_date": "2026-10-31",
+  "source_inspection_date": "2026-10-20",
   "content_verified_at": null
 }
 ---

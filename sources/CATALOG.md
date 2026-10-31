@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 307.
+Inventory date: 2026-10-31. Entries: 310.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -252,6 +252,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.flagger-deployment-strategies / core | [Deployment Strategies](https://docs.flagger.app/usage/deployment-strategies) — Flux project | Canary, A/B, blue/green and traffic-mirroring strategies, including idempotency conditions for mirrored requests. | admitted-for-research / public-web-or-author-download |
 | src.aws-blue-green-deployments / core | [Blue/Green Deployments on AWS](https://docs.aws.amazon.com/whitepapers/latest/blue-green-deployments/welcome.html) — Amazon Web Services | Blue/green environment boundary and data-tier compatibility, including shared data stores and schema-change order. | admitted-for-research / public-web-or-author-download |
 | src.aws-immutable-infrastructure / core | [REL08-BP04 Deploy using immutable infrastructure](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_tracking_change_management_immutable_infrastructure.html) — Amazon Web Services | Immutable deployment reproducibility, drift detection and rollback for the immutable-infrastructure invariant and failure/recovery dimensions. | admitted-for-research / public-web-or-author-download |
+| src.launchdarkly-flags / core | [LaunchDarkly feature flag documentation](https://launchdarkly.com/docs/home/flags/killswitch) — LaunchDarkly | Kill switch, change history, temporary/permanent lifecycle and server-side evaluation rules for the feature-flags owner unit. | admitted-for-research / public-web-or-author-download |
+| src.azure-app-configuration / core | [Azure App Configuration feature management documentation](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management) — Microsoft | Feature management, disabled default, canary rollout and Entra ID/RBAC authorization for the feature-flags owner unit. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 
@@ -411,6 +413,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.ibm-immutable-infrastructure / supporting | [What is Immutable Infrastructure?](https://www.ibm.com/think/topics/immutable-infrastructure) — IBM | Public overview of immutable infrastructure replacement and state boundaries. | admitted-for-research / public-web-or-author-download |
 | src.hashicorp-immutable-vms / core | [Create immutable virtual machines](https://developer.hashicorp.com/well-architected-framework/define-and-automate-processes/define/immutable-infrastructure/virtual-machines) — HashiCorp | Immutable VM rebuild, rollback and image metadata for the immutable-infrastructure failure/recovery dimension. | admitted-for-research / public-web-or-author-download |
 | src.fowler-parallel-change / core | [Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) — Martin Fowler | Primary article for the expand/migrate/contract protocol, its old-client rule, downside and alternatives. | admitted-for-research / public-web-or-author-download |
+| src.openfeature-spec / core | [OpenFeature specification](https://openfeature.dev/specification/sections/flag-evaluation/) — OpenFeature (CNCF) | Vendor-independent evaluation API, default-value contract and provider staleness for the feature-flags owner unit. | admitted-for-research / public-web-or-author-download |
 
 ## Scalability
 

@@ -11837,7 +11837,7 @@
         "unit_terms": [
           "safe branch",
           "snapshot age",
-          "audit every override",
+          "audit trail",
           "kill switch"
         ]
       },
@@ -11845,35 +11845,211 @@
         "mechanism": {
           "state": "supported",
           "quote": "A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment, with a default and kill switch.",
-          "reason": "Defines the flag mechanism.",
+          "reason": "Fowler defines the toggle mechanism and categories; OpenFeature adds the vendor-independent evaluation API, Microsoft decouples release from deployment, and AWS AppConfig serves versioned configuration through a deployed-data cache. The runtime-decision reading is Tycho synthesis.",
           "binding": {
             "source_id": "src.fowler-feature-toggles",
             "ledger_record": "read.batch5-fowler-feature-toggles.2026-10-21",
             "section": "Categories of toggles",
             "quote": "We've seen the fundamental facility provided by Feature Toggles - being able to ship alternative codepaths within one deployable unit and choose between them at runtime.",
             "revision": "d4e1a56d2d8c96cdcb278ec7fa16caf9805397e6a91fb862bf8642292a270e8d"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.openfeature-spec",
+              "ledger_record": "read.openfeature-flag-evaluation.2026-10-31",
+              "section": "Overview",
+              "quote": "The evaluation API allows for the evaluation of feature flag values, independent of any flag control plane or vendor.",
+              "revision": "d724a522d5164572df123630304c552d8657eef12773de050e2b9ed8c7de07d6"
+            },
+            {
+              "source_id": "src.azure-app-configuration",
+              "ledger_record": "read.azure-feature-management-overview.2026-10-31",
+              "section": "Feature management overview",
+              "quote": "Feature management is a software-development practice that decouples feature release from code deployment and enables quick changes to feature availability on demand.",
+              "revision": "7c503850c57f7d1258b98f94991cf6a21addedaca19431d2bc090d19656e7eb2"
+            },
+            {
+              "source_id": "src.appconfig-rollout",
+              "ledger_record": "read.aws-appconfig-feature-flags.2026-10-31",
+              "section": "Deploying feature flags and configuration data in AWS AppConfig",
+              "quote": "Caches a copy of the data so it is ready to be retrieved by your application. This cached copy is called the deployed data.",
+              "revision": "07b1d0eefcbeb5e0d7eb4c38bb0f653c5e7cf8fb02b0ffe43219ab2c168101cf"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Flags never replace an authorization check.",
-          "reason": "Fowler text has no authorization-check rule; Permissioning Toggles only expose groups."
+          "reason": "Microsoft places authorization of configuration requests in Entra ID/RBAC, OpenFeature exposes non-authoritative STALE values, and LaunchDarkly records each change with actor and diff; the rule that a flag never replaces an authorization decision is Tycho.",
+          "binding": {
+            "source_id": "src.azure-app-configuration",
+            "ledger_record": "read.azure-appconfig-rbac.2026-10-31",
+            "section": "Overview",
+            "quote": "Azure App Configuration supports authorization of requests to App Configuration stores using Microsoft Entra ID.",
+            "revision": "2859050bc696e227793fba413cd43b288ec3a4955644ef9596a338ee40a076f2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-app-configuration",
+              "ledger_record": "read.azure-appconfig-rbac.2026-10-31",
+              "section": "Overview",
+              "quote": "With Microsoft Entra ID, you can leverage Azure role-based access control (Azure RBAC) to grant permissions to security principals, which can be user principals, managed identities, or service principals.",
+              "revision": "2859050bc696e227793fba413cd43b288ec3a4955644ef9596a338ee40a076f2"
+            },
+            {
+              "source_id": "src.openfeature-spec",
+              "ledger_record": "read.openfeature-types.2026-10-31",
+              "section": "Provider Status",
+              "quote": "The provider's cached state is no longer valid and may not be up-to-date with the source of truth.",
+              "revision": "e2741a640b15b7eb7ee13640a383f342f0aaa8f9f96a2483cf3fe09581622ff6"
+            },
+            {
+              "source_id": "src.openfeature-spec",
+              "ledger_record": "read.openfeature-types.2026-10-31",
+              "section": "Evaluation Details",
+              "quote": "The resolved value is non-authoritative or possibly out of date",
+              "revision": "e2741a640b15b7eb7ee13640a383f342f0aaa8f9f96a2483cf3fe09581622ff6"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-change-history.2026-10-31",
+              "section": "View the change history",
+              "quote": "LaunchDarkly keeps a running log of changes made to feature flags and other resources in each environment.",
+              "revision": "1b35ea724252ceb84244f3dc6d0d8576f12d0771ce87423480bbdcd5d695fc44"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "on evaluation failure the default must be the safe branch, not a silent enable.",
-          "reason": "Text names carrying cost and Knight Capital but no evaluation-failure default."
+          "reason": "OpenFeature returns defaults on abnormal execution, Microsoft treats no matching filter as disabled, LaunchDarkly returns a fallback on offline evaluation and defines the kill switch, and AWS AppConfig rolls back on failure or alarm; the runbook ordering is Tycho.",
+          "binding": {
+            "source_id": "src.openfeature-spec",
+            "ledger_record": "read.openfeature-flag-evaluation.2026-10-31",
+            "section": "1.4. Detailed Flag Evaluation",
+            "quote": "Methods, functions, or operations on the client MUST NOT throw exceptions, or otherwise abnormally terminate. Flag evaluation calls must always return the default value in the event of abnormal execution.",
+            "revision": "d724a522d5164572df123630304c552d8657eef12773de050e2b9ed8c7de07d6"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.openfeature-spec",
+              "ledger_record": "read.openfeature-flag-evaluation.2026-10-31",
+              "section": "1.4. Detailed Flag Evaluation",
+              "quote": "If the value returned by the underlying provider implementation does not match the expected type, it's to be considered abnormal execution, and the supplied default value should be returned.",
+              "revision": "d724a522d5164572df123630304c552d8657eef12773de050e2b9ed8c7de07d6"
+            },
+            {
+              "source_id": "src.openfeature-spec",
+              "ledger_record": "read.openfeature-flag-evaluation.2026-10-31",
+              "section": "Overview",
+              "quote": "In the absence of a provider the evaluation API uses the \"No-op provider\", which simply returns the supplied default flag value.",
+              "revision": "d724a522d5164572df123630304c552d8657eef12773de050e2b9ed8c7de07d6"
+            },
+            {
+              "source_id": "src.azure-app-configuration",
+              "ledger_record": "read.azure-feature-management-dotnet.2026-10-31",
+              "section": "Feature filters",
+              "quote": "If no feature filter indicates that the feature should be enabled, it's considered disabled.",
+              "revision": "882b33ac3b545a0cbed56a90b88a0158ea0d4fd4236f65a99b247832bd9aa4d2"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-flag-evaluation-rules.2026-10-31",
+              "section": "Preliminary checks",
+              "quote": "If the SDK is offline, return the provided fallback value with the ERROR evaluation reason and the corresponding error code.",
+              "revision": "2509b3e8b236ee079ed330a0b9aa6c8c8d22e2f3c754bfc1c73b03e1e12e327b"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-killswitch.2026-10-31",
+              "section": "About kill switch flags",
+              "quote": "Kill switch flags, sometimes called circuit breaker flags, are permanent boolean flags with two variations: “Enabled” (true) and “Disabled” (false).",
+              "revision": "3499a8319235aa640944935aa9404b2a25339b323efa27d5d08df09325533159"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-killswitch.2026-10-31",
+              "section": "About kill switch flags",
+              "quote": "These flags are permanent safety mechanisms that you can use to turn off non-core functionality or third-party tools in an emergency.",
+              "revision": "3499a8319235aa640944935aa9404b2a25339b323efa27d5d08df09325533159"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-killswitch.2026-10-31",
+              "section": "About kill switch flags",
+              "quote": "You can use these flags to quickly turn off functionality when needed.",
+              "revision": "3499a8319235aa640944935aa9404b2a25339b323efa27d5d08df09325533159"
+            },
+            {
+              "source_id": "src.appconfig-rollout",
+              "ledger_record": "read.aws-appconfig-deploying.2026-10-31",
+              "section": "Deploying a configuration",
+              "quote": "If a distribution fails, then AWS AppConfig rolls back the configuration.",
+              "revision": "ccfead7e9b3e6f469232f0d47ad71a281fec033296d6e61b9fa65cd6207e067b"
+            },
+            {
+              "source_id": "src.appconfig-rollout",
+              "ledger_record": "read.aws-appconfig-feature-flags.2026-10-31",
+              "section": "Deploying feature flags and configuration data in AWS AppConfig",
+              "quote": "After you configure CloudWatch, if one or more alarms go into the alarm state during a deployment, AWS AppConfig automatically rolls back your configuration data to the previous version.",
+              "revision": "07b1d0eefcbeb5e0d7eb4c38bb0f653c5e7cf8fb02b0ffe43219ab2c168101cf"
+            },
+            {
+              "source_id": "src.appconfig-rollout",
+              "ledger_record": "read.aws-appconfig-deployment-strategies.2026-10-31",
+              "section": "Working with deployment strategies",
+              "quote": "Bake time This setting specifies the amount of time AWS AppConfig monitors for Amazon CloudWatch alarms after the configuration has been deployed to 100% of its targets, before considering the deployment to be complete. If an alarm is triggered during this time, AWS AppConfig rolls back the deployment.",
+              "revision": "aa782c44b9f35ccdfc65375300bc8c890e03da158164a5e7b108bdbd6f56e0c6"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A canary or branch-by-abstraction is preferable when the toggle would become permanent configuration.",
-          "reason": "Text treats canary as a flag application; no branch-by-abstraction recommendation."
+          "reason": "Microsoft names canary or staged rollout, AWS AppConfig supplies a gradual strategy with bake time, and LaunchDarkly separates temporary from permanent flags. The retained AWS Prescriptive Guidance record read.aws-branch.2026-10-29 contrasts branch by abstraction with toggles; the reversal rule is Tycho.",
+          "binding": {
+            "source_id": "src.azure-app-configuration",
+            "ledger_record": "read.azure-feature-management-overview.2026-10-31",
+            "section": "Rollout",
+            "quote": "Percentage-based gradual release – expose a feature to a small percentage of traffic and increase it over time (canary or staged rollout) to reduce risk",
+            "revision": "7c503850c57f7d1258b98f94991cf6a21addedaca19431d2bc090d19656e7eb2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-app-configuration",
+              "ledger_record": "read.azure-feature-management-overview.2026-10-31",
+              "section": "Rollout",
+              "quote": "Percentage-based gradual release",
+              "revision": "7c503850c57f7d1258b98f94991cf6a21addedaca19431d2bc090d19656e7eb2"
+            },
+            {
+              "source_id": "src.appconfig-rollout",
+              "ledger_record": "read.aws-appconfig-deployment-strategies.2026-10-31",
+              "section": "Working with deployment strategies",
+              "quote": "A deployment strategy enables you to slowly release changes to all targets or specific segments over minutes or hours",
+              "revision": "aa782c44b9f35ccdfc65375300bc8c890e03da158164a5e7b108bdbd6f56e0c6"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-technical-debt.2026-10-31",
+              "section": "Temporary and permanent flags",
+              "quote": "Flags are either temporary or permanent. A temporary flag has a limited lifespan. Once the flag has fulfilled its business purpose, remove it from the codebase.",
+              "revision": "c31b76fe87176abfe55141f28905c9892cfdd986f457326e22dc99a7e8dc7b99"
+            },
+            {
+              "source_id": "src.launchdarkly-flags",
+              "ledger_record": "read.launchdarkly-technical-debt.2026-10-31",
+              "section": "Include flags in your workflow’s definition of “done”",
+              "quote": "If the flag you use for a release will convert to a permanent flag, the definition of done should be when the setting on the flag changes to indicate it is permanent.",
+              "revision": "c31b76fe87176abfe55141f28905c9892cfdd986f457326e22dc99a7e8dc7b99"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "feature-flags-feature-toggles",
         "question": "Should activation be decoupled from deployment through a runtime toggle?",
-        "competing_alternative": "Deploy dark code with no toggle or a separate release train. Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.",
+        "competing_alternative": "Canary release when the residual risk is exposure of a deployment to a cohort; branch by abstraction when an internal implementation is being replaced behind a stable interface; deploy dark code or a separate release train. Microsoft lists \"Percentage-based gradual release\" that exposes \"a feature to a small percentage of traffic and increase it over time (canary or staged rollout) to reduce risk\"; AWS Prescriptive Guidance says branch by abstraction \"can be combined with feature toggles to switch between the old and new implementation.\" Reverse the choice when toggle lifecycle cost exceeds decoupling benefit or the toggle becomes permanent configuration.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -11882,12 +12058,74 @@
         "source_id": "src.fowler-feature-toggles",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.openfeature-spec",
+            "ledger_record": "read.openfeature-flag-evaluation.2026-10-31",
+            "revision": "d724a522d5164572df123630304c552d8657eef12773de050e2b9ed8c7de07d6"
+          },
+          {
+            "source_id": "src.openfeature-spec",
+            "ledger_record": "read.openfeature-types.2026-10-31",
+            "revision": "e2741a640b15b7eb7ee13640a383f342f0aaa8f9f96a2483cf3fe09581622ff6"
+          },
+          {
+            "source_id": "src.launchdarkly-flags",
+            "ledger_record": "read.launchdarkly-killswitch.2026-10-31",
+            "revision": "3499a8319235aa640944935aa9404b2a25339b323efa27d5d08df09325533159"
+          },
+          {
+            "source_id": "src.launchdarkly-flags",
+            "ledger_record": "read.launchdarkly-change-history.2026-10-31",
+            "revision": "1b35ea724252ceb84244f3dc6d0d8576f12d0771ce87423480bbdcd5d695fc44"
+          },
+          {
+            "source_id": "src.launchdarkly-flags",
+            "ledger_record": "read.launchdarkly-technical-debt.2026-10-31",
+            "revision": "c31b76fe87176abfe55141f28905c9892cfdd986f457326e22dc99a7e8dc7b99"
+          },
+          {
+            "source_id": "src.launchdarkly-flags",
+            "ledger_record": "read.launchdarkly-flag-evaluation-rules.2026-10-31",
+            "revision": "2509b3e8b236ee079ed330a0b9aa6c8c8d22e2f3c754bfc1c73b03e1e12e327b"
+          },
+          {
+            "source_id": "src.azure-app-configuration",
+            "ledger_record": "read.azure-feature-management-overview.2026-10-31",
+            "revision": "7c503850c57f7d1258b98f94991cf6a21addedaca19431d2bc090d19656e7eb2"
+          },
+          {
+            "source_id": "src.azure-app-configuration",
+            "ledger_record": "read.azure-feature-management-dotnet.2026-10-31",
+            "revision": "882b33ac3b545a0cbed56a90b88a0158ea0d4fd4236f65a99b247832bd9aa4d2"
+          },
+          {
+            "source_id": "src.azure-app-configuration",
+            "ledger_record": "read.azure-appconfig-rbac.2026-10-31",
+            "revision": "2859050bc696e227793fba413cd43b288ec3a4955644ef9596a338ee40a076f2"
+          },
+          {
+            "source_id": "src.appconfig-rollout",
+            "ledger_record": "read.aws-appconfig-feature-flags.2026-10-31",
+            "revision": "07b1d0eefcbeb5e0d7eb4c38bb0f653c5e7cf8fb02b0ffe43219ab2c168101cf"
+          },
+          {
+            "source_id": "src.appconfig-rollout",
+            "ledger_record": "read.aws-appconfig-deployment-strategies.2026-10-31",
+            "revision": "aa782c44b9f35ccdfc65375300bc8c890e03da158164a5e7b108bdbd6f56e0c6"
+          },
+          {
+            "source_id": "src.appconfig-rollout",
+            "ledger_record": "read.aws-appconfig-deploying.2026-10-31",
+            "revision": "ccfead7e9b3e6f469232f0d47ad71a281fec033296d6e61b9fa65cd6207e067b"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Embedded opening section; flags are defined there, rollout detail sits in later sections."
+      "notes": "All four technical dimensions bound 2026-10-31 to OpenFeature, LaunchDarkly, Microsoft Azure App Configuration and AWS AppConfig, with retained Fowler and AWS branch context; the invariant, recovery schedule, lifecycle and reversal rules remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.gitops",
@@ -14512,11 +14750,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 117,
-    "invariant_supported": 81,
-    "failure_recovery_supported": 76,
-    "alternative_supported": 81,
-    "technical_partial_bounded": 15,
-    "technical_partial": 66,
+    "invariant_supported": 82,
+    "failure_recovery_supported": 77,
+    "alternative_supported": 82,
+    "technical_partial_bounded": 16,
+    "technical_partial": 65,
     "technical_name_only": 0,
     "technical_sufficient": 64,
     "decision_partial_bounded": 81,
