@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 54 |
+| Reviewed by independent agent | 53 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 81, "reviewed-by-independent-agent": 54}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 82, "reviewed-by-independent-agent": 53}.
 
 ## Review procedure
 
@@ -571,7 +571,7 @@ blank verdict template in the machine-readable file.
 
 - **Transactional Inbox**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Transactional Outbox**
   Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.

@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "9ef6373a87ea6aeefb5f79f7b6dc2ac5898526ec9ab8f213c429564d28b04e5a",
-  "route_index_snapshot": "9f9a0303bda7914e44ec41e5143948f055af11a238b702d5b8d1f6f858548366",
+  "registry_sha256": "0fe34f28e79d4d6c1613209659c5334d41f630de2dc96dc80fd63d203508c606",
+  "route_index_snapshot": "a8a3ebc14d8ca6dc40040d1daf6d42f660f7a83c4a918e395df7e50d814351ce",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2074,9 +2074,77 @@
           "status": "read",
           "read_record_id": "read.batch2-idempotent-consumer.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Idempotent Consumer pattern — Azure Architecture Center",
+          "unit_type": "pattern-page",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/idempotent-consumer",
+          "sections": [
+            "Choose a stable deduplication key",
+            "Commit the processed key and the side effects atomically",
+            "Guard against concurrent duplicates",
+            "Handle side effects that can't join the transaction",
+            "Problems and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-idempotent-consumer.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "Implement the Transactional Outbox pattern by using Azure Cosmos DB",
+          "unit_type": "article",
+          "url": "https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-out-box-cosmos",
+          "sections": [
+            "Solution",
+            "Error handling"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kafka-design",
+          "unit": "Design — Apache Kafka 4.1 documentation (exactly-once and offsets)",
+          "unit_type": "documentation-page",
+          "url": "https://kafka.apache.org/41/design/design/",
+          "sections": [
+            "Consumer Position",
+            "Message Delivery Semantics",
+            "Using Transactions"
+          ],
+          "status": "read",
+          "read_record_id": "read.kafka41-design-exactly-once.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "SELECT — The Locking Clause (PostgreSQL 18 documentation)",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/sql-select.html",
+          "sections": [
+            "The Locking Clause"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgresql-select-locking.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.debezium-outbox",
+          "unit": "Outbox Event Router — Debezium documentation (2026-10-31 binding)",
+          "unit_type": "documentation-page",
+          "url": "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+          "sections": [
+            "Outbox Event Router",
+            "Basic outbox table"
+          ],
+          "status": "read",
+          "read_record_id": "read.debezium-outbox-binding.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 2 public unit read; claims limited to the ledger record."
+      "notes": "Batch 2 public unit read; four additional units read on 2026-10-31 for mechanism, invariant, failure/recovery and alternative."
     },
     {
       "pattern_id": "tycho.pattern.idempotency-key",
@@ -6373,11 +6441,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 278,
-    "read_units": 277,
+    "required_units": 283,
+    "read_units": 282,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 231
+    "ledger_records": 235
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

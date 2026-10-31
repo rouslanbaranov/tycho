@@ -5079,31 +5079,165 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**.",
-          "reason": "Source starts a transaction and inserts the processed ID; it does not state the business effect commits in that transaction."
+          "reason": "Microsoft names the transactional variant the Inbox pattern and requires the deduplication marker and business side effects in one transaction; its outbox guide applies the same transaction to the business object and its events. The local-authority reading and the external-send boundary are Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+            "section": "Commit the processed key and the side effects atomically",
+            "quote": "Avoid this failure window by writing the deduplication marker and the business side effects in the same transaction.",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Commit the processed key and the side effects atomically",
+              "quote": "This transactional variant is the Inbox pattern",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+              "section": "Solution",
+              "quote": "When you save the business object and its events within the same database transaction, the system guarantees no data loss.",
+              "revision": "6a7b566c0b088e3d95bc3fac1c4f884a9008f0258c72e07aac788499770e143e"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
           "quote": "The identity must include the correct subscriber and event/effect scope; two different consumers legitimately process the same event into different local states.",
-          "reason": "Scopes identity by subscriber and event/effect.",
+          "reason": "Microsoft requires a store-level uniqueness constraint and a consumer-scoped composite key; Kafka stores the consumer position as a message in the same transaction as the output records. The at-most-one committed effect rule and the retention window are Tycho.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-idempotent-consumer.2026-10-21",
             "section": "Solution",
             "quote": "Since the (subscriberId, messageID) is the PROCESSED_MESSAGE table’s primary key the INSERT will fail if the message has been already processed successfully.",
             "revision": "3edddaa1959c70dbd9953648e54759b5a2bc167cd121805124e5faafa0eca40f"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Guard against concurrent duplicates",
+              "quote": "Use a uniqueness constraint on the deduplication key such that two transactions can attempt to insert a key, but only one can succeed.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Choose a stable deduplication key",
+              "quote": "If the consumers share a deduplication store, key the records on a composite of the consumer identity and the message identity.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka41-design-exactly-once.2026-10-31",
+              "section": "Message Delivery Semantics",
+              "quote": "The consumer’s position is stored as a message in an internal topic, so we can write the offset to Kafka in the same transaction as the output topics receiving the processed data.",
+              "revision": "674d7c7e0516cd1f511f8692a720b3b03123e6d9567b191f181eb8cdf165503b"
+            },
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka41-design-exactly-once.2026-10-31",
+              "section": "Message Delivery Semantics",
+              "quote": "Exactly-once delivery for other destination systems generally requires cooperation with such systems",
+              "revision": "674d7c7e0516cd1f511f8692a720b3b03123e6d9567b191f181eb8cdf165503b"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "a notification consumer writes a processed marker then crashes before making an external non-idempotent send. On redelivery it may falsely skip the missing send. Reversing the order may send twice.",
-          "reason": "Source handles duplicate insert by rollback/ignore, not crash between marker and external send."
+          "reason": "Microsoft describes both crash-window directions and the in-progress/completed repair for external effects; Kafka defaults to at-least-once delivery and replays from a consumer position; the outbox relay can duplicate on reprocessing. The retry, reconcile and separate-acknowledgement schedule and the retention owner are Tycho.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+            "section": "Commit the processed key and the side effects atomically",
+            "quote": "A check-then-process flow has a failure window. If a consumer processes a message and then records the key in a separate step, a crash between the two operations leaves the side effects applied but the key unrecorded, so the consumer reprocesses the next redelivery.",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Handle side effects that can't join the transaction",
+              "quote": "Record the key with an in-progress state, and then perform the external action. Update the record to completed and store the outcome.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Handle side effects that can't join the transaction",
+              "quote": "The consumer should reconcile stale records or route unresolved cases for intervention before acknowledging redelivery.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "Retain each record at least as long as the broker can still redeliver the original message.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+              "section": "Error handling",
+              "quote": "When reprocessing occurs, the application might have already sent some messages to Service Bus, which normally creates duplicate message processing.",
+              "revision": "6a7b566c0b088e3d95bc3fac1c4f884a9008f0258c72e07aac788499770e143e"
+            },
+            {
+              "source_id": "src.kafka-design",
+              "ledger_record": "read.kafka41-design-exactly-once.2026-10-31",
+              "section": "Message Delivery Semantics",
+              "quote": "Otherwise, Kafka guarantees at-least-once delivery by default, and allows the user to implement at-most-once delivery by disabling retries on the producer and committing offsets in the consumer prior to processing a batch of messages.",
+              "revision": "674d7c7e0516cd1f511f8692a720b3b03123e6d9567b191f181eb8cdf165503b"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A unique constraint or conditional insert on effect identity, a producer outbox, or an idempotent downstream API may be preferable when the inbox table and retention cost exceed the duplicate-impact risk.",
-          "reason": "Source names processed-ID storage options, not producer outbox or idempotent downstream API."
+          "reason": "Debezium describes a producer-side outbox that avoids state/event inconsistency and carries an event ID for duplicate removal; PostgreSQL supports SKIP LOCKED for queue-like claim but warns of an inconsistent view; Microsoft prefers naturally idempotent operations. The inbox-versus-queue/outbox comparison and reversal conditions are Tycho.",
+          "binding": {
+            "source_id": "src.debezium-outbox",
+            "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+            "section": "Outbox Event Router",
+            "quote": "The outbox pattern is a way to safely and reliably exchange data between multiple (micro) services.",
+            "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.debezium-outbox",
+              "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+              "section": "Basic outbox table",
+              "quote": "Contains the unique ID of the event. In an outbox message, this value is a header. You can use this ID, for example, to remove duplicate messages.",
+              "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-select-locking.2026-10-31",
+              "section": "The Locking Clause",
+              "quote": "Skipping locked rows provides an inconsistent view of the data, so this is not suitable for general purpose work, but can be used to avoid lock contention with multiple consumers accessing a queue-like table.",
+              "revision": "464470632f55ed1f7b662b71e2d1b42351a0adcff0d742df245cf1d18d48dc94"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "Prefer naturally idempotent operations.",
+              "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+              "section": "Solution",
+              "quote": "This pattern saves events in a data store that's typically in an outbox table in your database before it pushes them to a message broker.",
+              "revision": "6a7b566c0b088e3d95bc3fac1c4f884a9008f0258c72e07aac788499770e143e"
+            }
+          ]
         }
       },
       "decision_evidence": {
@@ -5118,12 +5252,39 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-idempotent-consumer.2026-10-31",
+            "revision": "f50de2c478e15c5ef148791316beeda854c6d9bfe386ed47f68b679b51f78a34"
+          },
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+            "revision": "6a7b566c0b088e3d95bc3fac1c4f884a9008f0258c72e07aac788499770e143e"
+          },
+          {
+            "source_id": "src.kafka-design",
+            "ledger_record": "read.kafka41-design-exactly-once.2026-10-31",
+            "revision": "674d7c7e0516cd1f511f8692a720b3b03123e6d9567b191f181eb8cdf165503b"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-select-locking.2026-10-31",
+            "revision": "464470632f55ed1f7b662b71e2d1b42351a0adcff0d742df245cf1d18d48dc94"
+          },
+          {
+            "source_id": "src.debezium-outbox",
+            "ledger_record": "read.debezium-outbox-binding.2026-10-31",
+            "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated inbox section defines the atomic commit boundary and its limits; the later four-window trace adds crash detail."
+      "notes": "All four technical dimensions bound 2026-10-31 to Microsoft Inbox/outbox, Kafka 4.1 Design, PostgreSQL SELECT and Debezium Outbox Event Router; the invariant, recovery schedule, queue/outbox comparison and reversal conditions remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.idempotency-key",
@@ -14350,12 +14511,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 116,
+    "mechanism_supported": 117,
     "invariant_supported": 81,
-    "failure_recovery_supported": 75,
-    "alternative_supported": 80,
-    "technical_partial_bounded": 15,
-    "technical_partial": 67,
+    "failure_recovery_supported": 76,
+    "alternative_supported": 81,
+    "technical_partial_bounded": 16,
+    "technical_partial": 66,
     "technical_name_only": 0,
     "technical_sufficient": 63,
     "decision_partial_bounded": 82,

@@ -27,10 +27,6 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.idempotent-consumer-pattern"
-    - "src.microsoft-cloud-patterns"
-    - "src.kafka-design"
-    - "src.postgresql"
-    - "src.debezium-outbox"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.aa810dd152884b35a84f0f4cbe4369e9; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -41,7 +37,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-20"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: "2026-10-20"
 content_verified_at: null
 ---
 # Inbox processing and atomic consumer effects

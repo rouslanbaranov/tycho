@@ -9885,6 +9885,197 @@
       "read_scope": "the Performance and Space Requirements section; excludes other ALTER TABLE sections and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.microsoft-transactional-outbox-cosmos.2026-10-31",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-out-box-cosmos",
+      "unit_label": "Implement the Transactional Outbox pattern by using Azure Cosmos DB",
+      "unit_type": "article",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 84,527 bytes; raw HTML SHA-256 7d2b0299a683239c95f44571f862484035c71c89aa6375627a1c5f768298a048; canonical text SHA-256 6a7b566c0b088e3d95bc3fac1c4f884a9008f0258c72e07aac788499770e143e; HTTP Date 2026-10-31T14:38:37Z; Last-Modified 2026-10-15T17:37:26Z; ETag \"w6OVhWKvL9oyg8jLkO69fLwvTMY=\"",
+      "sections_read": [
+        "Solution",
+        "Error handling"
+      ],
+      "sections_not_read": [
+        "Overview",
+        "Implementation in Azure Cosmos DB",
+        "Transactional batches",
+        "Context, repositories, and UnitOfWork",
+        "Event handling: Creation and publication",
+        "Persistence",
+        "Change feed processing",
+        "Cleanup and maintenance",
+        "Summary",
+        "Considerations",
+        "Deploy this scenario",
+        "Contributors",
+        "Next steps",
+        "Related resources",
+        "linked pages, sample code and images"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "This pattern saves events in a data store that's typically in an outbox table in your database before it pushes them to a message broker.",
+        "When you save the business object and its events within the same database transaction, the system guarantees no data loss.",
+        "You must preserve event order so that the system publishes an OrderCreated event before an OrderUpdated event.",
+        "When reprocessing occurs, the application might have already sent some messages to Service Bus, which normally creates duplicate message processing.",
+        "To prevent this scenario, you can turn on duplicate message detection in Service Bus.",
+        "The primary consideration is to set a suitable TTL value on the DomainEvent documents when the background worker (change feed processor) or the service bus are unavailable."
+      ],
+      "claims_not_supported": [
+        "a consumer inbox implementation",
+        "exactly-once delivery to arbitrary external systems",
+        "a benchmark, failure drill or production observation",
+        "linked pages, sample code and images"
+      ],
+      "limitations": "One living Microsoft Learn guide with no published version identifier; it describes a Cosmos DB implementation of the producer-side outbox. It does not define a consumer inbox, a repair algorithm or a delivery guarantee for arbitrary external systems.",
+      "content_sha256": "6a7b566c0b088e3d95bc3fac1c4f884a9008f0258c72e07aac788499770e143e",
+      "read_scope": "Solution and Error handling sections of the served page, excluding navigation and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.kafka41-design-exactly-once.2026-10-31",
+      "source_id": "src.kafka-design",
+      "unit_url": "https://kafka.apache.org/41/design/design/",
+      "unit_label": "Design — Apache Kafka 4.1 documentation (exactly-once and offsets)",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 143,123 bytes; raw HTML SHA-256 d01981797402d75cada10599d586b753d02f8a9deb08d658a0e07758dedadfb7; canonical text SHA-256 674d7c7e0516cd1f511f8692a720b3b03123e6d9567b191f181eb8cdf165503b; HTTP Date 2026-10-31T14:38:37Z; Last-Modified 2026-10-28T19:19:52Z; ETag \"22f13-65eeb7291ff35\"",
+      "sections_read": [
+        "Consumer Position",
+        "Message Delivery Semantics",
+        "Using Transactions"
+      ],
+      "sections_not_read": [
+        "Motivation",
+        "Persistence",
+        "Efficiency",
+        "The Producer",
+        "The Consumer",
+        "Offline Data Load",
+        "Static Membership",
+        "Share groups",
+        "Replication",
+        "Log Compaction",
+        "Quotas",
+        "linked pages and implementation code"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Apache Kafka documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The consumer controls its position in this log.",
+        "The consumer’s position is stored as a message in an internal topic, so we can write the offset to Kafka in the same transaction as the output topics receiving the processed data.",
+        "Exactly once –Each message is processed once and only once.",
+        "Otherwise, Kafka guarantees at-least-once delivery by default, and allows the user to implement at-most-once delivery by disabling retries on the producer and committing offsets in the consumer prior to processing a batch of messages.",
+        "When writing to an external system, the limitation is in the need to coordinate the consumer’s position with what is actually stored as output.",
+        "Exactly-once delivery for other destination systems generally requires cooperation with such systems",
+        "The consumer uses partition assignment to ensure that it is the only consumer in the consumer group currently processing each partition.",
+        "The producer uses transactions so that all the records it produces, and any offsets it updates on behalf of the consumer, are performed atomically."
+      ],
+      "claims_not_supported": [
+        "an application inbox implementation",
+        "exactly-once effects in an external destination system",
+        "a benchmark, failure drill or production observation",
+        "linked pages and implementation code"
+      ],
+      "limitations": "One public Apache Kafka 4.1 design page; it states documented delivery semantics and the offset-transaction design, not an application inbox, an external-system implementation, a benchmark or a production observation.",
+      "content_sha256": "674d7c7e0516cd1f511f8692a720b3b03123e6d9567b191f181eb8cdf165503b",
+      "read_scope": "Consumer Position, Message Delivery Semantics and Using Transactions sections of the served page",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgresql-select-locking.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/sql-select.html",
+      "unit_label": "SELECT — The Locking Clause (PostgreSQL 18 documentation)",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 118,042 bytes; raw HTML SHA-256 876b2978f26650506af5fb36cf99135a15c8c68b4d979c3a784ee44f84d1e6fc; canonical text SHA-256 464470632f55ed1f7b662b71e2d1b42351a0adcff0d742df245cf1d18d48dc94; HTTP Date 2026-10-31T12:36:44Z; no Last-Modified or ETag served",
+      "sections_read": [
+        "The Locking Clause"
+      ],
+      "sections_not_read": [
+        "Synopsis",
+        "Description",
+        "Parameters",
+        "Examples",
+        "Compatibility",
+        "linked pages"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "With SKIP LOCKED , any selected rows that cannot be immediately locked are skipped.",
+        "Skipping locked rows provides an inconsistent view of the data, so this is not suitable for general purpose work, but can be used to avoid lock contention with multiple consumers accessing a queue-like table.",
+        "To prevent the operation from waiting for other transactions to commit, use either the NOWAIT or SKIP LOCKED option."
+      ],
+      "claims_not_supported": [
+        "duplicate suppression or transactional-inbox semantics",
+        "a durable queue implementation",
+        "a benchmark, lock experiment or production observation",
+        "linked pages"
+      ],
+      "limitations": "One living PostgreSQL 18 SELECT page; SKIP LOCKED is a row-locking option for queue-like access, not a message-deduplication mechanism. No query, lock, queue or failure drill was executed.",
+      "content_sha256": "464470632f55ed1f7b662b71e2d1b42351a0adcff0d742df245cf1d18d48dc94",
+      "read_scope": "The Locking Clause section of the served page",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.debezium-outbox-binding.2026-10-31",
+      "source_id": "src.debezium-outbox",
+      "unit_url": "https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html",
+      "unit_label": "Outbox Event Router — Debezium documentation (2026-10-31 binding)",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 90,537 bytes; raw HTML SHA-256 382f0bd0cd99f5c8206f9ba0381f3ec71f12ffe373154d351baa8823fd11ad53; canonical text SHA-256 26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e; HTTP Date 2026-10-31T14:38:38Z; Last-Modified 2026-10-31T04:20:50Z",
+      "sections_read": [
+        "Outbox Event Router",
+        "Basic outbox table"
+      ],
+      "sections_not_read": [
+        "Example outbox message",
+        "Basic configuration",
+        "Options for applying the transformation selectively",
+        "Payload serialization format",
+        "Emitting messages with additional fields",
+        "Configuration options",
+        "Distributed tracing",
+        "linked pages and examples"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Debezium documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The outbox pattern is a way to safely and reliably exchange data between multiple (micro) services.",
+        "An outbox pattern implementation avoids inconsistencies between a service’s internal state (as typically persisted in its database) and state in events consumed by services that need the same data.",
+        "A Debezium connector that is configured to apply the outbox SMT should capture changes that occur in an outbox table only.",
+        "Contains the unique ID of the event. In an outbox message, this value is a header. You can use this ID, for example, to remove duplicate messages.",
+        "Contains the event key, which provides an ID for the payload. The SMT uses this value as the key in the emitted outbox message. This is important for maintaining correct order in Kafka partitions."
+      ],
+      "claims_not_supported": [
+        "a consumer inbox implementation",
+        "exactly-once delivery or a delivery guarantee",
+        "a benchmark, failure drill or production observation",
+        "linked pages and examples"
+      ],
+      "limitations": "One living Debezium 3.7 documentation page; it describes the outbox table, event ID and routing configuration, not a consumer implementation, a delivery guarantee or a failure drill.",
+      "content_sha256": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e",
+      "read_scope": "Outbox Event Router and Basic outbox table sections of the served page",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }
