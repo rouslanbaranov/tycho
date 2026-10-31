@@ -1,11 +1,11 @@
 # Current state — Tycho
 
-> **Current promotion snapshot — 2026-10-31 (authoritative):** **76 of 145** entries
+> **Current promotion snapshot — 2026-10-31 (authoritative):** **77 of 145** entries
 > are technical/decision `sufficient`; **7** are owner-accepted (2026-10-28).
-> **69** entries remain. Timing covers 56 promotion cycles: mean **45.7 min**
-> (range 6-388, including reviewer/integration wait); forecast **3.4 / 4.7 / 7.4**
+> **68** entries remain. Timing covers 57 promotion cycles: mean **45.7 min**
+> (range 6-388, including reviewer/integration wait); forecast **3.4 / 4.6 / 7.2**
 > days (optimistic/base/pessimistic). The dated audit notes below describe the
-> 2026-10-21 baseline and are historical. B47 Consistent Hashing, B48 Circuit Breaker, B49 Expand-and-Contract B50 Transactional Inbox B51 Feature Flags B52 Cache Stampede B53 Index Table B54 Priority Queue B55 SLI/SLO B56 Session Consistency B57 Synthetic Monitoring B58 Distributed Tracing B59 Backup/PITR B60 Failover-Failback B61 Hedged Requests and B62 CDC were promoted on
+> 2026-10-21 baseline and are historical. B47 Consistent Hashing, B48 Circuit Breaker, B49 Expand-and-Contract B50 Transactional Inbox B51 Feature Flags B52 Cache Stampede B53 Index Table B54 Priority Queue B55 SLI/SLO B56 Session Consistency B57 Synthetic Monitoring B58 Distributed Tracing B59 Backup/PITR B60 Failover-Failback B61 Hedged Requests B62 CDC and B63 Online Data Migration were promoted on
 > 2026-10-31 after the Codex review; owner acceptance remains open. See
 > [the integration record](B47-CONSISTENT-HASHING-INTEGRATION-2026-10-31.md) and
 > [the 2026-10-31 hand-off](HANDOFF-2026-10-31.md).

@@ -160,3 +160,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer | #540 Failover-Failback | pass | `2026-10-31-failover-failback-deepseek.md` | `fe7c17951322821d14e51d908ef7aa130ddc63f28ce8cc0e424709c421c2907d` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Hedged Requests | pass | `2026-10-31-hedged-requests-deepseek.md` | `cdb461aaa40a7e6111323b267bb74004e5b3cb3efa6be3caddf4df24cd4c3c41` |
 | 2026-10-31 | DeepSeek Reviewer | #540 CDC | pass | `2026-10-31-cdc-deepseek.md` | `26288cfff3b5dc7b5f3de03bdfca676dfc22e64905816008651bfa02ae67cbaf` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Online Data Migration | pass | `2026-10-31-online-data-migration-deepseek.md` | `58437d84ad5815377af2049cda885328d01dfc7f3f00733b1783a03814a8f39f` |
