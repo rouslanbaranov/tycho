@@ -109,14 +109,14 @@ Pattern atlas: [Polyglot Persistence](../../v11-pattern-atlas/c06-database-stora
 
 ### Polyglot Persistence
 
-A single authoritative registration database plus a graph/search/OLAP projection is a valid
-possible design—but then there are *two data representations*, not two automatically consistent
-sources of truth. Each store has its own schema, failure mode and rebuild cost. A projection view
+**Mechanism (Tycho synthesis).** A single authoritative registration database plus a
+graph/search/OLAP projection is a valid possible design—but then there are *two data
+representations*, not two automatically consistent sources of truth. Each store has its own schema, failure mode and rebuild cost. A projection view
 may lag; the response needs a freshness contract, and the write owner must be named.
 
-**Tycho's four-part invariant, not a vendor claim.** Define freshness, rebuild, deduplication,
-schema migration and failure recovery explicitly. Write the serving rule down before the
-projection serves traffic. The public pages support separate parts of that rule, not the whole
+**Tycho's four-part invariant, not a vendor claim.** Define freshness, rebuild, deduplication and
+schema migration explicitly. Write the serving rule down before the projection serves traffic.
+Failure recovery is separate and explicit. The public pages support separate parts of that rule, not the whole
 rule:
 
 - **Freshness.** AWS says "The CQRS pattern typically results in eventual consistency between the

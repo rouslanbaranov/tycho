@@ -64,8 +64,9 @@ data-pattern; priority core.
 while one authoritative boundary owns consistency?
 
 **Good-fit conditions.** Distinct responsibilities have materially different access
-patterns; one store cannot meet a measured requirement; cross-store ownership,
-freshness, rebuild, deduplication, schema migration and failure handling are explicit;
+patterns; one store cannot meet a measured requirement; cross-store ownership is assigned;
+the four-part invariant (freshness, rebuild, deduplication, schema migration) and failure
+handling are explicit;
 the team can operate each store.
 
 **Hard contraindications.** Reject when one store meets the requirement, when no
