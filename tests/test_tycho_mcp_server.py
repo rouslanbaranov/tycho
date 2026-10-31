@@ -1086,8 +1086,12 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["pattern_registry"]["status"], "ok")
         self.assertEqual(payload["pattern_registry"]["entries"], 2)
         self.assertEqual(payload["query_logging"], "disabled")
-        self.assertIn("semantic, vector or hybrid ranking",
+        self.assertNotIn("semantic, vector or hybrid ranking",
+                         payload["not_implemented"])
+        self.assertIn("answer generation or verdicts",
                       payload["not_implemented"])
+        self.assertEqual(payload["metadata"]["version"],
+                         "tycho-mcp-contract-v1")
 
     def test_stdio_roundtrip(self):
         process = subprocess.Popen(

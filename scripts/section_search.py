@@ -946,6 +946,10 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                 ],
             }
             document_meta = metadata.get(row["path"], {})
+            item["summary"] = document_meta.get("summary", "")
+            item["topics"] = list(document_meta.get("topics", []))
+            item["perspectives"] = list(document_meta.get("perspectives", []))
+            item["related_ids"] = list(document_meta.get("related", []))
             if document_meta and not any(
                     term in item["excerpt"].casefold() for term in terms):
                 item["metadata_snippet"] = document_meta.get("summary")
