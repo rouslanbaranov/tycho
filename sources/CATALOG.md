@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 322.
+Inventory date: 2026-10-31. Entries: 323.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -207,6 +207,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.prom-alerting / core | [Prometheus Alerting Overview](https://prometheus.io/docs/alerting/latest/overview/) — Prometheus | Rule evaluation, Alertmanager routing and notification boundaries. | admitted-for-research / public-web-or-author-download |
 | src.openlineage / supporting | [OpenLineage Documentation](https://openlineage.io/docs/) — OpenLineage | Dataset/job/run lineage, distinct from request tracing and audit records. | admitted-for-research / public-web-or-author-download |
 | src.aws-cloudwatch-synthetics / core | [Synthetic monitoring (canaries)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html) — Amazon Web Services | Synthetic canary checks that follow user journeys, as an external alternative to runtime probes. | admitted-for-research / public-web-or-author-download |
+| src.azure-app-insights-availability / core | [Application Insights availability tests](https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability) — Microsoft | Recurring external web tests that monitor availability and responsiveness from locations, with retry and alert rules, as an alternative to real-user or internal signals. | admitted-for-research / public-web-or-author-download |
 
 ## Platform
 

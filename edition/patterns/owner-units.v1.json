@@ -14772,7 +14772,7 @@
         "heading": "Synthetic Monitoring",
         "anchor": "synthetic-monitoring",
         "level": 3,
-        "line": 124,
+        "line": 134,
         "unit_kind": "dedicated",
         "unit_terms": [
           "representative user journey",
@@ -14783,44 +14783,216 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Synthetic monitoring exercises a representative user journey from outside the service.",
-          "reason": "SRE chapter has no synthetic probes or external journeys."
+          "reason": "Bound 2026-10-31 to the Google SRE monitoring chapter's black-box definition and end-to-end content test, with Prometheus, AWS and Azure external probes; the probe-as-measurement-contract reading remains Tycho.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-book-blackbox-monitoring.2026-10-31",
+            "section": "Definitions",
+            "quote": "Testing externally visible behavior as a user would see it.",
+            "revision": "5fd5b2cb62374a300cef36d8058dd3a2b4e731c43a60cbcfa7ac7de1108aa7d7"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-blackbox-monitoring.2026-10-31",
+              "section": "The Four Golden Signals",
+              "quote": "while only end-to-end system tests can detect that you’re serving the wrong content.",
+              "revision": "5fd5b2cb62374a300cef36d8058dd3a2b4e731c43a60cbcfa7ac7de1108aa7d7"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+              "section": "Blackbox exporter",
+              "quote": "The blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP, ICMP and gRPC.",
+              "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+            },
+            {
+              "source_id": "src.aws-cloudwatch-synthetics",
+              "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+              "section": "Synthetic monitoring (canaries)",
+              "quote": "Canaries follow the same routes and perform the same actions as a customer, which makes it possible for you to continually verify your customer experience even when you don't have any customer traffic on your applications.",
+              "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+            },
+            {
+              "source_id": "src.azure-app-insights-availability",
+              "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+              "section": "Introduction",
+              "quote": "These availability tests send web requests to your application at regular intervals and alert you if your application isn't responding or if the response time is too slow.",
+              "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "It needs a safe identity, a journey definition, location and frequency choices and a rule that separates probe failure from product failure.",
-          "reason": "Chapter has no probe identity, location or frequency rule."
+          "reason": "Bound 2026-10-31 to Prometheus target relabelling, per-probe DNS and probe_success, with Azure per-location retry and shared IPs plus the AWS schedule; the safe-identity and success rule remain Tycho.",
+          "binding": {
+            "source_id": "src.prometheus",
+            "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+            "section": "Prometheus Configuration",
+            "quote": "The blackbox exporter needs to be passed the target as a parameter, this can be done with relabelling.",
+            "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+              "section": "DNS resolution of targets",
+              "quote": "The blackbox exporter resolves the target hostname on every probe and does not cache the result.",
+              "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+              "section": "Checking the results",
+              "quote": "The `probe_success` metric indicates if the probe succeeded.",
+              "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+            },
+            {
+              "source_id": "src.azure-app-insights-availability",
+              "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+              "section": "Create an availability test",
+              "quote": "This rule is applied independently at each test location.",
+              "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+            },
+            {
+              "source_id": "src.azure-app-insights-availability",
+              "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+              "section": "Testing behind a firewall",
+              "quote": "The availability tests service uses shared IP addresses, which can expose your firewall-protected endpoints to traffic from other tests.",
+              "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+            },
+            {
+              "source_id": "src.aws-cloudwatch-synthetics",
+              "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+              "section": "Synthetic monitoring (canaries)",
+              "quote": "configurable scripts that run on a schedule, to monitor your endpoints and APIs.",
+              "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The failure path is a probe that cannot authenticate or that tests only a trivial path; rotate credentials, cover the critical journey and triage probe noise separately.",
-          "reason": "Chapter has no probe-failure or credential remediation path."
+          "reason": "Bound 2026-10-31 to Azure's retry rule, 80% retry note and default alerts, AWS discover-before-customers, Prometheus debug and request surface, and SRE black-box discipline; the runbook remains Tycho.",
+          "binding": {
+            "source_id": "src.azure-app-insights-availability",
+            "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+            "section": "Create an availability test",
+            "quote": "A failure is reported only if three successive attempts fail.",
+            "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-app-insights-availability",
+              "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+              "section": "Create an availability test",
+              "quote": "On average, about 80% of failures disappear on retry.",
+              "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+            },
+            {
+              "source_id": "src.azure-app-insights-availability",
+              "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+              "section": "Availability alerts",
+              "quote": "Alerts are automatically enabled by default, but to fully configure an alert, you must initially create your availability test.",
+              "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+            },
+            {
+              "source_id": "src.aws-cloudwatch-synthetics",
+              "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+              "section": "Synthetic monitoring (canaries)",
+              "quote": "By using canaries, you can discover issues before your customers do.",
+              "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+              "section": "Checking the results",
+              "quote": "Adding a `debug=true` parameter will return debug information for that probe.",
+              "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+            },
+            {
+              "source_id": "src.prometheus",
+              "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+              "section": "Security",
+              "quote": "The exporter makes requests to any target it is given.",
+              "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-book-blackbox-monitoring.2026-10-31",
+              "section": "Black-Box Versus White-Box",
+              "quote": "black-box monitoring has the key benefit of forcing discipline to only nag a human when a problem is both already ongoing and contributing to real symptoms.",
+              "revision": "5fd5b2cb62374a300cef36d8058dd3a2b4e731c43a60cbcfa7ac7de1108aa7d7"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Real-user monitoring is the alternative when actual traffic provides enough coverage without synthetic load.",
-          "reason": "Chapter has no real-user-monitoring comparison."
+          "reason": "Bound 2026-10-31 to Google white-box instrumentation, Azure's internal-signal advice for nonpublic endpoints and the AWS no-traffic contrast; the real-user comparison and reversal rule remain Tycho.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-book-blackbox-monitoring.2026-10-31",
+            "section": "Black-Box Versus White-Box",
+            "quote": "White-box monitoring depends on the ability to inspect the innards of the system, such as logs or HTTP endpoints, with instrumentation.",
+            "revision": "5fd5b2cb62374a300cef36d8058dd3a2b4e731c43a60cbcfa7ac7de1108aa7d7"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.azure-app-insights-availability",
+              "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+              "section": "Testing behind a firewall",
+              "quote": "For nonpublic endpoints, monitor an internal health signal from inside the network and create log or metric alerts on that signal.",
+              "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+            },
+            {
+              "source_id": "src.aws-cloudwatch-synthetics",
+              "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+              "section": "Synthetic monitoring (canaries)",
+              "quote": "even when you don't have any customer traffic on your applications",
+              "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "synthetic-monitoring",
         "question": "Should probes exercise user-visible behavior from outside the service rather than rely only on internal metrics?",
-        "competing_alternative": "Real-user monitoring or internal SLOs. Reverse the choice when synthetic coverage cost exceeds detection benefit.",
+        "competing_alternative": "Real-user monitoring or internal SLOs. Reverse the choice when synthetic coverage cost exceeds detection benefit. Google SRE contrasts black-box with white-box monitoring; Azure directs operators of \"nonpublic endpoints\" to \"monitor an internal health signal from inside the network and create log or metric alerts on that signal.\" **Tycho choice rule:** prefer a synthetic probe only when no real traffic exercises the journey; prefer internal or real-user signals when the probe cannot reach or safely authenticate to the path.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch6-sre-workbook-monitoring.2026-10-21",
-        "source_id": "src.sre-workbook",
+        "ledger_record": "read.sre-book-blackbox-monitoring.2026-10-31",
+        "source_id": "src.sre",
         "unit_type": "book-chapter",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.prometheus",
+            "ledger_record": "read.prometheus-blackbox-exporter.2026-10-31",
+            "revision": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00"
+          },
+          {
+            "source_id": "src.aws-cloudwatch-synthetics",
+            "ledger_record": "read.aws-synthetics-canaries.2026-10-30",
+            "revision": "48dfd884aa28abc4d7b7740eb46b12c2107a330ed21a45d18ec1be6dc054b0b5"
+          },
+          {
+            "source_id": "src.azure-app-insights-availability",
+            "ledger_record": "read.azure-app-insights-availability.2026-10-31",
+            "revision": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Dedicated bounded note; all four dimensions are stated within it."
+      "notes": "All four dimensions bound 2026-10-31 to Google SRE Monitoring Distributed Systems, Prometheus Blackbox exporter, AWS CloudWatch Synthetics canaries and Azure Application Insights availability tests; partial-bounded, no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.health-readiness-and-liveness-checks",
@@ -15600,12 +15772,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 122,
-    "invariant_supported": 87,
-    "failure_recovery_supported": 82,
-    "alternative_supported": 87,
-    "technical_partial_bounded": 15,
-    "technical_partial": 60,
+    "mechanism_supported": 123,
+    "invariant_supported": 88,
+    "failure_recovery_supported": 83,
+    "alternative_supported": 88,
+    "technical_partial_bounded": 16,
+    "technical_partial": 59,
     "technical_name_only": 0,
     "technical_sufficient": 70,
     "decision_partial_bounded": 75,

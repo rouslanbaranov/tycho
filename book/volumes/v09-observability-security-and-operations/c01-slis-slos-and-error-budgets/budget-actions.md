@@ -36,9 +36,9 @@ evidence_scope:
     Bounded question from tycho.page.c987c475cc5340bcb967f4b6f963b295; exact
     inherited citation rows and limits remain in the chapter source ledger.
     The Synthetic Monitoring section binds four public units inspected on
-    2026-10-31; src.azure-app-insights-availability is proposed pending
-    registration, and no promotion, sufficient coverage or owner acceptance is
-    claimed.
+    2026-10-31; src.azure-app-insights-availability is registered, and no
+    promotion, sufficient coverage or owner acceptance is claimed. Source
+    registration does not change the bounded coverage state.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -46,7 +46,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-20"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 # Error-budget decisions and revisions
@@ -182,7 +182,7 @@ units are:
 <https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html>
 and
 <https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability>.
-The proposed or retained records are `read.sre-book-blackbox-monitoring.2026-10-31`,
+The bound or retained records are `read.sre-book-blackbox-monitoring.2026-10-31`,
 `read.prometheus-blackbox-exporter.2026-10-31`,
 `read.aws-synthetics-canaries.2026-10-30`, and
 `read.azure-app-insights-availability.2026-10-31`. They are living book, repository,

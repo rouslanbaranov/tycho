@@ -5019,7 +5019,9 @@
       "content_sha256": "59b5a725916658fd26a0e7feff813f4854be46e878e0bf19ec7f040a71314143",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained 2026-10-21 SRE Workbook monitoring record; the synthetic entry now cites the 2026-10-31 four-unit binding."
     },
     {
       "id": "read.batch3-fowler-polyglot.2026-10-22",
@@ -11599,6 +11601,135 @@
       "limitations": "The ETag is an opaque served-representation identifier, not a repository commit; no date is exposed; the page cites the formal Viotti-Vukolic sentence but the linked paper was not read.",
       "content_sha256": "1c5d413f43eec6ed25ebcdc3066cd84ce2e9612fa80638b06df2f47bc077f902",
       "read_scope": "the whole page, excluding the linked paper"
+    },
+    {
+      "id": "read.sre-book-blackbox-monitoring.2026-10-31",
+      "source_id": "src.sre",
+      "unit_url": "https://sre.google/sre-book/monitoring-distributed-systems/",
+      "unit_label": "Monitoring Distributed Systems — Site Reliability Engineering, chapter 6",
+      "unit_type": "book-chapter",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Definitions",
+        "Black-Box Versus White-Box",
+        "The Four Golden Signals"
+      ],
+      "sections_not_read": [
+        "linked pages, figures and examples as separate units",
+        "navigation chrome as a unit"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Black-box monitoring tests externally visible behavior as a user would see it.",
+        "Only end-to-end system tests can detect that the wrong content is served.",
+        "White-box monitoring depends on inspecting the innards of the system with instrumentation.",
+        "Black-box monitoring is fairly useless for not-yet-occurring but imminent problems.",
+        "Black-box monitoring forces discipline to page a human only for ongoing symptoms."
+      ],
+      "claims_not_supported": [
+        "a probe, monitor or production system run",
+        "linked pages and figures",
+        "synthetic monitoring as a replacement for internal signals"
+      ],
+      "limitations": "Living chapter with no published version identifier; the canonical digest includes served page chrome; linked pages and figures are excluded; no probe, monitor or production system was run.",
+      "content_sha256": "5fd5b2cb62374a300cef36d8058dd3a2b4e731c43a60cbcfa7ac7de1108aa7d7",
+      "read_scope": "the sections listed above; the canonical representation includes served page chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.prometheus-blackbox-exporter.2026-10-31",
+      "source_id": "src.prometheus",
+      "unit_url": "https://github.com/prometheus/blackbox_exporter",
+      "unit_label": "Blackbox exporter — Prometheus",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public raw README fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py; README pinned to prometheus/blackbox_exporter commit f9c2f47d4f7785652ed66e391618c2f7cea1b3c9",
+      "sections_read": [
+        "Blackbox exporter",
+        "Checking the results",
+        "Controlling log level for probe logs",
+        "Configuration",
+        "Prometheus Configuration",
+        "DNS resolution of targets",
+        "Security"
+      ],
+      "sections_not_read": [
+        "CONFIGURATION.md and example.yml",
+        "linked multi-target exporter guide",
+        "exporter-toolkit documentation"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The blackbox exporter allows blackbox probing of endpoints over several protocols.",
+        "The target is passed as a parameter through relabelling.",
+        "The exporter resolves the target hostname on every probe and does not cache the result.",
+        "The probe_success metric indicates whether the probe succeeded.",
+        "debug=true returns debug information for a probe.",
+        "The exporter makes requests to any target it is given."
+      ],
+      "claims_not_supported": [
+        "an exporter built or run",
+        "CONFIGURATION.md and the multi-target guide",
+        "a detection or latency measurement"
+      ],
+      "limitations": "Living README pinned by commit; CONFIGURATION.md, example.yml, exporter-toolkit and the linked multi-target guide were not read as separate units; no exporter was built or run.",
+      "content_sha256": "6b681ced13606d45a2c28fbdfd29ace513933b191b71b7f183851e4dfffebf00",
+      "read_scope": "the README sections listed above, excluding linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.azure-app-insights-availability.2026-10-31",
+      "source_id": "src.azure-app-insights-availability",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/azure-monitor/app/availability",
+      "unit_label": "Application Insights availability tests — Azure Monitor",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py; source Markdown pinned to MicrosoftDocs/azure-monitor-docs commit 0f9cb71b1bc53644a6ad7cc0551a9c0acb5acc97",
+      "sections_read": [
+        "Introduction",
+        "Types of availability tests",
+        "Create an availability test",
+        "Availability alerts",
+        "See your availability test results",
+        "Testing behind a firewall"
+      ],
+      "sections_not_read": [
+        "pricing and portal steps",
+        "custom TrackAvailability guidance",
+        "linked pages and figures"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Availability tests send web requests at regular intervals and alert when the application is not responding or is too slow.",
+        "The retry rule is applied independently at each test location.",
+        "A failure is reported only if three successive attempts fail, and about 80% of failures disappear on retry.",
+        "Alerts are automatically enabled by default but must be configured with the test.",
+        "The availability tests service uses shared IP addresses.",
+        "Availability tests fail if DNS cannot be resolved.",
+        "For nonpublic endpoints operators should monitor an internal health signal with log or metric alerts."
+      ],
+      "claims_not_supported": [
+        "an availability test created or run",
+        "pricing and custom TrackAvailability guidance",
+        "a retry-rate or detection-time measurement"
+      ],
+      "limitations": "Living how-to page; its GitHub source Markdown is pinned by commit, but served chrome and linked pages can change; pricing, custom TrackAvailability guidance and portal steps are outside the bound unit; no availability test was created or run.",
+      "content_sha256": "c4df7f017d0728d502b27943e51935e23c88a9448fdb49a9310f952c97eea917",
+      "read_scope": "the sections listed above, excluding linked pages and served navigation chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

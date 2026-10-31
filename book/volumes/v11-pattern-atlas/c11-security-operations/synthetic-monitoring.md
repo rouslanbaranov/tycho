@@ -36,8 +36,8 @@ evidence_scope:
     Four public units inspected 2026-10-31: Google SRE, "Monitoring
     Distributed Systems"; Prometheus, "Blackbox exporter"; AWS, "Synthetic
     monitoring (canaries)"; and Azure, "Application Insights availability
-    tests". The Azure source id is proposed pending registration. No
-    promotion, sufficient coverage or owner acceptance is claimed.
+    tests". The Azure source id is registered. No promotion, sufficient
+    coverage or owner acceptance is claimed.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -87,10 +87,11 @@ re-run with debug before declaring an outage.
 (`read.prometheus-blackbox-exporter.2026-10-31`); AWS, "Synthetic monitoring
 (canaries)" (`read.aws-synthetics-canaries.2026-10-30`, retained); and Azure,
 "Application Insights availability tests"
-(`read.azure-app-insights-availability.2026-10-31`, proposed). All four are public
+(`read.azure-app-insights-availability.2026-10-31`). All four are public
 documentation, not benchmarks or production observations; exact URLs, revisions and
 quotes are in the lane note and owner section. No probe, canary or availability test
-was run.
+was run. Source ids: `src.sre`, `src.prometheus`,
+`src.aws-cloudwatch-synthetics` and `src.azure-app-insights-availability`.
 
 **Decision state.** applicable-under-conditions.
 
