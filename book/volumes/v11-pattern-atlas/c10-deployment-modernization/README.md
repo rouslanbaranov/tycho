@@ -47,13 +47,15 @@ evidence_scope:
     - "src.flyway"
     - "src.mysql"
     - "src.postgresql"
+    - "src.appconfig-rollout"
+    - "src.aws-branch"
     - "src.hashicorp-immutable-vms"
   claim_ids: []
   status: "source-linked"
   notes: "12 cards cite read units; owner links are bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-30"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
@@ -162,25 +164,55 @@ kind deployment-pattern; priority core.
 toggle?
 
 **Good-fit conditions.** Toggle ownership, expiry, scope and kill switch are defined; the
-default fails safe; flag evaluation is observable.
+default fails safe; evaluation is observable; snapshot age and audit trail are explicit; and
+the flag is never the authorization decision for a protected action.
 
-**Hard contraindications.** Reject when a toggle would become permanent configuration
-debt, when no owner removes it, or when it hides a broken deployment.
+**Hard contraindications.** Reject when a toggle would become permanent configuration debt,
+when no owner removes it, when it hides a broken deployment, or when it is asked to grant a
+permission or approve an irreversible action.
 
-**Competing alternative.** Deploy dark code with no toggle or a separate release train.
-Reverse the choice when toggle lifecycle cost exceeds decoupling benefit.
+**Competing alternative.** Canary release when the residual risk is exposure of a deployment
+to a cohort; branch by abstraction when an internal implementation is being replaced behind a
+stable interface; deploy dark code or a separate release train. Microsoft lists
+"Percentage-based gradual release" that exposes "a feature to a small percentage of traffic
+and increase it over time (canary or staged rollout) to reduce risk"; AWS Prescriptive Guidance
+says branch by abstraction "can be combined with feature toggles to switch between the old and
+new implementation." Reverse the choice when toggle lifecycle cost exceeds decoupling benefit
+or the toggle becomes permanent configuration.
 
-**Failure and recovery.** Stale snapshots, flag interactions, permanent flags and
-unauthorized overrides are common; audit changes, expire flags and bound snapshot age.
+**Failure and recovery.** Safe default on evaluation failure, then a kill switch and a
+versioned rollback. OpenFeature requires "Flag evaluation calls must always return the default
+value in the event of abnormal execution"; LaunchDarkly describes kill switch flags as
+"permanent safety mechanisms" that "turn off non-core functionality or third-party tools in an
+emergency"; AWS AppConfig rolls back a failed distribution or an alarm-triggered deployment.
+Bound snapshot age, audit overrides and remove the flag after the rollout.
 
 **Technical owner.** [Feature Flags / Feature Toggles](../../v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/configuration-rollout.md#feature-flags-feature-toggles) — flags are bounded, not a full toggle-lifecycle platform.
 
-**Sources.**
-[src.fowler-feature-toggles](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-fowler-feature-toggles.2026-10-21: all seven top-level sections
-and 40 headings read. The source is a public
-pattern/documentation
-unit, not a benchmark.
+**Sources.** Public documentation, not benchmarks. The owner section binds the four
+dimensions; this card cites the same records. OpenFeature *Flag Evaluation API* and *Types
+and Data Structures*, canonical text SHA-256 `d724a522...` and `e2741a64...`, records
+`read.openfeature-flag-evaluation.2026-10-31` and `read.openfeature-types.2026-10-31`
+(proposed). LaunchDarkly *Kill switch flags*, *Change history*, *Reducing technical debt
+from feature flags* and *Flag evaluation rules in server-side SDKs*, canonical text SHA-256
+`3499a831...`, `1b35ea72...`, `c31b76fe...` and `2509b3e8...`, records
+`read.launchdarkly-killswitch.2026-10-31`, `read.launchdarkly-change-history.2026-10-31`,
+`read.launchdarkly-technical-debt.2026-10-31` and
+`read.launchdarkly-flag-evaluation-rules.2026-10-31` (proposed). Microsoft Azure App
+Configuration *Feature management overview*, *.NET feature management* and *Access Azure App
+Configuration using Microsoft Entra ID*, canonical text SHA-256 `7c503850...`,
+`882b33ac...` and `2859050b...`, records
+`read.azure-feature-management-overview.2026-10-31`,
+`read.azure-feature-management-dotnet.2026-10-31` and
+`read.azure-appconfig-rbac.2026-10-31` (proposed). AWS AppConfig *Deploying feature flags and
+configuration data*, *Working with deployment strategies* and *Deploying a configuration*,
+canonical text SHA-256 `07b1d0ee...`, `aa782c44...` and `ccfead7e...`, records
+`read.aws-appconfig-feature-flags.2026-10-31`,
+`read.aws-appconfig-deployment-strategies.2026-10-31` and
+`read.aws-appconfig-deploying.2026-10-31` (proposed under `src.appconfig-rollout`).
+The retained `src.fowler-feature-toggles` record
+`read.batch5-fowler-feature-toggles.2026-10-21` remains the mechanism context.
+Tycho-labelled rules are synthesis.
 
 **Decision state.** applicable-under-conditions.
 

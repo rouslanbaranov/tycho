@@ -43,7 +43,9 @@
   "evidence_scope": {
     "source_ids": [
       "src.appconfig-rollout",
-      "src.appconfig-validation"
+      "src.appconfig-validation",
+      "src.fowler-feature-toggles",
+      "src.aws-branch"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -51,13 +53,13 @@
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-20",
-    "reviewer": "Codex author; integration execution and independent acceptance pending",
+    "reviewed_at": "2026-10-31",
+    "reviewer": "Automated authoring agent",
     "proof_uri": null
   },
   "authored_at": "2026-10-20",
-  "updated_at": "2026-10-20",
-  "source_inspection_date": "2026-10-20",
+  "updated_at": "2026-10-31",
+  "source_inspection_date": "2026-10-31",
   "content_verified_at": null
 }
 ---
@@ -152,18 +154,119 @@ Exercise a stale process, a missing telemetry stream, a duplicate publication, a
 
 ### Feature Flags-Feature Toggles
 
-A runtime, versioned value scoped by tenant, user or cohort separates exposure from deployment,
-with a default and kill switch. The flag is runtime policy, not a
-replacement for a release gate.
+**Mechanism — runtime evaluation separates exposure from deployment (Tycho summary,
+source-bound).** A runtime, versioned value scoped by tenant, user or cohort separates
+exposure from deployment, with a default and kill switch. OpenFeature defines an evaluation
+API that "allows for the evaluation of feature flag values, independent of any flag control
+plane or vendor." Microsoft describes feature management as "a software-development practice
+that decouples feature release from code deployment and enables quick changes to feature
+availability on demand." AWS AppConfig deploys feature flags as versioned configuration data;
+when it starts a deployment it "Caches a copy of the data so it is ready to be retrieved by
+your application. This cached copy is called the deployed data." Tycho's reading: the flag
+service owns the runtime decision, not the release artifact; the evaluation path needs a
+stable flag key, an evaluation context, a version, a default and an observable reason.
 
-Flags never replace an authorization check. Each evaluation needs the flag version,
-scope and default; on evaluation failure the default must be the safe branch, not a silent enable.
-Expose the decision and snapshot age so stale exposure is visible; bound snapshot age, alert on
-staleness and fall back to last-known-good or the safe default. Audit every override, cap the flag's
-lifetime and remove it after the rollout.
+**Invariant — evaluation is not authorization, and every decision has an age and an
+audit trail (Tycho rule, source-bound).** Flags never replace an authorization check. A flag
+may gate a feature, but it never grants a permission, approves an irreversible action or
+substitutes for an authorization decision; when authority cannot be established, the protected
+action fails closed. Microsoft places authorization of configuration requests in a separate
+control: "Azure App Configuration supports authorization of requests to App Configuration
+stores using Microsoft Entra ID", and "With Microsoft Entra ID, you can leverage Azure
+role-based access control (Azure RBAC) to grant permissions to security principals, which can
+be user principals, managed identities, or service principals."
+OpenFeature exposes staleness as a provider state: `STALE` means "The provider's cached state
+is no longer valid and may not be up-to-date with the source of truth", and the reason means
+"The resolved value is non-authoritative or possibly out of date". LaunchDarkly keeps an
+audit trail: "LaunchDarkly keeps a running log of changes made to feature flags and other
+resources in each environment", and its detailed change entry lists "the member that made the
+change" and "a diff of the changes". Tycho's rule: record the flag key, version, scope,
+default, reason and snapshot age with each evaluation; make every override attributable to a
+member and a diff; bound snapshot age; and handle a stale or error decision through the
+failure contract, never as current authority.
 
-A canary or branch-by-abstraction is preferable when the toggle would become permanent
-configuration. A flag is a fit when exposure must be separable from deployment and the
-evaluation path is bounded, with an owner, a cleanup date and an audit
-trail.
+**Failure and recovery — fail to the safe branch, keep a kill switch, and recover by
+version (Tycho runbook, source-bound).** Tycho's rule: on evaluation failure the default must
+be the safe branch, not a silent enable. OpenFeature requires that client operations "MUST NOT throw
+exceptions, or otherwise abnormally terminate" and that "Flag evaluation calls must always
+return the default value in the event of abnormal execution." A type mismatch is "considered
+abnormal execution, and the supplied default value should be returned"; with no provider the
+API "simply returns the supplied default flag value." Microsoft's .NET feature manager treats
+the absence of a matching filter as disabled: "If no feature filter indicates that the feature
+should be enabled, it's considered disabled." LaunchDarkly returns "the provided fallback
+value with the ERROR evaluation reason" when its SDK is offline, and describes kill switch
+flags as "permanent safety mechanisms" that "turn off non-core functionality or third-party
+tools in an emergency." AWS AppConfig states that "If a distribution fails, then AWS AppConfig
+rolls back the configuration." It also states that "if one or more alarms go into the alarm
+state during a deployment, AWS AppConfig automatically rolls back your configuration data to
+the previous version." Tycho's runbook: make the safe branch the default (disabled, deny or
+no exposure); distinguish a provider error from a deliberate off state; expose and bound
+snapshot age; alert on stale data; keep last-known-good only for non-authoritative decisions;
+use an owned kill switch for emergency shutoff; and recover by publishing a higher, compatible
+version and re-observing it. A binary rollback does not undo durable effects already produced
+while the flag was on.
+
+**Alternative — canary or branch by abstraction when the toggle becomes permanent
+(Tycho choice rule, source-bound).** A canary or branch-by-abstraction is preferable when the
+toggle would become permanent configuration. Microsoft lists "Percentage-based gradual
+release" that exposes "a feature to a small percentage of traffic and increase it over time
+(canary or staged rollout) to reduce risk". AWS AppConfig's deployment strategy "enables you
+to slowly release changes to all targets or specific segments over minutes or hours", and its
+bake time watches alarms and rolls back a failed deployment. LaunchDarkly separates temporary
+from permanent flags: "Flags are either temporary or permanent. A temporary flag has a limited
+lifespan. Once the flag has fulfilled its business purpose, remove it from the codebase." When
+a release flag "will convert to a permanent flag, the definition of done should be when
+the setting on the flag changes to indicate it is permanent." AWS Prescriptive Guidance
+distinguishes the techniques: "The branch by abstraction pattern is often confused with
+feature toggles", but "Branch by abstraction is a development technique and can be combined
+with feature toggles to switch between the old and new implementation", and teams should
+"remove any switching feature flag that you might have implemented." Tycho's choice rule: use
+a canary when the residual risk is exposure of a deployment to a cohort; use branch by
+abstraction when the real work is replacing an internal implementation behind a stable
+interface; treat a permanent toggle as configuration with an owner, review cadence, audit
+trail and removal date; and remove the toggle after the rollout because a permanent switch
+otherwise becomes an untested interface.
+
+**Source boundary.** Public documentation and articles, accessed 2026-10-31. No product was
+deployed, no flag was evaluated and no canary, kill switch or rollback was executed. Quotes are
+short excerpts; Markdown emphasis, link spacing and typography are normalized where noted.
+New source ids and ledger records are proposed in the B51 lane note and are not added to the
+shared register by this lane. Tycho-labelled sentences are synthesis, not source claims.
+
+- OpenFeature specification, *Flag Evaluation API* and *Types and Data Structures*;
+  canonical text SHA-256 `d724a522...` and `e2741a64...`; raw HTML SHA-256
+  `01ca619d...` and `2a318b0d...`; records
+  `read.openfeature-flag-evaluation.2026-10-31` and
+  `read.openfeature-types.2026-10-31` proposed. Living `current` documentation with no
+  version selector.
+- LaunchDarkly documentation, *Kill switch flags*, *Change history*, *Reducing technical
+  debt from feature flags* and *Flag evaluation rules in server-side SDKs*; canonical text
+  SHA-256 `3499a831...`, `1b35ea72...`, `c31b76fe...` and `2509b3e8...`; raw
+  HTML SHA-256 `4217089d...`, `0cb35f78...`, `08ed1f57...` and `8e384341...`;
+  records `read.launchdarkly-killswitch.2026-10-31`,
+  `read.launchdarkly-change-history.2026-10-31`,
+  `read.launchdarkly-technical-debt.2026-10-31` and
+  `read.launchdarkly-flag-evaluation-rules.2026-10-31` proposed.
+- Microsoft Azure App Configuration, *Feature management overview*, *.NET feature
+  management* and *Access Azure App Configuration using Microsoft Entra ID*; canonical text
+  SHA-256 `7c503850...`, `882b33ac...` and `2859050b...`; raw HTML SHA-256
+  `ff46be3a...`, `b5b8621c...` and `5ba34c3a...`; records
+  `read.azure-feature-management-overview.2026-10-31`,
+  `read.azure-feature-management-dotnet.2026-10-31` and
+  `read.azure-appconfig-rbac.2026-10-31` proposed.
+- AWS AppConfig, *Deploying feature flags and configuration data*, *Working with deployment
+  strategies* and *Deploying a configuration*; canonical text SHA-256 `07b1d0ee...`,
+  `aa782c44...` and `ccfead7e...`; raw HTML SHA-256 `d6e54525...`,
+  `c5a7eb77...` and `3eba9fa4...`; records
+  `read.aws-appconfig-feature-flags.2026-10-31`,
+  `read.aws-appconfig-deployment-strategies.2026-10-31` and
+  `read.aws-appconfig-deploying.2026-10-31` proposed under the existing
+  `src.appconfig-rollout` source.
+- Martin Fowler, *Feature Toggles (aka Feature Flags)*, retained record
+  `read.batch5-fowler-feature-toggles.2026-10-21`; canonical text SHA-256
+  `d4e1a56d...`; used for toggle categories and lifecycle, not the authorization,
+  staleness or failure rules above.
+- AWS Prescriptive Guidance, *Branch by abstraction pattern*, retained record
+  `read.aws-branch.2026-10-29`; canonical text SHA-256 `618648d7...`; used for the
+  branch-by-abstraction distinction and cleanup rule.
 
