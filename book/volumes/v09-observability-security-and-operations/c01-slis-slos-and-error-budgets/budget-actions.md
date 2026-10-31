@@ -148,22 +148,21 @@ choices and a rule that separates probe failure from product failure. Prometheus
 be passed the target as a parameter", resolves "the target hostname on every probe and
 does not cache the result" and exposes `probe_success`; Azure applies its retry rule
 "independently at each test location" and warns that availability tests use "shared IP
-addresses", so a firewall must not rely on IP filtering alone. Add an origin header with a
-safe identity and treat credential expiry as a configuration event. AWS runs canaries "on a
+addresses", so a firewall must not rely on IP filtering alone. AWS runs canaries "on a
 schedule". **Tycho rule:** bind who probes what, from where, how often, with which
-identity, and what counts as success before the check is trusted.
+identity, and what counts as success before the check is trusted; add an origin header with a
+safe identity and treat credential expiry as a configuration event.
 
 **Failure and recovery.** The failure path is a probe that cannot authenticate or that
-tests only a trivial path; rotate credentials, cover the critical journey and triage probe
-noise separately. Azure retries a failed test and reports "only if three successive
+tests only a trivial path. Azure retries a failed test and reports "only if three successive
 attempts fail", yet notes that "about 80% of failures disappear on retry"; alerts are
 enabled by default. AWS says canaries let you "discover issues before your customers do".
 Prometheus exposes `probe_success` and debug output, and its security note says the
-exporter "makes requests to any target it is given". **Tycho runbook:** page on
-product-visible failure, keep credential-expiry alerts distinct from product alerts, and
-re-run with debug before declaring an outage.
+exporter "makes requests to any target it is given". **Tycho runbook:** cover the critical
+journey, rotate credentials, triage probe noise separately, keep credential-expiry alerts
+distinct from product alerts, and re-run with debug before declaring an outage.
 
-**Alternative.** Real-user monitoring is the alternative when actual traffic provides
+**Alternative.** Real-user monitoring is a Tycho comparison for when actual traffic provides
 enough coverage without synthetic load. Google SRE contrasts black-box with white-box
 monitoring, which "depends on the ability to inspect the innards of the system, such as
 logs or HTTP endpoints, with instrumentation." Azure tells operators that for nonpublic
@@ -173,7 +172,8 @@ probe only when no real traffic exercises the journey; prefer internal or real-u
 signals when the probe cannot reach or safely authenticate to the path; reverse when probe
 maintenance and noise exceed the detection benefit.
 
-**Bound source limits.** Four public units were inspected on 2026-10-31: Google SRE,
+**Bound source limits.** Three public units were inspected on 2026-10-31 and the AWS canary
+unit is retained from 2026-10-30: Google SRE,
 "Monitoring Distributed Systems"; Prometheus, "Blackbox exporter"; AWS, "Synthetic
 monitoring (canaries)"; and Azure, "Application Insights availability tests". The exact
 units are:

@@ -80,7 +80,7 @@ common; verify journey coverage in the owner section. **Tycho runbook:** page on
 product-visible failure, keep credential-expiry alerts distinct from product alerts, and
 re-run with debug before declaring an outage.
 
-**Technical owner.** [Burn-rate and alerts are actions, not decorations](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
+**Technical owner.** [Synthetic Monitoring](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
 
 **Sources.** Google SRE, "Monitoring Distributed Systems"
 (`read.sre-book-blackbox-monitoring.2026-10-31`); Prometheus, "Blackbox exporter"
