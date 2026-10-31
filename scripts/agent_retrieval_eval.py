@@ -37,6 +37,7 @@ def main(argv=None):
     ap.add_argument("--root", type=Path, default=ROOT)
     ap.add_argument("--limit", type=int, default=10)
     ap.add_argument("--abstain", action="store_true")
+    ap.add_argument("--all-sections", action="store_true")
     ap.add_argument("--out", type=Path, default=ROOT/"evaluation/agent-retrieval-v5/agent-eval.json")
     args = ap.parse_args(argv)
     page_q = json.loads((args.root/"evaluation/corpus-qrels.v5.3-page.json").read_text())
@@ -53,7 +54,8 @@ def main(argv=None):
     for qid in sample:
         item = next(i for i in page_q["items"] if i["id"] == qid)
         t0 = time.perf_counter()
-        r = section_search.search(args.root, item["question"], limit=args.limit, abstain=args.abstain)
+        r = section_search.search(args.root, item["question"], limit=args.limit,
+                                  abstain=args.abstain, all_sections=args.all_sections)
         latency = (time.perf_counter()-t0)*1000
         res = r.get("results", [])
         keys = [x["section_key"] for x in res]
@@ -102,7 +104,7 @@ def main(argv=None):
         "abstention_rate": round(sum(p["no_confident_answer"] for p in probes)/len(probes),4),
         "answerability_note": "off-topic abstention probes only; not answer correctness",
     }
-    out = {"status":"ai-adjudicated-not-human","mode":"abstain" if args.abstain else "return-candidates","snapshot":rows[0]["snapshot"] if rows else None,
+    out = {"status":"ai-adjudicated-not-human","mode":("abstain" if args.abstain else "return-candidates") + ("+all-sections" if args.all_sections else ""),"snapshot":rows[0]["snapshot"] if rows else None,
            "ranker":rows[0]["ranker"] if rows else None,"limit":args.limit,
            "metrics":metrics,"rows":rows,"abstention_probes":probes,
            "limits":("Retrieval-only; no answer support or citation correctness by a reader. "
