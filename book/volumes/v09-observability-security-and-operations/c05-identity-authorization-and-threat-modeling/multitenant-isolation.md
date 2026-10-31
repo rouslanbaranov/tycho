@@ -36,20 +36,24 @@
   },
   "evidence_scope": {
     "source_ids": [
-      "src.owasp-rest-enrichment"
+      "src.owasp-rest-enrichment",
+      "src.aws-saas-lens",
+      "src.kubernetes",
+      "src.postgresql",
+      "src.microsoft-multitenant"
     ],
     "claim_ids": [],
     "status": "source-linked",
-    "notes": "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+    "notes": "Tenant-based card binds four public sources read 2026-10-31; self-checked."
   },
   "content_review": {
     "status": "self-checked",
-    "reviewed_at": "2026-10-22",
-    "reviewer": "Tycho agent; execution gates pending",
+    "reviewed_at": "2026-10-31",
+    "reviewer": "Automated authoring agent",
     "proof_uri": null
   },
   "authored_at": "2026-10-22",
-  "updated_at": "2026-10-22",
+  "updated_at": "2026-10-31",
   "source_inspection_date": null,
   "content_verified_at": null
 }
@@ -74,18 +78,82 @@ Tenant-based isolation assigns each tenant a bounded share of compute, storage a
 routing and credentials that keep the tenant scope explicit. No query, cache key, queue consumer
 or credential may cross a tenant boundary without an explicit shared-resource contract.
 
-A shared cache or background worker leaks one tenant's data or consumes another's capacity;
-scope keys by tenant and test indirect paths with a foreign identifier. Network quotas and
-isolation — routing, egress and cross-tenant reachability — are part of the contract;
-compute-only quotas do not isolate network effects. A shared pool with tenant-scoped
-predicates is cheaper at low scale; choose dedicated resources when noisy-neighbour or
-compliance risk dominates.
+**Bounded share.** Kubernetes treats a namespace as the management unit for a tenant workload, which
+"helps segment a tenant's workload into a logical and distinct management unit", and uses
+ResourceQuotas so that "a tenant cannot monopolize a cluster's resources or overwhelm its control
+plane"; a container's limits are "the upper bound for the amount of resources that a container can
+consume". A namespaced PersistentVolumeClaim and a StorageClass bound storage; if a class is shared,
+Kubernetes recommends a `Delete` reclaim policy "to ensure that a PersistentVolume cannot be reused
+across different namespaces". Azure's multitenant guidance frames the same choice as sharing "every
+resource" versus deploying "isolated resources for every tenant" across compute, storage and data,
+networking and identity, with trade-offs in scale, isolation, cost and manageability. AWS's
+pool-isolation page describes shared storage as "a table indexed by individual tenant identifiers".
+**Tycho reading:** the bounded share is a per-resource contract, not a deployment label; a quota
+that the resource does not enforce is not isolation.
 
-**Limits.** Per-tenant quotas, noisy-neighbour isolation and cross-tenant test paths are costs;
-a shared pool needs explicit fairness and escape hatches. A shared pool can also strand
-capacity or fail to enforce quotas; those are reversal conditions, not deployment details.
-A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational
-cost.
+**Tenant boundary.** AWS's SaaS Lens states that a multi-tenant environment must "ensure that each
+tenant is prevented from accessing another tenant's resources" and that "Crossing this boundary in
+any form would represent a significant and potentially unrecoverable event". PostgreSQL row security
+restricts, "on a per-user basis, which rows can be returned by normal queries or inserted, updated,
+or deleted"; if no policy exists it applies "a default-deny policy", and the expression "will be
+evaluated for each row prior to any conditions or functions coming from the user's query".
+Kubernetes scopes credentials and reachability through RBAC, namespaced NetworkPolicies and
+namespaced PersistentVolumeClaims. AWS's serverless pool example exchanges JWT-supplied tenant
+context for "tenant-scoped credentials" before storage access. **Tycho rule:** derive the tenant
+from authenticated context; require it in every query, cache key, queue consumer and credential;
+enforce it centrally and never trust an arbitrary caller field alone. AWS states the boundary
+principle but does not enumerate the query, cache, queue and credential paths; PostgreSQL and
+Kubernetes bind the query and credential/network paths, and cache/queue scoping remains Tycho
+synthesis.
+
+**Leakage and capacity theft.** A shared cache or background worker leaks one tenant's data or
+consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier.
+Kubernetes warns that "Quotas cannot protect against all kinds of resource sharing, such as network
+traffic", that a shared StorageClass without a `Delete` reclaim policy can let a volume be "reused
+across different namespaces", and that under node isolation the kubelet and API service are "still
+shared services" from which an attacker can "move laterally". A compute quota alone therefore does
+not bound network effects. AWS's pool-isolation page records the capacity consequence: "The more
+resources are shared, the more chances there are for one tenant to impact the experience of
+another", and an outage "will likely impact all the tenants"; it asks for an environment that can
+"gracefully recover from failures". AWS's shared-function example also warns that the pooled
+execution role "does push part of the isolation model into the code". PostgreSQL adds that
+superusers and roles with `BYPASSRLS` "always bypass the row security system", that table owners
+normally bypass it unless `FORCE ROW LEVEL SECURITY` is set, and that whole-table operations such as
+`TRUNCATE` and `REFERENCES` "are not subject to row security"; `row_security = off` makes a query
+error when its results would be filtered rather than silently omitting rows. **Tycho runbook:**
+default-deny network paths between tenants; scope cache keys and queue partitions by tenant;
+partition or dedicate workers; set `Delete` reclaim on shared storage classes; force row security
+where the tenant is the database principal; test indirect paths with a foreign tenant identifier;
+monitor per-tenant consumption; fail closed when tenant scope is missing.
+
+**Alternatives.** A shared pool with tenant-scoped predicates is cheaper at low scale; choose
+dedicated resources when noisy-neighbour or compliance risk dominates. Azure's Deployment Stamps
+guidance says a single-tenant stamp provides "the highest level of isolation and helps to avoid the
+noisy neighbor problem", while a multitenant stamp still needs extra patterns and "the noisy
+neighbor problem still might occur"; its main drawback is infrastructure cost that "can't be shared
+with other tenants". AWS contrasts the shared pool with the silo model, and Kubernetes frames
+"Namespace per tenant" against "Virtual control plane per tenant". **Tycho choice rule:** use a
+shared pool only when tenant scope is enforced on every path and fairness is observable; move a
+tenant to a dedicated stamp when measured noisy-neighbour cost, compliance constraints or a bypass
+path dominates the operational saving.
+
+**Bound source limits.** Four public sources (six units) were inspected on 2026-10-31: AWS
+Well-Architected SaaS Lens, *Tenant isolation*, *Pool isolation* and *Preventing cross tenant
+access*; Kubernetes, *Multi-tenancy*, content commit `56db43a0`; PostgreSQL 18.6, *Row Security
+Policies*; and Microsoft Learn, *Architectural approaches for a multitenant solution*. The
+Kubernetes page treats "hard" and "soft" multi-tenancy as a spectrum, not a guarantee; PostgreSQL
+row security is bypassed by superusers and roles with `BYPASSRLS`, by table owners unless `FORCE ROW
+LEVEL SECURITY` is set, and does not apply to `TRUNCATE` or `REFERENCES`; the AWS and Azure pages
+are documentation, not measurements. Read records: `read.aws-saas-lens-tenant-isolation.2026-10-31`,
+`read.aws-saas-lens-pool-isolation.2026-10-31`,
+`read.aws-saas-lens-preventing-cross-tenant.2026-10-31`, `read.k8s-multitenancy.2026-10-31`,
+`read.postgres-rowsecurity.2026-10-31` and `read.ms-multitenant-approaches.2026-10-31`. Coverage is
+self-checked, not independently reviewed.
+
+**Limits.** Per-tenant quotas, noisy-neighbour isolation and cross-tenant test paths are costs; a
+shared pool needs explicit fairness and escape hatches. A shared pool can also strand capacity or
+fail to enforce quotas; those are reversal conditions, not deployment details. Dedicated resources
+are justified only when measured noisy-neighbour cost exceeds their operational cost.
 
 ## Multitenant Isolation
 

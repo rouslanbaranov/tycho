@@ -38,13 +38,18 @@ evidence_scope:
     - "src.cortex-shuffle-sharding"
     - "src.cell-boundaries"
     - "src.microsoft-multitenant"
+    - "src.aws-saas-lens"
+    - "src.postgresql"
     - "src.sre-workbook"
   claim_ids: []
   status: "source-linked"
-  notes: "10 cards cite read units; owner links are bounded."
+  notes: >-
+    10 cards cite read units; the Tenant-Based Resource Isolation card binds AWS
+    SaaS Lens, Kubernetes, PostgreSQL row security and Microsoft multitenant
+    guidance; owner links are bounded.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-29"
+  reviewed_at: "2026-10-31"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
@@ -295,19 +300,25 @@ quotas/isolation can be enforced and observed.
 **Hard contraindications.** Reject when one tenant exists, when isolation would strand
 most capacity, or when quotas cannot be enforced at the resource.
 
-**Competing alternative.** Shared pool with per-tenant rate limits. Reverse the choice
-when isolation cost exceeds noisy-neighbor risk.
+**Competing alternative.** Shared pool with per-tenant rate limits, or a dedicated deployment stamp.
+Reverse the choice when isolation cost exceeds noisy-neighbor risk.
 
-**Failure and recovery.** Quota bypass and cross-tenant leakage are common; verify
-isolation in the owner section.
+**Failure and recovery.** Quota bypass, shared-storage reuse, row-security bypass and cross-tenant
+cache or worker leaks are the common failures; deny network paths by default, set a `Delete` reclaim
+policy for shared storage classes, force row security where the tenant is the database principal,
+scope keys and workers by tenant, and test indirect paths with a foreign identifier in the owner
+section.
 
-**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#tenant-based-resource-isolation) — tenant isolation is bounded, not a full control catalogue.
+**Technical owner.** [Multitenant isolation](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md#tenant-based-resource-isolation) — compute, storage, quota, query and credential boundaries are bounded to public guidance, not a full control catalogue.
 
-**Sources.**
-[src.microsoft-multitenant](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-ms-multitenant.2026-10-21: all three served headings read.
-The source is a public pattern/documentation
-unit, not a benchmark.
+**Sources.** AWS Well-Architected SaaS Lens (*Tenant isolation*, *Pool isolation*,
+*Preventing cross tenant access*), Kubernetes *Multi-tenancy*, PostgreSQL 18.6 *Row Security
+Policies* and Microsoft Learn *Architectural approaches for a multitenant solution* were read
+on 2026-10-31. Read records: `read.aws-saas-lens-tenant-isolation.2026-10-31`,
+`read.aws-saas-lens-pool-isolation.2026-10-31`,
+`read.aws-saas-lens-preventing-cross-tenant.2026-10-31`, `read.k8s-multitenancy.2026-10-31`,
+`read.postgres-rowsecurity.2026-10-31` and `read.ms-multitenant-approaches.2026-10-31`.
+The sources are public documentation, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
