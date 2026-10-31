@@ -62,23 +62,25 @@ resilience-pattern; priority core.
 recovers?
 
 **Good-fit conditions.** Failures are dependency-local and observable; the symptom may be an
-error or a slow call; a bounded timeout and deadline exist; the rolling window, minimum request
-volume and threshold comparison are defined; a half-open probe is bounded and safe; the fallback
-or fail-fast contract is defined; state is local or shared deliberately; rejected calls are
-measured separately.
+error or a slow call (slow-call signal is Tycho); a bounded timeout and deadline exist; the
+rolling window, minimum request volume and threshold comparison are defined; a half-open probe
+is bounded and safe; the fallback or fail-fast contract is defined; rejected calls are measured
+separately.
 
-**Hard contraindications.** Reject when failures are caller-specific or caused by local
-saturation, when a circuit would hide a required dependency, when the caller cannot bound the
-call duration, or when recovery probing would overload it.
+**Hard contraindications.** Reject when a circuit would hide a required dependency, when the
+caller cannot bound the call duration, or when recovery probing would overload it. Prefer a retry
+budget with jitter, a rate limit or a bounded timeout when failures are caller-specific or
+caused by local saturation.
 
 **Competing alternative.** For caller-specific or local failures, a retry budget with jitter,
 rate limit or bounded timeout. AWS notes that breakers can add recovery time and limits retries
 locally with a token bucket; Google SRE caps retries per request and per client. Reverse the
-choice when circuit state and fallback complexity exceed failure containment benefit.
+choice when state coordination and fallback complexity cost more than the calls they avoid.
 
-**Failure and recovery.** Shared opens, false recovery, stale state and a breaker that hides a
-local resource problem are common; probe with a bounded budget, attribute rejections to the
-dependency only when dependency-local failures drove them, and do not treat open as recovered.
+**Failure and recovery.** Open is a hypothesis, not recovery; local saturation can masquerade
+as a dependency failure, and a fallback can hide the outage. Probe with a bounded budget,
+attribute rejections to the dependency only when dependency-local failures drove them, and do
+not treat open as recovered.
 
 **Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
 

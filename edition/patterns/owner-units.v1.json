@@ -8203,7 +8203,7 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe.",
+          "quote": "A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe. The three normal states are CLOSED, OPEN and HALF_OPEN; DISABLED and FORCED_OPEN are special states and are out of scope here.",
           "reason": "Azure defines the Closed, Open and Half-Open states and the proxy implementation; Resilience4j states that its CircuitBreaker is a finite state machine over a sliding window. One breaker per dependency is Tycho's rule.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -8224,7 +8224,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Threshold semantics need both a rate and a minimum volume.",
+          "quote": "The sources use different threshold models rather than one shared boundary: Resilience4j compares a failure rate (\"equal or greater\" than the threshold) after a minimum call volume; Azure triggers on a failure count within a specified interval and does not state a rate threshold.",
           "reason": "Resilience4j requires a minimum recorded call count and trips at \"equal or greater\" than the threshold; Azure requires a specified number of failures in a specified interval and says \"exceeds\". The comparison boundary remains a recorded disagreement.",
           "binding": {
             "source_id": "src.resilience4j",
@@ -8252,7 +8252,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "an open caused by local resource exhaustion hides the real bottleneck.",
+          "quote": "The open state records why it opened and the cooldown; half-open admits a bounded number of probes. Azure closes when all permitted requests succeed; Resilience4j closes when the permitted-call failure rate is below the threshold, so a permitted failure can still close it. A stricter consecutive-success rule is Tycho synthesis.",
           "reason": "Azure says Half-Open probes a recovering service, that recovery depends on external operations and that the pattern is scoped to remote services rather than local private resources; SRE ties utilization signals to local task state. The attribution rule and fail-fast contract are Tycho.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
@@ -8331,7 +8331,7 @@
       "decision_evidence": {
         "atlas_section": "circuit-breaker",
         "question": "Should calls to a failing dependency be rejected early until it recovers?",
-        "competing_alternative": "For caller-specific or local failures, a retry budget with jitter, rate limit or bounded timeout. AWS notes that breakers can add recovery time and limits retries locally with a token bucket; Google SRE caps retries per request and per client. Reverse the choice when circuit state and fallback complexity exceed failure containment benefit.",
+        "competing_alternative": "For caller-specific or local failures, a retry budget with jitter, rate limit or bounded timeout. AWS notes that breakers can add recovery time and limits retries locally with a token bucket; Google SRE caps retries per request and per client. Reverse the choice when state coordination and fallback complexity cost more than the calls they avoid.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8374,7 +8374,7 @@
         "heading": "Bulkhead",
         "anchor": "bulkhead",
         "level": 3,
-        "line": 200,
+        "line": 205,
         "unit_kind": "dedicated",
         "unit_terms": [
           "reserves bounded workers",
