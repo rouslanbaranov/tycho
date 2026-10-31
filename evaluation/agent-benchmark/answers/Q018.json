@@ -1,0 +1,16 @@
+{
+  "task_id": "Q018",
+  "answer": "A bounded queue is a buffer between arrival and processing, so it decouples when work arrives from when it is served. During a brief burst the excess can wait in the queue while workers drain it at their sustainable rate: because producers and consumers run at different rates, the queue absorbs the spike and downstream sees the smoother consumer rate. That is load leveling, not additional throughput.\n\nThe sustainable rate is set by worker completions (service capacity), not by queue depth. If offered work exceeds the drain rate, the backlog and queue age grow at the difference even while every worker is busy. The synthetic walkthrough shows 120 requests/s against 80 completions/s producing about 800 outstanding requests in 20 seconds, and clearing that backlog after arrivals stop takes at least ten more seconds under idealized assumptions.\n\nA bound only caps how much backlog may accumulate before the policy must reject, block, or shed. Once the queue is full, requests are turned away rather than served, so a full bounded queue converts sustained overload into admission loss or expiry while throughput stays at capacity. In the saturation example, 30 requests/s offered against 24/s of service capacity leaves utilization at 1.0, throughput at 24/s, a rejection rate of about 0.2, and backlog pinned near the queue limit; hidden rejection would make the model look healthier than it is.\n\nThe pattern therefore fits only when bursts exceed consumer capacity temporarily and added latency is acceptable; it is contraindicated when backlog would violate a deadline or when the queue becomes an unbounded hiding place. Durable acceptance, retention and age bounds, and idempotent consumers must be owned. If the burst is sustained or work is not deferrable, shedding, backpressure, or provisioning are preferable, because raising sustainable capacity requires increasing service capacity or reducing admitted load to what the service can sustain. A queue can postpone the excess, but it cannot remove it.",
+  "citations": [
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

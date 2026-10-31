@@ -1,0 +1,331 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q007",
+      "question": "What is the difference between an observed service indicator and its objective?",
+      "layer_expected": "book",
+      "answer": "An observed service indicator is the measurement; its objective is the target set on that measurement. The corpus defines a service-level indicator as a quantified property of service behavior, such as the share of eligible requests that satisfy correctness and deadline gates, computed over a defined event population, observation boundary and window. An objective is the target for that same indicator over a specified rolling or calendar window (for example, a chosen 99.9% good-event target over 30 days, which is translated into an allowed number of bad events). So the indicator reports what was observed, while the objective states the value the service is expected to preserve and supplies the reference against which the observation is judged: an unaimed indicator cannot declare health, and a target without an explicit event population and denominator can be meaningless. The error budget is then an accounting of the permitted bad events implied by the chosen objective; it is not permission to break hard invariants such as authorization rules, exclusivity or data-loss constraints, even when the objective appears green. The corpus's numeric examples are explicitly synthetic and illustrative, not real objectives or observed incidents.",
+      "citations": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview"
+      ],
+      "required_evidence": [
+        "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#decision-and-worked-result",
+        "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#pages-and-reasoning-route",
+        "tycho.landing.b7ea8fb13ebb4079af2333e475f97106#canonical-chapters",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#purpose-and-mission",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Pages and reasoning route",
+        "Canonical chapters",
+        "2. An SLI is an observation; an SLO is a chosen target",
+        "Purpose and mission"
+      ]
+    },
+    {
+      "task_id": "Q015",
+      "question": "How can a priority queue protect critical work while avoiding indefinite starvation of other classes?",
+      "layer_expected": "book",
+      "answer": "A priority queue protects critical work only when priority is a bounded, authenticated contract rather than a raw ordering shortcut. (1) Authenticate the criticality class and propagate it with the request at every hop, keeping it separate from the deadline and from any client-asserted priority. Otherwise a downstream dependency sees only an ordinary caller and may shed the critical work first, and an untrusted producer can self-assign the top class. (2) Define the class model explicitly: class levels, per-level capacity and the broker's actual priority support, and cap each tenant's share of a lane so one tenant cannot occupy the high-class lane. (3) Bound waiting: add aging or a maximum-wait rule so lower classes keep making progress; without a wait bound the policy is simply starvation. (4) Remember that a priority queue orders ready work and does not preempt a running handler, so a slow low-class execution can still delay a high-class item; cap handler time or use separate lanes or reserved capacity. (5) Verify with per-class queue age plus offered, admitted, rejected and correctly completed counts, and confirm that lower classes are rejected before higher ones at each hop; keep retry guidance consistent with the remaining budget so retries do not re-flood the queue. If priority cannot be authenticated or starvation is unacceptable, prefer admission-controlled FIFO, separate lanes per class, or a shared queue with reserved capacity, and reverse the priority choice when inversion and starvation exceed the latency benefit. Weighted fair scheduling can reserve progress for other tenants, but weights alone neither cap the cost of one operation nor prevent starvation unless the scheduling and admission rules do so, and request-count fairness versus resource-cost fairness produce different outcomes, so the protected objective must be stated explicitly.",
+      "citations": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#bounded-pattern-ownership-notes",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory"
+      ],
+      "required_evidence": [
+        "tycho.chapter.0718556e0eb14d499adbbe67073327df#decision-and-worked-result",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#applicability-migration-and-rollback-adr-for-another-organization",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#revised-boundary-storage-local-and-multi-signal",
+        "tycho.page.4856fd39b7e1bfa3b7430427192179fa#three-failures-and-explicit-recovery",
+        "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Admission must optimize useful completed work, not accepted requests",
+        "Applicability, migration and rollback ADR for another organization",
+        "Revised boundary: storage-local and multi-signal",
+        "Three failures and explicit recovery"
+      ]
+    },
+    {
+      "task_id": "Q023",
+      "question": "Why might promoting a streaming replica fail to recover an accidental deletion?",
+      "layer_expected": "book",
+      "answer": "Promoting a streaming replica does not undo an accidental deletion because a physical standby is a forward-replaying copy of the primary's WAL, not a historical snapshot. A destructive change -- a bulk DELETE/TRUNCATE, a dropped object, or a faulty release's cleanup -- is ordinary WAL content, so a standby that has already replayed it holds exactly the same damaged state. Promotion only makes that copy writable: it swaps availability, not history, and can convert a recoverable incident into a new authoritative copy of the damage. The source describes precisely this: a streaming standby 'receives those deletes', so 'fail over to the replica' is a bad recovery assumption, and 'if the standby already replayed the deletion, it is no better as a historical recovery source.' A replica may simply inherit logical corruption and deletions from the primary, and a logical destructive command can be replicated faithfully to every standby.\n\nThere is one accidental exception, not a strategy: a standby that still lags *behind* the destructive transaction may not yet have applied it. But lag is not a recovery guarantee -- lag is not a single scalar, and a healthy or reachable replica is explicitly not evidence that it contains a named effect, or that it will keep containing it. Promotion is not a substitute for a recovery point.\n\nThe mechanism that does target this failure class ('operator error' / logical corruption) is separate: a known-good physical base backup plus a continuous, complete WAL archive, restored by point-in-time recovery to a selected point before the destructive transaction, into an isolated target first, then verified against application invariants and reconciled with legitimate writes made after that point -- because recovering to an earlier point also discards valid post-point work (the restore paradox). Promotion carries an independent loss mode of its own as well: with asynchronous replication the standby can be missing acknowledged commits, and merely issuing pg_promote() is not a demonstrated zero-loss failover.",
+      "citations": [
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+        "tycho.page.ddeff7f1556f44f18c67659b73e6e15f#engineering-walkthrough-primary-acknowledgment-is-not-standby-completeness"
+      ],
+      "required_evidence": [
+        "tycho.chapter.388c48be24414421a63481b37d05fdce#decision-and-worked-result",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#overview"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "RTO, RPO and their measurement boundaries",
+        "3. Physical streaming replication versus logical replication",
+        "4. Original synthetic example: public equipment reservations",
+        "Bounded pattern ownership notes"
+      ]
+    },
+    {
+      "task_id": "Q031",
+      "question": "Why is a CPU flame graph insufficient by itself to explain a request delayed by blocking?",
+      "layer_expected": "book",
+      "answer": "A CPU flame graph is built from stack samples of threads that are running on a CPU, so it attributes CPU-running sampled time only. A request delayed by blocking spends most of its wall-clock time off-CPU: waiting for queue or executor admission, for a pooled connection, for a lock, for network, disk or an external API, or paused by JVM/OS scheduling. That waiting burns no CPU, so it produces no frames in the graph - the fire is absent rather than wide. The profile can look flat, or point at a hot function, while the delay accumulates somewhere the graph never samples. The book states that a CPU flame graph can point to hot functions, but cannot prove the request critical path, end-to-end correctness, or the cause of waiting without correlated evidence, and records 'missing waiting states' as the CPU sampling profile's limitation. Wall-clock stack sampling can show blocked and sleeping stacks, but carries its own sampling and thread-grouping biases; a distributed trace bounds only instrumented spans and does not by itself separate CPU use from a blocked socket or missing spans. The flame graph therefore has to be read alongside a latency decomposition and correlated signals - queue age, pool and connection waits, lock ownership, GC pause timing, offered versus admitted versus completed rates - and even then the symptom-to-cause pairings are hypotheses to test, not a diagnosis, so a single profile cannot establish which resource was actually limiting progress.",
+      "citations": [
+        "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix",
+        "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss"
+      ],
+      "required_evidence": [
+        "tycho.chapter.22e3f1a320e54179a176871646debd00#pages-and-reasoning-route",
+        "tycho.chapter.22e3f1a320e54179a176871646debd00#purpose-and-mission",
+        "tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+        "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix",
+        "tycho.page.b6cecfd7301b408db611228b4cec59c5#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Purpose and mission",
+        "6. How to choose the next experiment",
+        "2. Feedback signals and the hot-key trap",
+        "2. Connection pooling is not queuing-capacity magic"
+      ]
+    },
+    {
+      "task_id": "Q039",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "layer_expected": "book",
+      "answer": "A reset to earliest recovers only the earliest retained history, not the beginning of the log. If retention has deleted older records, the reset cannot recreate them: the consumer resumes at the earliest offset that still exists, and every expired record before that point stays lost. The result can look healthy while output is silently incomplete, so recovering the missing history requires retained data plus an explicit source snapshot/backfill or other out-of-band reconstruction, not the offset reset alone.",
+      "citations": [
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix"
+      ],
+      "required_evidence": [
+        "tycho.chapter.24729e8d9b7247b298956ab144c15225#further-mechanism-and-recovery-questions",
+        "tycho.chapter.566e576a945b44628386d520214d6c4a#decision-and-worked-result",
+        "tycho.page.0b493340594c4c4392c5d93940a7f319#integrated-decision-and-reading-route",
+        "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#1-command-query-notification-and-durable-event-are-distinct-contracts",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#engineering-walkthrough-work-queue-versus-ephemeral-fan-out-versus-replayable-history",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions"
+      ],
+      "expected_answer_points": [
+        "Further mechanism and recovery questions",
+        "Decision and worked result",
+        "Integrated decision and reading route",
+        "3. Replicas, ISR and acknowledgement scope",
+        "1. Command, query, notification and durable event are distinct contracts"
+      ]
+    },
+    {
+      "task_id": "Q047",
+      "question": "What evidence makes an extracted dependency edge traceable to its source?",
+      "layer_expected": "book",
+      "answer": "An extracted dependency edge is traceable only when the edge record carries its provenance, not merely its endpoints. The book's provenance contract says a graph constructed from source references should record: (1) the source file/version or admitted document the edge came from; (2) the inference or extraction method and its date; (3) a confidence or evidence-status label; (4) edge freshness plus a deprecation/removal rule; and (5) named ownership of conflict resolution. Beyond those five fields, the inspected source identity, relation meaning and snapshot membership must be carried into the derived relationship, so an answer can be attributed to a specific snapshot (accept the historical answer only with its S1 attribution; reject or disclose a mixed-snapshot conclusion). The corroborating rationale is that neither the existence of an edge nor a successful traversal establishes current source support: source revision drift can invalidate an edge, an update should mark a relationship stale or unknown rather than treating absence of new inspection as proof of removal, and deleting a stale edge must not silently erase the historical reason it once existed. Conversely, an edge is not fact merely because a visualization draws it. Note the page's stated limit: this provenance contract is conceptual guidance, not a claim of an implemented graph service or an empirical benchmark.",
+      "citations": [
+        "tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance",
+        "tycho.page.64f398c0535345258b1fdf5eebbf4438#original-stale-edge-counterexample"
+      ],
+      "required_evidence": [
+        "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#decision-and-worked-result",
+        "tycho.page.5bee1736b2fe4418af5c50587ee4fbb0#3-graph-traversal-is-an-explicit-reasoning-step-not-a-search-replacement",
+        "tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance",
+        "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+        "tycho.page.990dac261357498fa433cf98e87817d3#5-permission-and-provenance-are-part-of-retrieval-correctness",
+        "tycho.page.ae4febbe43f941f78d825613e126419b#1-clarify-the-meaning-of-an-edge"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "3. Graph traversal is an explicit reasoning step, not a search replacement",
+        "5. Derived graphs and provenance",
+        "4. Query specification must include semantics and bounds",
+        "5. Permission and provenance are part of retrieval correctness"
+      ]
+    },
+    {
+      "task_id": "Q055",
+      "question": "What should happen to the user response if the candidate fails during a parallel run?",
+      "layer_expected": "atlas",
+      "answer": "If the candidate implementation fails during a parallel run, the user-visible response must be unaffected: the failing candidate is contained to the comparison channel and must never affect the response, while the old, authoritative path keeps serving the user until cutover. Because the parallel-run card requires that outputs be side-effect free and that the old path stay authoritative until cutover, a candidate error is treated as a comparison signal (logged and inspected) rather than as a serving failure, and the candidate's result is discarded instead of being returned. Cutover or promotion must not proceed on a failing candidate; the run is rolled back or held at the old authority. The same isolation appears in shadow traffic, where mirrored requests are fire-and-forget, their responses are discarded and therefore cannot affect the primary response. The bounded nuance is that falling back to the old path for a user query is only safe while the old behavior and data assumptions still hold; otherwise the divergence itself must be handled before the comparison can prove equivalence.",
+      "citations": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states"
+      ],
+      "required_evidence": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+        "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview"
+      ],
+      "expected_answer_points": [
+        "Parallel Run",
+        "Bounded pattern ownership notes",
+        "Dark Launching / Shadow Traffic",
+        "Asynchronous Request-Reply"
+      ]
+    },
+    {
+      "task_id": "Q063",
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
+      "layer_expected": "atlas",
+      "answer": "Dedicated static content hosting assumes a representation can be stored once and reused by many callers without per-request application compute; personalized, uncacheable content violates exactly that premise, and the pattern's own evidence treats it as a rejection condition.\n\n1. It is a hard contraindication, not a tuning problem. The pattern card states the good-fit conditions as static/versioned content, a retained version covering the rollback window, controlled cacheability and purge, and owned origin protection, and lists \"Reject when content is personalized/uncacheable, when versioning/purge cannot meet freshness, or when edge configuration is unowned.\" Personalization removes the first condition and usually the second as well, so no amount of configuration makes the dedicated store appropriate.\n\n2. Cacheability is a content and authority contract, not a network location. A shared edge may reuse a response only when it is permitted to; the cache key, freshness policy and authorization boundary must all agree. User-specific responses cannot share a key, and an authorization header is not a complete design for private edge caching, because explicit cache directives can alter reuse rules. The named hazard is explicit: \"A misclassified response can serve one user's private data to another.\" For uncacheable content the reuse decision is always \"no\", so the store/edge is on the path without ever being able to answer from it.\n\n3. Freshness and purge cannot repair it. Changing, deleting or restricting origin content does not invalidate cached copies; purges need propagation time, and CDN purges do not clear browser caches. A purge request without completion evidence is not a proven revocation bound. For content that changes per request, any cached copy is already wrong before a purge could land, and the private-content failure mode (public-to-private visibility change) becomes a distributed-revocation problem rather than a cache problem.\n\n4. The economics invert. Static hosting pays off by serving by URL with no per-request application compute, trading that for storage, egress, purge cost and a retained-version rollback path. Personalized content still requires per-request key construction, an authorization decision and an origin reach on every request, so the dedicated layer no longer bypasses the origin it was meant to protect. It then adds a second version authority and storage/egress/purge cost on top of full origin load - negative value rather than a reduced hit rate.\n\n5. The guidance points elsewhere. When content changes per request or the publication pipeline cannot be governed, a dynamic origin, self-hosted files or edge compute may be preferable; and a direct origin or a private cache may be preferable when every response is user-specific or the purge contract cannot be enforced. Edge caching is a fit only when the response is shareable and the key, freshness and authorization boundary are explicit.",
+      "citations": [
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes",
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Cache Invalidation",
+        "Bounded pattern ownership notes",
+        "Static Content Hosting",
+        "TTL-Based Expiration"
+      ]
+    },
+    {
+      "task_id": "Q071",
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "layer_expected": "atlas",
+      "answer": "A liveness probe answers one narrow question: is this process wedged and should it be restarted? Readiness answers a different one: should this instance receive traffic? A shared dependency such as a database, cache or broker is outside the process, so its unavailability is not evidence that the worker itself is unhealthy, and a restart cannot repair it. If liveness tests the shared dependency, a single dependency outage fails every healthy replica at once; restarting them all into the same outage amplifies the failure, discards in-flight work and can cascade, while the restarted processes still cannot reach the dependency. The correct design separates the failure meanings: surface dependency unavailability through readiness (traffic removal), degradation or retry, and keep shared-dependency checks out of liveness, reserving restarts for process-local faults a restart can actually fix. Each probe needs its own endpoint, timeout and failure action, with consecutive-failure thresholds and bounded timeouts to avoid false restarts.",
+      "citations": [
+        "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+        "tycho.page.1810c1f1f11648bdba66aafa5da60d33#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.419769c372ccaa569796954878e3bef9#entry-inventory",
+        "tycho.chapter.e996607f707421ca388796732547cafd#entry-inventory",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.1810c1f1f11648bdba66aafa5da60d33#bounded-pattern-ownership-notes",
+        "tycho.page.2462dbd13c464291bcbf4325d2d2bd97#overview",
+        "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+        "tycho.page.77e5d6cab6c083335efb7fc74b423809#overview",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Health endpoint monitoring",
+        "Bounded pattern ownership notes",
+        "Sidecar",
+        "Health, Readiness and Liveness Checks"
+      ]
+    },
+    {
+      "task_id": "Q079",
+      "question": "Why can a relative-error convergence threshold be misleading when a metric mean is close to zero?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Relative error is the standard error divided by |mean| (relative error = se/|mean|), so a threshold such as 0.02 is a ratio whose denominator collapses as the metric mean approaches zero. The same absolute sampling error then produces an arbitrarily large relative error, so a run can be marked insufficient-sample even though its absolute error is already small enough for the decision; the book states plainly that a metric near zero can have a small absolute error and a large relative error. The converse is also misleading: a metric with a wide business tolerance can sit comfortably under a fixed relative threshold while its absolute error is still too wide to support the decision, and no single ratio threshold is meaningful across metrics with different tolerances. The book therefore treats the relative-error threshold as a decision aid, not a universal rule, and pairs it with the caveat that convergence means only that the sampling error of the reported metric is small under the declared model, not that the model, its inputs or the decision are valid. Practical guard: pair relative error with an absolute or decision-relevant tolerance, and declare the threshold before seeing results, because threshold shopping after the fact is a listed failure mode.",
+      "citations": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#pages-and-reasoning-route",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Relative error",
+        "What convergence does not mean",
+        "Required fields",
+        "Sensitivity and uncertainty"
+      ]
+    },
+    {
+      "task_id": "Q087",
+      "question": "What consistency relation should hold between first-order and total-order sensitivity shares?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Each total-order sensitivity share must be at least the corresponding first-order share, because total-order includes every interaction involving that input; both indices lie in [0,1]. The first-order shares must also sum to at most 1, with the remainder attributed to interaction and unexplained variance. The book states the sanity conditions explicitly (each first-order index in [0,1]; each total-order index >= its first-order index) and notes that the V12 screen enforces the second by construction, rejecting any screen whose total index falls below a first-order index. In the candidate B example the pairs are 0.361/0.464 and 0.536/0.639, and the two first-order shares sum to 0.897, leaving about 0.103 for interaction and unexplained variation. These are screening sanity checks, not proof of production importance.",
+      "citations": [
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#boundaries-and-evidence",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity"
+      ],
+      "expected_answer_points": [
+        "Boundaries and evidence",
+        "Purpose and mission",
+        "Standard error",
+        "Case 4: sensitivity sanity",
+        "Monte Carlo reference cases"
+      ]
+    },
+    {
+      "task_id": "Q095",
+      "question": "What happens to the timeout when the V12 discrete-event model retries an attempt?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "In the V12 discrete-event model the timeout is per-attempt, not per-request: when an attempt times out and attempts remain, the engine releases the server (or dequeues a queued request), records the attempt as timed out, schedules a retry event after the backoff, and the retry schedules a fresh timeout at the retry time plus the configured timeout. The old deadline is not reused, so a request with three attempts can spend up to three timeouts plus two backoffs in the system. The expired attempt's already-scheduled completion event stays in the heap as a stale event and is ignored because the state check finds no in-service request. This reset is required for reproducibility: the listed failure mode 'Timeout resets on retry omitted' means a retry would inherit an expired deadline and fail immediately.",
+      "citations": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#diagram",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#overview"
+      ],
+      "expected_answer_points": [
+        "Diagram",
+        "Purpose and mission",
+        "A retry state diagram",
+        "Retry amplification",
+        "Determinism rules"
+      ]
+    }
+  ]
+}

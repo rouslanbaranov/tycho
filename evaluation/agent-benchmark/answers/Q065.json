@@ -1,0 +1,15 @@
+{
+  "task_id": "Q065",
+  "answer": "Endpoint discovery and active health checking answer different questions, so discovery cannot substitute for a probe. Discovery distributes a membership view: Envoy fetches cluster members from a xDS management server through the endpoint discovery service, and EDS also carries per-host attributes such as load-balancing weight, canary status and zone. But Envoy assumes hosts come and go in an eventually consistent way, and the book states plainly that active health checking is what determines cluster health. That split exists because membership is a statement about the control plane's view, not about current admissibility: a stale membership view can outlive a rollout, a removed backend can still be cached (removal and connection shutdown require coordinated policy, judged by attempts to the removed endpoint after route publication), and a newly listed endpoint can appear before it can accept work. Collapsing the two hides failure modes rather than removing them - a route decides where a request may go, while a health signal decides whether an instance is eligible to receive it, and reducing both to 'the load balancer is healthy' conceals stale routes, mixed readiness semantics and a backend that answers quickly but cannot do useful work. Only probing yields an eligibility decision that does not depend on traffic having already failed: passive observation learns about failure only from real requests, and no response is not evidence of health. The check itself must therefore be bounded - probe frequency and timeouts bounded, probes run on a path that does not depend on the ingress, DNS or control plane they observe, and missing probe data alerted on rather than treated as a pass - and startup eligibility, readiness, liveness and permanent removal must stay separate endpoints, with a liveness endpoint not restarting every healthy process because one shared dependency is unavailable. Active checking also needs its own containment: a shared dependency failure can fail every probe and cause mass ejection or restart, so instance-local faults must be separated from shared ones, a cached healthy answer must have bounded age, and an instance must be drained before removal. The atlas card reaches the same conclusion in one line: discovery is eventually consistent; active health checking determines cluster health.",
+  "citations": [
+    "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+    "tycho.page.b503488c20a947b581ef45e84ea735d6#overview",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

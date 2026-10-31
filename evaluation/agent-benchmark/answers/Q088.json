@@ -1,0 +1,15 @@
+{
+  "task_id": "Q088",
+  "answer": "A scenario metric is comparable between candidates with different server counts when it is business-comparable: it is declared in the shared scenario contract with the same identifier, unit and direction, and can be compared without hidden normalization. The comparison must also hold the workload, duration, warmup, metric definitions and seed scheme identical, changing only the candidate configuration such as server count. Rates and per-outcome costs qualify: success rate, p95 latency, throughput, cost per 1000 successful requests, rejection rate and retry amplification. Utilization-style metrics do not: average CPU utilization is not comparable across candidates with different server counts unless cost and work units are also stated, because utilization depends on capacity (rho = lambda / (c * mu)) and therefore on server count. A decision record that uses a metric not declared in the scenario is a validation failure.",
+  "citations": [
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "Q096",
+  "answer": "It is recorded as a censored value at the horizon, not as a completed duration. The rollback state records three things: whether the rollback completed within the horizon; the time from trigger to drain, or a censored value at the horizon; and the maximum divergence observed before the trigger. So when the modeled drain is still running at the end of the horizon, the trigger-to-drain time is neither zero nor extrapolated to a finish time — it is right-censored at the observation boundary, paired with an explicit 'did not complete within the horizon' flag. The page treats this as a legitimate finding rather than a failed model: non-completion means the declared reconciliation capacity is insufficient for the declared lag and observation window, which is exactly the conclusion a precise but meaningless duration (for example, an unknown recorded as zero) would hide.",
+  "citations": [
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

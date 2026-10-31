@@ -1,0 +1,15 @@
+{
+  "task_id": "Q031",
+  "answer": "A CPU flame graph is built from stack samples of threads that are running on a CPU, so it attributes CPU-running sampled time only. A request delayed by blocking spends most of its wall-clock time off-CPU: waiting for queue or executor admission, for a pooled connection, for a lock, for network, disk or an external API, or paused by JVM/OS scheduling. That waiting burns no CPU, so it produces no frames in the graph - the fire is absent rather than wide. The profile can look flat, or point at a hot function, while the delay accumulates somewhere the graph never samples. The book states that a CPU flame graph can point to hot functions, but cannot prove the request critical path, end-to-end correctness, or the cause of waiting without correlated evidence, and records 'missing waiting states' as the CPU sampling profile's limitation. Wall-clock stack sampling can show blocked and sleeping stacks, but carries its own sampling and thread-grouping biases; a distributed trace bounds only instrumented spans and does not by itself separate CPU use from a blocked socket or missing spans. The flame graph therefore has to be read alongside a latency decomposition and correlated signals - queue age, pool and connection waits, lock ownership, GC pause timing, offered versus admitted versus completed rates - and even then the symptom-to-cause pairings are hypotheses to test, not a diagnosis, so a single profile cannot establish which resource was actually limiting progress.",
+  "citations": [
+    "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+    "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy",
+    "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix",
+    "tycho.page.6cdc8b405be542f29528e4cfd7454bc9#diagnose-what-conventional-profilers-miss"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

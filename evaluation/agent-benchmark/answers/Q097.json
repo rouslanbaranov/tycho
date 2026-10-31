@@ -1,0 +1,17 @@
+{
+  "task_id": "Q097",
+  "answer": "The V12 discrete-event checkout model uses one request-queue discipline: FIFO. It deliberately does not implement priority or preemption; a model needing them requires a new explicit contract and tests, and the verification page records FIFO-only with no priority or preemption among its unverified limits. Its resource controls are: a fixed number of servers; a bounded FIFO queue (maximum waiting requests); a bulkhead limiting waiting plus in-service requests; a per-attempt timeout (deadline); and a bounded retry budget (maximum attempts). Backpressure rejects and counts a request when the queue or bulkhead is full, while a timeout expires an attempt and may trigger a retry. Retry policy supports none, exponential or linear backoff and no, full or equal jitter. Separately, the event calendar orders simultaneous events by time, then priority, then insertion sequence; that event ordering is not request-class priority.",
+  "citations": [
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+    "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "task_id": "Q034",
+  "answer": "Wire compatibility only establishes that bytes still parse and that unknown fields are tolerated. An added field can nonetheless break an old client's business behavior because compatibility is behavioral and asymmetric, not a property of the schema alone: (1) a new field may become a required business value that an old caller cannot supply, so old requests lose their previously authorized meaning; (2) old code may interpret absence, null-versus-absent, defaults, units, enum values, pagination order or error types differently, so an optional addition silently changes what the client believes happened; (3) old decoders may be strict or may silently ignore the field while their business logic still assumes the old invariant, and persisted records, replayable events and background workers can outlive the rollout so old and new meanings coexist; (4) a new server reading an old client can behave differently from an old server reading a new client. Compatibility is therefore a matrix over every actually deployed producer/consumer pairing, and wire-parse, semantic and operational/state compatibility must each be tested with mixed-version fixtures and rollback windows rather than inferred from a successful parse.",
+  "citations": [
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+    "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

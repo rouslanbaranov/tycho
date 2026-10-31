@@ -1,0 +1,13 @@
+{
+  "task_id": "Q071",
+  "answer": "A liveness probe answers one narrow question: is this process wedged and should it be restarted? Readiness answers a different one: should this instance receive traffic? A shared dependency such as a database, cache or broker is outside the process, so its unavailability is not evidence that the worker itself is unhealthy, and a restart cannot repair it. If liveness tests the shared dependency, a single dependency outage fails every healthy replica at once; restarting them all into the same outage amplifies the failure, discards in-flight work and can cascade, while the restarted processes still cannot reach the dependency. The correct design separates the failure meanings: surface dependency unavailability through readiness (traffic removal), degradation or retry, and keep shared-dependency checks out of liveness, reserving restarts for process-local faults a restart can actually fix. Each probe needs its own endpoint, timeout and failure action, with consecutive-failure thresholds and bounded timeouts to avoid false restarts.",
+  "citations": [
+    "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+    "tycho.page.1810c1f1f11648bdba66aafa5da60d33#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,333 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q004",
+      "question": "Which extra isolation concern remains when tenants share a connection pool but data permissions are correct?",
+      "layer_expected": "book",
+      "answer": "Resource/capacity isolation remains. Correct tenant-scoped data permissions control which records a tenant may read or write, but they do not stop one tenant's workload from consuming or starving the shared connection pool and delaying other tenants (noisy-neighbour effects / connection-pool starvation). The book treats compute and resource isolation as a separate axis from identity and data isolation, warns that equal CPU limits alone do not prevent shared storage or connection-pool starvation, and says a shared pool with tenant-scoped predicates is cheaper at low scale only with explicit fairness and escape hatches; a shared pool can strand capacity or fail to enforce quotas, so dedicated resources are justified when measured noisy-neighbour cost (or compliance risk) dominates. At the connection level, pooled reuse also carries session-scoped state (session settings, temporary objects, prepared statements, LISTEN/NOTIFY and locks), so tenant/session context must not be assumed to persist across checkouts.",
+      "citations": [
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics"
+      ],
+      "required_evidence": [
+        "tycho.chapter.5426707ddf264b758016aafe71f342b7#decision-and-worked-result",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.4856fd39b7e1bfa3b7430427192179fa#common-dependencies-and-cost",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Tenant-Based Resource Isolation",
+        "Engineering walkthrough \u2014 Tenant isolation across four non-equivalent layers",
+        "Common dependencies and cost",
+        "5. Isolation is multidimensional"
+      ]
+    },
+    {
+      "task_id": "Q012",
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "layer_expected": "book",
+      "answer": "Parallel run is a control, not a race. The old implementation's result must remain the system of record while the candidate runs alongside it; the candidate is compared but never serves the response. That preserves three things. First, an independent reference: without an authoritative old result, a difference cannot be attributed to the candidate, and 'equal' or 'green' output proves nothing. Second, safety: a candidate failure must never become a user-visible failure, so the old result must keep answering. Third, recovery: the old route must remain operational and authorized so the change can be held, reversed, or used as a reconciliation baseline. Retiring or overwriting the old authority before cutover destroys both the comparison and the fallback. Two limits: parallel run applies only to side-effect-free operations with comparable outputs; and the old result is authoritative for control, not an infallible business oracle - equality with a buggy legacy output is not proof of correctness.",
+      "citations": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#7-public-sources-and-nonclaims",
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#decision-and-worked-result",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#decision-transfer-negative-cases-and-synthetic-adr",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+      ],
+      "expected_answer_points": [
+        "7. Public sources and nonclaims",
+        "Decision and worked result",
+        "Selection matrix: which migration method is justified?",
+        "Parallel Run",
+        "Concrete migration safety mechanism"
+      ]
+    },
+    {
+      "task_id": "Q020",
+      "question": "Why can a Java process exceed a memory limit while heap occupancy looks stable?",
+      "layer_expected": "book",
+      "answer": "The Java heap is only one memory domain of the process. Overall process memory also includes thread stacks, native libraries, direct (off-heap) buffers, memory-mapped files, JIT/compiler code and other runtime structures, so a process or container can exceed its physical or configured memory limit even while recorded heap occupancy looks acceptable. That heap figure is also a sampled, collection-dependent observation: heap used before a collection is not a sufficient leak indicator, and a high allocation volume may reflect normal high-throughput churn rather than retained live data. Container limits are enforced against process/container accounting rather than the managed heap, so heap occupancy does not bound the process footprint. To attribute the growth, correlate JVM-side evidence (JFR/GC events, allocation and native-memory telemetry) with OS/container telemetry (memory limit, page faults) over the same load window: an allocation profile alone cannot establish a retained live-set or leak, and process metrics alone cannot show the application-level effect.",
+      "citations": [
+        "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain",
+        "tycho.page.b6cecfd7301b408db611228b4cec59c5#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure",
+        "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove"
+      ],
+      "required_evidence": [
+        "tycho.chapter.22e3f1a320e54179a176871646debd00#purpose-and-mission",
+        "tycho.page.0d095fa3993a48f0b70ae375cb60c493#5-original-synthetic-failure-the-misleading-virtual-thread-fix",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix",
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+        "tycho.page.b6cecfd7301b408db611228b4cec59c5#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure",
+        "tycho.page.b6cecfd7301b408db611228b4cec59c5#purpose-and-mission",
+        "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "5. Original synthetic failure: the misleading virtual-thread fix",
+        "2. Working symptom matrix",
+        "Why reliability was not automatically improved",
+        "Workload requirement changes the answer"
+      ]
+    },
+    {
+      "task_id": "Q028",
+      "question": "What extra recovery coordination can a continuously reconciling GitOps controller require during an emergency rollback?",
+      "layer_expected": "book",
+      "answer": "A continuously reconciling GitOps controller adds a control-loop and authority-coordination step to an emergency rollback, not just a deployment action. Because the controller keeps pulling live state toward the versioned desired state, an imperative live-cluster rollback can be reverted or re-applied by the controller; the book notes Argo CD's caution that rollback cannot be performed while automated sync is enabled. Recovery therefore has to include the controller: decide and authorize who may pause reconciliation, then disable or suspend automated sync (treating pruning and self-healing as separate controls that can also be disabled) or, alternatively, express the rollback as a reviewed revert commit to the desired-state repository so the controller converges to it rather than fighting it. When the reconciler is stuck or racing the emergency change, inspect reconciliation history, freeze conflicting automation and assess actual resource state, because CI success does not prove convergence. Verify that the controller will not undo emergency changes and that the reconciled commit is the reviewed desired state. Also check that the old version can read data already written and prefer forward repair where rollback would leave it unable to decode stored state. Re-enable reconciliation only after desired and live state agree, and alert on drift with a named drift owner. In short, the extra coordination covers sync ownership, pause/freeze authority, the ordering of desired-state and live changes, and post-rollback convergence verification.",
+      "citations": [
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+        "tycho.page.7921e82a71b9446790f185c818326911#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback",
+        "tycho.page.7921e82a71b9446790f185c818326911#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.page.19145078d87143b28387ab187d345c32#5-target-architecture-and-transition-states-are-different-artifacts",
+        "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes",
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+        "tycho.page.7921e82a71b9446790f185c818326911#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#purpose-and-mission",
+        "tycho.page.b938ff1a06264492a425f2eff555ae7d#integrated-decision-and-reading-route",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries"
+      ],
+      "expected_answer_points": [
+        "5. Target architecture and transition states are different artifacts",
+        "1. GitOps reconciles desired configuration, not business outcomes",
+        "4. Direct push versus GitOps pull",
+        "6. Failure matrix and discriminating checks",
+        "Engineering walkthrough \u2014 Compromised build worker and a tempting image rollback"
+      ]
+    },
+    {
+      "task_id": "Q036",
+      "question": "In Netflix\u2019s 2024 GC account, how could request pauses amplify load beyond the original slow request?",
+      "layer_expected": "book",
+      "answer": "Netflix's March 2024 account describes GC pauses as a tail-latency and retry-amplification problem, not merely a local pause histogram. A stop-the-world pause stalls request handling, so an affected request can miss its client-side deadline. The caller then cancels and retries, and may also hedge (send a duplicate attempt) or fall back to alternate work. Those attempts are additional offered load on top of the original slow request: the fleet can end up serving the original attempt plus replacement or fallback work even after the unlucky request has failed, and the retries add work after the pause ends. If that extra traffic raises allocation, CPU, or queue pressure, it can cause further pauses and timeouts, which trigger still more retries \u2014 a closed amplification loop. That is why Netflix tied the collector change to reduced tail latency and fewer cancellation-driven retries, and why the account says to measure cancellations, retry traffic, and downstream response tails rather than declaring success from pause duration alone.",
+      "citations": [
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice"
+      ],
+      "required_evidence": [
+        "tycho.chapter.22e3f1a320e54179a176871646debd00#overview",
+        "tycho.chapter.22e3f1a320e54179a176871646debd00#purpose-and-mission",
+        "tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us",
+        "tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment",
+        "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy",
+        "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix",
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved"
+      ],
+      "expected_answer_points": [
+        "V03/C06 \u2014 Memory, GC, CPU and blocking diagnostics",
+        "Purpose and mission",
+        "Workload before collector: what the source can actually tell us",
+        "6. How to choose the next experiment",
+        "2. Connection pooling is not queuing-capacity magic"
+      ]
+    },
+    {
+      "task_id": "Q044",
+      "question": "How did Discord\u2019s data-service layer reduce redundant reads for a hot message channel?",
+      "layer_expected": "book",
+      "answer": "Discord's data-service layer was a Rust/Tokio gRPC tier with one endpoint per underlying query and deliberately no domain logic. It reduced redundant reads for a hot message channel in two coupled ways. First, it routed requests by channel ID using a consistent hash, so requests for the same hot channel tended to land on the same service instance. Second, it coalesced concurrent identical row reads: the first in-flight request for a row started the database operation and simultaneous requests for that same row subscribed to its result instead of issuing their own reads. The stated goal was to collapse redundant reads before they reached an already overloaded Cassandra partition, i.e. request shaping rather than a storage-engine fix. The case notes limits on this transfer: a single-flight cache must still be bounded by request identity and semantics, because differing authorization contexts, mutable reads or different consistency levels may disqualify coalescing (framed as Tycho's transfer risks, not as a claim about Discord's implementation), and hot partitions still occurred after coalescing, just less frequently, so coalescing bought migration time while the store was moved to ScyllaDB alongside it.",
+      "citations": [
+        "tycho.page.b55f5bf29d7946c78454a769980c476e#request-shaping-the-extra-architecture-boundary",
+        "tycho.page.b55f5bf29d7946c78454a769980c476e#architecture-shift-and-ownership",
+        "tycho.page.b55f5bf29d7946c78454a769980c476e#partition-hot-spots-and-why-a-database-replacement-alone-was-insufficient"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3e2e1da8f99c4a7ba05121baf1ef4d91#decision-and-worked-result",
+        "tycho.chapter.4a127ad6ab514ede9ff74394e5174f9c#decision-and-worked-result",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+        "tycho.page.7b980e671a324f769064bc5233761c62#1-start-from-the-workload-and-invariant-not-a-database-brand",
+        "tycho.page.b55f5bf29d7946c78454a769980c476e#request-shaping-the-extra-architecture-boundary",
+        "tycho.page.c75a11f9786442a5b5456f11c2412df4#applied-m9-evidence-what-transfers-and-what-does-not",
+        "tycho.page.ee2dd008d4f445eaa9b20998f855a786#4-document-and-wide-column-data-models"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "6. Cross-model trade-off matrix",
+        "1. Start from the workload and invariant, not a database brand",
+        "Request shaping: the extra architecture boundary",
+        "Applied M9 evidence: what transfers and what does not"
+      ]
+    },
+    {
+      "task_id": "Q052",
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "layer_expected": "atlas",
+      "answer": "Use branch by abstraction with a smaller, monitored rollout. Rather than executing and comparing both implementations for every request, put an internal interface between callers and the old/new implementations so both can run in one deployable while traffic moves gradually; the switch stays reversible until the old path is removed. This avoids doubled compute and comparison storage, but the two implementations must still preserve the same contract and observable effects, and untested side effects or a bypass around the abstraction can break that contract.",
+      "citations": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#entry-inventory",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+        "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Parallel Run",
+        "What a green shadow comparison cannot guarantee",
+        "Controlled Cutover",
+        "Bounded pattern ownership notes"
+      ]
+    },
+    {
+      "task_id": "Q060",
+      "question": "Why is mirrored production traffic unsafe for a shadow service that performs live writes?",
+      "layer_expected": "atlas",
+      "answer": "Mirrored production traffic is a copy of requests that the authoritative path already executed, so a shadow service that performs live writes repeats those effects instead of merely observing them. The book treats shadow requests that cause writes as a hard contraindication: duplicate or conflicting state changes (double creates, charges or updates) can land in shared production data, and because mirrored requests are fire-and-forget with their responses discarded, the shadow's errors and partial failures are invisible, leaving no feedback loop to detect or compensate them. The technical note adds that the new path still needs an explicit side-effect boundary and a load budget, which mirroring by itself does not provide. A feature flag or deployment rollback can stop further mirrored traffic but cannot undo data already committed, and replaying state-changing operations without a stable request/effect identity risks violating invariants through duplicate execution. Mirroring is therefore safe only when the shadow path is write-suppressed or isolated (a read-only replica or sandbox store, or a deduplicated idempotency boundary), not when it writes to live state.",
+      "citations": [
+        "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+        "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+        "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#entry-inventory",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+        "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Parallel Run",
+        "Transactional Outbox",
+        "Dark Launching / Shadow Traffic",
+        "Dark Launching-Shadow Traffic"
+      ]
+    },
+    {
+      "task_id": "Q068",
+      "question": "When should a message router be preferred to a pass-or-discard filter?",
+      "layer_expected": "atlas",
+      "answer": "Prefer a content-based router whenever the decision must choose among destinations, not merely admit or drop. The pass-or-discard filter fits exactly one shape: a single output channel, a testable predicate, and filtering cheaper than downstream handling. A non-matching message is discarded and produces no downstream output, so the filter card hard-contraindicates it when messages need multiple destinations or when every message has a required effect. The router examines message content - field existence, specific field values or configurable rules - and sends each message to a different channel; that makes it the right preference when routing depends on message attributes and destinations carry different contracts, and when unmatched or misrouted messages must be exposed through a declared default or dead-letter path. Choosing the router also imports obligations the filter never has: a versioned predicate set, a named owner for rule changes, validation of predicate fields (routing on an untrusted field lets the producer choose the destination), a declared fallback plus recorded predicate version, and tests for unmatched, multi-match and rule-rollout paths, plus a canary and rollback path. Reverse back to the filter when the destination set collapses to one and the only decision is match versus non-match. The router is the wrong tool when a fixed static route or a topic/queue per producer suffices at publish time, when routing depends on untrusted fields, or when the rules become a multi-step domain workflow without ownership - then use static routing or a workflow/orchestrator, because a router can become a point of frequent maintenance and may turn into a rules engine. Evidence limit: the filter's public source is publisher-abridged and states no rejected-message disposition, audit record or recovery path, so neither choice can be justified on filter-based audit or recovery.",
+      "citations": [
+        "tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory"
+      ],
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+        "tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Bounded pattern ownership notes",
+        "Resequencer",
+        "Message Filter",
+        "Splitter"
+      ]
+    },
+    {
+      "task_id": "Q076",
+      "question": "How should a stock-flow model account for offered work at every integration step?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Treat offered work as a flow that is integrated into stock units at each step: the offered amount over a step is the arrival rate multiplied by the step size dt, plus whatever backlog is already carried. Every integration step must then allocate that amount across completed, rejected and backlogged work under the identity offered = completed + rejected + backlog, with completed capped by capacity times dt; unserved work goes to backlog or rejection according to the admission policy and must never be silently discarded. Verify the identity and non-negativity after every update, not only at the end (a small floating-point tolerance is acceptable, but a persistent gap is a modeling defect); the migration model makes rejected the residual, offered minus target-served minus legacy-served. Step size is part of the model contract: a step large enough to admit a whole interval of arrivals can serve more than the available backlog and produce a negative stock, so a fixed small step with a non-negativity assertion keeps the fluid approximation stable. Also distinguish offered load from throughput: utilization is offered rate divided by capacity (rho = lambda / (c*mu)); at saturation throughput is capped at capacity, and the excess must appear as backlog or rejection rather than vanish.",
+      "citations": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.chapter.6006603befaacfc1baadc486a0f7007a#pages-and-reasoning-route",
+        "tycho.chapter.6006603befaacfc1baadc486a0f7007a#purpose-and-mission",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Pages and reasoning route",
+        "Applying the constraints",
+        "Case 1: conservation",
+        "Conservation"
+      ]
+    },
+    {
+      "task_id": "Q084",
+      "question": "What evidence must a V12 model contract attach to an input labeled measured?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A V12 model contract must attach a measurement record to any input labeled measured: a named source, a measurement method, the sample size, and the period. The parameter block carries the evidence status, source identifiers and note, and the validator checks that every measured parameter has a source and a measurement record. Status may change only with new evidence; an assumed value copied into a measured field does not become measured, and a derived value inherits the weakest status of its inputs.",
+      "citations": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.chapter.6006603befaacfc1baadc486a0f7007a#pages-and-reasoning-route",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#purpose-and-mission",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Pages and reasoning route",
+        "Calibration statuses",
+        "What replay proves",
+        "V12-D: calibration"
+      ]
+    },
+    {
+      "task_id": "Q092",
+      "question": "Which analytic Monte Carlo checks are identified as future work rather than completed reference tests?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The analytic Monte Carlo checks identified as future work are the four known-answer cases in Case 5 of the Monte Carlo reference cases page, explicitly 'not yet implemented': (1) estimating pi from uniform samples with a known standard error; (2) estimating the mean of an exponential distribution with a known variance; (3) comparing an M/M/1 queue's mean wait with the analytic formula for a stable system; (4) checking empirical coverage of a confidence interval over many synthetic samples. The page states V12 'does not claim these checks' and records them as 'future verification work, not as completed evidence.' By contrast, the completed reference tests are Case 1 conservation (offered = completed + rejected + backlog), Case 2 deterministic replay (same result hash for same model/scenario/seed), Case 3 boundary cases (zero arrivals, zero servers, zero queue capacity, etc.), and Case 4 sensitivity sanity (first-order indices in [0,1]; total-order at least first-order). The page notes the current cases exercise implemented accounting, event order and sensitivity sanity, 'not the statistical calibration of the sampler.'",
+      "citations": [
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#overview",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#pages-and-reasoning-route",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Standard error",
+        "A reference-case record",
+        "Case 5: known-answer checks not yet implemented",
+        "What is not verified"
+      ]
+    }
+  ]
+}

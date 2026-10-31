@@ -1,0 +1,373 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q002",
+      "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+      "layer_expected": "book",
+      "answer": "An in-place runtime upgrade can address a modernization problem when the main driver is lifecycle or security support (for example, a documented unsupported runtime or dependency), and the existing APIs and persisted state need not move, so one authoritative data writer can be preserved. It remains conditional: the required runtime/library combination must run, old data encoding must stay readable, and mixed-version releases must preserve externally required behavior, backed by contract tests and a reversible upgrade path. If those compatibility or behavior-preservation conditions fail, or the real problem requires a distinct capability/state owner or independent deployment, an in-place upgrade is contraindicated; moving a deployment boundary is not equivalent to transferring data ownership.",
+      "citations": [
+        "tycho.page.19145078d87143b28387ab187d345c32#4-four-modernization-alternatives-and-contraindications",
+        "tycho.page.19145078d87143b28387ab187d345c32#5-target-architecture-and-transition-states-are-different-artifacts",
+        "tycho.page.fbf4c3d642d14ce2a69f009efd17b1a8#7-the-evidence-based-selection-outcome",
+        "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1#purpose-and-mission"
+      ],
+      "required_evidence": [
+        "tycho.page.19145078d87143b28387ab187d345c32#4-four-modernization-alternatives-and-contraindications",
+        "tycho.page.210134080fac4c09bebb593befd0cb25#1-old-software-is-not-itself-an-architecture-defect",
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#purpose-and-mission",
+        "tycho.page.5a4108bc167f4e2387dbf019eac7881e#architecture-question",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+        "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1#purpose-and-mission"
+      ],
+      "expected_answer_points": [
+        "4. Four modernization alternatives and contraindications",
+        "1. Old software is not itself an architecture defect",
+        "3. Second example: runtime modernization without data loss",
+        "Purpose and mission",
+        "Architecture question"
+      ]
+    },
+    {
+      "task_id": "Q010",
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "layer_expected": "book",
+      "answer": "Little's Law is an average identity, L = lambda x W, where W is the mean residence time of work inside one consistently defined boundary. It follows from long-run conservation of counts, so the latency input the identity requires is the arithmetic mean time in the system, not an arbitrary quantile of the latency distribution. A p99 is a threshold: it reports a value that at most 1% of requests exceed and says nothing by itself about the mean or the rest of the distribution. Substituting p99 for W changes the quantity being multiplied by throughput and normally overstates mean occupancy when the tail is heavy. The book's synthetic example makes the error concrete: 95% of requests at 0.10 s and 5% at 2.10 s give a mean of 0.20 s but a p99 of 2.10 s; at 120 completed operations/s, L = 120 x 0.20 = 24 average outstanding operations, whereas 120 x 2.10 = 252 would be an invalid use of the law and a misleading claim about required concurrency. The reverse also fails: a p99 does not determine the mean, because a single mean equation does not reveal the full latency distribution or guarantee an SLO. Correct practice is to measure mean residence time over a stable, consistently bounded window (admission to exit for any reason, with finite-window and rejection caveats handled) and to report p99 separately as a tail/SLO metric, not as W.",
+      "citations": [
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route"
+      ],
+      "required_evidence": [
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#decision-and-worked-result",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#purpose-and-mission",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#4-simple-demand-arithmetic-and-its-boundaries"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Evidence-based counterexample: a short finite window",
+        "Architecture: Little's Law is an average identity",
+        "Alternatives and applicability boundaries",
+        "Integrated decision and reading route"
+      ]
+    },
+    {
+      "task_id": "Q018",
+      "question": "Why does a bounded queue smooth a brief burst but fail to create sustainable processing capacity?",
+      "layer_expected": "book",
+      "answer": "A bounded queue is a buffer between arrival and processing, so it decouples when work arrives from when it is served. During a brief burst the excess can wait in the queue while workers drain it at their sustainable rate: because producers and consumers run at different rates, the queue absorbs the spike and downstream sees the smoother consumer rate. That is load leveling, not additional throughput.\n\nThe sustainable rate is set by worker completions (service capacity), not by queue depth. If offered work exceeds the drain rate, the backlog and queue age grow at the difference even while every worker is busy. The synthetic walkthrough shows 120 requests/s against 80 completions/s producing about 800 outstanding requests in 20 seconds, and clearing that backlog after arrivals stop takes at least ten more seconds under idealized assumptions.\n\nA bound only caps how much backlog may accumulate before the policy must reject, block, or shed. Once the queue is full, requests are turned away rather than served, so a full bounded queue converts sustained overload into admission loss or expiry while throughput stays at capacity. In the saturation example, 30 requests/s offered against 24/s of service capacity leaves utilization at 1.0, throughput at 24/s, a rejection rate of about 0.2, and backlog pinned near the queue limit; hidden rejection would make the model look healthier than it is.\n\nThe pattern therefore fits only when bursts exceed consumer capacity temporarily and added latency is acceptable; it is contraindicated when backlog would violate a deadline or when the queue becomes an unbounded hiding place. Durable acceptance, retention and age bounds, and idempotent consumers must be owned. If the burst is sustained or work is not deferrable, shedding, backpressure, or provisioning are preferable, because raising sustainable capacity requires increasing service capacity or reducing admitted load to what the service can sustain. A queue can postpone the excess, but it cannot remove it.",
+      "citations": [
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory"
+      ],
+      "required_evidence": [
+        "tycho.chapter.b9bf60e22dc04878a05aeca98610b5d1#purpose-and-mission",
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#decision-and-worked-result",
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#2-first-example-a-burst-does-not-imply-a-service-split",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#7-choosing-a-response-to-saturation",
+        "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86#integrated-decision-and-reading-route"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Decision and worked result",
+        "2. First example: a burst does not imply a service split",
+        "Orientation: four numbers that are not interchangeable",
+        "4. Identify the actual contended authority"
+      ]
+    },
+    {
+      "task_id": "Q026",
+      "question": "How did LinkedIn\u2019s Kafka Audit compare message counts along its multi-cluster path?",
+      "layer_expected": "book",
+      "answer": "LinkedIn's Kafka Audit compared counts taken at successive points of its multi-cluster path, not a single cluster's view. Each producer tallied the messages it sent for a topic and reporting interval and periodically published those counts to a dedicated audit topic. Each cluster's Kafka Console Auditor separately consumed topics, accumulated observed counts, and sent audit results; aggregate-cluster auditors counted messages present after MirrorMaker copying; and critical downstream consumers such as Hadoop sinks could publish their own tier counts. Because the counts were for comparable topic and time intervals, the per-tier tallies could be compared along the producer -> local cluster -> aggregate cluster -> critical consumer chain to show where messages were lost or duplicated and at which hop. The page also cautions that equal counts alone cannot prove per-message equality (one lost record can be offset by one duplicate), and clock skew or late producers can make audit windows disagree transiently.",
+      "citations": [
+        "tycho.page.9f1f71a670f345e9898fe78167b48cda#kafka-audit-who-measures-what",
+        "tycho.page.9f1f71a670f345e9898fe78167b48cda#pressure-legacy-baseline-and-actual-chosen-direction",
+        "tycho.page.9f1f71a670f345e9898fe78167b48cda#exact-historical-topology-and-tier-contracts"
+      ],
+      "required_evidence": [
+        "tycho.chapter.24729e8d9b7247b298956ab144c15225#overview",
+        "tycho.chapter.24729e8d9b7247b298956ab144c15225#purpose-and-mission",
+        "tycho.page.0b493340594c4c4392c5d93940a7f319#applied-m9-evidence-what-transfers-and-what-does-not",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+        "tycho.page.9f1f71a670f345e9898fe78167b48cda#kafka-audit-who-measures-what",
+        "tycho.page.9f1f71a670f345e9898fe78167b48cda#pressure-legacy-baseline-and-actual-chosen-direction",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points"
+      ],
+      "expected_answer_points": [
+        "V04/C07 \u2014 Kafka logs, partitions and transactions",
+        "Purpose and mission",
+        "Applied M9 evidence: what transfers and what does not",
+        "2. Kafka's partition is an ordering and load unit",
+        "Kafka Audit: who measures what"
+      ]
+    },
+    {
+      "task_id": "Q034",
+      "question": "Why can an added API field be wire-compatible but incompatible with an old client\u2019s business behavior?",
+      "layer_expected": "book",
+      "answer": "Wire compatibility only establishes that bytes still parse and that unknown fields are tolerated. An added field can nonetheless break an old client's business behavior because compatibility is behavioral and asymmetric, not a property of the schema alone: (1) a new field may become a required business value that an old caller cannot supply, so old requests lose their previously authorized meaning; (2) old code may interpret absence, null-versus-absent, defaults, units, enum values, pagination order or error types differently, so an optional addition silently changes what the client believes happened; (3) old decoders may be strict or may silently ignore the field while their business logic still assumes the old invariant, and persisted records, replayable events and background workers can outlive the rollout so old and new meanings coexist; (4) a new server reading an old client can behave differently from an old server reading a new client. Compatibility is therefore a matrix over every actually deployed producer/consumer pairing, and wire-parse, semantic and operational/state compatibility must each be tested with mixed-version fixtures and rollback windows rather than inferred from a successful parse.",
+      "citations": [
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+        "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean"
+      ],
+      "required_evidence": [
+        "tycho.chapter.53b6bb88a00549e491949aeb426b83f2#decision-and-worked-result",
+        "tycho.chapter.5e4761e1a3e34c2f8023ec8ac4fa81d5#decision-and-worked-result",
+        "tycho.chapter.7d434d1a41e142d38bb729ee124ac548#decision-and-worked-result",
+        "tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission",
+        "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis",
+        "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+        "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Purpose and mission",
+        "4. Event schema compatibility is an additional axis",
+        "2. Compatibility is a matrix, not a Boolean",
+        "5. Evolving a boundary without an atomic fleet-wide release"
+      ]
+    },
+    {
+      "task_id": "Q042",
+      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "layer_expected": "book",
+      "answer": "A service can stay saturated while refusing most arrivals because rejecting is itself work and refusal does not remove the load already inside the system.\n\n1. The rejection path consumes real capacity. Parsing, authentication, authorization checks, logging, error rendering, network transfer and client retries still run for every refused request; if a large fraction of offered work is rejected, the rejection path can dominate the remaining capacity, and a service can be overloaded while most of its CPU is spent rejecting requests. Rejections also multiply when callers retry, and a retry hint that every client follows immediately recreates the overload.\n\n2. Refusing new arrivals does not undo admitted work. Requests already queued and in flight keep utilization at the limit until the backlog drains: the book's simulation offers 30 requests/s to a 24 requests/s pool with a 40-slot queue and a one-second deadline, and reports utilization 0.9966, mean queue length 12.79, success 0.6488, rejection 0.05% but timeout 35.0% - the dominant failure is deadline expiry, not rejection. In the Little's Law walkthrough, 120 requests/s against 80 completions/s leaves about 800 queued requests and needs at least ten more seconds to clear after arrivals stop.\n\n3. Rejection at the wrong layer protects nothing. An edge or per-requests-per-second quota does not free a shared outbound pool, database or storage bottleneck, so most traffic can be refused while the admitted minority keeps the scarce resource saturated; unequal operation costs and single-tenant queue filling mean request-count limits can reject cheap work yet leave the expensive work that dominates load. The countermeasures are admission before the expensive step, bounded queue size and age, a small bounded rejection response, explicit retry guidance, and measuring the rejection path itself rather than only rejection counts.",
+      "citations": [
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#integrated-decision-and-reading-route"
+      ],
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests",
+        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#why-the-first-idea-failed-in-production",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#bounded-pattern-ownership-notes"
+      ],
+      "expected_answer_points": [
+        "The overload boundary",
+        "Admission must optimize useful completed work, not accepted requests",
+        "Why the first idea failed in production",
+        "4. Bulkheads, circuit breakers and retries have different responsibilities",
+        "Partial failure, saturation and recovery"
+      ]
+    },
+    {
+      "task_id": "Q050",
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "layer_expected": "atlas",
+      "answer": "An audit trail is reliable only if the record is independent of the actor it describes; when the audited actor can modify or delete it, three properties collapse. First, absence stops being informative: the book names \"log drop interpreted as no event\" as a characteristic failure, so a deleted entry is indistinguishable from an action that never happened, and the trail can no longer establish completeness or non-occurrence. Second, integrity is not the same as storage: tamper evidence and complete event capture require independent engineering controls, and encrypting at rest alone does not prove integrity, so an actor with write or delete authority can rewrite or erase precisely the events that would implicate them. Third, accountability becomes circular: a durable business audit exists to record who was authorized to change which authoritative state and what committed; if the subject of that judgment also administers the record's access and retention, the record only self-attests. The pattern card therefore treats logs mutable or deletable by the actor as a hard contraindication: reject. The remedy is separation of duties: append-only storage, access and retention control held by a party other than the audited actor, tamper-evident mechanisms, and a tested commit boundary before claiming durability.",
+      "citations": [
+        "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage"
+      ],
+      "required_evidence": [
+        "tycho.chapter.419769c372ccaa569796954878e3bef9#entry-inventory",
+        "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+        "tycho.page.6023770f1256fc30b9784e10d312a3da#overview",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+        "tycho.page.77358ffa634cea630d04103c13c58086#overview",
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+        "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+        "tycho.page.fd57fe37e916adffc5819aa849245d1d#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Health, Readiness and Liveness Checks",
+        "Least Privilege",
+        "3. Logging is operational evidence, not an unlimited audit trail",
+        "RBAC / ABAC"
+      ]
+    },
+    {
+      "task_id": "Q058",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "layer_expected": "atlas",
+      "answer": "Plan for a bounded, auditable quarantine path, not open-ended retry. The relay is specified to carry bounded attempts and bounded age, a publication key, per-aggregate ordering and a terminal quarantine for poison rows, so a permanently invalid row should be pushed out of the publish path once its attempt/age budget is spent rather than retried forever. Because ordering is per aggregate, a parked row can stall later rows for the same aggregate: operators should expect head-of-line blocking and be able to state which aggregates or partitions are stalled, how far publication age lags, and whether skipping that row is acceptable for its consumers. Quarantine is a policy state, not delivery: classify transient, permanent and unknown outcomes, and treat a dead-letter queue or repair table as a holding and triage mechanism, not proof of delivery and not an automatically safe replayer. Retain in quarantine the row, payload digest and payload, headers, failure reason and attempt history for the declared retention window, with enough evidence to diagnose without leaking payloads, plus the declared source of truth for the affected record. Repair must be a separate reviewed decision (quarantined, then repair-authorized, then claimed under an explicit repair contract): either correct the input while preserving the same logical effect identity, or create an explicitly new operation if intent changed; replaying under a new ID merely to bypass deduplication risks a duplicate external effect, and current authorization should be rechecked before repair. Keep consumer-side deduplication by message ID or effect identity so a replay stays safe, and have the alternative ready when the failure is deterministic or the broker cannot retain evidence safely: retry with backoff, drop with an audit record, or park the work in a repair table or outbox, reversing the dead-letter choice when quarantine retention plus manual repair cost exceed the value of preserving the message. Budget observability and ownership too: alert on the age of the oldest unpublished row and on quarantine depth and age, not backlog depth alone, and name who owns human intervention and escalation. Test by killing the relay after commit but before publish and by replaying quarantined work while requiring correct effect identity. Limits: these are proposed tests and a synthetic state machine, not an exercised run, and no broker or workflow engine was executed.",
+      "citations": [
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview"
+      ],
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Transactional Outbox",
+        "Claim Check",
+        "4. Failure and recovery matrix",
+        "Asynchronous Request-Reply"
+      ]
+    },
+    {
+      "task_id": "Q066",
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
+      "layer_expected": "atlas",
+      "answer": "The Controlled Cutover card recommends pausing writes and switching authority only when a bounded set of preconditions is verifiable, not merely assumed. Before pausing writes: verify forward replication pipeline health (no permanent errors), verify DLQ state and resolve DLQ errors, and confirm active CDC replication actually exists. After pausing the write pipeline and before moving traffic: confirm that no replication events still pass through the stream (replication completeness) and wait for the data freshness metric to reach zero before switching. Two further facts must hold: the target schema is deployed and the backfill job is complete, since the procedure assumes both; and a reverse (fallback) replication pipeline is active before cutover starts so a contingency path exists, with reverse replication errors monitored after cutover. If writes cannot be paused or replication completeness cannot be verified, the pattern's hard contraindication applies and the switch should be rejected rather than attempted; its recorded decision state is applicable-under-conditions.",
+      "citations": [
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.22fa23c6c7a6b0c29a52137bc67a00c9#entry-inventory",
+        "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#entry-inventory",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Modernization plan",
+        "Parallel Run",
+        "Failure matrix: detection through restored user journey",
+        "Controlled Cutover"
+      ]
+    },
+    {
+      "task_id": "Q074",
+      "question": "What limits the exposure from a leaked credential issued for direct storage access?",
+      "layer_expected": "atlas",
+      "answer": "Exposure is bounded by the issued key's scope, lifetime and revocability. A valet key for direct storage access should grant only the specific resources and the predefined operations necessary for the task, so a leaked key cannot reach unrelated data or actions. It is time-limited: a short validity period bounds a leaked key's exposure, because the key only unlocks the target item during that window. It can also be revoked or disabled, which cuts the window short once compromise is noticed. Direct access shifts enforcement to the resource, so these limits are properties of the credential contract rather than of an intermediary. The atlas card states the same conditions: this pattern is a good fit only when access is limited in scope and duration and the key can be revoked or disabled; if access must be mediated, the pattern is contraindicated and proxied access through a gateway is the alternative.",
+      "citations": [
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#bounded-pattern-ownership-notes",
+        "tycho.page.b2c3d4e5f60718293a4b5c6d7e8f9012#overview"
+      ],
+      "required_evidence": [
+        "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#bounded-pattern-ownership-notes",
+        "tycho.page.6023770f1256fc30b9784e10d312a3da#overview",
+        "tycho.page.77358ffa634cea630d04103c13c58086#overview",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.page.b2c3d4e5f60718293a4b5c6d7e8f9012#overview",
+        "tycho.page.ca73432e255443ca808b30f9587f20cb#overview",
+        "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties"
+      ],
+      "expected_answer_points": [
+        "Zero Trust Architecture",
+        "Bounded pattern ownership notes",
+        "Least Privilege",
+        "RBAC / ABAC",
+        "Claim Check"
+      ]
+    },
+    {
+      "task_id": "Q082",
+      "question": "Which scenario inputs must remain aligned to compare checkout candidates fairly?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "To compare candidate checkouts fairly, hold every scenario input constant except the candidate configuration: the same workload (same arrival process and rate, Poisson at 20 requests per second, same 1,800-second horizon and 300-second warmup), the same metric identifiers, units and definitions, the same seed base and deterministic seed = base + replication scheme, and the same hard constraints. Only the candidate configuration (server count, service-time distribution, queue capacity, timeout, retry budget, bulkhead and unit cost) is the intended experimental variable; giving one candidate a shorter warmup or a lower arrival rate invalidates the comparison, and a genuinely different workload must be declared as part of that candidate.",
+      "citations": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.289750444f8040d292a474e3876046a1#pages-and-reasoning-route",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-replay-command",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Purpose and mission",
+        "Example: candidate B run",
+        "Required fields",
+        "The replay command"
+      ]
+    },
+    {
+      "task_id": "Q090",
+      "question": "How does the V12 quadratic sensitivity screen differ from a full Sobol analysis?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The V12 quadratic screen approximates a Sobol' analysis; it is not one. A full Sobol'/pick-freeze analysis uses paired model evaluations to build an ANOVA decomposition of the model's variance: the first-order index is the share of output variance V explained by input i alone, and the total-order index includes every interaction involving i. That estimator is unbiased only under its assumptions and is noisy at small sample sizes, and the page states that a full pick-freeze analysis is expensive for a discrete-event model.\n\nThe V12 screen instead runs one model run per row for 48 input rows drawn from the declared distributions, fits a quadratic surface in standardized input coordinates, decomposes the fitted variance into main effects plus a single interaction term, and reports first-order and total-order shares. Its indices therefore describe an approximated quadratic response surface over the sampled range, not a fully estimated decomposition of the simulator's variance.\n\nConsequences of that substitution, per the page: the screen assumes a quadratic surface is adequate over the sampled range and that standardization is meaningful; it requires independent inputs, so the engine rejects a correlated screen and correlated inputs are propagated only by the separate Monte Carlo run; and the failure modes include \"quadratic overreach\" from extrapolating beyond the sampled range, plus reporting indices without error. For candidate B the fitted screen gives arrival rate first-order 0.361 / total-order 0.464 and service mean 0.536 / 0.639; the first-order shares sum to 0.897, leaving about 0.103 for interaction and unexplained variation. The page explicitly warns that this does not prove service time is more important in production - under the declared distributions and the quadratic approximation it only explains more of the fitted variance. The sensitivity scenario is converged at 0.00016 relative error yet is still labeled a screening approximation, while a separate two-replication stress run at 0.032 relative error is marked insufficient-sample.\n\nIn short: full Sobol' = paired-evaluation, assumption-bounded estimate of model variance shares; V12 screen = cheap 48-row quadratic response-surface fit whose \"indices\" are fitted-surface shares, restricted to independent inputs and not a variance decomposition of the model itself.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#boundaries-and-evidence",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+        "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen"
+      ],
+      "expected_answer_points": [
+        "Boundaries and evidence",
+        "Coverage and its assumptions",
+        "Sensitivity and uncertainty",
+        "Case 4: sensitivity sanity",
+        "What is not verified"
+      ]
+    },
+    {
+      "task_id": "Q098",
+      "question": "Why do more simulation replications not remove uncertainty about the input distribution?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "More simulation replications reduce only Monte Carlo sampling error, not the epistemic uncertainty in the assumed input distribution. V12 separates input uncertainty (an arrival rate, service time, timeout or dual-write lag that is not known exactly) from sampling error (even with fixed inputs, a finite number of replications gives an estimate with error). Replications address sampling error; parameter draws address input uncertainty. Increasing replications does not reduce input uncertainty, and increasing the number of input draws does not remove sampling error. The standard error se = s/sqrt(n) narrows the confidence interval for the mean output of the declared model, but that interval covers the true mean only under the model's assumptions; it does not cover the true production value if the model is biased or the inputs are mis-specified. The declared distribution is an assumption, not a measurement: the chapter explicitly does not claim that an assumed distribution is a measured distribution, and it lists 'assumed as measured' (treating a uniform range as if it came from a measured distribution) as a failure mode. More replications therefore estimate the output of the assumed distribution ever more precisely while its shape, parameters and correlations stay unvalidated. Reducing uncertainty about the input distribution requires external evidence about the inputs (measurement, recorded evidence status, and declared correlations), not more simulation runs. Convergence likewise does not mean the model is valid or the inputs are measured, and more replications will not fix a biased model.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Standard error",
+        "What convergence does not mean",
+        "What would reverse the recommendation",
+        "Why reference cases matter"
+      ]
+    }
+  ]
+}

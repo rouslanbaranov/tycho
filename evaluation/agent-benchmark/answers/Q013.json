@@ -1,0 +1,16 @@
+{
+  "task_id": "Q013",
+  "answer": "Stop when the favorable latency is not a decision-grade measurement, and report INSUFFICIENT_EVIDENCE (or MEASURE_FIRST / REJECTED_BY_GATE) instead of an architecture conclusion. The stopping conditions are: (1) the apparent gain is within documented measurement noise, variance is high, samples are too few, or trials are not repeated; (2) the test did not deliver the intended demand - a saturated or closed-loop generator suppresses offered load, or the latency figure counts only completed requests and omits timed-out, rejected, cancelled or unsent intended operations; (3) baseline and candidate were not compared at equivalent offered demand and resource budget, or differed in application/data revision, runtime/configuration or warm/cold state, so lower latency may be a capacity purchase or missing work; (4) a hard gate fails (correctness, authorization, consistency, durable state, compatibility or recovery) or an unsafe abort condition is reached; (5) the decision threshold was chosen or changed after seeing the result (peeking, threshold shopping, or summarizing a heavy tail by its mean). In these cases the experiment has reached its stopping condition: record the narrowest next source, measurement or owner decision, repair the experiment, and rerun with a pre-registered criterion at equal demand and resource budget. Do not generalize a favorable p99 from one run into proof of an architecture improvement.",
+  "citations": [
+    "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

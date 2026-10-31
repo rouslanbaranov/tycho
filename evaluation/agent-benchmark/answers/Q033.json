@@ -1,0 +1,14 @@
+{
+  "task_id": "Q033",
+  "answer": "A missing sampled trace does not prove that no write was committed. It shows only that no sampled span was collected for that transaction: the request may have been unsampled, a collector or exporter may have dropped it, or the relevant dependency may be uninstrumented. The outcome therefore remains unknown, and an investigator must not treat the absence as evidence of absence. Symmetrically, a successful span status does not prove that the database commit or downstream effect succeeded. To determine whether a write was committed, the investigator should consult authoritative, durable evidence such as committed database state, transactional or outbox records, idempotency/business event IDs, and dedicated audit records that distinguish attempted, pending or unknown, and committed outcomes with defined integrity and ordering.",
+  "citations": [
+    "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

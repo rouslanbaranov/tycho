@@ -1,0 +1,14 @@
+{
+  "task_id": "Q020",
+  "answer": "The Java heap is only one memory domain of the process. Overall process memory also includes thread stacks, native libraries, direct (off-heap) buffers, memory-mapped files, JIT/compiler code and other runtime structures, so a process or container can exceed its physical or configured memory limit even while recorded heap occupancy looks acceptable. That heap figure is also a sampled, collection-dependent observation: heap used before a collection is not a sufficient leak indicator, and a high allocation volume may reflect normal high-throughput churn rather than retained live data. Container limits are enforced against process/container accounting rather than the managed heap, so heap occupancy does not bound the process footprint. To attribute the growth, correlate JVM-side evidence (JFR/GC events, allocation and native-memory telemetry) with OS/container telemetry (memory limit, page faults) over the same load window: an allocation profile alone cannot establish a retained live-set or leak, and process metrics alone cannot show the application-level effect.",
+  "citations": [
+    "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain",
+    "tycho.page.b6cecfd7301b408db611228b4cec59c5#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure",
+    "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

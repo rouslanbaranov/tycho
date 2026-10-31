@@ -1,0 +1,17 @@
+{
+  "task_id": "Q094",
+  "answer": "A V12 decision should stay unsupported when convergence is the only thing the run establishes. Convergence means only that the sampling error of the reported metric is small under the declared model; it does not mean the model is valid, the inputs are measured, the decision is correct, or that the confidence interval contains the production value, and more replications will not fix a biased model. Replay adds only reproducibility on the same platform family: it proves the stored inputs, engine version and seed reproduce the stored metrics, not model validity, measured inputs or decision correctness. So an otherwise converged run cannot carry a decision that depends on (a) an unverified non-quantitative constraint such as operability or regulatory approval, which keeps the recommendation conditional rather than supported; (b) a hard constraint the winning candidate violates, since a hard constraint eliminates a candidate regardless of its best score; or (c) evidence that is assumed rather than measured. The modernization record shows the pattern: the staged candidate has a large synthetic divergence, rollback does not complete within the horizon, and dual-write inputs are assumed, so the correct outcome is status insufficient-evidence (recommendation none is still a complete, valid record) listing what would change it - measured dual-write lag, measured reconciliation capacity, a rehearsed rollback and a measured divergence below the business threshold. The failure modes to avoid are evidence inflation (presenting a model-verified engine as a validated system), score laundering, and recommendation by default when the record has no recommendation.",
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

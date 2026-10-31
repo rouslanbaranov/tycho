@@ -1,0 +1,17 @@
+{
+  "task_id": "Q009",
+  "answer": "Unfinished work at the end of an observation window breaks the accounting between the window's arrival/throughput counts and the residence times used in the estimate. In the book's counterexample, one request arrives at t=0 and remains in the system for 10 seconds, but the window is only [0,5). The window records one arrival (0.20 arrivals/s), and the request is still unfinished when observation stops. Multiplying that window rate by the request's full 10-second residence gives L = 2, although the actual mean in-boundary population is 1. This is not a failure of Little's Law but a finite-window edge effect: the full residence time extends beyond the boundary, so the finite-window quantities have incompatible accounting (Kim & Whitt, sections 1-2). The ending backlog is exactly the missing term in N(t1) = N(t0) + A(t0,t1) - D(t0,t1); when N(t1) > 0, arrivals and exits within the window do not describe a stable flow, and an average built only from requests that completed before the cutoff is a truncated-cohort estimate, not the mean over all admitted work. A finite-interval equality exists only when the interval starts and ends empty; otherwise edge effects bias the result, and the paper recommends a statistical treatment such as batch means and confidence intervals to estimate and remove some edge bias. The same error appears at scale: 120 offered requests/s against 80 completions/s for 20 seconds leaves about 800 queued, and substituting 120/s and L = 800 into L = lambda * W to infer a stable W is invalid because arrival and departure boundaries differ and the window is not stationary. A closed-loop load generator compounds this: a virtual user waits for its previous iteration, so unfinished work suppresses new starts and the test under-offers load (coordinated omission). Record start and end backlog, admitted and exit counts, the residence-time cohort including unfinished work, warmup and stationarity, and report a finite-window estimate with uncertainty rather than as a long-run average.",
+  "citations": [
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+    "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+    "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

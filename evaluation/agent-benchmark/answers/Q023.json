@@ -1,0 +1,17 @@
+{
+  "task_id": "Q023",
+  "answer": "Promoting a streaming replica does not undo an accidental deletion because a physical standby is a forward-replaying copy of the primary's WAL, not a historical snapshot. A destructive change -- a bulk DELETE/TRUNCATE, a dropped object, or a faulty release's cleanup -- is ordinary WAL content, so a standby that has already replayed it holds exactly the same damaged state. Promotion only makes that copy writable: it swaps availability, not history, and can convert a recoverable incident into a new authoritative copy of the damage. The source describes precisely this: a streaming standby 'receives those deletes', so 'fail over to the replica' is a bad recovery assumption, and 'if the standby already replayed the deletion, it is no better as a historical recovery source.' A replica may simply inherit logical corruption and deletions from the primary, and a logical destructive command can be replicated faithfully to every standby.\n\nThere is one accidental exception, not a strategy: a standby that still lags *behind* the destructive transaction may not yet have applied it. But lag is not a recovery guarantee -- lag is not a single scalar, and a healthy or reachable replica is explicitly not evidence that it contains a named effect, or that it will keep containing it. Promotion is not a substitute for a recovery point.\n\nThe mechanism that does target this failure class ('operator error' / logical corruption) is separate: a known-good physical base backup plus a continuous, complete WAL archive, restored by point-in-time recovery to a selected point before the destructive transaction, into an isolated target first, then verified against application invariants and reconciled with legitimate writes made after that point -- because recovering to an earlier point also discards valid post-point work (the restore paradox). Promotion carries an independent loss mode of its own as well: with asynchronous replication the standby can be missing acknowledged commits, and merely issuing pg_promote() is not a demonstrated zero-loss failover.",
+  "citations": [
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+    "tycho.page.ddeff7f1556f44f18c67659b73e6e15f#engineering-walkthrough-primary-acknowledgment-is-not-standby-completeness"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

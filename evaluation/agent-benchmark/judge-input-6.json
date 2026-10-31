@@ -1,0 +1,336 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q006",
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "layer_expected": "book",
+      "answer": "The failure was a major database corruption event in August 2008 that interrupted DVD shipping for three days. It exposed the concentration of failure and scaling dependencies in the vertically scaled datacenter environment, and the retrospective places it at the start of the migration project. That operational failure helped motivate a multi-year reconstruction into elastic, fault-contained services rather than lifting and shifting the unchanged monolithic application onto rented cloud machines.",
+      "citations": [
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#transition-sequence-and-evidence"
+      ],
+      "required_evidence": [
+        "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+        "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#6-keep-descriptions-correct-through-change",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected"
+      ],
+      "expected_answer_points": [
+        "1. Start with concerns and a coherent vocabulary",
+        "6. Keep descriptions correct through change",
+        "The original problem and why a 'lift and shift' was rejected"
+      ]
+    },
+    {
+      "task_id": "Q014",
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "layer_expected": "book",
+      "answer": "A physical point-in-time restore needs a complete, verified chain, not a single backup file.\n\nCore artifacts:\n1. A valid physical base backup of the cluster (a consistent storage snapshot; a logical SQL dump is not a physical base backup usable for WAL replay). It must include the base-backup manifest and hash or other verification evidence, be correct for ownership and tablespaces, and match the source database major version and supported tooling/backup formats.\n2. A continuous WAL archive covering the interval from that base backup to the chosen recovery point. The WAL sequence/archive must be complete and uncorrupted, and any recent unarchived WAL needed for the target must also be accessible. Missing or corrupt segments, or archive lag, make the target unreachable.\n3. The timeline history and the selected recovery stop point, so replay follows the correct timeline and stops where intended. A target before the selected base backup completed is not available from that backup.\n\nSupporting artifacts and metadata:\n4. Configuration files, secrets, external files, tablespaces and network/identity requirements. Configuration is not automatically protected by WAL replay, so it must be preserved and supplied separately.\n5. If incremental base backups are used, their ancestor chain and WAL summaries; earlier backups cannot be deleted while a later incremental depends on them.\n6. Restore-environment information: target location, target disk capacity, network/archive throughput and access permissions, plus expected replay duration.\n7. A rehearsed restore procedure/runbook on an isolated target. The evidence stresses that only a tested restore of an admitted backup set shows recoverability; verify integrity and the recovery target against application consistency requirements after replay.\n\nIn short: a physical base backup + a continuous WAL archive + timeline/recovery target, plus the configuration and verification metadata around them.",
+      "citations": [
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope",
+        "tycho.chapter.388c48be24414421a63481b37d05fdce#decision-and-worked-result",
+        "tycho.chapter.b4272c1342514a40afce9d3872a9664c#exact-public-evidence-ledger",
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command"
+      ],
+      "expected_answer_points": [
+        "8. Public evidence ledger and unverified scope",
+        "Decision and worked result",
+        "Exact public evidence ledger",
+        "2. Replication is not historical recovery",
+        "3. Physical streaming replication versus logical replication"
+      ]
+    },
+    {
+      "task_id": "Q022",
+      "question": "What controls can make module ownership enforceable inside a single deployable?",
+      "layer_expected": "book",
+      "answer": "Within one deployable, module ownership becomes enforceable by combining structural, contract and review controls rather than relying on package names or diagrams.\n\nStructural enforcement: module-level build packages (separate build units with declared dependencies), language visibility restrictions that hide implementation, dependency analysis, ArchUnit-like architecture tests, and framework verification such as Spring Modulith's verification APIs. These controls should reject forbidden import paths and cycles, allow only declared dependencies, and enforce API-only access to module internals; they must run against the actual build versions and correspond to the real module architecture.\n\nContract and data ownership: each module exposes a true public/private contract with hidden implementation classes and controlled compile-time dependencies. There is one authoritative writer for each business aggregate even when physical storage is shared, callers use published interfaces instead of another module's internal state or tables, and hidden cross-module database access is treated as a boundary violation.\n\nReview and acceptance: a module review asks whether dependency checks reject forbidden imports and cycles, whether a public contract can change without direct access to another module's internals, whether the authoritative writer for each aggregate is clear, whether internal events can be replayed, delayed or duplicated safely under the declared delivery contract, whether one listener can fail without losing a committed mandatory operation, whether module integration tests are independent enough to reveal unintended coupling, and whether the whole executable can still be deployed or restored with its actual database and config.\n\nLimits: a single deployable still shares a runtime and deployment cadence and may have multiple replicas, so these controls make ownership visible and testable but do not turn modules into independently deployable services. Their benefit must be demonstrated under the relevant change and load profile, and splitting a module is justified only when independent deployment or failure containment is a measured requirement.",
+      "citations": [
+        "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+        "tycho.page.4365dbae044244c1b82751a39704e292#1-stable-module-boundaries-before-event-buses",
+        "tycho.page.c226850223614886b61b7cb36c7d5032#2-monolith-does-not-mean-unstructured-code",
+        "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#purpose-and-mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.5de52a840c14448c946a65c924f28487#pages-and-reasoning-route",
+        "tycho.chapter.5de52a840c14448c946a65c924f28487#purpose-and-mission",
+        "tycho.page.07bb1f96bdd94195ac8e31644527a217#2-original-synthetic-example-community-workshop-reservation",
+        "tycho.page.15ffb7535c424b0eac6445cddaeb4a25#3-ownership-boundaries-are-not-deployment-boundaries",
+        "tycho.page.2176fe3dcdf24a199d1656cba602e8e1#3-worked-applicability-cards-deployment-and-communication",
+        "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+        "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work",
+        "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Purpose and mission",
+        "2. Original synthetic example: community workshop reservation",
+        "3. Ownership boundaries are not deployment boundaries",
+        "3. Worked applicability cards: deployment and communication"
+      ]
+    },
+    {
+      "task_id": "Q030",
+      "question": "In Meta\u2019s ingestion migration, where did the candidate job write during the initial shadow phase?",
+      "layer_expected": "book",
+      "answer": "In the initial shadow phase of Meta's per-job ingestion migration lifecycle, the candidate (new) ingestion job ran in pre-production against production-realistic source inputs and wrote to an isolated shadow table, while the legacy job kept writing the consumer-facing production table; teams then compared the shadow output with the live production table via row counts and checksums (plus landing latency and resource usage) and investigated mismatches before advancing the job.",
+      "citations": [
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism"
+      ],
+      "required_evidence": [
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#quantitative-status-and-provenance",
+        "tycho.page.50b3410cae7d4032babb15542e748cac#three-separate-gates-on-the-production-data-movement-workflow",
+        "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview"
+      ],
+      "expected_answer_points": [
+        "Data-authority decision guard: Stripe versus Meta",
+        "Parallel Run",
+        "Concrete migration safety mechanism",
+        "Quantitative status and provenance",
+        "Three separate gates on the production data-movement workflow"
+      ]
+    },
+    {
+      "task_id": "Q038",
+      "question": "What must happen before an old region can safely regain authority after failover?",
+      "layer_expected": "book",
+      "answer": "Failback is a second migration from region B back to A, not the inverse of failover. Before the old region can safely regain authority: (1) Fence and quarantine it as old authority and prove old-writer fencing; hold writes when fencing evidence is missing, and do not treat DNS pointing as authority transfer, because A may still accept writes. (2) Reconcile divergent writes under one selected source of truth: identify any acknowledged or ambiguous operations A accepted that B lacks, choose the recovery point, and record the actual RPO consequence rather than assuming zero loss. (3) Establish an authority epoch that the destination checks and persists atomically, so stale epochs carrying the old authority are rejected, and define the takeover linearization point. (4) Verify user journeys and integrity gates and use controlled routing with an explicit rollback gate. (5) Only then reintroduce A as a replica or standby before considering promotion. If A cannot be fenced or reconciliation evidence is incomplete, stay on the promoted region and rebuild A as a standby, or hold writes, rather than claim successful recovery.",
+      "citations": [
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#bounded-pattern-ownership-notes",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination"
+      ],
+      "required_evidence": [
+        "tycho.chapter.30e63461f024419ab87cd012b140c600#decision-and-worked-result",
+        "tycho.chapter.30e63461f024419ab87cd012b140c600#overview",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#proposed-acceptance-and-evidence",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route",
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "V08/C07 \u2014 Multi-region recovery and data reconciliation",
+        "Proposed acceptance and evidence",
+        "The question: what survives which loss?",
+        "Bounded pattern ownership notes"
+      ]
+    },
+    {
+      "task_id": "Q046",
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "layer_expected": "book",
+      "answer": "Stable identifiers can act as ordinary cross-view join keys rather than as nodes in a separate graph service. Give each logical component one stable ID plus a versioned description, then have every view that makes a claim about it reference that ID: the context/component chart, the runtime interaction, the deployment allocation, and the ADR. A plain Markdown table is enough, with columns for stable ID, responsibility, runtime scenario role, deployment mapping, and evidence state. The source calls this cross-view mapping ordinary documentation and explicitly says it does not require building a manually curated concept graph as Tycho infrastructure; coherence comes from the discipline of the reference, not from graph infrastructure.\n\nCoherence is tested by walking one concrete scenario through the identifiers in every view and rejecting contradictions. In the source walkthrough, a booking commits but the HTTP response is lost; the context view must keep payment external, the component view must keep persistence under Booking's invariant, the sequence view must show commit before the lost response, the deployment view must show replicas sharing a durable writer, and the ADR must retain the approved state owner. Stable IDs make those claims comparable, so an editor can catch a diagram that quietly promotes a controller cache to a unique deduplicator or moves the payment provider inside the application. Keep identifier kinds separate - runtime identity is not a business capability, and data authority is not a cache - and carry link semantics and evidence state (observed vs proposed) so a cross-reference is not mistaken for proof of runtime presence.\n\nA separate graph service is unnecessary for this job. The relationship questions are fixed one-hop or known-depth links, which indexed foreign-key joins, link tables, or recursive CTEs with depth/cycle limits can answer; a graph model earns its place only when arbitrary-depth reachability or frequently evolving typed relationships are the dominant query, and it then brings its own ACID, path-explosion, and resource-limit obligations. Architecture documentation has a small curated relationship set, so stable IDs plus tables plus a contradiction review deliver coherence without a new service.\n\nLimits: the read examples are synthetic and marked unknown/proposed; no implementation experiment, benchmark, independent review, or evidence of drift-free operation at scale was found, and the sources do not prescribe tooling.",
+      "citations": [
+        "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#4-stable-identities-link-views-without-making-a-knowledge-graph-mandatory",
+        "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#engineering-walkthrough-reconciling-one-failure-across-architectural-views",
+        "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+        "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers"
+      ],
+      "required_evidence": [
+        "tycho.chapter.abcbb298887b49e79525ca00fead8926#decision-and-worked-result",
+        "tycho.chapter.abcbb298887b49e79525ca00fead8926#pages-and-reasoning-route",
+        "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+        "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#4-stable-identities-link-views-without-making-a-knowledge-graph-mandatory",
+        "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#integrated-decision-and-reading-route",
+        "tycho.page.b5d667aa6dac4a98a7c6ba8b10852897#3-different-diagrams-answer-different-questions"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Pages and reasoning route",
+        "1. Start with concerns and a coherent vocabulary",
+        "4. Stable identities link views without making a knowledge graph mandatory",
+        "Integrated decision and reading route"
+      ]
+    },
+    {
+      "task_id": "Q054",
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
+      "layer_expected": "atlas",
+      "answer": "Write-triggered cache invalidation depends on the authoritative write path emitting a reliable invalidation/change signal that the cache can observe (a defined owning writer and change event/version). When changes cannot be reliably signaled, no reliable invalidation path exists: write-triggered invalidation is contraindicated because readers can miss the signal or briefly see stale data after a write, and expiration after a configured period (TTL-based expiration) is the bounded-staleness alternative.",
+      "citations": [
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ],
+      "required_evidence": [
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Cache Invalidation",
+        "Static Content Hosting",
+        "Transactional Outbox",
+        "TTL-Based Expiration"
+      ]
+    },
+    {
+      "task_id": "Q062",
+      "question": "What kind of request should not be retried automatically by an ambassador proxy without an effect-safety contract?",
+      "layer_expected": "atlas",
+      "answer": "Non-idempotent requests \u2014 operations whose repetition can produce a second durable effect (typically POST-like commands with no idempotency identity). An ambassador proxy must reject ambassador-managed retries on those operations unless an explicit effect-safety contract makes a repeat resolve to one logical outcome: the application enforces an idempotency identity with correct storage, parameter checking, concurrency control and retention, so the API promise of when the effect occurred still holds. HTTP method idempotence alone (PUT/DELETE/safe methods) proves only abstract request-effect semantics, not that a handler is correct, and a non-idempotent POST is never automatically safe to repeat.",
+      "citations": [
+        "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview",
+        "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#purpose-and-mission"
+      ],
+      "required_evidence": [
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#chapter-result-and-counterexample",
+        "tycho.chapter.8a86707018773def410689efbc79cf94#a-worked-boundary-decision",
+        "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview",
+        "tycho.page.2462dbd13c464291bcbf4325d2d2bd97#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route",
+        "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview"
+      ],
+      "expected_answer_points": [
+        "Chapter result and counterexample",
+        "A worked boundary decision",
+        "Ambassador",
+        "Sidecar",
+        "Integrated decision and reading route"
+      ]
+    },
+    {
+      "task_id": "Q070",
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
+      "layer_expected": "atlas",
+      "answer": "After the local transaction commits, the business row and its outbox intent exist together while the broker may still know nothing; notification is delayed, not lost, and the committed local state remains authoritative. The relay must recover the persisted pending outbox event (by polling or its CDC position), retry publication with the same immutable event ID and aggregate key, and record completion only after broker acknowledgement. It must bound attempts and entry age, bound publication lag, retain the row, payload digest and attempt history for repair, and terminally quarantine poison rows. Because recovery implies at-least-once delivery, a crash after publish but before completion or a lost acknowledgement can replay the event, so consumers must deduplicate by event or effect identity and treat the replay as a no-op.",
+      "citations": [
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design"
+      ],
+      "required_evidence": [
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Transactional Outbox",
+        "1. Two unsafe dual-write orders",
+        "Claim Check",
+        "Purpose and decision question"
+      ]
+    },
+    {
+      "task_id": "Q078",
+      "question": "Why is a confidence interval across synthetic replications not a calibrated input uncertainty budget?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A confidence interval across synthetic replications measures only Monte Carlo sampling error under a fixed set of declared inputs, not the uncertainty of those inputs. The interval is computed from the replication spread (se = s/sqrt(n), mean +/- 1.96*se), so it narrows as replications increase while parameter values stay at their assumed levels. Replications address sampling error; parameter draws address input uncertainty; more replications cannot reduce input uncertainty, and more input draws cannot remove sampling error. Metrologically, JCGM 100 combines Type A and Type B components into a coverage interval at a stated coverage probability; a uniform input range in a scenario is an assumed input range, not a Type A or Type B component, and a confidence interval across replications is a sampling interval, not a metrological coverage interval. Its nominal 95% coverage applies to the model's repeated-sample mean under the model's assumptions, and it does not cover the true production value when the model is biased or the inputs are misspecified. Convergence does not establish that inputs are measured or that the model is valid; every V12 input remains assumed. Presenting that narrow synthetic interval as an input uncertainty budget is the 'uncertainty theater' failure mode and risks 'assumed as measured', asserting precision the evidence does not support.",
+      "citations": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ],
+      "required_evidence": [
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#overview"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Coverage and its assumptions",
+        "Standard error",
+        "Calibration statuses",
+        "Required fields"
+      ]
+    },
+    {
+      "task_id": "Q086",
+      "question": "What distinction separates verification of a simulation engine from validation for a decision?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Verification of a simulation engine and validation for a decision answer different questions and are kept as separate evidence layers and gates. Verification is internal conformance: is the computer program of the model correct, i.e. does the engine implement the model as specified, shown by engine tests for conservation, non-negativity, boundary conditions, event ordering and deterministic replay. Validation is fitness for purpose: is the model adequate for its intended decision, given its structure, data and declared constraints? A model can be verified and still be invalid for a decision because its structure or data are wrong, so a passing engine test does not prove operational validity and a verified engine is not a validated system. Decision records therefore carry three independent statuses: model-verified/partially-verified/unverified for the engine and model, calibrated/partially-calibrated/uncalibrated for the inputs, and decision-supported/insufficient-evidence for the outcome. A decision-supported outcome with an uncalibrated model is only a conditional result: it says the decision follows from the declared assumptions and constraints, not that those assumptions are true, and the record must state the condition and the measurements that would reverse it. In short, verification asks whether the engine was built right relative to its specification, while validation for a decision asks whether the model is adequate for that decision; simulation results never promote a pattern.",
+      "citations": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records"
+      ],
+      "required_evidence": [
+        "tycho.chapter.6006603befaacfc1baadc486a0f7007a#diagram",
+        "tycho.chapter.6006603befaacfc1baadc486a0f7007a#purpose-and-mission",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#purpose-and-mission",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#overview",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix"
+      ],
+      "expected_answer_points": [
+        "Diagram",
+        "Purpose and mission",
+        "A worked separation",
+        "What verification and validation mean here",
+        "Verification versus validation"
+      ]
+    },
+    {
+      "task_id": "Q094",
+      "question": "When should a V12 decision remain unsupported even though a model run converges?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A V12 decision should stay unsupported when convergence is the only thing the run establishes. Convergence means only that the sampling error of the reported metric is small under the declared model; it does not mean the model is valid, the inputs are measured, the decision is correct, or that the confidence interval contains the production value, and more replications will not fix a biased model. Replay adds only reproducibility on the same platform family: it proves the stored inputs, engine version and seed reproduce the stored metrics, not model validity, measured inputs or decision correctness. So an otherwise converged run cannot carry a decision that depends on (a) an unverified non-quantitative constraint such as operability or regulatory approval, which keeps the recommendation conditional rather than supported; (b) a hard constraint the winning candidate violates, since a hard constraint eliminates a candidate regardless of its best score; or (c) evidence that is assumed rather than measured. The modernization record shows the pattern: the staged candidate has a large synthetic divergence, rollback does not complete within the horizon, and dual-write inputs are assumed, so the correct outcome is status insufficient-evidence (recommendation none is still a complete, valid record) listing what would change it - measured dual-write lag, measured reconciliation capacity, a rehearsed rollback and a measured divergence below the business threshold. The failure modes to avoid are evidence inflation (presenting a model-verified engine as a validated system), score laundering, and recommendation by default when the record has no recommendation.",
+      "citations": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree"
+      ],
+      "required_evidence": [
+        "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#purpose-and-mission",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Failure modes",
+        "Convergence and error",
+        "What convergence does not mean",
+        "A worked separation"
+      ]
+    }
+  ]
+}

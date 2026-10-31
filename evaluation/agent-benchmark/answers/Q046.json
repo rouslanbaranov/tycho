@@ -1,0 +1,15 @@
+{
+  "task_id": "Q046",
+  "answer": "Stable identifiers can act as ordinary cross-view join keys rather than as nodes in a separate graph service. Give each logical component one stable ID plus a versioned description, then have every view that makes a claim about it reference that ID: the context/component chart, the runtime interaction, the deployment allocation, and the ADR. A plain Markdown table is enough, with columns for stable ID, responsibility, runtime scenario role, deployment mapping, and evidence state. The source calls this cross-view mapping ordinary documentation and explicitly says it does not require building a manually curated concept graph as Tycho infrastructure; coherence comes from the discipline of the reference, not from graph infrastructure.\n\nCoherence is tested by walking one concrete scenario through the identifiers in every view and rejecting contradictions. In the source walkthrough, a booking commits but the HTTP response is lost; the context view must keep payment external, the component view must keep persistence under Booking's invariant, the sequence view must show commit before the lost response, the deployment view must show replicas sharing a durable writer, and the ADR must retain the approved state owner. Stable IDs make those claims comparable, so an editor can catch a diagram that quietly promotes a controller cache to a unique deduplicator or moves the payment provider inside the application. Keep identifier kinds separate - runtime identity is not a business capability, and data authority is not a cache - and carry link semantics and evidence state (observed vs proposed) so a cross-reference is not mistaken for proof of runtime presence.\n\nA separate graph service is unnecessary for this job. The relationship questions are fixed one-hop or known-depth links, which indexed foreign-key joins, link tables, or recursive CTEs with depth/cycle limits can answer; a graph model earns its place only when arbitrary-depth reachability or frequently evolving typed relationships are the dominant query, and it then brings its own ACID, path-explosion, and resource-limit obligations. Architecture documentation has a small curated relationship set, so stable IDs plus tables plus a contradiction review deliver coherence without a new service.\n\nLimits: the read examples are synthetic and marked unknown/proposed; no implementation experiment, benchmark, independent review, or evidence of drift-free operation at scale was found, and the sources do not prescribe tooling.",
+  "citations": [
+    "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#4-stable-identities-link-views-without-making-a-knowledge-graph-mandatory",
+    "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#engineering-walkthrough-reconciling-one-failure-across-architectural-views",
+    "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

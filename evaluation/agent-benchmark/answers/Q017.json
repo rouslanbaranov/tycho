@@ -1,0 +1,15 @@
+{
+  "task_id": "Q017",
+  "answer": "Embedding SQLite links a database library into the application process instead of deploying an independent client/server database service. SQL text is compiled to bytecode and executed against B-trees through a pager that reads and writes a database file, while other connections coordinate through file locking/journaling on that file (transactional-models §2). That gives one application local query execution and local transactions — actual ACID guarantees still depend on filesystem, transaction and journaling settings — but it supplies no network endpoint, shared authority, or replication layer. The book states directly that SQLite fits mobile/edge/offline apps, local configuration or single-node embedded transactional storage, and is not by itself a networked multi-region service with independently scalable write nodes; making it one would require a separate synchronization/conflict protocol (same section). A networked multi-region service is exactly that missing layer: each failure class and loss boundary must be defined, because a service can lose all user state when its single database fails, and a regional failover does not by itself prevent two simultaneous writers (multi-region DR). Replication and consensus add leader/quorum/term rules, a replicated log, commit-acknowledgment boundaries and stale-leader rejection; durability and read consistency depend on those concrete protocols, not merely on replicas existing (replication-consensus). Combining stores or views likewise creates two data representations and a synchronization problem with explicit freshness, rebuild, deduplication and recovery obligations (multi-store §7). So embedding SQLite can make one process's local storage transactional, but the networked, multi-region properties — remote access, shared authority, replication, failover and conflict resolution — must be built as separate distributed-system machinery.",
+  "citations": [
+    "tycho.page.7b980e671a324f769064bc5233761c62#2-transactional-relational-and-embedded-storage",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+    "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

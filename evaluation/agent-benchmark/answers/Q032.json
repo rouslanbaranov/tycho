@@ -1,0 +1,14 @@
+{
+  "task_id": "Q032",
+  "answer": "Ordered Lamport clock values do not prove causality because the logical-clock implication runs only one way: if event a happened before event b, then L(a) < L(b), but L(a) < L(b) does not mean a caused or preceded b. Lamport counters are advanced locally and on message receipt so that causal predecessors get smaller numbers, yet the converse is not guaranteed; two events whose counters differ may still be concurrent, meaning neither direction of the happens-before relation is established and there is no causal path between them. Assigning a deterministic process-ID tie-breaker to the counters yields a reproducible total order over events, but that ordering is a convention for presentation or serialization, not evidence of a real causal dependency or of any interaction between the two events. A scalar Lamport clock also collapses concurrency: it cannot tell whether two events are concurrent or causally ordered, because it records only a single number per event rather than the per-process knowledge needed to detect missing dependencies; a vector clock carries that metadata and can distinguish concurrent updates from causally ordered ones, at the cost of per-replica metadata. Hence an observed inequality L(a) < L(b) may be produced by clock increments on unrelated processes, by message exchange in the opposite direction being absent, or by arbitrary interleaving, and it says nothing about whether a's effects were visible to b. Treating ordered Lamport values as proof of causality would therefore invert or invent dependencies, exactly as sorting backwards-adjusted wall-clock timestamps can invert a real send-before-receive edge. Lamport values are appropriate for tracing and for imposing one total order, not as evidence that one event caused another or as a merge decision; when causal knowledge is required, the counter must be paired with explicit causal metadata (message links, vector clocks) and concurrency must be preserved rather than hidden by the total ordering.",
+  "citations": [
+    "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#1-the-happens-before-relation-describes-causal-knowledge",
+    "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#bounded-pattern-ownership-notes",
+    "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

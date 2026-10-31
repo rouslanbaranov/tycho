@@ -1,0 +1,14 @@
+{
+  "task_id": "Q080",
+  "answer": "The V12 event queue orders events lexicographically by (time, priority, insertion sequence). When two events share a scheduled time, the lower priority number is processed first, and if both time and priority are equal, the event inserted into the heap earlier (smaller monotonically increasing insertion sequence number) is processed first. Because the insertion sequence is unique and monotonic, the order is total and deterministic rather than dependent on heap or dictionary iteration order. V12 assigns priority 0 to service completion and timeout events, 1 to arrivals and 2 to retries, so at an identical timestamp a completion or timeout outranks an arrival, which outranks a retry; the insertion sequence then resolves the remaining completion-vs-timeout tie by scheduling order. This rule is a declared modeling choice, not a universal one, and the engine's determinism rules state that events at the same time are ordered by priority and insertion sequence.",
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "task_id": "Q075",
+  "answer": "V12 records environment evidence rather than a full environment. Each run record stores the Python version and platform strings, alongside the engine name and version, model and scenario SHA-256 hashes, seed base and replication count, input hash, invocation, metrics, convergence, uncertainty, sensitivity, limitations and result hash. It archives Python and platform but includes no full environment lock, container image or dependency lock; the dependency-free engine reduces but does not eliminate the platform difference. Those strings make a cross-environment mismatch visible, but they are not a promise of bit-identical behavior: replay proves only that the stored inputs, engine version and seed reproduce the stored metrics on the same platform family, not that another platform (different OS or Python build) will produce bit-identical floats. Treating a single-platform replay as a guarantee for every platform is listed as a cross-platform overclaim failure mode.",
+  "citations": [
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

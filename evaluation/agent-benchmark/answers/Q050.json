@@ -1,0 +1,16 @@
+{
+  "task_id": "Q050",
+  "answer": "An audit trail is reliable only if the record is independent of the actor it describes; when the audited actor can modify or delete it, three properties collapse. First, absence stops being informative: the book names \"log drop interpreted as no event\" as a characteristic failure, so a deleted entry is indistinguishable from an action that never happened, and the trail can no longer establish completeness or non-occurrence. Second, integrity is not the same as storage: tamper evidence and complete event capture require independent engineering controls, and encrypting at rest alone does not prove integrity, so an actor with write or delete authority can rewrite or erase precisely the events that would implicate them. Third, accountability becomes circular: a durable business audit exists to record who was authorized to change which authoritative state and what committed; if the subject of that judgment also administers the record's access and retention, the record only self-attests. The pattern card therefore treats logs mutable or deletable by the actor as a hard contraindication: reject. The remedy is separation of duties: append-only storage, access and retention control held by a party other than the audited actor, tamper-evident mechanisms, and a tested commit boundary before claiming durability.",
+  "citations": [
+    "tycho.page.ebee5e8bd7ca90b878acad1df2d8630a#overview",
+    "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#purpose-and-mission",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#4-security-retention-and-integrity-boundaries",
+    "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+    "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "task_id": "Q010",
+  "answer": "Little's Law is an average identity, L = lambda x W, where W is the mean residence time of work inside one consistently defined boundary. It follows from long-run conservation of counts, so the latency input the identity requires is the arithmetic mean time in the system, not an arbitrary quantile of the latency distribution. A p99 is a threshold: it reports a value that at most 1% of requests exceed and says nothing by itself about the mean or the rest of the distribution. Substituting p99 for W changes the quantity being multiplied by throughput and normally overstates mean occupancy when the tail is heavy. The book's synthetic example makes the error concrete: 95% of requests at 0.10 s and 5% at 2.10 s give a mean of 0.20 s but a p99 of 2.10 s; at 120 completed operations/s, L = 120 x 0.20 = 24 average outstanding operations, whereas 120 x 2.10 = 252 would be an invalid use of the law and a misleading claim about required concurrency. The reverse also fails: a p99 does not determine the mean, because a single mean equation does not reveal the full latency distribution or guarantee an SLO. Correct practice is to measure mean residence time over a stable, consistently bounded window (admission to exit for any reason, with finite-window and rejection caveats handled) and to report p99 separately as a tail/SLO metric, not as W.",
+  "citations": [
+    "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+    "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

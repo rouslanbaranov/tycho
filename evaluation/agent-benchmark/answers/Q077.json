@@ -1,0 +1,13 @@
+{
+  "task_id": "Q077",
+  "answer": "It fails closed: the V12 reference engine aborts the run and writes no run record at all. The engine writes a run record only after the model, scenario and result hashes are known, so a failed invariant leaves no partial or plausible-but-invalid result behind; a partial write (writing a record before an invariant check) is listed as a failure mode the design deliberately avoids. The run life cycle orders the steps as run replications, check invariants, aggregate metrics, convergence/sensitivity, hash result, then write run record, and the page states the engine 'fails closed on unknown identifiers and failed invariants.'",
+  "citations": [
+    "tycho.page.687d2196433c3b076d00c73144dad431#components",
+    "tycho.page.687d2196433c3b076d00c73144dad431#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

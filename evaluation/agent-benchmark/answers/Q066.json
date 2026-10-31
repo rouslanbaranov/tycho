@@ -1,0 +1,14 @@
+{
+  "task_id": "Q066",
+  "answer": "The Controlled Cutover card recommends pausing writes and switching authority only when a bounded set of preconditions is verifiable, not merely assumed. Before pausing writes: verify forward replication pipeline health (no permanent errors), verify DLQ state and resolve DLQ errors, and confirm active CDC replication actually exists. After pausing the write pipeline and before moving traffic: confirm that no replication events still pass through the stream (replication completeness) and wait for the data freshness metric to reach zero before switching. Two further facts must hold: the target schema is deployed and the backfill job is complete, since the procedure assumes both; and a reverse (fallback) replication pipeline is active before cutover starts so a contingency path exists, with reverse replication errors monitored after cutover. If writes cannot be paused or replication completeness cannot be verified, the pattern's hard contraindication applies and the switch should be rejected rather than attempted; its recorded decision state is applicable-under-conditions.",
+  "citations": [
+    "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+    "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

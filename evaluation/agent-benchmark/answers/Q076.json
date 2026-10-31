@@ -1,0 +1,15 @@
+{
+  "task_id": "Q076",
+  "answer": "Treat offered work as a flow that is integrated into stock units at each step: the offered amount over a step is the arrival rate multiplied by the step size dt, plus whatever backlog is already carried. Every integration step must then allocate that amount across completed, rejected and backlogged work under the identity offered = completed + rejected + backlog, with completed capped by capacity times dt; unserved work goes to backlog or rejection according to the admission policy and must never be silently discarded. Verify the identity and non-negativity after every update, not only at the end (a small floating-point tolerance is acceptable, but a persistent gap is a modeling defect); the migration model makes rejected the residual, offered minus target-served minus legacy-served. Step size is part of the model contract: a step large enough to admit a whole interval of arrivals can serve more than the available backlog and produce a negative stock, so a fixed small step with a non-negativity assertion keeps the fluid approximation stable. Also distinguish offered load from throughput: utilization is offered rate divided by capacity (rho = lambda / (c*mu)); at saturation throughput is capped at capacity, and the excess must appear as backlog or rejection rather than vanish.",
+  "citations": [
+    "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

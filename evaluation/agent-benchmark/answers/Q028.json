@@ -1,0 +1,15 @@
+{
+  "task_id": "Q028",
+  "answer": "A continuously reconciling GitOps controller adds a control-loop and authority-coordination step to an emergency rollback, not just a deployment action. Because the controller keeps pulling live state toward the versioned desired state, an imperative live-cluster rollback can be reverted or re-applied by the controller; the book notes Argo CD's caution that rollback cannot be performed while automated sync is enabled. Recovery therefore has to include the controller: decide and authorize who may pause reconciliation, then disable or suspend automated sync (treating pruning and self-healing as separate controls that can also be disabled) or, alternatively, express the rollback as a reviewed revert commit to the desired-state repository so the controller converges to it rather than fighting it. When the reconciler is stuck or racing the emergency change, inspect reconciliation history, freeze conflicting automation and assess actual resource state, because CI success does not prove convergence. Verify that the controller will not undo emergency changes and that the reconciled commit is the reviewed desired state. Also check that the old version can read data already written and prefer forward repair where rollback would leave it unable to decode stored state. Re-enable reconciliation only after desired and live state agree, and alert on drift with a named drift owner. In short, the extra coordination covers sync ownership, pause/freeze authority, the ordering of desired-state and live changes, and post-rollback convergence verification.",
+  "citations": [
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+    "tycho.page.7921e82a71b9446790f185c818326911#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback",
+    "tycho.page.7921e82a71b9446790f185c818326911#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "Q079",
+  "answer": "Relative error is the standard error divided by |mean| (relative error = se/|mean|), so a threshold such as 0.02 is a ratio whose denominator collapses as the metric mean approaches zero. The same absolute sampling error then produces an arbitrarily large relative error, so a run can be marked insufficient-sample even though its absolute error is already small enough for the decision; the book states plainly that a metric near zero can have a small absolute error and a large relative error. The converse is also misleading: a metric with a wide business tolerance can sit comfortably under a fixed relative threshold while its absolute error is still too wide to support the decision, and no single ratio threshold is meaningful across metrics with different tolerances. The book therefore treats the relative-error threshold as a decision aid, not a universal rule, and pairs it with the caveat that convergence means only that the sampling error of the reported metric is small under the declared model, not that the model, its inputs or the decision are valid. Practical guard: pair relative error with an absolute or decision-relevant tolerance, and declare the threshold before seeing results, because threshold shopping after the fact is a listed failure mode.",
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

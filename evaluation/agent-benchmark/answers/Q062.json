@@ -1,0 +1,14 @@
+{
+  "task_id": "Q062",
+  "answer": "Non-idempotent requests — operations whose repetition can produce a second durable effect (typically POST-like commands with no idempotency identity). An ambassador proxy must reject ambassador-managed retries on those operations unless an explicit effect-safety contract makes a repeat resolve to one logical outcome: the application enforces an idempotency identity with correct storage, parameter checking, concurrency control and retention, so the API promise of when the effect occurred still holds. HTTP method idempotence alone (PUT/DELETE/safe methods) proves only abstract request-effect semantics, not that a handler is correct, and a non-idempotent POST is never automatically safe to repeat.",
+  "citations": [
+    "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

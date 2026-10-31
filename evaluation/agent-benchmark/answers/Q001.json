@@ -1,0 +1,13 @@
+{
+  "task_id": "Q001",
+  "answer": "Chaos Kong was an application-level regional outage simulation: it did not actually switch off the AWS region or all AWS infrastructure. Its passing result therefore covers only the traffic and dependencies the experiment actually redirected or suppressed. Left outside that tested envelope were failures of globally shared identity, cross-region control planes and durable datastores; provider-side metadata/storage/control-plane faults; provider-level DNS, external credentials and unrelated managed services; existing sessions, in-flight writes and other global dependencies; and simultaneous promotion creating conflicting writes. The source also does not publish Netflix's complete write-ownership mechanics or proof that no writes were lost, so it cannot support a claim that a real whole-region outage cannot affect customers.",
+  "citations": [
+    "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+    "tycho.page.b256d263efff488c8cf549e116be9683#alternatives-counterexamples-and-failure-criteria"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

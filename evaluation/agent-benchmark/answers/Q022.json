@@ -1,0 +1,15 @@
+{
+  "task_id": "Q022",
+  "answer": "Within one deployable, module ownership becomes enforceable by combining structural, contract and review controls rather than relying on package names or diagrams.\n\nStructural enforcement: module-level build packages (separate build units with declared dependencies), language visibility restrictions that hide implementation, dependency analysis, ArchUnit-like architecture tests, and framework verification such as Spring Modulith's verification APIs. These controls should reject forbidden import paths and cycles, allow only declared dependencies, and enforce API-only access to module internals; they must run against the actual build versions and correspond to the real module architecture.\n\nContract and data ownership: each module exposes a true public/private contract with hidden implementation classes and controlled compile-time dependencies. There is one authoritative writer for each business aggregate even when physical storage is shared, callers use published interfaces instead of another module's internal state or tables, and hidden cross-module database access is treated as a boundary violation.\n\nReview and acceptance: a module review asks whether dependency checks reject forbidden imports and cycles, whether a public contract can change without direct access to another module's internals, whether the authoritative writer for each aggregate is clear, whether internal events can be replayed, delayed or duplicated safely under the declared delivery contract, whether one listener can fail without losing a committed mandatory operation, whether module integration tests are independent enough to reveal unintended coupling, and whether the whole executable can still be deployed or restored with its actual database and config.\n\nLimits: a single deployable still shares a runtime and deployment cadence and may have multiple replicas, so these controls make ownership visible and testable but do not turn modules into independently deployable services. Their benefit must be demonstrated under the relevant change and load profile, and splitting a module is justified only when independent deployment or failure containment is a measured requirement.",
+  "citations": [
+    "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+    "tycho.page.4365dbae044244c1b82751a39704e292#1-stable-module-boundaries-before-event-buses",
+    "tycho.page.c226850223614886b61b7cb36c7d5032#2-monolith-does-not-mean-unstructured-code",
+    "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

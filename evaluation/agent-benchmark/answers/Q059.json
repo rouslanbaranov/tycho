@@ -1,0 +1,15 @@
+{
+  "task_id": "Q059",
+  "answer": "When the acknowledgment is lost, the client must treat the job's outcome as unknown, not failed, and resolve it through an identity it already controls. If the API defines an idempotency key or logical operation ID, the client retries the same submission with the same key and equivalent parameters; the service resolves that key to the already-created job and returns the existing status resource instead of enqueuing a duplicate. The asynchronous interface also returns a location reference to a status endpoint that the client can poll for the operation outcome; the status resource remains queryable and records the terminal state. Where the contract offers only a status read, the client queries it with a stable business identity and handles uncertain or inconsistent results explicitly. If neither an idempotency identity nor a status read exists, blind retries are not safe: the client should surface an unknown outcome and reconcile under an explicit policy.",
+  "citations": [
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#bounded-pattern-ownership-notes",
+    "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+    "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

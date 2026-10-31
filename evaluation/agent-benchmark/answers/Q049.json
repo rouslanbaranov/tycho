@@ -1,0 +1,14 @@
+{
+  "task_id": "Q049",
+  "answer": "Bound path explosion by putting explicit limits into the query contract instead of hoping cycles are rare.\n\n1. Declare the bounds up front: allowed edge types and direction, maximum hop depth, maximum returned result cardinality, and an explicit cycle policy (may a path repeat nodes or relationships?). The book lists exactly these as the minimum a graph question needs, and adds snapshot/time validity, node/edge filters and permission checks (section 4).\n\n2. Make the answer shape explicit: all paths, any path, shortest path, or just reachable node IDs. Enumerating all paths in a dense or cyclic graph is what explodes; a reachability question that only needs reachable IDs or any path should ask for that (sections 4 and 3).\n\n3. Prune on visited state: carry a visited/depth budget so a revisited node is not expanded again, and treat repeated traversal of the same node or edge as no extra evidence - the contradiction table on the integrated page pairs the A->B and B->A cycle with exactly this handling (integrated page, contradiction table).\n\n4. Budget request resources and decide in advance what happens when the traversal exceeds the budget: truncate with a signal, fail explicitly, or degrade to reachable IDs. Section 4 item 7 makes that an explicit part of the query specification.\n\n5. Do not rely on node count as the cost proxy: a high-degree hub can make a path search expensive even when the graph holds few total nodes, so depth limits alone do not bound fan-out (section 3).\n\n6. If a relational engine is used, the same question is a recursive CTE with cycle detection and limits, so the bound lives in the query rather than the storage choice (sections 3 and the integrated page).\n\n7. Apply filters and authorization to intermediate nodes and edges during traversal, not only to the final result - scoping the expansion also removes work (sections 4 and the integrated page table).\n\nLimits: the page carries evidence_status unknown with a self-checked editorial review, and the synthetic paired fixture is explicitly labelled proposed/not run, so the above is design guidance rather than measured thresholds or a benchmark result.",
+  "citations": [
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+    "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#engineering-walkthrough-a-bounded-dependency-path-is-not-proof-of-causation"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

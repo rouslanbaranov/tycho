@@ -1,0 +1,15 @@
+{
+  "task_id": "Q073",
+  "answer": "Removing the origin asset deletes only the authoritative copy; it does not invalidate copies that caches already hold. A cache returns a stored representation until its own freshness or validation rule forces a refetch. An edge purge is also not an instantaneous, global erase: purge requests propagate across edge locations over time, an incomplete purge can leave entries behind, and a purge without completion evidence is not a proven revocation bound. The purge reaches the CDN edge only, not browser caches, so a client can keep serving its own old copy. The old asset therefore remains available after the origin removal and the edge purge.",
+  "citations": [
+    "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+    "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+    "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

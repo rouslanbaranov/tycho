@@ -1,0 +1,14 @@
+{
+  "task_id": "Q060",
+  "answer": "Mirrored production traffic is a copy of requests that the authoritative path already executed, so a shadow service that performs live writes repeats those effects instead of merely observing them. The book treats shadow requests that cause writes as a hard contraindication: duplicate or conflicting state changes (double creates, charges or updates) can land in shared production data, and because mirrored requests are fire-and-forget with their responses discarded, the shadow's errors and partial failures are invisible, leaving no feedback loop to detect or compensate them. The technical note adds that the new path still needs an explicit side-effect boundary and a load budget, which mirroring by itself does not provide. A feature flag or deployment rollback can stop further mirrored traffic but cannot undo data already committed, and replaying state-changing operations without a stable request/effect identity risks violating invariants through duplicate execution. Mirroring is therefore safe only when the shadow path is write-suppressed or isolated (a read-only replica or sandbox store, or a deduplicated idempotency boundary), not when it writes to live state.",
+  "citations": [
+    "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+    "tycho.page.b1318da570f746bb8126e863b97d8eb3#overview",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "Q039",
+  "answer": "A reset to earliest recovers only the earliest retained history, not the beginning of the log. If retention has deleted older records, the reset cannot recreate them: the consumer resumes at the earliest offset that still exists, and every expired record before that point stays lost. The result can look healthy while output is silently incomplete, so recovering the missing history requires retained data plus an explicit source snapshot/backfill or other out-of-band reconstruction, not the offset reset alone.",
+  "citations": [
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

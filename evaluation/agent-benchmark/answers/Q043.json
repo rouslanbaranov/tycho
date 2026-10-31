@@ -1,0 +1,17 @@
+{
+  "task_id": "Q043",
+  "answer": "A shard's write capacity is bounded by its single authoritative owner, not by how many copies exist. Each shard is authoritative for a key range and one owner must exist per key, so writes are serialized through that leader/primary; replicas reproduce or vote on the same ordered write stream instead of creating a second place where independent writes may commit. A read replica therefore adds read capacity and recovery options but not write throughput, and letting replicas accept authoritative writes turns the system into multi-writer replication, which needs conflict handling and does not automatically give globally serializable outcomes. Replication actively costs write work: every replica must apply and store the same writes (log shipping, storage, WAL/IO), and in quorum clusters a write must be acknowledged by W voters, so adding voters adds coordination round trips rather than commit parallelism - majority arithmetic can even raise the required quorum without raising tolerated failures (3 voters need 2 votes; 4 voters need 3). The book states the limits directly: a replicated stateful writer does not gain safe independent commit capacity merely from duplication, and read replicas usually do not expand single-authority write serialization capacity. Scaling a single shard's writes therefore requires either vertical scaling (more CPU/RAM/IO on the one owner, if that resource is the actual bottleneck) or reducing write cost (index/query optimization, bounded connection pools, caching read-mostly data), while true horizontal write scale-out requires splitting the key space across more shards, each with its own owner. Even then, more shards cannot spread a single hot tenant or key, because that key still has exactly one authoritative owner; skew must be detected and the hot key throttled or the shard key redesigned.",
+  "citations": [
+    "tycho.page.94165346d83c4ff79634d4400f4a9ba7#5-alternatives-before-sharding",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#5-vertical-versus-horizontal-scale-under-invariants",
+    "tycho.page.89cd7853a0d04d78a02a772de59dbf38#6-workload-and-scale-considerations",
+    "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

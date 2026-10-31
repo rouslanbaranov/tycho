@@ -1,0 +1,14 @@
+{
+  "task_id": "Q026",
+  "answer": "LinkedIn's Kafka Audit compared counts taken at successive points of its multi-cluster path, not a single cluster's view. Each producer tallied the messages it sent for a topic and reporting interval and periodically published those counts to a dedicated audit topic. Each cluster's Kafka Console Auditor separately consumed topics, accumulated observed counts, and sent audit results; aggregate-cluster auditors counted messages present after MirrorMaker copying; and critical downstream consumers such as Hadoop sinks could publish their own tier counts. Because the counts were for comparable topic and time intervals, the per-tier tallies could be compared along the producer -> local cluster -> aggregate cluster -> critical consumer chain to show where messages were lost or duplicated and at which hop. The page also cautions that equal counts alone cannot prove per-message equality (one lost record can be offset by one duplicate), and clock skew or late producers can make audit windows disagree transiently.",
+  "citations": [
+    "tycho.page.9f1f71a670f345e9898fe78167b48cda#kafka-audit-who-measures-what",
+    "tycho.page.9f1f71a670f345e9898fe78167b48cda#pressure-legacy-baseline-and-actual-chosen-direction",
+    "tycho.page.9f1f71a670f345e9898fe78167b48cda#exact-historical-topology-and-tier-contracts"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

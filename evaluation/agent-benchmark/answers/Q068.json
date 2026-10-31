@@ -1,0 +1,14 @@
+{
+  "task_id": "Q068",
+  "answer": "Prefer a content-based router whenever the decision must choose among destinations, not merely admit or drop. The pass-or-discard filter fits exactly one shape: a single output channel, a testable predicate, and filtering cheaper than downstream handling. A non-matching message is discarded and produces no downstream output, so the filter card hard-contraindicates it when messages need multiple destinations or when every message has a required effect. The router examines message content - field existence, specific field values or configurable rules - and sends each message to a different channel; that makes it the right preference when routing depends on message attributes and destinations carry different contracts, and when unmatched or misrouted messages must be exposed through a declared default or dead-letter path. Choosing the router also imports obligations the filter never has: a versioned predicate set, a named owner for rule changes, validation of predicate fields (routing on an untrusted field lets the producer choose the destination), a declared fallback plus recorded predicate version, and tests for unmatched, multi-match and rule-rollout paths, plus a canary and rollback path. Reverse back to the filter when the destination set collapses to one and the only decision is match versus non-match. The router is the wrong tool when a fixed static route or a topic/queue per producer suffices at publish time, when routing depends on untrusted fields, or when the rules become a multi-step domain workflow without ownership - then use static routing or a workflow/orchestrator, because a router can become a point of frequent maintenance and may turn into a rules engine. Evidence limit: the filter's public source is publisher-abridged and states no rejected-message disposition, audit record or recovery path, so neither choice can be justified on filter-based audit or recovery.",
+  "citations": [
+    "tycho.page.1a7b78e63a294313b93d56eed8cc06c7#overview",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+    "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

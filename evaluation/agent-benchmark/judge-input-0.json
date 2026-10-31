@@ -1,0 +1,363 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q000",
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "layer_expected": "book",
+      "answer": "Authentication establishes who the caller is and, at most, which tenant the session is associated with; it does not establish that the caller may read or change a particular object. A tenant identifier is one request attribute, not an authorization decision. If a service authenticates user U and then fetches registration R by an arbitrary registration ID, U's authenticated tenant claim says nothing about whether R belongs to that tenant or whether U may see or change it; trusting the caller's claim that R belongs to their tenant is the broken object-level authorization (BOLA/IDOR) failure. Even a tenant ID derived from a signed session rather than a URL is insufficient: it may be trustworthy as a claim, but it still does not bind the referenced object to that tenant or to the requested action. Authorization must evaluate subject, action, object, and tenant/ownership under current policy at every sensitive authority: the route/controller and every alternative path (exports, search, batch jobs, admin APIs), repository/data-layer queries, event handlers, caches, object stores, tenant indexes, background jobs, and delegated administration. Isolation controls do not substitute for this check: a separate database reduces blast radius but does not replace permission checks, and row/object permissions are only as sound as the caller identity and current policy supplied to them. Caches and asynchronous consumers must also stop serving data once authorization is revoked. An authenticated tenant identifier is therefore a precondition for object authorization, not a substitute for deciding whether this subject may perform this action on this specific object.",
+      "citations": [
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route"
+      ],
+      "required_evidence": [
+        "tycho.chapter.5426707ddf264b758016aafe71f342b7#decision-and-worked-result",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.37a28a568f7e987941749e198c03439a#the-trust-question",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Engineering walkthrough \u2014 Tenant isolation across four non-equivalent layers",
+        "The trust question",
+        "5. Boundaries of network and service isolation",
+        "1. Model assets, principals and actions"
+      ]
+    },
+    {
+      "task_id": "Q008",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "layer_expected": "book",
+      "answer": "After the modeled rollback trigger, new traffic is sent to the legacy path. The trigger sets the target share to zero, so the legacy path absorbs the offered traffic while the target receives no new work and only drains its existing dual-write backlog and divergence; the model returns to legacy-only after the drain completes.",
+      "citations": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date"
+      ],
+      "required_evidence": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#diagram",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting"
+      ],
+      "expected_answer_points": [
+        "Diagram",
+        "Experiment design",
+        "Results",
+        "3. Original synthetic recovery scenario",
+        "Coexistence is a state, not a date"
+      ]
+    },
+    {
+      "task_id": "Q016",
+      "question": "What evidence should gate an irreversible migration of authoritative state?",
+      "layer_expected": "book",
+      "answer": "Gate the change on an observed go/no-go contract, not on a calendar milestone or a single green shadow result. Before authority switches, require: (1) a named change owner and approved versions/assets; (2) a complete old/new client x API x data compatibility matrix, including asynchronous readers; (3) proof that no uncoordinated writers overlap; (4) tested retry identity and late-acknowledgment handling; (5) representative user-level integrity and authorization tests; (6) source-to-target reconciliation plus recorded residual unknowns; (7) a recovery point with actually restored data validity, maximum permissible loss and time; (8) an explicit stop/hold mechanism; and (9) decommissioning evidence for every old caller/subscription.\n\nFor the authoritative-state cutover itself, require the controlled-cutover preconditions: target schema deployed and backfill complete, CDC replication healthy with DLQ errors resolved and no permanent errors, writes paused with no events passing, data freshness at zero, and a reverse-replication fallback active before the switch. State which invariant the gate proves - identity, value equality, operation order, referential consistency, exactly-once side effects, or bounded freshness - and test both shadow directions under real mutation classes; row counts or backup metadata alone do not prove business equivalence. Keep a timestamped authority ledger for old/new reads and writes and name the exact mismatch that triggers rollback. A green index or shadow state is insufficient evidence: replay and revocation paths (for example, a stale query after restarting from an older offset) must also pass.\n\nMake rollback real: identify the last safe phase, a reverse-write adapter or approved forward-repair path, and measured recovery time. Test irreversible cleanup only if backups and reverse transformations can restore newly accepted writes; otherwise refuse cleanup. Refuse the migration when identity mapping is undefined, authoritative writes cannot be recovered after rollback, snapshots differ in unmeasured ways, audit/authorization context changes, or the oracle covers only happy-path counts. If this evidence cannot be obtained, stay on current authority and use a reversible canary, blue/green, or incremental alternative.",
+      "citations": [
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified"
+      ],
+      "required_evidence": [
+        "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#decision-and-worked-result",
+        "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#pages-and-reasoning-route",
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#purpose-and-mission",
+        "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+        "tycho.page.19145078d87143b28387ab187d345c32#5-target-architecture-and-transition-states-are-different-artifacts",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Pages and reasoning route",
+        "Purpose and mission",
+        "Reversible two-stage experiment and falsification",
+        "Decision tree and chosen ADR"
+      ]
+    },
+    {
+      "task_id": "Q024",
+      "question": "Why can a minority partition of a five-voter Raft group not commit new log entries?",
+      "layer_expected": "book",
+      "answer": "Raft commits a new log entry only when the leader has replicated it to a quorum (majority) of the configured voters and enough of them acknowledge it, after which the leader advances the commit index. In a five-voter group the quorum is floor(5/2)+1 = 3. A minority partition holds at most two voters, so it can never collect the three current-term acknowledgments a commit requires; entries its members append locally remain uncommitted. Such a minority also cannot elect a legitimate leader, and a former leader stranded there must stop serving authoritative writes because it cannot confirm quorum. When the partition heals, a newly elected leader may reconcile and overwrite the minority's uncommitted suffix. This is a safety requirement, not only an availability limit: if a minority could commit, two disjoint partitions could claim incompatible authoritative commits, so quorums would no longer intersect and split-brain safety would fail. The three-voter majority side can elect a leader and commit new entries; the two-voter side is unavailable for new writes.",
+      "citations": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations"
+      ],
+      "required_evidence": [
+        "tycho.chapter.6eba0cf391184a709f2e23e5ecc1c3d2#decision-and-worked-result",
+        "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#purpose-and-mission",
+        "tycho.page.d664f65295644726ae1234a982f81fa8#2-agreement-linearizability-and-availability-solve-different-problems"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Engineering walkthrough \u2014 New leader, old client and a lost acknowledgment",
+        "4. Leader elections, logs and client observations",
+        "3. Ordering scopes: per-key versus global",
+        "2. Majority quorum arithmetic and the failure envelope"
+      ]
+    },
+    {
+      "task_id": "Q032",
+      "question": "Why do ordered Lamport clock values not prove a causal relationship between two events?",
+      "layer_expected": "book",
+      "answer": "Ordered Lamport clock values do not prove causality because the logical-clock implication runs only one way: if event a happened before event b, then L(a) < L(b), but L(a) < L(b) does not mean a caused or preceded b. Lamport counters are advanced locally and on message receipt so that causal predecessors get smaller numbers, yet the converse is not guaranteed; two events whose counters differ may still be concurrent, meaning neither direction of the happens-before relation is established and there is no causal path between them. Assigning a deterministic process-ID tie-breaker to the counters yields a reproducible total order over events, but that ordering is a convention for presentation or serialization, not evidence of a real causal dependency or of any interaction between the two events. A scalar Lamport clock also collapses concurrency: it cannot tell whether two events are concurrent or causally ordered, because it records only a single number per event rather than the per-process knowledge needed to detect missing dependencies; a vector clock carries that metadata and can distinguish concurrent updates from causally ordered ones, at the cost of per-replica metadata. Hence an observed inequality L(a) < L(b) may be produced by clock increments on unrelated processes, by message exchange in the opposite direction being absent, or by arbitrary interleaving, and it says nothing about whether a's effects were visible to b. Treating ordered Lamport values as proof of causality would therefore invert or invent dependencies, exactly as sorting backwards-adjusted wall-clock timestamps can invert a real send-before-receive edge. Lamport values are appropriate for tracing and for imposing one total order, not as evidence that one event caused another or as a merge decision; when causal knowledge is required, the counter must be paired with explicit causal metadata (message links, vector clocks) and concurrency must be preserved rather than hidden by the total ordering.",
+      "citations": [
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#1-the-happens-before-relation-describes-causal-knowledge",
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#bounded-pattern-ownership-notes",
+        "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order"
+      ],
+      "required_evidence": [
+        "tycho.chapter.510c0c78de2b450c8be93d708222a488#decision-and-worked-result",
+        "tycho.chapter.510c0c78de2b450c8be93d708222a488#exact-public-evidence",
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#1-the-happens-before-relation-describes-causal-knowledge",
+        "tycho.page.aac0f46189b74948bedfc30a81ec80e5#2-causal-and-temporal-interpretation",
+        "tycho.page.d4822cc1e71c4f73896b7f6509f6daae#engineering-walkthrough-wall-clock-order-cannot-prove-causality-or-commit-order",
+        "tycho.page.d664f65295644726ae1234a982f81fa8#2-agreement-linearizability-and-availability-solve-different-problems"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Exact public evidence",
+        "1. The happens-before relation describes causal knowledge",
+        "2. Causal and temporal interpretation",
+        "Engineering walkthrough \u2014 Wall-clock order cannot prove causality or commit order"
+      ]
+    },
+    {
+      "task_id": "Q040",
+      "question": "In Shopify\u2019s 2019 componentization account, how did Wedge surface cross-component dependencies?",
+      "layer_expected": "book",
+      "answer": "In the 2019 first-party account, Wedge was a component-coupling feedback mechanism that surfaced cross-component dependencies by combining runtime Ruby traces with static framework structure such as ActiveRecord associations. It observed runtime cross-component calls, ActiveRecord associations, inheritance and public-API violations and summarized them into an isolation score. The book's case page records the limitation that instrumented execution covers only exercised paths, so dynamic calls and long-term ownership remain hard, which is why the 2020 follow-up built Packwerk around static Ruby constant references checked in pull requests.",
+      "citations": [
+        "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#two-successive-detection-approaches-and-why-they-differed"
+      ],
+      "required_evidence": [
+        "tycho.chapter.5de52a840c14448c946a65c924f28487#purpose-and-mission",
+        "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9#the-actual-design-variables-code-ownership-versus-deployment-autonomy",
+        "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#two-successive-detection-approaches-and-why-they-differed",
+        "tycho.page.4365dbae044244c1b82751a39704e292#5-enforce-boundaries-rather-than-only-documenting-them",
+        "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#applied-m9-evidence-what-transfers-and-what-does-not",
+        "tycho.page.aed8b635f57f41dfa63c897a8d1caca8#historical-sequence-organization-ownership-enforcement"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "The actual design variables: code ownership versus deployment autonomy",
+        "Two successive detection approaches and why they differed",
+        "5. Enforce boundaries rather than only documenting them",
+        "Applied M9 evidence: what transfers and what does not"
+      ]
+    },
+    {
+      "task_id": "Q048",
+      "question": "What needs coordination when a tenant moves from shared storage to a dedicated database?",
+      "layer_expected": "book",
+      "answer": "Moving a tenant from shared storage to its own database is a data migration and cutover, not a connection-string change. Coordinate these workstreams: (1) state capture \u2014 establish a consistent snapshot plus a mutation/change log; (2) target provisioning \u2014 create schema, keys and permissions without leaking credentials or data from neighboring tenants; (3) single-writer control \u2014 freeze or coordinate the authoritative writer so no unguarded dual write exists during the copy; (4) full reconciliation \u2014 copy and reconcile all tenant-owned records, indexes, events, exports and projections, not just main-table rows (matching row counts alone proves nothing); (5) reference validation \u2014 confirm that any retained cross-tenant references are actually permitted; (6) routing cutover \u2014 switch through a versioned tenant-placement mapping with tested rollback and forward-repair limits; (7) old-placement retirement \u2014 verify stale caches, queries, tenant-router entries and background consumers no longer read or write the old placement; (8) identity and lifecycle continuity \u2014 bind stable tenant identity into message/operation IDs, audit records and deduplication keys, and preserve tenant-specific encryption, retention and deletion obligations, since deleting a row does not remove backups, projections or indexes. Guard specifically against a lost mapping, a stale tenant-router cache and an unguarded dual writer, each of which can break both isolation and correctness. Schema- or database-per-tenant also introduces schema/version fan-out, connection-pool, orchestration and mapping complexity, so those operational owners and limits need explicit coordination. Acceptance should require a one-writer proof plus complete consented-state and projection reconciliation, not table-row counts.",
+      "citations": [
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration",
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#6-negative-test-matrix",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose"
+      ],
+      "required_evidence": [
+        "tycho.chapter.5426707ddf264b758016aafe71f342b7#decision-and-worked-result",
+        "tycho.chapter.5426707ddf264b758016aafe71f342b7#overview",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "V02/C07 \u2014 Authorization boundaries and multitenancy",
+        "Purpose and mission",
+        "Tenant-Based Resource Isolation",
+        "Engineering walkthrough \u2014 Tenant isolation across four non-equivalent layers"
+      ]
+    },
+    {
+      "task_id": "Q056",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "layer_expected": "atlas",
+      "answer": "A split needs an owned completion or partial-release rule because, without a known part count, completion is not decidable: the aggregate group stays incomplete indefinitely rather than completing silently (Spring Integration sets SEQUENCE_SIZE to zero for an unknown-size iterator and leaves the group incomplete). Left alone, that open group holds tracking state and leaks orphaned work, so someone must own when to stop waiting. A custom ReleaseStrategy or send-partial-result-on-expiry provides that rule: it releases a partial result or forces closure, defines partial-result disposition and compensation ownership, and bounds fan-out. Critically, release or expiry closure is only a forced/partial closure, not evidence of successful completion; the same page's decision rule therefore requires either a known total count or an explicit release rule or expiry before splitting, and says a split with no completion marker leaks orphaned work and needs an owner.",
+      "citations": [
+        "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ],
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+        "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Resequencer",
+        "Splitter",
+        "Transactional Outbox",
+        "Pipes and Filters"
+      ]
+    },
+    {
+      "task_id": "Q064",
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
+      "layer_expected": "atlas",
+      "answer": "Because the outbox closes only the local dual-write window, not the send itself: one local transaction makes business state and publication intent durable together, but the relay's send and the relay's record of having sent are not in that transaction. A relay can therefore publish the event, have the broker durably store it, and then crash (or lose the broker's acknowledgment) before marking the outbox row as sent. On restart it still sees the intent as unsent and sends again, so publication is at-least-once and the duplicate is unavoidable at the relay. The page's publication truth table states this row explicitly: 'Broker receives event, relay loses acknowledgment -> Broker may store event; relay still sees unsent -> Duplicate publication must be tolerated.' The relay cannot distinguish 'never sent' from 'sent but not acknowledged' because no atomic transaction spans relay, broker and consumer, so the redundant send must be absorbed downstream. The consumer is the only party that observes the effect on its own authoritative state, hence it must make redelivery harmless: persist the processed-event identity together with the business effect in one local transaction (an inbox), or rely on a unique constraint / conditional insert on effect identity or an idempotent downstream API. The identity must be scoped to the correct subscriber and event, an in-memory set is insufficient when restart-safe deduplication is required, and markers must outlive the maximum broker-redelivery, dead-letter and replay horizon, otherwise an expired identity becomes a new message and duplicates the effect. This toleration buys idempotent effects, not exactly-once delivery: a transactional inbox does not guarantee exactly-once side effects outside its local authority, and independent practitioners confirm the same asymmetry, since a queue's at-least-once contract plus late acknowledgments after an object was already transferred are named as concrete duplicate causes handled by consumer-side guards rather than an exactly-once transport.",
+      "citations": [
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses"
+      ],
+      "required_evidence": [
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Resequencer",
+        "Crash windows",
+        "Transactional Outbox",
+        "1. Two unsafe dual-write orders"
+      ]
+    },
+    {
+      "task_id": "Q072",
+      "question": "What transient read behavior can remain immediately after a cache invalidation on write?",
+      "layer_expected": "atlas",
+      "answer": "Immediately after a write-time invalidation, reads can still be transiently wrong in two ways. First, a reader can hit a cache miss and fall through to the authoritative store, or briefly see the pre-write value in the window between the source write and the cache delete. Second, and more durably, a read that began before the invalidation can finish afterwards and reinsert the older version it fetched; subsequent readers then keep getting the obsolete value until TTL expiry or another correct invalidation (the stale-fill-after-invalidation race). Plain database-write-then-delete cache-aside does not close that race, so the residual stale window is bounded only with version-fenced or compare-and-set cache fills, a short bounded TTL, change-event replay with versions, or direct authoritative reads for correctness-critical operations. The book presents this as a general synthetic race, not a measured production incident.",
+      "citations": [
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "1. The stale-fill-after-invalidation race",
+        "Cache Invalidation",
+        "Static Content Hosting",
+        "TTL-Based Expiration"
+      ]
+    },
+    {
+      "task_id": "Q080",
+      "question": "How does the V12 event queue break ties between events scheduled at the same time?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The V12 event queue orders events lexicographically by (time, priority, insertion sequence). When two events share a scheduled time, the lower priority number is processed first, and if both time and priority are equal, the event inserted into the heap earlier (smaller monotonically increasing insertion sequence number) is processed first. Because the insertion sequence is unique and monotonic, the order is total and deterministic rather than dependent on heap or dictionary iteration order. V12 assigns priority 0 to service completion and timeout events, 1 to arrivals and 2 to retries, so at an identical timestamp a completion or timeout outranks an arrival, which outranks a retry; the insertion sequence then resolves the remaining completion-vs-timeout tie by scheduling order. This rule is a declared modeling choice, not a universal one, and the engine's determinism rules state that events at the same time are ordered by priority and insertion sequence.",
+      "citations": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+      ],
+      "required_evidence": [
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.687d2196433c3b076d00c73144dad431#components",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Event ordering",
+        "The test matrix",
+        "Components",
+        "Resource semantics"
+      ]
+    },
+    {
+      "task_id": "Q088",
+      "question": "What makes a scenario metric comparable between candidates with different server counts?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A scenario metric is comparable between candidates with different server counts when it is business-comparable: it is declared in the shared scenario contract with the same identifier, unit and direction, and can be compared without hidden normalization. The comparison must also hold the workload, duration, warmup, metric definitions and seed scheme identical, changing only the candidate configuration such as server count. Rates and per-outcome costs qualify: success rate, p95 latency, throughput, cost per 1000 successful requests, rejection rate and retry amplification. Utilization-style metrics do not: average CPU utilization is not comparable across candidates with different server counts unless cost and work units are also stated, because utilization depends on capacity (rho = lambda / (c * mu)) and therefore on server count. A decision record that uses a metric not declared in the scenario is a validation failure.",
+      "citations": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.870e64da1f925c52109a602440048603#the-stock-to-flow-shorthand-error",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "3. Define the experiment contract before the result",
+        "The experiment",
+        "V12-E: decision validity",
+        "The \"stock-to-flow\" shorthand error"
+      ]
+    },
+    {
+      "task_id": "Q096",
+      "question": "How is a rollback duration reported when the modeled drain has not completed by the end of the horizon?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "It is recorded as a censored value at the horizon, not as a completed duration. The rollback state records three things: whether the rollback completed within the horizon; the time from trigger to drain, or a censored value at the horizon; and the maximum divergence observed before the trigger. So when the modeled drain is still running at the end of the horizon, the trigger-to-drain time is neither zero nor extrapolated to a finish time \u2014 it is right-censored at the observation boundary, paired with an explicit 'did not complete within the horizon' flag. The page treats this as a legitimate finding rather than a failed model: non-completion means the declared reconciliation capacity is insufficient for the declared lag and observation window, which is exactly the conclusion a precise but meaningless duration (for example, an unknown recorded as zero) would hide.",
+      "citations": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#pages-and-reasoning-route",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Failure modes",
+        "Rollback",
+        "The modernization example",
+        "A worked cross-chapter synthesis"
+      ]
+    }
+  ]
+}

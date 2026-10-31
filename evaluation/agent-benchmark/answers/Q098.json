@@ -1,0 +1,15 @@
+{
+  "task_id": "Q098",
+  "answer": "More simulation replications reduce only Monte Carlo sampling error, not the epistemic uncertainty in the assumed input distribution. V12 separates input uncertainty (an arrival rate, service time, timeout or dual-write lag that is not known exactly) from sampling error (even with fixed inputs, a finite number of replications gives an estimate with error). Replications address sampling error; parameter draws address input uncertainty. Increasing replications does not reduce input uncertainty, and increasing the number of input draws does not remove sampling error. The standard error se = s/sqrt(n) narrows the confidence interval for the mean output of the declared model, but that interval covers the true mean only under the model's assumptions; it does not cover the true production value if the model is biased or the inputs are mis-specified. The declared distribution is an assumption, not a measurement: the chapter explicitly does not claim that an assumed distribution is a measured distribution, and it lists 'assumed as measured' (treating a uniform range as if it came from a measured distribution) as a failure mode. More replications therefore estimate the output of the assumed distribution ever more precisely while its shape, parameters and correlations stay unvalidated. Reducing uncertainty about the input distribution requires external evidence about the inputs (measurement, recorded evidence status, and declared correlations), not more simulation runs. Convergence likewise does not mean the model is valid or the inputs are measured, and more replications will not fix a biased model.",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
