@@ -250,3 +250,19 @@ tool invocation that retrieves sources, or change.
     index is allowed; changing its canonical source is not. If a task requires a
     content or structure change, stop and return it to the owner; do not implement
     it here.
+
+37. **Promotion timing bookkeeping.** After every promotion, append the entry's
+    measured interval to `authoring/promotion-entry-timing-*.json`, regenerate the
+    single-entry chart so the new entry is visible, and recompute the forecast from
+    **all** promoted entries rather than a recent window, a hardcoded remaining count
+    or a reused default duration. Derive the remaining count and tier distribution
+    from `owner-units.v1.json`, regenerate the forecast SVG, and label intervals
+    between commits as measured intervals, not stopwatch measurements.
+
+38. **Every task runs inside a goal.** Before starting a task, check whether an
+    active goal exists. If no goal exists, create one with `max_goal_rounds: 1000`
+    before doing any work, then work autonomously and continuously until the
+    objective is achieved. Do not stop for routine confirmation or intermediate
+    status reports; report only when the goal is complete or when a real blocker
+    requires owner input. If a goal is already active, continue under it. This rule
+    never overrides an explicit owner instruction to stop or pause.
