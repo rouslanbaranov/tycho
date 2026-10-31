@@ -1,0 +1,16 @@
+{
+  "task_id": "Q099",
+  "answer": "The no-cutover baseline is a counterfactual control, not an architecture recommendation. It reuses the same workload and model but keeps target share at zero and never triggers rollback, so its zero divergence and zero backlog hold by construction; it exists to price the modeled cost of not shifting traffic and to isolate what the staged shift adds (divergence risk and a rollback requirement). It is explicitly not an A/B test of two production systems, and it cannot support staying on the legacy path forever because it does not achieve modernization: the model excludes the business reason for modernization, and treating its zero divergence as a verdict is a named failure mode ('baseline as winner'); equally, because both paths serve the synthetic load, equal modeled throughput does not show the target adds no value. The comparison therefore returns insufficient evidence and a measurement agenda (instrument dual-write lag, measure reconciliation throughput, rehearse rollback, measure sustained divergence, re-run with measured inputs) - a 'not yet, measure' outcome rather than 'stay forever'.",
+  "citations": [
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

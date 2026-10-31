@@ -1,0 +1,24 @@
+{
+  "task_id": "Q073",
+  "answer": "Removing the origin asset changes only the authoritative copy. What the edge returns is a cached replica with its own key, lifetime and delivery path, so one edge purge does not undo the deletion unless it is complete, correctly scoped and reaches every layer holding a copy.\n\n1. Origin deletion is not cache invalidation. Static-hosting guidance is explicit: changing, deleting or restricting access to origin content does not invalidate cached copies, and a deleted object needs a tombstone or purge proof. Until that proof exists, the old representation remains a normal hit at the edge.\n\n2. A purge is a scoped, asynchronous request, not an erase. It covers only the cache key it names at the locations it reaches, and it can lag the origin, be dropped or be incomplete. Propagation takes time, and sending a request proves nothing: a purge request without completion evidence is not a proven revocation bound. Key coverage matters too: the cache key, freshness policy and authorization boundary must agree, and the page's own acceptance tests include changed response variants and dropped purge requests.\n\n3. Other layers keep their copies. A CDN purge does not clear browser caches, and multi-level placement adds a second invalidation/expiration layer with its own stale-version behavior. A deletion inventory must account for edge caches, retained versions, replication targets and search references, not just the current object name.\n\n4. The edge may be serving stale on purpose. Under stale-on-error or stale-while-revalidate it returns the current stale value while one owner refreshes, and a failing refresh keeps serving that same value until the stale bound is reached. A purge can also race with an in-flight fill that reinserts the stale value after invalidation; a TTL alone does not prevent that.\n\n5. Retained versions can legitimately remain addressable. A retained version is the rollback path, so garbage collection may delete it only after that window, and a current-name delete differs from removal of all retained versions; versioned URLs keep the old address a valid immutable target until retirement.\n\nConsequence: treat removal as a publish-to-retirement protocol with per-layer purge completion evidence, key/variant coverage checks and a bounded stale window, not as a single edge purge. The corpus bounds shared-cache reuse through RFC 9111 and does not provide provider-specific purge behavior, so a particular CDN still needs its own versioned documentation and verification.",
+  "citations": [
+    "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+    "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#acceptance-and-evidence-boundary",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes",
+    "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+    "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#2-three-basic-placements",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#publication-to-retirement-protocol",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#what-a-deletion-inventory-must-contain",
+    "tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

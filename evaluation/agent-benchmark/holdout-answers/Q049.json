@@ -1,0 +1,16 @@
+{
+  "task_id": "Q049",
+  "answer": "Bound the query along four dimensions. (1) Shape and cycle state: allow only declared edge types and direction, and decide whether paths are node-simple or relationship-simple. Carry visited state so a reached node or edge is not expanded again - for example a recursive CTE with a depth counter below N plus a visited-array guard such as `NOT (e.dst = ANY(w.visited))`. Cypher's default path uniqueness is relationship-based, so it does not by itself enforce node-simple paths. (2) Resource caps: set a maximum hop count, maximum result cardinality and a per-request resource budget (time, memory, visited state); check depth before expansion and stop at the cap. A high-degree hub can make a path search expensive even when the graph has few total nodes. (3) Answer contract: state whether the output is all paths, any path, shortest path or only reachable node IDs; when the question is existential reachability, stop at the first hit and return DISTINCT endpoint IDs instead of enumerating paths. (4) Exhaustion behavior: return a partial result with an explicit truncation flag or an error, and never report \"no path\" when the budget was exhausted. Apply time-validity and authorization checks to intermediate nodes and edges, not only the endpoint; repeated traversal around a cycle is not extra evidence.",
+  "citations": [
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+    "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+    "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#engineering-walkthrough-a-bounded-dependency-path-is-not-proof-of-causation",
+    "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route",
+    "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#decision-and-worked-result"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

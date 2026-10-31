@@ -1,0 +1,18 @@
+{
+  "task_id": "Q023",
+  "answer": "Promotion changes which instance is authoritative; it does not reconstruct state from before the incident. A physical streaming standby continuously replays the primary's WAL, deletes included, so a current replica has normally already applied the accidental deletion, and promoting it merely makes that damaged state the writable authority. Lag can incidentally leave an older state on a standby that has not yet replayed the delete, but that is not a designed recovery point: replay position is not a selectable time target, promotion can instead exclude acknowledged writes, and the delete may already have been replayed by the time anyone notices.\n\nAccidental deletion is a different failure class from host loss, so the mechanism is mismatched: failover/promotion buys availability, while time-selective historical restore plus reconciliation is what recovers deleted rows. Going back before the deletion requires a valid physical base backup with a continuous WAL archive whose timeline, history and retention actually reach that point, plus a recovery stop point validated against application consistency. A streaming replica supplies neither a rewind nor an older restore target; it only continues forward from its current replay position.\n\nWhether any older state still exists is bounded by retention and detection latency. The backup/log chain must span the time the deletion could stay unnoticed plus investigation and repair; if the damage predates the oldest usable backup or archived WAL, no promotion can produce the missing rows, and long WAL retention carried for a slot has its own storage limit.\n\nFinally, promotion is not demonstrated recovery until application-level integrity, references and user outcomes are verified. A sound protocol restores the bounded scope into an isolated target and merges it under an authorized, idempotent reconciliation rule, because a whole-cluster rewind can discard legitimate later writes and a selective merge can reintroduce data that was later deleted on purpose. So promotion can shorten the outage while leaving the deletion in place; recovery needs an independently verified backup-and-replay path, not a role change.",
+  "citations": [
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#6-failure-classes-change-the-preferred-architecture"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

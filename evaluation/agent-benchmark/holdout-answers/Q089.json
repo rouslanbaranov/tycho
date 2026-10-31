@@ -1,0 +1,18 @@
+{
+  "task_id": "Q089",
+  "answer": "When the V12 discrete-event engine reaches an admission limit, it rejects the request instead of blocking or hiding the refusal. The limits are a queue capacity (maximum waiting requests) and a bulkhead (maximum waiting plus in-service requests). On arrival, if the queue is full or the bulkhead has been reached, the engine rejects the request at that moment and records/counts the rejection; it does not stall the arrival process silently, and no service event is created. Rejection is a terminal outcome in the engine's retry state machine (Rejected has no successor), so a rejected request is not retried or given a server, though its already-scheduled timeout event may still fire and is ignored as stale. Boundary tests pin this down: zero queue capacity rejects any request that cannot start service immediately, and a full bulkhead yields an explicit rejection. Because the engine counts rejections, they appear in the reported rejection rate (0.0005 in the overload scenario, where timeout at 0.3495 is the dominant loss); the book treats hidden or uncounted rejection as a failure mode, since a model that hides it can report a high success rate while refusing work at the front door.",
+  "citations": [
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

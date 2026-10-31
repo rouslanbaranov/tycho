@@ -1,0 +1,14 @@
+{
+  "task_id": "Q057",
+  "answer": "A xDS management server (a discovery control plane) must exist and Envoy must be able to use the endpoint discovery service (EDS); the card treats the absence of a xDS management server as a hard contraindication, with static endpoint configuration as the simpler fallback. The server must serve each Envoy cluster's members (endpoints) together with per-host attributes such as load-balancing weight, canary status and zone, because those attributes arrive in EDS responses and give Envoy explicit knowledge of each upstream host. Envoy's clusters must be configured for EDS rather than one of its other discovery modes (static, strict DNS, logical DNS or original destination), and because membership is eventually consistent, active health checking must determine cluster health. The xDS control plane that distributes cluster, endpoint, listener and route resources is distinct from the proxies' live behavior and needs tests for stale configuration and rollback.",
+  "citations": [
+    "tycho.page.b503488c20a947b581ef45e84ea735d6#overview",
+    "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

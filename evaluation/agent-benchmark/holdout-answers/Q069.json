@@ -1,0 +1,16 @@
+{
+  "task_id": "Q069",
+  "answer": "Polling a separate asynchronous status resource is unnecessary when the outcome is already available from the original exchange or is delivered to the client without a status query.\n\n1. Same-connection completion. When the work fits the client's request/deadline budget and the API responds quickly, a bounded synchronous or unary response should return the result directly. The Async Request-Reply card says to reject the pattern when a same-connection synchronous response suffices, and its competing alternative is that response when most APIs respond quickly enough. A status handle then adds handle storage, retention, terminal-state schema, polling security, backoff and expiry costs for no benefit; the streaming chapter likewise says to prefer a unary bounded API when the user needs one result, reserving durable jobs for completion that must survive the connection.\n\n2. The client cannot safely handle a pending handle. A legacy client that treats every 2xx as final confirmation must not receive PENDING; retaining an immediate final result, or refusing the incompatible version, is safer than forcing that client to poll. The card also contraindicates the async pattern when duplicate submission cannot be made idempotent, because a retry after a lost response must return the existing status resource.\n\n3. Completion is pushed. A callback/reply channel can carry completion, so the client need not poll a status endpoint; but callbacks must re-establish the caller's context, authenticate the sender and tolerate duplicate delivery, and a status lookup may remain necessary for reconciliation after a lost or duplicate delivery.\n\nSo asynchronous execution does not by itself justify a separate status resource. Polling is warranted when completion must survive the client connection and the client needs the outcome; otherwise return the result in the same exchange or deliver it through a callback.",
+  "citations": [
+    "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#bounded-pattern-ownership-notes",
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#5-which-architecture-is-justified",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+    "tycho.page.7327a6422143416f8ff012e5c168ed5a#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

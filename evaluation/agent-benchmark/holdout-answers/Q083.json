@@ -1,0 +1,19 @@
+{
+  "task_id": "Q083",
+  "answer": "A p95 checkout comparison needs request-level events because the percentile is a property of a distribution of individual requests, which a fluid (stock-and-flow) model does not contain.\n\n1) A percentile needs a population of observations. The book defines a percentile as a value of a distribution, not a single request's maximum, and requires naming the measurement boundary (client-observed request, ingress-to-egress, queue wait, dependency call), the observation window, whether timed-out requests are included, and whether successful, rejected and failed requests share one population.\n\n2) The fluid model is structurally incapable of the number, not merely imprecise. At 20 requests/second against 24 requests/second of capacity it yields utilization 0.833, a stable backlog and an approximate mean time in system from Little's law (L = lambda * W), which is a relation among averages, not a per-request identity. The worked comparison reports p95 as n/a for both stock-flow cases while the discrete-event checkout model reports p95, success and timeout rates measured from completed requests.\n\n3) The decision chooses the resolution. Stock-and-flow answers backlog growth under overload; discrete-event represents individual requests and event ordering, so it can carry queueing, deadlines, retries and tail latency. 'Which candidate meets a 1.5-second p95 constraint' makes the request-level distribution the object of the decision, so the coarser model cannot answer it, and a discrete-event model is chosen for that reason rather than for sophistication.\n\n4) The comparison is a p95-versus-outcome trade that only per-request events can attribute. With identical offered load and capacity: A p95 0.870 s, success 0.9218, timeout 0.0778; B p95 1.206 s, success 0.9996, timeout 0.0041; C p95 1.769 s, success 0.9679. B has a worse p95 than A yet completes far more requests; A wins on p95 but misses the implied success threshold and C is eliminated by cost and latency. Screening p95 as a hard quantitative constraint alongside cost therefore works only when the percentile is conditioned on each request's outcome.\n\nLimits: these figures are synthetic, uncalibrated model output over a finite horizon with warmup; a finite window is not a long-run average, so a p95 claim must state its window, warmup and uncertainty and must not be read as production measurement.",
+  "citations": [
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

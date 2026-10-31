@@ -1,0 +1,19 @@
+{
+  "task_id": "Q053",
+  "answer": "Short answer: strong consistency is a property of the read that answers, not of the copy that stores it. A local read model is derived, versioned output, so it can be current only up to the change it last applied. \"Every read\" turns freshness into a per-read obligation the model cannot certify, and adding the certification per read rebuilds the synchronous dependency while keeping the projection cost.\n\nFacet 1 - consistency is certified per read. Linearizable reads require a quorum or read-index, and session guarantees require the answering replica's applied position to be checked, waited for within a bounded deadline, or rerouted to an authority. An independent read replica adds capacity and recovery options but not strong current reads or no lag. So the requirement attaches to each read, and a local copy carries no certificate of currency.\n\nFacet 2 - staleness is designed in. A projection is stale by contract; a materialized view stores derived rows that can be stale until refresh; a cache fill can even resurrect an older version after invalidation. Serving such a copy while claiming currency is silently serving an older snapshot, which the guidance forbids; a replica may inform a decision only inside an accepted staleness bound, and linearizable remote state must come from the authority or a lease-confirmed value.\n\nFacet 3 - what the synchronous dependency buys. A synchronous call is a per-request authority check: the reply reflects the owner's state when the call runs, or the call fails. That coupling costs availability and adds retry and tail latency, but it is exactly what supplies per-read consistency. Replacing it with a local model plus reconciliation substitutes duplication, reconciliation and staleness for the guarantee; the self-contained-service pattern is explicitly contraindicated when strong consistency is mandatory.\n\nFacet 4 - the substitution arithmetic. For every read to be strongly consistent, the local model must regain a version check, wait or reroute on every read. Coordination removed from the call path returns on the read path, on top of projection infrastructure and repair. Where reads dominate, that is the worst place to pay it. Use a local read model only for reads whose staleness bound the interface states, recording source version/offset, exposing pending state, and keeping an authority path for high-integrity decisions; otherwise keep the synchronous authority read and accept its coupling.",
+  "citations": [
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+    "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+    "tycho.page.4e0e4db7547b45469f36915886473750#bounded-pattern-ownership-notes",
+    "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

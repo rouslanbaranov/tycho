@@ -1,0 +1,13 @@
+{
+  "task_id": "Q039",
+  "answer": "A consumer reset to earliest cannot recover records that retention already deleted. When the requested offset no longer exists, auto.offset.reset selects a configured fallback but cannot recreate deleted records: earliest means the earliest retained history in the partition (the log start offset), not the beginning of all business events, while latest may skip even more missing history. A silent reset can therefore leave the consumer apparently healthy while its output is incomplete. Reconstructing state from before the retention horizon requires an external source snapshot with an explicit change boundary, replay of retained subsequent changes with stable identities, and a completeness comparison; if the source/CDC contract cannot close that snapshot/change gap, the evidence is insufficient for a lossless rebuild. The failure matrix likewise flags retention or compaction that removes needed history as preventing late or rebuilding consumers from reconstructing required state, and points to checking the retention horizon, full snapshots/backfills and the event contract.",
+  "citations": [
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

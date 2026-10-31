@@ -1,0 +1,16 @@
+{
+  "task_id": "Q029",
+  "answer": "It bounds only active/in-service work — the number of tasks executing at once — not the number of waiting submissions. With an unlimited submission queue the executor keeps accepting work and parking it, so backlog, total resident work and retained state grow with offered load instead of with capacity. Three things then go unbounded or unenforced: (1) queue depth and queueing delay, so latency grows while the system still reports few immediate errors (and any short-horizon latency figure becomes an artifact of the measurement window); (2) work age relative to deadlines — accepted tasks can sit past their useful deadline and later consume capacity producing results nobody can use; (3) the explicit admission/rejection signal, since an unbounded queue never rejects, so overload is converted into growing queues, missed deadlines and retries rather than a fast bounded refusal. Bounding the pool size or using a concurrency semaphore limits simultaneous resident work only; it does not bound the other dimension. The missing bound must be added at the queue (item count and maximum age) and at admission (deadline-aware accept/reject with an explicit overload contract).",
+  "citations": [
+    "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#platform-pools-queues-and-deadlines",
+    "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#original-decision-model-a-finite-worker-and-waiting-budget",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

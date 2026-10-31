@@ -1,0 +1,21 @@
+{
+  "task_id": "Q013",
+  "answer": "A favorable latency reading is a reason to audit the experiment, not a reason to stop and conclude. Stop the run — and report INSUFFICIENT_EVIDENCE or repair the fixture — when the number cannot represent the decision: the generator failed to emit the scheduled demand (unsent or dropped iterations, generator saturation, or closed-loop feedback that cuts offered load as the system slows); the histogram omits timed-out, rejected or never-started operations, or relies on an undisclosed coordinated-omission correction; warm/cold cache or JIT state, application or dataset revisions, request distribution, or resource budget differ between contenders; or the apparent gain sits within trial variability and too few samples exist to separate it from noise. Stop and reject the candidate when a hard gate fails — correctness, freshness/staleness, authorization, durability, compatibility or reversibility — because favorable latency cannot compensate for a violated contract. Stop and defer when the ranking is not robust to plausible ranges in weights and costs, when no authorized owner can accept the changed service contract, or when the run has no safe abort condition. These are legitimate outcomes (MEASURE_FIRST, INSUFFICIENT_EVIDENCE, REJECTED_BY_GATE); record the narrowest next measurement instead of promoting the candidate. Fix the decision criterion and stop condition before the run, and do not extend the run or move the threshold until the preferred option wins; once uncertainty no longer changes the choice, the decision itself is the stopping rule.",
+  "citations": [
+    "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+    "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#4-a-worked-fictional-experiment-cache-versus-query-repair",
+    "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+    "tycho.page.a5285941dcba43d5a6a7c091cb4c99f9#6-a-decision-is-also-a-stopping-rule",
+    "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment",
+    "tycho.page.a2cd4465792a4740aa5150ad248fd420#integrated-decision-and-reading-route"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

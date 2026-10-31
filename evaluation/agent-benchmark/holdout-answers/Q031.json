@@ -1,0 +1,16 @@
+{
+  "task_id": "Q031",
+  "answer": "A CPU flame graph is an on-CPU sampling artifact, so by itself it cannot account for time a request spends blocked.\n\nA CPU profile mainly attributes CPU-running sampled time: while a request thread is parked on a lock, waiting to borrow a connection, or waiting on network/disk, it produces no on-CPU stack. The dominant part of the request's elapsed time therefore appears as an absence rather than as a frame, and the aggregated stack view shows hot code, not the request's wall-clock critical path. So it cannot prove where a request waited or which wait dominates.\n\nBlocking often has no local stack to attribute at all: the limiting resource may be a saturated connection pool, a lock owner, an admission queue, or a slow downstream dependency. The corpus records this directly: a CPU sampling profile's limitation is 'missing waiting states or low-frequency intermittent events'; a CPU flame graph 'can point to hot functions; it cannot prove request critical path, end-to-end correctness or cause of waiting without correlated evidence'; and async-profiler CPU/lock modes do not establish complete network wait accounting. An end-to-end p99 likewise does not locate the resource bottleneck.\n\nExplaining a blocked request needs evidence that preserves time and waiting state: wall-clock/off-CPU stack sampling (which can show blocked and sleeping stacks, subject to its own sampling, thread-grouping and signal/runtime limits), per-request traces/spans, and queue, connection-acquire and lock metrics aligned to the same load window. The diagnostic walkthrough makes the same point with a request that spends 180 ms of 230 ms acquiring a DB lease while GC pauses total 8 ms: only connection-wait timestamps and correlated spans make that decomposition visible.\n\nEven then, a single observation is not a diagnosis: the chapter's experiment workflow asks for offered arrivals, per-request/span latency, queue/pool waits, GC pause timestamps and thread state under equal load, plus rival hypotheses and a controlled comparison. CPU hot-path profiling is the right instrument only once the request is actually CPU-bound.\n\nIn short, a CPU flame graph can nominate CPU-consuming code, but it cannot by itself separate running from waiting, locate the blocking resource, or measure how much of the request's latency the block contributes.",
+  "citations": [
+    "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#1-divide-wall-clock-latency-before-selecting-a-remedy",
+    "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+    "tycho.page.b6cecfd7301b408db611228b4cec59c5#engineering-walkthrough-high-latency-with-low-jvm-heap-pressure",
+    "tycho.page.b6cecfd7301b408db611228b4cec59c5#5-original-synthetic-failure-the-misleading-virtual-thread-fix",
+    "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

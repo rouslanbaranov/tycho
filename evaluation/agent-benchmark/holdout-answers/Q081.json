@@ -1,0 +1,18 @@
+{
+  "task_id": "Q081",
+  "answer": "V12's result hash is a replay key over the substantive record, not a checksum of the metrics. The contract computes it over the record minus the hash field, so it covers metrics together with convergence, uncertainty, sensitivity and limitations. Metrics alone are an incomplete claim: the same numbers are converged evidence at one relative-error threshold and insufficient-sample at another, and V12 states that a run missing the 0.02 threshold is not used as converged evidence. Hashing the convergence block (status, metric, relative error, threshold, replications) therefore stops post-hoc threshold changes or relabeling from leaving the numbers looking identical. Limitations are equally part of what the result establishes: they record that the workload is synthetic, that intervals use a normal approximation, and that replay proves reproducibility rather than model validity or decision correctness. A hash over metrics alone would make a changed limitation or convergence status invisible, and replay could degrade into comparing only names and values, the documented 'replay theater' failure. Hashing the whole substantive record keeps the caveats attached to the numbers, so a downstream decision record cannot inherit the metric while dropping the limitation, while formatting-only edits still do not invalidate the result.",
+  "citations": [
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

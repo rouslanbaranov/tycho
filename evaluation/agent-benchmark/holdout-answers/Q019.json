@@ -1,0 +1,16 @@
+{
+  "task_id": "Q019",
+  "answer": "A planned controlled cutover is unsuitable — and should be rejected rather than scheduled — when an essential source-side precondition cannot be met: the source write pipeline cannot be paused (no downtime window to quiesce writes) or replication completeness cannot be verified (the team cannot confirm that outstanding source changes have drained and data freshness has reached zero before switching writes). The atlas card states these as hard contraindications, not risks to be managed inside the window, and lists its good-fit conditions as an available downtime window, completed schema/backfill, active CDC replication and a configurable reverse fallback. The bounded cutover procedure adds the source-side steps this implies: verify pipeline health and DLQ state, resolve DLQ errors before pausing writes, confirm no replication events pass after pausing, then switch connection strings and monitor reverse replication. When the source cannot be paused or drained-and-verified, move authority incrementally instead — Strangler Fig replacement or branch-by-abstraction through an owned seam — so each step stays reversible. Even when the gates are met, row counts, checksums and freshness comparisons do not prove business equivalence, and freshness evidence needs production-like source update patterns, so the card remains a self-checked decision aid, not a benchmark-grade verification.",
+  "citations": [
+    "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+    "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

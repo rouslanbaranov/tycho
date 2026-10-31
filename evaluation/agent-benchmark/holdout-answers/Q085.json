@@ -1,0 +1,23 @@
+{
+  "task_id": "Q085",
+  "answer": "V12 propagates the pair as one declared dependence, not as two independent ranges. (1) Declaration and method: the modernization scenario declares a negative correlation of -0.4 between dual-write lag and reconciliation capacity, justified because the same operational pressure plausibly produces a longer lag and a lower capacity, and labels the uncertainty method a Gaussian copula; the engine applies the declared correlation to the input draws and does not infer it from data (uncertainty-and-sensitivity#correlated-inputs). (2) Contract and provenance: the scenario contract requires uncertainty parameter draws and correlations, and the run record stores the uncertainty method, draws, correlated-input flag and notes, with the result hash covering the substantive record, so the assumption travels from scenario to run to decision and replay (scenario-specification#required-structure; run-and-result-provenance#required-fields). (3) Deliberate separation: the quadratic response-surface sensitivity screen requires independent inputs, declares no correlation and rejects a correlated screen, so correlated inputs are propagated by the separate Monte Carlo run and not by the independent-input variance decomposition (uncertainty-and-sensitivity#the-v12-screen). (4) Model instantiation: the staged experiment draws lag from 0.5-2.5 seconds and reconciliation capacity from 2-8 records per second with the -0.4 correlation, using 20 replications and seed base 20261029; backlog grows with target throughput times the declared lag and drains at the reconciliation capacity, and divergence accumulates once the backlog exceeds the drain (modernization-path-experiment#experiment-design; coexistence-and-rollback#the-accounting). The run reports maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3) and rollback completed in only 0.1 of replications (coexistence-and-rollback#the-staged-result). The scenario's failure modes state that omitting the correlation draws the inputs independently and yields an unrealistically narrow divergence range (modernization-path-experiment#failure-modes). (5) Decision consequence and limits: because lag and capacity are assumed over wide ranges and are negatively correlated, the decision record returns insufficient evidence with recommendation none, and lists measured dual-write lag, measured reconciliation capacity, a rehearsed rollback and measured divergence below threshold as what would change the outcome (insufficient-evidence-outcomes#the-modernization-example; decision-record#insufficient-evidence-is-a-result); the calibration table marks both inputs assumed (calibration-and-validity-limits#the-v12-input-table), and the chapter boundary repeats that those assumptions are the reason for insufficient evidence and that record-level reconciliation is not modeled (V12/C06 README#boundaries-and-evidence).",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

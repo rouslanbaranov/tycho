@@ -1,0 +1,16 @@
+{
+  "task_id": "Q063",
+  "answer": "Dedicated static content hosting is a poor fit because its economics and correctness model assume one published representation served to many callers without per-request application compute; personalized, uncacheable content breaks that assumption in four places.\n\n1. No reuse means no benefit while the costs remain. The pattern's good-fit conditions are static or versioned content with controlled cacheability and purge, and an edge only reduces distance and origin work \"for responses it may reuse\". A caller-specific response is reused once, so the key space fragments per identity and the amortization that justifies a retained version, storage, egress and purge pipeline disappears, while cache value in general \"depends on what information is safe to reuse\" and on how far a copy may diverge from authoritative state.\n\n2. The freshness model does not match. Static hosting ties freshness to publication/versioning plus purge: the atlas card states that changing, deleting or restricting origin content does not invalidate cached copies, that CDN purges take propagation time, and that CDN purges do not clear browser caches. Personalized state changes at request or session granularity, so any copy is stale almost immediately, and the pattern offers no per-user invalidation contract.\n\n3. The authorization boundary becomes implicit. Private caller-dependent content needs its own cache key and authorization contract; an Authorization header is not a complete design for private edge caching, and a misclassified response can serve one user's private data to another while a purge lags the origin. Revocation does not erase copies already distributed, so a personalization defect on the static path becomes a cross-user disclosure rather than a staleness nuisance.\n\n4. Governance and ownership do not fit. The atlas lists unowned edge configuration as a hard contraindication, yet personalization forces per-request decisions about cache keys, TTLs, response variants and access checks inside a content-publication pipeline that was never designed for them.\n\nThe corpus's alternative is explicit: reject the pattern when content is personalized or uncacheable, and prefer a dynamic origin, self-hosted files or edge compute \"when content changes per request\", or a direct origin or private cache \"when every response is user-specific\". A defensible hybrid keeps only the cacheable shell and assets on static hosting and assembles personalized fragments at the origin or edge compute, following the classification guidance rather than publishing personalized output to the static path; that split is an inference from the classification rules, not a measured result. Limits: the cards are self-checked and conditional, and no hit-rate or latency improvement is measured in the corpus.",
+  "citations": [
+    "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+    "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

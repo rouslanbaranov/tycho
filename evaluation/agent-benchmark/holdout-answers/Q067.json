@@ -1,0 +1,13 @@
+{
+  "task_id": "Q067",
+  "answer": "An explicit late-message rejection disposition: messages that arrive after the resequencer has advanced past the gap must be rejected as stale (the old-message rejection path), not silently dropped and not re-inserted ahead of already-delivered messages. The corpus treats this as a declared contract field, not an implementation default: once a gap timeout fires, the resequencer 'disregards the current expected sequence number and moves to the next expected number', so any message for the skipped sequence becomes late by definition. The published mechanism states that with old-message rejection enabled the implementation 'throws for an exchange older than the last delivered message', which is the documented form of that disposition. Because rejection is destructive, the guidance adds that dropped or rejected sequence numbers must be recorded (evidence), and that duplicate handling is a separate declared rule rather than a broker default. If continuity is mandatory or the buffer cannot be bounded, the affected ordering scope must fail rather than admit the late message out of order. Two caveats bound this answer: the disposition is a decision the contract owner must name, and partitioning by key is the alternative when global order is unnecessary.",
+  "citations": [
+    "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+    "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

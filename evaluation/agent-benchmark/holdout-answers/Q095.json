@@ -1,0 +1,14 @@
+{
+  "task_id": "Q095",
+  "answer": "On a V12 retry the timeout is reset rather than carried over: when an attempt times out and attempts remain, the engine schedules a retry after the backoff, and the retry arms a new timeout event at the retry time plus the configured timeout. The deadline is per-attempt, not per-request lifetime, so each attempt receives a fresh full timeout and the fired timeout becomes stale and is ignored. A request with three attempts can therefore spend up to three timeouts plus two backoffs in the system. Omitting the reset is a documented failure mode: the retry would inherit an expired deadline and fail immediately.",
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
