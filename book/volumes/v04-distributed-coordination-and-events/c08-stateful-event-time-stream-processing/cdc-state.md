@@ -26,18 +26,32 @@ route_hints:
     - "state"
 evidence_scope:
   source_ids:
+    - "src.debezium-architecture"
+    - "src.debezium-outbox"
+    - "src.debezium-postgresql"
+    - "src.kafka-connect"
+    - "src.kafka-connect-guide"
     - "src.kafka-streams"
+    - "src.postgres-logical"
+    - "src.postgres-logical-decoding"
+    - "src.postgres-replication-config"
   claim_ids: []
   status: "source-linked"
-  notes: "Bounded question from tycho.page.a2c47a0850154eaa95e1eb97e23f9c71; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
+  notes: >-
+    Bounded question from tycho.page.a2c47a0850154eaa95e1eb97e23f9c71; CDC
+    mechanism, invariant, recovery and alternative bound on 2026-10-31 to
+    Debezium architecture and PostgreSQL connector documentation, PostgreSQL 18
+    logical decoding and replication settings, Kafka Connect offset guidance and
+    the Debezium outbox unit. Exact inherited citation rows and limits remain in
+    the chapter source ledger. New synthetic additions are separately labelled.
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
-source_inspection_date: null
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # CDC, task state and changelog replay
@@ -49,7 +63,16 @@ This page belongs to [V04/C08 — Stateful/event-time stream processing](README.
 <!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:1 -->
 ## 1. From a database change to a replayable input
 
-A relational database may already own an authoritative business state. A CDC pipeline observes changes after a commit and publishes records to consumers. PostgreSQL 17's logical-replication documentation describes publication/subscription and the logical change stream under PostgreSQL's configured replication mechanisms. Debezium **3.6** Outbox Event Router documents a concrete transform for outbox-table change events, including default event ID/header and aggregate key handling. [E01, E02]
+A relational database may already own an authoritative business state. A CDC pipeline
+observes changes after a commit and publishes records to consumers. PostgreSQL 18
+defines logical decoding as "extracting all persistent changes to a database's tables
+into a coherent, easy to understand format," and a logical replication slot as "a
+stream of changes that can be replayed to a client in the order they were made on the
+origin server." Debezium 3.7's architecture page says its PostgreSQL connector "reads
+from a logical replication stream"; the connector page says it "produces a change event
+for every row-level insert, update, and delete operation that was captured" and writes
+each table to a separate Kafka topic. The exact units and limits are bound in
+[section 3](#change-data-capture-cdc).
 
 ```mermaid
 flowchart LR
@@ -69,12 +92,14 @@ Text alternative: authoritative business state and outbox intent are committed l
 **Failure and recovery.** Connector lag, WAL/slot retention, schema changes and
 snapshot-to-stream gaps are common. Monitor lag and slot health, take a consistent snapshot,
 handle schema evolution, and make downstream apply idempotent. A missing or expired slot can
-require resnapshotting the source; that recovery point must be explicit.
+require resnapshotting the source; that recovery point must be explicit. The bound conditions
+and source limits are in [section 3](#change-data-capture-cdc).
 
-**Alternative.** A transactional outbox plus relay, dual-write with reconciliation, or
-scheduled batch extraction may be preferable when database log access is unavailable, when
-the source cannot retain a slot, or when the team cannot operate a connector. Reverse the CDC
-choice when connector and schema-coupling cost exceed the replay benefit.
+**Alternative.** A transactional outbox plus relay or scheduled batch extraction may be
+preferable when database log access is unavailable, when the source cannot retain a slot,
+or when the team cannot operate a connector. Reverse the CDC choice when connector and
+schema-coupling cost exceed the replay benefit. Dual-write with reconciliation remains an
+unbound heuristic; section 3 gives the bound comparisons.
 
 <!-- /tycho-question-source -->
 
@@ -128,16 +153,101 @@ The source material keeps its original published/inferred/synthetic/unverified d
 
 ### Change Data Capture (CDC)
 
-Change data capture reads the database's own change log and turns committed row changes into a
-replayable stream. The log position, not the connector's wall clock, is the cursor; a snapshot taken
-at a defined log position establishes the starting boundary.
+Change data capture reads the database's own change log and turns committed row changes
+into a replayable stream. The log position, not the connector's wall clock, is the
+cursor; a snapshot taken at a defined log position establishes the starting boundary.
 
-The stream must preserve per-key order and transaction grouping, and consumers must apply each change
-idempotently by a stable key or log position. Connector lag, slot retention, schema changes and a
-snapshot-to-stream gap are common. Monitor the slot, test a schema change, and rebuild from a
-consistent snapshot when the slot is lost rather than assuming the stream is complete. A tombstone
-or delete event needs an explicit downstream interpretation.
+Debezium's architecture page describes Kafka Connect source connectors that "send
+records into Kafka" and says "The PostgreSQL connector reads from a logical replication
+stream." The Debezium PostgreSQL connector "produces a change event for every row-level
+insert, update, and delete operation that was captured" and writes each table to a
+separate Kafka topic by default. PostgreSQL 18 defines "Logical decoding" as
+"extracting all persistent changes to a database's tables into a coherent, easy to
+understand format." These units describe a log-reading connector, not an exactly-once
+transaction that spans the database and the consumer.
 
-A transactional outbox plus relay, dual-write with reconciliation, or scheduled extraction may be
-preferable when log access is unavailable or the team cannot operate a connector. CDC is a fit when
-the log is accessible and the consumer can tolerate derived, at-least-once delivery.
+**Invariant.** The stream must preserve per-key order and transaction grouping. A
+logical replication slot "represents a stream of changes that can be replayed to a
+client in the order they were made on the origin server." Debezium uses the table's
+primary key as the change-event key, so events for one row share a key, and Kafka
+Connect writes "the change event records in the same order in which they were generated
+to the appropriate Kafka topic." Transaction boundaries are available only when the
+connector emits them: for every transaction BEGIN and END Debezium generates an event,
+and each change event can carry `total_order` ("absolute position of the event among
+all events generated by the transaction") and `data_collection_order`.
+
+Two limits narrow the claim. Kafka orders records within a partition, not across a
+topic; Debezium warns that "Ordering is guaranteed only for topics that use a single
+partition" for truncate events, which have no key. And logical decoding has no DDL
+stream: "Logical decoding does not support DDL changes. This means that the connector
+is unable to report DDL change events back to consumers."
+
+**Tycho rule:** require a row-identifying key, a partition scheme that keeps that key
+on one partition, transaction metadata enabled when grouping is required, and an
+idempotent apply identity built from the key and log position. A stream that satisfies
+none of these is a change feed, not an ordered replayable input.
+
+**Failure and recovery.** Connector lag, slot retention, schema changes and a
+snapshot-to-stream gap are common. Debezium defines `MilliSecondsBehindSource` as the
+gap "between the last change event's timestamp and the connector processing it", with
+minimum, maximum, average and percentile variants. A replication slot "will prevent
+removal of required resources even when there is no connection using them"; PostgreSQL
+warns that this "consumes storage" and can, in extreme cases, shut the database down.
+A slot can also be invalidated by retention settings. `restart_lsn` is "the LSN of the
+oldest WAL that the connector might require," and PostgreSQL can remove required WAL
+when it falls behind `max_slot_wal_keep_size`.
+
+The initial snapshot reads the current log position before scanning and then streams
+from that position, so a successful run does not miss updates made during the scan. If
+the connector fails before recording completion, "upon restart the connector begins a
+new snapshot." On restart it resumes from the recorded LSN while the slot remains
+intact; dropping the slot means "you will lose data" because the removed WAL cannot be
+reconstructed. Debezium can emit duplicate change events during recovery and provides
+at-least-once delivery; its incremental snapshot path also does not support schema
+changes while it is running.
+
+A primary-key change has a window in which the JDBC key and the change event disagree.
+
+**Tycho runbook:** monitor lag and slot health, alert before the retention limit, test a
+schema change across the snapshot and streaming paths, and rebuild from a consistent
+snapshot rather than assuming the stream is complete. A tombstone or delete event
+needs an explicit downstream interpretation.
+
+**Alternative.** A transactional outbox plus relay or scheduled extraction may be
+preferable when log access is unavailable or the team cannot operate a connector.
+Dual-write with reconciliation remains an unbound Tycho heuristic. Debezium's Outbox
+Event Router says an outbox implementation "avoids inconsistencies between a service's
+internal state ... and state in events consumed by services that need the same data";
+its event ID can "remove duplicate messages," and its event key is "important for
+maintaining correct order in Kafka partitions." Kafka Connect documents a source
+connector that "would import a relational database into Kafka" and a mapping that
+"uses a timestamp column to generate queries incrementally returning new data, and the
+last queried timestamp can be used as the offset." That is a scheduled extraction
+shape, not a log tail. No selected unit evaluates dual-write with reconciliation.
+
+**Tycho choice rule:** reverse the CDC choice when log access is unavailable, the
+source cannot retain a slot, schema changes cannot be governed, or connector operations
+exceed the replay benefit. CDC is a fit when the log is accessible, the key and
+transaction boundaries are explicit, and the consumer can tolerate derived,
+at-least-once delivery.
+
+**Bound source limits.** Six public units were inspected on 2026-10-31, plus
+the retained Debezium Outbox Event Router unit: Debezium
+*Architecture* (<https://debezium.io/documentation/reference/stable/architecture.html>);
+*Debezium connector for PostgreSQL*
+(<https://debezium.io/documentation/reference/stable/connectors/postgresql.html>);
+PostgreSQL 18, *47.2. Logical Decoding Concepts*
+(<https://www.postgresql.org/docs/current/logicaldecoding-explanation.html>);
+PostgreSQL 18, *19.6. Replication* settings
+(<https://www.postgresql.org/docs/current/runtime-config-replication.html>);
+Kafka Connect 4.1, *Connector Development Guide*
+(<https://kafka.apache.org/41/kafka-connect/connector-development-guide/>); and Kafka
+Connect 4.1, *Overview* (<https://kafka.apache.org/41/kafka-connect/overview/>).
+Records: `read.debezium-architecture.2026-10-31`,
+`read.debezium-postgresql.2026-10-31`,
+`read.postgres-logical-decoding.2026-10-31`,
+`read.postgres-slot-retention.2026-10-31`, `read.kafka-connect-offsets.2026-10-31`
+and `read.kafka-connect-overview.2026-10-31`; the outbox comparison retains
+`read.debezium-outbox-binding.2026-10-31`. The units are documentation, not
+benchmarks or production observations. Representation hashes and read scopes are in
+the B62 lane note. Coverage is self-checked, not independently reviewed.
