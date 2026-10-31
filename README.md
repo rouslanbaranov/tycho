@@ -1,5 +1,16 @@
 # Tycho
 
+<p align="center">
+  <a href="assets/tycho-station/tycho-station.jpg">
+    <img src="assets/tycho-station/tycho-station.jpg"
+         alt="An industrial ring-shaped construction station in deep space"
+         width="100%">
+  </a>
+</p>
+
+*Independent concept illustration of Tycho Station. Not an official production
+asset; see [artwork notes](assets/tycho-station/README.md).*
+
 An independent, self-contained System Design book and planned MCP knowledge service for external AI agents.
 
 Tycho explains engineering principles, architectural trade-offs, failure modes, and practical design reasoning through independently sourced public knowledge and original synthetic examples. It is not a description of any employer's systems.

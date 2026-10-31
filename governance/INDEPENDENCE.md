@@ -29,6 +29,13 @@ Stop using the material. Do not quote it in an issue, diagnostic, commit, or cor
 Automated lexical checks are a limited aid. Independent AI origin review under
 [AI-INDEPENDENT-REVIEW.md](AI-INDEPENDENT-REVIEW.md) remains mandatory. Future instructions cannot silently relax this policy; any requested exception must be surfaced to the owner before action.
 
+## Reviewed binary media
+
+Binary files cannot be lexically scanned. They may be admitted only through the
+hash-pinned [reviewed-media manifest](reviewed-media.json) under
+[REVIEWED-MEDIA.md](REVIEWED-MEDIA.md). A hash match records an explicit origin
+review; it is not a content scan, independent review or owner acceptance.
+
 ## Neutral deployment language
 
 This repository is domain-independent. All written material and generated outputs must describe deployment restrictions, approvals, infrastructure constraints and access controls in **technology- and environment-neutral** terms. Prefer `restricted enterprise environments`, `regulated environments`, `corporate infrastructure`, and `security-constrained deployments`. Do not reference or imply a particular industry, institution category, or organization as the intended deployment setting, even in examples, tests, metadata, source paths, translated text, issues or PR descriptions. This is a separate global editorial requirement from source independence.
