@@ -147,8 +147,8 @@ measured evidence, and they do not create a new source claim.
 ### Deployment Stamps
 
 A deployment stamp is an independently operated deployment unit used for scale, isolation or
-locality. It needs a routing key, a state authority, a deployment and upgrade process and a
-rule for shared global dependencies. Use it when stamps can fail or change independently and
+locality. **Invariant (Tycho synthesis).** It needs a routing key, a state authority, a
+deployment and upgrade process and a rule for shared global dependencies. Use it when stamps can fail or change independently and
 the duplication cost is justified. Do not use it when a single deployment meets the objective
 or when stamps still share an unowned global dependency.
 

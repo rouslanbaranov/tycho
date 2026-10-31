@@ -10449,16 +10449,16 @@
           "reason": "Defines the independent deployment unit and its purposes.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+            "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
             "section": "Solution",
-            "quote": "To avoid these problems, consider grouping resources into scale units and provisioning multiple copies of your stamps . Each scale unit hosts and serves a subset of your tenants. Stamps run independently of each other, and you can deploy and update them independently.",
-            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
+            "quote": "Stamps run independently of each other, and you can deploy and update them independently.",
+            "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
           }
         },
         "invariant": {
           "state": "supported",
           "quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
-          "reason": "Azure states that stamps run independently and can be deployed and updated independently, that a traffic routing service resolves the tenant-to-stamp mapping, that stamps implicitly shard data and a tenant move transfers and removes state, and that shared components are a consideration. Google SRE defines canarying as a partial, evaluated deployment and warns that the canary and control may share infrastructure. The four-part invariant wording and the routing/state ownership rule are Tycho, labelled in the page.",
+          "reason": "Azure states that stamps run independently and can be deployed and updated independently, that a traffic routing service resolves the tenant-to-stamp mapping, that stamps implicitly shard data and a tenant move transfers and removes state, and that shared components are a consideration. Google SRE defines canarying as a partial, evaluated deployment and warns that the canary and control may share infrastructure and failure domains. The four-part invariant wording and the routing/state ownership rule are Tycho, labelled in the page.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
@@ -10515,6 +10515,27 @@
               "section": "Dependencies and Isolation",
               "quote": "the canary population and the control may share backends, frontends, networks, data stores, and other infrastructure",
               "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Solution",
+              "quote": "Each stamp serves a subset of your customers.",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Deployment",
+              "quote": "When you deploy multiple stamps, automate and fully repeat your deployment processes.",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "Dependencies and Isolation",
+              "quote": "shared failure domains between our canary and control environments",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
             }
           ]
         },
@@ -10524,10 +10545,10 @@
           "reason": "Names drift and split state, with versioning, routing and reconciliation controls.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
-            "ledger_record": "read.batch5-deployment-stamps.2026-10-21",
+            "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
             "section": "Problems and considerations",
-            "quote": "Governance and configuration drift: As the number of stamps increases, it becomes harder to keep security policies, role-based access control (RBAC) assignments, network controls, observability settings, and service configurations consistent. Use Azure Policy to treat governance as code and continuously validate each stamp for drift to prevent inconsistent behavior and compliance gaps.",
-            "revision": "2e3ea72b5197d4fd6cfb0b55ff42f33d768e2b73c6c10a12e162e565a1e09e4e"
+            "quote": "Governance and configuration drift: As the number of stamps increases, it becomes harder to keep security policies, role-based access control (RBAC) assignments, network controls, observability settings, and service configurations consistent.",
+            "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
           }
         },
         "alternative": {

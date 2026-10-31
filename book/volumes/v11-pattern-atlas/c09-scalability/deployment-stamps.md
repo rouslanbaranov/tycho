@@ -63,11 +63,11 @@ scalability-pattern; priority core.
 scale, isolation or locality?
 
 **Good-fit conditions.** Each stamp can be operated and upgraded independently; a routing
-key and a single state authority are explicit; shared global dependencies are enumerated
+key and a state authority are explicit; shared global dependencies are enumerated
 and owned; duplication cost is acceptable.
 
 **Hard contraindications.** Reject when one deployment suffices, when stamps would share a
-hidden global dependency, or when routing, state or upgrade ownership is unassigned.
+hidden global dependency, or when routing, state, upgrade or tested rollback is unowned.
 
 **Competing alternative.** Cell-based architecture when fault isolation is the primary
 goal, or one shared deployment when isolation does not justify duplication. AWS describes
@@ -79,15 +79,16 @@ application's infrastructure"; Tycho reads that as making scale secondary to iso
 Reverse the choice when stamp operations and duplication exceed the isolation benefit; the
 isolation-first comparison and reversal condition are Tycho's.
 
-**Failure and recovery.** Configuration drift, split state and shared dependencies are
-common; verify routing, state reconciliation and upgrade ownership in the owner section.
+**Failure and recovery.** Configuration drift, split state and shared dependencies may
+occur; verify routing, state reconciliation and upgrade ownership in the owner section.
 
 **Technical owner.** [Deployment Stamps](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — independent deployment units for scale, isolation or locality, with routing keys, state authority and upgrade ownership.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-retained record read.batch5-deployment-stamps.2026-10-21, refreshed 2026-10-31
-(raw HTML revision `429616c3...`); [src.sre-workbook] record
+record read.microsoft-deployment-stamps.2026-10-31 (superseding retained
+read.batch5-deployment-stamps.2026-10-21), canonical text revision `e6659312...`, raw HTML
+`429616c390132dc77dcd6432addf59f29c57dd156d946d54424faf71dfedf668`; [src.sre-workbook] record
 read.sre-workbook-canarying.2026-10-30; [src.cell-boundaries] record
 read.batch7-cell-boundaries.2026-10-22. The units are public documentation,
 not benchmarks.
