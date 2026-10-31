@@ -154,3 +154,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer | #540 Priority Queue | pass | `2026-10-31-priority-queue-deepseek.md` | `575d495f1b2374fd8ba37887890fd420d24d1c3c65916e2a46f2b4995792c693` |
 | 2026-10-31 | DeepSeek Reviewer | #540 SLI/SLO | pass | `2026-10-31-sli-slo-deepseek.md` | `da0dee3a83db8eecc42f33e9fe200e778564b64275c74ba28d218f0cf7078f13` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Session Consistency | pass | `2026-10-31-session-consistency-deepseek.md` | `35c115e69915e0cf5f579c9d813aa0b3a032df5af358bd7f4ac05abe1623c425` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Synthetic Monitoring | pass | `2026-10-31-synthetic-monitoring-deepseek.md` | `2fecd75f8dd35c0b62cf31a11e0239220839d537dd80ce2741d6e22bdb401b39` |
