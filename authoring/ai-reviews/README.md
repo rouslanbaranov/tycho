@@ -140,3 +140,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-30 | DeepSeek Reviewer | #540 Immutable Infrastructure | pass | `2026-10-30-immutable-infrastructure-deepseek.md` | `3c7d0a134b9c063f3102c0780a278b35c44e5a3f8132d6d540e3a12cb72bf704` |
 | 2026-10-30 | DeepSeek Reviewer | #540 Causal Ordering | pass | `2026-10-30-causal-ordering-deepseek.md` | `d29130e57c317798ddcd1bc3d3735cde084e120899e5d4b3d6d7b461c17547a4` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Deployment Stamps | pass | `2026-10-31-deployment-stamps-deepseek.md` | `1120fb60de445fe290d7f0ecefc16b80ff807effc992f084377346c6a7b5c8a1` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Polyglot Persistence | pass | `2026-10-31-polyglot-persistence-deepseek.md` | `93e553eec4c284195cb2efd8ce262a8dbd00257cedb6c0b72e77e52c549d91ab` |
