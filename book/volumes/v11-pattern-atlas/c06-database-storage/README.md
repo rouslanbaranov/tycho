@@ -245,60 +245,7 @@ unit, not a benchmark.
 
 ### Polyglot Persistence
 
-**Identity.** Polyglot Persistence; family Database and storage architecture; kind
-data-pattern; priority core.
-
-**Decision question.** Should different data responsibilities use different stores
-while one authoritative boundary owns consistency?
-
-**Good-fit conditions.** Distinct responsibilities have materially different access
-patterns; one store cannot meet a measured requirement; cross-store ownership,
-freshness, rebuild, deduplication, schema migration and failure handling are explicit;
-the team can operate each store.
-
-**Hard contraindications.** Reject when one store meets the requirement, when no
-authoritative owner exists, when cross-store consistency or reconciliation ownership is
-undocumented, or when the team cannot operate the additional store.
-
-**Competing alternative.** Single store with derived projections or query-time joins.
-Reverse the choice when coordination, migration and operational cost exceed the
-workload benefit.
-
-**Failure and recovery.** Stale projections, dual-write ambiguity and partial migration
-are common. AWS notes "eventual consistency between the data stores"; Microsoft says the
-read model "is eventually consistent with the write model" and recommends a transactional
-outbox plus an idempotent consumer; PostgreSQL stops logical replication on a conflict
-that raises an error and says it "must be resolved manually by the user"; Debezium exposes
-an event id to
-"remove duplicate messages". Tycho guidance: publish a freshness bound, rebuild from the
-authority, and treat a half-migrated projection as unavailable. Verify freshness and
-rebuild in the owner section.
-
-**Technical owner.** [Polyglot Persistence](../../v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md#polyglot-persistence)
-— bounded selection and synchronization criteria, not a complete multi-store design.
-
-**Sources.** [src.fowler-polyglot](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-fowler-polyglot.2026-10-22: sections "Polyglot Persistence",
-"Notes". The thematic paragraph labels DatabaseThaw, Complexity and consistency, and Strategic
-versus utility projects are not headings; linked material was not read. The source is a public
-article, not a benchmark.
-
-The invariant and recovery evidence uses
-[src.aws-cqrs](../../../../edition/patterns/reading-ledger.v1.json) record
-`read.aws-cqrs.2026-10-30`;
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json) record
-`read.microsoft-cqrs.2026-10-30`;
-[src.debezium-outbox](../../../../edition/patterns/reading-ledger.v1.json) proposed
-record `read.debezium-outbox.2026-10-31`;
-[src.postgresql](../../../../edition/patterns/reading-ledger.v1.json) proposed records
-`read.postgresql-logical-replication.2026-10-31`,
-`read.postgresql-logical-replication-conflicts.2026-10-31` and
-`read.postgresql-logical-replication-restrictions.2026-10-31`. Canonical text revisions
-are bound in the owner page. These are public documentation pages, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CQRS Read Projections; CDC; Sharding; Materialized View.
+See the [dedicated Polyglot Persistence card](polyglot-persistence.md).
 
 ### CQRS Read Projections
 

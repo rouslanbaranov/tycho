@@ -13027,14 +13027,102 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Define freshness, rebuild, deduplication, schema migration and failure recovery explicitly.",
-          "reason": "Fowler page has no freshness, rebuild, dedup or schema-migration invariant."
+          "reason": "PostgreSQL binds the copy-then-stream start of logical replication; AWS and Microsoft bind eventual consistency and stale reads; Microsoft binds transactional outbox, idempotent delivery and replay-based regeneration; Debezium binds the event id used to remove duplicates; PostgreSQL binds the non-replication of schema and DDL. The four-part wording and the serving rules are Tycho, labelled in the page.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-logical-replication.2026-10-31",
+            "section": "Chapter 29. Logical Replication",
+            "quote": "When logical replication of a table typically starts, PostgreSQL takes a snapshot of the table's data on the publisher database and copies it to the subscriber. Once complete, changes on the publisher since the initial copy are sent continually to the subscriber.",
+            "revision": "2f803799559f1397ed6f6af2aa2fb3d04b678418e3ef5c7b901438d2062c4c1d"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-cqrs",
+              "ledger_record": "read.aws-cqrs.2026-10-30",
+              "section": "CQRS pattern",
+              "quote": "The CQRS pattern typically results in eventual consistency between the data stores.",
+              "revision": "d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Problems and considerations",
+              "quote": "When the read databases and write databases are separated, the read data might not show the most recent changes immediately. This delay results in stale data.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Separate models in different data stores",
+              "quote": "Use the Transactional Outbox pattern to persist the state change and event atomically, and make the read-model consumer idempotent to tolerate duplicate delivery.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Benefits of combining the Event Sourcing and CQRS patterns",
+              "quote": "Because the event store acts as the single source of truth, you can easily regenerate materialized views or adapt to changes in the read model by replaying historical events.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.debezium-outbox",
+              "ledger_record": "read.debezium-outbox.2026-10-31",
+              "section": "Basic outbox table",
+              "quote": "You can use this ID, for example, to remove duplicate messages.",
+              "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-logical-replication-restrictions.2026-10-31",
+              "section": "29.8. Restrictions",
+              "quote": "The database schema and DDL commands are not replicated.",
+              "revision": "85de74cc6d352a20becc5282482c542367c143d18d66cb9612db2287244a179a"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-logical-replication-restrictions.2026-10-31",
+              "section": "29.8. Restrictions",
+              "quote": "Subsequent schema changes would need to be kept in sync manually.",
+              "revision": "85de74cc6d352a20becc5282482c542367c143d18d66cb9612db2287244a179a"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Dual-write ambiguity and partial migration need an explicit reconciliation owner; a half-migrated projection is not a valid serving state.",
-          "reason": "Fowler page names no failure mode or recovery step."
+          "reason": "Microsoft states that broker and database writes cannot share one distributed transaction and recommends the transactional outbox plus an idempotent consumer. PostgreSQL states that a conflict that raises an error stops logical replication and must be resolved manually, by changing subscriber data or permissions or by skipping the conflicting transaction. The reconciliation-owner rule and the invalid half-migrated serving state are Tycho, labelled in the page.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-logical-replication-conflicts.2026-10-31",
+            "section": "29.7. Conflicts",
+            "quote": "A conflict that produces an error will stop the replication; it must be resolved manually by the user.",
+            "revision": "14702e9d7f4291babb23509b3193a7e3720618e2c1de01f674f858e60478c4d3"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-logical-replication-conflicts.2026-10-31",
+              "section": "29.7. Conflicts",
+              "quote": "The resolution can be done either by changing data or permissions on the subscriber so that it does not conflict with the incoming change or by skipping the transaction that conflicts with the existing data.",
+              "revision": "14702e9d7f4291babb23509b3193a7e3720618e2c1de01f674f858e60478c4d3"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Separate models in different data stores",
+              "quote": "Because you usually can't enlist message brokers and databases into a single distributed transaction, consistency problems can occur when you update the database and publish events.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Separate models in different data stores",
+              "quote": "Use the Transactional Outbox pattern to persist the state change and event atomically, and make the read-model consumer idempotent to tolerate duplicate delivery.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -13061,12 +13149,44 @@
         "source_id": "src.fowler-polyglot",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-cqrs",
+            "ledger_record": "read.aws-cqrs.2026-10-30",
+            "revision": "d3bcb473e011c43db8df0e09f568a0ba7c6c05a9014c1c7ef06fdf7bf60b8258"
+          },
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-cqrs.2026-10-30",
+            "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+          },
+          {
+            "source_id": "src.debezium-outbox",
+            "ledger_record": "read.debezium-outbox.2026-10-31",
+            "revision": "26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-logical-replication.2026-10-31",
+            "revision": "2f803799559f1397ed6f6af2aa2fb3d04b678418e3ef5c7b901438d2062c4c1d"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-logical-replication-conflicts.2026-10-31",
+            "revision": "14702e9d7f4291babb23509b3193a7e3720618e2c1de01f674f858e60478c4d3"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-logical-replication-restrictions.2026-10-31",
+            "revision": "85de74cc6d352a20becc5282482c542367c143d18d66cb9612db2287244a179a"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded selection unit; the public article supports the decision framing while the DDIA book remains unread."
+      "notes": "Invariant and failure/recovery bound 2026-10-31 to AWS, Microsoft, Debezium and PostgreSQL public units; the four-part invariant and recovery sequence remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     }
   ],
   "shared_pages": [
@@ -13533,11 +13653,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 111,
-    "invariant_supported": 75,
-    "failure_recovery_supported": 69,
+    "invariant_supported": 76,
+    "failure_recovery_supported": 70,
     "alternative_supported": 75,
-    "technical_partial_bounded": 15,
-    "technical_partial": 73,
+    "technical_partial_bounded": 16,
+    "technical_partial": 72,
     "technical_name_only": 0,
     "technical_sufficient": 57,
     "decision_partial_bounded": 88,

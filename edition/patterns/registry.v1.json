@@ -3,7 +3,7 @@
   "registry_version": "0.2.0",
   "edition_version": "2026.10.2-rc.1",
   "status": "draft",
-  "updated_at": "2026-10-30",
+  "updated_at": "2026-10-31",
   "catalog": {
     "issue": 228,
     "title": "[E17-01] Research and document the full System Design pattern catalog; audit every Tycho technical page",
@@ -3871,7 +3871,7 @@
         "document_id": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4",
         "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
         "anchor": "polyglot-persistence",
-        "state": "partial"
+        "state": "partial-bounded"
       },
       "atlas_owner": {
         "chapter": "V11/C06",
@@ -3879,9 +3879,9 @@
         "state": "partial-bounded"
       },
       "coverage": {
-        "technical": "partial",
+        "technical": "partial-bounded",
         "decision": "partial-bounded",
-        "overall": "partial"
+        "overall": "partial-bounded"
       },
       "confidence": "medium",
       "source_units": [
@@ -3891,13 +3891,43 @@
           "status": "read"
         },
         {
+          "source_id": "src.aws-cqrs",
+          "unit": "CQRS pattern — AWS Prescriptive Guidance",
+          "status": "read"
+        },
+        {
+          "source_id": "src.microsoft-cloud-patterns",
+          "unit": "CQRS pattern — Azure Architecture Center",
+          "status": "read"
+        },
+        {
+          "source_id": "src.debezium-outbox",
+          "unit": "Outbox Event Router — Debezium documentation (2026-10-31 refresh)",
+          "status": "read"
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "Chapter 29. Logical Replication — PostgreSQL 18 documentation",
+          "status": "read"
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "29.7. Conflicts — PostgreSQL 18 documentation",
+          "status": "read"
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "29.8. Restrictions — PostgreSQL 18 documentation",
+          "status": "read"
+        },
+        {
           "source_id": "src.ddia",
           "unit": "Designing Data-Intensive Applications — polyglot persistence",
           "status": "blocked"
         }
       ],
       "review_status": "self-checked",
-      "notes": "Phase 3 C06 card; bounded owner section and public article; not independent-reviewed or sufficient."
+      "notes": "Invariant and failure/recovery bound 2026-10-31 to AWS, Microsoft, Debezium and PostgreSQL public units; the four-part invariant and recovery sequence remain Tycho. Coverage partial-bounded; no promotion."
     },
     {
       "id": "tycho.pattern.cqrs-read-projections",

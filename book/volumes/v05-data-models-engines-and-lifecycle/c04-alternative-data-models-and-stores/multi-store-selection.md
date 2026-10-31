@@ -178,19 +178,19 @@ not source claims.
   `read.microsoft-cqrs.2026-10-30`.
 - Debezium, "Outbox Event Router", section "Basic outbox table": canonical text revision
   `26c1b278b6e7bd2a85787fa38064b0e9651836ca1bf1e7830df46781d9b6872e`, raw HTML
-  `382f0bd0cd99f5c8206f9ba0381f3ec71f12ffe373154d351baa8823fd11ad53`; proposed record
+  `382f0bd0cd99f5c8206f9ba0381f3ec71f12ffe373154d351baa8823fd11ad53`; record
   `read.debezium-outbox.2026-10-31`.
 - PostgreSQL, "Logical Replication", chapter 29: canonical text revision
   `2f803799559f1397ed6f6af2aa2fb3d04b678418e3ef5c7b901438d2062c4c1d`, raw HTML
-  `588d7a5bfa50fafada6e3bda0cfb39e979e924af84fee4bdcf40944a47ebc42f`; proposed record
+  `588d7a5bfa50fafada6e3bda0cfb39e979e924af84fee4bdcf40944a47ebc42f`; record
   `read.postgresql-logical-replication.2026-10-31`.
 - PostgreSQL, "29.7. Conflicts": canonical text revision
   `14702e9d7f4291babb23509b3193a7e3720618e2c1de01f674f858e60478c4d3`, raw HTML
-  `03928cc562272d536f3067a145e2e668f123a0ccb28ff205bf799315223c4a59`; proposed record
+  `03928cc562272d536f3067a145e2e668f123a0ccb28ff205bf799315223c4a59`; record
   `read.postgresql-logical-replication-conflicts.2026-10-31`.
 - PostgreSQL, "29.8. Restrictions": canonical text revision
   `85de74cc6d352a20becc5282482c542367c143d18d66cb9612db2287244a179a`, raw HTML
-  `ebcbea9f2af8d99e9df1c0a981fe031177fb90a522b92745b1d1549d8687243c`; proposed record
+  `ebcbea9f2af8d99e9df1c0a981fe031177fb90a522b92745b1d1549d8687243c`; record
   `read.postgresql-logical-replication-restrictions.2026-10-31`.
 
 Tycho's rule: the projection is not authority. A stale read is a derived read with a published

@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 60 |
+| Reviewed by independent agent | 59 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 75, "reviewed-by-independent-agent": 60}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 76, "reviewed-by-independent-agent": 59}.
 
 ## Review procedure
 
@@ -411,7 +411,7 @@ blank verdict template in the machine-readable file.
 
 - **Polyglot Persistence**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Priority Queue**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
