@@ -30,8 +30,120 @@ VOLUME = {
     "v08": "Delivery, deployment and recovery.",
     "v09": "Observability, security and operations.",
     "v10": "Evolution and modernization.",
-    "v11": "Pattern atlas.",
-    "v12": "Modeling, simulation and decision validation.",
+    "v11": "Compatibility code for atlas.",
+    "v12": "Compatibility code for modeling-and-simulation.",
+}
+
+
+LAYERS = [
+    {
+        "name": "book",
+        "aliases": [],
+        "purpose": "Default conceptual and comparative retrieval over canonical book prose.",
+        "contains": ["volumes", "chapters", "pages", "landings", "decisions",
+                     "section evidence", "frontmatter"],
+        "use_when": ["explain a concept", "compare options", "find prose evidence"],
+        "do_not_use_when": ["need pattern-registry identity",
+                            "need a model, run or decision artifact"],
+        "boundaries": ["evidence, not production proof",
+                       "zero results do not prove absence"],
+        "entry_tools": ["tycho_search", "tycho_outline", "tycho_page", "tycho_read"],
+        "examples": ["why does an outbox avoid a dual write?",
+                     "how do invalidation and stale fills interact?"],
+        "relation_to_book": "This is the book; other layers point back to it.",
+    },
+    {
+        "name": "atlas",
+        "aliases": ["v11"],
+        "purpose": "Pattern discovery: families, draft registry entries, cards and owner pages.",
+        "contains": ["atlas pages and cards",
+                     "draft pattern registry entries",
+                     "families, coverage states and owner paths",
+                     "heading-anchor owner citations"],
+        "use_when": ["find a pattern or family",
+                     "compare coverage or applicability",
+                     "locate the owner page for a pattern"],
+        "do_not_use_when": ["need model/run/decision evidence",
+                            "need production or independent acceptance"],
+        "boundaries": ["registry is draft",
+                       "coverage is not independent review",
+                       "owner citations are heading anchors, not section keys",
+                       "cards do not replace owner pages"],
+        "entry_tools": ["tycho_search(volume=atlas)", "tycho_patterns",
+                        "tycho_pattern", "tycho_page", "tycho_read"],
+        "examples": ["which pattern covers sidecar lifecycle risk?",
+                     "show coverage for tycho.pattern.layered-architecture",
+                     "find the owner page for the outbox pattern"],
+        "relation_to_book": "Atlas is a catalog/navigation layer whose owner pages are book pages.",
+    },
+    {
+        "name": "modeling-and-simulation",
+        "aliases": ["v12"],
+        "purpose": "Structured modeling, simulation, scenario, run, decision and validation evidence.",
+        "contains": ["models and assumptions", "scenarios and inputs", "runs and results",
+                     "decision records", "validation status", "provenance",
+                     "synthetic/modeled evidence labels"],
+        "use_when": ["inspect model assumptions or scenario inputs",
+                     "find a run or sensitivity claim",
+                     "inspect a decision record and validation",
+                     "check modeled vs production evidence"],
+        "do_not_use_when": ["need a pattern family or atlas card",
+                            "need general conceptual prose only",
+                            "need production observation or human acceptance"],
+        "boundaries": ["modeled/synthetic evidence is not production evidence",
+                       "model-verified is not production-verified",
+                       "decision records are proposals unless accepted",
+                       "artifact summaries do not replace artifact data"],
+        "entry_tools": ["tycho_search(volume=modeling-and-simulation, include_artifacts=true)",
+                        "tycho_evidence", "tycho_page", "tycho_read"],
+        "examples": ["which model supports the order-intake backlog claim?",
+                     "what scenario backs this run?",
+                     "is this decision model-verified or synthetic?"],
+        "relation_to_book": "Book prose explains the method; this layer carries structured models, runs and decisions. Neither proves production behavior.",
+    },
+]
+
+
+ERRORS = {
+    "protocol": {
+        "description": "JSON-RPC errors for malformed requests, unknown tools or server failures. Not a tool result.",
+        "codes": {
+            "-32600": "Invalid Request",
+            "-32601": "Method not found / unknown tool",
+            "-32602": "Invalid params",
+            "-32603": "Internal error",
+            "-32700": "Parse error",
+            "-32022": "Unsupported protocol version",
+        },
+    },
+    "tool_execution": {
+        "description": ("Tool results with isError=true and actionable text. "
+                        "offset-inside-diagram is text-only with no "
+                        "structuredContent; other tool errors may carry "
+                        "bounded diagnostic fields."),
+        "codes": {
+            "offset-inside-diagram": {
+                "meaning": "The requested offset is inside a fenced Mermaid diagram.",
+                "retryable": True,
+                "fields": ["requested_offset", "diagram_start", "diagram_end",
+                           "suggested_offset"],
+                "template": (
+                    "offset-inside-diagram: requested_offset=<n>; "
+                    "diagram_start=<n>; diagram_end=<n>; suggested_offset=<n>; "
+                    "retry with offset=<diagram_start> or offset=<diagram_end>"),
+            },
+            "offset-out-of-range": {
+                "meaning": "Offset is beyond the unit length.",
+                "retryable": True,
+                "fields": ["requested_offset", "total_chars"],
+            },
+            "not-found": {"meaning": "Object does not exist.", "retryable": False},
+            "not-available": {"meaning": "Feature or data is unavailable.", "retryable": False},
+            "snapshot-mismatch": {"meaning": "Snapshot changed.", "retryable": True},
+            "invalid-request": {"meaning": "Input validation failed.", "retryable": False},
+            "internal-error": {"meaning": "Unexpected server failure.", "retryable": True},
+        },
+    },
 }
 
 FRONTMATTER_FIELDS = [
@@ -86,14 +198,18 @@ PAGINATION = {
     "read": {
         "inputs": ["offset", "budget_chars"],
         "outputs": ["offset", "returned_chars", "total_chars", "next_offset", "truncated"],
-        "rule": "Call again with offset=next_offset while next_offset is not null.",
-        "max_chars": 5000,
+        "rule": ("Call again with offset=next_offset while next_offset is not null. "
+                 "A fenced Mermaid block is never split; budget may be exceeded to "
+                 "finish it and next_offset points after its closing fence."),
+        "max_chars": 6000,
     },
     "page": {
         "inputs": ["offset", "budget_chars"],
         "outputs": ["offset", "returned_chars", "total_chars", "next_offset", "truncated"],
-        "rule": "Call again with offset=next_offset while next_offset is not null.",
-        "max_chars": 5000,
+        "rule": ("Call again with offset=next_offset while next_offset is not null. "
+                 "A fenced Mermaid block is never split; budget may be exceeded to "
+                 "finish it and next_offset points after its closing fence."),
+        "max_chars": 6000,
     },
     "search": {
         "inputs": ["limit"],
@@ -134,10 +250,23 @@ def output_schema(tool):
     if tool == "tycho_search":
         return _object(common | {
             "query": _field("string", "Echoed query."),
+            "layer": _field("string", "Canonical layer name: book, atlas or modeling-and-simulation."),
             "returned": _field("integer", "Number of returned results."),
+            "filters": _field("object", "Applied filters; layer and volume are canonicalized."),
             "truncated": _field("boolean", "Response budget truncated."),
             "results": {"type": "array", "description": "Bounded candidate sections.",
                         "items": _result_schema()},
+            "artifacts": {"type": "array",
+                          "description": "V12 artifacts when include_artifacts is true.",
+                          "items": {"type": "object", "additionalProperties": True,
+                                    "properties": {
+                                        "id": _field("string", "Artifact ID."),
+                                        "path": _field("string", "Artifact JSON path."),
+                                        "artifact_type": _field("string", "model, scenario, run or decision."),
+                                        "volume": _field("string", "Source volume."),
+                                        "evidence_status": _field("string", "Artifact evidence status."),
+                                        "summary": _field("string", "Artifact summary."),
+                                    }}},
             "facets": _field("object", "Observed metadata counts; not a full catalog."),
             "answerability": _field("object", "Gate metadata; not answer correctness."),
         })
@@ -169,6 +298,9 @@ def output_schema(tool):
             "document_sha256": _field("string", "Document content hash."),
             "offset": _field("integer", "Codepoint offset returned."),
             "returned_chars": _field("integer", "Number of content codepoints."),
+            "budget_requested_chars": _field("integer", "Requested soft budget; may be exceeded to finish a diagram."),
+            "budget_overrun_chars": _field("integer", "Codepoints added beyond budget to complete a diagram."),
+            "diagram_completed": _field("boolean", "Whether the returned slice completed a diagram."),
             "total_chars": _field("integer", "Total codepoints in this unit."),
             "next_offset": _field("integer|null", "Next offset; null at end."),
             "truncated": _field("boolean", "Whether more content remains."),
@@ -224,6 +356,8 @@ OUTPUT_SCHEMAS = {tool: output_schema(tool) for tool in (
 def catalog():
     return {
         "version": VERSION,
+        "layers": LAYERS,
+        "errors": ERRORS,
         "kind": KIND,
         "evidence_status": EVIDENCE_STATUS,
         "artifact_type": ARTIFACT_TYPE,
