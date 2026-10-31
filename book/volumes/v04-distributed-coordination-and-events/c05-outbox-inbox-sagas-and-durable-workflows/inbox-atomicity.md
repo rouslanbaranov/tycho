@@ -27,17 +27,21 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.idempotent-consumer-pattern"
+    - "src.microsoft-cloud-patterns"
+    - "src.kafka-design"
+    - "src.postgresql"
+    - "src.debezium-outbox"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.aa810dd152884b35a84f0f4cbe4369e9; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
-source_inspection_date: "2026-10-20"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # Inbox processing and atomic consumer effects
@@ -65,6 +69,42 @@ silently treat it as new.
 outbox, or an idempotent downstream API may be preferable when the inbox table and retention
 cost exceed the duplicate-impact risk. Reverse the inbox choice when the downstream effect
 cannot be kept inside the local transaction.
+
+**Source check (2026-10-31).** Microsoft's Idempotent Consumer page names the transactional
+variant the Inbox pattern and says to write "the deduplication marker and the business side
+effects in the same transaction" (`src.microsoft-cloud-patterns`,
+`read.microsoft-idempotent-consumer.2026-10-31`). Its transactional-outbox guide applies the
+same rule on the producer side: saving "the business object and its events within the same
+database transaction" guarantees no data loss. Tycho reads both as one local commit boundary;
+a separately committed send remains outside it.
+
+**Invariant.** The same Microsoft page requires store-level arbitration: "Use a uniqueness
+constraint on the deduplication key such that two transactions can attempt to insert a key,
+but only one can succeed." It scopes a shared store by "a composite of the consumer identity
+and the message identity". Kafka's design page shows the same shape for a log position: the
+position is stored as a message, so "we can write the offset to Kafka in the same transaction
+as the output topics" (`src.kafka-design`, `read.kafka41-design-exactly-once.2026-10-31`).
+Tycho's invariant: at most one committed effect per consumer and message identity within the
+declared retention window.
+
+**Failure and recovery.** Microsoft describes the inverse crash window: a consumer that
+records the key after the effect can crash between the two, so "the consumer reprocesses the
+next redelivery". It gives the two-phase route for external effects: an in-progress record,
+then a completed record, with stale records reconciled before acknowledgement. Kafka states
+the default contract: "Kafka guarantees at-least-once delivery by default." Tycho's recovery
+rule: retry the local transaction, reconcile in-progress records, and treat the
+acknowledgement as a separate uncertain step.
+
+**Alternative source check.** Debezium's Outbox Event Router describes a producer-side outbox that
+"avoids inconsistencies between a service’s internal state ... and state in events consumed
+by services" (`src.debezium-outbox`,
+`read.debezium-outbox-binding.2026-10-31`). PostgreSQL's SELECT page allows a queue-like
+table to be claimed with SKIP LOCKED, but warns that skipped rows give "an inconsistent view
+of the data" (`src.postgresql`, `read.postgresql-select-locking.2026-10-31`). Microsoft adds:
+"Prefer naturally idempotent operations." Tycho reads SKIP LOCKED as a work-distribution
+alternative, not as duplicate suppression across retries; a producer outbox moves the atomic
+boundary to the sender, and a naturally idempotent operation may remove the inbox table
+entirely.
 
 <!-- /tycho-question-source -->
 
