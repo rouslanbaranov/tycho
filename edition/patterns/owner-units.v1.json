@@ -8773,7 +8773,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
+          "quote": "A missing or corrupt archive segment bounds the reachable point: targets after the gap are unreachable, while earlier targets remain reachable.",
           "reason": "PostgreSQL halts on corrupt WAL and can restart after an inaccessible archive, AWS restore testing and SRE require periodic restore tests, and Azure protects deleted backup data with soft delete; the runbook order is Tycho.",
           "binding": {
             "source_id": "src.postgresql",
@@ -8901,7 +8901,7 @@
       "decision_evidence": {
         "atlas_section": "backup-pitr-and-restore",
         "question": "Should recovery rely on base backups plus point-in-time WAL/log replay?",
-        "competing_alternative": "Snapshot-only recovery or replica failover. Google SRE says replication \"can’t protect you from many sources of data loss\" and that \"a corrupt database row or errant delete are pushed to all of your copies\". Azure Backup separates \"data protection (backup and restore)\" from \"disaster recovery and failover orchestration\". **Tycho choice rule:** use a replica for availability and a backup chain for historical state; reverse when snapshot/restore cost meets recovery needs.",
+        "competing_alternative": "Replica failover. Google SRE says replication \"can’t protect you from many sources of data loss\" and that \"a corrupt database row or errant delete are pushed to all of your copies\". Azure Backup separates \"data protection (backup and restore)\" from \"disaster recovery and failover orchestration\". **Tycho choice rule:** use a replica for availability and a backup/PITR chain for historical state; reverse when availability, not restoration of a prior point, is the objective.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

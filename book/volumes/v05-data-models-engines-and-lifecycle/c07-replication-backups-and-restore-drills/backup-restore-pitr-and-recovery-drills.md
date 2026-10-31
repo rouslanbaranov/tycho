@@ -121,8 +121,8 @@ ensuring data integrity." **Tycho rule:** validate the selected target with busi
 invariants; a readable backup or a reachable timestamp does not prove that referenced rows,
 authority state and dependent effects agree.
 
-**Failure and recovery.** A missing or corrupt archive segment makes the target unreachable;
-run restore drills on a schedule and verify checksums and recovery completion. PostgreSQL
+**Failure and recovery.** A missing or corrupt archive segment bounds the reachable point:
+targets after the gap are unreachable, while earlier targets remain reachable. Run restore drills on a schedule and verify checksums and recovery completion. PostgreSQL
 warns that "If recovery finds corrupted WAL data, recovery will halt at that point and the
 server will not start", while an inaccessible archive can be restarted and "will restart
 almost from where it failed." AWS Backup restore testing "provides automated and periodic
@@ -136,13 +136,13 @@ deletion or corruption; use backups when recovery point and retained history mat
 SRE says replication "can’t protect you from many sources of data loss" and that "a corrupt
 database row or errant delete are pushed to all of your copies". Azure Backup separates
 "data protection (backup and restore)" from "disaster recovery and failover orchestration",
-which belongs to Azure Site Recovery. **Tycho choice rule:** use a replica for continuity of
-service and a backup chain for historical state; reverse only when the objective is
-availability rather than restoration of a prior point.
+which belongs to Azure Site Recovery. **Tycho choice rule:** use a replica for continuity of service and a backup/PITR chain for
+historical state; reverse when availability, not restoration of a prior point, is the
+objective. A replica alone is not a backup.
 
 **Limits.** Backup retention, encryption keys and restore time are part of the recovery
-objective; an untested restore is a hypothesis, not a capability. Record the restore owner and
-the last successful drill date.
+objective; an untested restore is a hypothesis, not a capability. Record the restore owner and the last successful drill date. AWS immutability/soft delete and
+Azure cross-Region coverage are outside this partial-bounded check.
 
 **Bound source limits.** Five public units were inspected on 2026-10-31: PostgreSQL 17,
 *Continuous Archiving and Point-in-Time Recovery (PITR)*; AWS Backup, *What is AWS Backup?*
