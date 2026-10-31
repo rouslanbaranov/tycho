@@ -10299,7 +10299,7 @@
         "heading": "Cell-Based Architecture",
         "anchor": "cell-based-architecture",
         "level": 3,
-        "line": 163,
+        "line": 197,
         "unit_kind": "dedicated",
         "unit_terms": [
           "cell-based architecture",
@@ -10373,7 +10373,7 @@
         "heading": "Shuffle Sharding",
         "anchor": "shuffle-sharding",
         "level": 3,
-        "line": 178,
+        "line": 212,
         "unit_kind": "dedicated",
         "unit_terms": [
           "shuffle shard",
@@ -10456,9 +10456,67 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "It needs a routing key, a state authority, a deployment and upgrade process and a rule for shared global dependencies.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "Azure states that stamps run independently and can be deployed and updated independently, that a traffic routing service resolves the tenant-to-stamp mapping, that stamps implicitly shard data and a tenant move transfers and removes state, and that shared components are a consideration. Google SRE defines canarying as a partial, evaluated deployment and warns that the canary and control may share infrastructure. The four-part invariant wording and the routing/state ownership rule are Tycho, labelled in the page.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+            "section": "Solution",
+            "quote": "Stamps run independently of each other, and you can deploy and update them independently.",
+            "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Solution",
+              "quote": "Stamps run independently, so they implicitly shard your data.",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Traffic routing",
+              "quote": "the mapping between tenants and stamps",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Example",
+              "quote": "The traffic routing system routes the request to the correct stamp.",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "custom logic to transmit a customer's information to a different stamp and then remove the tenant's information from the original stamp.",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "Shared components: You might have components that you can share across stamps.",
+              "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "full Chapter 16 body",
+              "quote": "a partial and time-limited deployment of a change in a service and its evaluation",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            },
+            {
+              "source_id": "src.sre-workbook",
+              "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+              "section": "Dependencies and Isolation",
+              "quote": "the canary population and the control may share backends, frontends, networks, data stores, and other infrastructure",
+              "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+            }
+          ]
         },
         "failure_recovery": {
           "state": "supported",
@@ -10473,15 +10531,38 @@
           }
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A cell-based deployment is the alternative when isolation is the main goal and scale is secondary.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "AWS describes cells as independent instances that do not share state, a cell routing layer keyed by partition key, and says cell-based architecture need not multiply infrastructure. Tycho reads AWS's isolation framing and that note as making isolation primary and scale secondary; AWS does not state that priority. The comparison with deployment stamps and the reversal condition are Tycho's.",
+          "binding": {
+            "source_id": "src.cell-boundaries",
+            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+            "section": "What is a cell-based architecture?",
+            "quote": "Each cell is independent, does not share state with other cells, and handles a subset of the overall workload requests.",
+            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cell-boundaries",
+              "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+              "section": "What is a cell-based architecture?",
+              "quote": "A cell routing layer distributes requests to individual cells based on the partition key and presents a single endpoint to clients.",
+              "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+            },
+            {
+              "source_id": "src.cell-boundaries",
+              "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+              "section": "What is a cell-based architecture?",
+              "quote": "Building a cell-based architecture doesn't necessarily mean having to double, triple, or more your application's infrastructure.",
+              "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "deployment-stamps",
         "question": "Should independent deployment units be replicated as stamps for scale, isolation or locality?",
-        "competing_alternative": "Cell-based architecture or one shared deployment. Reverse the choice when stamp operations and duplication exceed isolation benefit.",
+        "competing_alternative": "Cell-based architecture when fault isolation is the primary goal, or one shared deployment when isolation does not justify duplication. AWS describes cells this way: \"Each cell is independent, does not share state with other cells, and handles a subset of the overall workload requests.\" A cell routing layer \"distributes requests to individual cells based on the partition key\". AWS also says that \"Building a cell-based architecture doesn't necessarily mean having to double, triple, or more your application's infrastructure\"; Tycho reads that as making scale secondary to isolation. Reverse the choice when stamp operations and duplication exceed the isolation benefit; the isolation-first comparison and reversal condition are Tycho's.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -10490,12 +10571,29 @@
         "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-deployment-stamps.2026-10-31",
+            "revision": "e665931237ad806db01ecc78f401379942d8a67f9ea142be5689ca777fcd981f"
+          },
+          {
+            "source_id": "src.sre-workbook",
+            "ledger_record": "read.sre-workbook-canarying.2026-10-30",
+            "revision": "2129ec6fefdb7807073a7877344e7f0409c27e4fde1021d30114a38338fd039f"
+          },
+          {
+            "source_id": "src.cell-boundaries",
+            "ledger_record": "read.batch7-cell-boundaries.2026-10-22",
+            "revision": "68667f9369cdafbc8cca3ae0ad86539bba5d7c246611c5905f4da73b79aa6910"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note with full mechanism, failure path and alternative."
+      "notes": "Invariant and alternative bound 2026-10-31 to the Azure Deployment Stamps refresh, AWS cell-based architecture and Google SRE Canarying Releases. Routing/state ownership, the isolation-first comparison and the reversal condition remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.geode",
@@ -13330,7 +13428,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 1,
+      "bounded_entries": 2,
       "decision": "deepen",
       "rationale": "Cells, shuffle sharding and deployment stamps now have three distinct dedicated units."
     },
@@ -13414,11 +13512,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 111,
-    "invariant_supported": 74,
+    "invariant_supported": 75,
     "failure_recovery_supported": 69,
-    "alternative_supported": 74,
-    "technical_partial_bounded": 15,
-    "technical_partial": 74,
+    "alternative_supported": 75,
+    "technical_partial_bounded": 16,
+    "technical_partial": 73,
     "technical_name_only": 0,
     "technical_sufficient": 56,
     "decision_partial_bounded": 89,

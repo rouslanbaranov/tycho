@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 63 |
+| Reviewed by independent agent | 60 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 72, "reviewed-by-independent-agent": 63}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 75, "reviewed-by-independent-agent": 60}.
 
 ## Review procedure
 
@@ -115,7 +115,7 @@ blank verdict template in the machine-readable file.
 
 - **Cell-Based Architecture**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Change Data Capture (CDC)**
   Current: pass; historical: None; re-review: pass; report: reject.
@@ -195,7 +195,7 @@ blank verdict template in the machine-readable file.
 
 - **Deployment Stamps**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Distributed Cache**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -519,7 +519,7 @@ blank verdict template in the machine-readable file.
 
 - **Shuffle Sharding**
   Current: pass; historical: None; re-review: pass; report: reject.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Sidecar**
   Current: awaiting-current-external-review; historical: pass; re-review: None; report: None.
