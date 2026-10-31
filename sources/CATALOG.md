@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 315.
+Inventory date: 2026-10-31. Entries: 318.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -147,6 +147,9 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.postgres17-mvcc-pages / core | [PostgreSQL 17 MVCC, isolation and routine vacuuming](https://www.postgresql.org/docs/17/mvcc-intro.html) — PostgreSQL Global Development Group | Explain snapshot visibility, version lifetime and the distinction from WAL durability. | admitted-for-research / public-web-or-author-download |
 | src.postgres17-wal-introduction / core | [PostgreSQL 17 Write-Ahead Logging introduction](https://www.postgresql.org/docs/17/wal-intro.html) — PostgreSQL Global Development Group | Bound the WAL-before-data claim separately from original backlog arithmetic and deployment sizing. | admitted-for-research / public-web-or-author-download |
 | src.oracle-distributed-transactions / supporting | [Distributed Transactions Concepts](https://docs.oracle.com/en/database/oracle/oracle-database/26/admin/distributed-transactions-concepts.html) — Oracle | Two-phase commit in-doubt state, redo-log and commit-point records, prepared locks and resolution. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-sql-server / core | [Create indexes with included columns](https://learn.microsoft.com/en-us/sql/relational-databases/indexes/create-indexes-with-included-columns?view=sql-server-ver17) — Microsoft Learn | Bounded SQL Server included-column unit for the index-table invariant and failure bound. | admitted-for-research / public-web-or-author-download |
+| src.use-the-index-luke / core | [Index-Only Scan: Avoiding Table Access](https://use-the-index-luke.com/sql/clustering/index-only-scan-covering-index) — Markus Winand | Bounded practitioner book chapter for the index-table failure/recovery and alternative bindings. | admitted-for-research / public-web-or-author-download |
+| src.aws-dynamodb-gsi / core | [Overloading Global Secondary Indexes in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-gsi-overloading.html) — Amazon Web Services | Bounded DynamoDB GSI overloading unit for the index-table alternative. | admitted-for-research / public-web-or-author-download |
 
 ## Caching
 

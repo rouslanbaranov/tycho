@@ -8235,41 +8235,217 @@
         "heading": "Index Table",
         "anchor": "index-table",
         "level": 3,
-        "line": 104,
+        "line": 107,
         "unit_kind": "dedicated",
         "unit_terms": [
           "application-owned lookup table",
           "current base row",
           "Dual-write ambiguity",
-          "native secondary index"
+          "native covering index"
         ]
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "An index table is an application-owned lookup table that maps a query key to a primary key or row locator.",
-          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
+          "state": "supported",
+          "quote": "the index table is the application-owned variant of that secondary access path",
+          "reason": "PostgreSQL defines a secondary index as a separately stored structure and an index-only scan as answering from the index alone; Luke and SQL Server describe the covering variant; the application-owned reading is Tycho.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+            "section": "11.9. Index-Only Scans and Covering Indexes",
+            "quote": "PostgreSQL supports index-only scans, which can answer queries from an index alone without any heap access.",
+            "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+              "section": "11.9. Index-Only Scans and Covering Indexes",
+              "quote": "All indexes in PostgreSQL are secondary indexes, meaning that each index is stored separately from the table's main data area",
+              "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "It not only avoids accessing the table to evaluate the where clause, but avoids accessing the table completely if the database can find the selected columns in the index itself.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.microsoft-sql-server",
+              "ledger_record": "read.microsoft-included-columns.2026-10-31",
+              "section": "In this article",
+              "quote": "By including nonkey columns, you can create nonclustered indexes that cover more queries.",
+              "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "Every lookup row must resolve to the current base row",
-          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
+          "state": "supported",
+          "quote": "keep exactly one lookup key; payload columns must never become a second key",
+          "reason": "SQL Server keeps nonkey columns out of key accounting and order, PostgreSQL applies uniqueness to the key only, and Luke says non-key columns are leaf payload; the one-key and repair rules are Tycho.",
+          "binding": {
+            "source_id": "src.microsoft-sql-server",
+            "ledger_record": "read.microsoft-included-columns.2026-10-31",
+            "section": "Design Recommendations",
+            "quote": "The Database Engine doesn't consider nonkey columns when calculating the number of index key columns or index key size.",
+            "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+              "section": "11.9. Index-Only Scans and Covering Indexes",
+              "quote": "the uniqueness condition applies to just column x, not to the combination of x and y",
+              "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "INCLUDE: Non-key Columns",
+              "quote": "They are—other than the key columns, which we discussed so far—only stored in the leaf nodes and can thus not be used for access predicates.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.microsoft-sql-server",
+              "ledger_record": "read.microsoft-included-columns.2026-10-31",
+              "section": "Design Recommendations",
+              "quote": "The order of nonkey columns in the index definition doesn't affect the performance of queries that use the index.",
+              "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows are common design-time failure modes",
-          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
+          "state": "supported",
+          "quote": "reconcile with a repair job, keep the lookup key immutable, bound rebuild time",
+          "reason": "Luke shows a filter defeating an index-only scan and raising response time, PostgreSQL requires visibility-map bits, and SQL Server warns about wide-index update cost and schema coupling; the repair runbook is Tycho.",
+          "binding": {
+            "source_id": "src.use-the-index-luke",
+            "ledger_record": "read.luke-index-only-scan.2026-10-31",
+            "section": "Index-Only Scan: Avoiding Table Access",
+            "quote": "Extending the where clause can cause “illogical” performance behavior. Check the execution plan before extending queries.",
+            "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "The table access increases the response time although the query selects fewer rows.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "The relevant factor is not how many rows the query delivers but how many rows the database must inspect to find them.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+              "section": "11.9. Index-Only Scans and Covering Indexes",
+              "quote": "If it's not set, the heap entry must be visited to find out whether it's visible, so no performance advantage is gained over a standard index scan.",
+              "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+              "section": "11.9. Index-Only Scans and Covering Indexes",
+              "quote": "An index-only scan, after finding a candidate index entry, checks the visibility map bit for the corresponding heap page.",
+              "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+            },
+            {
+              "source_id": "src.microsoft-sql-server",
+              "ledger_record": "read.microsoft-included-columns.2026-10-31",
+              "section": "Design Recommendations",
+              "quote": "Avoid very wide nonclustered indexes where the included columns don't represent a narrow enough subset of the underlying table columns.",
+              "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+            },
+            {
+              "source_id": "src.microsoft-sql-server",
+              "ledger_record": "read.microsoft-included-columns.2026-10-31",
+              "section": "Design Recommendations",
+              "quote": "If adding wide indexes, always verify if the cost of updating one extra wide index offsets the cost of reading directly from the table.",
+              "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+            },
+            {
+              "source_id": "src.microsoft-sql-server",
+              "ledger_record": "read.microsoft-included-columns.2026-10-31",
+              "section": "Limitations",
+              "quote": "Nonkey columns can't be dropped from a table unless that table's index is dropped first.",
+              "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "In this case we should remove the unneeded columns from the other index again.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A native secondary index, a materialized view or a query-time join may be preferable when the primary store already serves the access path.",
-          "reason": "Local representation is only the chapter landing plus 11.1 Introduction (274 words), not the recorded 19-section unit."
+          "state": "supported",
+          "quote": "keep an application-owned index table when the write path can own its repair",
+          "reason": "DynamoDB shows one overloaded GSI serving several query shapes, Luke recommends indexing without the select clause first and calls covering indexes aggressive, and PostgreSQL and SQL Server show payload columns as non-key; the choice rule is Tycho.",
+          "binding": {
+            "source_id": "src.aws-dynamodb-gsi",
+            "ledger_record": "read.aws-dynamodb-gsi-overloading.2026-10-31",
+            "section": "Overloading Global Secondary Indexes in DynamoDB",
+            "quote": "If you create a global secondary index for the table that uses the table's sort key as its partition key and the Data attribute as its sort key, you can make a variety of different queries using that single global secondary index.",
+            "revision": "1d1a982b843ee7d8cca03b06eecb19efc0c67a135acd020fb91a8d35da32fc1a"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-dynamodb-gsi",
+              "ledger_record": "read.aws-dynamodb-gsi-overloading.2026-10-31",
+              "section": "Overloading Global Secondary Indexes in DynamoDB",
+              "quote": "Although Amazon DynamoDB has a default quota of 20 global secondary indexes per table, in practice, you can index across far more than 20 data fields.",
+              "revision": "1d1a982b843ee7d8cca03b06eecb19efc0c67a135acd020fb91a8d35da32fc1a"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "The index-only scan is an aggressive indexing strategy.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "Do not design an index for an index-only scan on suspicion only because it unnecessarily uses memory and increases the maintenance effort needed for update statements.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.use-the-index-luke",
+              "ledger_record": "read.luke-index-only-scan.2026-10-31",
+              "section": "Index-Only Scan: Avoiding Table Access",
+              "quote": "In practice, you should first index without considering the select clause and only extend the index if needed.",
+              "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+              "section": "11.9. Index-Only Scans and Covering Indexes",
+              "quote": "Before PostgreSQL had the INCLUDE feature, people sometimes made covering indexes by writing the payload columns as ordinary index columns",
+              "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+            },
+            {
+              "source_id": "src.microsoft-sql-server",
+              "ledger_record": "read.microsoft-included-columns.2026-10-31",
+              "section": "Design Recommendations",
+              "quote": "Make all other columns that cover the query into nonkey columns.",
+              "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "index-table",
         "question": "Should a separate lookup table maintain a secondary access path?",
-        "competing_alternative": "Secondary index or query-time join. Reverse the choice when index maintenance and drift exceed lookup benefit.",
+        "competing_alternative": "Native covering index (PostgreSQL INCLUDE or SQL Server included columns), materialized view, query-time join, or an overloaded DynamoDB GSI. Reverse the choice when index maintenance and drift exceed lookup benefit, or when one managed index can serve many query shapes.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -8278,12 +8454,34 @@
         "source_id": "src.postgresql",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg17-index-only-scans.2026-10-31",
+            "revision": "770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4"
+          },
+          {
+            "source_id": "src.microsoft-sql-server",
+            "ledger_record": "read.microsoft-included-columns.2026-10-31",
+            "revision": "90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394"
+          },
+          {
+            "source_id": "src.use-the-index-luke",
+            "ledger_record": "read.luke-index-only-scan.2026-10-31",
+            "revision": "5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b"
+          },
+          {
+            "source_id": "src.aws-dynamodb-gsi",
+            "ledger_record": "read.aws-dynamodb-gsi-overloading.2026-10-31",
+            "revision": "1d1a982b843ee7d8cca03b06eecb19efc0c67a135acd020fb91a8d35da32fc1a"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level anchor; covers index lifecycle, not the access-path catalogue."
+      "notes": "All four technical dimensions bound 2026-10-31 to PostgreSQL 17 index-only scans, SQL Server included columns, Use The Index Luke and DynamoDB GSI overloading; coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.cqrs-read-projections",
@@ -14957,12 +15155,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 118,
-    "invariant_supported": 83,
-    "failure_recovery_supported": 78,
-    "alternative_supported": 83,
-    "technical_partial_bounded": 15,
-    "technical_partial": 64,
+    "mechanism_supported": 119,
+    "invariant_supported": 84,
+    "failure_recovery_supported": 79,
+    "alternative_supported": 84,
+    "technical_partial_bounded": 16,
+    "technical_partial": 63,
     "technical_name_only": 0,
     "technical_sufficient": 66,
     "decision_partial_bounded": 79,

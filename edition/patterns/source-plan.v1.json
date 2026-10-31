@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "be827db9521ea539d0e5a8713181125ada25ec61c25f9b3dd87fad46a98fa322",
-  "route_index_snapshot": "dc1ce120f238c15ec8b216891499ac779cc024e74a857902cbe0fe384c01dc72",
+  "registry_sha256": "2a6909804d5cd5fcddaa698547d1ae204f4a06757eb4dd1ff2264885d37697a6",
+  "route_index_snapshot": "b379f9ae187d3d8670b6b36e26615bc77a1b8e6ae575aa4a9bd44ed7cfac6e32",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -3664,9 +3664,60 @@
           "status": "read",
           "read_record_id": "read.batch3-pg-indexes.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "11.9. Index-Only Scans and Covering Indexes — PostgreSQL 17 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/17/indexes-index-only-scans.html",
+          "sections": [
+            "11.9. Index-Only Scans and Covering Indexes"
+          ],
+          "status": "read",
+          "read_record_id": "read.pg17-index-only-scans.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.microsoft-sql-server",
+          "unit": "Create indexes with included columns — SQL Server",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/sql/relational-databases/indexes/create-indexes-with-included-columns?view=sql-server-ver17",
+          "sections": [
+            "In this article",
+            "Design Recommendations",
+            "Limitations"
+          ],
+          "status": "read",
+          "read_record_id": "read.microsoft-included-columns.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.use-the-index-luke",
+          "unit": "Index-Only Scan: Avoiding Table Access — Use The Index, Luke",
+          "unit_type": "book-chapter",
+          "url": "https://use-the-index-luke.com/sql/clustering/index-only-scan-covering-index",
+          "sections": [
+            "Index-Only Scan: Avoiding Table Access",
+            "INCLUDE: Non-key Columns"
+          ],
+          "status": "read",
+          "read_record_id": "read.luke-index-only-scan.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-dynamodb-gsi",
+          "unit": "Overloading Global Secondary Indexes in DynamoDB — Amazon DynamoDB Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-gsi-overloading.html",
+          "sections": [
+            "Overloading Global Secondary Indexes in DynamoDB"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-dynamodb-gsi-overloading.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Four public units read 2026-10-31; all four technical dimensions bound to PostgreSQL 17 index-only scans, SQL Server included columns, Use The Index Luke and DynamoDB GSI overloading; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.polyglot-persistence",
@@ -6711,11 +6762,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 301,
-    "read_units": 300,
+    "required_units": 305,
+    "read_units": 304,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 253
+    "ledger_records": 257
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
