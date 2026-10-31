@@ -1,0 +1,119 @@
+{
+  "status": "ai-answer-not-human",
+  "answers": [
+    {
+      "task_id": "V4-V012",
+      "answer": "Convergence is necessary but not sufficient. A V12 record should return the insufficient-evidence outcome - no recommendation, which is distinct from a failed model - when the run converges but the evidence chain for the decision is incomplete: the result must still clear the statistical-validity gate (a converged sensitivity screen is checked alongside a separate two-replication convergence-stress run), the result must be reviewable with model, workload, seed, engine version and decision context bound into the run record, and a single run over one set of assumed inputs cannot settle the underlying uncertainty. Convergence bounds sampling stability; it says nothing about whether the assumptions or the evidence are adequate for the decision.",
+      "citations": [
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#overview",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V014",
+      "answer": "Verification asks whether the engine is implemented as specified - whether the computer program of the model is correct, tested for conservation, boundary cases and event ordering - whereas validation asks whether the model is adequate for its intended purpose. A model can therefore be verified and still be invalid for a decision, because verification establishes that the implementation matches the specification, not that the inputs are calibrated or that the simulation evidence supports the decision. V12 keeps the distinction explicit across its five evidence layers (source and claim, verification, calibration, simulation evidence, decision validity), and in the checkout worked separation the model is verified while arrival and service-time inputs remain uncalibrated; the decision record declares evidence status separately for model verification, calibration and simulation.",
+      "citations": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V028",
+      "answer": "The V12-A structural gate validates: strict frontmatter on every V12 document; uniqueness of volume, chapter and page identifiers; uniqueness of model, scenario, run and decision identifiers; and referential links, since every scenario model_id resolves and every run's model reference must resolve. Hashes are part of the same structural contract - the model and scenario hashes bind the run, and through it the result hash, while model and scenario files are versioned and hashed and pattern-owner links stay read-only. Structure is the first gate in the chain V12-A structure, V12-B model correctness, V12-C statistical validity, V12-D calibration, V12-E decision validity, V12-F independent review.",
+      "citations": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#diagram",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#diagram",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V024",
+      "answer": "Correlated inputs are propagated by declaring the dependence rather than sampling independently: a longer dual-write lag plausibly coincides with lower reconciliation capacity because the same operational pressure produces both, and V12 declares that relationship explicitly, since independent draws are a modelling assumption rather than a neutral default. The staged run instantiates it with a three-stage traffic shift (0.2, 0.5, 1.0) over 2,400 seconds, a 1.5-second dual-write lag and a 4-record-per-second reconciliation capacity, with declared input ranges starting at 0.5-2.5 seconds for the lag and a rollback at 1,200 seconds. The decision record flags the lag and capacity assumptions explicitly rather than treating them as calibrated data.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V008",
+      "answer": "The checkout engine models queue-and-resource behaviour - capacity, utilization and finite-window measurement over a queue plus a server pool - and the decision candidates exercise the resource controls: A timeout and load shedding; B a bounded queue with retry using exponential backoff plus a bulkhead; C horizontal scaling plus a bulkhead. The worked comparison reports per-candidate results for an offered load of 20 against a capacity of 24 for checkouts A, B and C. The excerpts do not name an explicit queue discipline (for example FIFO or priority ordering), so only the resource-control side of the question is supported here.",
+      "citations": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-candidate-mapping",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "OFF-00",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-01",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-02",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-03",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-04",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-05",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-06",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-07",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-08",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-09",
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    }
+  ]
+}

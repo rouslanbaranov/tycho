@@ -1,0 +1,399 @@
+{
+  "tasks": [
+    {
+      "task_id": "V4-V012",
+      "split": "v12",
+      "question": "When should a V12 decision remain unsupported even though a model run converges?",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A single simulation run with one set of assumed inputs hides uncertainty. This chapter separates input uncertainty from sampling error, defines convergence criteria and reports which inputs matter through a sensitivity screen. The chapter\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A simulation result is not reviewable if the model, workload, seed, engine and decision context are scattered across prose. This chapter defines four contracts that make a V12 result reproducible and bounded: - a **model specification** f\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-C: statistical validity",
+          "excerpt": "The run records report seeds, replications, standard errors, confidence intervals and a convergence status. The sensitivity run reports a quadratic response-surface screen and is converged. A separate two-replication convergence-stress run\u2026"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "heading": "Convergence and error",
+          "excerpt": "# Convergence and error **Question.** When is a Monte Carlo result stable enough to use, and what does a confidence interval actually cover? **Short answer.** A result is stable when its estimated standard error is small relative to the\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Machine artifacts",
+          "excerpt": "The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contrac\u2026"
+        },
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#4-periodic-pipelines-and-overlapping-runs",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
+          "heading": "4. Periodic pipelines and overlapping runs",
+          "excerpt": "A periodic pipeline is a chain of jobs on a schedule. It is fragile when its interval approaches its runtime: - A new run can stack behind the previous one, consuming cluster capacity. - A scheduler can kill a nearly finished run to start\u2026"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "heading": "Navigation",
+          "excerpt": "- Parent: [V12/C04 - Monte Carlo](../README.md) - Next: [Convergence and error](convergence-and-error.md) - Sensitivity run: edition/v12/runs/checkout-sensitivity.json"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "heading": "Provenance is not a log line",
+          "excerpt": "A timestamp and a filename do not explain a result. Provenance answers: - which model and scenario produced the result; - which engine version executed it; - which seed and how many replications; - which inputs were combined into the run;\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#overview",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "heading": "Insufficient-evidence outcomes",
+          "excerpt": "# Insufficient-evidence outcomes **Question.** When should a decision record return no recommendation, and how is that different from a failed model? **Short answer.** A record returns insufficient evidence when the model is implemented\u2026"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "heading": "The reproducibility contract",
+          "excerpt": "The V12 run record stores: - model and scenario SHA-256; - engine name and version; - seed base and replication count; - an input hash over the model, scenario and engine version; - Python and platform strings; - the invocation; - metrics\u2026"
+        }
+      ]
+    },
+    {
+      "task_id": "V4-V014",
+      "split": "v12",
+      "question": "What distinction separates verification of a simulation engine from validation for a decision?",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Five evidence layers",
+          "excerpt": "| Layer | Question | Owner | |---|---|---| | Source and claim | Does a source support the method? | Ledger and page citations | | Verification | Is the model implemented as specified? | Model spec and tests | | Calibration | Do parameters\u2026"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "heading": "A worked separation",
+          "excerpt": "The checkout comparison has: - source support for queueing and event semantics from SimPy and Little's law; - model verification for conservation, boundary cases and event ordering; - uncalibrated arrival and service-time inputs; - simula\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.77831d9a57067de6faa1da630a83f49b#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "This chapter states what V12 actually verifies and what it does not. It separates model verification, calibration, simulation evidence and decision validity, records the gate matrix, and explains how a stored run is replayed. The chapter\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "Verification versus validation",
+          "excerpt": "Sargent defines model verification as ensuring that the computer program of the model is correct. Validation asks whether the model is adequate for its intended purpose. A model can be verified and still be invalid for a decision because i\u2026"
+        },
+        {
+          "section_key": "tycho.page.ac84c140be153d3b1f5752ffbd38cb5b#three-complementary-verification-layers",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "heading": "Three complementary verification layers",
+          "excerpt": "| Layer | Inputs and oracle | What it can miss | | --- | --- | --- | | Executable model exploration | Small state space, enabled transitions, safety and progress predicates | An implementation detail omitted from the model | | Deterministi\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-E: decision validity",
+          "excerpt": "The decision records declare: - candidates and their runs; - hard, soft and non-quantitative constraints; - business-comparable metrics with units; - evidence statuses for model verification, calibration and simulation; - an explicit reco\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#engineering-walkthrough-authentic-artifact-incomplete-evidence-and-denied-promotion",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/README.md",
+          "heading": "Engineering walkthrough \u2014 Authentic artifact, incomplete evidence and denied promotion",
+          "excerpt": "**Synthetic release case:** an artifact digest D is accompanied by build provenance referring to D, an SBOM generated from its dependency closure and a signature. Verification succeeds cryptographically but the SBOM omits a dynamically dow\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "This chapter establishes the conceptual minimum before a simulation can inform an architecture decision: what a stock is, what a flow is, how a model boundary is chosen, and how source evidence, verification, calibration, simulation eviden\u2026"
+        },
+        {
+          "section_key": "tycho.page.38bb8a14ebb54866a7004080318b47e1#integrated-decision-and-reading-route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+          "heading": "Integrated decision and reading route",
+          "excerpt": "Verify artifact identity and provenance against an authorization policy; distinguish signatures, attestations and component inventories. A valid signature from an unapproved identity, or an SBOM for another digest, must not authorize prom\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "heading": "Boundaries and evidence",
+          "excerpt": "Sargent supports the requirement to state data validity, conceptual validity and operational validity separately. The modernization model uses assumed dual-write lag and reconciliation capacity; the decision record treats those assumptions\u2026"
+        }
+      ]
+    },
+    {
+      "task_id": "V4-V028",
+      "split": "v12",
+      "question": "What kinds of identifiers, links and hashes does the V12 structural gate check?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-A: structural",
+          "excerpt": "The validator checks: - every V12 document has valid strict frontmatter; - volume, chapter and page identifiers are unique; - model, scenario, run and decision identifiers are unique; - every scenario model_id resolves; - every run model_\u2026"
+        },
+        {
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "heading": "Failure modes",
+          "excerpt": "- **Backlink contamination.** A V12 link is added to an existing card. The card hash changes and a promotion becomes stale. - **Duplicate owner.** A V12 page explains the pattern mechanism in full and becomes a second canonical source.\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#boundaries-and-evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "heading": "Boundaries and evidence",
+          "excerpt": "MADR and Nygard support the context, options, outcome and consequences structure. Sargent supports the separation of model verification from validity for a purpose. The pattern links use the existing registry and owner pages without modify\u2026"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "heading": "3. Logging is operational evidence, not an unlimited audit trail",
+          "excerpt": "\u2026uthoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often best-effort, sampled/filtered/short retention\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.77831d9a57067de6faa1da630a83f49b#diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "heading": "Diagram",
+          "excerpt": "~~~mermaid flowchart LR A[\"V12-A Structure\"] --> B[\"V12-B Model correctness\"] B --> C[\"V12-C Statistical validity\"] C --> D[\"V12-D Calibration\"] D --> E[\"V12-E Decision validity\"] E --> F[\"V12-F Independent review\"] ~~~\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "heading": "Diagram",
+          "excerpt": "\u2026Model hash\"] S --> H R --> H2[\"Result hash\"] D --> L[\"Pattern owner links, read-only\"] ~~~ Text alternative: a model specification and scenario specification feed a run record. The model and scenario hashes bind the run, and th\u2026"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "heading": "Ten rules mapping",
+          "excerpt": "The PLOS ten rules are guidance, not a certificate. V12 implements a bounded subset: - track input data: model and scenario files are versioned and hashed; - version scripts: the engine is a single versioned module; - record parameters: t\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "V12 helps a reader evaluate architecture alternatives before costly implementation. It combines stock-and-flow reasoning, discrete-event simulation, Monte Carlo uncertainty, comparative decision records and staged modernization-path simula\u2026"
+        },
+        {
+          "section_key": "tycho.page.84fa4a7505904bb2a492be1593690ed2#2-four-kinds-of-requirement-must-stay-distinct",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/intake-invariants.md",
+          "heading": "2. Four kinds of requirement must stay distinct",
+          "excerpt": "\u2026Business outcome | An accepted reservation has a durable identifier | Evaluate the observable journey and its final state | | Hard invariant | A slot must not have two simultaneously valid owners | Reject any design that cannot enforce it;\u2026"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "heading": "Two kinds of uncertainty",
+          "excerpt": "V12 distinguishes: - **input uncertainty:** the arrival rate, service time, timeout, dual-write lag or another parameter is not known exactly; - **sampling error:** even with fixed inputs, a finite number of replications gives an esti\u2026"
+        }
+      ]
+    },
+    {
+      "task_id": "V4-V024",
+      "split": "v12",
+      "question": "How are correlated lag and reconciliation-capacity assumptions propagated in the V12 modernization scenario?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "heading": "Correlated inputs",
+          "excerpt": "Independent draws are a modelling assumption, not a neutral default. In the modernization scenario, a longer dual-write lag plausibly coincides with a lower reconciliation capacity: the same operational pressure produces both. V12 declares\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "heading": "Boundaries and evidence",
+          "excerpt": "Sargent supports the requirement to state data validity, conceptual validity and operational validity separately. The modernization model uses assumed dual-write lag and reconciliation capacity; the decision record treats those assumptions\u2026"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "heading": "Experiment design",
+          "excerpt": "The staged scenario: - offers 10 requests per second for 2,400 seconds; - shifts target traffic to 0.2 at t=0, 0.5 at t=300 and 1.0 at t=600; - uses a 1.5-second dual-write lag and a 4-record-per-second reconciliation capacity; - triggers\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "heading": "The modernization example",
+          "excerpt": "The staged modernization run reports: - success rate 1.0 (the model serves the offered traffic); - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1 (it finishes within the 2,400-second horizon in only\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "The test matrix",
+          "excerpt": "\u2026st | Result | |---|---|---| | Stock-flow conservation | test_conservation_below_capacity | pass | | Stock-flow non-negativity | test_saturation_rejects_and_conserves | pass | | Zero-arrival boundary | test_zero_boundary | pass | | Saturatio\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-C: statistical validity",
+          "excerpt": "The run records report seeds, replications, standard errors, confidence intervals and a convergence status. The sensitivity run reports a quadratic response-surface screen and is converged. A separate two-replication convergence-stress run\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "A worked cross-chapter synthesis",
+          "excerpt": "A synthetic checkout service receives 20 requests per second for 30 minutes after a five-minute warmup. Three candidates use the same arrivals, duration, seed scheme and metrics: - A: direct capacity with a one-second deadline and no retr\u2026"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "heading": "The V12 input table",
+          "excerpt": "| Input | Status | What is missing | |---|---|---| | Arrival rate | assumed | A measured arrival trace for the target workload | | Service mean | assumed | A measured service-time sample and tail | | Service CV | assumed | A measured distr\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "heading": "The staged result",
+          "excerpt": "The staged scenario uses a three-stage shift (0.2, 0.5, 1.0) over 2,400 seconds, a 1.5-second dual-write lag, a reconciliation capacity of 4 records per second, and a rollback at 1,200 seconds. The input ranges are 0.5-2.5 seconds for lag\u2026"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+          "path": "book/cases/decisions/agentic-migration-safety.md",
+          "heading": "Explicit invariants and failure semantics for the synthetic program",
+          "excerpt": "The synthetic task contains **two distinct classes of change**: mechanically constrained source-code migrations and stateful data-schema changes. They require different proof obligations. Passing a compiler cannot establish the historical\u2026"
+        }
+      ]
+    },
+    {
+      "task_id": "V4-V008",
+      "split": "v12",
+      "question": "Which queue disciplines and resource controls does the V12 checkout engine model?",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Machine artifacts",
+          "excerpt": "The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contrac\u2026"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-replay-command",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "heading": "The replay command",
+          "excerpt": "From the repository root: ~~~text python3 scripts/v12_engine.py replay \\ --run edition/v12/runs/checkout-b-queue.json \\ --model edition/v12/models/checkout-des.json \\ --scenario edition/v12/scenarios/checkout-b-queue.json ~~~ The c\u2026"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "heading": "Worked comparison",
+          "excerpt": "\u2026000 | n/a | 0.000 | | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 | | Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 | | Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 | | Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 | The table\u2026"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "heading": "Navigation",
+          "excerpt": "- Parent: [V12/C03 - Deterministic and DES](../README.md) - Next: [Queue and resource models](queue-and-resource-models.md) - Engine: scripts/v12_engine.py"
+        },
+        {
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "- [Reference engine architecture](reference-engine-architecture.md): modules, event queue, seeds and provenance. - [Queue and resource models](queue-and-resource-models.md): capacity, utilization, Little's law and finite-window measure\u2026"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "heading": "From decision to boundary",
+          "excerpt": "A model boundary is the line between the model's state and the rest of the world. It is not the same as a service boundary or a team boundary. A checkout model may include a queue and a server pool while omitting the payment network, the d\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#navigation-and-prerequisites",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "heading": "Navigation and prerequisites",
+          "excerpt": "- Previous: [V12/C04 - Monte Carlo](../c04-monte-carlo/README.md) - Next: [V12/C06 - Migration simulation](../c06-migration-simulation/README.md) - Decision: [checkout-candidate.json](../../../../edition/v12/decisions/checkout-candidate.js\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#evidence-ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "Evidence ledger",
+          "excerpt": "\u2026WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports computerized-model verification, degenerate tests, extreme-condition tests and traces. It does not validate the V12 engine. - [SimPy 4.1 documentation](https://simpy.rea\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#navigation-and-prerequisites",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "heading": "Navigation and prerequisites",
+          "excerpt": "- Previous: [V12/C03 - Deterministic and DES](../c03-deterministic-and-des/README.md) - Next: [V12/C05 - Decision integration](../c05-decision-integration/README.md) - Sensitivity run: [checkout-sensitivity.json](../../../../edition/v12/\u2026"
+        },
+        {
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-candidate-mapping",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "heading": "The candidate mapping",
+          "excerpt": "The checkout decision links three candidates: - A: timeout and load shedding; - B: bounded queue, retry with exponential backoff and bulkhead; - C: horizontal scaling and bulkhead. The owner pages are in V02 and V07. The decision record\u2026"
+        }
+      ]
+    },
+    {
+      "task_id": "OFF-00",
+      "split": "offtopic",
+      "question": "How do I bake a chocolate cake?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-01",
+      "split": "offtopic",
+      "question": "What is the best way to train a puppy?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-02",
+      "split": "offtopic",
+      "question": "How do I fix a flat bicycle tire?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-03",
+      "split": "offtopic",
+      "question": "What causes volcanoes?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-04",
+      "split": "offtopic",
+      "question": "How do I learn the violin?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-05",
+      "split": "offtopic",
+      "question": "What is the capital of Brazil?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-06",
+      "split": "offtopic",
+      "question": "How do I grow tomatoes?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-07",
+      "split": "offtopic",
+      "question": "What is the history of cinema?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-08",
+      "split": "offtopic",
+      "question": "How do I make soap at home?",
+      "evidence": []
+    },
+    {
+      "task_id": "OFF-09",
+      "split": "offtopic",
+      "question": "What is the best way to learn swimming?",
+      "evidence": []
+    }
+  ]
+}

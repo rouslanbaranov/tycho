@@ -1,0 +1,141 @@
+{
+  "status": "ai-answer-not-human",
+  "answers": [
+    {
+      "task_id": "V4-B067",
+      "answer": "Contraction is the final, gated step of expand-migrate-contract and is appropriate only after a compatibility window: expansion and client migration must be complete, and no reader may still depend on the pre-contraction shape. Parallel Change treats contract/removal as eventual, old readers are retained while old clients cannot upgrade at once, and the lifecycle is described as gated; the sources also list automatic database consistency as unproven.",
+      "citations": [
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#7-public-sources-and-nonclaims"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B077",
+      "answer": "A uniform-key test spreads work evenly across keys, so it never creates the skewed access pattern in which all writes (or misses) concentrate on one popular resource; the aggregate then looks healthy while hot-key contention is absent from the test. Averages conceal the backend's miss-driven peak and hot-key pressure, and shard-key evaluation is supposed to test cardinality/skew (does one customer dominate writes?) and access-path fit rather than average RPS.",
+      "citations": [
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+        "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B036",
+      "answer": "Back to the legacy system. In the V12 migration-simulation diagram, divergence at cutover triggers Rollback, and Rollback leads to Legacy once drain completes; only an accepted cutover ends the path at the target.",
+      "citations": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#diagram"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B016",
+      "answer": "The supplied excerpts do not explain the mechanism. They say only that the legacy Discord search fleet had three separate, linked failure mechanisms and that the account should not be reduced to the claim that Elasticsearch was slow; no provided section states why a healthy shard could miss messages after an outage.",
+      "citations": [
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet"
+      ],
+      "abstain": true
+    },
+    {
+      "task_id": "V4-B004",
+      "answer": "The excerpts identify Wedge only as a component-coupling feedback mechanism discussed under the article's Isolating Dependencies material; they do not state what it reported, where it surfaced dependencies, or how it detected them.",
+      "citations": [
+        "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#two-successive-detection-approaches-and-why-they-differed",
+        "tycho.page.aed8b635f57f41dfa63c897a8d1caca8#historical-sequence-organization-ownership-enforcement"
+      ],
+      "abstain": true
+    },
+    {
+      "task_id": "V4-B024",
+      "answer": "Because the reconciler keeps applying the versioned desired state, an emergency rollback has to be expressed in that declared state, not only by changing running resources, or the controller continues to converge toward the old declaration. Recovery must also establish real outcomes: a clean diff or converged resource state does not prove that durable writes, downstream effects or API contracts are correct.",
+      "citations": [
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+        "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B039",
+      "answer": "Give each component a stable ID plus a versioned description, and reference that identity from every view (static chart, runtime interactions, deployment allocation) so a failure can be followed across context, runtime, deployment and decision views without changing its meaning. This can be a simple Markdown table or cross-reference, so a separate knowledge-graph service is not mandatory.",
+      "citations": [
+        "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#4-stable-identities-link-views-without-making-a-knowledge-graph-mandatory",
+        "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#integrated-decision-and-reading-route"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B015",
+      "answer": "Because replicas do not hold authority: the shard that owns the authoritative keyspace still serializes its writes, and where writes require majority agreement the quorum arithmetic means additional voters add coordination rather than write throughput. A shard also does not guarantee independent throughput for every hot key, so extra copies do not remove a popular-resource bottleneck.",
+      "citations": [
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B045",
+      "answer": "The partition's ambiguous outcomes must be resolved first. The team cannot tell whether the last booking reply was lost before or after commit, and promoting a writer requires a policy for in-flight acknowledgments, replica lag, ordering, globally unique identifiers and replay idempotency; the returning region must catch up and reconcile before it is trusted with authority again.",
+      "citations": [
+        "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B088",
+      "answer": "A trace ID identifies one distributed trace or attempt, not the business operation: after a timeout the client may retry under the same logical operation key with a new span or trace. A trace ID only correlates selected spans and does not prove that every effect, user or message was recorded, and operational logs are often best-effort evidence; a durable operation ID must survive attempts and carry idempotency and audit meaning.",
+      "citations": [
+        "tycho.page.aac0f46189b74948bedfc30a81ec80e5#1-a-trace-a-span-and-a-request-are-different-entities",
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A007",
+      "answer": "After the commit the outbox record is pending publication intent, so the relay must still publish it and clear it only once publication is confirmed, retrying if delivery fails; the database commit cannot publish the event by itself because the broker is not part of the same atomic commit.",
+      "citations": [
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A005",
+      "answer": "Because with an unknown number of parts there is no natural completion signal. Splitter's decision requires an observable outcome: either the total count is known, or an explicit release rule or expiry must record a partial result or forced closure, otherwise a partial set would look like a silent success.",
+      "citations": [
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A027",
+      "answer": "The destination's caught-up and consistent state must be verifiable before authority moves: clients, source stores, replica/backfill state, transaction changes and destination ownership all have to remain consistent through the transition, and the cutover card frames the switch as a planned-downtime step taken only after writes pause.",
+      "citations": [
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A008",
+      "answer": "Because the broker is not part of the database's atomic commit, a relay cannot atomically both send and record that it sent: a crash after publication but before the record is updated causes republication on recovery, so delivery is at-least-once. Consumers must therefore deduplicate, for example with an inbox that persists the processed-event identity together with the business effect in one local transaction.",
+      "citations": [
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A006",
+      "answer": "The excerpts state when a claim check is justified (payload size, sensitivity or repeated serialization, plus payload lifecycle ownership) but not what goes wrong when the token is published before the payload is durably stored; no supplied section describes the resulting failure.",
+      "citations": [
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview"
+      ],
+      "abstain": true
+    }
+  ]
+}

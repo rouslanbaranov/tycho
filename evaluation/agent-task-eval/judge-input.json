@@ -1,0 +1,1564 @@
+{
+  "tasks": [
+    {
+      "task_id": "V4-B067",
+      "split": "book",
+      "question": "When may an expanded database schema be contracted during a mixed-version rollout?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+          "heading": "2. Expand-migrate-contract includes a compatibility window",
+          "excerpt": "The public [Parallel Change method](https://martinfowler.com/bliki/ParallelChange.html) frames an interface expansion, client migration and eventual contract/removal. Applying that to database schemas requires versioned DB-specific locks a\u2026"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "heading": "6. Compatibility and deployment strategy jointly constrain choice",
+          "excerpt": "| Constraint | Safer initial option to evaluate | Dangerous shortcut | |---|---|---| | Old clients cannot upgrade at once | Additive API/schema, feature negotiation, retained old readers | Breaking endpoint and storage change in one canary\u2026"
+        },
+        {
+          "section_key": "tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb#purpose-and-mission",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/mixed-version-database-compatibility-and-online-ddl.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A successful deployment can fail when an older process reads data written by a newer process. The database engine may accept new DDL, but the application can still misinterpret a status field or require a removed column. **Compatibility is\u2026"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "heading": "3. Explicit state machine for transitional safety",
+          "excerpt": "```mermaid stateDiagram-v2 [*] --> OldStable OldStable --> CompatibleSchema: Add backward compatible schema CompatibleSchema --> MixedVersions: Start N+1 behind controlled traffic MixedVersions --> Observe: Validate user SL\u2026"
+        },
+        {
+          "section_key": "tycho.page.357c2d162bd44f3aa06a995a1e691551#purpose-and-mission",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A database schema is a contract between stored historical state and all readers/writers able to interpret it. Changing a column name is often trivial syntax; changing the meaning or identity of data may be difficult or irreversible. A safe\u2026"
+        },
+        {
+          "section_key": "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/migration-retirement.md",
+          "heading": "3. Expand, migrate, contract as gated lifecycle",
+          "excerpt": "[Danilo Sato's Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) describes an expand/migrate/contract approach for interfaces. Applying it to a database requires **additional explicit transactional/data requirements** no\u2026"
+        },
+        {
+          "section_key": "tycho.landing.fe2eace7b2df4ae480adbdf844b68100#release-and-recovery-boundaries",
+          "path": "book/delivery/README.md",
+          "heading": "Release and recovery boundaries",
+          "excerpt": "The following original, synthetic decision flow separates artifact eligibility, application rollout and data recovery. It is a reading guide, not a report of an executed deployment or a complete release policy. ```mermaid flowchart TD\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#7-public-sources-and-nonclaims",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/README.md",
+          "heading": "7. Public sources and nonclaims",
+          "excerpt": "| Independently read source | Supported point | Unproven | |---|---|---| | [Danilo Sato \u2014 Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) | Expand/migrate/contract interface coexistence method | Automatic database cons\u2026"
+        },
+        {
+          "section_key": "tycho.page.19145078d87143b28387ab187d345c32#5-target-architecture-and-transition-states-are-different-artifacts",
+          "path": "book/volumes/v10-decision-support-and-modernization/c02-baseline-analysis-for-existing-software/modernization-options.md",
+          "heading": "5. Target architecture and transition states are different artifacts",
+          "excerpt": "**Original conditional plan:** Assume subsequent source inspection supports **option B (runtime upgrade in place)** and **option C (internal modularization)** for the catalog, with one data owner preserved. The target could be a single mod\u2026"
+        },
+        {
+          "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance unless a sentence explicitly attributes the claim to a dedicated source record; all other gui\u2026"
+        }
+      ],
+      "answer": "Contraction is the final, gated step of expand-migrate-contract and is appropriate only after a compatibility window: expansion and client migration must be complete, and no reader may still depend on the pre-contraction shape. Parallel Change treats contract/removal as eventual, old readers are retained while old clients cannot upgrade at once, and the lifecycle is described as gated; the sources also list automatic database consistency as unproven.",
+      "citations": [
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#7-public-sources-and-nonclaims"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B077",
+      "split": "book",
+      "question": "How can a uniform-key test conceal contention on a popular resource?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/demand-skew.md",
+          "heading": "5. Distribution and correlation matter",
+          "excerpt": "Suppose read latency is bimodal\u2014many requests hit a cache, a small fraction miss and perform costly database work. An average hides the parent tail and the backend's miss-driven peak. Alternatively, all writes may target one popular resour\u2026"
+        },
+        {
+          "section_key": "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/workload-demand-and-arrival-models.md",
+          "heading": "Integrated decision and reading route",
+          "excerpt": "Separate offered attempts, admitted work, successful outcomes, concurrency and per-operation demand before estimating capacity. Two equally sized user populations can impose different bursts and hot-key pressure; average requests per seco\u2026"
+        },
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "heading": "2. Why shard-key selection cannot be made from average RPS",
+          "excerpt": "A candidate key should be evaluated against: - **Cardinality and skew:** are most keys independent, or does one customer/workshop dominate writes? - **Access-path fit:** can the main query identify its shard without scatter-gather across\u2026"
+        },
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+          "path": "book/performance/workload-profiles-and-capacity-experiments.md",
+          "heading": "Record the boundary before the number",
+          "excerpt": "A workload contract should record: unique active users; offered requests per second (RPS); successful and failed exits; transaction boundaries and transactions per second (TPS); concurrent in-flight requests; bytes per request and response\u2026"
+        },
+        {
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#origin-protection-and-rewarming",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "heading": "Origin protection and rewarming",
+          "excerpt": "After widespread expiry, many edge locations may refill together. The origin needs bounded concurrent fills, retry budgets and a deliberate stale-response policy. A cache hit-rate average conceals one expensive class of misses. Estimate or\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.316b50ac3db440ae82c0986b896ff468#pages-and-reasoning-route",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026"
+        },
+        {
+          "section_key": "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86#purpose-and-mission",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/contention-saturation-and-scaling-laws.md",
+          "heading": "Purpose and mission",
+          "excerpt": "An architecture can have many processors and still process work at almost a fixed rate. Some fraction of execution may serialize on a lock or data authority; more concurrent callers may contend for a shared connection, exhaust a quota or i\u2026"
+        },
+        {
+          "section_key": "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#2-arrival-shape-is-part-of-the-architecture-requirement",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/arrivals-population.md",
+          "heading": "2. Arrival shape is part of the architecture requirement",
+          "excerpt": "Averages conceal peaks, clustering and correlations. A design must distinguish: - baseline arrivals from short bursts and periodic batch imports; - independent external arrivals from clients waiting for previous responses; - retries after\u2026"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "heading": "5. Online DDL and resource contention",
+          "excerpt": "Schema migration is itself a workload. It may need metadata locks, row/table rewrites, index creation and transaction log space. While backfill runs, it competes with normal queries for CPU, storage bandwidth, connections, replication thro\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.4cbc9e1582404965b696a63b79a66e93#decision-and-worked-result",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/README.md",
+          "heading": "Decision and worked result",
+          "excerpt": "Identify serial work, shared-state contention and resource saturation before extrapolating additional workers. A scaling curve fitted outside the tested range can hide coordination cost; more workers may worsen useful throughput. This is\u2026"
+        }
+      ],
+      "answer": "A uniform-key test spreads work evenly across keys, so it never creates the skewed access pattern in which all writes (or misses) concentrate on one popular resource; the aggregate then looks healthy while hot-key contention is absent from the test. Averages conceal the backend's miss-driven peak and hot-key pressure, and shard-key evaluation is supposed to test cardinality/skew (does one customer dominate writes?) and access-path fit rather than average RPS.",
+      "citations": [
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+        "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B036",
+      "split": "book",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "heading": "Diagram",
+          "excerpt": "\u2026DualWrite --> Shadow: stage 2 Shadow --> Cutover: stage 3 Cutover --> Rollback: divergence trigger Rollback --> Legacy: drain complete Cutover --> [*]: accepted ~~~ Text alternative: the path moves from legacy to dual wri\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "heading": "Coexistence is a state, not a date",
+          "excerpt": "A modernization path usually has several states: - legacy only; - dual write: both paths receive writes, with a reconciliation process; - shadow: the target receives traffic but does not own the authoritative response; - cutover: the targ\u2026"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "heading": "Results",
+          "excerpt": "The staged run reports: - success rate 1.0; - throughput 10 requests per second; - mean dual-write backlog 4,242.0 records; - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1; - rollback seconds mean\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "heading": "The modernization example",
+          "excerpt": "The staged modernization run reports: - success rate 1.0 (the model serves the offered traffic); - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1 (it finishes within the 2,400-second horizon in only\u2026"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "heading": "Modernization plan",
+          "excerpt": "\u2026\u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old only after proven zero callers. **Reversal triggers\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-E: decision validity",
+          "excerpt": "The decision records declare: - candidates and their runs; - hard, soft and non-quantitative constraints; - business-comparable metrics with units; - evidence statuses for model verification, calibration and simulation; - an explicit reco\u2026"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#abstraction-is-a-choice-about-resolution",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "heading": "Abstraction is a choice about resolution",
+          "excerpt": "Three model families cover most V12 questions: - **Stock-and-flow** for accumulation, feedback, delay and capacity. It is cheap to run and good for showing conservation and backlog growth. It does not represent individual request late\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "A worked cross-chapter synthesis",
+          "excerpt": "A synthetic checkout service receives 20 requests per second for 30 minutes after a five-minute warmup. Three candidates use the same arrivals, duration, seed scheme and metrics: - A: direct capacity with a one-second deadline and no retr\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "The test matrix",
+          "excerpt": "\u2026cts_and_conserves | pass | | Event order at equal time | test_ties_use_priority_then_insertion | pass | | Timeout before completion | test_timeout_before_completion | pass | | Completion before timeout | test_completion_before_timeout | pas\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "heading": "Diagram",
+          "excerpt": "\u2026led or retried ~~~ Text alternative: an arrival is admitted to a bounded queue or rejected. A free server dispatches a queued request, and completion releases capacity. A timeout can cancel an expired attempt and trigger a bounded retry."
+        }
+      ],
+      "answer": "Back to the legacy system. In the V12 migration-simulation diagram, divergence at cutover triggers Rollback, and Rollback leads to Legacy once drain completes; only an accepted cutover ends the path at the target.",
+      "citations": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#diagram"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B016",
+      "split": "book",
+      "question": "In Discord\u2019s search-indexing case, why could a healthy search shard still miss messages after an outage?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet",
+          "path": "book/cases/discord-search-index-cells.md",
+          "heading": "Three separate failure mechanisms in the legacy search fleet",
+          "excerpt": "The [Discord Engineering account](https://discord.com/blog/how-discord-indexes-trillions-of-messages) (src.m9-di02, **The Problems**) describes a linked set of bottlenecks. They should not be reduced to the claim that \u201cElasticsearch was sl\u2026"
+        },
+        {
+          "section_key": "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#applied-m9-evidence-what-transfers-and-what-does-not",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/retrieval-evaluation-and-index-lifecycle.md",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026"
+        },
+        {
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#outcomes-and-unlike-for-like-resources",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "heading": "Outcomes and unlike-for-like resources",
+          "excerpt": "src.m9-di01 reports fewer nodes after the migration, but the node configurations were not equal, so node counts are not like-for-like units. The reported node-count, capacity and latency deltas are recorded once under **Measured or reporte\u2026"
+        },
+        {
+          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118",
+          "path": "book/cases/README.md",
+          "heading": "Other companies (#118)",
+          "excerpt": "- [Uber DOMA](uber-doma-domains.md) - [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md) - [Uber MyRocks](uber-mysql-to-myrocks.md) - [Uber Cinnamon dynamic overload protection and fairness](uber-cinnamon-admission-and-fai\u2026"
+        },
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#contrasting-historical-evidence",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "heading": "Contrasting historical evidence",
+          "excerpt": "| Actual company case | What its primary source does and does not establish | |---|---| | [Netflix ZGC](../netflix-generational-zgc-workloads.md) | src.m9-n05: G1, old ZGC, generational ZGC and Parallel contrasts | | [Netflix HotSpot](../n\u2026"
+        },
+        {
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#the-data-semantics-made-the-cutover-tractable",
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "heading": "The data semantics made the cutover tractable",
+          "excerpt": "The target organized JSON-style cell data by **trip UUID**, column name and optional timestamp. Its fixed initial logical shard count was typically **4,096**, with shards movable among MySQL hosts for online capacity balancing. The model w\u2026"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "heading": "Contrasting historical evidence",
+          "excerpt": "| Actual company case | What its primary source does and does not establish | |---|---| | [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison | | [Netflix](.\u2026"
+        },
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+          "heading": "4. Original fictional incident: search index diverges from stored truth",
+          "excerpt": "Consider an invented public index of local hiking trails. The authoritative trail repository is correct, but its asynchronous search index stopped consuming updates after a configuration change. Some searches return outdated trail conditio\u2026"
+        },
+        {
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#four-and-a-half-year-transition-why-coexistence-was-both-safety-net-and-cost",
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "heading": "Four-and-a-half-year transition: why coexistence was both safety net and cost",
+          "excerpt": "The [first-party retrospective](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/) (src.m9-a01, **How did we migrate?**) differentiates *build equivalence* from *deployable runtime equivalence*. The pilot used **V\u2026"
+        },
+        {
+          "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c03-lexical-full-text-indexing-and-ranking/lexical-model.md",
+          "heading": "1. Why inverted indexes work",
+          "excerpt": "An **inverted index** associates each indexed term with the document IDs (and often positions/frequencies) where that term occurs. This reverses a document-to-words list into term-to-doc lookup, avoiding a full scan of all text for many qu\u2026"
+        }
+      ],
+      "answer": "The supplied excerpts do not explain the mechanism. They say only that the legacy Discord search fleet had three separate, linked failure mechanisms and that the account should not be reduced to the claim that Elasticsearch was slow; no provided section states why a healthy shard could miss messages after an outage.",
+      "citations": [
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet"
+      ],
+      "abstain": true
+    },
+    {
+      "task_id": "V4-B004",
+      "split": "book",
+      "question": "In Shopify\u2019s 2019 componentization account, how did Wedge surface cross-component dependencies?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#two-successive-detection-approaches-and-why-they-differed",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "heading": "Two successive detection approaches and why they differed",
+          "excerpt": "The [2019 first-party article](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) (src.m9-sh01, **Isolating Dependencies**) described **Wedge**: a component-coupling feedback mechanism\u2026"
+        },
+        {
+          "section_key": "tycho.page.aed8b635f57f41dfa63c897a8d1caca8#historical-sequence-organization-ownership-enforcement",
+          "path": "book/cases/shopify-modular-monolith.md",
+          "heading": "Historical sequence: organization, ownership, enforcement",
+          "excerpt": "Kirsten Westeinde's [February 21, 2019 engineering account](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) (src.m9-sh01, **Shopify's Implementation**, **Code Organization**, **Isola\u2026"
+        },
+        {
+          "section_key": "tycho.decision.1c768ea76c334e82b00e98b955dcf7e9#the-actual-design-variables-code-ownership-versus-deployment-autonomy",
+          "path": "book/cases/decisions/monolith-vs-services.md",
+          "heading": "The actual design variables: code ownership versus deployment autonomy",
+          "excerpt": "The three company reports answer **different starting problems**. [Shopify's February 2019 monolith decision](../shopify-modular-monolith.md) (src.m9-sh01) favored domain boundaries inside a shared Rails application, accepting one broad re\u2026"
+        },
+        {
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "heading": "What an architect should actually copy",
+          "excerpt": "The reusable principle is a **migration dependency graph**, not an AWS mandate. Establish failure boundaries, inventory transactional/data ownership, make interfaces stable, and isolate workloads into reversibly migrated slices. For a hypo\u2026"
+        },
+        {
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#applied-m9-evidence-what-transfers-and-what-does-not",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "heading": "Applied M9 evidence: what transfers and what does not",
+          "excerpt": "These examples connect the chapter's conditional mechanism to published experiences or synthetic decision exercises. A historical company report is **first-party, time-scoped evidence**, not a controlled Tycho benchmark; an M9 decision pla\u2026"
+        },
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+          "path": "book/cases/netflix-dgs-spring-graphql-convergence.md",
+          "heading": "The migration surface: preserve semantics, not merely annotations",
+          "excerpt": "The April 2024 [engineering account](https://netflixtechblog.com/a-tale-of-two-frameworks-the-domain-graph-service-framework-meets-spring-graphql-f8237f09c389) (src.m9-n09, **Framework Architecture with Spring GraphQL**) names the compatib\u2026"
+        },
+        {
+          "section_key": "tycho.page.5b4cd43052b647abb7cb161381ebdcc5#original-decision-record-for-an-unrelated-ui-modernization",
+          "path": "book/cases/shopify-helix-checkpoint-gated-native-migration.md",
+          "heading": "Original decision record for an unrelated UI modernization",
+          "excerpt": "**Hypothetical baseline:** a cross-platform mobile product has shared-state screens, device-specific APIs, multiple languages, accessibility requirements and an independently released backend. Native Swift and Kotlin may improve OS integra\u2026"
+        },
+        {
+          "section_key": "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/provenance-subjects.md",
+          "heading": "2. SLSA 1.2: levels and provenance have explicit scopes",
+          "excerpt": "[SLSA specification 1.2](https://slsa.dev/spec/v1.2/) distinguishes **Build** and **Source** tracks. The [Build Track Basics](https://slsa.dev/spec/v1.2/build-track-basics) describe progression from Build L1, where provenance exists, to Bu\u2026"
+        },
+        {
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#overview",
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "heading": "Airbnb \u2014 JVM monorepo Gradle to Bazel: coexistence before mandatory cutover",
+          "excerpt": "# Airbnb \u2014 JVM monorepo Gradle to Bazel: coexistence before mandatory cutover **Case ID:** `case.airbnb.jvm-bazel` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer. **Public primary:** src.m9-a01 [\u2026"
+        },
+        {
+          "section_key": "tycho.page.4318e542ac7e445b9e8b3150effd2cff#purpose-and-mission",
+          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/problem-framing-and-system-boundaries.md",
+          "heading": "Purpose and mission",
+          "excerpt": "Before selecting a database, architecture style or runtime, define **the system whose success will be judged**. A user wants an outcome, not a particular distribution of classes and processes. A software system owns some decisions and pers\u2026"
+        }
+      ],
+      "answer": "The excerpts identify Wedge only as a component-coupling feedback mechanism discussed under the article's Isolating Dependencies material; they do not state what it reported, where it surfaced dependencies, or how it detected them.",
+      "citations": [
+        "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#two-successive-detection-approaches-and-why-they-differed",
+        "tycho.page.aed8b635f57f41dfa63c897a8d1caca8#historical-sequence-organization-ownership-enforcement"
+      ],
+      "abstain": true
+    },
+    {
+      "task_id": "V4-B024",
+      "split": "book",
+      "question": "What extra recovery coordination can a continuously reconciling GitOps controller require during an emergency rollback?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/promotion-rollout.md",
+          "heading": "4. Direct push versus GitOps pull",
+          "excerpt": "In a push-style release, CI itself possesses credentials to mutate target runtime state. In GitOps, the desired configuration is versioned and a reconciler inside the target environment observes declared state and actual state, applying ap\u2026"
+        },
+        {
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "heading": "1. GitOps reconciles desired configuration, not business outcomes",
+          "excerpt": "A GitOps controller observes versioned desired deployment state and tries to align cluster/runtime resources with it. A clean diff or converged resource state does not mean downstream effects, durable writes or API contracts are correct.\u2026"
+        },
+        {
+          "section_key": "tycho.page.7921e82a71b9446790f185c818326911#engineering-walkthrough-compromised-build-worker-and-a-tempting-image-rollback",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md",
+          "heading": "Engineering walkthrough \u2014 Compromised build worker and a tempting image rollback",
+          "excerpt": "**Original hypothetical attack/failure:** a pipeline resolves the correct source revision but runs on a compromised shared worker. The worker produces an artifact with unexpected bytes and a generated signature from a key available to that\u2026"
+        },
+        {
+          "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#integrated-decision-and-reading-route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "heading": "Integrated decision and reading route",
+          "excerpt": "Define exposure, analysis, stop and recovery conditions across both application versions and shared data. A small canary can write incompatible state visible to all old instances; limiting traffic alone does not bound that effect. The de\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.5e4761e1a3e34c2f8023ec8ac4fa81d5#pages-and-reasoning-route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#purpose-and-mission",
+          "path": "book/delivery/progressive-delivery-and-schema-evolution.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A release can be deployed successfully yet fail when old and new binaries coexist, when records written by a new version cannot be read by older workers, or when delayed events arrive after contract removal. Progressive delivery controls *\u2026"
+        },
+        {
+          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#controller-failure-and-safe-rollback",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "heading": "Controller failure and safe rollback",
+          "excerpt": "PID regulation is only as good as its observations, sampling rate and bounded output. A delayed follower-lag signal could cause over-admission into a replica that cannot commit; stale error telemetry can drive oscillation. Another test is\u2026"
+        },
+        {
+          "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/rollback-data.md",
+          "heading": "4. When rollback means less than users think",
+          "excerpt": "A code rollback is reversible only if: 1. Older binaries still correctly interpret persisted state produced by newer binaries. 2. External clients and asynchronous consumers still accept the older response/event contract. 3. Effects commit\u2026"
+        },
+        {
+          "section_key": "tycho.landing.fe2eace7b2df4ae480adbdf844b68100#directed-question-routes",
+          "path": "book/delivery/README.md",
+          "heading": "Directed question routes",
+          "excerpt": "| User/agent question | Read first | Related evidence | |---|---|---| | How do we prove the deployed artifact is the one tested? | [CI/CD provenance](../volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-prove\u2026"
+        },
+        {
+          "section_key": "tycho.volume.cb10070ba233477fae8aa5d18e74fee8#questions-and-chapters",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/README.md",
+          "heading": "Questions and chapters",
+          "excerpt": "| Chapter | Owning question | |---|---| | [V08/C01 \u2014 CI/CD architecture and artifact provenance](c01-ci-cd-architecture-and-artifact-provenance/README.md) | Which boundaries separate build, test, publication and production deployment? | |\u2026"
+        }
+      ],
+      "answer": "Because the reconciler keeps applying the versioned desired state, an emergency rollback has to be expressed in that declared state, not only by changing running resources, or the controller continues to converge toward the old declaration. Recovery must also establish real outcomes: a clean diff or converged resource state does not prove that durable writes, downstream effects or API contracts are correct.",
+      "citations": [
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#4-direct-push-versus-gitops-pull",
+        "tycho.page.3d13e39bb42a4458999803e40d7137cc#1-gitops-reconciles-desired-configuration-not-business-outcomes"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B039",
+      "split": "book",
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#integrated-decision-and-reading-route",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+          "heading": "Integrated decision and reading route",
+          "excerpt": "Use consistent identities across context, runtime, deployment and decision views so a failure can be followed without changing its meaning. A tidy component view does not establish a working timeout, permission or recovery contract; follo\u2026"
+        },
+        {
+          "section_key": "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#4-stable-identities-link-views-without-making-a-knowledge-graph-mandatory",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/identity-adrs.md",
+          "heading": "4. Stable identities link views without making a knowledge graph mandatory",
+          "excerpt": "A component named ReservationAuthority in a static chart should be referable from runtime interactions and a deployment allocation, ideally through a stable ID and a versioned description. That can be a simple Markdown table or cross-refer\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.abcbb298887b49e79525ca00fead8926#pages-and-reasoning-route",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026"
+        },
+        {
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+          "heading": "1. Start with concerns and a coherent vocabulary",
+          "excerpt": "Before drawing, define: - **System boundary:** what the selected software system owns, which people and neighbors interact with it. - **Responsibility:** what functional result or rule belongs to each logical component. - **Runtime identit\u2026"
+        },
+        {
+          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy",
+          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
+          "heading": "What an architect should actually copy",
+          "excerpt": "The reusable principle is a **migration dependency graph**, not an AWS mandate. Establish failure boundaries, inventory transactional/data ownership, make interfaces stable, and isolate workloads into reversibly migrated slices. For a hypo\u2026"
+        },
+        {
+          "section_key": "tycho.page.b5d667aa6dac4a98a7c6ba8b10852897#3-different-diagrams-answer-different-questions",
+          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/views-tradeoffs.md",
+          "heading": "3. Different diagrams answer different questions",
+          "excerpt": "A single \"architecture diagram\" often combines people, components, build modules, Kubernetes pods and database internals into one uninterpretable picture. A reader needs a consistent abstraction level and clearly labelled relationships. T\u2026"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#purpose-and-mission",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "heading": "Purpose and mission",
+          "excerpt": "Choosing between a layered application, a modular monolith, service orientation and microservices is not a vote about modernity. The engineering question is **which responsibilities and ownership boundaries must remain coherent, which chan\u2026"
+        },
+        {
+          "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "heading": "2. Three credible modernization options",
+          "excerpt": "### Option A: keep the deployment, improve the architecture When domain and transaction cohesion are strong, isolate internal modules, publish contracts, enforce dependency direction, protect data ownership and add tests. This preserves a\u2026"
+        },
+        {
+          "section_key": "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
+          "heading": "Isolation determines how the view evolves",
+          "excerpt": "[Section 13.2](https://www.postgresql.org/docs/17/transaction-iso.html) distinguishes Read Committed statement snapshots from Repeatable Read transaction snapshots. Successive statements at Read Committed can see concurrent committed chang\u2026"
+        },
+        {
+          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118",
+          "path": "book/cases/README.md",
+          "heading": "Other companies (#118)",
+          "excerpt": "- [Uber DOMA](uber-doma-domains.md) - [Uber Mezzanine trip migration](uber-mezzanine-pg-to-schemaless.md) - [Uber MyRocks](uber-mysql-to-myrocks.md) - [Uber Cinnamon dynamic overload protection and fairness](uber-cinnamon-admission-and-fai\u2026"
+        }
+      ],
+      "answer": "Give each component a stable ID plus a versioned description, and reference that identity from every view (static chart, runtime interactions, deployment allocation) so a failure can be followed across context, runtime, deployment and decision views without changing its meaning. This can be a simple Markdown table or cross-reference, so a separate knowledge-graph service is not mandatory.",
+      "citations": [
+        "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#4-stable-identities-link-views-without-making-a-knowledge-graph-mandatory",
+        "tycho.page.b42e3ffc4a924b7089d261d0a3dc33b0#integrated-decision-and-reading-route"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B015",
+      "split": "book",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#5-alternatives-before-sharding",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "heading": "5. Alternatives before sharding",
+          "excerpt": "Database query/index optimization, bounded connection pools, increasing storage/CPU, read replicas, caching suitable immutable/read-mostly data and removing unnecessary cross-domain locks can delay or remove the need for sharding. These to\u2026"
+        },
+        {
+          "section_key": "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
+          "heading": "1. Distinguish physical partitions, logical ownership and replicas",
+          "excerpt": "| Term | What it controls | Does not guarantee | |---|---|---| | **Shard / partition** | A subset of an authoritative keyspace assigned to storage owners | Independent throughput for every hot key | | **Shard key / routing function** | How\u2026"
+        },
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "heading": "2. Majority quorum arithmetic and the failure envelope",
+          "excerpt": "In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1. A **3-voter** cluster requires 2 votes, and can normally make progress with one unavailable voter if remaining voters can communicate and have necessar\u2026"
+        },
+        {
+          "section_key": "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter",
+          "path": "book/volumes/v01-requirements-and-architecture/c02-workload-and-demand-models/demand-skew.md",
+          "heading": "5. Distribution and correlation matter",
+          "excerpt": "Suppose read latency is bimodal\u2014many requests hit a cache, a small fraction miss and perform costly database work. An average hides the parent tail and the backend's miss-driven peak. Alternatively, all writes may target one popular resour\u2026"
+        },
+        {
+          "section_key": "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-keys-hotspots-and-resharding.md",
+          "heading": "Purpose and mission",
+          "excerpt": "Splitting a database into shards is useful only if **resource or operational constraints** justify distributing ownership and the application can tolerate the resulting coordination and migration requirements. More shards cannot automatica\u2026"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#6-recovery-under-additional-load",
+          "path": "book/delivery/safe-rollout-and-recovery.md",
+          "heading": "6. Recovery under additional load",
+          "excerpt": "A degraded site can receive both its original workload and redirected traffic, while retries and backlog replay add more pressure. The public Google SRE chapter **Addressing Cascading Failures** discusses overloaded components, retries, li\u2026"
+        },
+        {
+          "section_key": "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+          "heading": "Engineering walkthrough \u2014 A burst ends before new replicas become useful",
+          "excerpt": "**Original hypothetical control loop:** arrival intensity doubles for 40 seconds. Metrics take 15 seconds to capture and be sampled; the controller decision takes 10 more; node scheduling takes 20; application startup and data warm-up need\u2026"
+        },
+        {
+          "section_key": "tycho.page.d664f65295644726ae1234a982f81fa8#5-applicability-alternatives-and-insufficient-evidence",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+          "heading": "5. Applicability, alternatives and insufficient evidence",
+          "excerpt": "Use replicated consensus when several fault-prone nodes must agree on an ordered configuration, leader lease/epoch, log, or authoritative state with explicit failure assumptions. Avoid introducing an application-level consensus cluster sim\u2026"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#contrasting-historical-evidence",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "heading": "Contrasting historical evidence",
+          "excerpt": "| Actual company case | What its primary source does and does not establish | |---|---| | [Stripe](../stripe-online-subscriptions-migration.md) | src.m9-st01: four-phase dual-write/read/write/retire and Scientist comparison | | [Netflix](.\u2026"
+        },
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#why-the-queue-architecture-is-not-automatically-the-best-choice",
+          "path": "book/cases/cloudflare-super-slurper-queues.md",
+          "heading": "Why the queue architecture is not automatically the best choice",
+          "excerpt": "A local batch copier can be safer and cheaper for a limited fixed transfer set. A durable queued architecture adds partitioned coordinator state, asynchronous acknowledgments, poison messages, idempotency rules, recovery operations and ver\u2026"
+        }
+      ],
+      "answer": "Because replicas do not hold authority: the shard that owns the authoritative keyspace still serializes its writes, and where writes require majority agreement the quorum arithmetic means additional voters add coordination rather than write throughput. A shard also does not guarantee independent throughput for every hot key, so extra copies do not remove a popular-resource bottleneck.",
+      "citations": [
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#1-distinguish-physical-partitions-logical-ownership-and-replicas",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B045",
+      "split": "book",
+      "question": "What must happen before an old region can safely regain authority after failover?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "heading": "3. Original synthetic recovery scenario",
+          "excerpt": "A fictional tool-booking system runs in region A with a recoverable copy in region B. A network partition disconnects A while clients still send requests. The recovery team cannot tell whether the last booking reply was lost before or afte\u2026"
+        },
+        {
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+          "path": "book/cases/netflix-chaos-kong-regional-failover.md",
+          "heading": "Write authority and the recovery contradiction",
+          "excerpt": "A secondary region can serve read-only degraded traffic before it can safely become a writer. Promoting writers requires a policy for **in-flight acknowledgments**, replica lag, ordering, globally unique identifiers, replay idempotency and\u2026"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "heading": "The question: what survives which loss?",
+          "excerpt": "A service can survive a failed container yet lose all user state when its single database fails. It can span three availability zones yet be unavailable during a region-wide routing or identity outage. Conversely, a cross-region copy of an\u2026"
+        },
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/disaster-recovery-and-recovery-objectives.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Geode Geode places i\u2026"
+        },
+        {
+          "section_key": "tycho.page.689c7d51faf1441caa7edfcb6152345e#reversible-transfer-and-refusal-criteria",
+          "path": "book/cases/uber-mysql-to-myrocks.md",
+          "heading": "Reversible transfer and refusal criteria",
+          "excerpt": "\u2026ferent Raft-replicated MySQL store, perform a **separate version-upgrade gate** before engine conversion; pin binary/client/backup revisions and capture representative SQL, query plans, object identity, checksums and per-class p95/p99. Prom\u2026"
+        },
+        {
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "heading": "1. Define the invariant before naming consistency",
+          "excerpt": "\u2026ine a wholly synthetic booking system with one workshop of ten seats. The invariant is not \"use ACID\"; it is **number of confirmed allocations must not exceed configured capacity**, under concurrency, retry and failure. Other requirements m\u2026"
+        },
+        {
+          "section_key": "tycho.page.62e3dca94bf647b98da7394d98232f88#1-define-impact-and-correctness-before-the-response-procedure",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-contract.md",
+          "heading": "1. Define impact and correctness before the response procedure",
+          "excerpt": "An alert is evidence that a condition crossed a configured threshold. It is not automatically proof of a certain root cause or the precise population harmed. Record: | Question | Evidence boundary | |---|---| | What user journey is affect\u2026"
+        },
+        {
+          "section_key": "tycho.page.a726b2ab751b44dea1a659556ed4f4c6#5-route-r4-modernization-objective-measured-improvement",
+          "path": "book/decisions/requirements-to-transition-decision-playbooks.md",
+          "heading": "5. Route R4: modernization objective \u2192 measured improvement",
+          "excerpt": "**Synthetic objective:** lower incident recovery time and regional exposure. The existing service has a durable primary database in one region, daily backups and one application deployment; restore times and data-loss windows were never me\u2026"
+        },
+        {
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#integrated-decision-and-reading-route",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "heading": "Integrated decision and reading route",
+          "excerpt": "Specify what an adapter preserves, rejects and cannot translate, including its eventual retirement conditions. A syntactically valid mapping can discard domain meaning; coexistence needs a reconciliation authority for unknown or unmappabl\u2026"
+        },
+        {
+          "section_key": "tycho.page.1810c1f1f11648bdba66aafa5da60d33#original-tabletop-exercise-recovery-must-have-an-oracle",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "heading": "Original tabletop exercise \u2014 recovery must have an oracle",
+          "excerpt": "\u2026earch is stale while the authoritative item store remains correct. Give participants a visible symptom, a current permission boundary and several plausible explanations. Do not give them a secret instruction to select a predetermined remedy\u2026"
+        }
+      ],
+      "answer": "The partition's ambiguous outcomes must be resolved first. The team cannot tell whether the last booking reply was lost before or after commit, and promoting a writer requires a policy for in-flight acknowledgments, replica lag, ordering, globally unique identifiers and replay idempotency; the returning region must catch up and reconcile before it is trusted with authority again.",
+      "citations": [
+        "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-B088",
+      "split": "book",
+      "question": "Why is a trace ID not a reliable substitute for a durable business operation ID?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "heading": "3. Logging is operational evidence, not an unlimited audit trail",
+          "excerpt": "| Property | Operational log | Dedicated authoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often bes\u2026"
+        },
+        {
+          "section_key": "tycho.page.aac0f46189b74948bedfc30a81ec80e5#1-a-trace-a-span-and-a-request-are-different-entities",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/trace-causality.md",
+          "heading": "1. A trace, a span and a request are different entities",
+          "excerpt": "| Identity | What it describes | What it does not prove | |---|---|---| | Trace ID | Correlates selected spans for one distributed trace | All effects, users or messages were recorded | | Span ID and parent | A named timed operation and im\u2026"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "heading": "5. Durable workflow selection is conditional",
+          "excerpt": "One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coo\u2026"
+        },
+        {
+          "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#why-the-data-copy-did-not-overload-the-live-database",
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "heading": "Why the data copy did not overload the live database",
+          "excerpt": "The article distinguishes two populations. **Newly created or updated** subscriptions enter the new representation during ordinary requests once dual writing is enabled, with controlled ramp-up. **Older, untouched** subscriptions need a se\u2026"
+        },
+        {
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+          "heading": "1. Separate semantics before selecting storage",
+          "excerpt": "| Evidence type | Primary question | Essential property | Failure or misuse | |---|---|---|---| | Operational log | What did this runtime report, and why? | Timestamp, level, context, safe attributes | Log drop interpreted as no event | |\u2026"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "heading": "Why reliability was not automatically improved",
+          "excerpt": "In the Servlet model a thread can remain attached to a request while it waits on a downstream dependency. A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure. A Netty\u2026"
+        },
+        {
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#legacy-security-and-reliability-failure",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "heading": "Legacy security and reliability failure",
+          "excerpt": "Netflix's data warehouse had **millions of tables** and **tens of thousands of scheduled workloads**, according to the May 2026 report. Access management was primarily per-asset, and many asynchronous jobs ran under their human creator's i\u2026"
+        },
+        {
+          "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+          "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Command-Side Replica\u2026"
+        },
+        {
+          "section_key": "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+          "heading": "5. Context, async messages and retries",
+          "excerpt": "When an RPC call times out, the client can retry under the same logical operation key but a new span or trace. The tracing design should represent **attempt** versus **operation**, preserve optional links, and avoid inflating business thro\u2026"
+        },
+        {
+          "section_key": "tycho.page.65f9616c034643f9bf5f297037f027e4#7-when-not-to-impose-this-structure",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c01-layered-modular-and-ports-and-adapters-design/adapter-scenarios.md",
+          "heading": "7. When not to impose this structure",
+          "excerpt": "A tiny fixed-format batch transformation with no alternate drivers and little independent business logic may not need elaborate adapter abstractions. Conversely, code that must support several frontends, isolated rule testing, storage subs\u2026"
+        }
+      ],
+      "answer": "A trace ID identifies one distributed trace or attempt, not the business operation: after a timeout the client may retry under the same logical operation key with a new span or trace. A trace ID only correlates selected spans and does not prove that every effect, user or message was recorded, and operational logs are often best-effort evidence; a durable operation ID must survive attempts and carry idempotency and audit meaning.",
+      "citations": [
+        "tycho.page.aac0f46189b74948bedfc30a81ec80e5#1-a-trace-a-span-and-a-request-are-different-entities",
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A007",
+      "split": "atlas",
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "heading": "1. Two unsafe dual-write orders",
+          "excerpt": "Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker t\u2026"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "heading": "4. Failure and recovery matrix",
+          "excerpt": "| Failure timing | Committed state / outbox | External event / user-visible effect | Recovery contract / evidence required | |---|---|---|---| | Before commit | Neither should commit in the proposed local transaction | No authoritative suc\u2026"
+        },
+        {
+          "section_key": "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+          "path": "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md",
+          "heading": "Transactional Outbox",
+          "excerpt": "# Transactional Outbox **Identity.** Transactional Outbox; family Data consistency, transactions and event sourcing; kind data-pattern; priority core. **Decision question.** Should publication intent be stored in the same local transacti\u2026"
+        },
+        {
+          "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "heading": "Transactional Outbox",
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded tec\u2026"
+        },
+        {
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "heading": "Purpose and decision question",
+          "excerpt": "A relational database can commit an authoritative state change inside one local transaction. An unrelated message broker or external service is usually *not part of the same atomic commit*. A long-running workflow crossing several independ\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.18aa94285a164b6f94530cebcfd87b8b#pages-and-reasoning-route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026"
+        },
+        {
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/invariants-isolation.md",
+          "heading": "1. Define the invariant before naming consistency",
+          "excerpt": "Imagine a wholly synthetic booking system with one workshop of ten seats. The invariant is not \"use ACID\"; it is **number of confirmed allocations must not exceed configured capacity**, under concurrency, retry and failure. Other requireme\u2026"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "heading": "5. Durable workflow selection is conditional",
+          "excerpt": "One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coo\u2026"
+        },
+        {
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#engineering-walkthrough-an-internal-event-that-survives-neither-process-death-nor-commit",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "heading": "Engineering walkthrough \u2014 An internal event that survives neither process death nor commit",
+          "excerpt": "**Original fictional workflow:** `BookingModule` reserves a resource and emits `BookingCreated`. `NotificationModule` subscribes. Three superficially similar deliveries have different durability: calling subscribers inside the transaction,\u2026"
+        },
+        {
+          "section_key": "tycho.page.07bb1f96bdd94195ac8e31644527a217#3-internal-events-have-multiple-execution-and-durability-contracts",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md",
+          "heading": "3. Internal events have multiple execution and durability contracts",
+          "excerpt": "| Event style | Execution boundary | Failure question | Appropriate use | |---|---|---|---| | Direct synchronous module call | Caller stack/transaction if configured | Can callee failure roll back caller? | Required immediate invariant/dec\u2026"
+        }
+      ],
+      "answer": "After the commit the outbox record is pending publication intent, so the relay must still publish it and clear it only once publication is confirmed, retrying if delivery fails; the database commit cannot publish the event by itself because the broker is not part of the same atomic commit.",
+      "citations": [
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A005",
+      "split": "atlas",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
+          "heading": "Splitter",
+          "excerpt": "# Splitter > **Pattern atlas:** > [Splitter](../../v11-pattern-atlas/c03-messaging-integration/splitter.md#splitter) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [messaging familie\u2026"
+        },
+        {
+          "section_key": "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview",
+          "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/splitter.md",
+          "heading": "Splitter",
+          "excerpt": "# Splitter **Decision.** Split only when the parts have independent effects and the outcome is observable: the total count is known, or an explicit release rule or expiry records a partial result or forced closure rather than silent succe\u2026"
+        },
+        {
+          "section_key": "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence; the Aggregator and Scatter-Gather alternatives carry separate source\u2026"
+        },
+        {
+          "section_key": "tycho.page.2c928286b62944769a4b0cab9fad6139#overview",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+          "heading": "Resequencer",
+          "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consu\u2026"
+        },
+        {
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#query-patterns-determine-when-data-duplication-is-justified",
+          "path": "book/cases/discord-search-index-cells.md",
+          "heading": "Query patterns determine when data duplication is justified",
+          "excerpt": "The design keeps ordinary guild messages indexed by **guild ID**, enabling localized guild queries. Search across all of a user's direct-message conversations could not efficiently be implemented by fanning out one query to every DM. Disco\u2026"
+        },
+        {
+          "section_key": "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+          "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/resequencer.md",
+          "heading": "Resequencer",
+          "excerpt": "# Resequencer **Decision.** Buffer and release out-of-order messages only when an ordering requirement, a reliable sequence domain, and a bounded buffer with a gap timeout and a late-message disposition have owners. Partition by key inste\u2026"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "heading": "Why event order is part of the model",
+          "excerpt": "Two events at the same timestamp can produce different results depending on which is processed first. A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp. If the completion is processed first, the request succeeds.\u2026"
+        },
+        {
+          "section_key": "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/semantic-translation.md",
+          "heading": "1. An adapter has a semantic contract, not just a schema mapping",
+          "excerpt": "| Adapter responsibility | Safe question | Unsafe shortcut | |---|---|---| | Identity mapping | Is one new entity equal to one old ID, many old IDs, or only a time-scoped mapping? | Copy a numeric ID and assume global uniqueness | | Status\u2026"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#original-worked-transfer-budget",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/upload-integrity.md",
+          "heading": "Original worked transfer budget",
+          "excerpt": "Assume a fictional workshop records a 4 GiB payload, divided into 64 parts of 64 MiB, with four concurrent part transfers. These are invented values, not a recommended universal part size. Client buffering one complete part per transfer wo\u2026"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. The Pipes and Filters and\u2026"
+        }
+      ],
+      "answer": "Because with an unknown number of parts there is no natural completion signal. Splitter's decision requires an observable outcome: either the total count is known, or an explicit release rule or expiry must record a partial result or forced closure, otherwise a partial set would look like a silent success.",
+      "citations": [
+        "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A027",
+      "split": "atlas",
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/controlled-cutover.md",
+          "heading": "Controlled Cutover",
+          "excerpt": "# Controlled Cutover > **Pattern atlas:** > [Controlled Cutover](../../v11-pattern-atlas/c10-deployment-modernization/controlled-cutover.md#controlled-cutover) \u2014 decision conditions and contraindications. This page owns the bounded techn\u2026"
+        },
+        {
+          "section_key": "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+          "path": "book/volumes/v11-pattern-atlas/c10-deployment-modernization/controlled-cutover.md",
+          "heading": "Controlled Cutover",
+          "excerpt": "# Controlled Cutover **Identity.** Controlled Cutover; family Deployment and legacy modernization; kind modernization-pattern; priority core. **Decision question.** Should authority switch during a planned downtime only after writes paus\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#pages-and-reasoning-route",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integr\u2026"
+        },
+        {
+          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "heading": "Modernization plan",
+          "excerpt": "Version contracts \u2192 establish old source authority \u2192 implement dual-state writes \u2192 backfill snapshot IDs/checkpoints \u2192 compare old/new values with temporal alignment \u2192 switch low-risk reads \u2192 invert writes under canary \u2192 decommission old o\u2026"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "### Expand-and-Contract Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence. The pr\u2026"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#failure-matrix-detection-through-restored-user-journey",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "heading": "Failure matrix: detection through restored user journey",
+          "excerpt": "| Failure/drill | Recovery method hypothesis | Evidence needed before saying it meets RTO/RPO | Do-not-proceed condition | |---|---|---|---| | Single instance/zone | Pre-warmed healthy replicas route around failure | Load under loss, data\u2026"
+        },
+        {
+          "section_key": "tycho.page.b938ff1a06264492a425f2eff555ae7d#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/gitops-canary-and-progressive-rollout.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance unless a sentence explicitly attributes the claim to a dedicated source record; all other gui\u2026"
+        },
+        {
+          "section_key": "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+          "heading": "4. Resharding is a multi-state data transition",
+          "excerpt": "\u2026sufficient: clients, source stores, replica/backfill state, transaction changes and destination ownership must remain consistent **during** migration. ```mermaid stateDiagram-v2 [*] --> Existing Existing --> Prepare: Version target\u2026"
+        },
+        {
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "heading": "What a green shadow comparison cannot guarantee",
+          "excerpt": "src.m9-me03 documents **job-level authority transitions**: legacy production/new shadow, followed by new production/legacy reverse shadow, then cleanup. This choreography solves a different problem from changing all reads before writes in\u2026"
+        },
+        {
+          "section_key": "tycho.page.3d13e39bb42a4458999803e40d7137cc#2-release-strategies-and-their-limits",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/desired-state-exposure.md",
+          "heading": "2. Release strategies and their limits",
+          "excerpt": "| Strategy | Version exposure | Trade-off and hidden failure | |---|---|---| | Recreate | Stop old, start new; possible downtime | Avoids some simultaneous binaries, not lingering clients/events | | Rolling | Gradually replace old replicas\u2026"
+        }
+      ],
+      "answer": "The destination's caught-up and consistent state must be verifiable before authority moves: clients, source stores, replica/backfill state, transaction changes and destination ownership all have to remain consistent through the transition, and the cutover card frames the switch as a planned-downtime step taken only after writes pause.",
+      "citations": [
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A008",
+      "split": "atlas",
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "heading": "1. Two unsafe dual-write orders",
+          "excerpt": "Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker t\u2026"
+        },
+        {
+          "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "heading": "Transactional Outbox",
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded tec\u2026"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "heading": "1. Boundaries: why the naive dual write is unsafe",
+          "excerpt": "Imagine a **completely synthetic** workshop registration service. A user asks to register for a workshop; the registration service stores a confirmed registration in its database and sends a notification to another component. The naive de\u2026"
+        },
+        {
+          "section_key": "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+          "path": "book/volumes/v11-pattern-atlas/c04-consistency-events/transactional-outbox.md",
+          "heading": "Transactional Outbox",
+          "excerpt": "# Transactional Outbox **Identity.** Transactional Outbox; family Data consistency, transactions and event sourcing; kind data-pattern; priority core. **Decision question.** Should publication intent be stored in the same local transacti\u2026"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+          "heading": "Crash windows",
+          "excerpt": "| Crash point | Persisted evidence | Recovery | |---|---|---| | Before upload starts | Pending K, no verified object | Resume or expire pending intent | | After upload, before completion call | Candidate object and pending K | Verify exact\u2026"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "heading": "5. Durable workflow selection is conditional",
+          "excerpt": "One service and one database transaction are often simpler than a saga. Move to orchestration only when a business operation genuinely spans multiple independently owned effects with different failure and recovery boundaries. A durable coo\u2026"
+        },
+        {
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "heading": "Purpose and decision question",
+          "excerpt": "A relational database can commit an authoritative state change inside one local transaction. An unrelated message broker or external service is usually *not part of the same atomic commit*. A long-running workflow crossing several independ\u2026"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c07-kafka-logs-partitions-and-transactions/offsets-effects.md",
+          "heading": "4. Consumer offset, effect and crash points",
+          "excerpt": "The consumer must decide when to mark its position consumed, often relative to applying an external business effect. ```mermaid sequenceDiagram participant Broker participant C as Consumer participant DB as External effect sto\u2026"
+        },
+        {
+          "section_key": "tycho.page.a06fd146f96b4b17a754f4d3b608ebdf#engineering-walkthrough-an-internal-event-that-survives-neither-process-death-nor-commit",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/modular-monolith-and-internal-events.md",
+          "heading": "Engineering walkthrough \u2014 An internal event that survives neither process death nor commit",
+          "excerpt": "**Original fictional workflow:** `BookingModule` reserves a resource and emits `BookingCreated`. `NotificationModule` subscribes. Three superficially similar deliveries have different durability: calling subscribers inside the transaction,\u2026"
+        },
+        {
+          "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/inbox-atomicity.md",
+          "heading": "3. Inbox and consumer-local atomicity",
+          "excerpt": "An inbox can persist a consumer's processed-event identity and business effect together in **one local transaction**. The [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) describ\u2026"
+        }
+      ],
+      "answer": "Because the broker is not part of the database's atomic commit, a relay cannot atomically both send and record that it sent: a crash after publication but before the record is updated causes republication on recovery, so delivery is at-least-once. Consumers must therefore deduplicate, for example with an inbox that persists the processed-event identity together with the business effect in one local transaction.",
+      "citations": [
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-A006",
+      "split": "atlas",
+      "question": "What failure can arise if a claim token is published before its payload is durably stored?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d44c30621fd941318453e3ff995a3e93#overview",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md",
+          "heading": "Claim Check",
+          "excerpt": "# Claim Check > **Pattern atlas:** > [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/claim-check.md#claim-check) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [workf\u2026"
+        },
+        {
+          "section_key": "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+          "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/claim-check.md",
+          "heading": "Claim Check",
+          "excerpt": "# Claim Check **Decision.** Store a large or sensitive payload outside the message and send a claim check only when payload size, sensitivity or repeated serialization justifies the extra store and retrieval hop, when payload lifecycle an\u2026"
+        },
+        {
+          "section_key": "tycho.page.b55f5bf29d7946c78454a769980c476e#what-changed-in-the-migration-plan",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "heading": "What changed in the migration plan",
+          "excerpt": "The first company proposal would have **dual-written** new messages, sent newer reads to ScyllaDB using a time cutoff, and migrated old data in the background. The publisher says a conventional Spark migrator estimated roughly **three mont\u2026"
+        },
+        {
+          "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+          "heading": "Bounded pattern ownership notes",
+          "excerpt": "### Session Consistency The product owner defines what counts as one session and which observations its users must retain. That choice sets the guarantee; no infrastructure default should supply it implicitly. The service owner publishes\u2026"
+        },
+        {
+          "section_key": "tycho.page.ac84c140be153d3b1f5752ffbd38cb5b#make-a-claim-falsifiable-before-building-a-harness",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "heading": "Make a claim falsifiable before building a harness",
+          "excerpt": "\u201cSurvives retries\u201d is too vague to test. State a safety property over observable operations, the failures under which it must hold, and the conditions needed for progress. Safety forbids a bad state; liveness requires eventual progress und\u2026"
+        },
+        {
+          "section_key": "tycho.volume.01d303aaa7984edaac4127884592dd75#questions-and-chapters",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/README.md",
+          "heading": "Questions and chapters",
+          "excerpt": "| Chapter | Owning question | |---|---| | [V05/C01 \u2014 Relational modeling and transaction isolation](c01-relational-modeling-and-transaction-isolation/README.md) | Which invariants and anomalies are relevant to the data contract? | | [V05/C\u2026"
+        },
+        {
+          "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "heading": "Transactional Outbox",
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded tec\u2026"
+        },
+        {
+          "section_key": "tycho.page.ca73432e255443ca808b30f9587f20cb#hypothetical-migration-adr",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "heading": "Hypothetical migration/ADR",
+          "excerpt": "**Context:** 2,000 scheduled ETL jobs across 70 teams currently use human tokens; reorgs lead to intermittent outages. Those numbers are Tycho's synthetic requirements, **not Netflix metrics**. **Decision:** inventory workloads and asset\u2026"
+        },
+        {
+          "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "heading": "1. First identify what a consumer must own",
+          "excerpt": "```mermaid flowchart TD Need[\"Integration requirement\"] --> Durable{\"Must work survive an offline subscriber?\"} Durable -->|No| Ephemeral[\"Transient pub/sub or direct RPC may suffice\"] Durable -->|Yes| Replay{\"Must independent\u2026"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#2-correlation-without-recording-credentials",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "heading": "2. Correlation without recording credentials",
+          "excerpt": "Use multiple bounded identities: - **Trace ID / Span ID:** telemetry correlation, generated independently of user secrets. - **Logical request/idempotency identity:** repeated user intent, scoped and retained under application contract. -\u2026"
+        }
+      ],
+      "answer": "The excerpts state when a claim check is justified (payload size, sensitivity or repeated serialization, plus payload lifecycle ownership) but not what goes wrong when the token is published before the payload is durably stored; no supplied section describes the resulting failure.",
+      "citations": [
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview"
+      ],
+      "abstain": true
+    },
+    {
+      "task_id": "V4-V012",
+      "split": "v12",
+      "question": "When should a V12 decision remain unsupported even though a model run converges?",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A single simulation run with one set of assumed inputs hides uncertainty. This chapter separates input uncertainty from sampling error, defines convergence criteria and reports which inputs matter through a sensitivity screen. The chapter\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "A simulation result is not reviewable if the model, workload, seed, engine and decision context are scattered across prose. This chapter defines four contracts that make a V12 result reproducible and bounded: - a **model specification** f\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-C: statistical validity",
+          "excerpt": "The run records report seeds, replications, standard errors, confidence intervals and a convergence status. The sensitivity run reports a quadratic response-surface screen and is converged. A separate two-replication convergence-stress run\u2026"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#overview",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "heading": "Convergence and error",
+          "excerpt": "# Convergence and error **Question.** When is a Monte Carlo result stable enough to use, and what does a confidence interval actually cover? **Short answer.** A result is stable when its estimated standard error is small relative to the\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Machine artifacts",
+          "excerpt": "The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contrac\u2026"
+        },
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#4-periodic-pipelines-and-overlapping-runs",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
+          "heading": "4. Periodic pipelines and overlapping runs",
+          "excerpt": "A periodic pipeline is a chain of jobs on a schedule. It is fragile when its interval approaches its runtime: - A new run can stack behind the previous one, consuming cluster capacity. - A scheduler can kill a nearly finished run to start\u2026"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "heading": "Navigation",
+          "excerpt": "- Parent: [V12/C04 - Monte Carlo](../README.md) - Next: [Convergence and error](convergence-and-error.md) - Sensitivity run: edition/v12/runs/checkout-sensitivity.json"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/run-and-result-provenance.md",
+          "heading": "Provenance is not a log line",
+          "excerpt": "A timestamp and a filename do not explain a result. Provenance answers: - which model and scenario produced the result; - which engine version executed it; - which seed and how many replications; - which inputs were combined into the run;\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#overview",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "heading": "Insufficient-evidence outcomes",
+          "excerpt": "# Insufficient-evidence outcomes **Question.** When should a decision record return no recommendation, and how is that different from a failed model? **Short answer.** A record returns insufficient evidence when the model is implemented\u2026"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "heading": "The reproducibility contract",
+          "excerpt": "The V12 run record stores: - model and scenario SHA-256; - engine name and version; - seed base and replication count; - an input hash over the model, scenario and engine version; - Python and platform strings; - the invocation; - metrics\u2026"
+        }
+      ],
+      "answer": "Convergence is necessary but not sufficient. A V12 record should return the insufficient-evidence outcome - no recommendation, which is distinct from a failed model - when the run converges but the evidence chain for the decision is incomplete: the result must still clear the statistical-validity gate (a converged sensitivity screen is checked alongside a separate two-replication convergence-stress run), the result must be reviewable with model, workload, seed, engine version and decision context bound into the run record, and a single run over one set of assumed inputs cannot settle the underlying uncertainty. Convergence bounds sampling stability; it says nothing about whether the assumptions or the evidence are adequate for the decision.",
+      "citations": [
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#overview",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V014",
+      "split": "v12",
+      "question": "What distinction separates verification of a simulation engine from validation for a decision?",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Five evidence layers",
+          "excerpt": "| Layer | Question | Owner | |---|---|---| | Source and claim | Does a source support the method? | Ledger and page citations | | Verification | Is the model implemented as specified? | Model spec and tests | | Calibration | Do parameters\u2026"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/evidence-and-validation-vocabulary.md",
+          "heading": "A worked separation",
+          "excerpt": "The checkout comparison has: - source support for queueing and event semantics from SimPy and Little's law; - model verification for conservation, boundary cases and event ordering; - uncalibrated arrival and service-time inputs; - simula\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.77831d9a57067de6faa1da630a83f49b#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "This chapter states what V12 actually verifies and what it does not. It separates model verification, calibration, simulation evidence and decision validity, records the gate matrix, and explains how a stored run is replayed. The chapter\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "Verification versus validation",
+          "excerpt": "Sargent defines model verification as ensuring that the computer program of the model is correct. Validation asks whether the model is adequate for its intended purpose. A model can be verified and still be invalid for a decision because i\u2026"
+        },
+        {
+          "section_key": "tycho.page.ac84c140be153d3b1f5752ffbd38cb5b#three-complementary-verification-layers",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "heading": "Three complementary verification layers",
+          "excerpt": "| Layer | Inputs and oracle | What it can miss | | --- | --- | --- | | Executable model exploration | Small state space, enabled transitions, safety and progress predicates | An implementation detail omitted from the model | | Deterministi\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-E: decision validity",
+          "excerpt": "The decision records declare: - candidates and their runs; - hard, soft and non-quantitative constraints; - business-comparable metrics with units; - evidence statuses for model verification, calibration and simulation; - an explicit reco\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#engineering-walkthrough-authentic-artifact-incomplete-evidence-and-denied-promotion",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/README.md",
+          "heading": "Engineering walkthrough \u2014 Authentic artifact, incomplete evidence and denied promotion",
+          "excerpt": "**Synthetic release case:** an artifact digest D is accompanied by build provenance referring to D, an SBOM generated from its dependency closure and a signature. Verification succeeds cryptographically but the SBOM omits a dynamically dow\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.6006603befaacfc1baadc486a0f7007a#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "This chapter establishes the conceptual minimum before a simulation can inform an architecture decision: what a stock is, what a flow is, how a model boundary is chosen, and how source evidence, verification, calibration, simulation eviden\u2026"
+        },
+        {
+          "section_key": "tycho.page.38bb8a14ebb54866a7004080318b47e1#integrated-decision-and-reading-route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c02-supply-chain-and-release-verification/sbom-attestation-and-release-verification.md",
+          "heading": "Integrated decision and reading route",
+          "excerpt": "Verify artifact identity and provenance against an authorization policy; distinguish signatures, attestations and component inventories. A valid signature from an unapproved identity, or an SBOM for another digest, must not authorize prom\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "heading": "Boundaries and evidence",
+          "excerpt": "Sargent supports the requirement to state data validity, conceptual validity and operational validity separately. The modernization model uses assumed dual-write lag and reconciliation capacity; the decision record treats those assumptions\u2026"
+        }
+      ],
+      "answer": "Verification asks whether the engine is implemented as specified - whether the computer program of the model is correct, tested for conservation, boundary cases and event ordering - whereas validation asks whether the model is adequate for its intended purpose. A model can therefore be verified and still be invalid for a decision, because verification establishes that the implementation matches the specification, not that the inputs are calibrated or that the simulation evidence supports the decision. V12 keeps the distinction explicit across its five evidence layers (source and claim, verification, calibration, simulation evidence, decision validity), and in the checkout worked separation the model is verified while arrival and service-time inputs remain uncalibrated; the decision record declares evidence status separately for model verification, calibration and simulation.",
+      "citations": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V028",
+      "split": "v12",
+      "question": "What kinds of identifiers, links and hashes does the V12 structural gate check?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-A: structural",
+          "excerpt": "The validator checks: - every V12 document has valid strict frontmatter; - volume, chapter and page identifiers are unique; - model, scenario, run and decision identifiers are unique; - every scenario model_id resolves; - every run model_\u2026"
+        },
+        {
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "heading": "Failure modes",
+          "excerpt": "- **Backlink contamination.** A V12 link is added to an existing card. The card hash changes and a promotion becomes stale. - **Duplicate owner.** A V12 page explains the pattern mechanism in full and becomes a second canonical source.\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#boundaries-and-evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "heading": "Boundaries and evidence",
+          "excerpt": "MADR and Nygard support the context, options, outcome and consequences structure. Sargent supports the separation of model verification from validity for a purpose. The pattern links use the existing registry and owner pages without modify\u2026"
+        },
+        {
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "heading": "3. Logging is operational evidence, not an unlimited audit trail",
+          "excerpt": "\u2026uthoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often best-effort, sampled/filtered/short retention\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.77831d9a57067de6faa1da630a83f49b#diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/README.md",
+          "heading": "Diagram",
+          "excerpt": "~~~mermaid flowchart LR A[\"V12-A Structure\"] --> B[\"V12-B Model correctness\"] B --> C[\"V12-C Statistical validity\"] C --> D[\"V12-D Calibration\"] D --> E[\"V12-E Decision validity\"] E --> F[\"V12-F Independent review\"] ~~~\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/README.md",
+          "heading": "Diagram",
+          "excerpt": "\u2026Model hash\"] S --> H R --> H2[\"Result hash\"] D --> L[\"Pattern owner links, read-only\"] ~~~ Text alternative: a model specification and scenario specification feed a run record. The model and scenario hashes bind the run, and th\u2026"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "heading": "Ten rules mapping",
+          "excerpt": "The PLOS ten rules are guidance, not a certificate. V12 implements a bounded subset: - track input data: model and scenario files are versioned and hashed; - version scripts: the engine is a single versioned module; - record parameters: t\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#purpose-and-mission",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Purpose and mission",
+          "excerpt": "V12 helps a reader evaluate architecture alternatives before costly implementation. It combines stock-and-flow reasoning, discrete-event simulation, Monte Carlo uncertainty, comparative decision records and staged modernization-path simula\u2026"
+        },
+        {
+          "section_key": "tycho.page.84fa4a7505904bb2a492be1593690ed2#2-four-kinds-of-requirement-must-stay-distinct",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/intake-invariants.md",
+          "heading": "2. Four kinds of requirement must stay distinct",
+          "excerpt": "\u2026Business outcome | An accepted reservation has a durable identifier | Evaluate the observable journey and its final state | | Hard invariant | A slot must not have two simultaneously valid owners | Reject any design that cannot enforce it;\u2026"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "heading": "Two kinds of uncertainty",
+          "excerpt": "V12 distinguishes: - **input uncertainty:** the arrival rate, service time, timeout, dual-write lag or another parameter is not known exactly; - **sampling error:** even with fixed inputs, a finite number of replications gives an esti\u2026"
+        }
+      ],
+      "answer": "The V12-A structural gate validates: strict frontmatter on every V12 document; uniqueness of volume, chapter and page identifiers; uniqueness of model, scenario, run and decision identifiers; and referential links, since every scenario model_id resolves and every run's model reference must resolve. Hashes are part of the same structural contract - the model and scenario hashes bind the run, and through it the result hash, while model and scenario files are versioned and hashed and pattern-owner links stay read-only. Structure is the first gate in the chain V12-A structure, V12-B model correctness, V12-C statistical validity, V12-D calibration, V12-E decision validity, V12-F independent review.",
+      "citations": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#diagram",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#diagram",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V024",
+      "split": "v12",
+      "question": "How are correlated lag and reconciliation-capacity assumptions propagated in the V12 modernization scenario?",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/uncertainty-and-sensitivity.md",
+          "heading": "Correlated inputs",
+          "excerpt": "Independent draws are a modelling assumption, not a neutral default. In the modernization scenario, a longer dual-write lag plausibly coincides with a lower reconciliation capacity: the same operational pressure produces both. V12 declares\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/README.md",
+          "heading": "Boundaries and evidence",
+          "excerpt": "Sargent supports the requirement to state data validity, conceptual validity and operational validity separately. The modernization model uses assumed dual-write lag and reconciliation capacity; the decision record treats those assumptions\u2026"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "heading": "Experiment design",
+          "excerpt": "The staged scenario: - offers 10 requests per second for 2,400 seconds; - shifts target traffic to 0.2 at t=0, 0.5 at t=300 and 1.0 at t=600; - uses a 1.5-second dual-write lag and a 4-record-per-second reconciliation capacity; - triggers\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/insufficient-evidence-outcomes.md",
+          "heading": "The modernization example",
+          "excerpt": "The staged modernization run reports: - success rate 1.0 (the model serves the offered traffic); - maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3); - rollback completed 0.1 (it finishes within the 2,400-second horizon in only\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "The test matrix",
+          "excerpt": "\u2026st | Result | |---|---|---| | Stock-flow conservation | test_conservation_below_capacity | pass | | Stock-flow non-negativity | test_saturation_rejects_and_conserves | pass | | Zero-arrival boundary | test_zero_boundary | pass | | Saturatio\u2026"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "heading": "V12-C: statistical validity",
+          "excerpt": "The run records report seeds, replications, standard errors, confidence intervals and a convergence status. The sensitivity run reports a quadratic response-surface screen and is converged. A separate two-replication convergence-stress run\u2026"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "A worked cross-chapter synthesis",
+          "excerpt": "A synthetic checkout service receives 20 requests per second for 30 minutes after a five-minute warmup. Three candidates use the same arrivals, duration, seed scheme and metrics: - A: direct capacity with a one-second deadline and no retr\u2026"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "heading": "The V12 input table",
+          "excerpt": "| Input | Status | What is missing | |---|---|---| | Arrival rate | assumed | A measured arrival trace for the target workload | | Service mean | assumed | A measured service-time sample and tail | | Service CV | assumed | A measured distr\u2026"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "heading": "The staged result",
+          "excerpt": "The staged scenario uses a three-stage shift (0.2, 0.5, 1.0) over 2,400 seconds, a 1.5-second dual-write lag, a reconciliation capacity of 4 records per second, and a rollback at 1,200 seconds. The input ranges are 0.5-2.5 seconds for lag\u2026"
+        },
+        {
+          "section_key": "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+          "path": "book/cases/decisions/agentic-migration-safety.md",
+          "heading": "Explicit invariants and failure semantics for the synthetic program",
+          "excerpt": "The synthetic task contains **two distinct classes of change**: mechanically constrained source-code migrations and stateful data-schema changes. They require different proof obligations. Passing a compiler cannot establish the historical\u2026"
+        }
+      ],
+      "answer": "Correlated inputs are propagated by declaring the dependence rather than sampling independently: a longer dual-write lag plausibly coincides with lower reconciliation capacity because the same operational pressure produces both, and V12 declares that relationship explicitly, since independent draws are a modelling assumption rather than a neutral default. The staged run instantiates it with a three-stage traffic shift (0.2, 0.5, 1.0) over 2,400 seconds, a 1.5-second dual-write lag and a 4-record-per-second reconciliation capacity, with declared input ranges starting at 0.5-2.5 seconds for the lag and a rollback at 1,200 seconds. The decision record flags the lag and capacity assumptions explicitly rather than treating them as calibrated data.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "V4-V008",
+      "split": "v12",
+      "question": "Which queue disciplines and resource controls does the V12 checkout engine model?",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "heading": "Machine artifacts",
+          "excerpt": "The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contrac\u2026"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-replay-command",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/reproducibility-and-replay.md",
+          "heading": "The replay command",
+          "excerpt": "From the repository root: ~~~text python3 scripts/v12_engine.py replay \\ --run edition/v12/runs/checkout-b-queue.json \\ --model edition/v12/models/checkout-des.json \\ --scenario edition/v12/scenarios/checkout-b-queue.json ~~~ The c\u2026"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "heading": "Worked comparison",
+          "excerpt": "\u2026000 | n/a | 0.000 | | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 | | Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 | | Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 | | Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 | The table\u2026"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "heading": "Navigation",
+          "excerpt": "- Parent: [V12/C03 - Deterministic and DES](../README.md) - Next: [Queue and resource models](queue-and-resource-models.md) - Engine: scripts/v12_engine.py"
+        },
+        {
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "heading": "Pages and reasoning route",
+          "excerpt": "- [Reference engine architecture](reference-engine-architecture.md): modules, event queue, seeds and provenance. - [Queue and resource models](queue-and-resource-models.md): capacity, utilization, Little's law and finite-window measure\u2026"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "heading": "From decision to boundary",
+          "excerpt": "A model boundary is the line between the model's state and the rest of the world. It is not the same as a service boundary or a team boundary. A checkout model may include a queue and a server pool while omitting the payment network, the d\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#navigation-and-prerequisites",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "heading": "Navigation and prerequisites",
+          "excerpt": "- Previous: [V12/C04 - Monte Carlo](../c04-monte-carlo/README.md) - Next: [V12/C06 - Migration simulation](../c06-migration-simulation/README.md) - Decision: [checkout-candidate.json](../../../../edition/v12/decisions/checkout-candidate.js\u2026"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#evidence-ledger",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "heading": "Evidence ledger",
+          "excerpt": "\u2026WSC 2011](https://informs-sim.org/wsc11papers/016.pdf) supports computerized-model verification, degenerate tests, extreme-condition tests and traces. It does not validate the V12 engine. - [SimPy 4.1 documentation](https://simpy.rea\u2026"
+        },
+        {
+          "section_key": "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#navigation-and-prerequisites",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/README.md",
+          "heading": "Navigation and prerequisites",
+          "excerpt": "- Previous: [V12/C03 - Deterministic and DES](../c03-deterministic-and-des/README.md) - Next: [V12/C05 - Decision integration](../c05-decision-integration/README.md) - Sensitivity run: [checkout-sensitivity.json](../../../../edition/v12/\u2026"
+        },
+        {
+          "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-candidate-mapping",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/decision-records-and-pattern-links.md",
+          "heading": "The candidate mapping",
+          "excerpt": "The checkout decision links three candidates: - A: timeout and load shedding; - B: bounded queue, retry with exponential backoff and bulkhead; - C: horizontal scaling and bulkhead. The owner pages are in V02 and V07. The decision record\u2026"
+        }
+      ],
+      "answer": "The checkout engine models queue-and-resource behaviour - capacity, utilization and finite-window measurement over a queue plus a server pool - and the decision candidates exercise the resource controls: A timeout and load shedding; B a bounded queue with retry using exponential backoff plus a bulkhead; C horizontal scaling plus a bulkhead. The worked comparison reports per-candidate results for an offered load of 20 against a capacity of 24 for checkouts A, B and C. The excerpts do not name an explicit queue discipline (for example FIFO or priority ordering), so only the resource-control side of the question is supported here.",
+      "citations": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-candidate-mapping",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route"
+      ],
+      "abstain": false
+    },
+    {
+      "task_id": "OFF-00",
+      "split": "offtopic",
+      "question": "How do I bake a chocolate cake?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-01",
+      "split": "offtopic",
+      "question": "What is the best way to train a puppy?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-02",
+      "split": "offtopic",
+      "question": "How do I fix a flat bicycle tire?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-03",
+      "split": "offtopic",
+      "question": "What causes volcanoes?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-04",
+      "split": "offtopic",
+      "question": "How do I learn the violin?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-05",
+      "split": "offtopic",
+      "question": "What is the capital of Brazil?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-06",
+      "split": "offtopic",
+      "question": "How do I grow tomatoes?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-07",
+      "split": "offtopic",
+      "question": "What is the history of cinema?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-08",
+      "split": "offtopic",
+      "question": "How do I make soap at home?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    },
+    {
+      "task_id": "OFF-09",
+      "split": "offtopic",
+      "question": "What is the best way to learn swimming?",
+      "evidence": [],
+      "answer": "Insufficient evidence: no evidence sections were supplied for this question, so it cannot be answered from the provided sources.",
+      "citations": [],
+      "abstain": true
+    }
+  ]
+}
