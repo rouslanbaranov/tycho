@@ -68,12 +68,16 @@ across replicas?
 requests; a replica can satisfy a token-aware read or the router can wait or reroute. Cosmos DB
 scopes the guarantee "within a single client session" and returns an updated session token
 after each write. Read-your-writes and monotonic reads are per-process properties; Jepsen
-scopes its session guarantees to a process. **Tycho condition:** name the observation set
-(read-your-writes, monotonic reads or both), token lifetime and the failure callers receive
-before the first routed read.
+scopes its session guarantees to a process. **Tycho condition:** name the guarantee set per
+session (read-your-writes, monotonic reads, monotonic writes, writes-follow-reads) and test
+each independently; also name token lifetime and the failure callers receive before the first
+routed read.
 
 **Hard contraindications.** Reject when global linearizability is required, when sessions
-cannot be maintained, or when failover loses session state. Cosmos session tokens are
+cannot be maintained, or when the required relation cannot be established. After client
+recreation or failover, rebuild the requirement from durable state or narrow the guarantee;
+an epoch or lineage field is required before a token may cross a leadership change. Cosmos
+session tokens are
 "partition-bound", and a re-created client cache begins without them. **Tycho rule:** a sticky
 route or a token that cannot survive failover is not a session guarantee.
 
@@ -82,18 +86,23 @@ contract. With majority reads and writes MongoDB's causally consistent session p
 own writes", "Monotonic reads", "Monotonic writes" and "Writes follow reads". Linearizable
 reads are the strongest alternative. Jepsen notes that "All models at or stronger than read
 your writes can be at most sticky available." **Tycho choice rule:** use session consistency
-when per-client continuity is the requirement, causal consistency when cross-client
-dependencies travel, and linearizable reads when one latest state is required. Reverse when
-routing or failover cost exceeds the user-visible benefit.
+when per-client continuity is the requirement and token-aware routing is cheaper than global
+coordination; causal consistency when cross-client dependencies travel; linearizable reads
+when one latest state is required.
+`{ w: 1 }` can roll back, so durability needs majority reads and writes. Reverse when token
+propagation or failover cost exceeds the user-visible benefit, or when the weaker view cannot
+be explained to the user.
 
-**Failure and recovery.** Token loss, server switching and multiwriter frontiers are common.
+**Failure and recovery.** Token loss, server switching and multiwriter frontiers are possible.
 MongoDB shows that majority reads and writes keep causal guarantees "even in circumstances
 (such as with a network partition) where two members in a replica set transiently believe that
 they are the primary"; weaker write concern may roll back. Cosmos retries another replica when
 the replica lacks the session's data, and returns the latest version when an old token meets
-newer data. Preserve the token across failover, bound waits, and return a retryable failure
-rather than serving an older snapshot. **Tycho runbook:** validate token scope, rebuild it
-after client recreation, and never collapse a multiwriter frontier into one scalar.
+newer data. Validate and preserve the token only when its epoch or lineage is comparable,
+bound waits, and return a retryable failure rather than serving an older snapshot.
+**Tycho runbook:** validate token scope and epoch, rebuild the requirement from durable state
+after client recreation or failover (or narrow the guarantee), and never collapse a
+multiwriter frontier into one scalar.
 
 **Technical owner.** [Session Consistency](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md#session-consistency) — session consistency is bounded, not a complete client-session protocol.
 

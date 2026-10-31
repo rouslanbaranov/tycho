@@ -11171,6 +11171,13 @@
               "section": "Session consistency",
               "quote": "the client retries the request against another replica in the region.",
               "revision": "2e1f621cf3345f8c2f85d042666f810369827f00bdfda1f139da6acfb7c2661e"
+            },
+            {
+              "source_id": "src.azure-cosmos-consistency",
+              "ledger_record": "read.azure-cosmos-consistency.2026-10-31",
+              "section": "Session consistency",
+              "quote": "if the client is re-created, its cache of session tokens is also re-created",
+              "revision": "2e1f621cf3345f8c2f85d042666f810369827f00bdfda1f139da6acfb7c2661e"
             }
           ]
         },
@@ -11199,7 +11206,7 @@
       "decision_evidence": {
         "atlas_section": "session-consistency",
         "question": "Should one client session preserve selected read/write observations across replicas?",
-        "competing_alternative": "**Tycho comparison:** causal consistency is the stronger adjacent contract. With majority reads and writes MongoDB's causally consistent session provides \"Read own writes\", \"Monotonic reads\", \"Monotonic writes\" and \"Writes follow reads\". Linearizable reads are the strongest alternative. Jepsen notes that \"All models at or stronger than read your writes can be at most sticky available.\" **Tycho choice rule:** use session consistency when per-client continuity is the requirement, causal consistency when cross-client dependencies travel, and linearizable reads when one latest state is required. Reverse when routing or failover cost exceeds the user-visible benefit.",
+        "competing_alternative": "**Tycho comparison:** causal consistency is the stronger adjacent contract. With majority reads and writes MongoDB's causally consistent session provides \"Read own writes\", \"Monotonic reads\", \"Monotonic writes\" and \"Writes follow reads\". Linearizable reads are the strongest alternative. Jepsen notes that \"All models at or stronger than read your writes can be at most sticky available.\" **Tycho choice rule:** use session consistency when per-client continuity is the requirement and token-aware routing is cheaper than global coordination; causal consistency when cross-client dependencies travel; linearizable reads when one latest state is required. `{ w: 1 }` can roll back, so durability needs majority reads and writes. Reverse when token propagation or failover cost exceeds the user-visible benefit, or when the weaker view cannot be explained to the user.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
