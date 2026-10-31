@@ -58,12 +58,12 @@ Atlas split on v5, 10/5/1:
 | Mode | P@5 | R@5 | NDCG@5 |
 |---|---:|---:|---:|
 | global | .220 | .276 | .482 |
-| explicit volume=v11 | **.487** | **.593** | **.818** |
+| explicit volume=atlas | **.487** | **.593** | **.818** |
 
 Decision:
 
-- do not make volume=v11 mandatory globally;
-- use explicit volume=v11 for the atlas path;
+- do not make volume=atlas mandatory globally;
+- use explicit volume=atlas for the atlas path;
 - keep automatic routing rejected.
 
 ## Decision

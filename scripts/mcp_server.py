@@ -263,7 +263,8 @@ def search_schema():
             },
             "volume": {
                 "type": "string",
-                "description": "Optional volume filter, for example v12.",
+                "description": ("Optional volume filter; use atlas for the "
+                                "explicit atlas layer, or v12."),
             },
             "pattern_ids": {
                 "type": "array",

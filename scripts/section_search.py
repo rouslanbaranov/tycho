@@ -92,6 +92,11 @@ def _cache_put(key, value):
             _QUERY_CACHE.popitem(last=False)
 
 
+def normalize_volume(value):
+    """Map user-facing atlas layer name to the indexed volume code."""
+    return "v11" if value == "atlas" else value
+
+
 def bm25_weights():
     raw = os.environ.get("TYCHO_BM25_WEIGHTS", "10,5,1")
     try:
@@ -738,6 +743,7 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
                         ("volume", volume)):
         _require(value is None or (isinstance(value, str) and value),
                  name + " filter must be a non-empty string")
+    volume = normalize_volume(volume)
     prefix = None if path_prefix is None else path_prefix_pattern(path_prefix)
     db, manifest = open_snapshot(root, index_path)
     cache_key = _query_cache_key(

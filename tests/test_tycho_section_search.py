@@ -481,6 +481,11 @@ class SearchTests(unittest.TestCase):
         self.assertNotEqual(key,
                             section_search._query_cache_key(*changed_weights))
 
+    def test_atlas_volume_alias(self):
+        self.assertEqual(section_search.normalize_volume("atlas"), "v11")
+        self.assertEqual(section_search.normalize_volume("v11"), "v11")
+        self.assertEqual(section_search.normalize_volume(None), None)
+
     def test_bm25_weights_are_bounded(self):
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop("TYCHO_BM25_WEIGHTS", None)
