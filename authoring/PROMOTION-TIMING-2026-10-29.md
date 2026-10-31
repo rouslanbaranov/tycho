@@ -28,9 +28,9 @@ research has been 60-120 minutes.
 
 ## Remaining estimate
 
-Current: 64 sufficient of 145; 7 owner-accepted of 64.
+Current: 65 sufficient of 145; 7 owner-accepted of 65.
 
-Remaining to 145: 81 entries. All 44 observed entries run 6-388 minutes (mean 50.7),
+Remaining to 145: 80 entries. All 45 observed entries run 6-388 minutes (mean 50.3),
 including pre-optimization entries and review/remediation outliers. Using tiered
 estimates calibrated to that mean gives 37-79 focused hours, or
 **4.6-9.8 days of continuous work**. Base is **6.3 days**. The dominant cost is the
@@ -83,8 +83,8 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ![Promotion forecast](promotion-forecast-2026-10-30.svg)
 
-Remaining tiers at 64 sufficient: 1 entry 4/4, 4 entries 3/4,
-28 entries 2/4, 22 entries 1/4, 26 entries 0/4. Continuous-day
+Remaining tiers at 65 sufficient: 1 entry 4/4, 4 entries 3/4,
+27 entries 2/4, 22 entries 1/4, 26 entries 0/4. Continuous-day
 scenarios: optimistic **4.6**, base **6.3**, pessimistic **9.8**.
 Base assumes 50/45/52/28/22 minutes by tier, calibrated to the all-entry mean. Data:
 `authoring/promotion-forecast-2026-10-30.json`; chart:
