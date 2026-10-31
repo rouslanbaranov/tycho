@@ -6735,62 +6735,260 @@
         "heading": "4. Negative caching and evicted authorization",
         "anchor": "4-negative-caching-and-evicted-authorization",
         "level": 2,
-        "line": 49,
+        "line": 58,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Negative caching and evicted authorization",
-          "Caching an absent result",
-          "cached not-found",
-          "TTL/backoff with a bounded denial"
+          "negative results",
+          "Bound reuse",
+          "revocation deadline"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "Caching an absent result can protect against repeated misses for nonexistent IDs. But it creates a freshness question: if a new object is created, a cached not-found may hide it.",
-          "reason": "Explains what negative caching does and its freshness exposure.",
+          "quote": "Caching an absent result can protect against repeated misses for nonexistent IDs. It also creates a freshness question: if a new object is created, a cached not-found may hide it.",
+          "reason": "RFC 9111 permits storing negative results inside its storage rules; CloudFront caches 4xx/5xx by status and origin headers; Cloudflare sets per-status TTLs. The policy reading is Tycho.",
           "binding": {
-            "source_id": "src.google-cdn-negative-caching",
-            "ledger_record": "read.batch3-google-negative.2026-10-21",
-            "section": "Use negative caching",
-            "quote": "Negative caching lets you set a different time to live (TTL) for each status code. The reason to do this is to apply fine-grained control over caching for common errors or redirects. This can reduce the load on your origins and improve the end-user experience by reducing response latency.",
-            "revision": "a8965b0a185de2ca1f52a47fafa7c8db5660222ea2016910bb93297cc1596f70"
-          }
+            "source_id": "src.rfc9111-enrichment",
+            "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+            "section": "2. Overview of Cache Operation",
+            "quote": "However, it is also possible to store redirects, negative results (e.g., 404 (Not Found)), incomplete results (e.g., 206 (Partial Content)), and responses to methods other than GET if the method's definition allows such caching and defines something suitable for use as a cache key.",
+            "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+              "section": "4.2.2. Calculating Heuristic Freshness",
+              "quote": "a cache MAY assign a heuristic expiration time when an explicit time is not specified",
+              "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+              "section": "HTTP 4xx and 5xx status codes that CloudFront caches",
+              "quote": "CloudFront caches HTTP 4xx and 5xx status codes returned by your origin, depending on the specific status code that is returned and whether your origin returns specific headers in the response.",
+              "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+            },
+            {
+              "source_id": "src.cloudflare-cache-status",
+              "ledger_record": "read.cloudflare-cache-status.2026-10-31",
+              "section": "Edge TTL",
+              "quote": "All other status codes are not cached by default.",
+              "revision": "7d9efa9b923873fc6f97994a83d1f104b8450a40650a0ed7ba56ad366a01fff3"
+            },
+            {
+              "source_id": "src.google-cdn-negative-caching",
+              "ledger_record": "read.batch3-google-negative.2026-10-21",
+              "section": "Use negative caching",
+              "quote": "Negative caching lets you set a different time to live (TTL) for each status code. The reason to do this is to apply fine-grained control over caching for common errors or redirects. This can reduce the load on your origins and improve the end-user experience by reducing response latency.",
+              "revision": "a8965b0a185de2ca1f52a47fafa7c8db5660222ea2016910bb93297cc1596f70"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A cached negative must never become a universal statement that an object does not exist for all authorized principals if visibility varies by principal or tenant.",
-          "reason": "Source describes per-status-code TTLs, not principal/tenant visibility scoping."
+          "reason": "OWASP binds a decision to subject, action, resource, tenant and context and limits cache reuse to the same scope and freshness; RFC 9111 requires a cache key and restricts shared-cache reuse of Authorization-bearing responses; CloudFront caches 403 only with origin Cache-Control.",
+          "binding": {
+            "source_id": "src.owasp-authorization-decisions",
+            "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+            "section": "Security Considerations",
+            "quote": "Cache only for the same subject, action, resource scope, tenant, and relevant policy/input state, within the approved freshness limit.",
+            "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.owasp-authorization-decisions",
+              "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+              "section": "Single and Batch Decisions",
+              "quote": "Bind each decision to the authenticated subject, action, resource, tenant, and relevant context.",
+              "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+            },
+            {
+              "source_id": "src.owasp-authorization-decisions",
+              "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+              "section": "Single and Batch Decisions",
+              "quote": "Do not apply one item's permit to the entire batch.",
+              "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+            },
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+              "section": "3.5. Storing Responses to Authenticated Requests",
+              "quote": "A shared cache MUST NOT use a cached response to a request with an Authorization header field (Section 11.6.2 of [HTTP]) to satisfy any subsequent request unless the response contains a Cache-Control field with a response directive (Section 5.2.2) that allows it to be stored by a shared cache",
+              "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+            },
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+              "section": "7.2. Timing Attacks",
+              "quote": "This is sometimes called \"double keying\".",
+              "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+              "section": "HTTP 4xx status codes that CloudFront caches based on Cache-Control headers",
+              "quote": "CloudFront only caches the following HTTP 4xx status codes returned by your origin if your origin returns a Cache-Control max-age or Cache-Control s-maxage header.",
+              "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A stale *allow* or *deny* decision can have more serious authorization consequences than an old description.",
-          "reason": "Source does not address stale allow/deny authorization decisions."
+          "state": "supported",
+          "quote": "A cached denial can outlive a grant or a revocation.",
+          "reason": "OWASP states that a cached permit must not outlive a revocation deadline and prescribes recheck and fail-closed behavior; CloudFront retries after its 10-second default error TTL; RFC 9111 prohibits stale responses unless disconnected or explicitly permitted. No selected unit tests a revocation path.",
+          "binding": {
+            "source_id": "src.owasp-authorization-decisions",
+            "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+            "section": "Security Considerations",
+            "quote": "Account for changes between evaluation and use; a cached permit must not outlive a required revocation deadline.",
+            "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.owasp-authorization-decisions",
+              "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+              "section": "Retrieve Authorized Resource Identifiers",
+              "quote": "Recheck authorization for subsequent operations or when the relevant state changes.",
+              "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+            },
+            {
+              "source_id": "src.owasp-authorization-decisions",
+              "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+              "section": "Security Considerations",
+              "quote": "Verify integrations with permitted and denied resources, tenant boundaries, each explicit filter result kind, incomplete batches or lists, and PDP failure.",
+              "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+            },
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+              "section": "4.2.4. Serving Stale Responses",
+              "quote": "A cache MUST NOT generate a stale response unless it is disconnected or doing so is explicitly permitted by the client or origin server",
+              "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+              "section": "How CloudFront processes errors if you haven't configured custom error pages",
+              "quote": "The amount of time specified by the error caching minimum TTL (10 seconds by default)",
+              "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+              "section": "How CloudFront processes errors if you haven't configured custom error pages",
+              "quote": "CloudFront continues to retry at intervals specified by the error caching minimum TTL.",
+              "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+              "section": "How CloudFront processes errors if you haven't configured custom error pages",
+              "quote": "If your origin returns a 5xx error code, CloudFront serves the object even though it has expired.",
+              "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "otherwise use a short TTL, bypass, or a per-principal key",
-          "reason": "Source offers TTL tuning and exclusion, not visibility-scoped alternatives."
+          "state": "supported",
+          "quote": "Per-principal keying, a short TTL and bypass are the three bounded alternatives.",
+          "reason": "Cloudflare defines per-status TTL and no-store/no-cache controls and a 3-minute default for 404/410; OWASP limits cache reuse to the same decision scope; RFC 9111 documents double keying and shared-cache Authorization rules. The choice rule is Tycho.",
+          "binding": {
+            "source_id": "src.cloudflare-cache-status",
+            "ledger_record": "read.cloudflare-cache-status.2026-10-31",
+            "section": "Syntax",
+            "quote": "An integer value that defines the duration an asset is valid in seconds or one of the following strings: no-store (equivalent to -1), no-cache (equivalent to 0).",
+            "revision": "7d9efa9b923873fc6f97994a83d1f104b8450a40650a0ed7ba56ad366a01fff3"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cloudflare-cache-status",
+              "ledger_record": "read.cloudflare-cache-status.2026-10-31",
+              "section": "Introduction",
+              "quote": "Customers can set cache time-to-live (TTL) based on the response status from the origin web server.",
+              "revision": "7d9efa9b923873fc6f97994a83d1f104b8450a40650a0ed7ba56ad366a01fff3"
+            },
+            {
+              "source_id": "src.cloudflare-cache-status",
+              "ledger_record": "read.cloudflare-cache-status.2026-10-31",
+              "section": "Edge TTL",
+              "quote": "All other status codes are not cached by default.",
+              "revision": "7d9efa9b923873fc6f97994a83d1f104b8450a40650a0ed7ba56ad366a01fff3"
+            },
+            {
+              "source_id": "src.owasp-authorization-decisions",
+              "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+              "section": "Security Considerations",
+              "quote": "Cache only for the same subject, action, resource scope, tenant, and relevant policy/input state, within the approved freshness limit.",
+              "revision": "4b6082b65424b078937875bc1402e54606ec3b51bd3e576dbdff8f6e91388e2c"
+            },
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+              "section": "3.5. Storing Responses to Authenticated Requests",
+              "quote": "A shared cache MUST NOT use a cached response to a request with an Authorization header field (Section 11.6.2 of [HTTP]) to satisfy any subsequent request unless the response contains a Cache-Control field with a response directive (Section 5.2.2) that allows it to be stored by a shared cache",
+              "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+            },
+            {
+              "source_id": "src.rfc9111-enrichment",
+              "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+              "section": "7.2. Timing Attacks",
+              "quote": "This is sometimes called \"double keying\".",
+              "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+            },
+            {
+              "source_id": "src.cloudfront",
+              "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+              "section": "HTTP 4xx status codes that CloudFront caches based on Cache-Control headers",
+              "quote": "CloudFront only caches the following HTTP 4xx status codes returned by your origin if your origin returns a Cache-Control max-age or Cache-Control s-maxage header.",
+              "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "negative-caching",
         "question": "Should failures or empty results be cached like successful responses?",
-        "competing_alternative": "Bypass, a per-principal key, or a short TTL with backoff. Reverse when repeated misses amplify origin load.",
+        "competing_alternative": "A per-principal key, a short TTL, or bypass. OWASP says to \"Cache only for the same subject, action, resource scope, tenant, and relevant policy/input state, within the approved freshness limit\"; Cloudflare gives 404 and 410 a 3-minute default Edge TTL and says \"All other status codes are not cached by default.\" Reverse when repeated misses amplify origin load and the denial is global for the key.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-google-negative.2026-10-21",
-        "source_id": "src.google-cdn-negative-caching",
+        "ledger_record": "read.owasp-authorization-decisions.2026-10-31",
+        "source_id": "src.owasp-authorization-decisions",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "ledger_record": "read.rfc9111-negative-caching.2026-10-31",
+            "source_id": "src.rfc9111-enrichment",
+            "revision": "cb261a284f28ee5315280d2f8ee4be14d82e46ae55b91c755962f3b833db0538"
+          },
+          {
+            "ledger_record": "read.cloudfront-status-codes.2026-10-31",
+            "source_id": "src.cloudfront",
+            "revision": "c09ee9965aa05bae32a876195927e7e2cfa4d8aff5b073a0e18f7bad4c368993"
+          },
+          {
+            "ledger_record": "read.cloudflare-cache-status.2026-10-31",
+            "source_id": "src.cloudflare-cache-status",
+            "revision": "7d9efa9b923873fc6f97994a83d1f104b8450a40650a0ed7ba56ad366a01fff3"
+          },
+          {
+            "ledger_record": "read.batch3-google-negative.2026-10-21",
+            "source_id": "src.google-cdn-negative-caching",
+            "revision": "a8965b0a185de2ca1f52a47fafa7c8db5660222ea2016910bb93297cc1596f70"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Heading names the pattern; the section is a policy checklist, not an algorithm."
+      "notes": "Four dimensions bound 2026-10-31 to RFC 9111, CloudFront 4xx/5xx processing, OWASP authorization-decision reuse and Cloudflare status-code TTL; the RFC does not use the term negative caching, OWASP and Cloudflare do not define HTTP authorization caching, and no revocation path was tested; coverage is self-checked, not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.cache-stampede-protection",
@@ -17032,11 +17230,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 94,
-    "failure_recovery_supported": 89,
-    "alternative_supported": 94,
-    "technical_partial_bounded": 15,
-    "technical_partial": 53,
+    "invariant_supported": 95,
+    "failure_recovery_supported": 90,
+    "alternative_supported": 95,
+    "technical_partial_bounded": 16,
+    "technical_partial": 52,
     "technical_name_only": 0,
     "technical_sufficient": 77,
     "decision_partial_bounded": 68,

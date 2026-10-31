@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "bfcdfbaa7ce912e5aa6739644eb337873ade23b456c25fd7234e6a04d9bf2208",
-    "ledger_sha256": "246b7b6fb0dac59d5b0521166f8396d2a429e5718684317b6f76ce0811825bb1",
-    "card_batches_sha256": "e87fab9a01e2c70e8ae4444fbaa57333c6dd8b18d5e04fca043f339396662e4e",
-    "route_index_sha256": "99afe69b1244ba28ff2750fcdd88f18fffc13612b464760eda28a45b825b9a65",
-    "coverage_sha256": "59705c8fbb7d61f939ece6f2053da2baf6b5d33be1511bdb580874c9742ba0d4"
+    "registry_sha256": "47c0f1fe245a0f76935bbc63ba866fa266819c83c93ccb572b4737f6b65fe208",
+    "ledger_sha256": "eaf00e8945d853112a6862d53d5d60062e5bb38853ace45693e7f6989e24a362",
+    "card_batches_sha256": "c72636e1cf22b870c9bd608f9ab4c690e3ae2b7e308413055889f0c31930e45a",
+    "route_index_sha256": "b59a866a0b7930e4832be9ba7be04841c5ee021167c95d36e737a4bebf3a0d0f",
+    "coverage_sha256": "3fd5dfe9bf820121e3fac9da6ba7166372f8f3bd52628724d0777ef83c2527b5"
   },
   "dimensions": [
     "identity",
@@ -24,7 +24,7 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 515,
+    "pages": 516,
     "entries": 145,
     "cards": 145,
     "routes": 536,
@@ -3284,6 +3284,13 @@
       "reason": "V11 decision layer"
     },
     {
+      "document_id": "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac",
+      "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/negative-caching.md",
+      "kind": "page",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
       "document_id": "tycho.page.37ee8969c224c7b336487c02aff9149c",
       "path": "book/volumes/v11-pattern-atlas/c05-caching-retrieval/stale-while-revalidate.md",
       "kind": "page",
@@ -5951,11 +5958,11 @@
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial",
+        "technical_coverage": "partial-bounded",
         "decision_coverage": "partial-bounded"
       },
       "gaps": [
-        "technical-partial",
+        "technical-partial-bounded",
         "decision-partial-bounded",
         "independent-review-missing"
       ],
@@ -5971,18 +5978,18 @@
         "contraindications": "pass",
         "competing_alternative": "pass",
         "failure_recovery": "pass",
-        "technical_owner": "partial",
+        "technical_owner": "sufficient",
         "owner_anchor": "pass",
         "backlink": "pass",
         "source_ledger": "pass",
         "read_source": "pass",
         "decision_state": "pass",
-        "technical_coverage": "partial-bounded",
-        "decision_coverage": "partial-bounded"
+        "technical_coverage": "sufficient",
+        "decision_coverage": "sufficient"
       },
       "gaps": [
-        "technical-partial-bounded",
-        "decision-partial-bounded",
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ],
       "question": "Should data be backfilled while the system continues serving reads and writes?"
@@ -8571,19 +8578,6 @@
     },
     {
       "pattern_id": "tycho.pattern.negative-caching",
-      "technical": "partial",
-      "decision": "partial-bounded",
-      "overall": "partial",
-      "card": true,
-      "owner_state": "partial",
-      "gaps": [
-        "technical-partial",
-        "decision-partial-bounded",
-        "independent-review-missing"
-      ]
-    },
-    {
-      "pattern_id": "tycho.pattern.online-data-migration",
       "technical": "partial-bounded",
       "decision": "partial-bounded",
       "overall": "partial-bounded",
@@ -8592,6 +8586,19 @@
       "gaps": [
         "technical-partial-bounded",
         "decision-partial-bounded",
+        "independent-review-missing"
+      ]
+    },
+    {
+      "pattern_id": "tycho.pattern.online-data-migration",
+      "technical": "sufficient",
+      "decision": "sufficient",
+      "overall": "sufficient",
+      "card": true,
+      "owner_state": "sufficient",
+      "gaps": [
+        "technical-sufficient",
+        "decision-sufficient",
         "independent-review-missing"
       ]
     },

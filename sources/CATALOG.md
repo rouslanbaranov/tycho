@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 337.
+Inventory date: 2026-10-31. Entries: 339.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -244,6 +244,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.oauth-security / supporting | [Best Current Practice for OAuth 2.0 Security — RFC 9700](https://www.rfc-editor.org/rfc/rfc9700.html) — IETF | OAuth threat models and security guidance. | admitted-for-research / public-web-or-author-download |
 | src.nist-sp-800-162 / supporting | [Guide to Attribute Based Access Control (ABAC) Definition and Considerations](https://nvlpubs.nist.gov/nistpubs/specialpublications/nist.sp.800-162.pdf) — NIST | ABAC policy decision/enforcement points, policy administration and implementation considerations. | admitted-for-research / public-web-or-author-download |
 | src.openid-federation / supporting | [OpenID Federation 1.0](https://openid.net/specs/openid-federation-1_0.html) — OpenID Foundation | Federation trust anchors, Entity Statements, trust chains, metadata and key rollover. | admitted-for-research / public-web-or-author-download |
+| src.owasp-authorization-decisions / supporting | [Authorization Decisions and Output Handling Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Decisions_And_Output_Handling_Cheat_Sheet.html) — OWASP | Authorization-decision reuse bounds, revocation deadline and fail-closed guidance for the negative-caching entry. | admitted-for-research / public-web-or-author-download |
 
 ## Quality
 
@@ -321,6 +322,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.azure-cdn / core | [Azure Content Delivery Network documentation](https://learn.microsoft.com/en-us/azure/cdn/cdn-how-caching-works) — Microsoft Learn | Azure CDN cache-key, freshness, authorization and purge limits for the CDN / Edge Caching entry. | admitted-for-research / public-web-or-author-download |
 | src.cloudfront / core | [Amazon CloudFront Developer Guide](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/understanding-the-cache-key.html) — Amazon Web Services | CloudFront cache-key, Authorization-header, expiration and invalidation limits for the CDN / Edge Caching entry. | admitted-for-research / public-web-or-author-download |
 | src.aws-load-shedding / core | [Using load shedding to avoid overload](https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/) — Amazon Web Services | Load-shedding rejection, visibility, false-positive measurement and capacity response. | admitted-for-research / public-web-or-author-download |
+| src.cloudflare-cache-status / supporting | [Cache by status code](https://developers.cloudflare.com/cache/how-to/configure-cache-status-code/) — Cloudflare | Per-status Edge TTL defaults and TTL/no-store controls for the negative-caching alternative. | admitted-for-research / public-web-or-author-download |
 
 ## Implementations
 

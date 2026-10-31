@@ -39,17 +39,13 @@ evidence_scope:
     - "src.rfc9111-enrichment"
     - "src.mdn-cache-control"
     - "src.microsoft-cloud-patterns"
-    - "src.cloudfront"
-    - "src.cloudflare-cache-status"
-    - "src.owasp-authorization-decisions"
   claim_ids: []
   status: "source-linked"
   notes: >-
-    14 cards cite read units; owner links are bounded. Negative Caching binds
-    invariant, failure/recovery and alternative on 2026-10-31 to RFC 9111,
-    CloudFront status-code processing, OWASP authorization-decision guidance
-    and Cloudflare cache-by-status-code defaults; per-status TTL context is
-    retained from Google Cloud CDN.
+    14 cards cite read units; owner links are bounded. Negative Caching moved to
+    a dedicated page on 2026-10-31 with RFC 9111, CloudFront 4xx/5xx processing,
+    OWASP authorization-decision reuse guidance and Cloudflare status-code
+    defaults; the Google Cloud CDN per-status TTL example is retained.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -291,55 +287,7 @@ See the [dedicated TTL-Based Expiration card](ttl-based-expiration.md).
 
 ### Negative Caching
 
-**Identity.** Negative Caching; family Caching and retrieval; kind caching-pattern;
-priority core.
-
-**Decision question.** Should failures or empty results be cached like successful
-responses?
-
-**Good-fit conditions.** The failure is stable enough to cache; TTL is short; negative
-entries cannot hide a later valid result; status-specific policy exists. RFC 9111 allows
-"negative results (e.g., 404 (Not Found))" only inside its storage rules, and a shared
-cache must not reuse an authorization-bearing response unless a directive "allows it to
-be stored by a shared cache".
-
-**Hard contraindications.** Reject when failures are transient, when caching an error
-would hide recovery, or when negative entries leak existence or authorization. CloudFront
-caches a 403 only when the origin sends `Cache-Control max-age` or `Cache-Control
-s-maxage`, so a denial the origin does not explicitly mark cacheable is not a safe
-default.
-
-**Competing alternative.** A per-principal key, a short TTL, or bypass. OWASP says to
-"Cache only for the same subject, action, resource scope, tenant, and relevant
-policy/input state, within the approved freshness limit"; Cloudflare gives 404 and 410 a
-3-minute default Edge TTL and says "All other status codes are not cached by default."
-Reverse when repeated misses amplify origin load and the denial is global for the key.
-
-**Failure and recovery.** A cached denial can outlive a create/grant or leak across
-principals; scope keys by tenant/principal, delete or version on change, bound TTL and
-test revocation. OWASP states that "a cached permit must not outlive a required
-revocation deadline"; CloudFront's error-caching minimum TTL defaults to 10 seconds (the
-window is the larger of that minimum and any origin cache directive) and it "continues
-to retry at intervals".
-
-**Technical owner.** [Negative caching and discriminating experiments](../../v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md#4-negative-caching-and-evicted-authorization) — negative-cache policy is bounded, not a universal error-cache rule.
-
-**Sources.** Four public units were inspected on 2026-10-31:
-`src.rfc9111-enrichment`, `src.cloudfront`,
-`src.owasp-authorization-decisions` and `src.cloudflare-cache-status`
-([reading ledger](../../../../edition/patterns/reading-ledger.v1.json)).
-Records: `read.rfc9111-negative-caching.2026-10-31`,
-`read.cloudfront-status-codes.2026-10-31`,
-`read.owasp-authorization-decisions.2026-10-31` and
-`read.cloudflare-cache-status.2026-10-31`. The retained
-`src.google-cdn-negative-caching` record `read.batch3-google-negative.2026-10-21`
-supplies the per-status TTL example. These are protocol, documentation and
-guidance units, not benchmarks.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** TTL-Based Expiration; CDN / Edge Caching; Cache Invalidation; Cache
-Stampede Protection.
+See the [dedicated Negative Caching card](negative-caching.md).
 
 ### Cache Stampede Protection
 

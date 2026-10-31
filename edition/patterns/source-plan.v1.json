@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "b86bee50731a9a7f7dec49f59068e714ac5cab8603d7768834dca3463d6604da",
-  "route_index_snapshot": "f8ea960f3f86c70bac22705e51cd1b2be7d16df42b0fdde06535b87f2f0c2a05",
+  "registry_sha256": "47c0f1fe245a0f76935bbc63ba866fa266819c83c93ccb572b4737f6b65fe208",
+  "route_index_snapshot": "85f2fffd7be5574228bfde9b2c534014ff0e1479c30ce082998e471cd5082c57",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2699,6 +2699,72 @@
       "priority": "core",
       "required_units": [
         {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "RFC 9111 — HTTP Caching",
+          "unit_type": "specification",
+          "url": "https://www.rfc-editor.org/rfc/rfc9111.txt",
+          "sections": [
+            "2. Overview of Cache Operation",
+            "3. Storing Responses in Caches",
+            "3.5. Storing Responses to Authenticated Requests",
+            "4.2.2. Calculating Heuristic Freshness",
+            "4.2.4. Serving Stale Responses",
+            "7.2. Timing Attacks",
+            "7.3. Caching of Sensitive Information"
+          ],
+          "status": "read",
+          "read_record_id": "read.rfc9111-negative-caching.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "CloudFront — HTTP 4xx and 5xx status-code processing",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/HTTPStatusCodes.md",
+          "sections": [
+            "Introduction",
+            "HTTP 4xx and 5xx status codes that CloudFront caches",
+            "HTTP 4xx status codes that CloudFront caches based on Cache-Control headers",
+            "How CloudFront processes errors if you haven't configured custom error pages",
+            "How CloudFront processes errors if you have configured custom error pages"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudfront-status-codes.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.owasp-authorization-decisions",
+          "unit": "OWASP — Authorization Decisions and Output Handling Cheat Sheet",
+          "unit_type": "documentation-page",
+          "url": "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Decisions_And_Output_Handling_Cheat_Sheet.html",
+          "sections": [
+            "Introduction",
+            "Single and Batch Decisions",
+            "Enforcing Access to Collections",
+            "Retrieve Authorized Resource Identifiers",
+            "Security Considerations",
+            "References"
+          ],
+          "status": "read",
+          "read_record_id": "read.owasp-authorization-decisions.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudflare-cache-status",
+          "unit": "Cloudflare — Cache by status code",
+          "unit_type": "documentation-page",
+          "url": "https://developers.cloudflare.com/cache/how-to/configure-cache-status-code/",
+          "sections": [
+            "Introduction",
+            "Caching limits",
+            "Edge TTL",
+            "Syntax"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudflare-cache-status.2026-10-31",
+          "blocked_reason": null
+        },
+        {
           "source_id": "src.google-cdn-negative-caching",
           "unit": "Use negative caching — Google Cloud documentation",
           "unit_type": "documentation-page",
@@ -2721,7 +2787,7 @@
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public sources bound 2026-10-31: RFC 9111, CloudFront 4xx/5xx processing, OWASP authorization-decision reuse and Cloudflare status-code TTL. The Google per-status TTL example is retained. The protocol text does not use the term negative caching; OWASP and Cloudflare do not define HTTP authorization caching semantics."
     },
     {
       "pattern_id": "tycho.pattern.cache-stampede-protection",
@@ -7414,11 +7480,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 347,
-    "read_units": 346,
+    "required_units": 351,
+    "read_units": 350,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 307
+    "ledger_records": 311
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

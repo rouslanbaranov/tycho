@@ -3239,7 +3239,7 @@
         "document_id": "tycho.page.f077c7f124b54e2a8137cec267d9170a",
         "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/negative-cache.md",
         "anchor": "4-negative-caching-and-evicted-authorization",
-        "state": "partial"
+        "state": "partial-bounded"
       },
       "atlas_owner": {
         "chapter": "V11/C05",
@@ -3247,12 +3247,32 @@
         "state": "partial-bounded"
       },
       "coverage": {
-        "technical": "partial",
+        "technical": "partial-bounded",
         "decision": "partial-bounded",
-        "overall": "partial"
+        "overall": "partial-bounded"
       },
       "confidence": "high",
       "source_units": [
+        {
+          "source_id": "src.rfc9111-enrichment",
+          "unit": "RFC 9111 — HTTP Caching",
+          "status": "read"
+        },
+        {
+          "source_id": "src.cloudfront",
+          "unit": "CloudFront — HTTP 4xx and 5xx status-code processing",
+          "status": "read"
+        },
+        {
+          "source_id": "src.owasp-authorization-decisions",
+          "unit": "OWASP — Authorization Decisions and Output Handling Cheat Sheet",
+          "status": "read"
+        },
+        {
+          "source_id": "src.cloudflare-cache-status",
+          "unit": "Cloudflare — Cache by status code",
+          "status": "read"
+        },
         {
           "source_id": "src.google-cdn-negative-caching",
           "unit": "Use negative caching — Google Cloud documentation",
@@ -3260,7 +3280,7 @@
         }
       ],
       "review_status": "self-checked",
-      "notes": "Phase 3 C05 card; bounded owner section and backlink are self-checked, not independent-reviewed or sufficient."
+      "notes": "Negative Caching dedicated card; four dimensions bound 2026-10-31 to RFC 9111, CloudFront 4xx/5xx processing, OWASP authorization-decision reuse guidance and Cloudflare status-code TTL; the RFC does not use the term negative caching, OWASP and Cloudflare do not define HTTP authorization caching, and no revocation path was tested. Coverage remains partial-bounded and self-checked; promotion is not part of this lane."
     },
     {
       "id": "tycho.pattern.cache-stampede-protection",
