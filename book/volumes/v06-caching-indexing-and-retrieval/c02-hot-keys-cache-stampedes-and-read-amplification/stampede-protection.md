@@ -28,6 +28,11 @@ evidence_scope:
   source_ids:
     - "src.sre-cascading"
     - "src.redis"
+    - "src.cloudflare-cache-stampede"
+    - "src.aws-caching-challenges"
+    - "src.go-singleflight"
+    - "src.aws-ttl-jitter"
+    - "src.aws-per-cache-stampede"
   claim_ids: []
   status: "source-linked"
   notes: "Bounded question from tycho.page.e0f0d5b68f834acbae94cc6714895dd3; exact inherited citation rows and limits remain in the chapter source ledger. New synthetic additions are separately labelled."
@@ -38,7 +43,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-20"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 # Stampedes and source protection
@@ -212,39 +217,40 @@ certified behavior.
 **Source boundary.** Public documentation and articles, accessed 2026-10-31. No cache, lock,
 lease, coalescing or load test was executed. Quotes are short excerpts; line breaks are
 editorial wrapping and whitespace is normalized. New source ids and ledger records are
-proposed in the B52 lane note and are not added to the shared register by this lane.
-Tycho-labelled sentences are synthesis, not source claims.
+registered in the shared source register and reading ledger by the B52 integration; they
+remain bounded evidence, not benchmarks. Tycho-labelled sentences are synthesis, not source
+claims.
 
 - Cloudflare, *Sometimes I cache: implementing lock-free probabilistic caching*; published
   2024-12-26, modified 2026-07-30; canonical text SHA-256
   `1095c942825ca57d17f82796398957e8dfa6fac01eb7fe2c0a47b52752220a19`; raw HTML
   SHA-256 `b95a03f213e8ab798292b1680a0bec71ee0e9ff242b94e7816616438e1935649`;
-  record `read.cloudflare-sometimes-i-cache.2026-10-31` proposed.
+  record `read.cloudflare-sometimes-i-cache.2026-10-31`.
 - AWS Builders' Library, *Caching challenges and strategies*; published and last modified
   2019-12-05; canonical text SHA-256
   `55f310713a99dd8282b6e4e569538462793e6387a3c1ca6251a6aa1c42e739a1`; raw HTML
   SHA-256 `874cf4ac6ee84772dc37446ec34e41d8adc076a32a3f8c8e5468c9fd50587759`;
-  record `read.aws-caching-challenges.2026-10-31` proposed.
+  record `read.aws-caching-challenges.2026-10-31`.
 - Redis documentation, *Distributed Locks with Redis*; Last-Modified 2026-10-30;
   canonical text SHA-256
   `628a3026cdbad3121deb6f604d43f9e01317db9d0f7bb74f9ea4e1524291bb17`; raw HTML
   SHA-256 `b96df057bbf4b9d2a321d47c3a319fe796b8705bb56ee5e62a819679d1d01ec7`;
-  record `read.redis-distributed-locks.2026-10-31` proposed under `src.redis`.
+  record `read.redis-distributed-locks.2026-10-31` under `src.redis`.
 - Go documentation, *singleflight package*; version v0.24.0; page published 2026-09-23;
   canonical text SHA-256
   `a3810adc75c789bbe3c59a2aa1ca627bcdedfc9962703c444234a99f225762c4`; raw HTML
   SHA-256 `ad466f6794e6bf6e5abf197636ca6db4fbbf270e45e6fbc798914aff4dd50c55`;
-  record `read.go-singleflight.2026-10-31` proposed under `src.go-singleflight`.
+  record `read.go-singleflight.2026-10-31` under `src.go-singleflight`.
 - AWS Builder Center, *Database Caching on AWS with Valkey: A Developer's Guide*;
   published and last modified 2026-03-27; canonical text SHA-256
   `75b455cb1f36e9b17d840a5e20cacf68d56bd6a2d65e334098f3196d3451df07`; raw HTML
   SHA-256 `74a56d3425c6cda548bf924c4249af84525b5aa4b4f730159032c61b3e25f093`;
-  record `read.aws-valkey-ttl-jitter.2026-10-31` proposed under `src.aws-ttl-jitter`.
+  record `read.aws-valkey-ttl-jitter.2026-10-31` under `src.aws-ttl-jitter`.
 - AWS Builder Center community article (Portuguese), *Resiliência Extrema em Camadas de
   Acesso a Dados*; published and last modified 2026-06-17; canonical text SHA-256
   `631905b81459a0deb70c8c675b4ae76b68a9f41cd23fb0e6bb6472e77e7a0c0f`; raw HTML
   SHA-256 `9625cea708d39110ef1d16fe95d9138efc6a4fec3066a177ec403c7fe5d7dbd8`;
-  record `read.aws-community-per.2026-10-31` proposed under
+  record `read.aws-community-per.2026-10-31` under
   `src.aws-per-cache-stampede`; community content, not AWS documentation.
 
 ### Single Flight-Request Coalescing

@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 52 |
+| Reviewed by independent agent | 50 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 83, "reviewed-by-independent-agent": 52}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 85, "reviewed-by-independent-agent": 50}.
 
 ## Review procedure
 
@@ -91,7 +91,7 @@ blank verdict template in the machine-readable file.
 
 - **Cache Stampede Protection**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Cache-Aside / Lazy Loading**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -527,7 +527,7 @@ blank verdict template in the machine-readable file.
 
 - **Single Flight / Request Coalescing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **SLI/SLO and Error Budgets**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

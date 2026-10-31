@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 310.
+Inventory date: 2026-10-31. Entries: 315.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -160,6 +160,11 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.memcached / supporting | [Memcached Documentation](https://docs.memcached.org/) — Memcached | Cache client/server responsibilities and invalidation. | admitted-for-research / public-web-or-author-download |
 | src.mdn-cache-control / core | [Cache-Control header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cache-Control) — Mozilla | Cache-Control directive semantics for stale-while-revalidate, including the bounded reuse period and the return to normal revalidation. | admitted-for-research / public-web-or-author-download |
 | src.aws-caching-guidance / core | [AWS Well-Architected caching guidance](https://docs.aws.amazon.com/wellarchitected/latest/performance-efficiency-pillar/perf_data_access_patterns_caching.html) — Amazon Web Services | Client-side, remote and multi-level caching latency/consistency trade-offs and TTL invalidation for the Multi-Level Caching entry. | admitted-for-research / public-web-or-author-download |
+| src.cloudflare-cache-stampede / core | [Sometimes I cache: implementing lock-free probabilistic caching](https://blog.cloudflare.com/sometimes-i-cache/) — Cloudflare | Cache-stampede mechanism, cache-lock unavailability and probabilistic early expiration for the cache-stampede-protection owner unit. | admitted-for-research / public-web-or-author-download |
+| src.aws-caching-challenges / core | [Caching challenges and strategies](https://aws.amazon.com/builders-library/caching-challenges-and-strategies/) — AWS Builders' Library | Thundering-herd and request-coalescing definitions for the cache-stampede-protection owner unit. | admitted-for-research / public-web-or-author-download |
+| src.go-singleflight / supporting | [singleflight package — Go Packages](https://pkg.go.dev/golang.org/x/sync/singleflight) — Go project (golang.org/x/sync) | In-process one-in-flight-execution and waiter semantics for the cache-stampede-protection owner unit. | admitted-for-research / public-web-or-author-download |
+| src.aws-ttl-jitter / supporting | [Database Caching on AWS with Valkey: A Developer's Guide](https://builder.aws.com/content/3BX14CsK2OwUkAjyscUT0ApbBIu) — AWS Builder Center (AWS employee article) | TTL-jitter alternative and thundering-herd framing for the cache-stampede-protection owner unit. | admitted-for-research / public-web-or-author-download |
+| src.aws-per-cache-stampede / supporting | [Resiliência Extrema em Camadas de Acesso a Dados: Mitigando Cache Stampede com Amazon ElastiCache e Probabilistic Early Expiration](https://builder.aws.com/content/3Eom8qVfc73P2fGNUks4d4HqWge) — AWS Builder Center community | Bounded community XFetch example for the cache-stampede-protection alternative; not AWS documentation. | admitted-for-research / public-web-or-author-download |
 
 ## Search
 

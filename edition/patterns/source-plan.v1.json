@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "4365597785d51de6384885f0cbe5aec32db95cce1ee01453253b378e0415e89c",
-  "route_index_snapshot": "07939cdd820d391f2bb52d64379fa4472002d1e01b86aaf1b9ec9d1ececf10ca",
+  "registry_sha256": "517da3562ed05005cc7b3467acbb2091cdd2bece203f6d64128e9cfaca11d942",
+  "route_index_snapshot": "dc1ce120f238c15ec8b216891499ac779cc024e74a857902cbe0fe384c01dc72",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -2668,9 +2668,127 @@
           "status": "read",
           "read_record_id": "read.batch3-ms-caching.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.cloudflare-cache-stampede",
+          "unit": "Sometimes I cache: implementing lock-free probabilistic caching — Cloudflare Blog",
+          "unit_type": "engineering-article",
+          "url": "https://blog.cloudflare.com/sometimes-i-cache/",
+          "sections": [
+            "Background",
+            "Setup",
+            "Expectation about cache revalidation",
+            "The usual solution: a cache lock",
+            "First dive into probabilities given a stable request rate",
+            "Adaptive cache revalidation",
+            "Optimal cache stampede solution",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.cloudflare-sometimes-i-cache.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-caching-challenges",
+          "unit": "Caching challenges and strategies — AWS Builders' Library",
+          "unit_type": "engineering-article",
+          "url": "https://aws.amazon.com/builders-library/caching-challenges-and-strategies/",
+          "sections": [
+            "The ecstasy and the agony of caches",
+            "When we use caching",
+            "Local caches",
+            "External caches",
+            "Inline vs. side caches",
+            "Cache expiration",
+            "Other considerations",
+            "Amazon best practices and considerations"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-caching-challenges.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.redis",
+          "unit": "Distributed Locks with Redis — Redis documentation",
+          "unit_type": "documentation-page",
+          "url": "https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/",
+          "sections": [
+            "Safety and Liveness Guarantees",
+            "Why Failover-based Implementations Are Not Enough",
+            "Correct Implementation with a Single Instance",
+            "The Redlock Algorithm",
+            "Disclaimer about consistency",
+            "Analysis of Redlock"
+          ],
+          "status": "read",
+          "read_record_id": "read.redis-distributed-locks.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.go-singleflight",
+          "unit": "singleflight package — Go Packages",
+          "unit_type": "documentation-page",
+          "url": "https://pkg.go.dev/golang.org/x/sync/singleflight",
+          "sections": [
+            "Overview",
+            "type Group",
+            "func (*Group) Do",
+            "func (*Group) DoChan",
+            "func (*Group) Forget",
+            "type Result",
+            "Example"
+          ],
+          "status": "read",
+          "read_record_id": "read.go-singleflight.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-ttl-jitter",
+          "unit": "Database Caching on AWS with Valkey: A Developer's Guide — AWS Builder Center",
+          "unit_type": "article",
+          "url": "https://builder.aws.com/content/3BX14CsK2OwUkAjyscUT0ApbBIu",
+          "sections": [
+            "TL;DR",
+            "Why Caching?",
+            "The Two Patterns You Actually Need",
+            "Cache-Aside",
+            "Write-Through",
+            "So, what's the downside?",
+            "Serialization Overhead",
+            "TTL: The Goldilocks Problem",
+            "Cache Invalidation",
+            "Thundering Herd (and TTL Jitter)",
+            "Multi-Tier Caching with Moka",
+            "Valkey on AWS",
+            "Wrapping Up"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-valkey-ttl-jitter.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-per-cache-stampede",
+          "unit": "Resiliência Extrema em Camadas de Acesso a Dados: Mitigando Cache Stampede com Amazon ElastiCache e Probabilistic Early Expiration — AWS Builder Center",
+          "unit_type": "article",
+          "url": "https://builder.aws.com/content/3Eom8qVfc73P2fGNUks4d4HqWge",
+          "sections": [
+            "abstract",
+            "Pré-requisitos",
+            "Passo a Passo",
+            "Provisionamento Determinístico do Amazon ElastiCache",
+            "O Colapso do Cache Miss e Bloqueios Distribuídos (Mutex)",
+            "Latência Constante com Probabilistic Early Expiration (XFetch)",
+            "Invalidação Reativa e Desacoplamento Orientado a Eventos",
+            "Solução de Problemas Comuns",
+            "Conclusão",
+            "Referências and footer"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-community-per.2026-10-31",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Batch 3 public unit read; four technical dimensions bound 2026-10-31 to Cloudflare, AWS Builders' Library, Redis, Go singleflight, AWS TTL jitter and a bounded AWS Builder Center community XFetch article; no runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.single-flight-request-coalescing",
@@ -6593,11 +6711,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 295,
-    "read_units": 294,
+    "required_units": 301,
+    "read_units": 300,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 247
+    "ledger_records": 253
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

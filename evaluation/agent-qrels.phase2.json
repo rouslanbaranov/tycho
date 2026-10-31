@@ -152,14 +152,14 @@
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "A stampede policy must bound concurrent origin loads per key and total source work, and stale-while-revalidate is only valid when the operation accepts the stale value. An expired lease can release a second refresh while the first is still writing; jittered TTLs do not protect one extremely hot key.",
-          "rationale": "Per-key bound, lease hazards and the single hot-key limit."
+          "quote": "Tycho's rule: coalesce or lease refreshes per key, cap total source admission, and make the wait/reject/declared-stale choice explicit. Stale-while-revalidate is valid only when the operation accepts the stale value. A per-process singleflight is not a global bound: every replica can still load the same key in parallel.",
+          "rationale": "Per-key bound, stale acceptance and the non-global singleflight limit."
         },
         {
           "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Jittered TTL is a competing technique for simultaneous expiry of *different* keys; one extremely hot key can still stampede. A distributed refresh lease or request coalescing is preferable when one key dominates and stale data is acceptable for the operation.",
-          "rationale": "Coalescing/lease preferred for one dominating key."
+          "quote": "Tycho's choice rule: use probabilistic early expiration when occasional extra origin loads are acceptable and no coordination service is wanted; use jittered TTL when many different keys expire together, recognizing that one extremely hot key can still stampede; use a distributed lease or request coalescing when one key dominates and duplicate loads are unacceptable; reverse the choice when coordination latency and failure outweigh source protection.",
+          "rationale": "Jitter cannot protect one hot key; a distributed lease or coalescing is preferred when one key dominates."
         }
       ],
       "adjudication": "confirmed",
