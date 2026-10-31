@@ -1,0 +1,367 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q001",
+      "question": "What did Netflix\u2019s Chaos Kong regional simulation leave outside the tested failure envelope?",
+      "layer_expected": "book",
+      "answer": "Chaos Kong was an application-level regional outage simulation: it did not actually switch off the AWS region or all AWS infrastructure. Its passing result therefore covers only the traffic and dependencies the experiment actually redirected or suppressed. Left outside that tested envelope were failures of globally shared identity, cross-region control planes and durable datastores; provider-side metadata/storage/control-plane faults; provider-level DNS, external credentials and unrelated managed services; existing sessions, in-flight writes and other global dependencies; and simultaneous promotion creating conflicting writes. The source also does not publish Netflix's complete write-ownership mechanics or proof that no writes were lost, so it cannot support a claim that a real whole-region outage cannot affect customers.",
+      "citations": [
+        "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+        "tycho.page.b256d263efff488c8cf549e116be9683#alternatives-counterexamples-and-failure-criteria"
+      ],
+      "required_evidence": [
+        "tycho.chapter.30e63461f024419ab87cd012b140c600#decision-and-worked-result",
+        "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#applied-m9-evidence-what-transfers-and-what-does-not",
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks",
+        "tycho.page.6b3725950fad4c0db82417b3d0225d32#purpose-and-mission",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol",
+        "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+        "tycho.page.b256d263efff488c8cf549e116be9683#historical-result-versus-experiment-design"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Applied M9 evidence: what transfers and what does not",
+        "4. Strategy alternatives have different costs and risks",
+        "Purpose and mission",
+        "6. Falsifiable drill protocol"
+      ]
+    },
+    {
+      "task_id": "Q009",
+      "question": "How can unfinished work at the end of an observation window distort a queueing estimate?",
+      "layer_expected": "book",
+      "answer": "Unfinished work at the end of an observation window breaks the accounting between the window's arrival/throughput counts and the residence times used in the estimate. In the book's counterexample, one request arrives at t=0 and remains in the system for 10 seconds, but the window is only [0,5). The window records one arrival (0.20 arrivals/s), and the request is still unfinished when observation stops. Multiplying that window rate by the request's full 10-second residence gives L = 2, although the actual mean in-boundary population is 1. This is not a failure of Little's Law but a finite-window edge effect: the full residence time extends beyond the boundary, so the finite-window quantities have incompatible accounting (Kim & Whitt, sections 1-2). The ending backlog is exactly the missing term in N(t1) = N(t0) + A(t0,t1) - D(t0,t1); when N(t1) > 0, arrivals and exits within the window do not describe a stable flow, and an average built only from requests that completed before the cutoff is a truncated-cohort estimate, not the mean over all admitted work. A finite-interval equality exists only when the interval starts and ends empty; otherwise edge effects bias the result, and the paper recommends a statistical treatment such as batch means and confidence intervals to estimate and remove some edge bias. The same error appears at scale: 120 offered requests/s against 80 completions/s for 20 seconds leaves about 800 queued, and substituting 120/s and L = 800 into L = lambda * W to infer a stable W is invalid because arrival and departure boundaries differ and the window is not stationary. A closed-loop load generator compounds this: a virtual user waits for its previous iteration, so unfinished work suppresses new starts and the test under-offers load (coordinated omission). Record start and end backlog, admitted and exit counts, the residence-time cohort including unfinished work, warmup and stationarity, and report a finite-window estimate with uncertainty rather than as a long-run average.",
+      "citations": [
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals"
+      ],
+      "required_evidence": [
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#decision-and-worked-result",
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#overview",
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#pages-and-reasoning-route",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "V07/C01 \u2014 Queueing, Little's Law and measurement boundaries",
+        "Pages and reasoning route",
+        "Evidence-based counterexample: a short finite window",
+        "Architecture: Little's Law is an average identity"
+      ]
+    },
+    {
+      "task_id": "Q017",
+      "question": "Why does embedding SQLite in an application not by itself provide a networked multi-region database service?",
+      "layer_expected": "book",
+      "answer": "Embedding SQLite links a database library into the application process instead of deploying an independent client/server database service. SQL text is compiled to bytecode and executed against B-trees through a pager that reads and writes a database file, while other connections coordinate through file locking/journaling on that file (transactional-models \u00a72). That gives one application local query execution and local transactions \u2014 actual ACID guarantees still depend on filesystem, transaction and journaling settings \u2014 but it supplies no network endpoint, shared authority, or replication layer. The book states directly that SQLite fits mobile/edge/offline apps, local configuration or single-node embedded transactional storage, and is not by itself a networked multi-region service with independently scalable write nodes; making it one would require a separate synchronization/conflict protocol (same section). A networked multi-region service is exactly that missing layer: each failure class and loss boundary must be defined, because a service can lose all user state when its single database fails, and a regional failover does not by itself prevent two simultaneous writers (multi-region DR). Replication and consensus add leader/quorum/term rules, a replicated log, commit-acknowledgment boundaries and stale-leader rejection; durability and read consistency depend on those concrete protocols, not merely on replicas existing (replication-consensus). Combining stores or views likewise creates two data representations and a synchronization problem with explicit freshness, rebuild, deduplication and recovery obligations (multi-store \u00a77). So embedding SQLite can make one process's local storage transactional, but the networked, multi-region properties \u2014 remote access, shared authority, replication, failover and conflict resolution \u2014 must be built as separate distributed-system machinery.",
+      "citations": [
+        "tycho.page.7b980e671a324f769064bc5233761c62#2-transactional-relational-and-embedded-storage",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#the-question-what-survives-which-loss",
+        "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#7-multiple-databases-create-a-new-synchronization-problem"
+      ],
+      "required_evidence": [
+        "tycho.chapter.4a127ad6ab514ede9ff74394e5174f9c#decision-and-worked-result",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#6-cross-model-trade-off-matrix",
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract",
+        "tycho.page.7b980e671a324f769064bc5233761c62#2-transactional-relational-and-embedded-storage",
+        "tycho.page.a726b2ab751b44dea1a659556ed4f4c6#5-route-r4-modernization-objective-measured-improvement",
+        "tycho.page.b55f5bf29d7946c78454a769980c476e#partition-hot-spots-and-why-a-database-replacement-alone-was-insufficient",
+        "tycho.page.c75a11f9786442a5b5456f11c2412df4#purpose-and-mission",
+        "tycho.page.ee2dd008d4f445eaa9b20998f855a786#4-document-and-wide-column-data-models"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "6. Cross-model trade-off matrix",
+        "Placement, IaC and operational contract",
+        "2. Transactional relational and embedded storage",
+        "5. Route R4: modernization objective \u2192 measured improvement"
+      ]
+    },
+    {
+      "task_id": "Q025",
+      "question": "Why is the age of an application insufficient evidence that its architecture caused an incident?",
+      "layer_expected": "book",
+      "answer": "Age is only a description of how long a system has been running; it does not name a failure mechanism, so it cannot by itself establish that the architecture caused an incident. The corpus states this directly: \"Age alone does not explain a service-level failure.\" The real drivers may be unsupported dependencies, high change lead time, untestable side effects, incompatible external protocols, data-retention risk, or an observed resource bottleneck, and a long-lived modular system may be more reliable and cheaper to maintain than a newly distributed one. \"Legacy monolith\" is not a sufficient explanation for a slow request, deployment outage, audit deficiency, or rising maintenance cost. Age also cannot discriminate among competing explanations, because systems of any age have incidents and a single incident often has multiple contributing conditions (a bad configuration, an untested schema interaction, monitoring blind spots, inadequate failover verification). A causal claim instead requires an incident chronology that separates observation from explanation, tests competing hypotheses against discriminating evidence such as connector offset, schema version, failed records, and deployment/config revision, and records the specific mechanism, blast radius, and contributing conditions. An unknown issue should generate an investigation and an evidence-bearing baseline, not a design imperative to replace the system because it is old.",
+      "citations": [
+        "tycho.page.210134080fac4c09bebb593befd0cb25#1-old-software-is-not-itself-an-architecture-defect",
+        "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+        "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#workload-change-is-not-an-architecture-controlled-experiment"
+      ],
+      "required_evidence": [
+        "tycho.page.19145078d87143b28387ab187d345c32#4-four-modernization-alternatives-and-contraindications",
+        "tycho.page.210134080fac4c09bebb593befd0cb25#1-old-software-is-not-itself-an-architecture-defect",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#purpose-and-mission",
+        "tycho.page.4e96abb6d4504ef1b09cbc355485108a#5-separate-evidence-classes-to-prevent-false-certainty",
+        "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1#purpose-and-mission",
+        "tycho.page.d8118d40313143e4ac47323274fbb594#1-five-evidence-classes-are-not-substitutes",
+        "tycho.page.d87f9ba3852b49ee8188d150bb679716#engineering-walkthrough-index-divergence-masquerading-as-a-database-latency-incident",
+        "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause"
+      ],
+      "expected_answer_points": [
+        "4. Four modernization alternatives and contraindications",
+        "1. Old software is not itself an architecture defect",
+        "Purpose and mission",
+        "5. Separate evidence classes to prevent false certainty",
+        "1. Five evidence classes are not substitutes"
+      ]
+    },
+    {
+      "task_id": "Q033",
+      "question": "What can a missing sampled trace tell an investigator about a possibly committed write?",
+      "layer_expected": "book",
+      "answer": "A missing sampled trace does not prove that no write was committed. It shows only that no sampled span was collected for that transaction: the request may have been unsampled, a collector or exporter may have dropped it, or the relevant dependency may be uninstrumented. The outcome therefore remains unknown, and an investigator must not treat the absence as evidence of absence. Symmetrically, a successful span status does not prove that the database commit or downstream effect succeeded. To determine whether a write was committed, the investigator should consult authoritative, durable evidence such as committed database state, transactional or outbox records, idempotency/business event IDs, and dedicated audit records that distinguish attempted, pending or unknown, and committed outcomes with defined integrity and ordering.",
+      "citations": [
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#4-sampling-limits-what-the-trace-can-support",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+      ],
+      "required_evidence": [
+        "tycho.chapter.03ec5acf85e043a5a6d552a036bf4659#decision-and-worked-result",
+        "tycho.chapter.03ec5acf85e043a5a6d552a036bf4659#pages-and-reasoning-route",
+        "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.436c2b22dc9e47acaaca7d18fadb511c#overview",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#1-trace-context-and-causality-boundaries",
+        "tycho.page.a2cd4465792a4740aa5150ad248fd420#overview"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Pages and reasoning route",
+        "5. Aggregation loses information by design",
+        "Structured logging, authoritative audit and data lineage",
+        "3. Measure the right signals at the right level"
+      ]
+    },
+    {
+      "task_id": "Q041",
+      "question": "Why can an index assembled from document revisions that never coexisted produce misleading evidence?",
+      "layer_expected": "book",
+      "answer": "An index assembled from document revisions that never coexisted has no single point-in-time source state behind it. Each retrieved section, score and citation can be individually real, yet the joint evidence set was never simultaneously valid: older and newer wording can be blended into an internally plausible composite, stale and current claims can appear side by side, and provenance fields such as source revision, access date and access labels cannot be anchored to one snapshot. Because results still resolve to real canonical documents and rank plausibly, per-citation verification can pass while the combined answer asserts a corpus state that never existed; the reader cannot tell which revision was authoritative for the question, and re-running against any valid snapshot will not reproduce the answer. Mixed access labels compound the problem when permissions changed between revisions. The book's contract makes index generations belong to an admitted source revision and access scope: define rebuild consistency for source changes mid-build, validate a candidate generation before promotion, pin queries to one generation, resolve every result back to canonical source evidence, and retire old generations safely. Provenance must distinguish cited from actually read sources, record revision or access date against the question's version requirement, and separate direct evidence, inference and missing or contradictory sources.",
+      "citations": [
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.990dac261357498fa433cf98e87817d3#5-permission-and-provenance-are-part-of-retrieval-correctness",
+        "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#integrated-decision-and-reading-route"
+      ],
+      "required_evidence": [
+        "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9#decision-and-worked-result",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+        "tycho.page.210134080fac4c09bebb593befd0cb25#2-collect-a-baseline-as-an-evidence-bearing-architecture-model",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#3-lexical-vector-and-hybrid-need-matched-comparisons",
+        "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+        "tycho.page.64f398c0535345258b1fdf5eebbf4438#original-stale-edge-counterexample",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#4-versioned-provenance-and-cross-collection-isolation"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "4. Incremental indexing and the stale citation problem",
+        "2. Collect a baseline as an evidence-bearing architecture model",
+        "5. Data movement is not a row-count exercise",
+        "3. Lexical, vector and hybrid need matched comparisons"
+      ]
+    },
+    {
+      "task_id": "Q049",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "layer_expected": "book",
+      "answer": "Bound path explosion by putting explicit limits into the query contract instead of hoping cycles are rare.\n\n1. Declare the bounds up front: allowed edge types and direction, maximum hop depth, maximum returned result cardinality, and an explicit cycle policy (may a path repeat nodes or relationships?). The book lists exactly these as the minimum a graph question needs, and adds snapshot/time validity, node/edge filters and permission checks (section 4).\n\n2. Make the answer shape explicit: all paths, any path, shortest path, or just reachable node IDs. Enumerating all paths in a dense or cyclic graph is what explodes; a reachability question that only needs reachable IDs or any path should ask for that (sections 4 and 3).\n\n3. Prune on visited state: carry a visited/depth budget so a revisited node is not expanded again, and treat repeated traversal of the same node or edge as no extra evidence - the contradiction table on the integrated page pairs the A->B and B->A cycle with exactly this handling (integrated page, contradiction table).\n\n4. Budget request resources and decide in advance what happens when the traversal exceeds the budget: truncate with a signal, fail explicitly, or degrade to reachable IDs. Section 4 item 7 makes that an explicit part of the query specification.\n\n5. Do not rely on node count as the cost proxy: a high-degree hub can make a path search expensive even when the graph holds few total nodes, so depth limits alone do not bound fan-out (section 3).\n\n6. If a relational engine is used, the same question is a recursive CTE with cycle detection and limits, so the bound lives in the query rather than the storage choice (sections 3 and the integrated page).\n\n7. Apply filters and authorization to intermediate nodes and edges during traversal, not only to the final result - scoping the expansion also removes work (sections 4 and the integrated page table).\n\nLimits: the page carries evidence_status unknown with a self-checked editorial review, and the synthetic paired fixture is explicitly labelled proposed/not run, so the above is design guidance rather than measured thresholds or a benchmark result.",
+      "citations": [
+        "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+        "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+        "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#engineering-walkthrough-a-bounded-dependency-path-is-not-proof-of-causation"
+      ],
+      "required_evidence": [
+        "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#7-public-evidence-and-explicit-product-scope-boundary",
+        "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#decision-and-worked-result",
+        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+        "tycho.page.5bee1736b2fe4418af5c50587ee4fbb0#3-graph-traversal-is-an-explicit-reasoning-step-not-a-search-replacement",
+        "tycho.page.64f398c0535345258b1fdf5eebbf4438#6-architecture-decision-and-falsifiable-benchmark",
+        "tycho.page.6d8377d616c548ef9c3b213d8a2df934#3-graph-traversal-and-relational-joins-can-express-similar-answers",
+        "tycho.page.ae4febbe43f941f78d825613e126419b#1-clarify-the-meaning-of-an-edge",
+        "tycho.page.ae4febbe43f941f78d825613e126419b#2-original-fictional-example-a-workshop-equipment-dependency-map"
+      ],
+      "expected_answer_points": [
+        "7. Public evidence and explicit product-scope boundary",
+        "Decision and worked result",
+        "Bounded data and query semantics",
+        "3. Graph traversal is an explicit reasoning step, not a search replacement",
+        "6. Architecture decision and falsifiable benchmark"
+      ]
+    },
+    {
+      "task_id": "Q057",
+      "question": "What infrastructure must exist before Envoy can use the service-discovery approach described by the card?",
+      "layer_expected": "atlas",
+      "answer": "Envoy can use the card's service-discovery approach only when a xDS management server exists and is available: the card lists a xDS management server as a good-fit condition and makes its absence a hard contraindication. That server must implement the endpoint discovery service (EDS), returning each cluster's endpoints together with per-host attributes such as load-balancing weight, canary status and zone, and Envoy's clusters must be able to use EDS rather than only static endpoints or DNS. Because discovery is eventually consistent, active health checking must also exist to determine cluster health. In an Envoy-based mesh, this xDS control plane supplies the dynamic cluster, endpoint, listener and route resources that configure the proxy's live behavior.",
+      "citations": [
+        "tycho.page.b503488c20a947b581ef45e84ea735d6#overview",
+        "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries"
+      ],
+      "required_evidence": [
+        "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview",
+        "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+        "tycho.page.b503488c20a947b581ef45e84ea735d6#overview"
+      ],
+      "expected_answer_points": [
+        "Self-Contained Service",
+        "Service Discovery"
+      ]
+    },
+    {
+      "task_id": "Q065",
+      "question": "Why does endpoint discovery still need active health checks?",
+      "layer_expected": "atlas",
+      "answer": "Endpoint discovery and active health checking answer different questions, so discovery cannot substitute for a probe. Discovery distributes a membership view: Envoy fetches cluster members from a xDS management server through the endpoint discovery service, and EDS also carries per-host attributes such as load-balancing weight, canary status and zone. But Envoy assumes hosts come and go in an eventually consistent way, and the book states plainly that active health checking is what determines cluster health. That split exists because membership is a statement about the control plane's view, not about current admissibility: a stale membership view can outlive a rollout, a removed backend can still be cached (removal and connection shutdown require coordinated policy, judged by attempts to the removed endpoint after route publication), and a newly listed endpoint can appear before it can accept work. Collapsing the two hides failure modes rather than removing them - a route decides where a request may go, while a health signal decides whether an instance is eligible to receive it, and reducing both to 'the load balancer is healthy' conceals stale routes, mixed readiness semantics and a backend that answers quickly but cannot do useful work. Only probing yields an eligibility decision that does not depend on traffic having already failed: passive observation learns about failure only from real requests, and no response is not evidence of health. The check itself must therefore be bounded - probe frequency and timeouts bounded, probes run on a path that does not depend on the ingress, DNS or control plane they observe, and missing probe data alerted on rather than treated as a pass - and startup eligibility, readiness, liveness and permanent removal must stay separate endpoints, with a liveness endpoint not restarting every healthy process because one shared dependency is unavailable. Active checking also needs its own containment: a shared dependency failure can fail every probe and cause mass ejection or restart, so instance-local faults must be separated from shared ones, a cached healthy answer must have bounded age, and an instance must be drained before removal. The atlas card reaches the same conclusion in one line: discovery is eventually consistent; active health checking determines cluster health.",
+      "citations": [
+        "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+        "tycho.page.b503488c20a947b581ef45e84ea735d6#overview",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery"
+      ],
+      "required_evidence": [
+        "tycho.chapter.9825cb82eb2142754c638aea1ba8d845#entry-inventory",
+        "tycho.page.0465c87ed370438db997a1fcfcbe54cd#overview",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+        "tycho.page.b503488c20a947b581ef45e84ea735d6#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Ambassador",
+        "Health endpoint monitoring",
+        "Health, Readiness and Liveness Checks",
+        "Bounded pattern ownership notes"
+      ]
+    },
+    {
+      "task_id": "Q073",
+      "question": "Why can removing an origin asset leave an old copy available after an edge purge?",
+      "layer_expected": "atlas",
+      "answer": "Removing the origin asset deletes only the authoritative copy; it does not invalidate copies that caches already hold. A cache returns a stored representation until its own freshness or validation rule forces a refetch. An edge purge is also not an instantaneous, global erase: purge requests propagate across edge locations over time, an incomplete purge can leave entries behind, and a purge without completion evidence is not a proven revocation bound. The purge reaches the CDN edge only, not browser caches, so a client can keep serving its own old copy. The old asset therefore remains available after the origin removal and the edge purge.",
+      "citations": [
+        "tycho.page.840c65c6698344ba8ed13f1f10038b5c#overview",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+      ],
+      "required_evidence": [
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+        "tycho.page.4ee21701c36640119917d0bb900f9894#overview",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+      ],
+      "expected_answer_points": [
+        "Cache Invalidation",
+        "Original worked example",
+        "Static Content Hosting",
+        "TTL-Based Expiration",
+        "Bounded pattern ownership notes"
+      ]
+    },
+    {
+      "task_id": "Q081",
+      "question": "Why does the V12 result hash include limitations and convergence information along with metrics?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "V12 computes the result hash over the run record's substantive fields, not over metrics alone and not over file bytes. Metrics are only the numbers: convergence (status, metric, relative error, threshold and replications) records whether those numbers satisfied the 0.02 relative-error rule and are converged rather than insufficient-sample, and limitations record what the run does not establish, such as a synthetic workload or normal-approximation intervals. If the hash covered only metrics, a changed limitation or convergence status would be invisible; the book names this the 'hash over the wrong fields' failure, and the replay page names the matching 'replay theater' failure, where replay compares only metric names and not values or limitations. Hashing the substantive record makes any edit to those claims break replay, while formatting-only changes still do not, so a matching hash is a reproducibility check on everything the result asserts, not a truth check.",
+      "citations": [
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#overview",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.chapter.9548ac72fafbee8773ad7309a51d512b#purpose-and-mission",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+        "tycho.page.687d2196433c3b076d00c73144dad431#a-run-s-life-cycle",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "A stopping rule",
+        "What convergence does not mean",
+        "The five layers",
+        "Failure modes"
+      ]
+    },
+    {
+      "task_id": "Q089",
+      "question": "What does the V12 engine do when the queue or bulkhead reaches its admission limit?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "When the queue is full or the bulkhead limit (waiting plus in-service requests) is reached, V12 rejects the request at admission and records and counts the rejection, rather than blocking the arrival process silently. Rejection is terminal: rejected requests do not retry, whereas timed-out requests with attempts remaining wait for backoff and re-enter the queue. The engine reports the rejection rate as an explicit metric, while noting that timeouts can account for a much larger share of lost work.",
+      "citations": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram"
+      ],
+      "required_evidence": [
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#overview",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#integrated-decision-and-reading-route",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Backpressure",
+        "Scope",
+        "Backpressure and rejection",
+        "Queue and resource models"
+      ]
+    },
+    {
+      "task_id": "Q097",
+      "question": "Which queue disciplines and resource controls does the V12 checkout engine model?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The V12 discrete-event checkout model uses one request-queue discipline: FIFO. It deliberately does not implement priority or preemption; a model needing them requires a new explicit contract and tests, and the verification page records FIFO-only with no priority or preemption among its unverified limits. Its resource controls are: a fixed number of servers; a bounded FIFO queue (maximum waiting requests); a bulkhead limiting waiting plus in-service requests; a per-attempt timeout (deadline); and a bounded retry budget (maximum attempts). Backpressure rejects and counts a request when the queue or bulkhead is full, while a timeout expires an attempt and may trigger a retry. Retry policy supports none, exponential or linear backoff and no, full or equal jitter. Separately, the event calendar orders simultaneous events by time, then priority, then insertion sequence; that event ordering is not request-class priority.",
+      "citations": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+      ],
+      "required_evidence": [
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-3-boundary-cases",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+        "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison"
+      ],
+      "expected_answer_points": [
+        "Pages and reasoning route",
+        "Purpose and mission",
+        "Backpressure",
+        "Case 3: boundary cases",
+        "What is not verified"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "task_id": "Q058",
+  "answer": "Plan for a bounded, auditable quarantine path, not open-ended retry. The relay is specified to carry bounded attempts and bounded age, a publication key, per-aggregate ordering and a terminal quarantine for poison rows, so a permanently invalid row should be pushed out of the publish path once its attempt/age budget is spent rather than retried forever. Because ordering is per aggregate, a parked row can stall later rows for the same aggregate: operators should expect head-of-line blocking and be able to state which aggregates or partitions are stalled, how far publication age lags, and whether skipping that row is acceptable for its consumers. Quarantine is a policy state, not delivery: classify transient, permanent and unknown outcomes, and treat a dead-letter queue or repair table as a holding and triage mechanism, not proof of delivery and not an automatically safe replayer. Retain in quarantine the row, payload digest and payload, headers, failure reason and attempt history for the declared retention window, with enough evidence to diagnose without leaking payloads, plus the declared source of truth for the affected record. Repair must be a separate reviewed decision (quarantined, then repair-authorized, then claimed under an explicit repair contract): either correct the input while preserving the same logical effect identity, or create an explicitly new operation if intent changed; replaying under a new ID merely to bypass deduplication risks a duplicate external effect, and current authorization should be rechecked before repair. Keep consumer-side deduplication by message ID or effect identity so a replay stays safe, and have the alternative ready when the failure is deterministic or the broker cannot retain evidence safely: retry with backoff, drop with an audit record, or park the work in a repair table or outbox, reversing the dead-letter choice when quarantine retention plus manual repair cost exceed the value of preserving the message. Budget observability and ownership too: alert on the age of the oldest unpublished row and on quarantine depth and age, not backlog depth alone, and name who owns human intervention and escalation. Test by killing the relay after commit but before publish and by replaying quarantined work while requiring correct effect identity. Limits: these are proposed tests and a synthetic state machine, not an exercised run, and no broker or workflow engine was executed.",
+  "citations": [
+    "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+    "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

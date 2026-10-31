@@ -1,0 +1,16 @@
+{
+  "task_id": "Q081",
+  "answer": "V12 computes the result hash over the run record's substantive fields, not over metrics alone and not over file bytes. Metrics are only the numbers: convergence (status, metric, relative error, threshold and replications) records whether those numbers satisfied the 0.02 relative-error rule and are converged rather than insufficient-sample, and limitations record what the run does not establish, such as a synthetic workload or normal-approximation intervals. If the hash covered only metrics, a changed limitation or convergence status would be invisible; the book names this the 'hash over the wrong fields' failure, and the replay page names the matching 'replay theater' failure, where replay compares only metric names and not values or limitations. Hashing the substantive record makes any edit to those claims break replay, while formatting-only changes still do not, so a matching hash is a reproducibility check on everything the result asserts, not a truth check.",
+  "citations": [
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#overview",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

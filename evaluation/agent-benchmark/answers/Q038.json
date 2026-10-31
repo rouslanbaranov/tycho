@@ -1,0 +1,15 @@
+{
+  "task_id": "Q038",
+  "answer": "Failback is a second migration from region B back to A, not the inverse of failover. Before the old region can safely regain authority: (1) Fence and quarantine it as old authority and prove old-writer fencing; hold writes when fencing evidence is missing, and do not treat DNS pointing as authority transfer, because A may still accept writes. (2) Reconcile divergent writes under one selected source of truth: identify any acknowledged or ambiguous operations A accepted that B lacks, choose the recovery point, and record the actual RPO consequence rather than assuming zero loss. (3) Establish an authority epoch that the destination checks and persists atomically, so stale epochs carrying the old authority are rejected, and define the takeover linearization point. (4) Verify user journeys and integrity gates and use controlled routing with an explicit rollback gate. (5) Only then reintroduce A as a replica or standby before considering promotion. If A cannot be fenced or reconciliation evidence is incomplete, stay on the promoted region and rebuild A as a standby, or hold writes, rather than claim successful recovery.",
+  "citations": [
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#bounded-pattern-ownership-notes",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#5-recovery-is-a-state-machine-with-abort-conditions",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

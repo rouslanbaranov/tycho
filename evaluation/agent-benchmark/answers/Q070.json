@@ -1,0 +1,15 @@
+{
+  "task_id": "Q070",
+  "answer": "After the local transaction commits, the business row and its outbox intent exist together while the broker may still know nothing; notification is delayed, not lost, and the committed local state remains authoritative. The relay must recover the persisted pending outbox event (by polling or its CDC position), retry publication with the same immutable event ID and aggregate key, and record completion only after broker acknowledgement. It must bound attempts and entry age, bound publication lag, retain the row, payload digest and attempt history for repair, and terminally quarantine poison rows. Because recovery implies at-least-once delivery, a crash after publish but before completion or a lost acknowledgement can replay the event, so consumers must deduplicate by event or effect identity and treat the replay as a no-op.",
+  "citations": [
+    "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

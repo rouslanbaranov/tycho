@@ -1,0 +1,15 @@
+{
+  "task_id": "Q015",
+  "answer": "A priority queue protects critical work only when priority is a bounded, authenticated contract rather than a raw ordering shortcut. (1) Authenticate the criticality class and propagate it with the request at every hop, keeping it separate from the deadline and from any client-asserted priority. Otherwise a downstream dependency sees only an ordinary caller and may shed the critical work first, and an untrusted producer can self-assign the top class. (2) Define the class model explicitly: class levels, per-level capacity and the broker's actual priority support, and cap each tenant's share of a lane so one tenant cannot occupy the high-class lane. (3) Bound waiting: add aging or a maximum-wait rule so lower classes keep making progress; without a wait bound the policy is simply starvation. (4) Remember that a priority queue orders ready work and does not preempt a running handler, so a slow low-class execution can still delay a high-class item; cap handler time or use separate lanes or reserved capacity. (5) Verify with per-class queue age plus offered, admitted, rejected and correctly completed counts, and confirm that lower classes are rejected before higher ones at each hop; keep retry guidance consistent with the remaining budget so retries do not re-flood the queue. If priority cannot be authenticated or starvation is unacceptable, prefer admission-controlled FIFO, separate lanes per class, or a shared queue with reserved capacity, and reverse the priority choice when inversion and starvation exceed the latency benefit. Weighted fair scheduling can reserve progress for other tenants, but weights alone neither cap the cost of one operation nor prevent starvation unless the scheduling and admission rules do so, and request-count fairness versus resource-cost fairness produce different outcomes, so the protected objective must be stated explicitly.",
+  "citations": [
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#bounded-pattern-ownership-notes",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

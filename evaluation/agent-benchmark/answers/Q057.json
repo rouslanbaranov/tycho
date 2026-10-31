@@ -1,0 +1,15 @@
+{
+  "task_id": "Q057",
+  "answer": "Envoy can use the card's service-discovery approach only when a xDS management server exists and is available: the card lists a xDS management server as a good-fit condition and makes its absence a hard contraindication. That server must implement the endpoint discovery service (EDS), returning each cluster's endpoints together with per-host attributes such as load-balancing weight, canary status and zone, and Envoy's clusters must be able to use EDS rather than only static endpoints or DNS. Because discovery is eventually consistent, active health checking must also exist to determine cluster health. In an Envoy-based mesh, this xDS control plane supplies the dynamic cluster, endpoint, listener and route resources that configure the proxy's live behavior.",
+  "citations": [
+    "tycho.page.b503488c20a947b581ef45e84ea735d6#overview",
+    "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

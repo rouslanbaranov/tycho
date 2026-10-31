@@ -1,0 +1,13 @@
+{
+  "task_id": "Q056",
+  "answer": "A split needs an owned completion or partial-release rule because, without a known part count, completion is not decidable: the aggregate group stays incomplete indefinitely rather than completing silently (Spring Integration sets SEQUENCE_SIZE to zero for an unknown-size iterator and leaves the group incomplete). Left alone, that open group holds tracking state and leaks orphaned work, so someone must own when to stop waiting. A custom ReleaseStrategy or send-partial-result-on-expiry provides that rule: it releases a partial result or forces closure, defines partial-result disposition and compensation ownership, and bounds fan-out. Critically, release or expiry closure is only a forced/partial closure, not evidence of successful completion; the same page's decision rule therefore requires either a known total count or an explicit release rule or expiry before splitting, and says a split with no completion marker leaks orphaned work and needs an owner.",
+  "citations": [
+    "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview",
+    "tycho.page.ed3237e11d1348a7898b79b16f3244c8#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

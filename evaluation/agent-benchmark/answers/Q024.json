@@ -1,0 +1,14 @@
+{
+  "task_id": "Q024",
+  "answer": "Raft commits a new log entry only when the leader has replicated it to a quorum (majority) of the configured voters and enough of them acknowledge it, after which the leader advances the commit index. In a five-voter group the quorum is floor(5/2)+1 = 3. A minority partition holds at most two voters, so it can never collect the three current-term acknowledgments a commit requires; entries its members append locally remain uncommitted. Such a minority also cannot elect a legitimate leader, and a former leader stranded there must stop serving authoritative writes because it cannot confirm quorum. When the partition heals, a newly elected leader may reconcile and overwrite the minority's uncommitted suffix. This is a safety requirement, not only an availability limit: if a minority could commit, two disjoint partitions could claim incompatible authoritative commits, so quorums would no longer intersect and split-brain safety would fail. The three-voter majority side can elect a leader and commit new entries; the two-voter side is unavailable for new writes.",
+  "citations": [
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

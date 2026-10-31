@@ -1,0 +1,15 @@
+{
+  "task_id": "Q000",
+  "answer": "Authentication establishes who the caller is and, at most, which tenant the session is associated with; it does not establish that the caller may read or change a particular object. A tenant identifier is one request attribute, not an authorization decision. If a service authenticates user U and then fetches registration R by an arbitrary registration ID, U's authenticated tenant claim says nothing about whether R belongs to that tenant or whether U may see or change it; trusting the caller's claim that R belongs to their tenant is the broken object-level authorization (BOLA/IDOR) failure. Even a tenant ID derived from a signed session rather than a URL is insufficient: it may be trustworthy as a claim, but it still does not bind the referenced object to that tenant or to the requested action. Authorization must evaluate subject, action, object, and tenant/ownership under current policy at every sensitive authority: the route/controller and every alternative path (exports, search, batch jobs, admin APIs), repository/data-layer queries, event handlers, caches, object stores, tenant indexes, background jobs, and delegated administration. Isolation controls do not substitute for this check: a separate database reduces blast radius but does not replace permission checks, and row/object permissions are only as sound as the caller identity and current policy supplied to them. Caches and asynchronous consumers must also stop serving data once authorization is revoked. An authenticated tenant identifier is therefore a precondition for object authorization, not a substitute for deciding whether this subject may perform this action on this specific object.",
+  "citations": [
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+    "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

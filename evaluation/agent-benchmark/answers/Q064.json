@@ -1,0 +1,14 @@
+{
+  "task_id": "Q064",
+  "answer": "Because the outbox closes only the local dual-write window, not the send itself: one local transaction makes business state and publication intent durable together, but the relay's send and the relay's record of having sent are not in that transaction. A relay can therefore publish the event, have the broker durably store it, and then crash (or lose the broker's acknowledgment) before marking the outbox row as sent. On restart it still sees the intent as unsent and sends again, so publication is at-least-once and the duplicate is unavoidable at the relay. The page's publication truth table states this row explicitly: 'Broker receives event, relay loses acknowledgment -> Broker may store event; relay still sees unsent -> Duplicate publication must be tolerated.' The relay cannot distinguish 'never sent' from 'sent but not acknowledged' because no atomic transaction spans relay, broker and consumer, so the redundant send must be absorbed downstream. The consumer is the only party that observes the effect on its own authoritative state, hence it must make redelivery harmless: persist the processed-event identity together with the business effect in one local transaction (an inbox), or rely on a unique constraint / conditional insert on effect identity or an idempotent downstream API. The identity must be scoped to the correct subscriber and event, an in-memory set is insufficient when restart-safe deduplication is required, and markers must outlive the maximum broker-redelivery, dead-letter and replay horizon, otherwise an expired identity becomes a new message and duplicates the effect. This toleration buys idempotent effects, not exactly-once delivery: a transactional inbox does not guarantee exactly-once side effects outside its local authority, and independent practitioners confirm the same asymmetry, since a queue's at-least-once contract plus late acknowledgments after an object was already transferred are named as concrete duplicate causes handled by consumer-side guards rather than an exactly-once transport.",
+  "citations": [
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+    "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

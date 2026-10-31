@@ -1,0 +1,13 @@
+{
+  "task_id": "Q067",
+  "answer": "Specify an explicit, owned late-message (old-message) rejection disposition in the streaming contract rather than allowing silent acceptance or silent dropping. Once the gap timeout fires and the resequencer disregards the current expected sequence number and moves to the next expected number, a message arriving from below that point is late: the stated disposition is old-message rejection, which throws for an exchange older than the last delivered message, with invalid exchanges discarded or skipped explicitly and dropped or rejected sequence numbers recorded for evidence. When continuity of the ordering scope is mandatory instead, the alternative disposition is to fail that ordering scope rather than continue past the gap; the same rule applies at the buffer cap, where the scope must reject, spill or fail with evidence rather than drop silently. The sequence domain, buffer cap, duplicate rule, gap timeout and late-message disposition all need named owners in the message contract.",
+  "citations": [
+    "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+    "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "task_id": "Q091",
+  "answer": "In a V12 decision record a hard constraint is a gating condition a candidate must satisfy, while a soft constraint is only a preference that can be traded. A candidate that fails a hard constraint is eliminated outright, even if it is best on every other metric: the decision-record contract says that if candidate C exceeds a declared cost ceiling it is eliminated even though it has the highest success rate, and in the worked example C is eliminated by the hard cost and p95-latency constraints while A and B pass and are then compared. The record's decision tree encodes the same asymmetry: 'Hard constraints pass?' - No - 'Eliminate candidate'; only survivors are compared on success and cost, and trade-offs happen there. So a failed hard constraint removes the candidate from consideration rather than costing it points, whereas soft preferences are traded off among surviving candidates. Hard, soft and non-quantitative constraints are kept in separate fields precisely so a weighted composite score cannot hide or trade away a hard constraint. A non-quantitative constraint the model cannot measure (for example operability) does not eliminate a candidate; if it remains unverified the record keeps the recommendation conditional and records reversal triggers, which is a different treatment from both a failed hard constraint and an ordinary soft preference.",
+  "citations": [
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#a-decision-tree"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

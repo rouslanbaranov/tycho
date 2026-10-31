@@ -1,0 +1,16 @@
+{
+  "task_id": "Q014",
+  "answer": "A physical point-in-time restore needs a complete, verified chain, not a single backup file.\n\nCore artifacts:\n1. A valid physical base backup of the cluster (a consistent storage snapshot; a logical SQL dump is not a physical base backup usable for WAL replay). It must include the base-backup manifest and hash or other verification evidence, be correct for ownership and tablespaces, and match the source database major version and supported tooling/backup formats.\n2. A continuous WAL archive covering the interval from that base backup to the chosen recovery point. The WAL sequence/archive must be complete and uncorrupted, and any recent unarchived WAL needed for the target must also be accessible. Missing or corrupt segments, or archive lag, make the target unreachable.\n3. The timeline history and the selected recovery stop point, so replay follows the correct timeline and stops where intended. A target before the selected base backup completed is not available from that backup.\n\nSupporting artifacts and metadata:\n4. Configuration files, secrets, external files, tablespaces and network/identity requirements. Configuration is not automatically protected by WAL replay, so it must be preserved and supplied separately.\n5. If incremental base backups are used, their ancestor chain and WAL summaries; earlier backups cannot be deleted while a later incremental depends on them.\n6. Restore-environment information: target location, target disk capacity, network/archive throughput and access permissions, plus expected replay duration.\n7. A rehearsed restore procedure/runbook on an isolated target. The evidence stresses that only a tested restore of an admitted backup set shows recoverability; verify integrity and the recovery target against application consistency requirements after replay.\n\nIn short: a physical base backup + a continuous WAL archive + timeline/recovery target, plus the configuration and verification metadata around them.",
+  "citations": [
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+    "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+    "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+    "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

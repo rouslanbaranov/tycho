@@ -1,0 +1,13 @@
+{
+  "task_id": "Q036",
+  "answer": "Netflix's March 2024 account describes GC pauses as a tail-latency and retry-amplification problem, not merely a local pause histogram. A stop-the-world pause stalls request handling, so an affected request can miss its client-side deadline. The caller then cancels and retries, and may also hedge (send a duplicate attempt) or fall back to alternate work. Those attempts are additional offered load on top of the original slow request: the fleet can end up serving the original attempt plus replacement or fallback work even after the unlucky request has failed, and the retries add work after the pause ends. If that extra traffic raises allocation, CPU, or queue pressure, it can cause further pauses and timeouts, which trigger still more retries — a closed amplification loop. That is why Netflix tied the collector change to reduced tail latency and fewer cancellation-driven retries, and why the account says to measure cancellations, retry traffic, and downstream response tails rather than declaring success from pause duration alone.",
+  "citations": [
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

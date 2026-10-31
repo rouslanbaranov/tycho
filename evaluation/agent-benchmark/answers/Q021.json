@@ -1,0 +1,13 @@
+{
+  "task_id": "Q021",
+  "answer": "A healthy search shard only proves that the shard itself is serving queries; it does not prove that every message reached the index. In Discord's legacy search pipeline, messages first passed through a Redis-backed realtime indexing queue. When search-node failures caused a backlog, Redis could become CPU-saturated and begin dropping messages. Those messages never entered the indexing pipeline, so no shard, however healthy, ever contained them, and querying a healthy shard later could not recover documents that were never indexed. Two other mechanisms compounded the outage: a 50-message bulk batch could fan out across up to 50 nodes, so a single unavailable node failed the whole batch and forced all records to be retried, amplifying the backlog; and cluster-state/Lucene limits (master OOM raising the backlog, the roughly 2-billion-document MAX_DOC ceiling, and a restart-induced complete search outage) could deepen or prolong it. Discord later moved realtime indexing from Redis to a PubSub queue that can retain backlogs while Elasticsearch is unavailable and routed bulk writes by destination cluster/index, but the book notes that queue redelivery/idempotency, retention through prolonged outages, and a consistent index checkpoint still require separate validation. Queue retention alone therefore does not guarantee replay of every dropped message.",
+  "citations": [
+    "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet",
+    "tycho.page.95bf2e08c056472f92faf870de8f1357#source-reported-new-topology-and-recovery-limits"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q005",
+      "question": "Why can equal source and target row counts fail to prove migration completeness?",
+      "layer_expected": "book",
+      "answer": "Equal source and target row counts are a single aggregate scalar, so they fail to prove migration completeness for several distinct reasons the corpus states explicitly. (1) Counts are consistent with compensating errors. Two unequal sets can have identical counts: missing rows can be offset by duplicated or spurious rows, so a net-zero total hides both omissions and additions. The Meta case names this limit directly in its gate table -- row-count comparison has the epistemic limit that \"two unequal sets can have identical counts\". (2) Counts do not test value, schema or query semantics. Netflix's stated invariant is that both set differences C-M and M-C must be empty, not that totals match, because identical semantics must include schema and metadata, not only row count. Uber records a reproduction where identical query text and the same client API still produced different results across engines (PS-7722), so a matching count -- or even a matching checksum -- proves only the checked representation under its defined snapshot, not end-to-end equivalence. (3) Equality is a relative parity guarantee, not domain truth. If both sides implement the same wrong semantics, equality holds while correctness fails; and a difference can equally come from a legitimate snapshot or interpretation difference (TTL reference timestamps, consistency levels, backup choice, internal data-model interpretation) as from a defective target. Identity, value equality, operation order, referential consistency, exactly-once side effects and bounded freshness are different invariants, and a row count only addresses cardinality of one set at one instant. (4) A count is a point-in-time claim over an unspecified window. It does not cover live-write races during backfill or dual-write, retry and partial-failure divergence, TTL/retention expiry, historical tombstones, delayed cache refresh, or rollback after old data deletion. The decision playbook therefore warns never to assume counts or full-backup metadata alone prove business equivalence, and requires per-cohort missing/extra row measurement, referential and business invariants, mismatch root-cause analysis and dual-write conflict counts instead.",
+      "citations": [
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+        "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+        "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+        "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards"
+      ],
+      "required_evidence": [
+        "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#decision-and-worked-result",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+        "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+        "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Reconciliation, repair and evidence for a migration cutover",
+        "Equality is an observable contract, not automatically domain truth",
+        "3. A versioned sequence of safe intermediate states",
+        "Engineering walkthrough \u2014 New-only persisted effects turn image rollback into forward repair"
+      ]
+    },
+    {
+      "task_id": "Q013",
+      "question": "When should an architecture experiment stop instead of drawing a conclusion from apparently favorable latency?",
+      "layer_expected": "book",
+      "answer": "Stop when the favorable latency is not a decision-grade measurement, and report INSUFFICIENT_EVIDENCE (or MEASURE_FIRST / REJECTED_BY_GATE) instead of an architecture conclusion. The stopping conditions are: (1) the apparent gain is within documented measurement noise, variance is high, samples are too few, or trials are not repeated; (2) the test did not deliver the intended demand - a saturated or closed-loop generator suppresses offered load, or the latency figure counts only completed requests and omits timed-out, rejected, cancelled or unsent intended operations; (3) baseline and candidate were not compared at equivalent offered demand and resource budget, or differed in application/data revision, runtime/configuration or warm/cold state, so lower latency may be a capacity purchase or missing work; (4) a hard gate fails (correctness, authorization, consistency, durable state, compatibility or recovery) or an unsafe abort condition is reached; (5) the decision threshold was chosen or changed after seeing the result (peeking, threshold shopping, or summarizing a heavy tail by its mean). In these cases the experiment has reached its stopping condition: record the narrowest next source, measurement or owner decision, repair the experiment, and rerun with a pre-registered criterion at equal demand and resource budget. Do not generalize a favorable p99 from one run into proof of an architecture improvement.",
+      "citations": [
+        "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4#purpose-and-mission",
+        "tycho.page.06b70cb83d4f490ea9ef698a025e7684#engineering-walkthrough-an-apparently-faster-architecture-that-fails-a-hard-invariant",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#4-a-worked-fictional-experiment-cache-versus-query-repair",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#overview",
+        "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment",
+        "tycho.page.a2cd4465792a4740aa5150ad248fd420#integrated-decision-and-reading-route",
+        "tycho.page.ac84c140be153d3b1f5752ffbd38cb5b#make-a-claim-falsifiable-before-building-a-harness"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Engineering walkthrough \u2014 An apparently faster architecture that fails a hard invariant",
+        "Failure modes",
+        "4. A worked fictional experiment: cache versus query repair",
+        "Discriminating architecture experiments"
+      ]
+    },
+    {
+      "task_id": "Q021",
+      "question": "In Discord\u2019s search-indexing case, why could a healthy search shard still miss messages after an outage?",
+      "layer_expected": "book",
+      "answer": "A healthy search shard only proves that the shard itself is serving queries; it does not prove that every message reached the index. In Discord's legacy search pipeline, messages first passed through a Redis-backed realtime indexing queue. When search-node failures caused a backlog, Redis could become CPU-saturated and begin dropping messages. Those messages never entered the indexing pipeline, so no shard, however healthy, ever contained them, and querying a healthy shard later could not recover documents that were never indexed. Two other mechanisms compounded the outage: a 50-message bulk batch could fan out across up to 50 nodes, so a single unavailable node failed the whole batch and forced all records to be retried, amplifying the backlog; and cluster-state/Lucene limits (master OOM raising the backlog, the roughly 2-billion-document MAX_DOC ceiling, and a restart-induced complete search outage) could deepen or prolong it. Discord later moved realtime indexing from Redis to a PubSub queue that can retain backlogs while Elasticsearch is unavailable and routed bulk writes by destination cluster/index, but the book notes that queue redelivery/idempotency, retention through prolonged outages, and a consistent index checkpoint still require separate validation. Queue retention alone therefore does not guarantee replay of every dropped message.",
+      "citations": [
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet",
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#source-reported-new-topology-and-recovery-limits"
+      ],
+      "required_evidence": [
+        "tycho.chapter.e3cf27f8212a455bb53e135ee18bbaa9#decision-and-worked-result",
+        "tycho.page.4dbb361891e04ed4b48e421be85b3a26#1-build-an-evaluation-set-before-choosing-a-vector-model",
+        "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#architecture-shift-and-ownership",
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#original-pressure-and-baseline",
+        "tycho.page.95bf2e08c056472f92faf870de8f1357#three-separate-failure-mechanisms-in-the-legacy-search-fleet",
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.d79b0a48b30f4995a9bc110dbe691e52#applied-m9-evidence-what-transfers-and-what-does-not"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "1. Build an evaluation set before choosing a vector model",
+        "7. Failure and recovery",
+        "Architecture shift and ownership",
+        "Original pressure and baseline"
+      ]
+    },
+    {
+      "task_id": "Q029",
+      "question": "What does a bounded platform worker pool fail to bound when its submission queue is unlimited?",
+      "layer_expected": "book",
+      "answer": "A bounded platform worker pool bounds only concurrent active work (the executing platform threads); an unlimited submission queue is outside that bound. It does not bound the number of admitted-but-waiting submissions or the queue depth, so the waiting backlog and its queueing delay can grow without limit. Because an unbounded queue never rejects, the pool can show few immediate errors while latency worsens; Little's Law (L = lambda x W) describes occupancy and response time growing once arrivals exceed completion rate. A deadline must therefore budget admission and executor queue wait, not only execution.",
+      "citations": [
+        "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#platform-pools-queues-and-deadlines",
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.d5b789c9cd7e4cb693c22943423531c2#decision-and-worked-result",
+        "tycho.chapter.e436af815dc442f694deb55966077d9e#purpose-and-mission",
+        "tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix",
+        "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#1-four-distinct-concurrency-boundaries",
+        "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#explicit-decision-rejection-criteria",
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#2-reactive-streams-is-demand-coordination-not-a-magic-queue",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#bounded-pattern-ownership-notes",
+        "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#platform-pools-queues-and-deadlines"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Purpose and mission",
+        "A capacity-and-correctness decision matrix",
+        "1. Four distinct concurrency boundaries",
+        "Explicit decision rejection criteria"
+      ]
+    },
+    {
+      "task_id": "Q037",
+      "question": "What relationship details must be defined before interpreting a graph edge?",
+      "layer_expected": "book",
+      "answer": "Before interpreting a graph edge, a useful graph schema must define the relationship details that give it meaning: node identity and node type; the relationship type, direction, endpoints and cardinality; whether multiple parallel relationships are allowed; the temporal validity or version of the relation; authorization and visibility of both nodes and edges; whether the relationship is authoritative or derived; and deletion, cycle, duplicate and integrity policies. Without these, an edge's direction and label are ambiguous, a path is only a sequence of matched elements rather than proof of causal influence, permission or completeness, and alternative paths or time-bound availability cannot be reasoned about.",
+      "citations": [
+        "tycho.page.ae4febbe43f941f78d825613e126419b#1-clarify-the-meaning-of-an-edge",
+        "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route"
+      ],
+      "required_evidence": [
+        "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#decision-and-worked-result",
+        "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#pages-and-reasoning-route",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+        "tycho.page.5bee1736b2fe4418af5c50587ee4fbb0#3-graph-traversal-is-an-explicit-reasoning-step-not-a-search-replacement",
+        "tycho.page.64f398c0535345258b1fdf5eebbf4438#5-derived-graphs-and-provenance",
+        "tycho.page.6d8377d616c548ef9c3b213d8a2df934#4-query-specification-must-include-semantics-and-bounds",
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#3-openlineage-records-data-flow-relationships-not-business-approval"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "Pages and reasoning route",
+        "5. Aggregation loses information by design",
+        "4. Token and credential boundaries",
+        "3. Graph traversal is an explicit reasoning step, not a search replacement"
+      ]
+    },
+    {
+      "task_id": "Q045",
+      "question": "When may an expanded database schema be contracted during a mixed-version rollout?",
+      "layer_expected": "book",
+      "answer": "Only after the expansion's compatibility window has been closed on evidence, never on a calendar date or an assumption that every instance is upgraded. In the expand-migrate-contract sequence, contraction (removing the old columns/contracts and destructive cleanup) is gated by: the N/N+1 read/write matrix passing through the mixed phase; bounded, replay-safe backfill and reconciliation of migrated data; and demonstrable retirement of the old N writers and historic readers/consumers \u2014 an observed reader absence backed by a real reader inventory, including mobile/partner clients, queues, batch jobs, database views and backups. Replay/restore requirements must be satisfied and any irreversible effects must have an approved recovery strategy. Until those gates hold, the schema stays expanded; any incompatible persisted write places the rollout in a hold state requiring forward repair or a verified restore rather than redeploying N. Contraction is the riskiest, effectively no-return step: dropping required old fields destroys the easiest rollback path, and image rollback cannot reinterpret new-only state or recreate a removed column, so an earlier binary cannot be assumed able to operate after contraction.",
+      "citations": [
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#bounded-pattern-ownership-notes",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary"
+      ],
+      "required_evidence": [
+        "tycho.chapter.5e4761e1a3e34c2f8023ec8ac4fa81d5#decision-and-worked-result",
+        "tycho.chapter.7d434d1a41e142d38bb729ee124ac548#decision-and-worked-result",
+        "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+        "tycho.page.357c2d162bd44f3aa06a995a1e691551#purpose-and-mission",
+        "tycho.page.3d13e39bb42a4458999803e40d7137cc#2-release-strategies-and-their-limits",
+        "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+        "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis"
+      ],
+      "expected_answer_points": [
+        "Decision and worked result",
+        "3. Explicit state machine for transitional safety",
+        "3. Original fictional canary failure",
+        "Purpose and mission",
+        "2. Release strategies and their limits"
+      ]
+    },
+    {
+      "task_id": "Q053",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "layer_expected": "atlas",
+      "answer": "A local read model is a derived, asynchronously maintained copy, not the authority. When every read must be strongly consistent, each read must reflect the latest committed state (or a verifiable version); a local copy can lag or be stale through projection/replication lag, lost invalidation, or a stale fill, and without the source revision it cannot prove which value is current. The Self-Contained Service pattern is explicitly contraindicated when strong consistency is mandatory, and its accepted trade-offs are duplication, reconciliation and staleness. Strong reads still need the authority: a synchronous authority read, a wait for a specified version within a bounded timeout, or a version/quorum gate\u2014so the synchronous dependency and coordination cost return, now with extra reconciliation machinery. Cache or replica availability is not authoritative correctness; a local read model fits only reads whose declared freshness contract tolerates staleness.",
+      "citations": [
+        "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview",
+        "tycho.page.4e0e4db7547b45469f36915886473750#bounded-pattern-ownership-notes",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties"
+      ],
+      "required_evidence": [
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#purpose-and-mission",
+        "tycho.chapter.9825cb82eb2142754c638aea1ba8d845#entry-inventory",
+        "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.b21078a397214496a24305a2f016b021#overview",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ],
+      "expected_answer_points": [
+        "Entry inventory",
+        "Purpose and mission",
+        "Self-Contained Service",
+        "Cache Invalidation",
+        "Request-Reply Messaging"
+      ]
+    },
+    {
+      "task_id": "Q061",
+      "question": "What risk arises when a translation layer between legacy and new domains has no owner for its mappings?",
+      "layer_expected": "atlas",
+      "answer": "The mapping becomes an unowned, untested de facto contract: as the legacy and new models evolve independently, translations silently drift and unmappable meanings get laundered into false equivalents (for example, legacy ACTIVE being read as new AVAILABLE), with no accountable party to validate them or reconcile mapping errors. The anti-corruption layer then stops being a controlled translation boundary and can quietly become a second, competing domain model or a single point of semantic failure. The atlas therefore treats 'the mapping has no owner' as a hard contraindication: a translation layer between legacy and new domains should not be accepted or kept until its mappings and mapping errors have a real owner and are tested.",
+      "citations": [
+        "tycho.page.849bdcae7fb65f6daa4d9db920961789#overview",
+        "tycho.page.31c8e450f78c451d90cb6090df330c5a#bounded-pattern-ownership-notes",
+        "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping"
+      ],
+      "required_evidence": [
+        "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview",
+        "tycho.page.31c8e450f78c451d90cb6090df330c5a#bounded-pattern-ownership-notes",
+        "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+        "tycho.page.849bdcae7fb65f6daa4d9db920961789#overview",
+        "tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields",
+        "tycho.page.e5195a1aafa640359f05aebc08744584#2-original-synthetic-case-an-equipment-catalogue-migration"
+      ],
+      "expected_answer_points": [
+        "Self-Contained Service",
+        "Bounded pattern ownership notes",
+        "Anti-Corruption Layer",
+        "4. Anti-corruption adapters protect meaning, not just JSON fields",
+        "2. Original synthetic case: an equipment catalogue migration"
+      ]
+    },
+    {
+      "task_id": "Q069",
+      "question": "When is polling a separate asynchronous status resource unnecessary for a client?",
+      "layer_expected": "atlas",
+      "answer": "Polling a separate asynchronous status resource is unnecessary when the work can finish inside a single request: i.e., when a same-connection synchronous (unary) response suffices because the API responds quickly enough to return the one final result or error before the request is released. In that case the client holds one request and reads the outcome directly, so no operation handle, status endpoint, backoff/expiry policy, handle store or terminal-state schema is warranted. The Asynchronous Request-Reply pattern is only a good fit when the work does not fit a same-connection response, and it is a hard contraindication when a synchronous response suffices or duplicate submission cannot be made idempotent. Even when accepted work does outlive the request transport, a durable operation ID and status read are required, but polling is only one option for status updates \u2014 webhooks or a stream can carry them instead, so a client-side poll loop is not mandatory whenever a push channel is available.",
+      "citations": [
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#bounded-pattern-ownership-notes",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+        "tycho.page.fbb4bc905d02495dbe3d7675d8670235#1-four-interaction-contracts"
+      ],
+      "required_evidence": [
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.page.b21078a397214496a24305a2f016b021#overview",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+        "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#bounded-pattern-ownership-notes",
+        "tycho.page.f213c7f6ef0741f18ea2e6f9d008f34f#overview",
+        "tycho.page.fbb4bc905d02495dbe3d7675d8670235#1-four-interaction-contracts"
+      ],
+      "expected_answer_points": [
+        "Transactional Outbox",
+        "Claim Check",
+        "Request-Reply Messaging",
+        "1. Define the scarce resource and the acceptance outcome",
+        "Bounded pattern ownership notes"
+      ]
+    },
+    {
+      "task_id": "Q077",
+      "question": "What does the V12 reference engine do when an invariant fails before a run record is written?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "It fails closed: the V12 reference engine aborts the run and writes no run record at all. The engine writes a run record only after the model, scenario and result hashes are known, so a failed invariant leaves no partial or plausible-but-invalid result behind; a partial write (writing a record before an invariant check) is listed as a failure mode the design deliberately avoids. The run life cycle orders the steps as run replications, check invariants, aggregate metrics, convergence/sensitivity, hash result, then write run record, and the page states the engine 'fails closed on unknown identifiers and failed invariants.'",
+      "citations": [
+        "tycho.page.687d2196433c3b076d00c73144dad431#components",
+        "tycho.page.687d2196433c3b076d00c73144dad431#failure-modes"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#purpose-and-mission",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#pages-and-reasoning-route",
+        "tycho.chapter.ad6455916f994c0e22e0df7881857f23#pages-and-reasoning-route",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#overview"
+      ],
+      "expected_answer_points": [
+        "Purpose and mission",
+        "Pages and reasoning route",
+        "A provenance chain",
+        "Applying the constraints",
+        "Case 1: conservation"
+      ]
+    },
+    {
+      "task_id": "Q085",
+      "question": "How are correlated lag and reconciliation-capacity assumptions propagated in the V12 modernization scenario?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "In V12 the correlation is a declared scenario assumption, not an inferred or measured one. The scenario contract's uncertainty block records parameter draws and correlations; the modernization scenario draws dual-write lag from 0.5-2.5 seconds and reconciliation capacity from 2-8 records per second and declares a Gaussian copula with correlation -0.4, on the reasoning that the same operational pressure lengthens lag and lowers capacity. The engine's sampling applies that declared correlation to the joint input draws; it does not infer a correlation from data. Each sampled row then feeds the stock-flow model at every step: offered traffic is split across legacy and target paths up to each path's capacity; backlog grows as target_served times dual_write_lag and drains at min(backlog, reconciliation_capacity * dt), so divergence accumulates once backlog exceeds drain capacity. The staged run uses point values of 1.5 seconds and 4 records per second, 20 replications and seed base 20261029, yielding mean backlog 4,242.0 records and maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3), with rollback completed in only 0.1 of runs (non-completions censored at 1,200 seconds). Propagation stops at the Monte Carlo run: the V12 quadratic response-surface sensitivity screen requires independent inputs and the engine rejects a correlated screen, so the correlation shapes divergence and rollback outputs but not the Sobol-style variance decomposition. Because both ranges are assumed rather than measured, the comparison is insufficient evidence for a cutover decision; the stated next step is to measure dual-write lag and reconciliation throughput, rehearse rollback, measure divergence over a shadow period, and rerun with measured inputs.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ],
+      "required_evidence": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result"
+      ],
+      "expected_answer_points": [
+        "Boundaries and evidence",
+        "V12-C: statistical validity",
+        "Experiment design",
+        "Correlated inputs",
+        "The V12 input table"
+      ]
+    },
+    {
+      "task_id": "Q093",
+      "question": "What kinds of identifiers, links and hashes does the V12 structural gate check?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The V12-A structural gate, run by scripts/validate_v12.py, checks: valid strict frontmatter for every V12 document; uniqueness of volume, chapter and page identifiers; uniqueness of model, scenario, run and decision identifiers; that links resolve \u2014 every scenario model_id, every run model_id and scenario_id, every decision candidate run, and every pattern identifier and owner page in the existing registry; that every stored hash matches the current model or scenario file; that the reverse index is derived from the records rather than hand-edited; and the iron rule that no protected existing page or card outside the V12 directory references V12 paths or V12-only identifiers.",
+      "citations": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ],
+      "required_evidence": [
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#diagram",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#pages-and-reasoning-route",
+        "tycho.chapter.77831d9a57067de6faa1da630a83f49b#pages-and-reasoning-route",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#overview",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#ten-rules-mapping",
+        "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes"
+      ],
+      "expected_answer_points": [
+        "Diagram",
+        "Pages and reasoning route",
+        "Reproducibility and replay",
+        "Ten rules mapping",
+        "The reproducibility contract"
+      ]
+    }
+  ]
+}

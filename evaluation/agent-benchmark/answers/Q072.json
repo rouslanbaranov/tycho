@@ -1,0 +1,15 @@
+{
+ "task_id": "Q072",
+ "answer": "Immediately after a write-time invalidation, reads can still be transiently wrong in two ways. First, a reader can hit a cache miss and fall through to the authoritative store, or briefly see the pre-write value in the window between the source write and the cache delete. Second, and more durably, a read that began before the invalidation can finish afterwards and reinsert the older version it fetched; subsequent readers then keep getting the obsolete value until TTL expiry or another correct invalidation (the stale-fill-after-invalidation race). Plain database-write-then-delete cache-aside does not close that race, so the residual stale window is bounded only with version-fenced or compare-and-set cache fills, a short bounded TTL, change-event replay with versions, or direct authoritative reads for correctness-critical operations. The book presents this as a general synthetic race, not a measured production incident.",
+ "citations": [
+  "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+  "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+  "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+  "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+ ],
+ "abstain": false,
+ "token_usage": {
+  "total": null,
+  "estimated": true
+ }
+}

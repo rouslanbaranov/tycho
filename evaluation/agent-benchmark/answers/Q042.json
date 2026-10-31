@@ -1,0 +1,16 @@
+{
+  "task_id": "Q042",
+  "answer": "A service can stay saturated while refusing most arrivals because rejecting is itself work and refusal does not remove the load already inside the system.\n\n1. The rejection path consumes real capacity. Parsing, authentication, authorization checks, logging, error rendering, network transfer and client retries still run for every refused request; if a large fraction of offered work is rejected, the rejection path can dominate the remaining capacity, and a service can be overloaded while most of its CPU is spent rejecting requests. Rejections also multiply when callers retry, and a retry hint that every client follows immediately recreates the overload.\n\n2. Refusing new arrivals does not undo admitted work. Requests already queued and in flight keep utilization at the limit until the backlog drains: the book's simulation offers 30 requests/s to a 24 requests/s pool with a 40-slot queue and a one-second deadline, and reports utilization 0.9966, mean queue length 12.79, success 0.6488, rejection 0.05% but timeout 35.0% - the dominant failure is deadline expiry, not rejection. In the Little's Law walkthrough, 120 requests/s against 80 completions/s leaves about 800 queued requests and needs at least ten more seconds to clear after arrivals stop.\n\n3. Rejection at the wrong layer protects nothing. An edge or per-requests-per-second quota does not free a shared outbound pool, database or storage bottleneck, so most traffic can be refused while the admitted minority keeps the scarce resource saturated; unequal operation costs and single-tenant queue filling mean request-count limits can reject cheap work yet leave the expensive work that dominates load. The countermeasures are admission before the expensive step, bounded queue size and age, a small bounded rejection response, explicit retry guidance, and measuring the rejection path itself rather than only rejection counts.",
+  "citations": [
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#integrated-decision-and-reading-route"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

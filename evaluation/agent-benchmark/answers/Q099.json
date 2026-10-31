@@ -1,0 +1,13 @@
+{
+  "task_id": "Q099",
+  "answer": "The no-cutover scenario is a control, not an endorsement. It runs the same synthetic workload and model as the staged path but holds target traffic share at zero and never triggers rollback, so its zero divergence, zero backlog and absent rollback requirement isolate the modeled cost of not shifting traffic. The staged path adds divergence risk and a rollback requirement without adding modeled throughput, because both paths have capacity for the synthetic load. Crucially, zero modeled divergence does not achieve modernization: the experiment explicitly lists 'baseline as winner' as a failure mode, states the baseline is not a recommendation to remain on the legacy path forever, and says both arms lead to insufficient evidence and a measurement agenda (instrument dual-write lag, measure reconciliation throughput, rehearse rollback, measure sustained shadow divergence, rerun with measured inputs). The model contains no business reason for modernization, so it cannot justify permanent retention of the old path.",
+  "citations": [
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

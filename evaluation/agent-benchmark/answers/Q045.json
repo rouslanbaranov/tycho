@@ -1,0 +1,15 @@
+{
+  "task_id": "Q045",
+  "answer": "Only after the expansion's compatibility window has been closed on evidence, never on a calendar date or an assumption that every instance is upgraded. In the expand-migrate-contract sequence, contraction (removing the old columns/contracts and destructive cleanup) is gated by: the N/N+1 read/write matrix passing through the mixed phase; bounded, replay-safe backfill and reconciliation of migrated data; and demonstrable retirement of the old N writers and historic readers/consumers — an observed reader absence backed by a real reader inventory, including mobile/partner clients, queues, batch jobs, database views and backups. Replay/restore requirements must be satisfied and any irreversible effects must have an approved recovery strategy. Until those gates hold, the schema stays expanded; any incompatible persisted write places the rollout in a hold state requiring forward repair or a verified restore rather than redeploying N. Contraction is the riskiest, effectively no-return step: dropping required old fields destroys the easiest rollback path, and image rollback cannot reinterpret new-only state or recreate a removed column, so an earlier binary cannot be assumed able to operate after contraction.",
+  "citations": [
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#bounded-pattern-ownership-notes",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

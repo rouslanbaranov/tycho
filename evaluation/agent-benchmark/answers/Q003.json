@@ -1,0 +1,13 @@
+{
+  "task_id": "Q003",
+  "answer": "Airbnb's generated Bazel targets sometimes missed dependencies on classes loaded reflectively from configuration. The sync-configs generator derived targets mainly from Java/Kotlin/Scala source imports and declarations, so reflection-driven runtime dependencies were not always detectable; roughly 100 of about 700 services then failed publisher-reported startup/integration parity tests. (The migration also exposed incompatible library versions, because Gradle modules had used multiple versions of the same library while the initial Bazel model assumed one globally selected version.)",
+  "citations": [
+    "tycho.page.c766e3289b95429bb158fb168f7bd0b9#actual-failures-static-imports-are-not-full-runtime-dependencies",
+    "tycho.page.c766e3289b95429bb158fb168f7bd0b9#detailed-mechanics-and-ownership"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

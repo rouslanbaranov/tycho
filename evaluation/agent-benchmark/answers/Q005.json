@@ -1,0 +1,16 @@
+{
+  "task_id": "Q005",
+  "answer": "Equal source and target row counts are a single aggregate scalar, so they fail to prove migration completeness for several distinct reasons the corpus states explicitly. (1) Counts are consistent with compensating errors. Two unequal sets can have identical counts: missing rows can be offset by duplicated or spurious rows, so a net-zero total hides both omissions and additions. The Meta case names this limit directly in its gate table -- row-count comparison has the epistemic limit that \"two unequal sets can have identical counts\". (2) Counts do not test value, schema or query semantics. Netflix's stated invariant is that both set differences C-M and M-C must be empty, not that totals match, because identical semantics must include schema and metadata, not only row count. Uber records a reproduction where identical query text and the same client API still produced different results across engines (PS-7722), so a matching count -- or even a matching checksum -- proves only the checked representation under its defined snapshot, not end-to-end equivalence. (3) Equality is a relative parity guarantee, not domain truth. If both sides implement the same wrong semantics, equality holds while correctness fails; and a difference can equally come from a legitimate snapshot or interpretation difference (TTL reference timestamps, consistency levels, backup choice, internal data-model interpretation) as from a defective target. Identity, value equality, operation order, referential consistency, exactly-once side effects and bounded freshness are different invariants, and a row count only addresses cardinality of one set at one instant. (4) A count is a point-in-time claim over an unspecified window. It does not cover live-write races during backfill or dual-write, retry and partial-failure divergence, TTL/retention expiry, historical tombstones, delayed cache refresh, or rollback after old data deletion. The decision playbook therefore warns never to assume counts or full-backup metadata alone prove business equivalence, and requires per-cohort missing/extra row measurement, referential and business invariants, mismatch root-cause analysis and dual-write conflict counts instead.",
+  "citations": [
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.page.50b3410cae7d4032babb15542e748cac#equality-is-an-observable-contract-not-automatically-domain-truth",
+    "tycho.page.689c7d51faf1441caa7edfcb6152345e#the-two-failure-findings-that-invalidate-a-purely-structural-cutover",
+    "tycho.page.cd9c135dbdad45e5937a41c6f70ec3d3#shadow-read-parity-and-additional-safeguards"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

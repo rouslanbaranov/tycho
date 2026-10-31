@@ -1,0 +1,15 @@
+{
+  "task_id": "Q004",
+  "answer": "Resource/capacity isolation remains. Correct tenant-scoped data permissions control which records a tenant may read or write, but they do not stop one tenant's workload from consuming or starving the shared connection pool and delaying other tenants (noisy-neighbour effects / connection-pool starvation). The book treats compute and resource isolation as a separate axis from identity and data isolation, warns that equal CPU limits alone do not prevent shared storage or connection-pool starvation, and says a shared pool with tenant-scoped predicates is cheaper at low scale only with explicit fairness and escape hatches; a shared pool can strand capacity or fail to enforce quotas, so dedicated resources are justified when measured noisy-neighbour cost (or compliance risk) dominates. At the connection level, pooled reuse also carries session-scoped state (session settings, temporary objects, prepared statements, LISTEN/NOTIFY and locks), so tenant/session context must not be assumed to persist across checkouts.",
+  "citations": [
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

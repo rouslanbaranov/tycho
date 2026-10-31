@@ -1,0 +1,14 @@
+{
+  "task_id": "Q089",
+  "answer": "When the queue is full or the bulkhead limit (waiting plus in-service requests) is reached, V12 rejects the request at admission and records and counts the rejection, rather than blocking the arrival process silently. Rejection is terminal: rejected requests do not retry, whereas timed-out requests with attempts remaining wait for backoff and re-enter the queue. The engine reports the rejection rate as an explicit metric, while noting that timeouts can account for a much larger share of lost work.",
+  "citations": [
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

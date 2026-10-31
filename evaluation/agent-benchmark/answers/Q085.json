@@ -1,0 +1,18 @@
+{
+  "task_id": "Q085",
+  "answer": "In V12 the correlation is a declared scenario assumption, not an inferred or measured one. The scenario contract's uncertainty block records parameter draws and correlations; the modernization scenario draws dual-write lag from 0.5-2.5 seconds and reconciliation capacity from 2-8 records per second and declares a Gaussian copula with correlation -0.4, on the reasoning that the same operational pressure lengthens lag and lowers capacity. The engine's sampling applies that declared correlation to the joint input draws; it does not infer a correlation from data. Each sampled row then feeds the stock-flow model at every step: offered traffic is split across legacy and target paths up to each path's capacity; backlog grows as target_served times dual_write_lag and drains at min(backlog, reconciliation_capacity * dt), so divergence accumulates once backlog exceeds drain capacity. The staged run uses point values of 1.5 seconds and 4 records per second, 20 replications and seed base 20261029, yielding mean backlog 4,242.0 records and maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3), with rollback completed in only 0.1 of runs (non-completions censored at 1,200 seconds). Propagation stops at the Monte Carlo run: the V12 quadratic response-surface sensitivity screen requires independent inputs and the engine rejects a correlated screen, so the correlation shapes divergence and rollback outputs but not the Sobol-style variance decomposition. Because both ranges are assumed rather than measured, the comparison is insufficient evidence for a cutover decision; the stated next step is to measure dual-write lag and reconciliation throughput, rehearse rollback, measure divergence over a shadow period, and rerun with measured inputs.",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

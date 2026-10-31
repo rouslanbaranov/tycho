@@ -1,0 +1,20 @@
+{
+  "task_id": "Q016",
+  "answer": "Gate the change on an observed go/no-go contract, not on a calendar milestone or a single green shadow result. Before authority switches, require: (1) a named change owner and approved versions/assets; (2) a complete old/new client x API x data compatibility matrix, including asynchronous readers; (3) proof that no uncoordinated writers overlap; (4) tested retry identity and late-acknowledgment handling; (5) representative user-level integrity and authorization tests; (6) source-to-target reconciliation plus recorded residual unknowns; (7) a recovery point with actually restored data validity, maximum permissible loss and time; (8) an explicit stop/hold mechanism; and (9) decommissioning evidence for every old caller/subscription.\n\nFor the authoritative-state cutover itself, require the controlled-cutover preconditions: target schema deployed and backfill complete, CDC replication healthy with DLQ errors resolved and no permanent errors, writes paused with no events passing, data freshness at zero, and a reverse-replication fallback active before the switch. State which invariant the gate proves - identity, value equality, operation order, referential consistency, exactly-once side effects, or bounded freshness - and test both shadow directions under real mutation classes; row counts or backup metadata alone do not prove business equivalence. Keep a timestamped authority ledger for old/new reads and writes and name the exact mismatch that triggers rollback. A green index or shadow state is insufficient evidence: replay and revocation paths (for example, a stale query after restarting from an older offset) must also pass.\n\nMake rollback real: identify the last safe phase, a reverse-write adapter or approved forward-repair path, and measured recovery time. Test irreversible cleanup only if backups and reverse transformations can restore newly accepted writes; otherwise refuse cleanup. Refuse the migration when identity mapping is undefined, authoritative writes cannot be recovered after rollback, snapshots differ in unmeasured ways, audit/authorization context changes, or the oracle covers only happy-path counts. If this evidence cannot be obtained, stay on current authority and use a reversible canary, blue/green, or incremental alternative.",
+  "citations": [
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+    "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+    "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

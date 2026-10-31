@@ -1,0 +1,15 @@
+{
+  "task_id": "Q048",
+  "answer": "Moving a tenant from shared storage to its own database is a data migration and cutover, not a connection-string change. Coordinate these workstreams: (1) state capture — establish a consistent snapshot plus a mutation/change log; (2) target provisioning — create schema, keys and permissions without leaking credentials or data from neighboring tenants; (3) single-writer control — freeze or coordinate the authoritative writer so no unguarded dual write exists during the copy; (4) full reconciliation — copy and reconcile all tenant-owned records, indexes, events, exports and projections, not just main-table rows (matching row counts alone proves nothing); (5) reference validation — confirm that any retained cross-tenant references are actually permitted; (6) routing cutover — switch through a versioned tenant-placement mapping with tested rollback and forward-repair limits; (7) old-placement retirement — verify stale caches, queries, tenant-router entries and background consumers no longer read or write the old placement; (8) identity and lifecycle continuity — bind stable tenant identity into message/operation IDs, audit records and deduplication keys, and preserve tenant-specific encryption, retention and deletion obligations, since deleting a row does not remove backups, projections or indexes. Guard specifically against a lost mapping, a stale tenant-router cache and an unguarded dual writer, each of which can break both isolation and correctness. Schema- or database-per-tenant also introduces schema/version fan-out, connection-pool, orchestration and mapping complexity, so those operational owners and limits need explicit coordination. Acceptance should require a one-writer proof plus complete consented-state and projection reconciliation, not table-row counts.",
+  "citations": [
+    "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#5-movement-between-isolation-levels-is-a-data-migration",
+    "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#6-negative-test-matrix",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+    "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "task_id": "Q044",
+  "answer": "Discord's data-service layer was a Rust/Tokio gRPC tier with one endpoint per underlying query and deliberately no domain logic. It reduced redundant reads for a hot message channel in two coupled ways. First, it routed requests by channel ID using a consistent hash, so requests for the same hot channel tended to land on the same service instance. Second, it coalesced concurrent identical row reads: the first in-flight request for a row started the database operation and simultaneous requests for that same row subscribed to its result instead of issuing their own reads. The stated goal was to collapse redundant reads before they reached an already overloaded Cassandra partition, i.e. request shaping rather than a storage-engine fix. The case notes limits on this transfer: a single-flight cache must still be bounded by request identity and semantics, because differing authorization contexts, mutable reads or different consistency levels may disqualify coalescing (framed as Tycho's transfer risks, not as a claim about Discord's implementation), and hot partitions still occurred after coalescing, just less frequently, so coalescing bought migration time while the store was moved to ScyllaDB alongside it.",
+  "citations": [
+    "tycho.page.b55f5bf29d7946c78454a769980c476e#request-shaping-the-extra-architecture-boundary",
+    "tycho.page.b55f5bf29d7946c78454a769980c476e#architecture-shift-and-ownership",
+    "tycho.page.b55f5bf29d7946c78454a769980c476e#partition-hot-spots-and-why-a-database-replacement-alone-was-insufficient"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

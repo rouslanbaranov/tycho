@@ -1,0 +1,16 @@
+{
+  "task_id": "Q053",
+  "answer": "A local read model is a derived, asynchronously maintained copy, not the authority. When every read must be strongly consistent, each read must reflect the latest committed state (or a verifiable version); a local copy can lag or be stale through projection/replication lag, lost invalidation, or a stale fill, and without the source revision it cannot prove which value is current. The Self-Contained Service pattern is explicitly contraindicated when strong consistency is mandatory, and its accepted trade-offs are duplication, reconciliation and staleness. Strong reads still need the authority: a synchronous authority read, a wait for a specified version within a bounded timeout, or a version/quorum gate—so the synchronous dependency and coordination cost return, now with extra reconciliation machinery. Cache or replica availability is not authoritative correctness; a local read model fits only reads whose declared freshness contract tolerates staleness.",
+  "citations": [
+    "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview",
+    "tycho.page.4e0e4db7547b45469f36915886473750#bounded-pattern-ownership-notes",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

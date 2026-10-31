@@ -1,0 +1,13 @@
+{
+  "task_id": "Q011",
+  "answer": "Fix a written experiment contract before running either change: (1) the claim — under scenario X, change Y improves user-visible metric Z without violating invariants; (2) the measurement boundary — where the clock starts, what counts as a logical request, and which systems/resources are included; (3) the alternatives — an unchanged or smallest-safe baseline and a materially distinct candidate; (4) the workload — input-trace source/version, arrival schedule, key skew, old/new client mix, and dataset; (5) hard gates — permissions, correctness, durable state, compatibility, and recovery; (6) the expected signature — which metric should change if the hypothesis is true and which independent metric would contradict it; (7) repetition and uncertainty — trials, warm/cold state, random order, noise, and acceptable range; (8) abort and rollback conditions; and (9) the evidence record — exact tool versions/configuration, raw observations, analysis scripts, failed checks, and independent review status. Crucially, pre-register the decision criterion and its threshold or acceptable range before seeing results, so the threshold cannot be adjusted afterward until a preferred candidate wins. Freezing the workload and acceptance observables is part of the same contract. This prevents criterion drift, but it does not by itself make a weak benchmark valid: the fixture still needs representative, accurately observed demand and correctness.",
+  "citations": [
+    "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+    "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

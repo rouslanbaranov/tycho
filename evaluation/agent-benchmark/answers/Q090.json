@@ -1,0 +1,14 @@
+{
+  "task_id": "Q090",
+  "answer": "The V12 quadratic screen approximates a Sobol' analysis; it is not one. A full Sobol'/pick-freeze analysis uses paired model evaluations to build an ANOVA decomposition of the model's variance: the first-order index is the share of output variance V explained by input i alone, and the total-order index includes every interaction involving i. That estimator is unbiased only under its assumptions and is noisy at small sample sizes, and the page states that a full pick-freeze analysis is expensive for a discrete-event model.\n\nThe V12 screen instead runs one model run per row for 48 input rows drawn from the declared distributions, fits a quadratic surface in standardized input coordinates, decomposes the fitted variance into main effects plus a single interaction term, and reports first-order and total-order shares. Its indices therefore describe an approximated quadratic response surface over the sampled range, not a fully estimated decomposition of the simulator's variance.\n\nConsequences of that substitution, per the page: the screen assumes a quadratic surface is adequate over the sampled range and that standardization is meaningful; it requires independent inputs, so the engine rejects a correlated screen and correlated inputs are propagated only by the separate Monte Carlo run; and the failure modes include \"quadratic overreach\" from extrapolating beyond the sampled range, plus reporting indices without error. For candidate B the fitted screen gives arrival rate first-order 0.361 / total-order 0.464 and service mean 0.536 / 0.639; the first-order shares sum to 0.897, leaving about 0.103 for interaction and unexplained variation. The page explicitly warns that this does not prove service time is more important in production - under the declared distributions and the quadratic approximation it only explains more of the fitted variance. The sensitivity scenario is converged at 0.00016 relative error yet is still labeled a screening approximation, while a separate two-replication stress run at 0.032 relative error is marked insufficient-sample.\n\nIn short: full Sobol' = paired-evaluation, assumption-bounded estimate of model variance shares; V12 screen = cheap 48-row quadratic response-surface fit whose \"indices\" are fitted-surface shares, restricted to independent inputs and not a variance decomposition of the model itself.",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

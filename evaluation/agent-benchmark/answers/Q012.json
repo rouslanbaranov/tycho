@@ -1,0 +1,17 @@
+{
+  "task_id": "Q012",
+  "answer": "Parallel run is a control, not a race. The old implementation's result must remain the system of record while the candidate runs alongside it; the candidate is compared but never serves the response. That preserves three things. First, an independent reference: without an authoritative old result, a difference cannot be attributed to the candidate, and 'equal' or 'green' output proves nothing. Second, safety: a candidate failure must never become a user-visible failure, so the old result must keep answering. Third, recovery: the old route must remain operational and authorized so the change can be held, reversed, or used as a reconciliation baseline. Retiring or overwriting the old authority before cutover destroys both the comparison and the fallback. Two limits: parallel run applies only to side-effect-free operations with comparable outputs; and the old result is authoritative for control, not an infallible business oracle - equality with a buggy legacy output is not proof of correctness.",
+  "citations": [
+    "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

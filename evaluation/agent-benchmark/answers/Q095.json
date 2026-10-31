@@ -1,0 +1,13 @@
+{
+  "task_id": "Q095",
+  "answer": "In the V12 discrete-event model the timeout is per-attempt, not per-request: when an attempt times out and attempts remain, the engine releases the server (or dequeues a queued request), records the attempt as timed out, schedules a retry event after the backoff, and the retry schedules a fresh timeout at the retry time plus the configured timeout. The old deadline is not reused, so a request with three attempts can spend up to three timeouts plus two backoffs in the system. The expired attempt's already-scheduled completion event stays in the heap as a stale event and is ignored because the state check finds no in-service request. This reset is required for reproducibility: the listed failure mode 'Timeout resets on retry omitted' means a retry would inherit an expired deadline and fail immediately.",
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
