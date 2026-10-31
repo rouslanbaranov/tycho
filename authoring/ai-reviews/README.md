@@ -158,3 +158,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer | #540 Distributed Tracing | pass | `2026-10-31-distributed-tracing-deepseek.md` | `f529745d2186ab517b80a7da7bf74aedc3a3706a76eada9c6865b380fa257497` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Backup/PITR | pass | `2026-10-31-backup-pitr-deepseek.md` | `3891568f982ee9579f3b6bc80da95bb3fc1a44dcf644f024015dc1f3496fca19` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Failover-Failback | pass | `2026-10-31-failover-failback-deepseek.md` | `fe7c17951322821d14e51d908ef7aa130ddc63f28ce8cc0e424709c421c2907d` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Hedged Requests | pass | `2026-10-31-hedged-requests-deepseek.md` | `cdb461aaa40a7e6111323b267bb74004e5b3cb3efa6be3caddf4df24cd4c3c41` |
