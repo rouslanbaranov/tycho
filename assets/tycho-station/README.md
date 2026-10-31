@@ -20,6 +20,17 @@ The image is included only as project artwork for the README. Do not present it
 as an official production asset or as a claim of affiliation. The artwork is
 not offered for standalone redistribution.
 
+## Rights limits
+
+The image was supplied by the project owner; the generation tool and model were
+not recorded. No license or clearance from the rights holders is claimed.
+
+Because the image depicts a fictional location associated with `The Expanse`,
+a close visual likeness may be treated as a derivative work in some
+jurisdictions. The project uses it as an independent interpretation, not as a
+copy of a specific production frame. If a rights holder objects, remove or
+replace the image. This note records provenance, not a legal opinion.
+
 ## Origin review
 
 - Supplied by the project owner for use as the README hero image.
