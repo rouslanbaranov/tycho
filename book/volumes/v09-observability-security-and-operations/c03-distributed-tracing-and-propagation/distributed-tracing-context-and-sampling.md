@@ -46,17 +46,17 @@ evidence_scope:
   status: "source-linked"
   notes: >-
     Bound 2026-10-31 to five public units: OpenTelemetry traces, context
-    propagation and sampling; W3C Trace Context; and Google Dapper. src.dapper
-    is proposed pending registration. No claim-level mapping, independent
-    review or source-completeness claim is made.
+    propagation and sampling; W3C Trace Context; and Google Dapper. The
+    src.dapper source id is registered. No claim-level mapping, independent
+    review, promotion or source-completeness claim is made.
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-31"
-  reviewer: "Automated authoring agent"
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.f921597aae854c6996459fc025a9bca3:-1 -->
@@ -159,7 +159,7 @@ Infrastructure", technical report dapper-2010-1. The exact units are:
 <https://opentelemetry.io/docs/concepts/sampling/>,
 <https://www.w3.org/TR/2021/REC-trace-context-1-20211123/> and
 <https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf>.
-The proposed or retained records are `read.otel-traces.2026-10-31`,
+The bound or retained records are `read.otel-traces.2026-10-31`,
 `read.otel-context-propagation.2026-10-31`, `read.otel-sampling.2026-10-31`,
 `read.w3c-trace-context.2026-10-31` and `read.dapper-tracing.2026-10-31`. They are living
 documentation, a dated Recommendation and a technical report, not benchmarks or production

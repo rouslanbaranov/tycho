@@ -14251,62 +14251,246 @@
         "heading": "Distributed Tracing",
         "anchor": "distributed-tracing",
         "level": 3,
-        "line": 90,
+        "line": 101,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selected execution story",
           "not an authoritative record",
           "missing span",
-          "metrics or structured logs"
+          "metrics and structured logs"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
           "quote": "Distributed tracing reconstructs *a selected execution story*: a request enters a component, starts work, calls another component and may later complete asynchronously.",
-          "reason": "Explains tracing as reconstructing a selected cross-component execution story.",
+          "reason": "OpenTelemetry defines the trace path and context assembly, W3C defines the propagation format and Dapper defines the trace-context container.",
           "binding": {
             "source_id": "src.otel",
-            "ledger_record": "read.batch6-otel-traces.2026-10-21",
-            "section": "Traces",
-            "quote": "Traces give us the big picture of what happens when a request is made to an application. Whether your application is a monolith with a single database or a sophisticated mesh of services, traces are essential to understanding the full “path” a request takes in your application.",
-            "revision": "e9678cd76218165297a0182a94a79d19a2338d926ea1a5fc0d01c6f11c4a4a98"
-          }
+            "ledger_record": "read.otel-traces.2026-10-31",
+            "section": "Context Propagation",
+            "quote": "With Context Propagation, Spans can be correlated with each other and assembled into a trace, regardless of where Spans are generated.",
+            "revision": "a255b2a8896771371e3b2ef2def8b13308b00af764cec3a6568deecc0b700d74"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-traces.2026-10-31",
+              "section": "Traces",
+              "quote": "The path of a request through your application.",
+              "revision": "a255b2a8896771371e3b2ef2def8b13308b00af764cec3a6568deecc0b700d74"
+            },
+            {
+              "source_id": "src.trace-context",
+              "ledger_record": "read.w3c-trace-context.2026-10-31",
+              "section": "Abstract",
+              "quote": "This specification defines standard HTTP headers and a value format to propagate context information that enables distributed tracing scenarios.",
+              "revision": "5d5df65d954cbe0347dc6f61b53f7d58bc2c145ef1a27f2ab932a4b0214282f9"
+            },
+            {
+              "source_id": "src.dapper",
+              "ledger_record": "read.dapper-tracing.2026-10-31",
+              "section": "2.2 Instrumentation points",
+              "quote": "A trace context is a small and easily copyable container of span attributes such as trace and span ids.",
+              "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "A trace can illuminate critical-path waiting, retries and failure propagation—but **it is not an authoritative record of every business effect**.",
-          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule."
+          "state": "supported",
+          "quote": "A trace is a sampled, propagated observation, not an authoritative record of every business effect.",
+          "reason": "W3C says the sampled flag only denotes that the caller may have recorded data and trace-id uniqueness is a SHOULD, OpenTelemetry defines not-sampled as unexported, Dapper denies replacement of all tools, and OpenTelemetry warns about forged headers; the missing-span rule is Tycho.",
+          "binding": {
+            "source_id": "src.dapper",
+            "ledger_record": "read.dapper-tracing.2026-10-31",
+            "section": "1 Introduction",
+            "quote": "Although Dapper alone is sometimes sufficient for a developer to identify the source of a performance anomaly, it is not intended to replace all other tools.",
+            "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.trace-context",
+              "ledger_record": "read.w3c-trace-context.2026-10-31",
+              "section": "3.2.2.5.1 Sampled flag",
+              "quote": "When set, the least significant bit (right-most), denotes that the caller may have recorded trace data.",
+              "revision": "5d5df65d954cbe0347dc6f61b53f7d58bc2c145ef1a27f2ab932a4b0214282f9"
+            },
+            {
+              "source_id": "src.trace-context",
+              "ledger_record": "read.w3c-trace-context.2026-10-31",
+              "section": "8.1 Uniqueness of trace-id",
+              "quote": "The value of trace-id SHOULD be globally unique.",
+              "revision": "5d5df65d954cbe0347dc6f61b53f7d58bc2c145ef1a27f2ab932a4b0214282f9"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-sampling.2026-10-31",
+              "section": "Terminology",
+              "quote": "Not sampled: A trace or span is not processed or exported.",
+              "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-context-propagation.2026-10-31",
+              "section": "Security best practices",
+              "quote": "Malicious actors could send forged trace headers to manipulate your tracing data or potentially exploit vulnerabilities in context parsing.",
+              "revision": "036e40aac0f1617fde082e095d2e34aac4b0f7452aad2b0352c89f0426ae4a08"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "A missing span may mean no work occurred, the instrumentation failed, or the sampling policy intentionally discarded it.",
-          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule."
+          "state": "supported",
+          "quote": "Instrumentation gaps and sampling loss are normal failure modes.",
+          "reason": "Dapper records instrumentation fragility and low-traffic sampling loss, OpenTelemetry records the head-sampling blind spot and tail-sampling monitoring need, W3C records context restart, and Dapper records sampling-probability accounting; the runbook order is Tycho.",
+          "binding": {
+            "source_id": "src.dapper",
+            "ledger_record": "read.dapper-tracing.2026-10-31",
+            "section": "1 Introduction",
+            "quote": "A tracing infrastructure that relies on active collaboration from application-level developers in order to function becomes extremely fragile, and is often broken due to instrumentation bugs or omissions",
+            "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-sampling.2026-10-31",
+              "section": "Terminology",
+              "quote": "Not sampled: A trace or span is not processed or exported.",
+              "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-sampling.2026-10-31",
+              "section": "Head Sampling",
+              "quote": "The primary downside to head sampling is that it is not possible to make a sampling decision based on data in the entire trace.",
+              "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+            },
+            {
+              "source_id": "src.dapper",
+              "ledger_record": "read.dapper-tracing.2026-10-31",
+              "section": "4.4 Adaptive sampling",
+              "quote": "lower traffic workloads may miss important events at such low sampling rates, while tolerating higher sampling rates with acceptable performance overheads.",
+              "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+            },
+            {
+              "source_id": "src.dapper",
+              "ledger_record": "read.dapper-tracing.2026-10-31",
+              "section": "4.6 Additional sampling during collection",
+              "quote": "By depending on the trace id for our sampling decision, we either sample or discard entire traces rather than individual spans within traces.",
+              "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+            },
+            {
+              "source_id": "src.trace-context",
+              "ledger_record": "read.w3c-trace-context.2026-10-31",
+              "section": "3.4 Mutating the traceparent Field",
+              "quote": "Restart trace: All properties (trace-id, parent-id, trace-flags) are regenerated.",
+              "revision": "5d5df65d954cbe0347dc6f61b53f7d58bc2c145ef1a27f2ab932a4b0214282f9"
+            },
+            {
+              "source_id": "src.trace-context",
+              "ledger_record": "read.w3c-trace-context.2026-10-31",
+              "section": "4.3 A traceparent is Received",
+              "quote": "If the version cannot be parsed, the vendor creates a new traceparent header and deletes tracestate.",
+              "revision": "5d5df65d954cbe0347dc6f61b53f7d58bc2c145ef1a27f2ab932a4b0214282f9"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-sampling.2026-10-31",
+              "section": "Tail Sampling",
+              "quote": "Because of these factors, it is critical to monitor tail-sampling components to ensure that they have the resources they need to make the correct sampling decisions.",
+              "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+            },
+            {
+              "source_id": "src.dapper",
+              "ledger_record": "read.dapper-tracing.2026-10-31",
+              "section": "4.4 Adaptive sampling",
+              "quote": "The actual sampling probability used is recorded along with the trace itself; this facilitates accurate accounting of trace frequencies in analytical tools built around Dapper data.",
+              "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-sampling.2026-10-31",
+              "section": "Head Sampling",
+              "quote": "This ensures that whole traces are sampled - no missing spans - at a consistent rate, such as 5% of all traces.",
+              "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "For aggregate latency or a discrete business event, metrics or structured logs may be preferable; use tracing when the cross-component path itself is the question.",
-          "reason": "OTel Traces page has no authoritative-record, missing-span or metrics/log comparison rule."
+          "state": "supported",
+          "quote": "Metrics and structured logs are alternatives for different questions.",
+          "reason": "OpenTelemetry says aggregate data can be pre-aggregated, metrics aggregate in context, traces are structured logs with context, and Dapper is not a replacement for all tools; the choice rule is Tycho.",
+          "binding": {
+            "source_id": "src.otel",
+            "ledger_record": "read.otel-sampling.2026-10-31",
+            "section": "When not to sample",
+            "quote": "You only use observability data in aggregate, and can thus pre-aggregate data.",
+            "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-context-propagation.2026-10-31",
+              "section": "Metrics",
+              "quote": "In the case of metrics, context propagation enables you to aggregate measurements in that context.",
+              "revision": "036e40aac0f1617fde082e095d2e34aac4b0f7452aad2b0352c89f0426ae4a08"
+            },
+            {
+              "source_id": "src.otel",
+              "ledger_record": "read.otel-traces.2026-10-31",
+              "section": "Traces",
+              "quote": "One way to think of Traces is that they’re a collection of structured logs with context, correlation, hierarchy, and more baked in.",
+              "revision": "a255b2a8896771371e3b2ef2def8b13308b00af764cec3a6568deecc0b700d74"
+            },
+            {
+              "source_id": "src.dapper",
+              "ledger_record": "read.dapper-tracing.2026-10-31",
+              "section": "1 Introduction",
+              "quote": "Although Dapper alone is sometimes sufficient for a developer to identify the source of a performance anomaly, it is not intended to replace all other tools.",
+              "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "distributed-tracing",
         "question": "Should requests carry a trace context so spans across services can be correlated?",
-        "competing_alternative": "Structured logs with request IDs. Reverse the choice when cross-service latency diagnosis justifies trace infrastructure.",
+        "competing_alternative": "Metrics and structured logs. OpenTelemetry notes that if you \"only use observability data in aggregate, and can thus pre-aggregate data\", sampling may not be appropriate, and metrics can \"aggregate measurements in that context.\" A trace is \"a collection of structured logs with context, correlation, hierarchy, and more baked in\"; Dapper \"is not intended to replace all other tools.\" **Tycho choice rule:** metrics for aggregate latency or error rate; structured logs or audit for a discrete event; tracing when the cross-component path is the question. Reverse when trace cost exceeds diagnostic benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch6-otel-traces.2026-10-21",
+        "ledger_record": "read.otel-traces.2026-10-31",
         "source_id": "src.otel",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.otel",
+            "ledger_record": "read.otel-context-propagation.2026-10-31",
+            "revision": "036e40aac0f1617fde082e095d2e34aac4b0f7452aad2b0352c89f0426ae4a08"
+          },
+          {
+            "source_id": "src.otel",
+            "ledger_record": "read.otel-sampling.2026-10-31",
+            "revision": "1895ba9c75cba6a2965b72cd0394cc97ca1c9d15b174b35e00b151d784686b3f"
+          },
+          {
+            "source_id": "src.trace-context",
+            "ledger_record": "read.w3c-trace-context.2026-10-31",
+            "revision": "5d5df65d954cbe0347dc6f61b53f7d58bc2c145ef1a27f2ab932a4b0214282f9"
+          },
+          {
+            "source_id": "src.dapper",
+            "ledger_record": "read.dapper-tracing.2026-10-31",
+            "revision": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Purpose and mission defines traces and their limits; propagation and sampling pages are elsewhere."
+      "notes": "Four dimensions bound 2026-10-31 to OpenTelemetry traces, context propagation and sampling, W3C Trace Context and Google Dapper; coverage remains partial-bounded, self-checked and not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.structured-logging",
@@ -15773,11 +15957,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 88,
-    "failure_recovery_supported": 83,
-    "alternative_supported": 88,
-    "technical_partial_bounded": 15,
-    "technical_partial": 59,
+    "invariant_supported": 89,
+    "failure_recovery_supported": 84,
+    "alternative_supported": 89,
+    "technical_partial_bounded": 16,
+    "technical_partial": 58,
     "technical_name_only": 0,
     "technical_sufficient": 71,
     "decision_partial_bounded": 74,

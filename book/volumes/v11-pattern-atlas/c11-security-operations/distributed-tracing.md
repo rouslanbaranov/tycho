@@ -33,9 +33,9 @@ evidence_scope:
   status: "source-linked"
   notes: >-
     Bound 2026-10-31 to five public units: OpenTelemetry traces, context
-    propagation and sampling; W3C Trace Context; and Google Dapper. src.dapper
-    is proposed pending registration. No claim-level mapping, independent
-    review or source-completeness claim is made.
+    propagation and sampling; W3C Trace Context; and Google Dapper. The
+    src.dapper source id is registered. No claim-level mapping, independent
+    review, promotion or source-completeness claim is made.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -88,10 +88,10 @@ Google "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure" (techn
 dapper-2010-1). Retained: `read.batch6-otel-traces.2026-10-21`; new:
 `read.otel-traces.2026-10-31`, `read.otel-context-propagation.2026-10-31`,
 `read.otel-sampling.2026-10-31`, `read.w3c-trace-context.2026-10-31` and
-`read.dapper-tracing.2026-10-31`. Source ids: `src.otel`, `src.trace-context`;
-`src.dapper` is proposed pending registration. Exact URLs, revisions and limits are in the
-lane note and owner section. None is a benchmark or production observation; no trace, sampler
-or backend was run.
+`read.dapper-tracing.2026-10-31`. Source ids: `src.otel`, `src.trace-context` and
+`src.dapper`. Exact URLs, revisions and limits are in the lane note and owner
+section. None is a benchmark or production observation; no trace, sampler or
+backend was run.
 
 **Decision state.** applicable-under-conditions.
 

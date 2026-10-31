@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "e13f52471967050d1969bf82324e25600338781584fca18881063dcc3defd05c",
-  "route_index_snapshot": "5f8ff87667cd185070ae0bba6a0ba99d3d193896a2b3758eb0f2903162a273f4",
+  "registry_sha256": "cd6c9205e74ccb31cc066e01462c090aa30dbd0d71c7f67cb0a973beaa13c57c",
+  "route_index_snapshot": "30de1b770df92c671c95faada1756bc2c81d5c2aeb7d282834e9255fc62d4672",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -6661,11 +6661,98 @@
             "Specification"
           ],
           "status": "read",
-          "read_record_id": "read.batch6-otel-traces.2026-10-21",
+          "read_record_id": "read.otel-traces.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.otel",
+          "unit": "Context propagation — OpenTelemetry",
+          "unit_type": "documentation-page",
+          "url": "https://opentelemetry.io/docs/concepts/context-propagation/",
+          "sections": [
+            "Context",
+            "Propagation",
+            "Example",
+            "Traces",
+            "Logs",
+            "Metrics",
+            "Custom Context Propagation",
+            "Security best practices",
+            "External services",
+            "Baggage",
+            "Support in Language SDKs",
+            "Specification"
+          ],
+          "status": "read",
+          "read_record_id": "read.otel-context-propagation.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.otel",
+          "unit": "Sampling — OpenTelemetry",
+          "unit_type": "documentation-page",
+          "url": "https://opentelemetry.io/docs/concepts/sampling/",
+          "sections": [
+            "Terminology",
+            "Why sampling?",
+            "When to sample",
+            "When not to sample",
+            "Head Sampling",
+            "Tail Sampling",
+            "Support",
+            "Collector",
+            "Language SDKs",
+            "Vendors"
+          ],
+          "status": "read",
+          "read_record_id": "read.otel-sampling.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.trace-context",
+          "unit": "Trace Context — W3C Recommendation 23 November 2021",
+          "unit_type": "specification",
+          "url": "https://www.w3.org/TR/2021/REC-trace-context-1-20211123/",
+          "sections": [
+            "Abstract",
+            "2.2 Solution",
+            "2.3 Design Overview",
+            "3.2.2 traceparent Header Field Values",
+            "3.2.2.3 trace-id",
+            "3.2.2.4 parent-id",
+            "3.2.2.5.1 Sampled flag",
+            "3.2.4 Versioning of traceparent",
+            "3.4 Mutating the traceparent Field",
+            "4.2 No traceparent Received",
+            "4.3 A traceparent is Received",
+            "8.1 Uniqueness of trace-id",
+            "8.2 Randomness of trace-id"
+          ],
+          "status": "read",
+          "read_record_id": "read.w3c-trace-context.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.dapper",
+          "unit": "Dapper, a Large-Scale Distributed Systems Tracing Infrastructure — Google Technical Report dapper-2010-1, April 2010",
+          "unit_type": "paper",
+          "url": "https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf",
+          "sections": [
+            "Abstract",
+            "1 Introduction",
+            "2.2 Instrumentation points",
+            "2.4 Sampling",
+            "4.4 Adaptive sampling",
+            "4.5 Coping with aggressive sampling",
+            "4.6 Additional sampling during collection",
+            "6.1 Using Dapper during development"
+          ],
+          "status": "read",
+          "read_record_id": "read.dapper-tracing.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 6 public unit read; Health checks reuse the batch 4 Kubernetes probe record; ASVS entries are verification-framing only."
+      "notes": "Mechanism, invariant, failure/recovery and alternative bound 2026-10-31 to five public units: OpenTelemetry traces, context propagation and sampling; W3C Trace Context; and Google Dapper. No runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.structured-logging",
@@ -6991,11 +7078,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 321,
-    "read_units": 320,
+    "required_units": 325,
+    "read_units": 324,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 276
+    "ledger_records": 281
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -7006,6 +7093,7 @@
     "read.batch4-rabbit-priority.2026-10-21",
     "read.batch6-sre-slo.2026-10-21",
     "read.batch4-jepsen.2026-10-21",
-    "read.batch6-sre-workbook-monitoring.2026-10-21"
+    "read.batch6-sre-workbook-monitoring.2026-10-21",
+    "read.batch6-otel-traces.2026-10-21"
   ]
 }
