@@ -151,3 +151,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer | #540 Feature Flags | pass | `2026-10-31-feature-flags-deepseek.md` | `d99204e90f7f1861b1de14eb558040f6fc42c884cc60437f30fa53d5caf22133` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Cache Stampede | pass | `2026-10-31-cache-stampede-deepseek.md` | `b44ce65abc348ff0a6881e6d3f87848d8e37ac46c1e1b3e814d33cb55aa911be` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Index Table | pass | `2026-10-31-index-table-deepseek.md` | `7f5a2db855699f813e7794ba50e1f51bf635e5c1afe2bb152a312e1e2e5bd002` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Priority Queue | pass | `2026-10-31-priority-queue-deepseek.md` | `575d495f1b2374fd8ba37887890fd420d24d1c3c65916e2a46f2b4995792c693` |
