@@ -71,16 +71,19 @@ cannot be kept with the operation, when clients switch servers without a session
 guarantee, or when concurrent writes have no merge rule.
 
 **Competing alternative.** Sequential consistency as the total-order model, a consensus-backed
-replicated log as one implementation, or per-key ordering. Jepsen notes that total order
-sacrifices availability and latency; Kafka guarantees order per partition and routes same-key
-events to one partition, not a topic-wide order. Reverse the choice when causal metadata
+replicated log as one implementation, or per-key ordering. Jepsen describes total-order models
+with a conditional availability and latency cost; Kafka guarantees order per partition and
+default producer routing sends same-key events to one partition, not a topic-wide order.
+Reverse the choice when causal metadata
 cost exceeds the ordering benefit; the cross-partition reading is Tycho.
 
-**Failure and recovery.** A partition is survivable only while each client stays on one
-non-faulty server; switching servers can expose missing dependencies. Reordered delivery,
+**Failure and recovery.** A partition remains survivable while each client stays on one
+non-faulty server; switching is safe only if session continuity and causal metadata are
+re-established, otherwise it can expose missing dependencies. Reordered delivery,
 lost vector metadata and lost session continuity can violate causal order. Keep durable
-causal metadata, replay/deduplicate and define a merge; Jepsen requires convergence once
-the same operations are visible. The server-switch and metadata-loss inferences are Tycho.
+causal metadata, replay/deduplicate and define a merge. Tycho guidance: converge once the
+same operations are visible. The server-switch, metadata-loss and convergence rules are
+Tycho.
 
 **Technical owner.** [Causal Ordering](../../v04-distributed-coordination-and-events/c01-time-causality-and-ordering/causal-order.md#causal-ordering) — causal ordering is bounded, not a universal clock service.
 

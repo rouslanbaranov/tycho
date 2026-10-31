@@ -9693,7 +9693,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A partition is therefore survivable only while a client stays on one non-faulty server; reconnecting elsewhere can expose missing dependencies.",
+          "quote": "A partition remains survivable while a client stays on one non-faulty server; reconnecting elsewhere is safe only if session continuity and causal metadata are re-established, otherwise it can expose missing dependencies. Reordered delivery and lost vector metadata can remove the evidence needed to reconstruct happens-before; persist causal metadata, replay/deduplicate and define a merge. Tycho guidance: converge once the same operations are visible. The server-switch, metadata-loss and convergence rules are Tycho inferences from Jepsen's stickiness requirement and Lamport's out-of-order note.",
           "reason": "Jepsen states that causal consistency is sticky available only while clients stay on the same server; Lamport and Mattern both note that messages may be received out of order; Mattern's vector metadata travels with each message and convergence is required once operations are visible. The server-switch and metadata-loss failure paths are Tycho inferences, labelled in the page; the durable, replay and merge rule is Tycho guidance.",
           "binding": {
             "source_id": "src.jepsen-consistency",
@@ -9742,7 +9742,7 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "A total order is therefore a stronger serialization contract than causality: it adds a chosen order and its coordination, availability or latency cost.",
+          "quote": "Jepsen describes sequential consistency as the total-order model, with a conditional availability and latency cost; Kafka describes a leader-based replicated log that agrees on the order, guarantees order per partition and routes same-key events to one partition by default producer partitioning.",
           "reason": "Jepsen recommends sequential consistency when total order is required and names the availability/latency cost; Kafka describes a replicated log that comes into consensus on the order and a leader that chooses it, and states the network-partition availability limit; Lamport's total-order extension depends on the chosen clocks and is not unique. The stronger-contract synthesis, the per-key/cross-partition reading and the choice rule are Tycho, labelled in the page.",
           "binding": {
             "source_id": "src.jepsen-consistency",
@@ -9807,7 +9807,7 @@
       "decision_evidence": {
         "atlas_section": "causal-ordering",
         "question": "Should operations that are causally related preserve their order without requiring a total order?",
-        "competing_alternative": "Sequential consistency as the total-order model, a consensus-backed replicated log as one implementation, or per-key ordering. Jepsen notes that total order sacrifices availability and latency; Kafka guarantees order per partition and routes same-key events to one partition, not a topic-wide order. Reverse the choice when causal metadata cost exceeds the ordering benefit; the cross-partition reading is Tycho.",
+        "competing_alternative": "Sequential consistency as the total-order model, a consensus-backed replicated log as one implementation, or per-key ordering. Jepsen describes total-order models with a conditional availability and latency cost; Kafka guarantees order per partition and default producer routing sends same-key events to one partition, not a topic-wide order. Reverse the choice when causal metadata cost exceeds the ordering benefit; the cross-partition reading is Tycho.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },

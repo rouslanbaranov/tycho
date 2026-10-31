@@ -114,8 +114,8 @@ explicit merge for concurrent writes. Jepsen states that "Convergent causal syst
 the values of objects in the system converge to identical values, once the same operations are
 visible", and that conflict resolution is left "up to the implementation".
 
-**Alternative (Tycho comparison).** When a total order is required, Jepsen recommends sequential
-consistency and states the cost directly: "When a total order is required, and you’re willing to
+**Alternative (Tycho comparison).** Jepsen describes sequential consistency as the total-order model when a total order is
+required and the caller is willing to accept the cost: "When a total order is required, and you’re willing to
 sacrifice availability (and latency), consider sequential consistency". [E03] A replicated log is
 one implementation family: Kafka describes "A replicated log" as modelling "the process of
 coming into consensus on the order of a series of values", with "a leader who chooses the
@@ -216,16 +216,19 @@ Causal ordering fits when cross-item happens-before is real, metadata can travel
 and concurrent writes have a merge rule. Reject it when total order is mandatory, metadata cannot
 travel, clients switch servers without session continuity, or no merge rule exists.
 
-**Failure and recovery (Tycho synthesis).** A partition is therefore survivable only while a
-client stays on one non-faulty server; reconnecting elsewhere can expose missing dependencies.
+**Failure and recovery (Tycho synthesis).** A partition remains survivable while a client
+stays on one non-faulty server; reconnecting elsewhere is safe only if session continuity and
+causal metadata are re-established, otherwise it can expose missing dependencies.
 Reordered delivery and lost vector metadata can remove the evidence needed to reconstruct
-happens-before; persist causal metadata, replay/deduplicate and define a merge. The server-switch
-and metadata-loss paths are Tycho inferences from Jepsen's stickiness requirement and Lamport's
+happens-before; persist causal metadata, replay/deduplicate and define a merge. Tycho guidance:
+converge once the same operations are visible. The server-switch, metadata-loss and
+convergence rules are Tycho inferences from Jepsen's stickiness requirement and Lamport's
 out-of-order note.
 
 **Alternative (Tycho comparison).** A total order is therefore a stronger serialization contract
 than causality: it adds a chosen order and its coordination, availability or latency cost.
-Jepsen recommends sequential consistency when total order is required; Kafka describes a
-replicated log that comes into consensus on the order, guarantees order per partition and routes
-same-key events to one partition. Per-key ordering is not a topic-wide total order; that reading
+Jepsen describes sequential consistency as the total-order model, with a conditional
+availability and latency cost; Kafka describes a leader-based replicated log that agrees on the
+order, guarantees order per partition and routes same-key events to one partition by default
+producer partitioning. Per-key ordering is not a topic-wide total order; that reading
 is Tycho.
