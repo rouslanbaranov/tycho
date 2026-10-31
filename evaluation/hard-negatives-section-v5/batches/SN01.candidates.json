@@ -1,0 +1,135 @@
+{
+  "batch": "SN01",
+  "items": [
+    {
+      "id": "V4-A001",
+      "question": "What risk arises when a translation layer between legacy and new domains has no owner for its mappings?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Anti-Corruption Layer An anti-corruption layer is a translation boundary that keeps an external or legacy model from becoming the local authority. It owns mapping, validation and the explicit rejection of meanings that do not translate. The anti-corruption layer must maintain and monitor transaction and data consistency. It isolates the domain model from the external model and maps external concepts into the local domain language. The layer can become a single point of failure; plan for resilience with retry, circuit breaker, bulkhead and health endpoint monitoring. The pattern might not be suitable when the new and legacy systems have no significant se",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c06-integration-adapters-and-anti-corruption-boundaries/anti-corruption-adapters-and-coexistence.md",
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A002",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "section_new": [
+        {
+          "excerpt": "## 2. Three credible modernization options ### Option A: keep the deployment, improve the architecture When domain and transaction cohesion are strong, isolate internal modules, publish contracts, enforce dependency direction, protect data ownership and add tests. This preserves an in-process interaction model while reducing accidental coupling. Cockburn's 2005 ports-and-adapters report directly motivates isolation of application logic from presentation and database technology, including the ability to test with alternate adapters. [E01] Good candidates: poor module encapsulation, slow code reviews caused by accidental dependencies, UI/batch interface churn, data persistence technology leaka",
+          "heading": "2. Three credible modernization options",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A003",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "section_new": [
+        {
+          "excerpt": "## 2. HTTP method semantics are not business-effect deduplication [RFC 9110, \u00a79.2.1\u20139.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) defines the semantics of safe and idempotent methods. A safe method is intended not to request a state-changing effect. Idempotency describes the intended server-side effect of repeating an identical request; it does not require the responses, timing or logging events to be identical. PUT, DELETE and safe methods are idempotent by their specified semantics. POST has no general automatic-retry guarantee. Three distinct notions must not be merged: 1. **HTTP method contract:** Is the requested operation safe or idempotent according to its semantic",
+          "heading": "2. HTTP method semantics are not business-effect deduplication",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A004",
+      "question": "What infrastructure must exist before Envoy can use the service-discovery approach described by the card?",
+      "section_new": [
+        {
+          "excerpt": "# Service Discovery > **Pattern atlas:** > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [discovery, load balancing and backend selection page](discovery-balancing.md#service-discovery) on 2026-10-29. Client-side discovery, server-side discovery and load balancing remain on the chapter page. Envoy fetches cluster members from a xDS management server through the endpoint discovery service. The cluster members are called endpoints; for each cluster Envoy fetches the endpoints from the discovery service. EDS carries per-host attributes",
+          "heading": "Service Discovery",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/service-discovery.md",
+          "section_key": "tycho.page.21ec7c5f9aa44e2aae9a3160695bdd2e#overview"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A005",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "section_new": [
+        {
+          "excerpt": "# Splitter > **Pattern atlas:** > [Splitter](../../v11-pattern-atlas/c03-messaging-integration/splitter.md#splitter) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [messaging families and durable workflows page](messaging-families-and-durable-workflows.md#splitter) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Split a composite message only when its parts can make progress independently and the outcome is observable: the total count is known, or an explicit release rule or expiry records a partial result or forced closure rather than silent success. If the parts must succeed atomically, keep the compo",
+          "heading": "Splitter",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/splitter.md",
+          "section_key": "tycho.page.46865c9b53984280ac3a15e86f5ae50c#overview"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A006",
+      "question": "What failure can arise if a claim token is published before its payload is durably stored?",
+      "section_new": [
+        {
+          "excerpt": "# Claim Check > **Pattern atlas:** > [Claim Check](../../v11-pattern-atlas/c03-messaging-integration/claim-check.md#claim-check) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [workflow state and messaging failure gates page](workflow-failure.md#claim-check) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Store a large or sensitive payload outside the messaging system and send a claim check only when payload size, sensitivity or repeated serialization justifies the extra store and retrieval hop, when payload lifecycle and failure handling have owners, and when authorization can remain an independent int",
+          "heading": "Claim Check",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/claim-check.md",
+          "section_key": "tycho.page.d44c30621fd941318453e3ff995a3e93#overview"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A007",
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Two unsafe dual-write orders Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker then DB** can publish a purported acceptance and later roll back the reservation. [Richardson's Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox) records publication intent together with the business state in a **single local** transaction, then uses a relay. It explicitly notes that a relay may send a message more than once. ```mermaid flowchart LR C[\"Command with effect ID\"] --> TX",
+          "heading": "1. Two unsafe dual-write orders",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A008",
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Two unsafe dual-write orders Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker then DB** can publish a purported acceptance and later roll back the reservation. [Richardson's Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox) records publication intent together with the business state in a **single local** transaction, then uses a relay. It explicitly notes that a relay may send a message more than once. ```mermaid flowchart LR C[\"Command with effect ID\"] --> TX",
+          "heading": "1. Two unsafe dual-write orders",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "section_key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A009",
+      "question": "When can expiration alone fail the freshness promise of a cached value?",
+      "section_new": [
+        {
+          "excerpt": "## 2. Local in-process cache: fast reads, isolated knowledge The public **Caffeine** project wiki's **Eviction** page documents size-bound caching and expiration policies such as `expireAfterWrite`, `expireAfterAccess` and variable expiration. Its **Refresh** page distinguishes refresh from eviction: with refresh a previously stored value can continue being returned while an asynchronous load is in progress; refresh eligibility does not itself initiate work until queried. [E01, E02] ```mermaid stateDiagram-v2 [*] --> Absent Absent --> Fresh: Initial load Fresh --> RefreshEligible: Refresh interval reached RefreshEligible --> Refreshing: Next eligible read schedules refresh Refreshing --> Fre",
+          "heading": "2. Local in-process cache: fast reads, isolated knowledge",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#2-local-in-process-cache-fast-reads-isolated-knowledge"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A010",
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Cache Invalidation Cache invalidation removes a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy. On a write, write the change to the data store, then remove the affected cache entry. The next read repopulates the cache from the data store. This keeps the write path simple. A reader can experience a cache miss or briefly see stale data immediately after a write. Many caching systems let you con",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "section_key": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "atlas"
+    }
+  ]
+}
