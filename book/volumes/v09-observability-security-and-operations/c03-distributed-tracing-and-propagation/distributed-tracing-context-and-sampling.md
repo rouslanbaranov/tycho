@@ -115,8 +115,8 @@ each controlled boundary and on spans being emitted at those boundaries.
 every business effect. W3C says the sampled flag "denotes that the caller may have recorded
 trace data", not that every span was recorded; the trace-id "SHOULD be globally unique", not
 guaranteed. OpenTelemetry defines "Not sampled: A trace or span is not processed or exported."
-Dapper says that, although a trace is sometimes sufficient to find an anomaly, "it is not
-intended to replace all other tools." Context is also untrusted input: OpenTelemetry warns that
+Dapper says that, although "Dapper alone is sometimes sufficient for a developer to identify
+the source of a performance anomaly", "it is not intended to replace all other tools." Context is also untrusted input: OpenTelemetry warns that
 "Malicious actors could send forged trace headers to manipulate your tracing data or potentially
 exploit vulnerabilities in context parsing" and suggests that you may want to ignore or sanitize
 it. **Tycho rule:** a missing span is ambiguous until instrumentation coverage and sampling
@@ -159,7 +159,8 @@ Infrastructure", technical report dapper-2010-1. The exact units are:
 <https://opentelemetry.io/docs/concepts/sampling/>,
 <https://www.w3.org/TR/2021/REC-trace-context-1-20211123/> and
 <https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf>.
-The bound or retained records are `read.otel-traces.2026-10-31`,
+The bound or retained records are `read.batch6-otel-traces.2026-10-21` (retained),
+`read.otel-traces.2026-10-31`,
 `read.otel-context-propagation.2026-10-31`, `read.otel-sampling.2026-10-31`,
 `read.w3c-trace-context.2026-10-31` and `read.dapper-tracing.2026-10-31`. They are living
 documentation, a dated Recommendation and a technical report, not benchmarks or production

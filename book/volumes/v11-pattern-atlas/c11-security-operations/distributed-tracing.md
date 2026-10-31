@@ -60,9 +60,17 @@ and retention are owned. OpenTelemetry says "With Context Propagation, Spans can
 with each other and assembled into a trace, regardless of where Spans are generated." These are
 Tycho conditions.
 
-**Hard contraindications.** Reject when one service suffices, when context cannot cross a
-boundary, or when trace data would leak sensitive payloads. Also reject when a missing span
-cannot be distinguished from an unsampled or uninstrumented path. **Tycho contraindication.**
+**Invariant — sampled observation, untrusted context.** A trace is a selected execution
+story, not an authoritative business record. OpenTelemetry defines "Not sampled: A trace or
+span is not processed or exported", and W3C's sampled flag means the caller "may have
+recorded trace data". A missing span is unknown, not proof that no work occurred, until
+instrumentation coverage and sampling policy are known. Trace and baggage values are
+untrusted input: never use them for authorization, and keep business-effect authority with
+the audit or log owner. **Tycho rule.**
+
+**Hard contraindications.** Reject when no cross-service correlation is needed for the
+decision question, when context cannot cross a boundary, or when trace data would leak
+sensitive payloads. **Tycho contraindication.**
 
 **Competing alternative.** Metrics and structured logs. OpenTelemetry notes that if you "only
 use observability data in aggregate, and can thus pre-aggregate data", sampling may not be
@@ -74,11 +82,13 @@ path is the question. Reverse when trace cost exceeds diagnostic benefit.
 
 **Failure and recovery.** Broken context, instrumentation gaps and sampling loss are common.
 Dapper says instrumentation "is often broken due to instrumentation bugs or omissions";
-low-traffic workloads "may miss important events at such low sampling rates". W3C restarts a
-trace when context is invalid: "Restart trace: All properties (trace-id, parent-id, trace-flags)
-are regenerated." OpenTelemetry says it is "critical to monitor tail-sampling components".
-**Tycho runbook:** alert on coverage, sampling and context rejection separately; record the
-sampling decision; treat a gap as unknown, not success; restore propagation first.
+low-traffic workloads "may miss important events at such low sampling rates". W3C permits a
+restart mutation: "Restart trace: All properties (trace-id, parent-id, trace-flags) are
+regenerated"; separately, a version it cannot parse gets a new traceparent
+and loses tracestate. OpenTelemetry says it is "critical to monitor tail-sampling components".
+**Tycho runbook:** alert on instrumentation coverage, sampling-policy changes and context
+rejection separately from product errors; record the sampling decision; treat a gap as
+unknown, not success; restore propagation first.
 
 **Technical owner.** [Distributed Tracing](../../v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/distributed-tracing-context-and-sampling.md#distributed-tracing) — tracing is bounded, not an SDK implementation.
 
