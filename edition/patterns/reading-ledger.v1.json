@@ -9598,6 +9598,93 @@
       "read_scope": "the four listed sections of the pinned Markdown representation; command output examples and linked pages were not read",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.microsoft-circuit-breaker.2026-10-31",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker",
+      "unit_label": "Circuit breaker pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP 200 at 2026-10-31T13:20:55Z; 75,396-byte HTML; raw HTML SHA-256 5b83f1575092478594cf049c4c4a0a8505b9bdc851f6db4fbee3d9dd979c1655; canonical text SHA-256 29299b3b788328f0ec127c6f37b5f7bfb6ffc0d4a6bab37d4a0d81b5a4614274; Last-Modified 2026-09-26T05:05:04Z; ETag \"NThv46B/2aPU5pWB8DJBE6hGdCE=\"; ms.date 2025-02-05; quote authority is the pinned Markdown at commit 9fdb775034a2faf6b2dcf699fb870d49fe50c992 (2026-09-25T19:33:08Z), 25,769 bytes, 187 lines and 3,744 words, SHA-256 29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e; no published semantic version.",
+      "sections_read": [
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation, feedback and unrelated site chrome",
+        "images and the example were not reproduced"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The pattern can be implemented as a proxy state machine with Closed, Open and Half-Open states.",
+        "Closed routes requests and counts failures; Open fails immediately; Half-Open admits a limited number of requests.",
+        "The failure threshold opens the circuit only when a specified number of failures occur during a specified interval.",
+        "Half-Open limits probes so a recovering service is not flooded; a failed probe returns the circuit to Open.",
+        "Recovery depends on external operations; a breaker does not fully protect against long time-outs and is not a fit for local private resources.",
+        "Retry is an alternative when well-known retry algorithms are sufficient and dependencies handle retries."
+      ],
+      "claims_not_supported": [
+        "configuration values or a universal threshold",
+        "an executed example, benchmark or production outcome",
+        "linked pages, images and unrelated chrome",
+        "independent reproduction"
+      ],
+      "limitations": "One living Microsoft Learn pattern page with no published semantic version. The pinned Markdown is the quote authority and the live page is a cross-check. The page gives configurable thresholds, not values. Its failure counter is time based and resets periodically; Resilience4j offers count-based and time-based windows, and the two models are not treated as equivalent. The managed-database example was not executed. The local-resource contraindication is a scope limit, not proof that a breaker cannot help elsewhere.",
+      "content_sha256": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e",
+      "read_scope": "the five listed sections of the pinned public Markdown, cross-checked against the live page; excludes linked pages, images and the example",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-builders-timeouts-retries.2026-10-31",
+      "source_id": "src.aws-backoff",
+      "unit_url": "https://aws.amazon.com/builders-library/timeouts-retries-and-backoff-with-jitter/",
+      "unit_label": "Timeouts, retries, and backoff with jitter — AWS Builders' Library",
+      "unit_type": "engineering-article",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP 301 to the Builder Center article at content id 3EumjoZascWd1oZiEgL8ORlv3qE, then HTTP 200 at 2026-10-31T13:21:11Z; 139,053-byte HTML; raw HTML SHA-256 d289c95d849b6d082f8b9aac64f1df92d7383d9b49ff3326d4d181ba8140f636; canonical text SHA-256 c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94; the page displays Published 2019-12-05 and Last modified 2019-12-05; no Last-Modified header and no published version identifier.",
+      "sections_read": [
+        "Introduction",
+        "Failures Happen",
+        "Timeouts",
+        "Retries and backoff",
+        "Jitter",
+        "Conclusion"
+      ],
+      "sections_not_read": [
+        "SDK behavior, benchmarks and service internals",
+        "linked articles and images",
+        "navigation and unrelated site chrome"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public AWS engineering article; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Retries are selfish and can worsen overload when failures are caused by overload.",
+        "Circuit breakers are widely promoted for overload but introduce modal behavior and can add recovery time; a local token bucket can limit retries.",
+        "A timeout should be set on remote and cross-process calls; too high a timeout consumes resources while waiting.",
+        "Jitter spreads retries in time and prevents synchronized contention."
+      ],
+      "claims_not_supported": [
+        "a universal timeout, retry or backoff value",
+        "an SDK or service implementation",
+        "a benchmark or production measurement",
+        "linked articles and independent reproduction"
+      ],
+      "limitations": "One engineering article, not a formal specification or benchmark. The word 'addition' in the recovery-time sentence is in the served text and is retained in the quote. The article states one public provider's practice and does not establish a universal rule. No service, SDK or retry path was run.",
+      "content_sha256": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94",
+      "read_scope": "the six listed sections of the public article, excluding linked pages, images and unrelated chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

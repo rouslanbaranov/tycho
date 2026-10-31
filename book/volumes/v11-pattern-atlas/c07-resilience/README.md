@@ -81,48 +81,7 @@ none claims sufficient technical or decision coverage.
 
 ### Circuit Breaker
 
-**Identity.** Circuit Breaker; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should calls to a failing dependency be rejected early until it
-recovers?
-
-**Good-fit conditions.** Failures are dependency-local and observable; the symptom may be an
-error or a slow call; a bounded timeout and deadline exist; the rolling window, minimum request
-volume and threshold comparison are defined; a half-open probe is bounded and safe; the fallback
-or fail-fast contract is defined; state is local or shared deliberately; rejected calls are
-measured separately.
-
-**Hard contraindications.** Reject when failures are caller-specific or caused by local
-saturation, when a circuit would hide a required dependency, when the caller cannot bound the
-call duration, or when recovery probing would overload it.
-
-**Competing alternative.** For caller-specific or local failures, a retry budget with jitter,
-rate limit or bounded timeout. AWS notes that breakers can add recovery time and limits retries
-locally with a token bucket; Google SRE caps retries per request and per client. Reverse the
-choice when circuit state and fallback complexity exceed failure containment benefit.
-
-**Failure and recovery.** Shared opens, false recovery, stale state and a breaker that hides a
-local resource problem are common; probe with a bounded budget, attribute rejections to the
-dependency only when dependency-local failures drove them, and do not treat open as recovered.
-
-**Technical owner.** [Circuit Breaker](../../v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/dependency-isolation.md#circuit-breaker) — dependency isolation is bounded, not a full circuit-breaker library guide.
-
-**Sources.** Public documentation, not benchmarks. Proposed records (not yet in the shared
-ledger): Resilience4j, "CircuitBreaker," Markdown alternate SHA-256
-`cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94` (the existing
-[src.resilience4j](../../../../edition/patterns/reading-ledger.v1.json) record
-`read.batch4-r4j-circuit.2026-10-21` has the same digest); Microsoft Azure, "Circuit breaker
-pattern," `ms.date` 2025-02-05, pinned commit
-`9fdb775034a2faf6b2dcf699fb870d49fe50c992`, record
-`read.microsoft-circuit-breaker.2026-10-31` proposed; AWS Builders' Library, "Timeouts,
-retries, and backoff with jitter," 2019-12-05, record
-`read.aws-builders-timeouts-retries.2026-10-31` proposed; Google SRE, "Handling Overload,"
-2017, CC BY-NC-ND 4.0, existing record revalidated. Tycho-labelled rules are synthesis.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Bulkhead; Retry with Exponential Backoff; Timeout; Fallback.
+See the [dedicated Circuit Breaker card](circuit-breaker.md).
 
 ### Bulkhead
 

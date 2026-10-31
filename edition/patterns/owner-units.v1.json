@@ -8191,55 +8191,178 @@
         "heading": "Circuit Breaker",
         "anchor": "circuit-breaker",
         "level": 3,
-        "line": 115,
+        "line": 117,
         "unit_kind": "dedicated",
         "unit_terms": [
           "state machine",
-          "minimum request volume",
+          "minimum volume",
           "half-open",
           "rejected calls"
         ]
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
-          "quote": "A circuit breaker is a state machine around one dependency",
-          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
+          "state": "supported",
+          "quote": "A circuit breaker is a state machine around one dependency: closed counts outcomes over a rolling window, open rejects fast for a cooldown, half-open admits a bounded probe.",
+          "reason": "Azure defines the Closed, Open and Half-Open states and the proxy implementation; Resilience4j states that its CircuitBreaker is a finite state machine over a sliding window. One breaker per dependency is Tycho's rule.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+            "section": "Solution",
+            "quote": "You can implement the proxy as a state machine that includes the following states.",
+            "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.resilience4j",
+              "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
+              "section": "Introduction",
+              "quote": "The CircuitBreaker is implemented via a finite state machine with three normal states: CLOSED, OPEN and HALF_OPEN and three special states METRICS_ONLY, DISABLED and FORCED_OPEN.",
+              "revision": "cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
-          "quote": "The threshold needs a minimum request volume so one failure does not trip a quiet dependency.",
-          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
+          "state": "supported",
+          "quote": "Threshold semantics need both a rate and a minimum volume.",
+          "reason": "Resilience4j requires a minimum recorded call count and trips at \"equal or greater\" than the threshold; Azure requires a specified number of failures in a specified interval and says \"exceeds\". The comparison boundary remains a recorded disagreement.",
+          "binding": {
+            "source_id": "src.resilience4j",
+            "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
+            "section": "Failure rate and slow call rate thresholds",
+            "quote": "The failure rate and slow call rate can only be calculated, if a minimum number of calls were recorded.",
+            "revision": "cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+              "section": "Solution",
+              "quote": "The failure threshold triggers the Open state only when a specified number of failures occur during a specified interval.",
+              "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+            },
+            {
+              "source_id": "src.resilience4j",
+              "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
+              "section": "Failure rate and slow call rate thresholds",
+              "quote": "The state of the CircuitBreaker changes from CLOSED to OPEN when the failure rate is equal or greater than a configurable threshold.",
+              "revision": "cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "an open caused by local resource exhaustion hides the real bottleneck",
-          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
+          "state": "supported",
+          "quote": "an open caused by local resource exhaustion hides the real bottleneck.",
+          "reason": "Azure says Half-Open probes a recovering service, that recovery depends on external operations and that the pattern is scoped to remote services rather than local private resources; SRE ties utilization signals to local task state. The attribution rule and fail-fast contract are Tycho.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+            "section": "Solution",
+            "quote": "System recovery is based on external operations, such as restoring or restarting a failed component or repairing a network connection.",
+            "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+              "section": "Solution",
+              "quote": "The Half-Open state helps prevent a recovering service from suddenly being flooded with requests.",
+              "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+              "section": "When to use this pattern",
+              "quote": "You need to manage access to local private resources in an application, such as in-memory data structures.",
+              "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+            },
+            {
+              "source_id": "src.sre-overload",
+              "ledger_record": "read.sre-overload.2026-10-21",
+              "section": "Utilization Signals",
+              "quote": "based on the state local to the task.",
+              "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A retry budget with jitter, a rate limit or a bounded timeout may be preferable when failures are not fast.",
-          "reason": "Local representation hash differs from the recorded revision; quotes are not accepted for the pinned unit."
+          "state": "supported",
+          "quote": "Use a breaker when failures are dependency-local, observable and repeated calls amplify them, whether the symptom is an error or a slow call.",
+          "reason": "AWS limits retries locally with a token bucket, treats timeout as a budget and warns that breakers can add recovery time; Google SRE caps retries per request and per client and says overloaded requests should fail locally; Azure contrasts retry and long time-outs. The Tycho choice rule is synthesis.",
+          "binding": {
+            "source_id": "src.aws-backoff",
+            "ledger_record": "read.aws-builders-timeouts-retries.2026-10-31",
+            "section": "Retries and backoff",
+            "quote": "We have found that we can mitigate this risk by limiting retries locally using a token bucket.",
+            "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-backoff",
+              "ledger_record": "read.aws-builders-timeouts-retries.2026-10-31",
+              "section": "Timeouts",
+              "quote": "Setting a timeout too high reduces its usefulness, because resources are still consumed while the client waits for the timeout.",
+              "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+            },
+            {
+              "source_id": "src.sre-overload",
+              "ledger_record": "read.sre-overload.2026-10-21",
+              "section": "Client-Side Throttling",
+              "quote": "Requests above the cap fail locally without even reaching the network.",
+              "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "A circuit breaker might not fully protect applications from failures in external services that have long time-out periods.",
+              "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+              "section": "When to use this pattern",
+              "quote": "Well-known retry algorithms are sufficient and your dependencies are designed to handle retry mechanisms.",
+              "revision": "29baeab9e19c54c9fdae01dfa4c431bae0c6811e0c5267a1d6c8c78267b8146e"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "circuit-breaker",
         "question": "Should calls to a failing dependency be rejected early until it recovers?",
-        "competing_alternative": "Retry with backoff or bulkhead isolation. Reverse the choice when circuit state and fallback complexity exceed failure containment benefit.",
+        "competing_alternative": "For caller-specific or local failures, a retry budget with jitter, rate limit or bounded timeout. AWS notes that breakers can add recovery time and limits retries locally with a token bucket; Google SRE caps retries per request and per client. Reverse the choice when circuit state and fallback complexity exceed failure containment benefit.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
-        "source_id": "src.resilience4j",
-        "unit_type": "documentation-page",
+        "ledger_record": "read.microsoft-circuit-breaker.2026-10-31",
+        "source_id": "src.microsoft-cloud-patterns",
+        "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.resilience4j",
+            "ledger_record": "read.batch4-r4j-circuit.2026-10-21",
+            "revision": "cad62135427cfee85f2c80095c3b823854aa36d4314a0fd829fa956022036e94"
+          },
+          {
+            "source_id": "src.aws-backoff",
+            "ledger_record": "read.aws-builders-timeouts-retries.2026-10-31",
+            "revision": "c076aeb3beeb4766568d3cf85c5ffda79be9610be186159b925ceb882addfc94"
+          },
+          {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Shared dedicated section with Bulkhead; the control table gives one row per pattern."
+      "notes": "All four dimensions bound 2026-10-31 to Resilience4j, Microsoft Azure Architecture Center, AWS Builders' Library and Google SRE; the minimum-volume rule, comparison boundary, dependency attribution and alternative choice remain Tycho."
     },
     {
       "pattern_id": "tycho.pattern.bulkhead",
@@ -8251,7 +8374,7 @@
         "heading": "Bulkhead",
         "anchor": "bulkhead",
         "level": 3,
-        "line": 133,
+        "line": 200,
         "unit_kind": "dedicated",
         "unit_terms": [
           "reserves bounded workers",
@@ -13913,7 +14036,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Circuit breaker and bulkhead now have two distinct dedicated units."
     },
@@ -14075,12 +14198,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 114,
-    "invariant_supported": 79,
-    "failure_recovery_supported": 73,
-    "alternative_supported": 78,
-    "technical_partial_bounded": 15,
-    "technical_partial": 69,
+    "mechanism_supported": 115,
+    "invariant_supported": 80,
+    "failure_recovery_supported": 74,
+    "alternative_supported": 79,
+    "technical_partial_bounded": 16,
+    "technical_partial": 68,
     "technical_name_only": 0,
     "technical_sufficient": 61,
     "decision_partial_bounded": 84,
