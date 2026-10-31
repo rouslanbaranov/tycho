@@ -372,50 +372,7 @@ The source is a public pattern/documentation unit, not a benchmark.
 
 ### Queue-Based Load Leveling
 
-**Identity.** Queue-Based Load Leveling; family Resilience and fault tolerance; kind
-resilience-pattern; priority core.
-
-**Decision question.** Should work be buffered in a queue so producers and consumers can
-run at different rates?
-
-**Good-fit conditions.** Bursts exceed consumer capacity; queue durability, a backlog
-age/retention bound and idempotent consumers are owned; the caller can defer the result;
-latency is acceptable.
-
-**Hard contraindications.** Reject when the caller needs a synchronous result, when
-backlog would violate a deadline, when the broker does not persist accepted messages, or
-when the queue becomes an unbounded hiding place.
-
-**Competing alternative.** Direct synchronous calls or admission control, including
-shedding when work cannot be deferred. Reverse the choice when queue delay and backlog risk
-exceed smoothing benefit; shedding is the alternative when deferral has no value.
-
-**Failure and recovery.** Unbounded backlog, expired work and duplicate effects after
-ambiguous acknowledgment are possible; bound age, reject early and drain. Azure says
-"Monitor queue depth and scale consumers within safe limits, or shed work at the producer";
-AWS says that messages beyond the maximum retention period are deleted automatically;
-Google SRE says requests above a cap fail locally. Tycho's rule is to reject before enqueue
-when backlog age crosses its bound, not to let memory or retention expire the work.
-
-**Technical owner.** [Queue-Based Load Leveling](../../v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queue-recovery.md#queue-based-load-leveling) — mechanism, durability and retention are source-bound; the four-part admission rule and shedding choice remain Tycho.
-
-**Sources.** [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record `read.microsoft-queue-based-load-leveling.2026-10-31`: sections "Solution",
-"Problems and considerations" and "When to use this pattern".
-[src.aws-sqs](../../../../edition/patterns/reading-ledger.v1.json) read record
-`read.aws-sqs-welcome.2026-10-31`: sections "Benefits of using Amazon SQS",
-"Basic Amazon SQS architecture" and "Message lifecycle".
-[src.sre-overload](../../../../edition/patterns/reading-ledger.v1.json) retained record
-`read.sre-overload.2026-10-21`: sections "Handling Overload", "Per-Customer Limits" and
-"Client-Side Throttling". The retained
-[src.rabbitmq](../../../../edition/patterns/reading-ledger.v1.json) record
-`read.batch4-rabbit-reliability.2026-10-21` remains a supporting reliability citation only.
-The sources are public documentation, not benchmarks; Tycho-labelled rules are synthesis.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Priority Queue; Load Shedding; Dead Letter Channel; Competing
-Consumers.
+See the [dedicated Queue-Based Load Leveling card](queue-based-load-leveling.md).
 
 ### Priority Queue
 

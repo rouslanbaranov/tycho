@@ -9018,6 +9018,97 @@
       "read_scope": "the \"29.8. Restrictions\" section of the publicly served page, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.microsoft-queue-based-load-leveling.2026-10-31",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/queue-based-load-leveling",
+      "unit_label": "Queue-Based Load Leveling pattern — Azure Architecture Center",
+      "unit_type": "pattern-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 63,505 bytes; raw HTML SHA-256 1a335ca1fbf19abc1aafd6d41a286e2ad528ddf621a1bee943a0d45adbea860a; canonical text SHA-256 9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2; HTTP Date 2026-10-31T04:54:09Z; Last-Modified 2026-08-24T17:31:52Z; ETag 6q1CF2qXKtLlVsu7Y/Y8dRWa/lc=; ms.date 2026-06-09; updated_at 2026-08-15T05:02:00Z; git_commit_id d73cd1632ffa489eff78a16bba4d101c510a1810; no published semantic version.",
+      "sections_read": [
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Next steps",
+        "Related resources"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation, feedback and unrelated site chrome",
+        "images and examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The pattern places a queue between the task and the service so both run asynchronously; the queue buffers messages until the service retrieves them.",
+        "The pattern depends on queue durability to prevent message loss before consumers process the data.",
+        "When the average producer rate exceeds the consumer rate the queue grows and latency increases; monitor queue depth and scale consumers within safe limits or shed work at the producer.",
+        "Most queue services deliver at-least-once, so consumers must be idempotent; synchronous callers are a contraindication."
+      ],
+      "claims_not_supported": [
+        "a backlog-age threshold or universal number",
+        "a backlog incident runbook",
+        "a durable-ack protocol or outcome/offset commit protocol",
+        "a tested queue failure, benchmark or production outcome",
+        "linked material and independent reproduction"
+      ],
+      "limitations": "One living Microsoft Learn pattern page with no published semantic version. The canonical digest covers the full extracted page text including navigation chrome. The page recommends monitoring and producer-side shedding; it does not define a backlog-age threshold, a runbook, a durable-ack protocol, an outcome/offset commit or a retry policy.",
+      "content_sha256": "9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2",
+      "read_scope": "the eight listed sections of the publicly served page, excluding navigation and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-sqs-welcome.2026-10-31",
+      "source_id": "src.aws-sqs",
+      "unit_url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html",
+      "unit_label": "What is Amazon Simple Queue Service? — Amazon SQS Developer Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 23,949 bytes; raw HTML SHA-256 3dbc6575cd6c3c459aeeab8869798bcc42041d8b19545fca3630b2a0af0e0108; canonical text SHA-256 ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61; HTTP Date 2026-10-31T04:54:10Z; Last-Modified 2026-10-31T03:34:03Z; ETag 7Exv563LQeYuEz6OxzYuSeeYg8A=; no published version identifier.",
+      "sections_read": [
+        "What is Amazon Simple Queue Service?",
+        "Benefits of using Amazon SQS",
+        "Basic Amazon SQS architecture",
+        "Distributed queues",
+        "Message lifecycle",
+        "Differences between Amazon SQS, Amazon MQ, and Amazon SNS"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "navigation, feedback and unrelated site chrome",
+        "images and examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Amazon SQS is a hosted queue that decouples distributed software systems and components.",
+        "SQS stores messages on multiple servers and distributes producer messages across its servers redundantly.",
+        "The consumer deletes a message after processing so it is not received again when the visibility timeout expires.",
+        "SQS automatically deletes messages that have been in a queue for more than the maximum message retention period.",
+        "SQS delivers each message at least once."
+      ],
+      "claims_not_supported": [
+        "a durable-ack protocol",
+        "a backlog-age policy or threshold",
+        "a retry policy",
+        "a tested queue failure, benchmark or production outcome",
+        "linked material and independent reproduction"
+      ],
+      "limitations": "One living AWS documentation page with no published version identifier. The canonical digest includes served navigation chrome. The page describes durability and message lifecycle; it does not define a durable-ack protocol, a backlog-age policy, a runbook or a retry policy.",
+      "content_sha256": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61",
+      "read_scope": "the six listed sections of the publicly served page, excluding navigation and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 304.
+Inventory date: 2026-10-31. Entries: 305.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -430,6 +430,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-sqs-dlq / core | [Using dead-letter queues in Amazon SQS](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html) — Amazon Web Services | Dead-letter queue retry bounds, retention, redrive and diagnostic evidence. | admitted-for-research / public-web-or-author-download |
 | src.azure-service-bus-dlq / core | [Overview of Service Bus dead-letter queues](https://learn.microsoft.com/en-us/azure/service-bus-messaging/service-bus-dead-letter-queues) — Microsoft Learn | Service Bus dead-letter purpose, delivery-count bound, diagnostic fields and application-level rejection. | admitted-for-research / public-web-or-author-download |
 | src.hookdeck-dlq-alternatives / supporting | [Alternatives to Dead-Letter Queues for Webhook Reliability](https://hookdeck.com/webhooks/guides/alternatives-to-dead-letter-queues) — Hookdeck | Explicit vendor guide comparison of DLQs with database persistence, retry table and transactional outbox. | admitted-for-research / public-web-or-author-download |
+| src.aws-sqs / core | [What is Amazon Simple Queue Service?](https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html) — Amazon Web Services | Queue durability, producer/consumer lifecycle, retention and visibility-timeout mechanics for Queue-Based Load Leveling. | admitted-for-research / public-web-or-author-download |
 
 ## Api
 

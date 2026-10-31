@@ -8827,44 +8827,153 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The admission rule of a bounded queue decides four things that the queue cannot decide for itself",
-          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
+          "reason": "Microsoft describes a queue between the task and the service that runs asynchronously and buffers messages until retrieval; AWS states the hosted-queue decoupling purpose. The four-part admission rule is Tycho synthesis, not a source claim.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-queue-based-load-leveling.2026-10-31",
+            "section": "Solution",
+            "quote": "Place a queue between the task and the service. The task and the service run asynchronously.",
+            "revision": "9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-welcome.2026-10-31",
+              "section": "What is Amazon Simple Queue Service?",
+              "quote": "Amazon Simple Queue Service (Amazon SQS) offers a secure, durable, and available hosted queue that lets you integrate and decouple distributed software systems and components.",
+              "revision": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "An enqueue acknowledgement must be a durable write; if it is not, the caller keeps the effect",
-          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
+          "reason": "Azure states the durability dependency; Azure and AWS describe at-least-once delivery and redundant storage. The durable-ack and outcome/offset commit rules are Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-queue-based-load-leveling.2026-10-31",
+            "section": "Problems and considerations",
+            "quote": "This pattern depends on queue durability to prevent message loss. If the broker doesn't persist messages to durable storage, a crash or capacity limit can cause enqueued data to be lost before consumers process it.",
+            "revision": "9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-welcome.2026-10-31",
+              "section": "Benefits of using Amazon SQS",
+              "quote": "Durability – For the safety of your messages, Amazon SQS stores them on multiple servers.",
+              "revision": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61"
+            },
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-welcome.2026-10-31",
+              "section": "Message lifecycle",
+              "quote": "A producer (Component 1) sends message A to a queue, and the message is distributed across the Amazon SQS servers redundantly.",
+              "revision": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-queue-based-load-leveling.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "Most queue services deliver messages with at-least-once semantics, which means that consumers can receive the same message more than once. Design consumer logic to be idempotent so that processing the same message multiple times produces the same outcome and avoids problems such as duplicate records or repeated charges.",
+              "revision": "9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "When backlog age crosses its bound, reject new work before enqueue or shed it at the worker",
-          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
+          "reason": "Azure states that when producer rate exceeds consumer rate the queue grows and latency rises, and recommends monitoring, scaling or producer shedding; AWS states automatic deletion after maximum retention; Google SRE states local rejection above a cap. The age threshold, runbook steps and pause decision are Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-queue-based-load-leveling.2026-10-31",
+            "section": "Problems and considerations",
+            "quote": "If your average producer rate exceeds the consumer rate, the queue continues to grow and latency increases. Monitor queue depth and scale consumers within safe limits, or shed work at the producer.",
+            "revision": "9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-welcome.2026-10-31",
+              "section": "Message lifecycle",
+              "quote": "Amazon SQS automatically deletes messages that have been in a queue for more than the maximum message retention period.",
+              "revision": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61"
+            },
+            {
+              "source_id": "src.aws-sqs",
+              "ledger_record": "read.aws-sqs-welcome.2026-10-31",
+              "section": "Message lifecycle",
+              "quote": "The consumer (Component 2) deletes message A from the queue to prevent the message from being received and processed again when the visibility timeout expires.",
+              "revision": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61"
+            },
+            {
+              "source_id": "src.sre-overload",
+              "ledger_record": "read.sre-overload.2026-10-21",
+              "section": "Client-Side Throttling",
+              "quote": "Requests above the cap fail locally without even reaching the network.",
+              "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Shedding is preferable when work cannot be deferred.",
-          "reason": "Local representation is a Cloudflare challenge page; RabbitMQ unit text is absent."
+          "reason": "Google SRE states that under extreme overload a service may have no immediate option but to serve errors; Azure recommends shedding work at the producer. The choice rule is Tycho synthesis.",
+          "binding": {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "section": "Handling Overload",
+            "quote": "However, under extreme overload, the service might not even be able to compute and serve degraded responses. At this point it may have no immediate option but to serve errors.",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-queue-based-load-leveling.2026-10-31",
+              "section": "Problems and considerations",
+              "quote": "Monitor queue depth and scale consumers within safe limits, or shed work at the producer.",
+              "revision": "9fea34ac982b133da739241278e8d02222f07956ccf258e2dad3b1bd66172ac2"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "queue-based-load-leveling",
         "question": "Should work be buffered in a queue so producers and consumers can run at different rates?",
-        "competing_alternative": "Direct synchronous calls or admission control. Reverse the choice when queue delay and backlog risk exceed smoothing benefit.",
+        "competing_alternative": "Direct synchronous calls or admission control, including shedding when work cannot be deferred. Reverse the choice when queue delay and backlog risk exceed smoothing benefit; shedding is the alternative when deferral has no value.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch4-rabbit-reliability.2026-10-21",
-        "source_id": "src.rabbitmq",
-        "unit_type": "documentation-page",
+        "ledger_record": "read.microsoft-queue-based-load-leveling.2026-10-31",
+        "source_id": "src.microsoft-cloud-patterns",
+        "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-sqs",
+            "ledger_record": "read.aws-sqs-welcome.2026-10-31",
+            "revision": "ef1831e540d16851e01e8233302de92f4f4a584aa92d3cd56fdeb204fc5fed61"
+          },
+          {
+            "source_id": "src.sre-overload",
+            "ledger_record": "read.sre-overload.2026-10-21",
+            "revision": "945d15db67ad15a7f5e75833f8c0d014c8dc61d57909f7a3abd48459ad12cc9e"
+          },
+          {
+            "source_id": "src.rabbitmq",
+            "ledger_record": "read.batch4-rabbit-reliability.2026-10-21",
+            "revision": "12e636d8ff2a50bc42ffdbf93224c1f080af0ad4f82a7066a0e086ec6cf77a2a"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "All four technical dimensions bound 2026-10-31 to Microsoft Azure Architecture Center, AWS SQS and Google SRE Handling Overload; the four-part admission rule, durable-ack rule and shedding choice remain Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.priority-queue",
@@ -13668,12 +13777,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 111,
-    "invariant_supported": 76,
-    "failure_recovery_supported": 70,
-    "alternative_supported": 75,
-    "technical_partial_bounded": 15,
-    "technical_partial": 72,
+    "mechanism_supported": 112,
+    "invariant_supported": 77,
+    "failure_recovery_supported": 71,
+    "alternative_supported": 76,
+    "technical_partial_bounded": 16,
+    "technical_partial": 71,
     "technical_name_only": 0,
     "technical_sufficient": 58,
     "decision_partial_bounded": 87,
