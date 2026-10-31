@@ -1,0 +1,192 @@
+{
+  "count": 17,
+  "items": [
+    {
+      "batch": "HN01",
+      "excerpt": "## 1. Two unsafe dual-write orders Consider an original invented device-reservation system: it records an accepted reservation and notifies another component. Naive sequence **DB then broker** can commit the reservation and crash before publishing. Naive sequence **broker then DB** can publish a purported acceptance and later roll back the reservation. [Richardson's Transactional Outbox pattern](https://microservices.io/patterns/data/transactional-outbox) records publication intent together with the business state in a **single local** transaction, then uses a relay. It explicitly notes that a relay may send a message more than once. ```mermaid flowchart LR C[\"Command with effect ID\"] --> TX",
+      "id": "V4-A007",
+      "key": "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "What must a transactional outbox relay do after a state change commits but publication has not yet happened?",
+      "title": "1. Two unsafe dual-write orders"
+    },
+    {
+      "batch": "HN04",
+      "excerpt": "## Integrated decision and reading route Keep published semantics, synthetic arithmetic, hypotheses and observed experiments as distinct evidence classes with different permissible conclusions. A cache experiment can improve latency while failing freshness; the result rejects that configuration rather than proving a universal claim about caching. The detailed pages separate the mechanisms that make this decision conditional: - [Evidence classes and competing hypotheses](evidence-hypotheses.md) \u2014 Which evidence class supports a claim and which alternative explanation remains possible? - [Discriminating architecture experiments](experiment-contract.md) \u2014 What observation would distinguish cach",
+      "id": "V4-B003",
+      "key": "tycho.page.a2cd4465792a4740aa5150ad248fd420#integrated-decision-and-reading-route",
+      "label_a": 1,
+      "label_b": 2,
+      "level": "section",
+      "question": "When should an architecture experiment stop instead of drawing a conclusion from apparently favorable latency?",
+      "title": "Integrated decision and reading route"
+    },
+    {
+      "batch": "HN05",
+      "excerpt": "## 2. Majority quorum arithmetic and the failure envelope In a simplified majority-voting cluster of N eligible voters, a quorum is floor(N/2)+1. A **3-voter** cluster requires 2 votes, and can normally make progress with one unavailable voter if remaining voters can communicate and have necessary log state. A **5-voter** cluster requires 3. Adding an extra voting member can actually increase the quorum without increasing tolerated failures\u2014for example 3 voters \u2192 4 voters raises required votes from 2 to 3. This arithmetic assumes the quorum protocol and membership-change rules are correct. It is **not a proof that any arbitrary implementation guarantees safety**. **Alternative.** A leader-ba",
+      "id": "V4-B015",
+      "key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+      "label_a": 0,
+      "label_b": 1,
+      "level": "section",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "title": "2. Majority quorum arithmetic and the failure envelope"
+    },
+    {
+      "batch": "HN05",
+      "excerpt": "## 5. Quality metrics: retrieval is not answer quality | Dimension | Meaning and measurement | Error if omitted | |---|---|---| | **Recall@k** | Fraction of independently judged relevant items found among top k | Miss key dependency while top result looks similar | | **Precision@k** | Fraction of top k judged relevant | Drown context in irrelevant pages | | **MRR / nDCG@k** | Ranking order and graded relevance on judged questions | Strong evidence buried below shallow context | | **ANN recall@k** | Match of approximate neighbors to exact vector baseline under same filter/model | Mistake vector algorithm accuracy for human relevance | | **Answer correctness** | Independently checked conclusio",
+      "id": "V4-B017",
+      "key": "tycho.page.a4335241afc0408d9e137bc2a027ebed#5-quality-metrics-retrieval-is-not-answer-quality",
+      "label_a": 1,
+      "label_b": 2,
+      "level": "section",
+      "question": "What does recall at k measure when the relevant set has been judged incompletely?",
+      "title": "5. Quality metrics: retrieval is not answer quality"
+    },
+    {
+      "batch": "HN06",
+      "excerpt": "## The overload boundary The overload scenario offers 30 requests per second to a 24-request-per-second pool with a 40-request queue and a one-second deadline. The run reports: - success rate 0.6488 (95% CI 0.6443-0.6534); - timeout rate 0.3495 (95% CI 0.3451-0.3540); - rejection rate 0.0005; - mean queue length 12.79; - server utilization 0.9966. The dominant failure is timeout, not rejection. The queue is large enough to absorb arrivals but not large enough to prevent deadline expiry. A report that focuses on rejection alone would miss most of the loss: rejection is 0.05% while timeout is 35.0%.",
+      "id": "V4-B021",
+      "key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+      "label_a": 1,
+      "label_b": 0,
+      "level": "section",
+      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "title": "The overload boundary"
+    },
+    {
+      "batch": "HN07",
+      "excerpt": "# Modernization-path experiment **Question.** How does the staged modernization scenario compare with a no-cutover baseline, and what does the comparison establish? **Short answer.** The experiment fixes the workload and seed scheme, varies the stage schedule and rollback trigger, and compares the staged path with a no-cutover baseline. The staged path serves the traffic but produces a large synthetic divergence and does not complete rollback within the horizon. The comparison establishes a measurement agenda, not a cutover decision.",
+      "id": "V4-B035",
+      "key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview",
+      "label_a": 1,
+      "label_b": 0,
+      "level": "section",
+      "question": "Which traffic-share schedule is declared in the synthetic staged modernization experiment?",
+      "title": "Modernization-path experiment"
+    },
+    {
+      "batch": "HN08",
+      "excerpt": "## 2. An original fictional reservation audit A fictional public equipment library allows members to reserve shared devices. A successful booking should have one authoritative reservation identity, and a cancellation should identify the reservation and authorization decision. An operational log such as \"reservation requested\" may be emitted before the database transaction commits. It is valuable diagnostic context, but it is **not evidence of accepted state**. Likewise, a log sink may be unavailable while an authorized operation commits successfully. An **illustrative domain audit record** might contain a stable effect ID, actor/role reference within authorized access, tenant or resource sco",
+      "id": "V4-B046",
+      "key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "How should a reservation problem distinguish business success from sending a notification?",
+      "title": "2. An original fictional reservation audit"
+    },
+    {
+      "batch": "HN08",
+      "excerpt": "## 5. Boundaries of network and service isolation | Control | Intended protection | What it does NOT prove | |---|---|---| | TLS / mutual TLS | Connection confidentiality, integrity and authenticated endpoint depending on configuration | Authorization for a particular business object | | Ingress/gateway authentication | Filter unauthenticated traffic and apply coarse policy | Every internal path or async consumer enforces business permissions | | Network policies / segments | Restrict permitted network reachability | A reachable compromised service cannot abuse permitted actions | | Container/VM isolation | Bound process/runtime reach and some resource ownership | Correct tenant-level applic",
+      "id": "V4-B049",
+      "key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+      "label_a": 1,
+      "label_b": 2,
+      "level": "section",
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "title": "5. Boundaries of network and service isolation"
+    },
+    {
+      "batch": "HN10",
+      "excerpt": "## 7. Public evidence and explicit product-scope boundary | Independently inspected public source | Supports | Not established | |---|---|---| | [Neo4j Cypher \u2014 Patterns](https://neo4j.com/docs/cypher-manual/current/patterns/) | Property-graph query patterns and path semantics | Implementation for fictional equipment model | | [Neo4j Cypher \u2014 Variable-length paths](https://neo4j.com/docs/cypher-manual/current/patterns/variable-length-paths/) | Bounded variable-length traversal and explosion/pruning concerns | Performance of any real graph DB under a target workload | All graph nodes, edges, diagrams, inferred rules and experiments are original invented educational examples. No graph was crea",
+      "id": "V4-B065",
+      "key": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#7-public-evidence-and-explicit-product-scope-boundary",
+      "label_a": 1,
+      "label_b": 0,
+      "level": "section",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "title": "7. Public evidence and explicit product-scope boundary"
+    },
+    {
+      "batch": "HN11",
+      "excerpt": "## Integrated decision and reading route Define eligible events, good outcomes, observation window and an action policy before using an error budget. A success-only denominator can hide rejected user operations, so a green dashboard may not describe the promised experience. The detailed pages separate the mechanisms that make this decision conditional: - [Eligible events, SLIs and objectives](sli-population.md) \u2014 Which user population and observation boundary define the promised outcome? - [Error-budget decisions and revisions](budget-actions.md) \u2014 What action should a budget trigger and when should the objective be reconsidered? [Chapter introduction, ordered pages and full source ledger](R",
+      "id": "V4-B071",
+      "key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#integrated-decision-and-reading-route",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "What is the difference between an observed service indicator and its objective?",
+      "title": "Integrated decision and reading route"
+    },
+    {
+      "batch": "HN11",
+      "excerpt": "## Integrated decision and reading route Separate offered attempts, admitted work, successful outcomes, concurrency and per-operation demand before estimating capacity. Two equally sized user populations can impose different bursts and hot-key pressure; average requests per second conceals that difference. The detailed pages separate the mechanisms that make this decision conditional: - [Population, arrival and admission models](arrivals-population.md) \u2014 How do user population and arrival process change offered work? - [Demand arithmetic and skew](demand-skew.md) \u2014 What does a demand estimate conceal about operation mix, bursts and hot keys? - [Workload contracts for architecture choices](wo",
+      "id": "V4-B077",
+      "key": "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "How can a uniform-key test conceal contention on a popular resource?",
+      "title": "Integrated decision and reading route"
+    },
+    {
+      "batch": "HN12",
+      "excerpt": "## Integrated decision and reading route Apply occupancy and rate identities only to the same measured boundary, population and time semantics. A finite window with unfinished work or rejection outside the boundary can invalidate naive arithmetic, and means cannot predict p99. The detailed pages separate the mechanisms that make this decision conditional: - [Population boundaries and Little's Law](measurement-boundary.md) \u2014 When are occupancy, throughput and mean residence time comparable? - [Finite windows and load-generator feedback](finite-window.md) \u2014 Why can unfinished work and closed-loop arrivals invalidate a naive estimate? - [Overload, recovery and alternative measurements](queue-re",
+      "id": "V4-B085",
+      "key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "title": "Integrated decision and reading route"
+    },
+    {
+      "batch": "HN12",
+      "excerpt": "## 3. Logging is operational evidence, not an unlimited audit trail | Property | Operational log | Dedicated authoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often best-effort, sampled/filtered/short retention | Explicit durability, retention, access, integrity and failure policy | | Identity | Component/time/trace correlation | Principal, actor/delegation, action, target, policy decision, time and immutable event ID | | Ordering | May be delayed, duplicated and reordered | Stable per-authority sequence/hash or external evidence with documented ordering ",
+      "id": "V4-B088",
+      "key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "Why is a trace ID not a reliable substitute for a durable business operation ID?",
+      "title": "3. Logging is operational evidence, not an unlimited audit trail"
+    },
+    {
+      "batch": "HN13",
+      "excerpt": "## Failure modes - **Unstable tie-breaking.** Two events at the same time depend on hash order. - **Timeout resets on retry omitted.** A retry inherits an expired deadline and fails immediately. - **Timeout not cancelled on completion.** A completed request is later marked failed. - **Double release.** A timeout and a completion both free the same server, increasing capacity beyond the configured pool. - **Floating-point equality.** Events at 1.0 and 1.0000000001 are treated as equal or not equal without a declared tolerance. V12 rounds scheduled times to 12 decimal places and compares event times as floats. That is sufficient for the synthetic scenarios; a model with very small time units w",
+      "id": "V4-V006",
+      "key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "How does the V12 event queue break ties between events scheduled at the same time?",
+      "title": "Failure modes"
+    },
+    {
+      "batch": "HN13",
+      "excerpt": "## What this volume does and does not do It does: - state a model boundary, state variables, units, parameters and validity limits; - execute deterministic reference cases and seeded discrete-event simulations; - report uncertainty, convergence and sensitivity rather than one number; - compare candidates on identical workloads and business-comparable metrics; - record a recommendation, a no-recommendation outcome or an explicit `insufficient-evidence` outcome; - preserve hashes, seeds and replay instructions for every stored run. It does not: - promote, demote or re-review an existing pattern; - claim that a simulation proves production behavior; - treat a source claim as a calibrated parame",
+      "id": "V4-V009",
+      "key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+      "label_a": 1,
+      "label_b": 0,
+      "level": "section",
+      "question": "Why do more simulation replications not remove uncertainty about the input distribution?",
+      "title": "What this volume does and does not do"
+    },
+    {
+      "batch": "HN14",
+      "excerpt": "## The experiment Three candidates receive the same Poisson workload at 20 requests per second for 1,800 seconds after a 300-second warmup. Each uses 30 replications with the seed base 20261029. The metrics are success rate, p95 latency, throughput, cost per 1000 successful requests, rejection rate and retry amplification. The candidates differ in capacity, deadline, queue, retry and unit cost: - A: 12 servers, 0.5-second mean service, 50-request queue, 1-second timeout, one attempt, 60-request bulkhead, cost 10.0; - B: 12 servers, 0.5-second mean service, 200-request queue, 2-second timeout, three attempts, exponential backoff with full jitter, 240-request bulkhead, cost 8.0; - C: 18 server",
+      "id": "V4-V017",
+      "key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+      "label_a": 2,
+      "label_b": 1,
+      "level": "section",
+      "question": "What makes a scenario metric comparable between candidates with different server counts?",
+      "title": "The experiment"
+    },
+    {
+      "batch": "HN14",
+      "excerpt": "## Provenance is not a log line A timestamp and a filename do not explain a result. Provenance answers: - which model and scenario produced the result; - which engine version executed it; - which seed and how many replications; - which inputs were combined into the run; - which output metrics and convergence diagnostics were produced; - which limitations apply. PROV-O describes entities, activities and agents, with relations such as generation, use and derivation. V12 borrows that shape without claiming ontology conformance. The model and scenario are entities; the engine run is an activity; the run record is a generated entity that used the inputs. A replay is a new activity that should gen",
+      "id": "V4-V018",
+      "key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#provenance-is-not-a-log-line",
+      "label_a": 1,
+      "label_b": 0,
+      "level": "section",
+      "question": "What happens to a derived run record when its canonical model or scenario input changes?",
+      "title": "Provenance is not a log line"
+    }
+  ]
+}

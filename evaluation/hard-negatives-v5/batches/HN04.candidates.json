@@ -2,236 +2,141 @@
   "batch": "HN04",
   "items": [
     {
-      "id": "V4-B046",
-      "page_new": [
+      "id": "V4-B001",
+      "page_new": [],
+      "question": "Why does a published interface specification not establish that a deployed service actually behaves that way?",
+      "section_new": [
         {
-          "excerpt": "",
-          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
-          "title": "Logs, authoritative audit and lineage"
-        },
+          "excerpt": "## 2. Monolith does not mean unstructured code A monolithic application can be a single deployment unit and still contain **well-separated functional modules**. The defining cost is shared deployment and often shared process/runtime failure exposure, not an inability to implement interfaces, contracts or strong domain separation. Lewis and Fowler's 2014 *Microservices* comparison describes one logical server-side executable and notes that multiple instances of such a monolith can be load-balanced. A monolith is therefore **not inherently restricted to one machine**. [E02] ### Example: fictional workshop application Imagine a new system with three cohesive functions: catalogue, registration a",
+          "heading": "2. Monolith does not mean unstructured code",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#2-monolith-does-not-mean-unstructured-code"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B002",
+      "page_new": [],
+      "question": "What must be fixed in advance to compare two architecture changes without shifting the decision criterion after the test?",
+      "section_new": [
         {
-          "excerpt": "",
+          "excerpt": "## 4. Turn qualities into adversarial scenarios A quality attribute should have a stimulus, affected boundary, environment, expected response and measurable acceptance criterion. In the fictional booking system, these would be **proposed experiments**: | Scenario | Stimulus and environment | Observable criterion | Architectural question | |---|---|---|---| | Concurrency correctness | Two clients reserve same slot simultaneously | At most one committed owner; both get consistent final results | Which datastore transaction or compare-and-set boundary enforces this? | | Client uncertainty | Reply is lost after durable commit | Same logical retry yields original booking, no duplicate | Where is ",
+          "heading": "4. Turn qualities into adversarial scenarios",
+          "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/evidence-screening.md",
+          "section_key": "tycho.page.4e96abb6d4504ef1b09cbc355485108a#4-turn-qualities-into-adversarial-scenarios"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B003",
+      "page_new": [],
+      "question": "When should an architecture experiment stop instead of drawing a conclusion from apparently favorable latency?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Keep published semantics, synthetic arithmetic, hypotheses and observed experiments as distinct evidence classes with different permissible conclusions. A cache experiment can improve latency while failing freshness; the result rejects that configuration rather than proving a universal claim about caching. The detailed pages separate the mechanisms that make this decision conditional: - [Evidence classes and competing hypotheses](evidence-hypotheses.md) \u2014 Which evidence class supports a claim and which alternative explanation remains possible? - [Discriminating architecture experiments](experiment-contract.md) \u2014 What observation would distinguish cach",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/architecture-evidence-hypotheses-and-experiments.md",
+          "section_key": "tycho.page.a2cd4465792a4740aa5150ad248fd420#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B004",
+      "page_new": [],
+      "question": "In Shopify\u2019s 2019 componentization account, how did Wedge surface cross-component dependencies?",
+      "section_new": [
+        {
+          "excerpt": "## Two successive detection approaches and why they differed The [2019 first-party article](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) (src.m9-sh01, **Isolating Dependencies**) described **Wedge**: a component-coupling feedback mechanism that combined runtime Ruby traces and static framework structure such as ActiveRecord associations. The [2020 follow-up](https://shopify.engineering/shopify-monolith) (src.m9-sh02, **What We're Building Right Now** and **How We Enforce Boundaries**) explains why the team built **Packwerk** as a separate tool: analyzing explicit Ruby constant references was faster and more actionable in the pull-re",
+          "heading": "Two successive detection approaches and why they differed",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#two-successive-detection-approaches-and-why-they-differed"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B005",
+      "page_new": [],
+      "question": "What controls can make module ownership enforceable inside a single deployable?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Separate four different architectural axes | Dimension | Core question | Misleading shortcut to avoid | |---|---|---| | **Business/domain boundary** | Which concepts, rules and invariants belong together, with one consistent language? | Treat every database table or REST endpoint as a bounded context | | **Code/module boundary** | Which implementation details are hidden behind an explicit contract? | Call a package tree \"modular\" without checking its dependency edges | | **Runtime/deployment boundary** | Which artifacts or processes can be released, scaled and rolled back independently? | Assume a separate process automatically establishes a good domain boundary | | **Data ownership an",
+          "heading": "1. Separate four different architectural axes",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B006",
+      "page_new": [],
+      "question": "Why can a post-commit in-memory event lose a required follow-up after the primary transaction succeeds?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Internal events have multiple execution and durability contracts | Event style | Execution boundary | Failure question | Appropriate use | |---|---|---|---| | Direct synchronous module call | Caller stack/transaction if configured | Can callee failure roll back caller? | Required immediate invariant/decision | | In-process synchronous event | Same process; dispatch semantics framework-specific | Does listener exception fail publishing operation? | Small local observers when explicit coupling is accepted | | Post-commit event listener | Triggered in relation to a successful transaction boundary | Is listener work durable or retried after a process crash? | Side effects that must not hap",
+          "heading": "3. Internal events have multiple execution and durability contracts",
           "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md",
-          "title": "Internal events and transaction timing"
-        }
-      ],
-      "question": "How should a reservation problem distinguish business success from sending a notification?",
-      "section_new": [
-        {
-          "excerpt": "",
-          "heading": "2. An original fictional reservation audit",
-          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
-          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit"
-        },
-        {
-          "excerpt": "",
-          "heading": "2. Separate business context from technical context",
-          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/outcomes-context.md",
-          "section_key": "tycho.page.de62a6f0e5a145aea3798ee69715f033#2-separate-business-context-from-technical-context"
-        },
-        {
-          "excerpt": "",
-          "heading": "2. Original synthetic example: community workshop reservation",
-          "path": "book/volumes/v02-application-boundaries-and-contracts/c03-modular-monolith-and-internal-events/events-transactions.md",
-          "section_key": "tycho.page.07bb1f96bdd94195ac8e31644527a217#2-original-synthetic-example-community-workshop-reservation"
-        },
-        {
-          "excerpt": "",
-          "heading": "5. Problem framing produces explicit unknowns",
-          "path": "book/volumes/v01-requirements-and-architecture/c01-problem-framing/evidence-contract.md",
-          "section_key": "tycho.page.b6be128c3e714ac68ef3311a30d65141#5-problem-framing-produces-explicit-unknowns"
-        },
-        {
-          "excerpt": "",
-          "heading": "3. Distributed transactions are a protocol choice, not an automatic extension",
-          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/distributed-protocols.md",
-          "section_key": "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension"
+          "section_key": "tycho.page.07bb1f96bdd94195ac8e31644527a217#3-internal-events-have-multiple-execution-and-durability-contracts"
         }
       ],
       "split": "book"
     },
     {
-      "id": "V4-B051",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
-          "title": "Multitenant isolation"
-        },
-        {
-          "excerpt": "",
-          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
-          "title": "Security architecture: identity, authorization, trust boundaries and isolation"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
-          "title": "Cells and shuffle sharding"
-        },
-        {
-          "excerpt": "",
-          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
-          "title": "Uber \u2014 Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness"
-        }
-      ],
-      "question": "What needs coordination when a tenant moves from shared storage to a dedicated database?",
+      "id": "V4-B007",
+      "page_new": [],
+      "question": "In Netflix\u2019s 2024 GC account, how could request pauses amplify load beyond the original slow request?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "Tenant-Based Resource Isolation",
-          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
-          "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation"
-        },
-        {
-          "excerpt": "",
-          "heading": "5. Isolation is multidimensional",
-          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
-          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional"
-        },
-        {
-          "excerpt": "",
-          "heading": "Bounded pattern ownership notes",
-          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
-          "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2"
-        },
-        {
-          "excerpt": "",
-          "heading": "Three kinds of admission are not interchangeable",
-          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
-          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#three-kinds-of-admission-are-not-interchangeable"
+          "excerpt": "## Workload before collector: what the source can actually tell us [Netflix's March 2024 GC report](../netflix-generational-zgc-workloads.md) (src.m9-n05) reports a significant **request-tail and retry-amplification** problem in latency-sensitive Java services. A stop-the-world pause can cause an upstream request timeout, trigger retries/hedging and thus increase work after the original pause ends. The publication distinguishes **G1**, **older non-generational ZGC**, **Generational ZGC**, and **Parallel GC**. Mixing them would produce a false architectural conclusion: older ZGC was about **36% more CPU-intensive** than G1 in one comparison, **generational** ZGC was around **10% better** than",
+          "heading": "Workload before collector: what the source can actually tell us",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us"
         }
       ],
       "split": "book"
     },
     {
-      "id": "V4-B056",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
-          "title": "Multi-zone availability, multi-region disaster recovery and restore contracts"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md",
-          "title": "Availability zones, placement and failure-domain architecture"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
-          "title": "Replication and restore boundaries"
-        }
-      ],
-      "question": "Why might promoting a streaming replica fail to recover an accidental deletion?",
+      "id": "V4-B008",
+      "page_new": [],
+      "question": "Why can a Java process exceed a memory limit while heap occupancy looks stable?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "RTO, RPO and their measurement boundaries",
-          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
-          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries"
-        },
-        {
-          "excerpt": "",
-          "heading": "Engineering walkthrough \u2014 Two zones, one shared dependency and no real isolation",
-          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/availability-zones-placement-and-failure-domains.md",
-          "section_key": "tycho.page.6b3725950fad4c0db82417b3d0225d32#engineering-walkthrough-two-zones-one-shared-dependency-and-no-real-isolation"
-        },
-        {
-          "excerpt": "",
-          "heading": "3. Physical streaming replication versus logical replication",
-          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/replica-recovery.md",
-          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication"
-        },
-        {
-          "excerpt": "",
-          "heading": "Purpose and mission",
-          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/backup-restore-pitr-and-recovery-drills.md",
-          "section_key": "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission"
-        }
-      ],
-      "split": "book"
-    },
-    {
-      "id": "V4-B061",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
-          "title": "Java 21 virtual-thread pinning at tracing and synchronization boundaries"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
-          "title": "Threads, tasks and coordination: cancellation and resource ownership"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/README.md",
-          "title": "V03 \u2014 Execution models, concurrency and flow control"
-        }
-      ],
-      "question": "Why does limiting database permits inside virtual tasks leave a separate admission problem?",
-      "section_new": [
-        {
-          "excerpt": "",
+          "excerpt": "## Why this can look like a lock problem A pinned waiter holds a carrier while it waits. A signaled virtual thread that has been unmounted needs a free carrier before it can run. If every carrier is occupied by pinned waiters, the signaled thread cannot make progress even when the lock itself has been released. An observer may then see a live process, an apparently free lock and no completed requests. That is a scheduler/resource interlock, not necessarily a permanently held mutex. This diagnostic framing is Tycho synthesis. The JEPs define the pinning mechanism; they do not prescribe a production triage procedure or prove that any particular incident had this shape. ```mermaid flowchart TD ",
           "heading": "Why this can look like a lock problem",
           "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
           "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
-        },
-        {
-          "excerpt": "",
-          "heading": "Purpose and mission",
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c01-threads-tasks-and-coordination/threads-tasks-structured-coordination.md",
-          "section_key": "tycho.page.4e075e4ebc644f0e9b92c05294f62ca4#purpose-and-mission"
-        },
-        {
-          "excerpt": "",
-          "heading": "A worked cross-chapter synthesis",
-          "path": "book/volumes/v03-execution-concurrency-and-flow-control/README.md",
-          "section_key": "tycho.volume.c4854b444d7c480e9616c5bf06f4db08#a-worked-cross-chapter-synthesis"
         }
       ],
       "split": "book"
     },
     {
-      "id": "V4-B066",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/application/architecture-styles-and-module-boundaries.md",
-          "title": "Application architecture styles: modules, services and ownership boundaries"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-contracts.md",
-          "title": "Service contracts and failure evaluation"
-        }
-      ],
-      "question": "What evidence makes an extracted dependency edge traceable to its source?",
+      "id": "V4-B009",
+      "page_new": [],
+      "question": "Why is a CPU flame graph insufficient by itself to explain a request delayed by blocking?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "Integrated decision and reading route",
-          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/graph-data-models-and-traversal.md",
-          "section_key": "tycho.page.d34afc7f27b54431b779f7f75f11e2c3#integrated-decision-and-reading-route"
-        },
+          "excerpt": "## Why replacing a pool looked appealing Virtual threads preserve direct-looking synchronous Java programming while allowing many *I/O-blocked* requests to yield their carrier platform threads. A migration from a bounded OS-thread executor to a per-task virtual-thread executor can therefore reduce the need for large platform-thread pools when tasks spend much of their lives waiting for sockets. The Netflix practitioner account gives an immediate counterexample. A platform-team experiment replaced the worker pool used with **outgoing gRPC calls**, anticipating reduced scheduling overhead. Its work was **CPU intensive**, however; changing the thread abstraction introduced overhead without crea",
+          "heading": "Why replacing a pool looked appealing",
+          "path": "book/cases/netflix-grpc-cpu-workerpool-virtual-thread-regression.md",
+          "section_key": "tycho.page.36d83a4c7ecb4d12b60fb814d605646a#why-replacing-a-pool-looked-appealing"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B010",
+      "page_new": [],
+      "question": "How did LinkedIn\u2019s Kafka Audit compare message counts along its multi-cluster path?",
+      "section_new": [
         {
-          "excerpt": "",
-          "heading": "5. What could justify distribution \u2014 and what cannot?",
-          "path": "book/application/architecture-styles-and-module-boundaries.md",
-          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot"
-        },
-        {
-          "excerpt": "",
-          "heading": "6. Candidate evaluation under realistic requirements",
-          "path": "book/volumes/v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-contracts.md",
-          "section_key": "tycho.page.cdb86c0b91a6489f979689ab08efad35#6-candidate-evaluation-under-realistic-requirements"
-        },
-        {
-          "excerpt": "",
-          "heading": "Pages and reasoning route",
-          "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/README.md",
-          "section_key": "tycho.chapter.1f0c8323023f4adfaa1affc7bf2993d4#pages-and-reasoning-route"
+          "excerpt": "## Provenance and acceptance boundary Evidence is company-authored and scoped to the publication date and sections: [src.m9-di02](https://discord.com/blog/how-discord-indexes-trillions-of-messages), **The Problems; The Solutions; Multi-cluster cell architecture; Supporting new search use cases**. Numerical results, where stated, are publisher-reported; no Tycho benchmark, source reproduction or copyright permissions inferred. Source status must be reconciled with [the candidate audit](../../sources/REAL_WORLD_CASES_CANDIDATE_AUDIT.md) and E16-01 #114. This case remains a draft until independent #121 correctness and source review.",
+          "heading": "Provenance and acceptance boundary",
+          "path": "book/cases/discord-search-index-cells.md",
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#provenance-and-acceptance-boundary"
         }
       ],
       "split": "book"

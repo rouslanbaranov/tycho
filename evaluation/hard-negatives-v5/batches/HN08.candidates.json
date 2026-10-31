@@ -1,0 +1,145 @@
+{
+  "batch": "HN08",
+  "items": [
+    {
+      "id": "V4-B041",
+      "page_new": [],
+      "question": "Why does embedding SQLite in an application not by itself provide a networked multi-region database service?",
+      "section_new": [
+        {
+          "excerpt": "## Alternatives, counterexamples, and failure criteria | Choice | Correct when | Risk | |---|---|---| | Multi-AZ inside one region | RTO/RPO are modest and whole-region event is tolerable | Still subject to region-wide services | | Multi-region active/passive | Regional recovery required, moderate operational complexity | Cold failover, promotion correctness and staleness | | Multi-region active/active | Need regional continuity and workloads permit split ownership | Cross-region consistency, split brain, billing/storage expense | | Chaos Kong-like simulation | Want to verify selected failover routing/dependencies | Does **not** reproduce physically all provider failure modes | **Decision re",
+          "heading": "Alternatives, counterexamples, and failure criteria",
+          "path": "book/cases/netflix-chaos-kong-regional-failover.md",
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#alternatives-counterexamples-and-failure-criteria"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B042",
+      "page_new": [],
+      "question": "When can embedding related records in a document become a poor fit for their lifecycle?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Choose a storage model from access patterns, invariant scope and operating constraints, keeping migration costs visible. Replacing an engine does not remove a hot logical key or a cross-owner transaction requirement. The detailed pages separate the mechanisms that make this decision conditional: - [Relational, embedded and transactional key-value models](transactional-models.md) \u2014 Which transaction and locality requirements distinguish these storage choices? - [Document, wide-column and analytical access](specialized-models.md) \u2014 Which access pattern justifies specialized modeling and what is lost? - [Cross-model comparison and synchronization](multi-",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/storage-model-alternatives-and-workload-fit.md",
+          "section_key": "tycho.page.c75a11f9786442a5b5456f11c2412df4#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B043",
+      "page_new": [],
+      "question": "What did Netflix\u2019s Chaos Kong regional simulation leave outside the tested failure envelope?",
+      "section_new": [
+        {
+          "excerpt": "## Netflix \u2014 Java and runtime (#115/#116/#117) - [Java service platform convergence](netflix-java-platform-convergence.md) - [Durable identity and project-based data governance](netflix-data-project-durable-workload-identity.md) - [Zuul 2 async gateway](netflix-zuul2-nonblocking-gateway.md) - [DGS and Spring GraphQL](netflix-dgs-spring-graphql-convergence.md) - [Java 21 virtual-thread pinning](netflix-java21-virtual-thread-pinning.md) - [CPU-heavy gRPC worker-pool virtual-thread regression](netflix-grpc-cpu-workerpool-virtual-thread-regression.md) - [Generational ZGC workload choice](netflix-generational-zgc-workloads.md) - [HotSpot false/true sharing](netflix-hotspot-false-true-sharing.md) ",
+          "heading": "Netflix \u2014 Java and runtime (#115/#116/#117)",
+          "path": "book/cases/README.md",
+          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#netflix-java-and-runtime-115-116-117"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B044",
+      "page_new": [],
+      "question": "Why does fencing an old regional writer not itself recover a commit missing from the promoted replica?",
+      "section_new": [
+        {
+          "excerpt": "## 6. Falsifiable drill protocol A safe isolated drill should create known accepted operations, checkpoint their IDs, simulate one declared failure, restore or promote state, and compare actual business outcomes. It should also inject: - region link partition with old primary returning late; - missing replica data and delayed WAL; - corrupted historical state copied to standby; - lost client acknowledgment after commit; - an old message redelivered after promotion; - credential/artifact unavailability; - incomplete recovery configuration; - operational rollback attempted after incompatible writes. No such drills were performed in this chapter. A green health endpoint or replica process alone",
+          "heading": "6. Falsifiable drill protocol",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c07-multi-region-recovery-and-data-reconciliation/authority-failback.md",
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#6-falsifiable-drill-protocol"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B045",
+      "page_new": [],
+      "question": "What must happen before an old region can safely regain authority after failover?",
+      "section_new": [
+        {
+          "excerpt": "## Write authority and the recovery contradiction A secondary region can serve read-only degraded traffic before it can safely become a writer. Promoting writers requires a policy for **in-flight acknowledgments**, replica lag, ordering, globally unique identifiers, replay idempotency and a recovery model when the former primary returns. An active-active system further requires conflict rules that match domain semantics; last-write-wins may be unacceptable for some mutable state. A fictitious acceptance exercise should stage two adversarial states: a write acknowledged in A but not visible in B when the failover begins, and a stale client still sending mutations to A after B has been promote",
+          "heading": "Write authority and the recovery contradiction",
+          "path": "book/cases/netflix-chaos-kong-regional-failover.md",
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B046",
+      "page_new": [],
+      "question": "How should a reservation problem distinguish business success from sending a notification?",
+      "section_new": [
+        {
+          "excerpt": "## 2. An original fictional reservation audit A fictional public equipment library allows members to reserve shared devices. A successful booking should have one authoritative reservation identity, and a cancellation should identify the reservation and authorization decision. An operational log such as \"reservation requested\" may be emitted before the database transaction commits. It is valuable diagnostic context, but it is **not evidence of accepted state**. Likewise, a log sink may be unavailable while an authorized operation commits successfully. An **illustrative domain audit record** might contain a stable effect ID, actor/role reference within authorized access, tenant or resource sco",
+          "heading": "2. An original fictional reservation audit",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+          "section_key": "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B047",
+      "page_new": [],
+      "question": "What separates a state-authority boundary from a separately deployed process?",
+      "section_new": [
+        {
+          "excerpt": "## 1. Separate four different architectural axes | Dimension | Core question | Misleading shortcut to avoid | |---|---|---| | **Business/domain boundary** | Which concepts, rules and invariants belong together, with one consistent language? | Treat every database table or REST endpoint as a bounded context | | **Code/module boundary** | Which implementation details are hidden behind an explicit contract? | Call a package tree \"modular\" without checking its dependency edges | | **Runtime/deployment boundary** | Which artifacts or processes can be released, scaled and rolled back independently? | Assume a separate process automatically establishes a good domain boundary | | **Data ownership an",
+          "heading": "1. Separate four different architectural axes",
+          "path": "book/application/architecture-styles-and-module-boundaries.md",
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B048",
+      "page_new": [],
+      "question": "How can a boundary register expose an unknown that would change a design decision?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Place invariants at their enforcing transaction boundary and state how cross-boundary uncertainty is reconciled. A compensating action can fail or arrive late; a saga is not an atomic transaction across independent owners. The detailed pages separate the mechanisms that make this decision conditional: - [Invariants and local transaction isolation](invariants-isolation.md) \u2014 Which state owner and anomaly define the required coordination boundary? - [Distributed transactions and business protocols](distributed-protocols.md) \u2014 Which obligations remain when local transactions cannot atomically coordinate owners? - [Concurrency, compensation and negative e",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c03-consistency-and-distributed-transactions/transaction-isolation-and-sagas.md",
+          "section_key": "tycho.page.3c78e2b17ac74973b2ae658977843c2a#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B049",
+      "page_new": [],
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Boundaries of network and service isolation | Control | Intended protection | What it does NOT prove | |---|---|---| | TLS / mutual TLS | Connection confidentiality, integrity and authenticated endpoint depending on configuration | Authorization for a particular business object | | Ingress/gateway authentication | Filter unauthenticated traffic and apply coarse policy | Every internal path or async consumer enforces business permissions | | Network policies / segments | Restrict permitted network reachability | A reachable compromised service cannot abuse permitted actions | | Container/VM isolation | Bound process/runtime reach and some resource ownership | Correct tenant-level applic",
+          "heading": "5. Boundaries of network and service isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/object-credentials.md",
+          "section_key": "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B050",
+      "page_new": [],
+      "question": "Which extra isolation concern remains when tenants share a connection pool but data permissions are correct?",
+      "section_new": [
+        {
+          "excerpt": "## 5. Isolation is multidimensional | Dimension | Typical mechanism | What it does not prove | |---|---|---| | Process/host | OS user permissions, VM/process/container isolation | A container boundary is not automatically a separate kernel or tenant-proof guarantee | | Network | Segmentation, identity-aware ingress/egress, service policy | Being on an allowed subnet does not imply resource authorization | | Compute | CPU/memory/request/queue quotas, admission gates | Equal CPU limits alone do not prevent shared storage or connection-pool starvation | | Data | Row/object policies, tenant key checks, isolation by schema/database when justified | A tenant filter may be bypassed by direct SQL, c",
+          "heading": "5. Isolation is multidimensional",
+          "path": "book/security/identity-authorization-threat-models-and-isolation.md",
+          "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

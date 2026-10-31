@@ -1,0 +1,87 @@
+{
+  "batch": "HN09",
+  "labeler": "A",
+  "status": "ai-adjudicated-not-human",
+  "items": [
+    {
+      "id": "V4-B051",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation": 1
+      },
+      "notes": "Tenant isolation contract (routing, credentials, cache/queue scoping, network quotas) supports shared-to-dedicated moves, but the excerpt does not cover migration or cutover coordination."
+    },
+    {
+      "id": "V4-B052",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers": 2
+      },
+      "notes": "Explicitly says to bind the operation key to immutable request parameters and reject same-key/different-intent reuse."
+    },
+    {
+      "id": "V4-B053",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect": 2
+      },
+      "notes": "Directly explains that durable scheduler/log state does not prove the external RPC, launch or side effect occurred."
+    },
+    {
+      "id": "V4-B054",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication": 1
+      },
+      "notes": "Explains HTTP method idempotency is distinct from business-effect deduplication; supports duplicate-after-expiry test design but does not address key expiry or test cases."
+    },
+    {
+      "id": "V4-B055",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ": 0
+      },
+      "notes": "Compares logical backup, physical backup and WAL replay; it does not define or distinguish RTO and RPO."
+    },
+    {
+      "id": "V4-B056",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries": 1
+      },
+      "notes": "RPO/RTO boundaries and replica lag support why promotion is not deletion recovery, but the excerpt does not directly address promoting a replica."
+    },
+    {
+      "id": "V4-B057",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.ddeff7f1556f44f18c67659b73e6e15f#purpose-and-mission": 1
+      },
+      "notes": "Frames WAL/PITR and warns a WAL archive is not a working PITR procedure, but lists no base-backup/WAL artifacts."
+    },
+    {
+      "id": "V4-B058",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment": 0
+      },
+      "notes": "Experiment-selection table for CPU, GC, pool and memory diagnostics; nothing on fan-out threshold probability or waiting for all calls."
+    },
+    {
+      "id": "V4-B059",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split": 1
+      },
+      "notes": "Worked retain/hedge/split decision discusses hedging optional calls, but the excerpt does not state when hedging adds overload."
+    },
+    {
+      "id": "V4-B060",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals": 2
+      },
+      "notes": "Directly explains closed-model feedback and coordinated omission hiding overload versus independently paced demand."
+    }
+  ]
+}
