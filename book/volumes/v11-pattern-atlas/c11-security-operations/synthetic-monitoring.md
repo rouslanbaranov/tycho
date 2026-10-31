@@ -33,7 +33,8 @@ evidence_scope:
   claim_ids: []
   status: "source-linked"
   notes: >-
-    Four public units inspected 2026-10-31: Google SRE, "Monitoring
+    Three public units inspected 2026-10-31; the AWS canary record is retained from
+    2026-10-30: Google SRE, "Monitoring
     Distributed Systems"; Prometheus, "Blackbox exporter"; AWS, "Synthetic
     monitoring (canaries)"; and Azure, "Application Insights availability
     tests". The Azure source id is registered. No promotion, sufficient
@@ -64,21 +65,21 @@ success criteria should be explicit. These are Tycho conditions.
 only shallow endpoints, or when alert noise exceeds signal. These are Tycho
 contraindications.
 
-**Competing alternative.** Real-user monitoring or internal SLOs. Reverse the choice when
-synthetic coverage cost exceeds detection benefit. Google SRE contrasts black-box with
-white-box monitoring; Azure directs operators of "nonpublic endpoints" to "monitor an
+**Competing alternative.** Real-user monitoring or internal SLOs. Google SRE contrasts
+black-box with white-box monitoring; Azure directs operators of "nonpublic endpoints" to "monitor an
 internal health signal from inside the network and create log or metric alerts on that
 signal." **Tycho choice rule:** prefer a synthetic probe only when no real traffic
 exercises the journey; prefer internal or real-user signals when the probe cannot reach
-or safely authenticate to the path.
+or safely authenticate to the path. Reverse when synthetic coverage cost exceeds detection
+benefit.
 
 **Failure and recovery.** Azure retries a failed availability test and reports "only if
 three successive attempts fail", while noting that "about 80% of failures disappear on
 retry"; AWS says canaries let you "discover issues before your customers do"; Prometheus
-exposes `probe_success` and debug output. Probe blindness and credential leakage are
-common; verify journey coverage in the owner section. **Tycho runbook:** page on
-product-visible failure, keep credential-expiry alerts distinct from product alerts, and
-re-run with debug before declaring an outage.
+exposes `probe_success` and debug output. Probe blindness and credential expiry are possible;
+this risk inventory is Tycho. Verify journey coverage in the owner section.
+**Tycho runbook:** page on product-visible failure, keep credential-expiry alerts distinct
+from product alerts, and re-run with debug before declaring an outage.
 
 **Technical owner.** [Synthetic Monitoring](../../v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/budget-actions.md#synthetic-monitoring) — synthetic monitoring is bounded to alert/action reasoning.
 
