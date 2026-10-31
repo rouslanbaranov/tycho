@@ -27,17 +27,20 @@ route_hints:
 evidence_scope:
   source_ids:
     - "src.postgresql"
+    - "src.microsoft-sql-server"
+    - "src.use-the-index-luke"
+    - "src.aws-dynamodb-gsi"
   claim_ids: []
   status: "source-linked"
-  notes: "Read source-plan units; page-level, not claim-mapped."
+  notes: "Four dimensions bound 2026-10-31 to public units; page-level, not claim-mapped."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-20"
-  reviewer: "Codex editorial decomposition"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
-source_inspection_date: null
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # Plan evidence and index lifecycle
@@ -103,22 +106,92 @@ materialized view may be preferable when the index would cost more writes than i
 
 ### Index Table
 
-**Synthetic design guidance, not measured evidence.** An index table is an application-owned
-lookup table that maps a query key to a primary key or row locator. The application
-maintains it on the write path, separately from any native database index,
-because the query shape, sort order or cross-store join is not served by the primary store.
+**Synthetic design guidance, not measured evidence.** An index table is an
+application-owned lookup table that maps a query key to a primary key or row
+locator. The application maintains it on the write path, separately from any
+native database index, because the query shape, sort order or cross-store join
+is not served by the primary store.
 
-Every lookup row must resolve to the current base row; the mapping and the base write should
-commit in one local transaction, or the write path must publish a durable repair
-intent. Dual-write ambiguity, partial backfill, duplicate lookup keys and stale rows
-are common design-time failure modes; the cited PostgreSQL page covers native indexes,
-not this application-owned table. Reconcile with a repair job, keep the lookup key
-immutable and bound rebuild time.
+**Mechanism.** A secondary index is a separate structure keyed for one access
+path. PostgreSQL states that its indexes are "stored separately from the table's
+main data area" and that index-only scans "can answer queries from an index
+alone without any heap access". Use The Index Luke describes the covering
+variant: it "avoids accessing the table completely if the database can find the
+selected columns in the index itself". SQL Server calls the non-key form a
+covering index: "By including nonkey columns, you can create nonclustered
+indexes that cover more queries." **Tycho reading:** the index table is the
+application-owned variant of that secondary access path; the base row stays
+authoritative and the lookup row is derived state that the write path maintains.
 
-A native secondary index, a materialized view or a query-time join may be preferable when the
-primary store already serves the access path. An index table is a fit when the primary
-store cannot serve a stable, frequently used lookup, the write path can own its repair and
-the added write/repair cost is lower than the scan or drift cost it removes.
+**Invariant.** The lookup key alone defines what a row locates and what a
+duplicate means. SQL Server states that nonkey columns "aren't considered by the
+Database Engine when calculating the number of index key columns or index key
+size", and that their order "doesn't affect the performance of queries that use
+the index". PostgreSQL states that for a unique index with included columns
+"the uniqueness condition applies to just column x, not to the combination of x
+and y". Luke notes that non-key columns are "only stored in the leaf nodes and
+can thus not be used for access predicates". **Tycho rule:** keep exactly one
+lookup key; payload columns must never become a second key or a second source
+of truth. Every lookup row must resolve to the current base row; the mapping and
+the base write commit in one local transaction, or the write path publishes a
+durable repair intent.
+
+**Failure and recovery.** A covering access path fails quietly when its shape
+changes. Luke shows that adding a filter column "can cause “illogical”
+performance behavior"; "The table access increases the response time although
+the query selects fewer rows", and "The relevant factor is not how many rows the
+query delivers but how many rows the database must inspect to find them".
+PostgreSQL adds that when the visibility-map bit is not set, "the heap entry
+must be visited to find out whether it's visible, so no performance advantage is
+gained over a standard index scan". SQL Server warns that very wide included
+columns add update cost, and that "Nonkey columns can't be dropped from a table
+unless that table's index is dropped first". **Tycho runbook:** dual-write
+ambiguity, partial backfill, duplicate lookup keys and stale rows are
+design-time failure modes; reconcile with a repair job, keep the lookup key
+immutable, bound rebuild time and re-check the execution plan after every
+query-shape change; remove payload columns that no longer earn their write cost.
+
+**Alternative.** A native covering index, a materialized view or an overloaded
+managed secondary index may serve the access path without an application-owned
+table. DynamoDB documents overloaded global secondary indexes: beyond the
+default quota of 20 GSIs, one index can serve "a variety of different queries
+using that single global secondary index". Luke calls index-only scans "an
+aggressive indexing strategy" and recommends indexing without the select clause
+first, then extending only when needed. PostgreSQL and SQL Server both show
+payload columns declared as non-key rather than key columns. **Tycho choice
+rule:** use a native covering index, materialized view, query-time join or
+overloaded managed secondary index when the primary store already serves the
+access path; keep an application-owned index table when the write path can own
+its repair and the added write/repair cost is lower than the scan or drift cost
+it removes. Reverse the choice when key drift or maintenance cost exceeds the
+lookup benefit.
+
+**Bound source limits.** The four 2026-10-31 units are public documentation
+pages, not benchmarks or production observations. PostgreSQL 17 documents
+index-only scans and INCLUDE columns; SQL Server documents included (nonkey)
+columns; *Use The Index, Luke* is a practitioner book site; DynamoDB documents
+GSI overloading. None tests an application-owned lookup table, and none
+supplies a measured drift or repair cost. Tycho-labelled sentences are this
+book's synthesis, not source quotations.
+
+**Source units.** Each binding revision is the canonical-text SHA-256 of the
+2026-10-31 representation:
+
+- PostgreSQL 17, *11.9. Index-Only Scans and Covering Indexes*;
+  770597607e655863d637486b44c7169fb547dba3cd3c40acd1320866a754e3c4;
+  record read.pg17-index-only-scans.2026-10-31 under src.postgresql.
+- Microsoft Learn, *Create indexes with included columns* (SQL Server);
+  90861625c10dd5cf1892aeb32f98619b65ffcd0a43b2d1c9183f1d63da4da394;
+  record read.microsoft-included-columns.2026-10-31 under
+  src.microsoft-sql-server.
+- Markus Winand, *Index-Only Scan: Avoiding Table Access*;
+  5e1204b9cdd0f25a712894869d80126abbbd39132706c80357908693dc24a95b;
+  record read.luke-index-only-scan.2026-10-31 under src.use-the-index-luke.
+- Amazon DynamoDB Developer Guide, *Overloading Global Secondary Indexes in
+  DynamoDB*;
+  1d1a982b843ee7d8cca03b06eecb19efc0c67a135acd020fb91a8d35da32fc1a;
+  record read.aws-dynamodb-gsi-overloading.2026-10-31 under
+  src.aws-dynamodb-gsi.
 
 ## Navigation, prerequisites and source scope
 
