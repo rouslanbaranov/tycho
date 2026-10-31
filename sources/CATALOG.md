@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 324.
+Inventory date: 2026-10-31. Entries: 326.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -152,6 +152,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-dynamodb-gsi / core | [Overloading Global Secondary Indexes in DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-gsi-overloading.html) — Amazon Web Services | Bounded DynamoDB GSI overloading unit for the index-table alternative. | admitted-for-research / public-web-or-author-download |
 | src.azure-cosmos-consistency / supporting | [Consistency levels in Azure Cosmos DB](https://learn.microsoft.com/en-us/azure/cosmos-db/consistency-levels) — Microsoft | Session scope, session-token barrier, partition-bound tokens and token repair for the session-consistency mechanism and failure dimensions. | admitted-for-research / public-web-or-author-download |
 | src.mongodb-causal-consistency / supporting | [Causal Consistency and Read and Write Concerns](https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/) — MongoDB | Four causal guarantees, read/write concern combinations, durability and partition behavior for the failure and alternative dimensions. | admitted-for-research / public-web-or-author-download |
+| src.aws-backup / supporting | [What is AWS Backup?](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html) — Amazon Web Services | Managed backup plans, cross-Region copies and automated restore testing for the backup/PITR alternatives and recovery drills. | admitted-for-research / public-web-or-author-download |
+| src.azure-backup / supporting | [What is the Azure Backup service?](https://learn.microsoft.com/en-us/azure/backup/backup-overview) — Microsoft | Policy-based backup, soft delete, immutable recovery points and the boundary between backup and disaster-recovery failover. | admitted-for-research / public-web-or-author-download |
 
 ## Caching
 

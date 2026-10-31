@@ -3117,7 +3117,9 @@
       "content_sha256": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained 2026-10-21 PostgreSQL continuous-archiving record; superseded for current claims by read.pg-pitr.2026-10-31 because the page path and digest changed."
     },
     {
       "id": "read.batch3-google-negative.2026-10-21",
@@ -11975,6 +11977,223 @@
       "limitations": "The public PDF is the authors' technical report, not a benchmark reproduction; the text has PDF line-break hyphenation and spacing artefacts; sections after development use, other lessons, related work and references were not read; no Dapper deployment, trace or sampler was run.",
       "content_sha256": "4a079899ab68b3fda92942b8af9825070c223b8dc7f529af2229f91c171ae919",
       "read_scope": "the sections listed above; text extracted with pdftotext -raw",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.pg-pitr.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/17/continuous-archiving.html",
+      "unit_label": "Continuous Archiving and Point-in-Time Recovery (PITR) — PostgreSQL 17 documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "25.3. Continuous Archiving and PITR",
+        "25.3.1. Setting Up WAL Archiving",
+        "25.3.2. Making a Base Backup",
+        "25.3.3. Making an Incremental Backup",
+        "25.3.4. Making a Base Backup Using the Low Level API",
+        "25.3.4.1. Backing Up the Data Directory",
+        "25.3.5. Recovering Using a Continuous Archive Backup",
+        "25.3.6. Timelines",
+        "25.3.7. Tips and Examples",
+        "25.3.7.1. Standalone Hot Backups",
+        "25.3.7.2. Compressed Archive Logs",
+        "25.3.7.3. archive_command Scripts",
+        "25.3.8. Caveats"
+      ],
+      "sections_not_read": [
+        "linked child pages",
+        "version archive, navigation and unrelated chrome",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A base backup plus a continuous sequence of archived WAL files restores the database to its state at any time since the base backup was taken.",
+        "A recovery target can be selected by date/time, named restore point or completion of a specific transaction ID.",
+        "Recovery is bounded by the available WAL segments; corrupted WAL data halts recovery and the server does not start.",
+        "An inaccessible WAL archive can be resolved and recovery restarted almost from the failure point."
+      ],
+      "claims_not_supported": [
+        "linked pages",
+        "implementation behavior",
+        "independent reproduction or benchmark"
+      ],
+      "limitations": "PostgreSQL 17 living documentation with no Last-Modified header and a 2026-10-15 news banner; the digest pins the 2026-10-31 representation, not a release tag; the page gives no RPO/RTO values or deployment drill evidence; no database or restore was run.",
+      "content_sha256": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76",
+      "read_scope": "the sections listed above, excluding linked pages and served navigation chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-backup.2026-10-31",
+      "source_id": "src.aws-backup",
+      "unit_url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html",
+      "unit_label": "What is AWS Backup? — AWS Backup Developer Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "What is AWS Backup?",
+        "Feature overview",
+        "Centralized backup management",
+        "Policy-based backup",
+        "Cross-Region backup",
+        "Backup activity monitoring",
+        "Secure your data in backup vaults"
+      ],
+      "sections_not_read": [
+        "service-specific backup pages",
+        "pricing detail and quotas",
+        "linked API references and console procedures"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "AWS Backup is a fully-managed service that centralizes and automates data protection across AWS services, in the cloud and on premises.",
+        "AWS Backup organizes protection through backup plans and policies and supports cross-Region backup copies.",
+        "Cross-Region backup stores backups a minimum distance away from production data for business continuity or compliance requirements."
+      ],
+      "claims_not_supported": [
+        "a backup plan, vault, copy job or restore run",
+        "pricing, quotas or console procedures",
+        "service-specific backup behavior"
+      ],
+      "limitations": "Service overview and supporting topic pages, not a benchmark or account observation; linked service pages, pricing, quotas and console procedures were excluded; no AWS account, backup plan, vault, copy job or restore was created.",
+      "content_sha256": "edbc0b590a3be072a14ec7fa65a527bd02f360efd56e75bb2c96f09c65817aca",
+      "read_scope": "the sections listed above, excluding linked pages, pricing and console procedures",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-backup-restore-testing.2026-10-31",
+      "source_id": "src.aws-backup",
+      "unit_url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html",
+      "unit_label": "Restore testing — AWS Backup Developer Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Overview",
+        "Restore testing compared with restore process",
+        "Restore testing management",
+        "Restore testing validation",
+        "Audit restore testing",
+        "Restore testing quotas and parameters"
+      ],
+      "sections_not_read": [
+        "console walkthroughs and CLI command references",
+        "inferred metadata detail",
+        "troubleshooting and quotas tables"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "AWS Backup restore testing provides automated and periodic evaluation of restore viability and monitoring of restore job duration.",
+        "Restore test results can show compliance for organizational or governance requirements such as successful restore scenarios or restore job completion time.",
+        "Restore testing runs restore jobs in the same way as on-demand restores and uses the same recovery points."
+      ],
+      "claims_not_supported": [
+        "a testing plan, restore job or compliance evaluation run",
+        "console or CLI procedures",
+        "quota behavior"
+      ],
+      "limitations": "Feature documentation; no testing plan, restore job, validation or compliance evaluation was run; console walkthroughs, CLI references, inferred metadata detail, troubleshooting and quotas were excluded.",
+      "content_sha256": "8a0be467ae54c840fc0bdbab5b5aed4a2620bd3564f988d48b648c5dc475078f",
+      "read_scope": "the sections listed above, excluding console and CLI procedures and quota tables",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.azure-backup.2026-10-31",
+      "source_id": "src.azure-backup",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/backup/backup-overview",
+      "unit_label": "What is the Azure Backup service? — Microsoft Learn",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "What is the Azure Backup service?",
+        "When to use Azure Backup",
+        "What can I back up?",
+        "How Azure Backup works",
+        "Key components in Azure Backup",
+        "Why use Azure Backup?",
+        "Security and ransomware protection by Azure Backup",
+        "Design considerations for workload protection"
+      ],
+      "sections_not_read": [
+        "per-workload backup articles",
+        "vault architecture detail, backup types and tiers",
+        "pricing and linked tutorials"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Azure Backup protects data against accidental deletion, corruption or ransomware through policy-based backup and restore.",
+        "Soft delete retains deleted backup data for a defined period to protect against accidental or malicious deletion.",
+        "Immutable backup locks recovery points to prevent modification or deletion.",
+        "Azure Backup focuses on data protection, while disaster recovery and failover orchestration belong to Azure Site Recovery."
+      ],
+      "claims_not_supported": [
+        "a vault, policy, recovery point or restore run",
+        "per-workload behavior and backup tiers",
+        "pricing or tutorial outcomes"
+      ],
+      "limitations": "Service overview, not a benchmark or deployed configuration; per-workload articles, vault architecture, backup types and tiers, pricing and tutorials were excluded; no vault, policy, recovery point or restore was created.",
+      "content_sha256": "628a67342bd04649ae9367d502aa6980a344ffcfbb88a900fff736ae8faf5df6",
+      "read_scope": "the sections listed above, excluding per-workload articles, pricing and tutorials",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.sre-data-integrity.2026-10-31",
+      "source_id": "src.sre",
+      "unit_url": "https://sre.google/sre-book/data-integrity/",
+      "unit_label": "Data Integrity: What You Read Is What You Wrote — Site Reliability Engineering",
+      "unit_type": "book-chapter",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Backups Versus Archives",
+        "Delivering a Recovery System, Rather Than a Backup System",
+        "Challenges of Maintaining Data Integrity Deep and Wide",
+        "Knowing That Data Recovery Will Work",
+        "Hope Is Not a Strategy",
+        "Conclusion"
+      ],
+      "sections_not_read": [
+        "the 24 failure-mode combinations",
+        "the Gmail case study and validation implementation detail",
+        "linked papers and the rest of the book"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public book chapter; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Backups and archives serve different purposes, and what users want is restores.",
+        "Replication provides locality and site-disaster protection but does not protect against many sources of data loss, and errant writes replicate.",
+        "Recovery capability is known only by testing it, continuously and as part of normal operations, including periodic DiRT exercises."
+      ],
+      "claims_not_supported": [
+        "a recovery or DiRT exercise run",
+        "the Gmail case study or failure-mode detail",
+        "benchmark or current product behavior"
+      ],
+      "limitations": "A 2016 book chapter with contextual case studies, not a benchmark or current product description; the 24 failure-mode combinations, Gmail case study, validation implementation detail and linked papers were excluded; no recovery or DiRT exercise was run.",
+      "content_sha256": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a",
+      "read_scope": "the sections listed above, excluding case-study detail and linked papers",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }

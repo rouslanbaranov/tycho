@@ -46,16 +46,16 @@ evidence_scope:
     Bound 2026-10-31 to five public units: PostgreSQL 17 continuous archiving/PITR;
     AWS Backup overview and restore testing; Azure Backup overview; and Google SRE
     data integrity/disaster-recovery testing. src.aws-backup and src.azure-backup are
-    proposed pending registration. No claim-level mapping, independent review or
-    source-completeness claim is made.
+    registered. No claim-level mapping, independent review or source-completeness
+    claim is made.
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-31"
-  reviewer: "Automated authoring agent"
+  status: "draft"
+  reviewed_at: null
+  reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.81efb7e6d72349768b6f202845cbe35e:-1 -->
@@ -66,7 +66,7 @@ content_verified_at: null
 > Draws on PostgreSQL 17 continuous archiving/PITR, AWS Backup, Azure Backup and
 > Google SRE data-integrity/disaster-recovery testing. All scenarios are original
 > fiction. No database, backup set, restore, disaster exercise or measurement was
-> performed. The content_review field records a self-check, not independent review.
+> performed. The 2026-10-31 evidence binding is self-checked, not independent review.
 
 <!-- /tycho-question-source -->
 
@@ -152,7 +152,7 @@ and *Restore testing*; Azure Backup, *What is the Azure Backup service?*; and Go
 <https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html>,
 <https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html>,
 <https://learn.microsoft.com/en-us/azure/backup/backup-overview> and
-<https://sre.google/sre-book/data-integrity/>. Proposed or retained records:
+<https://sre.google/sre-book/data-integrity/>. Bound and retained records:
 `read.pg-pitr.2026-10-31`, `read.aws-backup.2026-10-31`,
 `read.aws-backup-restore-testing.2026-10-31`, `read.azure-backup.2026-10-31` and
 `read.sre-data-integrity.2026-10-31`. They are documentation, managed-service overviews and

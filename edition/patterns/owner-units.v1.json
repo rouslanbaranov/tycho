@@ -8694,7 +8694,7 @@
         "heading": "Backup, PITR and Restore",
         "anchor": "backup-pitr-and-restore",
         "level": 3,
-        "line": 91,
+        "line": 104,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Backup, PITR and Restore"
@@ -8704,49 +8704,240 @@
         "mechanism": {
           "state": "supported",
           "quote": "A base backup plus a continuous archive of write-ahead records lets an operator restore the data to a chosen point in time before an incident.",
-          "reason": "Defines a base backup plus archived WAL restored to a chosen point in time.",
+          "reason": "PostgreSQL defines base backup plus WAL replay to a chosen target and AWS centralizes managed backup policy.",
           "binding": {
             "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+            "ledger_record": "read.pg-pitr.2026-10-31",
             "section": "25.3. Continuous Archiving and PITR",
-            "quote": "Since we can combine an indefinitely long sequence of WAL files for replay, continuous backup can be achieved simply by continuing to archive the WAL files. This is particularly valuable for large databases, where it might not be convenient to take a full backup frequently. It is not necessary to replay the WAL entries all the way to the end. We could stop the replay at any point and have a consistent snapshot of the database as it was at that time. Thus, this technique supports point-in-time recovery : it is possible to restore the database to its state at any time since your base backup was taken.",
-            "revision": "0c5f4cb3a63b500ad55966358d7ae0253939fd650daca3083b9ff413358ee31f"
-          }
+            "quote": "it is possible to restore the database to its state at any time since your base backup was taken.",
+            "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-pitr.2026-10-31",
+              "section": "25.3. Continuous Archiving and PITR",
+              "quote": "you need a continuous sequence of archived WAL files that extends back at least as far as the start time of your backup.",
+              "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+            },
+            {
+              "source_id": "src.aws-backup",
+              "ledger_record": "read.aws-backup.2026-10-31",
+              "section": "What is AWS Backup?",
+              "quote": "AWS Backup is a fully-managed service that makes it easy to centralize and automate data protection across AWS services, in the cloud, and on premises.",
+              "revision": "edbc0b590a3be072a14ec7fa65a527bd02f360efd56e75bb2c96f09c65817aca"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The backup chain must be complete and restorable, and a recovery target must be validated against the application's consistency requirements, not only produced.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "PostgreSQL requires a continuous WAL sequence and permits time, named-point or transaction-ID targets, Azure locks immutable recovery points, available segments bound the reachable target, and AWS centralizes policy; the application-validation rule is Tycho.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg-pitr.2026-10-31",
+            "section": "25.3. Continuous Archiving and PITR",
+            "quote": "you need a continuous sequence of archived WAL files that extends back at least as far as the start time of your backup.",
+            "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-pitr.2026-10-31",
+              "section": "25.3.5. Recovering Using a Continuous Archive Backup",
+              "quote": "either by date/time, named restore point or by completion of a specific transaction ID.",
+              "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+            },
+            {
+              "source_id": "src.azure-backup",
+              "ledger_record": "read.azure-backup.2026-10-31",
+              "section": "Security and ransomware protection by Azure Backup",
+              "quote": "Immutable backup: Locks recovery points to prevent modification or deletion, ensuring data integrity.",
+              "revision": "628a67342bd04649ae9367d502aa6980a344ffcfbb88a900fff736ae8faf5df6"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-pitr.2026-10-31",
+              "section": "25.3.5. Recovering Using a Continuous Archive Backup",
+              "quote": "as close as possible given the available WAL segments",
+              "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+            },
+            {
+              "source_id": "src.aws-backup",
+              "ledger_record": "read.aws-backup.2026-10-31",
+              "section": "What is AWS Backup?",
+              "quote": "AWS Backup is a fully-managed service that makes it easy to centralize and automate data protection across AWS services, in the cloud, and on premises.",
+              "revision": "edbc0b590a3be072a14ec7fa65a527bd02f360efd56e75bb2c96f09c65817aca"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A missing or corrupt archive segment makes the target unreachable; run restore drills on a schedule and verify checksums and recovery completion.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "PostgreSQL halts on corrupt WAL and can restart after an inaccessible archive, AWS restore testing and SRE require periodic restore tests, and Azure protects deleted backup data with soft delete; the runbook order is Tycho.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg-pitr.2026-10-31",
+            "section": "25.3.5. Recovering Using a Continuous Archive Backup",
+            "quote": "If recovery finds corrupted WAL data, recovery will halt at that point and the server will not start.",
+            "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-pitr.2026-10-31",
+              "section": "25.3.5. Recovering Using a Continuous Archive Backup",
+              "quote": "as close as possible given the available WAL segments",
+              "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-pitr.2026-10-31",
+              "section": "25.3.5. Recovering Using a Continuous Archive Backup",
+              "quote": "If recovery fails for an external reason, such as a system crash or if the WAL archive has become inaccessible, then the recovery can simply be restarted and it will restart almost from where it failed.",
+              "revision": "3aeddd67e051548889c4ee59e3a056378d0df53d772ef47f9072b22631216b76"
+            },
+            {
+              "source_id": "src.aws-backup",
+              "ledger_record": "read.aws-backup-restore-testing.2026-10-31",
+              "section": "Overview",
+              "quote": "provides automated and periodic evaluation of restore viability, as well as the ability to monitor restore job duration times.",
+              "revision": "8a0be467ae54c840fc0bdbab5b5aed4a2620bd3564f988d48b648c5dc475078f"
+            },
+            {
+              "source_id": "src.aws-backup",
+              "ledger_record": "read.aws-backup-restore-testing.2026-10-31",
+              "section": "Overview",
+              "quote": "After the restore test plan completes its run, you can use the results to show compliance for organizational or governance requirements such as the successful completion of restore test scenarios or the restore job completion time.",
+              "revision": "8a0be467ae54c840fc0bdbab5b5aed4a2620bd3564f988d48b648c5dc475078f"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-data-integrity.2026-10-31",
+              "section": "Knowing That Data Recovery Will Work",
+              "quote": "you only know that you can recover your recent state if you actually do so",
+              "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-data-integrity.2026-10-31",
+              "section": "Knowing That Data Recovery Will Work",
+              "quote": "Continuously test the recovery process as part of your normal operations",
+              "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-data-integrity.2026-10-31",
+              "section": "Hope Is Not a Strategy",
+              "quote": "This procedure is also periodically tested by a DiRT exercise to ensure that we can restore users’ annotations from backups within the time set by the SLO.",
+              "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+            },
+            {
+              "source_id": "src.azure-backup",
+              "ledger_record": "read.azure-backup.2026-10-31",
+              "section": "When to use Azure Backup",
+              "quote": "Protect data against accidental deletion, corruption, or ransomware",
+              "revision": "628a67342bd04649ae9367d502aa6980a344ffcfbb88a900fff736ae8faf5df6"
+            },
+            {
+              "source_id": "src.azure-backup",
+              "ledger_record": "read.azure-backup.2026-10-31",
+              "section": "Security and ransomware protection by Azure Backup",
+              "quote": "Soft delete: Retains deleted backup data for a defined period to protect against accidental or malicious deletion.",
+              "revision": "628a67342bd04649ae9367d502aa6980a344ffcfbb88a900fff736ae8faf5df6"
+            },
+            {
+              "source_id": "src.aws-backup",
+              "ledger_record": "read.aws-backup-restore-testing.2026-10-31",
+              "section": "Restore testing compared with restore process",
+              "quote": "Restore testing runs restore jobs in the same way as on-demand restores and uses the same recovery points (backups) as an on-demand restore.",
+              "revision": "8a0be467ae54c840fc0bdbab5b5aed4a2620bd3564f988d48b648c5dc475078f"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Promote a replica for availability, but it does not protect against replicated deletion or corruption; use backups when recovery point and retained history matter.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "reason": "SRE says replication is not recoverability and errant deletes replicate, Azure separates backup from Site Recovery failover, AWS copies backups across Regions, and restores are the goal; the choice rule is Tycho.",
+          "binding": {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-data-integrity.2026-10-31",
+            "section": "Challenges of Maintaining Data Integrity Deep and Wide",
+            "quote": "Replication provides many benefits, including locality of data and protection from a site-specific disaster, but it can’t protect you from many sources of data loss.",
+            "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-data-integrity.2026-10-31",
+              "section": "Challenges of Maintaining Data Integrity Deep and Wide",
+              "quote": "Datastores that automatically sync multiple replicas guarantee that a corrupt database row or errant delete are pushed to all of your copies, likely before you can isolate the problem.",
+              "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+            },
+            {
+              "source_id": "src.azure-backup",
+              "ledger_record": "read.azure-backup.2026-10-31",
+              "section": "When to use Azure Backup",
+              "quote": "Azure Backup focuses on data protection (backup and restore). For disaster recovery and failover orchestration, use Azure Site Recovery",
+              "revision": "628a67342bd04649ae9367d502aa6980a344ffcfbb88a900fff736ae8faf5df6"
+            },
+            {
+              "source_id": "src.aws-backup",
+              "ledger_record": "read.aws-backup.2026-10-31",
+              "section": "Cross-Region backup",
+              "quote": "Cross-Region backup is particularly valuable if you have business continuity or compliance requirements to store backups a minimum distance away from your production data.",
+              "revision": "edbc0b590a3be072a14ec7fa65a527bd02f360efd56e75bb2c96f09c65817aca"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-data-integrity.2026-10-31",
+              "section": "Backups Versus Archives",
+              "quote": "what people really want are restores",
+              "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "backup-pitr-and-restore",
         "question": "Should recovery rely on base backups plus point-in-time WAL/log replay?",
-        "competing_alternative": "Snapshot-only recovery or replica failover. Reverse the choice when snapshot/restore cost meets recovery needs.",
+        "competing_alternative": "Snapshot-only recovery or replica failover. Google SRE says replication \"can’t protect you from many sources of data loss\" and that \"a corrupt database row or errant delete are pushed to all of your copies\". Azure Backup separates \"data protection (backup and restore)\" from \"disaster recovery and failover orchestration\". **Tycho choice rule:** use a replica for availability and a backup chain for historical state; reverse when snapshot/restore cost meets recovery needs.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-pg-archiving.2026-10-21",
+        "ledger_record": "read.pg-pitr.2026-10-31",
         "source_id": "src.postgresql",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-backup",
+            "ledger_record": "read.aws-backup.2026-10-31",
+            "revision": "edbc0b590a3be072a14ec7fa65a527bd02f360efd56e75bb2c96f09c65817aca"
+          },
+          {
+            "source_id": "src.aws-backup",
+            "ledger_record": "read.aws-backup-restore-testing.2026-10-31",
+            "revision": "8a0be467ae54c840fc0bdbab5b5aed4a2620bd3564f988d48b648c5dc475078f"
+          },
+          {
+            "source_id": "src.azure-backup",
+            "ledger_record": "read.azure-backup.2026-10-31",
+            "revision": "628a67342bd04649ae9367d502aa6980a344ffcfbb88a900fff736ae8faf5df6"
+          },
+          {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-data-integrity.2026-10-31",
+            "revision": "8afec3878de75392885e447c8dca9d97376ea34c27d4c8959dc2b88e7d0a1f1a"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Four dimensions bound 2026-10-31 to PostgreSQL 17 PITR, AWS Backup overview and restore testing, Azure Backup overview and Google SRE data integrity; coverage remains partial-bounded, self-checked and not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.circuit-breaker",
@@ -15957,11 +16148,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 89,
-    "failure_recovery_supported": 84,
-    "alternative_supported": 89,
-    "technical_partial_bounded": 15,
-    "technical_partial": 58,
+    "invariant_supported": 90,
+    "failure_recovery_supported": 85,
+    "alternative_supported": 90,
+    "technical_partial_bounded": 16,
+    "technical_partial": 57,
     "technical_name_only": 0,
     "technical_sufficient": 72,
     "decision_partial_bounded": 73,

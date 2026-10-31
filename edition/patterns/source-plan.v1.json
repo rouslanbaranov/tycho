@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "a952b553a8e2712877fef382983cc0c297fdcfc1b522639d05c968f2f8ba6cd6",
-  "route_index_snapshot": "91e40b4c290b3f9b6f16cbf47a6e9589603a80cb510d604dbb51f3dbfd6dca0e",
+  "registry_sha256": "ba447740af3420f9de6b3d8b87195b17b16c37b10318bf86d8abe051c92af6cf",
+  "route_index_snapshot": "16d60e57867e91bd4972697489a3bd0aa491385cd71856395299183bf260ae0d",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -3940,9 +3940,9 @@
       "required_units": [
         {
           "source_id": "src.postgresql",
-          "unit": "Continuous Archiving and PITR — PostgreSQL documentation",
+          "unit": "Continuous Archiving and Point-in-Time Recovery (PITR) — PostgreSQL 17 documentation",
           "unit_type": "documentation-page",
-          "url": "https://www.postgresql.org/docs/current/continuous-archiving.html",
+          "url": "https://www.postgresql.org/docs/17/continuous-archiving.html",
           "sections": [
             "25.3. Continuous Archiving and PITR",
             "25.3.1. Setting Up WAL Archiving",
@@ -3959,11 +3959,82 @@
             "25.3.8. Caveats"
           ],
           "status": "read",
-          "read_record_id": "read.batch3-pg-archiving.2026-10-21",
+          "read_record_id": "read.pg-pitr.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backup",
+          "unit": "What is AWS Backup? — AWS Backup Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html",
+          "sections": [
+            "What is AWS Backup?",
+            "Feature overview",
+            "Centralized backup management",
+            "Policy-based backup",
+            "Cross-Region backup",
+            "Backup activity monitoring",
+            "Secure your data in backup vaults"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-backup.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-backup",
+          "unit": "Restore testing — AWS Backup Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/aws-backup/latest/devguide/restore-testing.html",
+          "sections": [
+            "Overview",
+            "Restore testing compared with restore process",
+            "Restore testing management",
+            "Restore testing validation",
+            "Audit restore testing",
+            "Restore testing quotas and parameters"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-backup-restore-testing.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-backup",
+          "unit": "What is the Azure Backup service? — Microsoft Learn",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/backup/backup-overview",
+          "sections": [
+            "What is the Azure Backup service?",
+            "When to use Azure Backup",
+            "What can I back up?",
+            "How Azure Backup works",
+            "Key components in Azure Backup",
+            "Why use Azure Backup?",
+            "Security and ransomware protection by Azure Backup",
+            "Design considerations for workload protection"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-backup.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre",
+          "unit": "Data Integrity: What You Read Is What You Wrote — Site Reliability Engineering",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/data-integrity/",
+          "sections": [
+            "Backups Versus Archives",
+            "Delivering a Recovery System, Rather Than a Backup System",
+            "Challenges of Maintaining Data Integrity Deep and Wide",
+            "Knowing That Data Recovery Will Work",
+            "Hope Is Not a Strategy",
+            "Conclusion"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-data-integrity.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 public unit read; claims limited to the ledger record."
+      "notes": "Four dimensions bound 2026-10-31 to five public units: PostgreSQL 17 PITR, AWS Backup overview and restore testing, Azure Backup overview, and Google SRE data integrity. No runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.circuit-breaker",
@@ -7078,11 +7149,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 325,
-    "read_units": 324,
+    "required_units": 329,
+    "read_units": 328,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 281
+    "ledger_records": 286
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -7094,6 +7165,7 @@
     "read.batch6-sre-slo.2026-10-21",
     "read.batch4-jepsen.2026-10-21",
     "read.batch6-sre-workbook-monitoring.2026-10-21",
-    "read.batch6-otel-traces.2026-10-21"
+    "read.batch6-otel-traces.2026-10-21",
+    "read.batch3-pg-archiving.2026-10-21"
   ]
 }
