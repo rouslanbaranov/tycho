@@ -1,0 +1,125 @@
+{
+  "batch": "PG03",
+  "items": [
+    {
+      "id": "V4-A021",
+      "page_new": [
+        {
+          "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#resequencer) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Use a resequencer only when the message contract declares a required order, a reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition have owners. Partition by key instead when global order is unnecessary; when the buffer cannot be bounded, reject the resequence",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+          "title": "Resequencer"
+        }
+      ],
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A022",
+      "page_new": [
+        {
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "title": "Transactional Outbox"
+        }
+      ],
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A023",
+      "page_new": [
+        {
+          "excerpt": "# Eviction, refresh and cache-aside races **Owning question:** Which read/write interleaving invalidates a naive freshness promise? This page belongs to [V06/C01 \u2014 Local and distributed caching](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:3 -->",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "title": "Eviction, refresh and cache-aside races"
+        }
+      ],
+      "question": "Why can synchronized expiry make a short cache TTL expensive during a traffic burst?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A024",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:-1 --> # Cache invalidation, stampedes and hot-key failure modes > **Original Tycho V06/C02 chapter draft**, 2026-10-19. Public Caffeine refresh, Redis cache-aside and EXPIRE sources describe mechanisms. All races and load examples here are educational inventions; no cache, Redis lock, version guard, database or benchmark was run or reviewed. The earlier [combined cache research](../../../scaling/local-distributed-caching-and-invalidation.md) remains intact until claims are reconciled. <!-- /tycho-question-source --> > **Pattern atlas:** > [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/cache-invalidati",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "title": "Cache invalidation, stampedes and hot-key failure modes"
+        }
+      ],
+      "question": "What transient read behavior can remain immediately after a cache invalidation on write?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A025",
+      "page_new": [
+        {
+          "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "title": "Edge caching, private content and origin recovery"
+        }
+      ],
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A026",
+      "page_new": [
+        {
+          "excerpt": "# V08/C08 \u2014 Network request paths, routing and edge delivery **Owning question:** Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "title": "V08/C08 \u2014 Network request paths, routing and edge delivery"
+        }
+      ],
+      "question": "Which edge-hosting responsibilities must be owned before static content is offloaded?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A027",
+      "page_new": [
+        {
+          "excerpt": "# Controlled Cutover > **Pattern atlas:** > [Controlled Cutover](../../v11-pattern-atlas/c10-deployment-modernization/controlled-cutover.md#controlled-cutover) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [migration mechanisms and no-return gates page](cutover-gates.md#controlled-cutover) on 2026-10-29. The branch-by-abstraction walkthrough remains on the chapter page. A controlled cutover drains the write pipeline and verifies that source changes replicate before switching writes. Verify pipeline health and DLQ state before cutover. Resolve DLQ errors before pausing writes. Verify the forward replication pipeline has no permanent erro",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/controlled-cutover.md",
+          "title": "Controlled Cutover"
+        }
+      ],
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A028",
+      "page_new": [
+        {
+          "excerpt": "# State authority and coexistence transitions **Owning question:** Which owner is authoritative in every real intermediate configuration? This page belongs to [V10/C05 \u2014 Target architecture versus transition states](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:1 -->",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+          "title": "State authority and coexistence transitions"
+        }
+      ],
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A029",
+      "page_new": [
+        {
+          "excerpt": "# Distributed tracing, structured logs, data lineage and trustworthy audit > Tycho E14-11 [#89](https://github.com/rouslanbaranov/tycho/issues/89). Original technical manuscript using official public source sections inspected 2026-10-19. Examples are fictional and conceptual; no capture pipeline, incident, authorized forensic procedure or human review was executed.",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "title": "Distributed tracing, structured logs, data lineage and trustworthy audit"
+        }
+      ],
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A030",
+      "page_new": [
+        {
+          "excerpt": "# Request routing and health signals **Owning question:** Which route selects a backend, and which health signal may admit or remove it? A route decides where a request may go; a health signal decides whether an instance is eligible to receive it. Collapsing both into \"the load balancer is healthy\" hides stale routes, mixed readiness semantics and a backend that answers quickly but cannot do useful work. > **Pattern atlas:** > [Gateway Routing](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-routing) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Health Endpoint Monitoring](../../v11-pattern-atlas/c07-resilience/README.md#health-endpoint-monitoring) \u2014 de",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+          "title": "Request routing and health signals"
+        }
+      ],
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "split": "atlas"
+    }
+  ]
+}
