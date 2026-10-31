@@ -1,0 +1,145 @@
+{
+  "batch": "HN13",
+  "items": [
+    {
+      "id": "V4-V001",
+      "page_new": [],
+      "question": "How should a stock-flow model account for offered work at every integration step?",
+      "section_new": [
+        {
+          "excerpt": "## Case 1: conservation The stock-flow model must preserve: offered = completed + rejected + backlog The test runs a below-capacity case, a saturation case and a zero-arrival case. It checks the identity at every step and refuses a negative backlog. A broken service calculation usually shows up as a conservation gap or a negative stock. The observed results are in the order-intake baseline and saturation runs. The baseline has zero rejection and zero backlog; the saturation case has 0.2 rejection, a 77.6-request backlog and a 24-request-per-second throughput.",
+          "heading": "Case 1: conservation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/monte-carlo-reference-cases.md",
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V002",
+      "page_new": [],
+      "question": "Why does a p95 checkout latency comparison require request-level events rather than only a fluid model?",
+      "section_new": [
+        {
+          "excerpt": "## Worked comparison | Case | Lambda | Capacity | Success | p95 | Timeout | |---|---|---|---|---|---| | Baseline stock-flow | 20 | 24 | 1.000 | n/a | 0.000 | | Saturation stock-flow | 30 | 24 | 0.800 | n/a | 0.000 | | Checkout A | 20 | 24 | 0.9218 | 0.870 | 0.0778 | | Checkout B | 20 | 24 | 0.9996 | 1.206 | 0.0041 | | Checkout C | 20 | 24 | 0.9679 | 1.769 | 0.111 | The table is deliberately compact. The stock-flow model has no individual p95; the checkout model does. Candidate B has a higher p95 than A because it waits longer before timing out, but it completes far more requests and costs less per success.",
+          "heading": "Worked comparison",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#worked-comparison"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V003",
+      "page_new": [],
+      "question": "Which scenario inputs must remain aligned to compare checkout candidates fairly?",
+      "section_new": [
+        {
+          "excerpt": "# Scenario specification contract **Question.** Which fields make a scenario reproducible and comparable across candidates? **Short answer.** A V12 scenario fixes the model identifier, workload, candidate configuration, uncertainty inputs, replication count, seed scheme, metrics and constraints. For a candidate comparison, the workload, duration, warmup, metric definitions and seed scheme are identical. Only the candidate configuration changes.",
+          "heading": "Scenario specification contract",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c02-contracts/scenario-specification.md",
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V004",
+      "page_new": [],
+      "question": "What evidence must a V12 model contract attach to an input labeled measured?",
+      "section_new": [
+        {
+          "excerpt": "## The V12 input table | Input | Status | What is missing | |---|---|---| | Arrival rate | assumed | A measured arrival trace for the target workload | | Service mean | assumed | A measured service-time sample and tail | | Service CV | assumed | A measured distribution, not a chosen shape | | Servers | assumed | A measured deployment capacity | | Queue capacity | assumed | A measured admission policy | | Timeout | assumed | A measured client deadline and retry policy | | Dual-write lag | assumed | A measured lag distribution | | Reconciliation capacity | assumed | A measured throughput under target load | | Divergence threshold | assumed | A business-defined data-quality threshold | The tabl",
+          "heading": "The V12 input table",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/calibration-and-validity-limits.md",
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V005",
+      "page_new": [],
+      "question": "Why does the V12 result hash include limitations and convergence information along with metrics?",
+      "section_new": [
+        {
+          "excerpt": "## Machine artifacts The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contracts | `edition/v12/scenarios/` | Workload, configuration, seeds and metrics | | Run records | `edition/v12/runs/` | Metrics, convergence, hashes and limits | | Decision records | `edition/v12/decisions/` | Candidates, constraints and outcome | | Source ledger | `edition/v12/reading-ledger.v1.json` | Read units, hashes and omissions | | Reverse index | `edition/v12/reverse-index.v1.json` | Derived pattern-to-artifact lookup | Reproduce a s",
+          "heading": "Machine artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V006",
+      "page_new": [],
+      "question": "How does the V12 event queue break ties between events scheduled at the same time?",
+      "section_new": [
+        {
+          "excerpt": "## Failure modes - **Unstable tie-breaking.** Two events at the same time depend on hash order. - **Timeout resets on retry omitted.** A retry inherits an expired deadline and fails immediately. - **Timeout not cancelled on completion.** A completed request is later marked failed. - **Double release.** A timeout and a completion both free the same server, increasing capacity beyond the configured pool. - **Floating-point equality.** Events at 1.0 and 1.0000000001 are treated as equal or not equal without a declared tolerance. V12 rounds scheduled times to 12 decimal places and compares event times as floats. That is sufficient for the synthetic scenarios; a model with very small time units w",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/event-ordering-and-timeouts.md",
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V007",
+      "page_new": [],
+      "question": "What happens to the timeout when the V12 discrete-event model retries an attempt?",
+      "section_new": [
+        {
+          "excerpt": "## Diagram ~~~mermaid sequenceDiagram participant A as Arrival participant Q as Queue participant S as Server participant T as Timeout A->>Q: admit or reject Q->>S: dispatch when capacity is free S-->>Q: release on completion T-->>S: cancel expired attempt S-->>A: completed, failed or retried ~~~ Text alternative: an arrival is admitted to a bounded queue or rejected. A free server dispatches a queued request, and completion releases capacity. A timeout can cancel an expired attempt and trigger a bounded retry.",
+          "heading": "Diagram",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/README.md",
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#diagram"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V008",
+      "page_new": [],
+      "question": "Which queue disciplines and resource controls does the V12 checkout engine model?",
+      "section_new": [
+        {
+          "excerpt": "## Machine artifacts The volume is not only prose. The following artifacts are part of the deliverable: | Artifact | Path | Purpose | |---|---|---| | Model contracts | `edition/v12/models/` | State, parameters, invariants and verification | | Scenario contracts | `edition/v12/scenarios/` | Workload, configuration, seeds and metrics | | Run records | `edition/v12/runs/` | Metrics, convergence, hashes and limits | | Decision records | `edition/v12/decisions/` | Candidates, constraints and outcome | | Source ledger | `edition/v12/reading-ledger.v1.json` | Read units, hashes and omissions | | Reverse index | `edition/v12/reverse-index.v1.json` | Derived pattern-to-artifact lookup | Reproduce a s",
+          "heading": "Machine artifacts",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#machine-artifacts"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V009",
+      "page_new": [],
+      "question": "Why do more simulation replications not remove uncertainty about the input distribution?",
+      "section_new": [
+        {
+          "excerpt": "## What this volume does and does not do It does: - state a model boundary, state variables, units, parameters and validity limits; - execute deterministic reference cases and seeded discrete-event simulations; - report uncertainty, convergence and sensitivity rather than one number; - compare candidates on identical workloads and business-comparable metrics; - record a recommendation, a no-recommendation outcome or an explicit `insufficient-evidence` outcome; - preserve hashes, seeds and replay instructions for every stored run. It does not: - promote, demote or re-review an existing pattern; - claim that a simulation proves production behavior; - treat a source claim as a calibrated parame",
+          "heading": "What this volume does and does not do",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V010",
+      "page_new": [],
+      "question": "How does the V12 quadratic sensitivity screen differ from a full Sobol analysis?",
+      "section_new": [
+        {
+          "excerpt": "## Evidence and limits The source ledger records the exact unit, representation hash, sections read, omissions and limits for each admitted source. The engine tests exercise conservation, boundary cases, event ordering, retries, convergence and sensitivity ranking. Those tests prove the implemented reference cases; they do not validate a real system. All numeric workloads in this volume are synthetic. The confidence intervals use a normal approximation across replications. The sensitivity screen uses a quadratic response-surface decomposition, not a full pick-freeze Sobol analysis. Calibration is `uncalibrated` for every model. Independent review and owner acceptance remain separate decision",
+          "heading": "Evidence and limits",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#evidence-and-limits"
+        }
+      ],
+      "split": "v12"
+    }
+  ]
+}

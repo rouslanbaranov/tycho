@@ -4,82 +4,84 @@
   "status": "ai-adjudicated-not-human",
   "items": [
     {
-      "id": "V4-B021",
-      "page_grades": {
-        "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md": 1,
-        "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md": 0,
-        "book/cases/netflix-java21-virtual-thread-pinning.md": 0
-      },
+      "id": "V4-A021",
+      "page_grades": {},
       "section_grades": {
-        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary": 0,
-        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes": 0,
-        "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem": 0,
-        "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests": 2
+        "tycho.page.2c928286b62944769a4b0cab9fad6139#overview": 1
       },
-      "notes": "Retries/backpressure page gives overload and retry-amplification context, but its overload run has 0.05% rejection and 35% timeouts, the inverse of the query premise, so the matching section is 0. SLI and virtual-thread pages address measurement and carrier pinning, not overload with high rejection. Uber Cinnamon's admission section directly states that accepted work already past its deadline still consumes CPU, memory and locks and that useful completed work, not accepted requests or reject rate, is the right metric."
+      "notes": "Mentions late-message disposition ownership but does not name the disposition."
     },
     {
-      "id": "V4-B026",
-      "page_grades": {
-        "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/README.md": 0,
-        "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/README.md": 0,
-        "book/volumes/v01-requirements-and-architecture/README.md": 0,
-        "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md": 0,
-        "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/README.md": 0
-      },
+      "id": "V4-A022",
+      "page_grades": {},
       "section_grades": {
-        "tycho.chapter.3d34f0b431814c9fa879a355029af2a9#sources-scope-and-known-limitations": 0,
-        "tycho.chapter.b7924b3db65949df952fbb5ca706236c#7-public-sources-and-nonclaims": 0,
-        "tycho.volume.4d10f5c93f3b4356a553c8732e513a38#questions-and-chapters": 0,
-        "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#purpose-and-mission": 0,
-        "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4#navigation-and-prerequisites": 0
+        "tycho.page.61636057f11b418a9478066a8034ff56#overview": 0
       },
-      "notes": "None of the candidates mentions attribute-based authorization (ABAC), authorization policy operations or their trade-offs. They are generic quality-attribute, capacity/cost, evidence and navigation material; keyword overlap is insufficient."
+      "notes": "Describes normal relay flow only; no poison-row planning."
     },
     {
-      "id": "V4-B031",
-      "page_grades": {
-        "book/cases/decisions/data-migration-correctness.md": 1,
-        "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md": 0,
-        "book/cases/meta-tao-social-graph-serving.md": 0,
-        "book/cases/README.md": 0
-      },
+      "id": "V4-A023",
+      "page_grades": {},
       "section_grades": {
-        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves": 2,
-        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta": 1,
-        "tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not": 0,
-        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability": 0,
-        "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118": 0
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes": 2
       },
-      "notes": "The Meta ingestion page's 'Preconditions...' section contains the reported three-phase transition and states that the initial shadow phase wrote to isolated shadow tables in pre-production (2). The decision playbook's data-authority guard describes Meta's later reverse-shadow authority switch, relevant background but not the initial write target (1); the playbook page as a whole is therefore also 1. The TAO case, cases landing, schema-lifecycle page and generic case lens do not contain the initial-phase write detail (0)."
+      "notes": "States short TTL raises load and jitter avoids synchronized bursts."
     },
     {
-      "id": "V4-B036",
-      "page_grades": {
-        "book/cases/decisions/data-migration-correctness.md": 0
-      },
+      "id": "V4-A024",
+      "page_grades": {},
       "section_grades": {
-        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date": 2,
-        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results": 1,
-        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan": 0
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes": 2
       },
-      "notes": "Coexistence and rollback's 'Coexistence is a state, not a date' section states that rollback returns traffic to the legacy path while the target drains, so target share goes to zero (2). The experiment's 'Results' section reports the modeled rollback outcome but not where new traffic is sent (1). The decision playbook's generic modernization plan does not address the V12 model or post-trigger routing (0)."
+      "notes": "States a reader may see a cache miss or brief staleness immediately after a write."
     },
     {
-      "id": "V4-B041",
-      "page_grades": {
-        "book/cases/netflix-chaos-kong-regional-failover.md": 0,
-        "book/deployment/multi-region-disaster-recovery-contracts.md": 1,
-        "book/cases/meta-tao-social-graph-serving.md": 0,
-        "book/cases/netflix-seven-year-cloud-rearchitecture.md": 0
-      },
+      "id": "V4-A025",
+      "page_grades": {},
       "section_grades": {
-        "tycho.page.b256d263efff488c8cf549e116be9683#alternatives-counterexamples-and-failure-criteria": 0,
-        "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract": 1,
-        "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original": 0,
-        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership": 0
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes": 1
       },
-      "notes": "The multi-region DR page and its 'Placement, IaC and operational contract' section explain requirements a networked multi-region service must reproduce (routing, identity, replication, write authority, operational contract), which supports but never mentions embedded SQLite or explains the embedding gap (1). Chaos Kong, TAO and the Netflix rearchitecture case address regional testing, graph serving and cloud migration rather than an embedded database (0)."
+      "notes": "Explains edge cacheability and authorization limits, not static-hosting fit directly."
+    },
+    {
+      "id": "V4-A026",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route": 0
+      },
+      "notes": "Navigation table only; no edge-hosting responsibilities enumerated."
+    },
+    {
+      "id": "V4-A027",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview": 2
+      },
+      "notes": "Lists pipeline health, DLQ checks, and replication verification before pausing writes."
+    },
+    {
+      "id": "V4-A028",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes": 0
+      },
+      "notes": "Describes parallel run constraints; no lower-overhead alternative."
+    },
+    {
+      "id": "V4-A029",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail": 1
+      },
+      "notes": "Contrasts operational logs with audit records; integrity needs are implied, not explained."
+    },
+    {
+      "id": "V4-A030",
+      "page_grades": {},
+      "section_grades": {
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring": 2
+      },
+      "notes": "Explains liveness restart semantics and warns against restarting for a shared dependency."
     }
   ]
 }

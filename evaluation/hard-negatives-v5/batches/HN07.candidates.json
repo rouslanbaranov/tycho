@@ -1,0 +1,145 @@
+{
+  "batch": "HN07",
+  "items": [
+    {
+      "id": "V4-B031",
+      "page_new": [],
+      "question": "In Meta\u2019s ingestion migration, where did the candidate job write during the initial shadow phase?",
+      "section_new": [
+        {
+          "excerpt": "## Preconditions and what the published gates cannot prove by themselves | Gate | What Meta says it checked | Known epistemic limit | |---|---|---| | Record set size | Row count comparison | Two unequal sets can have identical counts | | Content fingerprint | Checksum comparison | Collisions/omitted columns/versioned canonicalization require own policy; matching checksum does not prove all data semantics | | Freshness | New landing latency no worse | Needs production-like source update patterns, measurement window and downstream consumers | | Resources | New compute/storage use comparable or improved | Capital cost, engineering time and operational ownership beyond reported utilization need ",
+          "heading": "Preconditions and what the published gates cannot prove by themselves",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B032",
+      "page_new": [],
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Parallel Run Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative. Parallel run must not execute both implementations when the operation has side effects, such as sending an email or charging a card. Use it for side-effect-free logic when output equality can be checked. A candidate failure must never affect the response. Keep the old authority until cutover. For op",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B033",
+      "page_new": [],
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "section_new": [
+        {
+          "excerpt": "## Alternative architecture and stop conditions Staying on a PostgreSQL-based design with partitioning and targeted indexing may be less risky if current scaling margins, migration ownership and online schema-change needs can be met. A distributed append-only model is justified by measured write/storage scaling and predictable domain semantics, not simply because the original application now has many services. The historical engineering team evaluated alternatives, but this is Tycho's **independent option analysis**. **Refuse a cutover** when UUID mapping is incomplete, old clients still issue direct ORM queries, buffered writes cannot be replayed idempotently, secondary-index and current-da",
+          "heading": "Alternative architecture and stop conditions",
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "section_key": "tycho.page.b369cf77ebee40c6a35f45effefe473d#alternative-architecture-and-stop-conditions"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B034",
+      "page_new": [],
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "section_new": [
+        {
+          "excerpt": "## Coexistence is a state, not a date A modernization path usually has several states: - legacy only; - dual write: both paths receive writes, with a reconciliation process; - shadow: the target receives traffic but does not own the authoritative response; - cutover: the target owns the authoritative response; - rollback: traffic returns to the legacy path while the target drains. Each state has different failure modes. A dual-write state can diverge silently. A shadow state can look healthy while the target's write path is untested. A cutover state can expose a reconciliation backlog that was hidden by legacy ownership. The V12 modernization model represents the states as a stage schedule a",
+          "heading": "Coexistence is a state, not a date",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B035",
+      "page_new": [],
+      "question": "Which traffic-share schedule is declared in the synthetic staged modernization experiment?",
+      "section_new": [
+        {
+          "excerpt": "# Modernization-path experiment **Question.** How does the staged modernization scenario compare with a no-cutover baseline, and what does the comparison establish? **Short answer.** The experiment fixes the workload and seed scheme, varies the stage schedule and rollback trigger, and compares the staged path with a no-cutover baseline. The staged path serves the traffic but produces a large synthetic divergence and does not complete rollback within the horizon. The comparison establishes a measurement agenda, not a cutover decision.",
+          "heading": "Modernization-path experiment",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#overview"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B036",
+      "page_new": [],
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "section_new": [
+        {
+          "excerpt": "## Coexistence is a state, not a date A modernization path usually has several states: - legacy only; - dual write: both paths receive writes, with a reconciliation process; - shadow: the target receives traffic but does not own the authoritative response; - cutover: the target owns the authoritative response; - rollback: traffic returns to the legacy path while the target drains. Each state has different failure modes. A dual-write state can diverge silently. A shadow state can look healthy while the target's write path is untested. A cutover state can expose a reconciliation backlog that was hidden by legacy ownership. The V12 modernization model represents the states as a stage schedule a",
+          "heading": "Coexistence is a state, not a date",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B037",
+      "page_new": [],
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "section_new": [
+        {
+          "excerpt": "## Engineering pressure A blocking request-per-connection gateway can be simple and effective when each request completes quickly. Persistent downstream connections change the arithmetic: a connection with low activity may still occupy a worker in a blocking implementation, and the load balancer's resource budget becomes tied to waiting rather than useful work. Netflix's existing gateway platform was exposed to growing device and persistent-connection needs. The migration targeted **concurrent connection scalability** and I/O handling, not a universally faster CPU implementation. [src.m9-n07: motivation and \"Results of Zuul 2 in Production\"].",
+          "heading": "Engineering pressure",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#engineering-pressure"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B038",
+      "page_new": [],
+      "question": "Which architectural view depicts a request\u2019s error branches and state transitions over time?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### Strangler Fig Intercept requests at a fa\u00e7ade or route and send one capability at a time to the new implementation while the old path remains available. The old system stays authoritative for the capabilities not yet migrated. Keep one authoritative writer for each invariant and define routing plus data compatibility during coexistence. Interception may be impossible, internal callers may bypass the fa\u00e7ade, and old/new state can diverge. Add a bypass detector, a routing inventory and a data reconciliation check before retiring the old path. Fund coexistence and name owners for both paths. Rollback remains possible until a recorded no-return point, where ",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/target-and-transition-architecture-states.md",
+          "section_key": "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B039",
+      "page_new": [],
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision and original walkthrough](architecture-views-and-decision-records.md) | What belongs in diagrams, views, assumptions, ADRs and source-linked evidence? | | [Concerns and architectural views](concerns-views.md) | Which concern is answered by a context, building-block, runtime or deployment view? | | [Identity and evolving decision records](identity-adrs.md) | How do stable identities and ADRs keep several views cohere",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/README.md",
+          "section_key": "tycho.chapter.abcbb298887b49e79525ca00fead8926#pages-and-reasoning-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B040",
+      "page_new": [],
+      "question": "How did Discord\u2019s data-service layer reduce redundant reads for a hot message channel?",
+      "section_new": [
+        {
+          "excerpt": "## Quantified reported outcome, with non-transferable denominators As published, Discord reports **twice the legacy indexing throughput**, **median search latency from 500 ms to below 100 ms**, **p99 from about 1 second to below 500 ms**, and **40 Elasticsearch clusters with thousands of indices**, while indexing **trillions** of messages. It also reports automated cluster upgrades/rolling restarts with no service impact during its observation. [src.m9-di02, **How are things going?**]. The blog does not give enough reproducible benchmark method, traffic composition, hardware mix, sample duration or independent replication to generalize the multipliers. **Critical disambiguation:** these numb",
+          "heading": "Quantified reported outcome, with non-transferable denominators",
+          "path": "book/cases/discord-search-index-cells.md",
+          "section_key": "tycho.page.95bf2e08c056472f92faf870de8f1357#quantified-reported-outcome-with-non-transferable-denominators"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

@@ -88,13 +88,15 @@ def evaluate(root, page_qrels, section_qrels, profile):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, default=ROOT)
+    ap.add_argument("--page-qrels",
+                    default="evaluation/corpus-qrels.v5-dense.json")
+    ap.add_argument("--section-qrels",
+                    default="evaluation/section-qrels.v5-dense.json")
     args = ap.parse_args(argv)
-    page = json.loads(
-        (args.root / "evaluation/corpus-qrels.v5-dense.json").read_text(
-            encoding="utf-8"))
-    section = json.loads(
-        (args.root / "evaluation/section-qrels.v5-dense.json").read_text(
-            encoding="utf-8"))
+    page = json.loads((args.root / args.page_qrels).read_text(
+        encoding="utf-8"))
+    section = json.loads((args.root / args.section_qrels).read_text(
+        encoding="utf-8"))
     print(json.dumps({name: evaluate(args.root, page, section, profile)
                       for name, profile in PROFILES.items()}, indent=2))
     return 0

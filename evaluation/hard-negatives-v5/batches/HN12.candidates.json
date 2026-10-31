@@ -1,0 +1,145 @@
+{
+  "batch": "HN12",
+  "items": [
+    {
+      "id": "V4-B081",
+      "page_new": [],
+      "question": "How can an API prevent a stale full-object update from silently erasing another user\u2019s change?",
+      "section_new": [
+        {
+          "excerpt": "## 4. Snapshot and index identity prevent silent staleness ```mermaid flowchart LR S[\"Admitted source revision\"] --> C[\"Canonical sections and access labels\"] C --> I[\"Versioned index generation\"] I --> Q[\"Ranked bounded result + source IDs\"] Q --> V[\"Claim/source verification\"] V --> A[\"Reader or agent answer\"] S --> U[\"Change/deletion event\"] U --> N[\"Refresh/rebuild and compare\"] N --> I ``` Text alternative: index generations belong to an admitted source revision and access scope. A result must resolve back to canonical source evidence. Changes and deletion must trigger versioned refresh or a documented stale result condition; this is a design plan, not a running index. Define rebuild co",
+          "heading": "4. Snapshot and index identity prevent silent staleness",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c07-retrieval-evaluation-and-index-lifecycle/snapshot-access.md",
+          "section_key": "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B082",
+      "page_new": [],
+      "question": "Why do ordered Lamport clock values not prove a causal relationship between two events?",
+      "section_new": [
+        {
+          "excerpt": "## Exact public evidence | ID | Source and bounded read scope | Supports and limitations | |---|---|---| | E01 | [Leslie Lamport, *Time, Clocks, and the Ordering of Events in a Distributed System*](https://www.microsoft.com/en-us/research/publication/time-clocks-ordering-events-distributed-system/), CACM 21(7), 1978, **official abstract and bibliographic record**, accessed 2026-10-18 | Establishes partial-order logical-time problem and total-order extension; **full PDF not inspected for this issue**, so detailed formal lemmas are explanations to be independently verified before formal-methods use | | E02 | [Ongaro/Ousterhout, *In Search of an Understandable Consensus Algorithm*, extended ver",
+          "heading": "Exact public evidence",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/README.md",
+          "section_key": "tycho.chapter.510c0c78de2b450c8be93d708222a488#exact-public-evidence"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B083",
+      "page_new": [],
+      "question": "When might ordering updates per key avoid the cost of one global sequence?",
+      "section_new": [
+        {
+          "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#resequencer) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Use a resequencer only when the message contract declares a required order, a reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition have owners. Partition by key instead when global order is unnecessary; when the buffer cannot be bounded, reject the resequence",
+          "heading": "Resequencer",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+          "section_key": "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B084",
+      "page_new": [],
+      "question": "Why can a minority partition of a five-voter Raft group not commit new log entries?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Original synthetic network-partition scenario A fictional five-voter metadata service is divided by a network failure into groups of three and two. The majority side can retain quorum; the minority side cannot legitimately independently commit a conflicting entry under the assumed Raft-style safety rules. Users attached only to the minority may experience unavailable writes even though local processes remain healthy. ```mermaid flowchart LR C1[\"Clients in segment A\"] --> Q1[\"Voters 1,2,3 \u2014 quorum\"] C2[\"Clients in segment B\"] --> Q2[\"Voters 4,5 \u2014 no quorum\"] Q1 -.->|Network partition| Q2 Q1 --> X[\"Eligible committed-log progress\"] Q2 --> Y[\"Must not claim independent conflicting commit\"",
+          "heading": "3. Original synthetic network-partition scenario",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B085",
+      "page_new": [],
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Apply occupancy and rate identities only to the same measured boundary, population and time semantics. A finite window with unfinished work or rejection outside the boundary can invalidate naive arithmetic, and means cannot predict p99. The detailed pages separate the mechanisms that make this decision conditional: - [Population boundaries and Little's Law](measurement-boundary.md) \u2014 When are occupancy, throughput and mean residence time comparable? - [Finite windows and load-generator feedback](finite-window.md) \u2014 Why can unfinished work and closed-loop arrivals invalidate a naive estimate? - [Overload, recovery and alternative measurements](queue-re",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B086",
+      "page_new": [],
+      "question": "How can unfinished work at the end of an observation window distort a queueing estimate?",
+      "section_new": [
+        {
+          "excerpt": "## Integrated decision and reading route Apply occupancy and rate identities only to the same measured boundary, population and time semantics. A finite window with unfinished work or rejection outside the boundary can invalidate naive arithmetic, and means cannot predict p99. The detailed pages separate the mechanisms that make this decision conditional: - [Population boundaries and Little's Law](measurement-boundary.md) \u2014 When are occupancy, throughput and mean residence time comparable? - [Finite windows and load-generator feedback](finite-window.md) \u2014 Why can unfinished work and closed-loop arrivals invalidate a naive estimate? - [Overload, recovery and alternative measurements](queue-re",
+          "heading": "Integrated decision and reading route",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B087",
+      "page_new": [],
+      "question": "Why does a bounded queue smooth a brief burst but fail to create sustainable processing capacity?",
+      "section_new": [
+        {
+          "excerpt": "## 2. First example: a burst does not imply a service split **Synthetic requirement:** the registration journey must serve sudden surges while preserving a one-seat-per-confirmed-registration invariant. Observed client arrivals, peak duration, key skew, database wait and retry amplification are initially unknown. Compare: - **A: retain a modular monolith and instrument** offered/admitted/completed requests, per-key contention, DB connection acquisition, latency histograms and queue age. Least structural change; evidence can disprove the need for new topology. - **B: add bounded admission/queue discipline** before the bottleneck when explicit rejection or deferral is permitted. Stabilizes res",
+          "heading": "2. First example: a burst does not imply a service split",
+          "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/workload-runtime.md",
+          "section_key": "tycho.page.2eb290f6307f4797a5981510f1248d70#2-first-example-a-burst-does-not-imply-a-service-split"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B088",
+      "page_new": [],
+      "question": "Why is a trace ID not a reliable substitute for a durable business operation ID?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Logging is operational evidence, not an unlimited audit trail | Property | Operational log | Dedicated authoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often best-effort, sampled/filtered/short retention | Explicit durability, retention, access, integrity and failure policy | | Identity | Component/time/trace correlation | Principal, actor/delegation, action, target, policy decision, time and immutable event ID | | Ordering | May be delayed, duplicated and reordered | Stable per-authority sequence/hash or external evidence with documented ordering ",
+          "heading": "3. Logging is operational evidence, not an unlimited audit trail",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B089",
+      "page_new": [],
+      "question": "What can a missing sampled trace tell an investigator about a possibly committed write?",
+      "section_new": [
+        {
+          "excerpt": "## Pages and reasoning route Begin with the integrated decision, then open the independent question that matches the missing mechanism or observed failure. Read source limits before applying the conclusion. | Page | Independent question and role | |---|---| | [Integrated decision](distributed-tracing-context-and-sampling.md) | Which context, sampling and async boundaries determine trace usefulness? | | [Trace identity and causal interpretation](trace-causality.md) | What execution relationship can a span and its timing establish? | | [Propagation, sampling and untrusted context](sampling-trust.md) | What does a missing span or forged context prevent a trace from proving? |",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/README.md",
+          "section_key": "tycho.chapter.03ec5acf85e043a5a6d552a036bf4659#pages-and-reasoning-route"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B090",
+      "page_new": [],
+      "question": "Why must externally supplied trace baggage not determine tenant authorization?",
+      "section_new": [
+        {
+          "excerpt": "## Original migration and constraints Spotify planned to deprecate two heavily used datasets to release richer replacements. Its lineage graph indicated approximately **1,800 direct downstream data pipelines**, and several thousand indirect dependencies, spanning **BigQuery Runner, dbt and Scio**. The manual work estimate was about **10 engineering weeks**. That estimated baseline is *not* an independently controlled timer. The engineering team used Backstage endpoint lineage/Codesearch to identify affected repositories and Fleetshift to orchestrate changes. Honk could create code PRs, but it did not have the feature-rich tools and external context retrieval options now often assumed for cod",
+          "heading": "Original migration and constraints",
+          "path": "book/cases/spotify-honk-data-consumer-migration.md",
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#original-migration-and-constraints"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

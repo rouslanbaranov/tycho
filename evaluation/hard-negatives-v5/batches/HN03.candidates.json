@@ -2,260 +2,144 @@
   "batch": "HN03",
   "items": [
     {
-      "id": "V4-B021",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
-          "title": "Retries and backpressure"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
-          "title": "User-visible service indicators, objectives and error-budget decisions"
-        },
-        {
-          "excerpt": "",
-          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
-          "title": "Java 21 virtual-thread pinning at tracing and synchronization boundaries"
-        }
-      ],
-      "question": "Why can a service become overloaded while rejecting most incoming requests?",
+      "id": "V4-A021",
+      "page_new": [],
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "The overload boundary",
-          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/retries-and-backpressure.md",
-          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary"
-        },
+          "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#resequencer) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Use a resequencer only when the message contract declares a required order, a reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition have owners. Partition by key instead when global order is unnecessary; when the buffer cannot be bounded, reject the resequence",
+          "heading": "Resequencer",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+          "section_key": "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A022",
+      "page_new": [],
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "section_new": [
         {
-          "excerpt": "",
+          "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+          "heading": "Transactional Outbox",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+          "section_key": "tycho.page.61636057f11b418a9478066a8034ff56#overview"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A023",
+      "page_new": [],
+      "question": "Why can synchronized expiry make a short cache TTL expensive during a traffic burst?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes ### TTL-Based Expiration TTL-based expiration gives an entry a bounded valid lifetime. **expire-after-write:** after a defined lifetime, the entry can no longer be served as a normal valid hit. The cached copy is not refreshed merely because the clock passed; the next reader performs the load or waits for a refresh. A TTL reduces the period during which data might be out of date. Size/weight eviction bounds memory and may remove useful hot entries, creating origin read bursts. A TTL shorter than the source's change rate reduces staleness but increases load; a longer TTL does the opposite. Jitter the expiry across keys to avoid synchronized bursts. Explicit ",
           "heading": "Bounded pattern ownership notes",
-          "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
-          "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes"
-        },
-        {
-          "excerpt": "",
-          "heading": "Why this can look like a lock problem",
-          "path": "book/cases/netflix-java21-virtual-thread-pinning.md",
-          "section_key": "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
-        },
-        {
-          "excerpt": "",
-          "heading": "Admission must optimize useful completed work, not accepted requests",
-          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
-          "section_key": "tycho.page.3fb5e995d5c04cc4aa78b0bd95fcbfe6#admission-must-optimize-useful-completed-work-not-accepted-requests"
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes"
         }
       ],
-      "split": "book"
+      "split": "atlas"
     },
     {
-      "id": "V4-B026",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/README.md",
-          "title": "V01/C03 \u2014 Quality attributes and trade-offs"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/README.md",
-          "title": "V07/C07 \u2014 Capacity planning and cost/performance trade-offs"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v01-requirements-and-architecture/README.md",
-          "title": "V01 \u2014 Requirements, quality attributes and architecture fundamentals"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
-          "title": "Capacity planning and cost/performance trade-offs"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/README.md",
-          "title": "V01/C04 \u2014 Evidence, hypotheses and architecture experiments"
-        }
-      ],
-      "question": "What operational trade-off accompanies attribute-based authorization policies?",
+      "id": "V4-A024",
+      "page_new": [],
+      "question": "What transient read behavior can remain immediately after a cache invalidation on write?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "Sources, scope and known limitations",
-          "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/README.md",
-          "section_key": "tycho.chapter.3d34f0b431814c9fa879a355029af2a9#sources-scope-and-known-limitations"
-        },
-        {
-          "excerpt": "",
-          "heading": "7. Public sources and nonclaims",
-          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/README.md",
-          "section_key": "tycho.chapter.b7924b3db65949df952fbb5ca706236c#7-public-sources-and-nonclaims"
-        },
-        {
-          "excerpt": "",
-          "heading": "Questions and chapters",
-          "path": "book/volumes/v01-requirements-and-architecture/README.md",
-          "section_key": "tycho.volume.4d10f5c93f3b4356a553c8732e513a38#questions-and-chapters"
-        },
-        {
-          "excerpt": "",
-          "heading": "Purpose and mission",
-          "path": "book/volumes/v07-performance-scale-and-resilience/c07-capacity-planning-and-cost-performance-trade-offs/capacity-planning-and-cost-performance.md",
-          "section_key": "tycho.page.5ae9f2c4b45842c7975fd32c252dc4d8#purpose-and-mission"
-        },
-        {
-          "excerpt": "",
-          "heading": "Navigation and prerequisites",
-          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/README.md",
-          "section_key": "tycho.chapter.ee2cd95003ab4018a9d49e2ff0b6b2f4#navigation-and-prerequisites"
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Cache Invalidation Cache invalidation removes a cached entry when the authoritative value changes, so a later read cannot reuse the superseded copy. On a write, write the change to the data store, then remove the affected cache entry. The next read repopulates the cache from the data store. This keeps the write path simple. A reader can experience a cache miss or briefly see stale data immediately after a write. Many caching systems let you con",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "section_key": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes"
         }
       ],
-      "split": "book"
+      "split": "atlas"
     },
     {
-      "id": "V4-B031",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/cases/decisions/data-migration-correctness.md",
-          "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
-        },
-        {
-          "excerpt": "",
-          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
-          "title": "Schema lifecycle, semantic data migration and data retirement"
-        },
-        {
-          "excerpt": "",
-          "path": "book/cases/meta-tao-social-graph-serving.md",
-          "title": "Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches"
-        },
-        {
-          "excerpt": "",
-          "path": "book/cases/README.md",
-          "title": "M9 \u2014 Historical Architecture Modernization Case Studies"
-        }
-      ],
-      "question": "In Meta\u2019s ingestion migration, where did the candidate job write during the initial shadow phase?",
+      "id": "V4-A025",
+      "page_new": [],
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "Preconditions and what the published gates cannot prove by themselves",
-          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
-          "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#preconditions-and-what-the-published-gates-cannot-prove-by-themselves"
-        },
-        {
-          "excerpt": "",
-          "heading": "Data-authority decision guard: Stripe versus Meta",
-          "path": "book/cases/decisions/data-migration-correctness.md",
-          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta"
-        },
-        {
-          "excerpt": "",
-          "heading": "Applied M9 evidence: what transfers and what does not",
-          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
-          "section_key": "tycho.page.357c2d162bd44f3aa06a995a1e691551#applied-m9-evidence-what-transfers-and-what-does-not"
-        },
-        {
-          "excerpt": "",
-          "heading": "Migration mechanics and reliability",
-          "path": "book/cases/meta-tao-social-graph-serving.md",
-          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability"
-        },
-        {
-          "excerpt": "",
-          "heading": "Other companies (#118)",
-          "path": "book/cases/README.md",
-          "section_key": "tycho.landing.43b3f0c107e34e5a800d6c1de65069e8#other-companies-118"
+          "excerpt": "## Bounded pattern ownership notes ### CDN-Edge Caching An edge can reduce distance and origin work, but only for responses it may reuse. Cacheability is a content and authority contract, not a network location. The cache key, freshness policy and authorization boundary must agree. An authorization header is not a complete design for private edge caching; explicit cache directives can alter reuse rules. A misclassified response can serve one user's private data to another, and a purge can lag the origin. Test the authorization matrix, the purge path and the stale-on-error behavior. The cited Microsoft static-hosting unit is narrower than this CDN guidance; RFC 9111 supports shared-cache rest",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#bounded-pattern-ownership-notes"
         }
       ],
-      "split": "book"
+      "split": "atlas"
     },
     {
-      "id": "V4-B036",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/cases/decisions/data-migration-correctness.md",
-          "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
-        }
-      ],
-      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "id": "V4-A026",
+      "page_new": [],
+      "question": "Which edge-hosting responsibilities must be owned before static content is offloaded?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "Coexistence is a state, not a date",
-          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/coexistence-and-rollback.md",
-          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date"
-        },
-        {
-          "excerpt": "",
-          "heading": "Results",
-          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c06-migration-simulation/modernization-path-experiment.md",
-          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#results"
-        },
-        {
-          "excerpt": "",
-          "heading": "Modernization plan",
-          "path": "book/cases/decisions/data-migration-correctness.md",
-          "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+          "excerpt": "## Pages and reasoning route | Page | Question | |---|---| | [Discovery and selection](discovery-balancing.md) | How do clients find a usable backend and avoid concentrating work on it? | | [Request routing and health](routing-and-health.md) | Which route selects a backend, and which health signal may admit or remove it? | | [Connections and shutdown](connections-draining.md) | What can an interrupted stream reveal about an application effect? | | [Trust at proxies and gateways](tls-gateway-boundaries.md) | Which principal and transport boundary does each hop actually establish? | | [Gateway boundaries and offloading](gateway-boundaries-and-offloading.md) | Which policy and connection functi",
+          "heading": "Pages and reasoning route",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "section_key": "tycho.chapter.8a86707018773def410689efbc79cf94#pages-and-reasoning-route"
         }
       ],
-      "split": "book"
+      "split": "atlas"
     },
     {
-      "id": "V4-B041",
-      "page_new": [
-        {
-          "excerpt": "",
-          "path": "book/cases/netflix-chaos-kong-regional-failover.md",
-          "title": "Netflix \u2014 Chaos Kong: testing application-level regional failure, not shutting down AWS"
-        },
-        {
-          "excerpt": "",
-          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
-          "title": "Multi-zone availability, multi-region disaster recovery and restore contracts"
-        },
-        {
-          "excerpt": "",
-          "path": "book/cases/meta-tao-social-graph-serving.md",
-          "title": "Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches"
-        },
-        {
-          "excerpt": "",
-          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
-          "title": "Netflix \u2014 seven years from datacenter dependency to cloud-native service architecture"
-        }
-      ],
-      "question": "Why does embedding SQLite in an application not by itself provide a networked multi-region database service?",
+      "id": "V4-A027",
+      "page_new": [],
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
       "section_new": [
         {
-          "excerpt": "",
-          "heading": "Alternatives, counterexamples, and failure criteria",
-          "path": "book/cases/netflix-chaos-kong-regional-failover.md",
-          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#alternatives-counterexamples-and-failure-criteria"
-        },
-        {
-          "excerpt": "",
-          "heading": "Placement, IaC and operational contract",
-          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
-          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#placement-iac-and-operational-contract"
-        },
-        {
-          "excerpt": "",
-          "heading": "Adopt only for matching access patterns (Tycho original)",
-          "path": "book/cases/meta-tao-social-graph-serving.md",
-          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original"
-        },
-        {
-          "excerpt": "",
-          "heading": "Failure containment and migration ownership",
-          "path": "book/cases/netflix-seven-year-cloud-rearchitecture.md",
-          "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership"
+          "excerpt": "# Controlled Cutover > **Pattern atlas:** > [Controlled Cutover](../../v11-pattern-atlas/c10-deployment-modernization/controlled-cutover.md#controlled-cutover) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [migration mechanisms and no-return gates page](cutover-gates.md#controlled-cutover) on 2026-10-29. The branch-by-abstraction walkthrough remains on the chapter page. A controlled cutover drains the write pipeline and verifies that source changes replicate before switching writes. Verify pipeline health and DLQ state before cutover. Resolve DLQ errors before pausing writes. Verify the forward replication pipeline has no permanent erro",
+          "heading": "Controlled Cutover",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/controlled-cutover.md",
+          "section_key": "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview"
         }
       ],
-      "split": "book"
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A028",
+      "page_new": [],
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded pattern ownership notes These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Parallel Run Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative. Parallel run must not execute both implementations when the operation has side effects, such as sending an email or charging a card. Use it for side-effect-free logic when output equality can be checked. A candidate failure must never affect the response. Keep the old authority until cutover. For op",
+          "heading": "Bounded pattern ownership notes",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A029",
+      "page_new": [],
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Logging is operational evidence, not an unlimited audit trail | Property | Operational log | Dedicated authoritative audit record | |---|---|---| | Primary purpose | Diagnose behavior and errors | Reconstruct accountable, security-relevant and irreversible decisions | | Typical durability | Often best-effort, sampled/filtered/short retention | Explicit durability, retention, access, integrity and failure policy | | Identity | Component/time/trace correlation | Principal, actor/delegation, action, target, policy decision, time and immutable event ID | | Ordering | May be delayed, duplicated and reordered | Stable per-authority sequence/hash or external evidence with documented ordering ",
+          "heading": "3. Logging is operational evidence, not an unlimited audit trail",
+          "path": "book/observability/trace-context-lineage-and-audit.md",
+          "section_key": "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#3-logging-is-operational-evidence-not-an-unlimited-audit-trail"
+        }
+      ],
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A030",
+      "page_new": [],
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "section_new": [
+        {
+          "excerpt": "## Health endpoint monitoring **Health endpoint monitoring.** A startup probe answers \"has initialization finished\"; readiness answers \"may this instance receive new work\"; liveness answers \"must the process be restarted\". They must not be collapsed into one endpoint. External monitoring should also observe user-level success and dependency state, because a green liveness probe does not prove readiness, correct routing or a healthy dependency. Define startup eligibility, readiness, draining and permanent removal separately. A liveness endpoint should not restart every healthy process because one shared dependency is unavailable. **Failure and recovery.** A shared dependency failure can fail ",
+          "heading": "Health endpoint monitoring",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring"
+        }
+      ],
+      "split": "atlas"
     }
   ]
 }

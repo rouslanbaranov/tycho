@@ -1,0 +1,145 @@
+{
+  "batch": "HN09",
+  "items": [
+    {
+      "id": "V4-B051",
+      "page_new": [],
+      "question": "What needs coordination when a tenant moves from shared storage to a dedicated database?",
+      "section_new": [
+        {
+          "excerpt": "## Tenant-Based Resource Isolation Tenant-based isolation assigns each tenant a bounded share of compute, storage and quota, with routing and credentials that keep the tenant scope explicit. No query, cache key, queue consumer or credential may cross a tenant boundary without an explicit shared-resource contract. A shared cache or background worker leaks one tenant's data or consumes another's capacity; scope keys by tenant and test indirect paths with a foreign identifier. Network quotas and isolation \u2014 routing, egress and cross-tenant reachability \u2014 are part of the contract; compute-only quotas do not isolate network effects. A shared pool with tenant-scoped predicates is cheaper at low sc",
+          "heading": "Tenant-Based Resource Isolation",
+          "path": "book/volumes/v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/multitenant-isolation.md",
+          "section_key": "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B052",
+      "page_new": [],
+      "question": "What should an API do when an operation key is reused for a different payload?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Identity across retries, messages and consumers At least three identities are needed and should not be conflated: - **Client request key K:** expresses a user's logical intent to repeat *the same command* after an ambiguous response. Scope it by principal/tenant and operation, bind it to immutable request parameters, persist outcome where necessary, and document expiry. Reject same-key/different-intent reuse. - **Business entity ID R:** identifies the durable registration. Multiple event types can relate to one registration. - **Event ID E:** identifies an immutable committed publication intent. Re-delivery of the same event keeps its identity E; a new legitimate change gets a new even",
+          "heading": "3. Identity across retries, messages and consumers",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B053",
+      "page_new": [],
+      "question": "Why does recording a processed event locally not guarantee a separate external effect occurs exactly once?",
+      "section_new": [
+        {
+          "excerpt": "## 3. Scheduler state is not the external effect A replicated scheduler can agree on which launch it intended, while the external job has a different state. Consensus on the scheduler log does not prove that an RPC was sent, a container started or a side effect committed. - Persist scheduler state with its own durability and recovery contract. - A snapshot plus a bounded log suffix may reconstruct scheduler state; it does not reconstruct an external effect. - A new leader must reconcile in-flight launches before opening new work. - Membership changes and failover are scheduler decisions; they do not fence an external worker that is still running. This is why the launch identity and the exter",
+          "heading": "3. Scheduler state is not the external effect",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/periodic-work-leases-and-exactly-once.md",
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B054",
+      "page_new": [],
+      "question": "What should be tested when a duplicate request arrives after its deduplication key expires?",
+      "section_new": [
+        {
+          "excerpt": "## 2. HTTP method semantics are not business-effect deduplication [RFC 9110, \u00a79.2.1\u20139.2.2](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.2.2) defines the semantics of safe and idempotent methods. A safe method is intended not to request a state-changing effect. Idempotency describes the intended server-side effect of repeating an identical request; it does not require the responses, timing or logging events to be identical. PUT, DELETE and safe methods are idempotent by their specified semantics. POST has no general automatic-retry guarantee. Three distinct notions must not be merged: 1. **HTTP method contract:** Is the requested operation safe or idempotent according to its semantic",
+          "heading": "2. HTTP method semantics are not business-effect deduplication",
+          "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B055",
+      "page_new": [],
+      "question": "What distinguishes the recovery point objective from the recovery time objective?",
+      "section_new": [
+        {
+          "excerpt": "## 2. Logical backup, physical backup and WAL replay differ The [PostgreSQL 17 Backup and Restore guide](https://www.postgresql.org/docs/17/backup.html) distinguishes SQL dumps, file-system-level backup, and continuous archiving. The [PostgreSQL 17 continuous archiving/PITR section](https://www.postgresql.org/docs/17/continuous-archiving.html) explains how a valid base backup plus a continuous suitable WAL sequence supports point-in-time recovery; logical dumps are **not** physical base backups usable for WAL replay. | Method | Useful when | Recovery limitation | |---|---|---| | Logical SQL dump | Portable export/import within supported format/version limits; selected objects | Import time; ",
+          "heading": "2. Logical backup, physical backup and WAL replay differ",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c07-replication-backups-and-restore-drills/recovery-objects.md",
+          "section_key": "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B056",
+      "page_new": [],
+      "question": "Why might promoting a streaming replica fail to recover an accidental deletion?",
+      "section_new": [
+        {
+          "excerpt": "## RTO, RPO and their measurement boundaries **RTO (Recovery Time Objective)**: the approved maximum period a named user capability can be unavailable for the declared disaster class. An operational measurement must say when the incident timer starts (user impact, confirmed failover decision or injection) and what verified user-visible state counts as restored. Do not start the timer only after the slow detection or approval phase. **RPO (Recovery Point Objective)**: the maximum accepted loss of committed, relevant state relative to a chosen pre-failure boundary. Define the last known durable *correct* business event; asynchronous replicas can be behind, and continuous replication may faithf",
+          "heading": "RTO, RPO and their measurement boundaries",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#rto-rpo-and-their-measurement-boundaries"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B057",
+      "page_new": [],
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "section_new": [
+        {
+          "excerpt": "## Purpose and mission Durability and availability depend on **which state has been acknowledged, where it has been persisted, which copies have received it and what was actually restored**. A replica is not automatically a backup. A WAL archive is not automatically a working point-in-time recovery procedure. Local COMMIT, replication acknowledgment and user-visible success must be distinguished. **Primary question:** How do write-ahead logging, asynchronous/synchronous streaming replication, logical replication and backup/recovery complement one another in PostgreSQL, and what evidence is needed to claim a defined RPO/RTO? <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.pag",
+          "heading": "Purpose and mission",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/postgresql-wal-replication-and-recovery.md",
+          "section_key": "tycho.page.ddeff7f1556f44f18c67659b73e6e15f#purpose-and-mission"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B058",
+      "page_new": [],
+      "question": "Under independent identical downstream latencies, how does waiting for all calls change the chance of meeting a threshold?",
+      "section_new": [
+        {
+          "excerpt": "## 6. How to choose the next experiment | Hypothesis | Small, falsifiable experiment | Correctness gate | |---|---|---| | CPU code is expensive | Profile hot path; vary algorithmic workload at fixed data and arrivals | Identical output and error outcomes | | Pool wait dominates | Measure acquisition/call time; adjust admission before connection ceiling | No duplicate/omitted effects, no backend exhaustion | | GC is dominant | Correlate GC pause with user traces, allocation and live-set; modify one supported knob in isolated environment | No memory exhaustion or hidden latency regression | | Native memory is leaking | Reconcile RSS/native allocations with buffer/thread lifetimes and workload ",
+          "heading": "6. How to choose the next experiment",
+          "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/diagnostic-experiments.md",
+          "section_key": "tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B059",
+      "page_new": [],
+      "question": "When can hedged reads increase overload even if they improve individual latency?",
+      "section_new": [
+        {
+          "excerpt": "## 6. Worked decision: retain, hedge, or split? **Fictional case:** A read page queries eight independent views, but only five are required for the user's core operation. The three optional views may be absent with a visible explanation. Parent p99 is not yet measured, and it is unknown whether all views share one backend. A proposed \"optimization\" is to split the service and hedge every call. **Baseline option:** retain the existing topology, trace the critical path, bound queue/admission, and measure the distribution of required versus optional views. This adds little operational complexity and is testable. **Conditional improvement:** enforce a cutoff for optional views; render the core r",
+          "heading": "6. Worked decision: retain, hedge, or split?",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-experiments.md",
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split"
+        }
+      ],
+      "split": "book"
+    },
+    {
+      "id": "V4-B060",
+      "page_new": [],
+      "question": "How can a closed load generator make an overloaded service appear faster than externally timed demand would show?",
+      "section_new": [
+        {
+          "excerpt": "## Workload generators: closed feedback versus independent arrivals An apparently successful load test may be invalid for its stated demand assumption. The official **Grafana k6 Open and closed models** documentation, viewed in the *v2.2.x* documentation family on 2026-10-18, distinguishes two executor semantics. In the **closed model**, a virtual user's next iteration waits for the previous iteration to finish. In the **open model**, starts are paced independently of prior iteration duration. The documentation explicitly discusses the slowed-arrival/coordinated-omission pitfall. [E03] A simple invented illustration, **one request per iteration and no think time**: | 100 closed virtual users",
+          "heading": "Workload generators: closed feedback versus independent arrivals",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/finite-window.md",
+          "section_key": "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals"
+        }
+      ],
+      "split": "book"
+    }
+  ]
+}

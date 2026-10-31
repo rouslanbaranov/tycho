@@ -1,0 +1,145 @@
+{
+  "batch": "HN15",
+  "items": [
+    {
+      "id": "V4-V021",
+      "page_new": [],
+      "question": "What does the V12 reference engine do when an invariant fails before a run record is written?",
+      "section_new": [
+        {
+          "excerpt": "## Failure modes - **Clock leakage.** A metric uses wall-clock time and becomes irreproducible. - **Unstable event order.** A set or dictionary iteration order changes tie-breaking. - **Hidden state.** A module-level cache carries state between replications. - **Partial write.** A run record is written before an invariant check, leaving a plausible but invalid result. - **Silent model fallback.** An unknown model identifier runs a default model instead of failing. The engine fails closed on unknown identifiers and failed invariants.",
+          "heading": "Failure modes",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#failure-modes"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V022",
+      "page_new": [],
+      "question": "Which analytic Monte Carlo checks are identified as future work rather than completed reference tests?",
+      "section_new": [
+        {
+          "excerpt": "## Navigation - Parent: [V12/C04 - Monte Carlo](../README.md) - Previous: [Uncertainty and sensitivity](uncertainty-and-sensitivity.md) - Next: [Monte Carlo reference cases](monte-carlo-reference-cases.md)",
+          "heading": "Navigation",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c04-monte-carlo/convergence-and-error.md",
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#navigation"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V023",
+      "page_new": [],
+      "question": "What consistency relation should hold between first-order and total-order sensitivity shares?",
+      "section_new": [
+        {
+          "excerpt": "## Bounded data and query semantics | TAO construct / operation in src.m9-me01 | Supported meaning | Deliberate limitation | |---|---|---| | Object | Unique ID, type and named fields | A generic SQL join API is not exposed | | Association | Typed, directed link between objects; multiple types allowed between same pair | Rich arbitrary graph pattern matching is **not** offered | | Inverse association type | Optionally created/deleted automatically for related directed link | Must preserve intended relationship semantics, not every association is necessarily bidirectional | | Association point read | Find `(id1, type, id2)` | Not a complete arbitrary multi-hop reachability query | | Associatio",
+          "heading": "Bounded data and query semantics",
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V024",
+      "page_new": [],
+      "question": "How are correlated lag and reconciliation-capacity assumptions propagated in the V12 modernization scenario?",
+      "section_new": [
+        {
+          "excerpt": "## The test matrix | Check | Test | Result | |---|---|---| | Stock-flow conservation | test_conservation_below_capacity | pass | | Stock-flow non-negativity | test_saturation_rejects_and_conserves | pass | | Zero-arrival boundary | test_zero_boundary | pass | | Saturation and rejection | test_saturation_rejects_and_conserves | pass | | Event order at equal time | test_ties_use_priority_then_insertion | pass | | Timeout before completion | test_timeout_before_completion | pass | | Completion before timeout | test_completion_before_timeout | pass | | Retry conservation | test_conservation_under_retries | pass | | Zero queue capacity | test_zero_capacity_boundary | pass | | Deterministic replay",
+          "heading": "The test matrix",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V025",
+      "page_new": [],
+      "question": "How is a rollback duration reported when the modeled drain has not completed by the end of the horizon?",
+      "section_new": [
+        {
+          "excerpt": "## Legacy modernization decision transfer Implement auditable event transport when replay correctness and cross-region fan-out matter; evaluate simpler single-region queues when streaming topology complexity adds no business value. **Metrics required before reuse:** actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, with historical time window. No new performance measurement or independent replication was performed by Tycho. All source-reported numbers are scoped to this publisher's observations. **Provenance:** [src.m9-li01](https://engineering.linkedin.com/kafka/running-kafka-scale), How Big is Big?; multi-datacenter tie",
+          "heading": "Legacy modernization decision transfer",
+          "path": "book/cases/linkedin-kafka-tiered-completeness.md",
+          "section_key": "tycho.page.9f1f71a670f345e9898fe78167b48cda#legacy-modernization-decision-transfer"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V026",
+      "page_new": [],
+      "question": "What record-level behavior is excluded from the V12 fluid modernization model?",
+      "section_new": [
+        {
+          "excerpt": "## What the gates do not establish - They do not establish that the source claims are true; the source ledger records what was read and what was not. - They do not establish that the models match a real system. - They do not establish that the decisions are accepted by the owner. - They do not establish CI, deployment or production behavior. - They do not promote any existing pattern.",
+          "heading": "What the gates do not establish",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V027",
+      "page_new": [],
+      "question": "Why is the no-cutover scenario a reference case rather than a recommendation to stay on the old path forever?",
+      "section_new": [
+        {
+          "excerpt": "## Original Tycho migration decision for another JVM platform **Synthetic constraints:** a JVM monorepo has several hundred deployables, overloaded CI, custom code-generation plugins, mixed libraries, and strict compatibility requirements. Comparing three alternatives clarifies the decision: (a) optimize Gradle with cache/test sharding first, avoiding new infrastructure; (b) migrate gradually to a hermetic remote-execution tool; (c) split ownership into independently built repositories, accepting coordination and dependency-management costs. The Airbnb source reports why it selected the second option, but these are **not** three empirically tested Airbnb cohorts. Recommended **separate accep",
+          "heading": "Original Tycho migration decision for another JVM platform",
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "section_key": "tycho.page.c766e3289b95429bb158fb168f7bd0b9#original-tycho-migration-decision-for-another-jvm-platform"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V028",
+      "page_new": [],
+      "question": "What kinds of identifiers, links and hashes does the V12 structural gate check?",
+      "section_new": [
+        {
+          "excerpt": "## Boundaries and evidence MADR and Nygard support the context, options, outcome and consequences structure. Sargent supports the separation of model verification from validity for a purpose. The pattern links use the existing registry and owner pages without modifying them. The chapter does not promote a pattern, claim owner acceptance or create a second canonical explanation of a pattern.",
+          "heading": "Boundaries and evidence",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c05-decision-integration/README.md",
+          "section_key": "tycho.chapter.2147ec1471d027ef256437a345f9c1e7#boundaries-and-evidence"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V029",
+      "page_new": [],
+      "question": "What environment details are recorded for replay, and what cross-platform guarantee do they not provide?",
+      "section_new": [
+        {
+          "excerpt": "## Explicit unknowns and checks The source does not provide a controlled A/B comparison of developer productivity for this entire migration; do not invent one. The JavaOne 2026 abstract is insufficient to assert adoption details not recorded in a transcript. A new adopter should measure schema breakage, downstream fan-out, per-field cost, tracing propagation, p99, and deployment lead time, while maintaining a reversible client-facing API. Identity of every underlying library/upgrade revision is not established here. **Original public references:** [src.m9-n02 \u2014 QCon/InfoQ transcript](https://www.infoq.com/presentations/netflix-java/), [src.m9-n03 \u2014 JavaOne 2026 abstract](https://dev.java/com",
+          "heading": "Explicit unknowns and checks",
+          "path": "book/cases/netflix-java-platform-convergence.md",
+          "section_key": "tycho.page.b95df0f6a3ee4355939f65193b11d8c9#explicit-unknowns-and-checks"
+        }
+      ],
+      "split": "v12"
+    },
+    {
+      "id": "V4-V030",
+      "page_new": [],
+      "question": "How does the V12 independent review gate differ from the locally checked validation gates?",
+      "section_new": [
+        {
+          "excerpt": "# V12 validation gates **Question.** Which structural, model, statistical, calibration, decision and review gates does V12 pass, and what evidence supports each one? **Short answer.** V12-A through V12-E are implemented and checked locally. V12-F is an independent review gate and is recorded separately. A passing local check is not independent review, CI, owner acceptance or production validity.",
+          "heading": "V12 validation gates",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview"
+        }
+      ],
+      "split": "v12"
+    }
+  ]
+}
