@@ -932,14 +932,14 @@
         {
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "Consistent hashing maps keys onto a ring so adding or removing a node moves only the adjacent share of keys instead of remapping the whole keyspace. Clients and owners must agree on a versioned mapping, and a key must retain one authoritative owner at any mapping epoch.",
-          "rationale": "Adding or removing a node moves only the adjacent share of keys."
+          "quote": "With K keys spread over N equal-share nodes, adding or removing one node should move about K/N keys: the joining or leaving node's share, not the whole keyspace.",
+          "rationale": "Adding or removing a node moves only the joining or leaving share of keys."
         },
         {
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
           "section_id": "bounded-pattern-ownership-notes",
-          "quote": "**Limits.** Virtual nodes improve balance but add metadata and lookup cost; a ring without epoch fencing can route a write to two owners during a change.",
-          "rationale": "Virtual nodes improve balance; ring changes need epoch fencing."
+          "quote": "Tycho's runbook: detect hot token ranges and hot keys, bound token counts against repair and outage cost, record the ownership epoch at every membership change, and treat hinted handoff as temporary protection rather than repair. A ring without epoch fencing can still route one key to two owners during a change.",
+          "rationale": "Bound token counts and record the ownership epoch; a ring change still needs fencing."
         },
         {
           "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/shard-strategies.md",
