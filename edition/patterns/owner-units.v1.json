@@ -8810,7 +8810,7 @@
         "heading": "Expand-and-Contract Schema",
         "anchor": "expand-and-contract-schema",
         "level": 3,
-        "line": 200,
+        "line": 208,
         "unit_kind": "dedicated",
         "unit_terms": [
           "staged change protocol",
@@ -8870,62 +8870,349 @@
         "heading": "Online Data Migration",
         "anchor": "online-data-migration",
         "level": 3,
-        "line": 215,
+        "line": 223,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "If backfill takes hours",
-          "Two independent writers",
-          "resumable checkpoint",
-          "stop-the-world migration"
+          "online migration",
+          "dual writing",
+          "checkpoint",
+          "stop-the-world"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "If backfill takes hours, it may read records while new writes occur. A design needs an authoritative writer and a change-capture/reconciliation plan.",
-          "reason": "Explains copy-while-live-writes and the change-capture/reconciliation arrangement.",
+          "quote": "An online migration copies or transforms data while the source continues serving writes. If backfill takes hours, it may read records while new writes occur. A design needs an authoritative writer and a change-capture/reconciliation plan.",
+          "reason": "Stripe describes dual writing and offline backfill; PostgreSQL documents consistent exports and bulk COPY; AWS DMS documents full-load plus CDC. The copy-plus-change-stream-plus-reconciliation reading is Tycho.",
           "binding": {
-            "source_id": "src.gh-ost",
-            "ledger_record": "read.batch3-gh-ost.2026-10-21",
-            "section": "How?",
-            "quote": "All existing online-schema-change tools operate in similar manner: they create a ghost table in the likeness of your original table, migrate that table while empty, slowly and incrementally copy data from your original table to the ghost table, meanwhile propagating ongoing changes (any INSERT , DELETE , UPDATE applied to your table) to the ghost table. Finally, at the right time, they replace your original table with the ghost table. gh-ost uses the same pattern. However it differs from all existing tools by not using triggers. We have recognized the triggers to be the source of many limitations and risks . Instead, gh-ost uses the binary log stream to capture table changes, and asynchronously applies them onto the ghost table.",
-            "revision": "07b6cf866971f100fa01fb6675d94e325d15eefb23300feb378b19a55da2cc19"
-          }
+            "source_id": "src.m9-st01",
+            "ledger_record": "read.stripe-online-migrations.2026-10-31",
+            "section": "A pattern for online migrations",
+            "quote": "Dual writing to the existing and new tables to keep them in sync.",
+            "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "A pattern for online migrations",
+              "quote": "There's a common 4 step dual writing pattern that people often use to do large online migrations like this.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "Part 1: Dual writing",
+              "quote": "We make snapshots of our databases available to our Hadoop cluster",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Description",
+              "quote": "Script dumps are plain-text files containing the SQL commands required to reconstruct the database to the state it was in at the time it was saved.",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-copy.2026-10-31",
+              "section": "Description",
+              "quote": "COPY moves data between PostgreSQL tables and standard file-system files. COPY TO copies the contents of a table to a file, while COPY FROM copies data from a file to a table (appending the data to whatever is in the table already). COPY TO can also copy the results of a SELECT query.",
+              "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-overview.2026-10-31",
+              "section": "What is AWS Database Migration Service?",
+              "quote": "You can perform one-time migrations or replicate ongoing changes to keep sources and targets in sync.",
+              "revision": "9391024f929dea3d8824ab956e9c20749dea9bdf865b9ee02d033b08c695dcc0"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-cdc.2026-10-31",
+              "section": "Creating tasks for ongoing replication using AWS DMS",
+              "quote": "You can create an AWS DMS task that captures ongoing changes from the source data store. You can do this capture while you are migrating your data.",
+              "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-cdc.2026-10-31",
+              "section": "Creating tasks for ongoing replication using AWS DMS",
+              "quote": "There are two types of ongoing replication tasks:",
+              "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Two independent writers are not automatically atomic just because the schema includes both fields.",
-          "reason": "gh-ost README has no two-writer atomicity or dual-schema rule."
+          "reason": "Stripe requires both stores to be written and compares read paths; it does not claim an atomic cross-store commit. PostgreSQL distinguishes a consistent export from serial execution history and defines positional COPY mapping. The single-writer or reconciled-projection rule is Tycho.",
+          "binding": {
+            "source_id": "src.m9-st01",
+            "ledger_record": "read.stripe-online-migrations.2026-10-31",
+            "section": "Part 3: Changing all write paths",
+            "quote": "Our two tables need to stay consistent with each other at every step.",
+            "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "A pattern for online migrations",
+              "quote": "Dual writing to the existing and new tables to keep them in sync.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "Part 1: Dual writing",
+              "quote": "All new writes should update both stores.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "Part 2: Changing all read paths",
+              "quote": "If the results don't match, raise an error alerting our engineers to the inconsistency.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Description",
+              "quote": "pg_dump is a utility for exporting a PostgreSQL database. It makes consistent exports even if the database is being used concurrently.",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Options",
+              "quote": "Without it the dump may reflect a state which is not consistent with any serial execution of the transactions eventually committed. For example, if batch processing techniques are used, a batch may show as closed in the dump without all of the items which are in the batch appearing.",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-copy.2026-10-31",
+              "section": "Parameters",
+              "quote": "If a column list is specified, COPY TO copies only the data in the specified columns to the file. For COPY FROM, each field in the file is inserted, in order, into the specified column.",
+              "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A crash can leave a checkpoint behind the last committed row; a changed mapping can strand a subset.",
-          "reason": "README has no crash checkpoint or row-reconciliation procedure."
+          "reason": "DMS caches a checkpoint from time to time and can recover a failed task from it; it captures transactions that started after the chosen start point. Failed COPY leaves deleted-row residue, and an interrupted restore can leave catalogs in the wrong state. The replay-window and duplicate-tolerant apply procedures are Tycho; no selected unit tests a changed business-key mapping.",
+          "binding": {
+            "source_id": "src.aws-dms",
+            "ledger_record": "read.aws-dms-cdc.2026-10-31",
+            "section": "Using a checkpoint as a CDC start point",
+            "quote": "An ongoing replication task migrates changes, and AWS DMS caches checkpoint information specific to AWS DMS from time to time. The checkpoint that AWS DMS creates contains information so the replication engine knows the recovery point for the change stream. You can use the checkpoint to go back in the timeline of changes and recover a failed migration task.",
+            "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "Part 1: Dual writing",
+              "quote": "Once the migration is complete, run the Scalding job once again to make sure there are no existing subscriptions missing from the Subscriptions table.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "Part 3: Changing all write paths",
+              "quote": "If we miss any cases, we might end up with data inconsistency.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Notes",
+              "quote": "If the restore is stopped in the middle, the system catalogs might be left in the wrong state.",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Notes",
+              "quote": "When a dump without schema is chosen and the option --disable-triggers is used",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-copy.2026-10-31",
+              "section": "Notes",
+              "quote": "COPY FROM will invoke any triggers and check constraints on the destination table. However, it will not invoke rules.",
+              "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-copy.2026-10-31",
+              "section": "Notes",
+              "quote": "The COPY FROM command physically inserts input rows into the table as it progresses. If the command fails, these rows are left in a deleted state; these rows will not be visible, but still occupy disk space.",
+              "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-copy.2026-10-31",
+              "section": "Description",
+              "quote": "By default, COPY will fail if it encounters an error during processing.",
+              "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-cdc.2026-10-31",
+              "section": "Determining a CDC native start point",
+              "quote": "DMS captures transactions that started after the chosen CDC start point.",
+              "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-cdc.2026-10-31",
+              "section": "Determining a CDC native start point",
+              "quote": "To avoid any data inconsistencies, carefully choose the start point for the replication-only task.",
+              "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-cdc.2026-10-31",
+              "section": "Creating tasks for ongoing replication using AWS DMS",
+              "quote": "AWS DMS CDC does not provide real-time replication. Replication latency varies based on source workload, network conditions, replication instance resources, target ingestion capacity, and data characteristics. There are no SLAs for CDC latency.",
+              "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+            },
+            {
+              "source_id": "src.flyway-expand-contract",
+              "ledger_record": "read.flyway-expand-contract.2026-10-31",
+              "section": "Core principles",
+              "quote": "Immutability of applied changes. Once a change has been applied to any production database, never edit the artefact that produced it; add a new change instead.",
+              "revision": "a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "A stop-the-world migration or a dual-write with reconciliation may be preferable when the write rate is low or the changed-row set is small.",
-          "reason": "README names modes/tools, not stop-the-world or dual-write alternatives."
+          "state": "supported",
+          "quote": "A stop-the-world export/restore is the simplest alternative when a maintenance window is acceptable: quiesce writers, export with `pg_dump`, load with `COPY`, verify, then reopen.",
+          "reason": "PostgreSQL documents consistent export and bulk load; Flyway documents the expand/contract sequence; AWS DMS documents managed full-load plus CDC; Stripe documents dual writing. The quiesce/export/load/verify procedure is a Tycho operating shape, not a documented PostgreSQL procedure.",
+          "binding": {
+            "source_id": "src.flyway-expand-contract",
+            "ledger_record": "read.flyway-expand-contract.2026-10-31",
+            "section": "Core principles",
+            "quote": "Forward-compatible schema changes. Changes should be safe to apply while the previous version of the application is still running. Use the expand/contract pattern (add new columns nullable, dual-write, backfill, switch reads, then drop) so a partial rollout -- application v1 against schema v2 -- keeps working.",
+            "revision": "a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.flyway-expand-contract",
+              "ledger_record": "read.flyway-expand-contract.2026-10-31",
+              "section": "Backward-compatible changes (expand/contract)",
+              "quote": "The expand/contract pattern splits a breaking change into a sequence of non-breaking ones, each released independently:",
+              "revision": "a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f"
+            },
+            {
+              "source_id": "src.flyway-expand-contract",
+              "ledger_record": "read.flyway-expand-contract.2026-10-31",
+              "section": "Backward-compatible changes (expand/contract)",
+              "quote": "Update application code to write to both old and new structures, then to read from the new one. Backfill historical data with a one-off change.",
+              "revision": "a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Description",
+              "quote": "pg_dump is a utility for exporting a PostgreSQL database. It makes consistent exports even if the database is being used concurrently.",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-pgdump.2026-10-31",
+              "section": "Description",
+              "quote": "Script dumps are plain-text files containing the SQL commands required to reconstruct the database to the state it was in at the time it was saved.",
+              "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgres-copy.2026-10-31",
+              "section": "Description",
+              "quote": "COPY moves data between PostgreSQL tables and standard file-system files.",
+              "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-overview.2026-10-31",
+              "section": "What is AWS Database Migration Service?",
+              "quote": "You can perform one-time migrations or replicate ongoing changes to keep sources and targets in sync.",
+              "revision": "9391024f929dea3d8824ab956e9c20749dea9bdf865b9ee02d033b08c695dcc0"
+            },
+            {
+              "source_id": "src.aws-dms",
+              "ledger_record": "read.aws-dms-cdc.2026-10-31",
+              "section": "Creating tasks for ongoing replication using AWS DMS",
+              "quote": "There are two types of ongoing replication tasks:",
+              "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+            },
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "A pattern for online migrations",
+              "quote": "There's a common 4 step dual writing pattern that people often use to do large online migrations like this.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            },
+            {
+              "source_id": "src.m9-st01",
+              "ledger_record": "read.stripe-online-migrations.2026-10-31",
+              "section": "A pattern for online migrations",
+              "quote": "Dual writing to the existing and new tables to keep them in sync.",
+              "revision": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "online-data-migration",
         "question": "Should data be backfilled while the system continues serving reads and writes?",
-        "competing_alternative": "Offline migration or a full export/import. Reverse the choice when online complexity exceeds downtime cost.",
+        "competing_alternative": "A stop-the-world export/restore (`pg_dump` plus `COPY`; Tycho shape), Flyway expand/contract, or AWS DMS full-load plus CDC. Reverse when online complexity exceeds downtime cost. Flyway's guidance says to \"add new columns nullable, dual-write, backfill, switch reads, then drop\" so a partial rollout \"keeps working\".",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-gh-ost.2026-10-21",
-        "source_id": "src.gh-ost",
-        "unit_type": "documentation-page",
+        "ledger_record": "read.stripe-online-migrations.2026-10-31",
+        "source_id": "src.m9-st01",
+        "unit_type": "engineering-article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "ledger_record": "read.postgres-pgdump.2026-10-31",
+            "source_id": "src.postgresql",
+            "revision": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf"
+          },
+          {
+            "ledger_record": "read.postgres-copy.2026-10-31",
+            "source_id": "src.postgresql",
+            "revision": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c"
+          },
+          {
+            "ledger_record": "read.aws-dms-overview.2026-10-31",
+            "source_id": "src.aws-dms",
+            "revision": "9391024f929dea3d8824ab956e9c20749dea9bdf865b9ee02d033b08c695dcc0"
+          },
+          {
+            "ledger_record": "read.aws-dms-cdc.2026-10-31",
+            "source_id": "src.aws-dms",
+            "revision": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918"
+          },
+          {
+            "ledger_record": "read.flyway-expand-contract.2026-10-31",
+            "source_id": "src.flyway-expand-contract",
+            "revision": "a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Nested inside the expand/contract unit; the registry anchor points to this subsection."
+      "notes": "Four dimensions bound 2026-10-31 to Stripe, PostgreSQL 18.6 pg_dump and COPY, the AWS DMS User Guide and Flyway expand/contract guidance; the invariant is application-level, the checkpoint is cached rather than per-commit, and a changed mapping remains an untested Tycho hazard; coverage is self-checked, not independently reviewed. read.batch3-gh-ost.2026-10-21 is retained historical evidence."
     },
     {
       "pattern_id": "tycho.pattern.backup-pitr-and-restore",
@@ -16568,7 +16855,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 0,
+      "bounded_entries": 1,
       "decision": "deepen",
       "rationale": "Expand-and-contract and online migration now have two distinct dedicated units."
     },
@@ -16745,11 +17032,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 93,
-    "failure_recovery_supported": 88,
-    "alternative_supported": 93,
-    "technical_partial_bounded": 15,
-    "technical_partial": 54,
+    "invariant_supported": 94,
+    "failure_recovery_supported": 89,
+    "alternative_supported": 94,
+    "technical_partial_bounded": 16,
+    "technical_partial": 53,
     "technical_name_only": 0,
     "technical_sufficient": 76,
     "decision_partial_bounded": 69,

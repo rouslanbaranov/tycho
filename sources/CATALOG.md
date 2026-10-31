@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 335.
+Inventory date: 2026-10-31. Entries: 337.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -160,6 +160,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.mongodb-causal-consistency / supporting | [Causal Consistency and Read and Write Concerns](https://www.mongodb.com/docs/manual/core/causal-consistency-read-write-concerns/) — MongoDB | Four causal guarantees, read/write concern combinations, durability and partition behavior for the failure and alternative dimensions. | admitted-for-research / public-web-or-author-download |
 | src.aws-backup / supporting | [What is AWS Backup?](https://docs.aws.amazon.com/aws-backup/latest/devguide/whatisbackup.html) — Amazon Web Services | Managed backup plans, cross-Region copies and automated restore testing for the backup/PITR alternatives and recovery drills. | admitted-for-research / public-web-or-author-download |
 | src.azure-backup / supporting | [What is the Azure Backup service?](https://learn.microsoft.com/en-us/azure/backup/backup-overview) — Microsoft | Policy-based backup, soft delete, immutable recovery points and the boundary between backup and disaster-recovery failover. | admitted-for-research / public-web-or-author-download |
+| src.aws-dms / supporting | [AWS Database Migration Service User Guide](https://docs.aws.amazon.com/dms/latest/userguide/Welcome.html) — Amazon Web Services | Managed full-load and CDC behavior, checkpoint recovery and start-point limits for the online migration entry. | admitted-for-research / public-web-or-author-download |
 
 ## Caching
 
@@ -276,6 +277,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-immutable-infrastructure / core | [REL08-BP04 Deploy using immutable infrastructure](https://docs.aws.amazon.com/wellarchitected/latest/framework/rel_tracking_change_management_immutable_infrastructure.html) — Amazon Web Services | Immutable deployment reproducibility, drift detection and rollback for the immutable-infrastructure invariant and failure/recovery dimensions. | admitted-for-research / public-web-or-author-download |
 | src.launchdarkly-flags / core | [LaunchDarkly feature flag documentation](https://launchdarkly.com/docs/home/flags/killswitch) — LaunchDarkly | Kill switch, change history, temporary/permanent lifecycle and server-side evaluation rules for the feature-flags owner unit. | admitted-for-research / public-web-or-author-download |
 | src.azure-app-configuration / core | [Azure App Configuration feature management documentation](https://learn.microsoft.com/en-us/azure/azure-app-configuration/concept-feature-management) — Microsoft | Feature management, disabled default, canary rollout and Entra ID/RBAC authorization for the feature-flags owner unit. | admitted-for-research / public-web-or-author-download |
+| src.flyway-expand-contract / supporting | [Rolling out updates from a single schema to multiple production databases](https://documentation.red-gate.com/x/NoJvF) — Redgate | Exact public Flyway expand/contract guidance for the online migration alternative. | admitted-for-research / public-web-or-author-download |
 
 ## Scaling
 
@@ -361,7 +363,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.m9-sp01 / supporting | [Tech Migrations, the Spotify Way (2020)](https://engineering.atspotify.com/2020/6/tech-migrations-the-spotify-way) — Spotify | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
 | src.m9-sp02 / supporting | [1,500+ PRs: Background Coding Agent (2025)](https://www.engineering.atspotify.com/2025/11/spotifys-background-coding-agent-part-1) — Spotify | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
 | src.m9-sp03 / supporting | [Dataset Migration with Background Agents (2026)](https://www.engineering.atspotify.com/2026/4/background-coding-agents-dataset-migrations-honk-part-4) — Spotify | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
-| src.m9-st01 / supporting | [Online Migrations at Scale (2017)](https://stripe.com/blog/online-migrations) — Stripe | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
+| src.m9-st01 / supporting | [Online Migrations at Scale (2017)](https://stripe.com/blog/online-migrations) — Stripe | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | admitted-for-research / public-web-or-author-download |
 | src.m9-u01 / supporting | [Domain-Oriented Microservice Architecture (2020)](https://www.uber.com/us/en/blog/microservice-architecture/) — Uber | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
 | src.m9-u02 / supporting | [Project Mezzanine: The Great Migration](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) — Uber | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |
 | src.m9-u03 / supporting | [MySQL to MyRocks Migration (2022)](https://www.uber.com/us/en/blog/mysql-to-myrocks-migration-in-uber-distributed-datastores/) — Uber | Identify the exact linked M9 source; retain claim-specific evidence and historical limits in the case ledgers. | pending-content-access / public-web-or-author-download |

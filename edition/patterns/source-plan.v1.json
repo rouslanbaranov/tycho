@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "d332803dd0d6bff994b155aa1956c106ad7b807a01c2e37f3627bef585accff4",
-  "route_index_snapshot": "3486557e87fc28c461161597e02783b7753cc02efbc006a06ecd965d5f4d4595",
+  "registry_sha256": "bfcdfbaa7ce912e5aa6739644eb337873ade23b456c25fd7234e6a04d9bf2208",
+  "route_index_snapshot": "d4c2cff873532aec6975444d7c8d75bb39d4f4f6e1c1585bcbac20a7adb92c4b",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -3987,28 +3987,104 @@
       "priority": "core",
       "required_units": [
         {
-          "source_id": "src.gh-ost",
-          "unit": "gh-ost README — online schema migration",
-          "unit_type": "documentation-page",
-          "url": "https://github.com/github/gh-ost",
+          "source_id": "src.m9-st01",
+          "unit": "Online migrations at scale — Stripe engineering article",
+          "unit_type": "engineering-article",
+          "url": "https://stripe.com/blog/online-migrations",
           "sections": [
-            "gh-ost",
-            "GitHub's online schema migration for MySQL",
-            "How?",
-            "Highlights",
-            "Usage",
-            "What's in a name?",
-            "License",
-            "Community",
-            "Download/binaries/source",
-            "Authors"
+            "A pattern for online migrations",
+            "Part 1: Dual writing",
+            "Part 2: Changing all read paths",
+            "Part 3: Changing all write paths",
+            "Part 4: Removing old data",
+            "Conclusion"
           ],
           "status": "read",
-          "read_record_id": "read.batch3-gh-ost.2026-10-21",
+          "read_record_id": "read.stripe-online-migrations.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18.6 pg_dump",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/app-pgdump.html",
+          "sections": [
+            "Description",
+            "Options",
+            "Notes",
+            "Examples",
+            "Diagnostics"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-pgdump.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
+          "unit": "PostgreSQL 18.6 COPY",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/current/sql-copy.html",
+          "sections": [
+            "Description",
+            "Parameters",
+            "Outputs",
+            "Notes",
+            "File Formats",
+            "Examples",
+            "Compatibility"
+          ],
+          "status": "read",
+          "read_record_id": "read.postgres-copy.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-dms",
+          "unit": "AWS DMS User Guide — What is AWS DMS?",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/dms/latest/userguide/Welcome.md",
+          "sections": [
+            "What is AWS Database Migration Service?",
+            "Migration tasks that AWS DMS performs"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-dms-overview.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-dms",
+          "unit": "AWS DMS User Guide — Creating tasks for ongoing replication",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Task.CDC.md",
+          "sections": [
+            "Creating tasks for ongoing replication using AWS DMS",
+            "Full-load plus CDC and CDC-only task types",
+            "Determining a CDC native start point",
+            "Using a checkpoint as a CDC start point",
+            "Stopping a task at a commit point or server time",
+            "Bidirectional replication"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-dms-cdc.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.flyway-expand-contract",
+          "unit": "Flyway fleet rollout — expand/contract guidance",
+          "unit_type": "documentation-page",
+          "url": "https://documentation.red-gate.com/x/NoJvF",
+          "sections": [
+            "Core principles",
+            "Driving the fleet",
+            "Backward-compatible changes (expand/contract)",
+            "Handling failures",
+            "Proactive drift checks"
+          ],
+          "status": "read",
+          "read_record_id": "read.flyway-expand-contract.2026-10-31",
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 3 tail public unit read; claims limited to the ledger record."
+      "notes": "Four public sources (six pages) bound 2026-10-31: Stripe's dual-write article; PostgreSQL 18.6 pg_dump and COPY; the AWS DMS User Guide overview and CDC task pages; and Flyway's fleet-rollout expand/contract section. The invariant is an application-level consistency rule, the DMS checkpoint is cached rather than per-commit, and a changed mapping remains an untested Tycho hazard. read.batch3-gh-ost.2026-10-21 is retained in foundation records as historical mechanism evidence."
     },
     {
       "pattern_id": "tycho.pattern.backup-pitr-and-restore",
@@ -7338,11 +7414,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 342,
-    "read_units": 341,
+    "required_units": 347,
+    "read_units": 346,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 301
+    "ledger_records": 307
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [
@@ -7358,6 +7434,7 @@
     "read.batch3-pg-archiving.2026-10-21",
     "read.batch4-hedged.2026-10-21",
     "read.batch8-postgres-logical.2026-10-22",
-    "read.batch2-debezium-outbox.2026-10-21"
+    "read.batch2-debezium-outbox.2026-10-21",
+    "read.batch3-gh-ost.2026-10-21"
   ]
 }

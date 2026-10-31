@@ -3300,7 +3300,9 @@
       "content_sha256": "07b6cf866971f100fa01fb6675d94e325d15eefb23300feb378b19a55da2cc19",
       "read_scope": "publicly served page as returned by fetch, excluding navigation and linked pages",
       "reviewer": "Automated authoring agent",
-      "status": "read"
+      "status": "read",
+      "citation_status": "intentionally-unused",
+      "citation_note": "Retained historical mechanism context for the Online Data Migration entry; the current four-dimension binding uses the six 2026-10-31 units instead."
     },
     {
       "id": "read.batch4-r4j-circuit.2026-10-21",
@@ -12804,6 +12806,256 @@
       "limitations": "A short overview page; it states intended framework behavior, not a guarantee for a particular connector.",
       "content_sha256": "1ff3963b0c6f83ea94e39a359c52f6b6995a300772b707c35b1f2e85f34ce288",
       "read_scope": "the overview and feature list of the publicly served page, excluding the linked user guide and connector pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.stripe-online-migrations.2026-10-31",
+      "source_id": "src.m9-st01",
+      "unit_url": "https://stripe.com/blog/online-migrations",
+      "unit_label": "Online migrations at scale — Stripe engineering article",
+      "unit_type": "engineering-article",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T21:58:56Z and again at 2026-10-31T21:58:57Z; 411,763-byte and 399,214-byte decompressed HTML; no Last-Modified or ETag served; raw HTML SHA-256 d6315d487efcae0d7ce41a201075a58a3bc51b209ccc43159661cacfb5350a17 on the first fetch and decc39e7e5b1f2c867d79e7aeb414d7f88e9a1f3063c3589ff9a86fc960fb114 on the second, differing in dynamic experiment and edge markup; canonical article text 11,056 characters / 1,801 words, SHA-256 f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519, identical on both fetches.",
+      "sections_read": [
+        "A pattern for online migrations",
+        "Part 1: Dual writing",
+        "Part 2: Changing all read paths",
+        "Part 3: Changing all write paths",
+        "Part 4: Removing old data",
+        "Conclusion"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "unrelated site chrome"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "the four-step dual-write pattern",
+        "movement of reads and writes before removal",
+        "read-path comparison with an alert on mismatch",
+        "offline backfill and final recheck",
+        "retirement of the old store"
+      ],
+      "claims_not_supported": [
+        "benchmark",
+        "production observation",
+        "atomic cross-store transaction",
+        "current Stripe architecture"
+      ],
+      "limitations": "A 2017 engineering article about one subscription data-model migration; not a formal specification, benchmark or current system description. It does not state an atomic cross-store transaction.",
+      "content_sha256": "f55df9ddac4a2b47514a9570da5f9a5f3d1f09145af5d865bcca6704fbad9519",
+      "read_scope": "the full publicly served article body, excluding linked pages, images and site chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgres-pgdump.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/app-pgdump.html",
+      "unit_label": "PostgreSQL 18.6 pg_dump",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T21:09:33Z and again at 2026-10-31T19:06:17Z (cached responses); 89,919-byte HTML both times; no Last-Modified or ETag served; raw HTML SHA-256 1a32251a83e6dec1a967dbfc93e1add0ba99bfe84fae471ea56613e6e7306d30 on both fetches; canonical text 41,961 characters / 6,578 words, SHA-256 3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf, identical on both fetches.",
+      "sections_read": [
+        "Description",
+        "Options",
+        "Notes",
+        "Examples",
+        "Diagnostics"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "PostgreSQL source code"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "consistent exports under concurrent use",
+        "the serializable-deferrable caveat",
+        "plain-text script dumps that reconstruct a saved state",
+        "interrupted restore leaving catalogs in the wrong state",
+        "the data-only dump and --disable-triggers caution"
+      ],
+      "claims_not_supported": [
+        "dump execution",
+        "restore execution",
+        "benchmark"
+      ],
+      "limitations": "Documentation of a utility and its options; no dump, restore or concurrent workload was run. The serializable-deferrable caveat describes consistency with serial execution, not a universal failure of every dump.",
+      "content_sha256": "3ea3630d2df755269048563c7468de0bb9f4b98d17f924e436d38dfe46820fdf",
+      "read_scope": "the full publicly served pg_dump page, excluding linked pages and source code",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgres-copy.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/sql-copy.html",
+      "unit_label": "PostgreSQL 18.6 COPY",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/2 200 at 2026-10-31T16:05:57Z on both fetches; 62,490-byte HTML both times; no Last-Modified or ETag served; raw HTML SHA-256 d85166d9fc149ef73c181533b1ff89ce1346948349dcf5d4c028b994d3f4ac53 on both fetches; canonical text 28,697 characters / 4,956 words, SHA-256 ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c, identical on both fetches.",
+      "sections_read": [
+        "Description",
+        "Parameters",
+        "Outputs",
+        "Notes",
+        "File Formats",
+        "Examples",
+        "Compatibility"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "PostgreSQL source code"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "COPY moves rows between tables and files",
+        "positional field mapping with a column list",
+        "trigger and check-constraint invocation but not rules",
+        "failed COPY leaving rows in a deleted state",
+        "COPY failing by default on a processing error"
+      ],
+      "claims_not_supported": [
+        "COPY execution",
+        "trigger or constraint test",
+        "benchmark"
+      ],
+      "limitations": "Command documentation; no COPY, trigger, constraint or failure scenario was executed. \"Deleted state\" describes physical residue, not a guarantee that a retry sees those rows.",
+      "content_sha256": "ed656babcaf6d93cb64b4514ad9259da08988cb71d08ddfaa7823605a56ddc4c",
+      "read_scope": "the full publicly served COPY page, excluding linked pages and source code",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-dms-overview.2026-10-31",
+      "source_id": "src.aws-dms",
+      "unit_url": "https://docs.aws.amazon.com/dms/latest/userguide/Welcome.md",
+      "unit_label": "AWS DMS User Guide — What is AWS DMS?",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS fetch of the AWS-served markdown alternate on 2026-10-31; HTTP/1.1 200 at 2026-10-31T21:55:32Z; 6,106-byte markdown, 2,369 transferred bytes; Last-Modified Sat, 31 Oct 2026 03:33:41 GMT; ETag \"3Zr0CA1pp+fv62L067zSK/e1kVQ=-gzip\"; raw markdown SHA-256 31b345aa2f638daa752802e49da1e8b3ea5409759189a0f28b20be369a0ea5ed on both fetches; canonical text 6,086 characters / 934 words, SHA-256 9391024f929dea3d8824ab956e9c20749dea9bdf865b9ee02d033b08c695dcc0.",
+      "sections_read": [
+        "What is AWS Database Migration Service?",
+        "Migration tasks that AWS DMS performs"
+      ],
+      "sections_not_read": [
+        "linked user-guide pages",
+        "images",
+        "PDF rendering"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "one-time migration versus ongoing change replication",
+        "managed full-load plus CDC task intent"
+      ],
+      "claims_not_supported": [
+        "DMS task execution",
+        "benchmark",
+        "SLA"
+      ],
+      "limitations": "A living service guide; it describes service intent, not a benchmark, service-level guarantee or local reproduction. No pinned release.",
+      "content_sha256": "9391024f929dea3d8824ab956e9c20749dea9bdf865b9ee02d033b08c695dcc0",
+      "read_scope": "the full publicly served markdown alternate, excluding linked pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-dms-cdc.2026-10-31",
+      "source_id": "src.aws-dms",
+      "unit_url": "https://docs.aws.amazon.com/dms/latest/userguide/CHAP_Task.CDC.md",
+      "unit_label": "AWS DMS User Guide — Creating tasks for ongoing replication",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS fetch of the AWS-served markdown alternate on 2026-10-31; HTTP/1.1 200 at 2026-10-31T21:57:36Z; 23,791-byte markdown, 7,553 transferred bytes; Last-Modified Sat, 31 Oct 2026 03:33:44 GMT; ETag \"WQqQO6K0X4jUTQRVuNbDk/Bvyn4=-gzip\"; raw markdown SHA-256 0d96560346e974c2450e392f4696f81235ad36861f832ae2e41672b66312ba7a on both fetches; canonical text 23,581 characters / 3,591 words, SHA-256 9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918.",
+      "sections_read": [
+        "Creating tasks for ongoing replication using AWS DMS",
+        "Full-load plus CDC and CDC-only task types",
+        "Determining a CDC native start point",
+        "Using a checkpoint as a CDC start point",
+        "Stopping a task at a commit point or server time",
+        "Bidirectional replication"
+      ],
+      "sections_not_read": [
+        "linked endpoint pages",
+        "images",
+        "PDF rendering"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "full-load plus CDC and CDC-only task types",
+        "CDC start-point selection",
+        "a cached checkpoint that can recover a failed task",
+        "transactions captured after the chosen start point",
+        "latency variation with no CDC SLA",
+        "stopping at a commit point or server time"
+      ],
+      "claims_not_supported": [
+        "task recovery execution",
+        "benchmark",
+        "end-to-end exactly-once",
+        "per-commit checkpoint"
+      ],
+      "limitations": "A living guide; it documents task settings and intended recovery behavior, not a tested recovery. It does not define a per-commit checkpoint.",
+      "content_sha256": "9a4d986bbef7aaff8385f6ed6c0bbc51b12cfbdbd4e2154f7f368c9e78380918",
+      "read_scope": "the full publicly served markdown alternate, excluding linked endpoint pages and images",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.flyway-expand-contract.2026-10-31",
+      "source_id": "src.flyway-expand-contract",
+      "unit_url": "https://documentation.red-gate.com/x/NoJvF",
+      "unit_label": "Flyway fleet rollout — expand/contract guidance",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; HTTP/1.1 200 at 2026-10-31T21:59:04Z and again at 2026-10-31T21:59:05Z; 62,417-byte HTML both times; no Last-Modified or ETag served; raw HTML SHA-256 5078c8ee35868b0b2013ccc5d54c9c173e4e03948ce0d44f17590aac4db83459 on both fetches; canonical text 21,271 characters / 3,235 words, SHA-256 a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f, identical on both fetches.",
+      "sections_read": [
+        "Core principles",
+        "Driving the fleet",
+        "Backward-compatible changes (expand/contract)",
+        "Handling failures",
+        "Proactive drift checks"
+      ],
+      "sections_not_read": [
+        "linked tutorials",
+        "images"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "forward-compatible schema changes",
+        "the expand/contract sequence of nullable columns, dual-write, backfill, read switch and drop",
+        "immutability of applied changes",
+        "sequential rollout as the safe default",
+        "failure handling and drift checks"
+      ],
+      "claims_not_supported": [
+        "Flyway execution",
+        "data migration run",
+        "benchmark"
+      ],
+      "limitations": "Current Flyway documentation for a fleet rollout; it describes intended deployment practice, not a benchmark or a data-migration run. No page titled Expand-Contract exists; this page supplies the exact section.",
+      "content_sha256": "a85f51e81ffce1075853639f07d6e3661f8d98f939e8b5478c87f26a4777ea6f",
+      "read_scope": "the full publicly served fleet-rollout page, excluding linked tutorials and images",
       "reviewer": "Automated authoring agent",
       "status": "read"
     }
