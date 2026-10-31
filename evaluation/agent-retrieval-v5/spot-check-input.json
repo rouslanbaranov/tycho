@@ -1,0 +1,144 @@
+{
+  "items": [
+    {
+      "id": "V4-B067",
+      "question": "When may an expanded database schema be contracted during a mixed-version rollout?",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+      "heading": "2. Expand-migrate-contract includes a compatibility window",
+      "excerpt": "The public [Parallel Change method](https://martinfowler.com/bliki/ParallelChange.html) frames an interface expansion, client migration and eventual contract/removal. Applying that to database schemas requires versioned DB-specific locks a\u2026"
+    },
+    {
+      "id": "V4-B054",
+      "question": "What should be tested when a duplicate request arrives after its deduplication key expires?",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/dedup-authority.md",
+      "heading": "4. Deduplication is only as strong as its authority boundary",
+      "excerpt": "An in-memory set can deduplicate within one live process but fails across replicas, restarts and retained events. A durable database uniqueness constraint or state-machine conditional write can enforce one logical-effect record when scoped\u2026"
+    },
+    {
+      "id": "V4-B039",
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/architecture-views-and-decision-records.md",
+      "heading": "Integrated decision and reading route",
+      "excerpt": "Use consistent identities across context, runtime, deployment and decision views so a failure can be followed without changing its meaning. A tidy component view does not establish a working timeout, permission or recovery contract; follo\u2026"
+    },
+    {
+      "id": "V4-B047",
+      "question": "What separates a state-authority boundary from a separately deployed process?",
+      "path": "book/application/architecture-styles-and-module-boundaries.md",
+      "heading": "1. Separate four different architectural axes",
+      "excerpt": "| Dimension | Core question | Misleading shortcut to avoid | |---|---|---| | **Business/domain boundary** | Which concepts, rules and invariants belong together, with one consistent language? | Treat every database table or REST endpoint a\u2026"
+    },
+    {
+      "id": "V4-B038",
+      "question": "Which architectural view depicts a request\u2019s error branches and state transitions over time?",
+      "path": "book/volumes/v01-requirements-and-architecture/c05-architecture-descriptions-and-decision-records/concerns-views.md",
+      "heading": "2. The main views answer separate questions",
+      "excerpt": "| View | Reader's question | What it must contain | What it cannot prove | |---|---|---|---| | Context | Who uses and surrounds the system? | Actors, external partners, data/effect contracts, scope | Internal modules or runtime availabilit\u2026"
+    },
+    {
+      "id": "V4-B023",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/build-identity.md",
+      "heading": "1. Five separately controlled boundaries",
+      "excerpt": "| Boundary | Evidence identity | Success requires | A false inference | |---|---|---|---| | Source | Repo/commit, reviewed dependencies, accepted changes | Immutable reviewed revision and authorized inputs | A branch name is immutable | |\u2026"
+    },
+    {
+      "id": "V4-B070",
+      "question": "How can retries distort the denominator of a user-facing service indicator?",
+      "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/sli-population.md",
+      "heading": "1. Identify the service boundary and eligible population",
+      "excerpt": "An indicator needs a **denominator**. Consider an original fictional public equipment-reservation service. A user submits a logical attempt for a valid timeslot; it can be accepted, explicitly rejected because another reservation won, reje\u2026"
+    },
+    {
+      "id": "V4-B015",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md",
+      "heading": "5. Alternatives before sharding",
+      "excerpt": "Database query/index optimization, bounded connection pools, increasing storage/CPU, read replicas, caching suitable immutable/read-mostly data and removing unnecessary cross-domain locks can delay or remove the need for sharding. These to\u2026"
+    },
+    {
+      "id": "V4-B004",
+      "question": "In Shopify\u2019s 2019 componentization account, how did Wedge surface cross-component dependencies?",
+      "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+      "heading": "Two successive detection approaches and why they differed",
+      "excerpt": "The [2019 first-party article](https://shopify.engineering/deconstructing-monolith-designing-software-maximizes-developer-productivity) (src.m9-sh01, **Isolating Dependencies**) described **Wedge**: a component-coupling feedback mechanism\u2026"
+    },
+    {
+      "id": "V4-B032",
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+      "heading": "Bounded pattern ownership notes",
+      "excerpt": "These notes define the decision boundary for atlas cards whose mechanism is not the main subject of this page. They are synthetic design guidance, not measured evidence, and they do not create a new source claim. ### Parallel Run Paralle\u2026"
+    },
+    {
+      "id": "V4-B089",
+      "question": "What can a missing sampled trace tell an investigator about a possibly committed write?",
+      "path": "book/volumes/v09-observability-security-and-operations/c03-distributed-tracing-and-propagation/sampling-trust.md",
+      "heading": "4. Sampling limits what the trace can support",
+      "excerpt": "| Policy | Advantage | Limitation | |---|---|---| | Head sampling | Can limit collection near request start | Later severe error may be missed | | Tail sampling | Can prefer slow/error traces using fuller context | Requires buffered state\u2026"
+    },
+    {
+      "id": "V4-B033",
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+      "heading": "Alternative architecture and stop conditions",
+      "excerpt": "Staying on a PostgreSQL-based design with partitioning and targeted indexing may be less risky if current scaling margins, migration ownership and online schema-change needs can be met. A distributed append-only model is justified by measu\u2026"
+    },
+    {
+      "id": "V4-B065",
+      "question": "How should a reachability query bound path explosion in a cyclic graph?",
+      "path": "book/volumes/v06-caching-indexing-and-retrieval/c06-graph-relationships-and-traversal/bounded-traversal.md",
+      "heading": "3. Graph traversal and relational joins can express similar answers",
+      "excerpt": "| Requirement | Relational option | Graph-model option | |---|---|---| | One-hop fixed relationship | Indexed join on foreign keys/link table | Match one typed edge | | Small known-depth chain | Several joins or recursive CTE | Bounded pat\u2026"
+    },
+    {
+      "id": "V4-B041",
+      "question": "Why does embedding SQLite in an application not by itself provide a networked multi-region database service?",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/transactional-models.md",
+      "heading": "2. Transactional relational and embedded storage",
+      "excerpt": "**PostgreSQL 17** provides a server-managed relational engine with versioned concurrency, SQL planner, diverse indexes, WAL and logical/physical replication. These mechanisms are explained separately in [MVCC/query planning](../../../data/\u2026"
+    },
+    {
+      "id": "V4-B052",
+      "question": "What should an API do when an operation key is reused for a different payload?",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c04-retries-idempotency-and-duplicate-effects/retries-idempotency-and-ambiguous-effects.md",
+      "heading": "Integrated decision and reading route",
+      "excerpt": "Bind retries to a stable logical intent, payload and retention policy with an authoritative recorded outcome. After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical ded\u2026"
+    },
+    {
+      "id": "V4-B071",
+      "question": "What is the difference between an observed service indicator and its objective?",
+      "path": "book/volumes/v09-observability-security-and-operations/c01-slis-slos-and-error-budgets/service-level-indicators-objectives-and-alerts.md",
+      "heading": "Integrated decision and reading route",
+      "excerpt": "Define eligible events, good outcomes, observation window and an action policy before using an error budget. A success-only denominator can hide rejected user operations, so a green dashboard may not describe the promised experience. The\u2026"
+    },
+    {
+      "id": "V4-B008",
+      "question": "Why can a Java process exceed a memory limit while heap occupancy looks stable?",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c06-memory-gc-cpu-and-blocking-diagnostics/memory-tools.md",
+      "heading": "3. Java heap is only one memory domain",
+      "excerpt": "The JVM heap stores managed objects, but overall process memory may also include thread stacks, native libraries, direct buffers, memory mappings, JIT/compiler and runtime structures. A container can exceed its physical or configured memor\u2026"
+    },
+    {
+      "id": "V4-B073",
+      "question": "During a shadow search-index migration, which store remains authoritative for item edits?",
+      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+      "heading": "2. The fictional migration: moving a public catalogue read model",
+      "excerpt": "Imagine a standalone community tool catalogue that stores authoritative items and serves a query endpoint from the same runtime. The proposed target moves **read-only search projection** into a specialized index while leaving authoritative\u2026"
+    },
+    {
+      "id": "V4-B026",
+      "question": "What operational trade-off accompanies attribute-based authorization policies?",
+      "path": "book/volumes/v01-requirements-and-architecture/c03-quality-attributes-and-trade-offs/README.md",
+      "heading": "Sources, scope and known limitations",
+      "excerpt": "\u2026n via Services* and *Design for failure* | Costs and characteristics of service-based boundary decisions; descriptive, not a proof of optimality | **Review state:** public-source-bounded explanation and author self-check, no independent hu\u2026"
+    },
+    {
+      "id": "V4-B020",
+      "question": "How can a priority queue protect critical work while avoiding indefinite starvation of other classes?",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/admission-resource.md",
+      "heading": "3. Queues, limits and priority create new contracts",
+      "excerpt": "A bounded queue must name both **number of items** and **maximum age**. A small queue of slow operations can still exceed caller deadlines. An old task may be useless even if the system has capacity after the peak; cancel it only where can\u2026"
+    }
+  ]
+}
