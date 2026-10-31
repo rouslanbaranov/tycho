@@ -147,3 +147,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | DeepSeek Reviewer (same-vendor fallback; supplementary) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-deepseek.md` | `3e5289deb8fb5cff4e8830f764a73a4eeb8a73b675ac86c7b9975384c6bd20a9` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Circuit Breaker | pass | `2026-10-31-circuit-breaker-deepseek.md` | `a227c3153af91c19347c17ae5be6fc1a6d047da222e55d727e24fdcc0398da60` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Expand-and-Contract | pass | `2026-10-31-expand-and-contract-deepseek.md` | `de6c491d59579fe6b3d3f1dc2343e8f15edadac752d2137b332ea620be7584d8` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Transactional Inbox | pass | `2026-10-31-transactional-inbox-deepseek.md` | `6e1a06386b8ccb5ce875f9da185cc43484d92e80dc4dc63e8f20ea0f0d64e665` |

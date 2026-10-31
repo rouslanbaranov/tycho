@@ -1,11 +1,11 @@
 # Current state — Tycho
 
-> **Current promotion snapshot — 2026-10-31 (authoritative):** **63 of 145** entries
+> **Current promotion snapshot — 2026-10-31 (authoritative):** **64 of 145** entries
 > are technical/decision `sufficient`; **7** are owner-accepted (2026-10-28).
-> **82** entries remain. Timing covers 43 promotion cycles: mean **51.3 min**
-> (range 6-388, including reviewer/integration wait); forecast **4.4 / 6.1 / 9.5**
+> **81** entries remain. Timing covers 44 promotion cycles: mean **50.7 min**
+> (range 6-388, including reviewer/integration wait); forecast **4.3 / 6.0 / 9.3**
 > days (optimistic/base/pessimistic). The dated audit notes below describe the
-> 2026-10-21 baseline and are historical. B47 Consistent Hashing, B48 Circuit Breaker and B49 Expand-and-Contract were promoted on
+> 2026-10-21 baseline and are historical. B47 Consistent Hashing, B48 Circuit Breaker, B49 Expand-and-Contract and B50 Transactional Inbox were promoted on
 > 2026-10-31 after the Codex review; owner acceptance remains open. See
 > [the integration record](B47-CONSISTENT-HASHING-INTEGRATION-2026-10-31.md) and
 > [the 2026-10-31 hand-off](HANDOFF-2026-10-31.md).
