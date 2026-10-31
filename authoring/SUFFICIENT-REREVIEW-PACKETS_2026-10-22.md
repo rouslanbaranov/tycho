@@ -13,11 +13,11 @@
 | Residual findings after re-review | 0 |
 | Unique owner pages | 81 |
 | Ready for independent re-review | 0 |
-| Reviewed by independent agent | 57 |
+| Reviewed by independent agent | 56 |
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 78, "reviewed-by-independent-agent": 57}.
+Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 79, "reviewed-by-independent-agent": 56}.
 
 ## Review procedure
 
@@ -159,7 +159,7 @@ blank verdict template in the machine-readable file.
 
 - **Consistent Hashing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: reviewed-by-independent-agent.
+  Status: page-changed-since-review.
 
 - **Content-Based Router**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.

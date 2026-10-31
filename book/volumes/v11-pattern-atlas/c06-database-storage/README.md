@@ -114,48 +114,7 @@ unit, not a benchmark.
 
 ### Consistent Hashing
 
-**Identity.** Consistent Hashing; family Database and storage architecture; kind
-data-distribution-pattern; priority core.
-
-**Decision question.** Should keys and nodes share a hash ring so membership changes move
-only a fraction of data?
-
-**Good-fit conditions.** Membership changes often; the ring, token/vnode count and replication
-factor are owned; key and token distribution are measured; a rebalance and repair path exists;
-ownership can be fenced during a change.
-
-**Hard contraindications.** Reject when a static assignment is stable, when ring hotspots cannot
-be mitigated, when rebalancing cannot be observed, or when no one can fence stale ownership during
-a membership change.
-
-**Competing alternative.** Explicit range assignment, modulo sharding or rendezvous
-(highest-random-weight) hashing. Tycho's choice rule: use consistent hashing when membership churns
-and per-key movement must be bounded; use ranges when range locality and operator control dominate;
-use modulo only for fixed cardinality; use rendezvous when a shared ring is unacceptable. Reverse
-the choice when ring operations and virtual-node tuning exceed the movement savings.
-
-**Failure and recovery.** Hotspots, uneven token ranges and node loss are possible. Dynamo
-disperses an unavailable node's load across remaining nodes and uses hinted handoff plus
-anti-entropy repair; Cassandra warns that more tokens raise outage probability and maintenance cost;
-Riak removes an irrecoverable node from another node. Tycho's rule: detect hot ranges, bound token
-counts, verify ownership after every membership change, and treat hinted handoff as temporary
-protection, not repair.
-
-**Technical owner.** [Resharding is a multi-state data transition](../../v05-data-models-engines-and-lifecycle/c05-partitioning-sharding-and-rebalancing/resharding-transition.md#consistent-hashing) — resharding transition is bounded, not a consistent-hashing implementation.
-
-**Sources.** Public paper and documentation, not benchmarks. Proposed records (not yet in the
-shared ledger): `read.karger-consistent-hashing.2026-10-31`,
-`read.dynamo-consistent-hashing.2026-10-31`,
-`read.cassandra-dynamo-consistent-hashing.2026-10-31`, and three Riak 2.2.3 records. Karger et al.,
-STOC '97, pp. 654-663; Dynamo, SOSP 2007, sections 4.2-4.3 and 4.6-4.9; Apache Cassandra 5.0,
-"Dynamo"; Riak KV 2.2.3, "Vnodes", "Clusters" and "Adding / Removing Nodes". The existing
-[src.cassandra](../../../../edition/patterns/reading-ledger.v1.json) record
-`read.batch3-cassandra-arch.2026-10-21` explicitly does not cover the token ring and remains a
-scope limit, not support. Tycho-labelled rules are synthesis.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Sharding; Partitioning; Resharding; Read Replicas.
+See the [dedicated Consistent Hashing card](consistent-hashing.md).
 
 ### Leader-Follower Replication
 

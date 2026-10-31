@@ -9337,6 +9337,267 @@
       "read_scope": "the five listed sections of the publicly served page, excluding navigation and linked pages; digest covers the canonical extracted page text including chrome",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.karger-consistent-hashing.2026-10-31",
+      "source_id": "src.karger",
+      "unit_url": "https://www.cs.princeton.edu/courses/archive/fall09/cos521/Handouts/consistenthashing.pdf",
+      "unit_label": "Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web",
+      "unit_type": "paper",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served application/pdf 1,729,694 bytes, 10 pages; PDF SHA-256 0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2; extracted with pdftotext -raw to 1,163 lines and 11,838 words, text SHA-256 cdaf06a423a62b790cea18bc0adc50fbc71a4c17682f7e08b098c13c0d8fe6c4; PDF creation 1997-06-17, modification 1997-08-10; HTTP Date 2026-10-31T11:45:42Z; Last-Modified 2009-11-16T20:21:18Z; ETag \"1a649e-47882c0870b80\"; digest rechecked 2026-10-31.",
+      "sections_read": [
+        "Abstract",
+        "1 Introduction",
+        "4 Consistent Hashing",
+        "4.1 Definitions",
+        "4.2 Construction"
+      ],
+      "sections_not_read": [
+        "Sections 2-3",
+        "4.3 Implementation",
+        "4.4 Some Theorems on Consistent Hashing",
+        "remaining back matter",
+        "linked references",
+        "figures and theorem proofs not reproduced"
+      ],
+      "tables_figures": [
+        "figures and theorem proof details were not reproduced; no table was used as support"
+      ],
+      "license_notes": "Public conference paper copy; cite short excerpts and paraphrase; do not mirror. ACM copyright; public access is not a redistribution license.",
+      "claims_supported": [
+        "Our caching protocols are based on a special kind of hashing that we call consistent hashing.",
+        "Our protocols are particularly designed for use with very large networks such as the Internet, where delays caused by hot spots can be severe.",
+        "In other words, i is mapped to the bucket “closest” to i.",
+        "For reasons that will become apparent, we actually need to have more than one point in the unit interval associated with each bucket.",
+        "When a machine is added to or removed from the set of caches, the expected fraction of objects that must be moved to a new cache is the minimum needed to maintain a balanced load across the caches.",
+        "When a new bucket is added, the only items that move are those that are now closest to one of the new bucket’s associated points. No items move between old buckets.",
+        "Since there are many ways to formalize the notion of consistency as described above, we will not commit to a precise definition."
+      ],
+      "claims_not_supported": [
+        "modern virtual-node implementations",
+        "rendezvous hashing",
+        "range partitioning",
+        "theorem proofs re-run or independently verified",
+        "deployment, benchmark or production measurements",
+        "linked references"
+      ],
+      "limitations": "Author-copy PDF with OCR text, not the ACM typesetting; ligature and line-break artifacts remain. The paper does not describe modern vnodes, rendezvous hashing or range partitioning. No theorem proof was re-run and no production measurement is claimed.",
+      "content_sha256": "0ccf4b8b1b4a1d4b7e5a411c98d1a1c890e863f71cccdddaf9cdc272015262d2",
+      "read_scope": "sections Abstract, 1 Introduction, 4 Consistent Hashing, 4.1 Definitions and 4.2 Construction of the publicly served PDF; extracted text used for reading; figures and proofs were not reproduced",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.dynamo-consistent-hashing.2026-10-31",
+      "source_id": "src.dynamo",
+      "unit_url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+      "unit_label": "Dynamo: Amazon's Highly Available Key-value Store — SOSP 2007 paper",
+      "unit_type": "paper",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served application/pdf 900,468 bytes, 16 pages; PDF SHA-256 5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4; extracted with pdftotext -raw to 1,663 lines and 14,930 words, text SHA-256 2da247073d091ba83236b71dd9c5c56a19516f9f7b2e29258a0e3b5c4d4fb140; PDF creation 2007-08-15, modification 2007-09-26; digest matches the retained 2026-10-30 record.",
+      "sections_read": [
+        "4.2 Partitioning Algorithm",
+        "4.3 Replication",
+        "4.6 Handling Failures: Hinted Handoff",
+        "4.7 Handling permanent failures: Replica synchronization",
+        "4.9 Adding/Removing Storage Nodes"
+      ],
+      "sections_not_read": [
+        "4.1 System Interface",
+        "4.4 Data Versioning",
+        "4.5 Execution of get() and put() operations",
+        "4.8 Membership and Failure Detection",
+        "Sections 5-9",
+        "linked references",
+        "figures and implementation details"
+      ],
+      "tables_figures": [
+        "Figure 2 and Table 1 were not reproduced; no table was used as support"
+      ],
+      "license_notes": "No source text or code is mirrored. Public access is not a redistribution license. Cite short excerpts and paraphrase.",
+      "claims_supported": [
+        "Dynamo’s partitioning scheme relies on consistent hashing to distribute the load across multiple storage hosts.",
+        "In consistent hashing [10], the output range of a hash function is treated as a fixed circular space or “ring” (i.e. the largest hash value wraps around to the smallest hash value).",
+        "Each data item identified by a key is assigned to a node by hashing the data item’s key to yield its position on the ring, and then walking the ring clockwise to find the first node with a position larger than the item’s position.",
+        "instead of mapping a node to a single point in the circle, each node gets assigned to multiple points in the ring.",
+        "The principle advantage of consistent hashing is that departure or arrival of a node only affects its immediate neighbors and other nodes remain unaffected.",
+        "If a node becomes unavailable (due to failures or routine maintenance), the load handled by this node is evenly dispersed across the remaining available nodes.",
+        "In this example, if node A is temporarily down or unreachable during a write operation then a replica that would normally have lived on A will now be sent to node D.",
+        "Dynamo implements an anti-entropy (replica synchronization) protocol to keep the replicas synchronized.",
+        "When a new node (say X) is added into the system, it gets assigned a number of tokens that are randomly scattered on the ring."
+      ],
+      "claims_not_supported": [
+        "current service internals or deployment behavior",
+        "sloppy quorum as a general quorum-overlap rule",
+        "benchmark or production measurement",
+        "implementation details beyond the paper"
+      ],
+      "limitations": "2007 design paper; historical and not a current service contract. The paper chooses a sloppy quorum, so its failure handling is not a strict quorum-overlap rule. No deployment or benchmark is claimed.",
+      "content_sha256": "5cacd624cd7bfd37e3d22e04d8c2e347a49579d2927dbb06f40a89c0bcd40bd4",
+      "read_scope": "the five listed sections of the publicly served PDF; extracted text used for reading; figures were not reproduced",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.cassandra-dynamo-consistent-hashing.2026-10-31",
+      "source_id": "src.cassandra",
+      "unit_url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html",
+      "unit_label": "Dynamo — Apache Cassandra 5.0 documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; served text/html 76,252 bytes; raw HTML SHA-256 6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65; article-region text 25,291 characters and 3,967 words, SHA-256 b613129d96ffae22bf20f43807093b18973b75d5e1b79c1b43aa2ffad4b45f39; documentation version selector current value 5.0; HTTP Date 2026-10-31T11:45:44Z; Last-Modified 2026-08-26T07:20:02Z; ETag \"129dc-659ee0c3b6c6d\"; digest rechecked 2026-10-31.",
+      "sections_read": [
+        "Dataset Partitioning: Consistent Hashing",
+        "Consistent Hashing using a Token Ring",
+        "Multiple Tokens per Physical Node (vnodes)"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "navigation and scripts",
+        "other Dynamo-page sections outside the three named headings"
+      ],
+      "tables_figures": [
+        "no table was used as support; images and diagram interiors were not inspected"
+      ],
+      "license_notes": "Public Apache Cassandra documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "In naive data hashing, you typically allocate keys to buckets by taking a hash of the key modulo the number of buckets.",
+        "In this naive scheme, however, adding a single node might invalidate almost all of the mappings.",
+        "Cassandra instead maps every node to one or more tokens on a continuous hash ring, and defines ownership by hashing a key onto the ring and then \"walking\" the ring in one direction, similar to the Chord algorithm.",
+        "The main difference of consistent hashing to naive data hashing is that when the number of nodes (buckets) to hash into changes, consistent hashing only has to move a small fraction of the keys.",
+        "Cassandra seeks to avoid token imbalance because uneven token ranges lead to uneven request load.",
+        "If a node becomes unavailable, query load (especially token-aware query load), is evenly distributed across many other nodes.",
+        "Every token introduces up to 2 * (RF - 1) additional neighbors on the token ring, which means that there are more combinations of node failures where we lose availability for a portion of the token ring. The more tokens you have, the higher the probability of an outage.",
+        "Cluster-wide maintenance operations are often slowed. For example, as the number of tokens per node is increased, the number of discrete repair operations the cluster must do also increases."
+      ],
+      "claims_not_supported": [
+        "a universal ring contract or behavior shared by other systems",
+        "release-tag behavior beyond living 5.0-branch documentation",
+        "executed cluster behavior, benchmark or production measurement",
+        "linked pages outside the three named sections"
+      ],
+      "limitations": "Living documentation on the 5.0 branch, not a release tag or an executed cluster test. The page describes Cassandra’s implementation, not a universal ring contract. The article-text digest covers the article region, excluding navigation and scripts.",
+      "content_sha256": "6392972302ba65e62eab354d4b754003847ce869a464979ba894f4daf0514a65",
+      "read_scope": "the three listed sections of the publicly served page; article-region text read, navigation and scripts excluded from the digest",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.riak-vnodes.2026-10-31",
+      "source_id": "src.riak",
+      "unit_url": "https://docs.riak.com/riak/kv/2.2.3/learn/concepts/vnodes/index.html",
+      "unit_label": "Vnodes — Riak KV 2.2.3",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "pinned Markdown at basho/basho_docs commit 6409dd9c93b08f0a6e959a1874b5568c88172f3a (master commit date 2022-12-12), docs version 2.2.3; 7,064 bytes and 962 words, SHA-256 3fe623f7bbe206b9b289894607b0ff08748414a65060c6229a274ef7d986c204; live page returned HTTP 200 on 2026-10-31; the binding revision is the pinned commit; digest rechecked 2026-10-31.",
+      "sections_read": [
+        "Vnodes",
+        "The Number of Vnodes in a Cluster",
+        "The Role of Vnodes",
+        "Vnodes and Replication Properties"
+      ],
+      "sections_not_read": [
+        "Vnode Status",
+        "linked pages",
+        "navigation and chrome"
+      ],
+      "tables_figures": [
+        "no table was used as support; images and diagram interiors were not inspected"
+      ],
+      "license_notes": "Public Riak KV documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Virtual nodes, more commonly referred to as vnodes, are processes that manage partitions in the Riak ring. Each data partition in a Riak cluster has a vnode that claims that partition.",
+        "The nodes of a Riak cluster each attempt to run a roughly equal number of vnodes at any given time. In the general case, this means that each node in the cluster is responsible for 1/(number of nodes) of the ring, or (number of partitions)/(number of nodes) vnodes."
+      ],
+      "claims_not_supported": [
+        "an exact moved fraction or balance guarantee",
+        "Riak cluster behavior, benchmark or production measurement",
+        "linked pages and implementation details"
+      ],
+      "limitations": "Pinned 2022 documentation for Riak KV 2.2.3. The page states the general case and an example distribution; it does not guarantee an exact moved fraction. No Riak cluster was run.",
+      "content_sha256": "3fe623f7bbe206b9b289894607b0ff08748414a65060c6229a274ef7d986c204",
+      "read_scope": "the four listed sections of the pinned Markdown representation; linked pages and images were not read",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.riak-clusters.2026-10-31",
+      "source_id": "src.riak",
+      "unit_url": "https://docs.riak.com/riak/kv/2.2.3/learn/concepts/clusters/index.html",
+      "unit_label": "Clusters — Riak KV 2.2.3",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "pinned Markdown at basho/basho_docs commit 6409dd9c93b08f0a6e959a1874b5568c88172f3a (master commit date 2022-12-12), docs version 2.2.3; 5,006 bytes and 730 words, SHA-256 ea246f176b17e21a6225d4fb9f5ba7a60fe90958ed07ef5da07efff05afbdfc5; live page returned HTTP 200 on 2026-10-31; the binding revision is the pinned commit; digest rechecked 2026-10-31.",
+      "sections_read": [
+        "The Ring",
+        "Intelligent Replication",
+        "Gossiping"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "navigation and chrome",
+        "images and diagram interiors"
+      ],
+      "tables_figures": [
+        "no table was used as support; images and diagram interiors were not inspected"
+      ],
+      "license_notes": "Public Riak KV documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Internally, Riak computes a 160-bit binary hash of each bucket/key pair and maps this value to a position on an ordered ring of all such values. This ring is divided into partitions, with each Riak vnode responsible for one of these partitions (we say that each vnode claims that partition).",
+        "The nodes of a Riak cluster each attempt to run a roughly equal number of vnodes at any given time. In the general case, this means that each node in the cluster is responsible for 1/(number of nodes) of the ring, or (number of partitions)/(number of nodes) vnodes.",
+        "The ring state is shared around the cluster by means of a \"gossip protocol.\" Whenever a node changes its claim on the ring, it announces, it announces, the change to the other nodes."
+      ],
+      "claims_not_supported": [
+        "an exact moved fraction or balance guarantee",
+        "Riak cluster behavior, benchmark or production measurement",
+        "linked pages and implementation details"
+      ],
+      "limitations": "Pinned 2022 documentation for Riak KV 2.2.3. The page states the general case and an example distribution; it does not guarantee an exact moved fraction. No Riak cluster was run.",
+      "content_sha256": "ea246f176b17e21a6225d4fb9f5ba7a60fe90958ed07ef5da07efff05afbdfc5",
+      "read_scope": "the three listed sections of the pinned Markdown representation; images and linked pages were not read",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.riak-adding-removing-nodes.2026-10-31",
+      "source_id": "src.riak",
+      "unit_url": "https://docs.riak.com/riak/kv/2.2.3/using/cluster-operations/adding-removing-nodes/index.html",
+      "unit_label": "Adding and Removing Nodes — Riak KV 2.2.3",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "pinned Markdown at basho/basho_docs commit 6409dd9c93b08f0a6e959a1874b5568c88172f3a (master commit date 2022-12-12), docs version 2.2.3; 7,027 bytes and 943 words, SHA-256 67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f; live page returned HTTP 200 on 2026-10-31; the binding revision is the pinned commit; digest rechecked 2026-10-31.",
+      "sections_read": [
+        "Add a Node to an Existing Cluster",
+        "Joining Nodes to Form a Cluster",
+        "Note on ring changes",
+        "Removing a Node From a Cluster"
+      ],
+      "sections_not_read": [
+        "Start the Node",
+        "Pausing a join or leave",
+        "linked pages",
+        "command output examples",
+        "navigation and chrome"
+      ],
+      "tables_figures": [
+        "no table was used as support; command output examples were not reproduced"
+      ],
+      "license_notes": "Public Riak KV documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The second is relevant for failure scenarios in which a node has crashed and is irrecoverable and thus must be removed from the cluster from another node.",
+        "The algorithm that distributes partitions across the cluster during membership changes is non-deterministic. As a result, there is no optimal ring."
+      ],
+      "claims_not_supported": [
+        "an exact moved fraction or transfer count",
+        "Riak cluster behavior, benchmark or production measurement",
+        "linked pages and command execution"
+      ],
+      "limitations": "Pinned 2022 documentation for Riak KV 2.2.3. The page describes staged join and remove operations; no Riak cluster was run.",
+      "content_sha256": "67d14c75a3edb078f0d49591eea02d0b60cd5d7b4ebbfd49e632ec60705fe23f",
+      "read_scope": "the four listed sections of the pinned Markdown representation; command output examples and linked pages were not read",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }
