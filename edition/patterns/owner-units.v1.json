@@ -10594,7 +10594,7 @@
         "heading": "Failover-Failback",
         "anchor": "failover-failback",
         "level": 3,
-        "line": 157,
+        "line": 166,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Failover moves authority",
@@ -10607,49 +10607,238 @@
         "mechanism": {
           "state": "supported",
           "quote": "Failover moves authority from region A to a surviving region B under an explicit decision; failback is a second migration from B back to A, not the inverse operation.",
-          "reason": "Defines the mechanism and its scope.",
+          "reason": "PostgreSQL defines standby failover and promotion; Route 53 defines the traffic-level switch.",
           "binding": {
             "source_id": "src.postgresql",
-            "ledger_record": "read.batch3-pg-warm.2026-10-21",
-            "section": "26.2.4. Setting Up a Standby Server",
-            "quote": "If you're setting up the standby server for high availability purposes, set up WAL archiving, connections and authentication like the primary server, because the standby server will work as a primary server after failover.",
-            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
-          }
+            "ledger_record": "read.pg-failover.2026-10-31",
+            "section": "26.3. Failover",
+            "quote": "If the primary server fails then the standby server should begin failover procedures.",
+            "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-failover.2026-10-31",
+              "section": "26.3. Failover",
+              "quote": "To trigger failover of a log-shipping standby server, run pg_ctl promote or call pg_promote()",
+              "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+            },
+            {
+              "source_id": "src.aws-route53",
+              "ledger_record": "read.aws-route53-failover.2026-10-31",
+              "section": "Active-passive failover",
+              "quote": "Use an active-passive failover configuration when you want a primary resource or group of resources to be available the majority of the time and you want a secondary resource or group of resources to be on standby in case all the primary resources become unavailable.",
+              "revision": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600"
+            },
+            {
+              "source_id": "src.aws-route53",
+              "ledger_record": "read.aws-route53-failover.2026-10-31",
+              "section": "Configuring active-passive failover with one primary and one secondary resource",
+              "quote": "When the primary resource is unhealthy, Route 53 responds to DNS queries using the secondary record.",
+              "revision": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Quarantine A, reconcile any divergent writes under one selected authority, verify user journeys, then reintroduce A as a replica or standby before considering promotion.",
-          "reason": "Local text ends at 26.2.9; 26.3 Failover content is absent."
+          "reason": "PostgreSQL requires old-primary notification and STONITH to avoid two primaries, Azure Site Recovery requires source shutdown and synchronization, and Google SRE requires a loadable checkpoint; the authority-epoch and reconciliation rules are Tycho.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg-failover.2026-10-31",
+            "section": "26.3. Failover",
+            "quote": "This is sometimes known as STONITH (Shoot The Other Node In The Head), which is necessary to avoid situations where both systems think they are the primary, which will lead to confusion and ultimately data loss.",
+            "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-failover.2026-10-31",
+              "section": "26.3. Failover",
+              "quote": "If the primary server fails and the standby server becomes the new primary, and then the old primary restarts, you must have a mechanism for informing the old primary that it is no longer the primary.",
+              "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failback.2026-10-31",
+              "section": "Prerequisites",
+              "quote": "Source region VM must be shut down before attempting a failback since, changes are synced from failover VM disks to the source region disks during failback.",
+              "revision": "dd092294983216ac84f44d8d8a75972cb281fc59cb2f61bb1db0cba60f28eb71"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failback.2026-10-31",
+              "section": "Fail back to the primary region",
+              "quote": "On the VM overview page, check that the VM is healthy, and that synchronization is complete, before you run a failover.",
+              "revision": "dd092294983216ac84f44d8d8a75972cb281fc59cb2f61bb1db0cba60f28eb71"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failover.2026-10-31",
+              "section": "Run a failover",
+              "quote": "After the failover, sign into the VM to validate it.",
+              "revision": "5b1475e4cdc175e5e5285a55b28bdc92b655f7ecf7f7a5cef6a5bcda42eeccb8"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-testing-disaster.2026-10-31",
+              "section": "Testing Disaster",
+              "quote": "Compute a checkpoint state that is equivalent to cleanly stopping the service",
+              "revision": "425eb0ec229b85678058f57cb1e4bb1c7b7bacb2e10164d4313d9cf60dc2bed7"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A failback that merely points DNS back can resurrect stale writes and split authority.",
-          "reason": "No failback, DNS repointing or split-authority passage."
+          "reason": "Route 53 routes on health, not authority; PostgreSQL records data loss when two primaries remain; Azure Site Recovery fails failback when the source is still powered on and cannot resume replication after a cancelled failover; Google SRE warns about broken offline constraints and repair races; the runbook order is Tycho.",
+          "binding": {
+            "source_id": "src.aws-route53",
+            "ledger_record": "read.aws-route53-failover.2026-10-31",
+            "section": "Configuring active-passive failover with one primary and one secondary resource",
+            "quote": "When the primary resource is unhealthy, Route 53 responds to DNS queries using the secondary record.",
+            "revision": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-route53",
+              "ledger_record": "read.aws-route53-failover.2026-10-31",
+              "section": "Configuring active-passive failover with weighted records",
+              "quote": "All the records with nonzero weights must be unhealthy before Route 53 starts to respond to DNS queries using records that have weights of zero. This can make your web application or website unreliable if the last healthy resource, such as a web server, can't handle all the traffic when other resources are unavailable.",
+              "revision": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failback.2026-10-31",
+              "section": "Prerequisites",
+              "quote": "If the source VM is powered on then it fails and thus fails the failback operation.",
+              "revision": "dd092294983216ac84f44d8d8a75972cb281fc59cb2f61bb1db0cba60f28eb71"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-failover.2026-10-31",
+              "section": "26.3. Failover",
+              "quote": "This is sometimes known as STONITH (Shoot The Other Node In The Head), which is necessary to avoid situations where both systems think they are the primary, which will lead to confusion and ultimately data loss.",
+              "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failover.2026-10-31",
+              "section": "Run a failover",
+              "quote": "If you cancel an in-progress job, failover stops, but the VM doesn't start to replicate. You can't start replication again.",
+              "revision": "5b1475e4cdc175e5e5285a55b28bdc92b655f7ecf7f7a5cef6a5bcda42eeccb8"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failover.2026-10-31",
+              "section": "Run a failover",
+              "quote": "When you're ready, you can commit the failover. The Commit action deletes all recovery points available with the service.",
+              "revision": "5b1475e4cdc175e5e5285a55b28bdc92b655f7ecf7f7a5cef6a5bcda42eeccb8"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-testing-disaster.2026-10-31",
+              "section": "Testing Disaster",
+              "quote": "If any of the constraints (offline, checkpoint, loadable, barrier, or clean start) must be broken, it’s much harder to show confidence that the associated tool implementation will work at any time on short notice.",
+              "revision": "425eb0ec229b85678058f57cb1e4bb1c7b7bacb2e10164d4313d9cf60dc2bed7"
+            },
+            {
+              "source_id": "src.sre",
+              "ledger_record": "read.sre-testing-disaster.2026-10-31",
+              "section": "Testing Disaster",
+              "quote": "One challenge you face in a distributed system is determining if normal behavior, which may be eventually consistent by nature, will interact badly with the repair.",
+              "revision": "425eb0ec229b85678058f57cb1e4bb1c7b7bacb2e10164d4313d9cf60dc2bed7"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failover.2026-10-31",
+              "section": "Before you start",
+              "quote": "Before you do a full failover, run a disaster recovery drill to ensure that everything is working as expected.",
+              "revision": "5b1475e4cdc175e5e5285a55b28bdc92b655f7ecf7f7a5cef6a5bcda42eeccb8"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Stay on the promoted region and rebuild the old region as a standby when failback risk exceeds its benefit.",
-          "reason": "No stay-on-promoted or rebuild-old-region comparison."
+          "reason": "PostgreSQL requires standby recreation and names pg_rewind, Azure Site Recovery reprotects with delta replication, and Route 53 documents active-active operation; the choice rule is Tycho.",
+          "binding": {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.pg-failover.2026-10-31",
+            "section": "26.3. Failover",
+            "quote": "To return to normal operation, a standby server must be recreated, either on the former primary system when it comes up, or on a third, possibly new, system.",
+            "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.pg-failover.2026-10-31",
+              "section": "26.3. Failover",
+              "quote": "The pg_rewind utility can be used to speed up this process on large clusters.",
+              "revision": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9"
+            },
+            {
+              "source_id": "src.azure-site-recovery",
+              "ledger_record": "read.azure-asr-failback.2026-10-31",
+              "section": "Reprotect VMs",
+              "quote": "The process sends initial data to the target location, and then replicates delta information for the VMs to the target.",
+              "revision": "dd092294983216ac84f44d8d8a75972cb281fc59cb2f61bb1db0cba60f28eb71"
+            },
+            {
+              "source_id": "src.aws-route53",
+              "ledger_record": "read.aws-route53-failover.2026-10-31",
+              "section": "Active-active failover",
+              "quote": "In active-active failover, all the records that have the same name, the same type (such as A or AAAA), and the same routing policy (such as weighted or latency) are active unless Route 53 considers them unhealthy.",
+              "revision": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "failover-failback",
         "question": "Should traffic move to a standby and later return to the original authority?",
-        "competing_alternative": "Restore from backup or stay on the promoted primary. Reverse the choice when failback risk exceeds locality benefit.",
+        "competing_alternative": "Restore from backup or stay on the promoted primary. PostgreSQL says \"To return to normal operation, a standby server must be recreated, either on the former primary system when it comes up, or on a third, possibly new, system\"; Azure Site Recovery reprotects the failed-over region before returning traffic. **Tycho choice rule:** stay on the promoted region and rebuild the old region as a standby when fencing or reconciliation evidence is incomplete; reverse only when the old region can be proven consistent.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-pg-warm.2026-10-21",
+        "ledger_record": "read.pg-failover.2026-10-31",
         "source_id": "src.postgresql",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-route53",
+            "ledger_record": "read.aws-route53-failover.2026-10-31",
+            "revision": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600"
+          },
+          {
+            "source_id": "src.azure-site-recovery",
+            "ledger_record": "read.azure-asr-failover.2026-10-31",
+            "revision": "5b1475e4cdc175e5e5285a55b28bdc92b655f7ecf7f7a5cef6a5bcda42eeccb8"
+          },
+          {
+            "source_id": "src.azure-site-recovery",
+            "ledger_record": "read.azure-asr-failback.2026-10-31",
+            "revision": "dd092294983216ac84f44d8d8a75972cb281fc59cb2f61bb1db0cba60f28eb71"
+          },
+          {
+            "source_id": "src.sre",
+            "ledger_record": "read.sre-testing-disaster.2026-10-31",
+            "revision": "425eb0ec229b85678058f57cb1e4bb1c7b7bacb2e10164d4313d9cf60dc2bed7"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.batch3-pg-warm.2026-10-21",
+            "revision": "b89009fc548105bdd0d9f820d09f40a135b3595b9079a6034e066255c31fc09f"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Embedded recovery-scenario section; failback itself is only a return-to-normal bullet in section 5."
+      "notes": "Four dimensions bound 2026-10-31 to five public units: AWS Route 53 failover routing, Azure Site Recovery failover and failback, PostgreSQL 17 failover and promotion, and Google SRE disaster recovery testing; coverage remains partial-bounded, self-checked and not independently reviewed."
     },
     {
       "pattern_id": "tycho.pattern.leader-election",
@@ -16148,11 +16337,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 123,
-    "invariant_supported": 90,
-    "failure_recovery_supported": 85,
-    "alternative_supported": 90,
-    "technical_partial_bounded": 15,
-    "technical_partial": 57,
+    "invariant_supported": 91,
+    "failure_recovery_supported": 86,
+    "alternative_supported": 91,
+    "technical_partial_bounded": 16,
+    "technical_partial": 56,
     "technical_name_only": 0,
     "technical_sufficient": 73,
     "decision_partial_bounded": 72,

@@ -36,8 +36,8 @@ evidence_scope:
     Bound 2026-10-31 to five public units: AWS Route 53 active-active and
     active-passive failover; Azure Site Recovery failover and failback; PostgreSQL
     17 failover and promotion; and Google SRE testing disaster. src.aws-route53
-    and src.azure-site-recovery are proposed pending registration. No claim-level
-    mapping, independent review or source-completeness claim is made.
+    and src.azure-site-recovery are registered. No claim-level mapping,
+    independent review or source-completeness claim is made.
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-31"
@@ -45,7 +45,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-20"
 updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+source_inspection_date: null
 content_verified_at: null
 ---
 # Recovery state machines, fencing and failback
@@ -220,12 +220,12 @@ Disaster*. The exact units are
 <https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-failover>,
 <https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-tutorial-failback>,
 <https://www.postgresql.org/docs/17/warm-standby-failover.html> and
-<https://sre.google/sre-book/testing-reliability/>. Proposed records:
+<https://sre.google/sre-book/testing-reliability/>. Bound and retained records:
 `read.aws-route53-failover.2026-10-31`, `read.azure-asr-failover.2026-10-31`,
 `read.azure-asr-failback.2026-10-31`, `read.pg-failover.2026-10-31` and
 `read.sre-testing-disaster.2026-10-31`; `src.aws-route53` and `src.azure-site-recovery`
-are proposed pending registration. They are documentation and a book chapter, not
-benchmarks or production observations. The PostgreSQL page has no Last-Modified header
-or ETag; the AWS and Azure pages carry Last-Modified timestamps. No database, DNS change,
+are registered. They are documentation and a book chapter, not benchmarks or production
+observations. The PostgreSQL page has no Last-Modified header or ETag; the AWS and Azure
+pages carry Last-Modified timestamps. No database, DNS change,
 failover, failback or disaster exercise was run. The authority-epoch rule, reconciliation
 order, user-journey gate and choice rule remain Tycho guidance.

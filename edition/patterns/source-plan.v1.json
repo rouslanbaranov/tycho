@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "registry_version": "0.2.0",
-  "registry_sha256": "44ba9332f59d365c0362af72a742a1ad389828692ca23d764a78c611e23645af",
-  "route_index_snapshot": "1c6e7477b863503291cc2f36320b7ee598691195aa792f5c72010aad3223cddd",
+  "registry_sha256": "4b5fd67c237a7c0a21f464dd17ddfbf133e097fad39ee4e15b0769c9b3e150d7",
+  "route_index_snapshot": "47e40ed73e1e08c1a73cd54f14b8b4b09d774a3423b9479215d2773c4048f55b",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -4844,6 +4844,74 @@
       "required_units": [
         {
           "source_id": "src.postgresql",
+          "unit": "26.3. Failover — PostgreSQL 17 documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.postgresql.org/docs/17/warm-standby-failover.html",
+          "sections": [
+            "26.3. Failover"
+          ],
+          "status": "read",
+          "read_record_id": "read.pg-failover.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.aws-route53",
+          "unit": "Active-active and active-passive failover — Amazon Route 53 Developer Guide",
+          "unit_type": "documentation-page",
+          "url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-types.html",
+          "sections": [
+            "Active-active failover",
+            "Active-passive failover",
+            "Configuring active-passive failover with one primary and one secondary resource",
+            "Configuring active-passive failover with weighted records"
+          ],
+          "status": "read",
+          "read_record_id": "read.aws-route53-failover.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-site-recovery",
+          "unit": "Run a failover from on-premises to Azure — Azure Site Recovery",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-failover",
+          "sections": [
+            "Before you start",
+            "Run a failover",
+            "Track failovers",
+            "Next steps"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-asr-failover.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.azure-site-recovery",
+          "unit": "Tutorial: Fail back Azure VM to the primary region — Azure Site Recovery",
+          "unit_type": "documentation-page",
+          "url": "https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-tutorial-failback",
+          "sections": [
+            "Prerequisites",
+            "Fail back to the primary region",
+            "Reprotect VMs"
+          ],
+          "status": "read",
+          "read_record_id": "read.azure-asr-failback.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.sre",
+          "unit": "Testing for Reliability — Site Reliability Engineering, section Testing Disaster",
+          "unit_type": "book-chapter",
+          "url": "https://sre.google/sre-book/testing-reliability/",
+          "sections": [
+            "Testing Disaster"
+          ],
+          "status": "read",
+          "read_record_id": "read.sre-testing-disaster.2026-10-31",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.postgresql",
           "unit": "Log-Shipping Standby Servers — PostgreSQL documentation",
           "unit_type": "documentation-page",
           "url": "https://www.postgresql.org/docs/current/warm-standby.html",
@@ -4874,7 +4942,7 @@
           "blocked_reason": null
         }
       ],
-      "notes": "Batch 4 tail read; Failover/Failback uses the PostgreSQL standby record as a bounded database failover example."
+      "notes": "Four dimensions bound 2026-10-31 to five public units: AWS Route 53 failover routing, Azure Site Recovery failover and failback, PostgreSQL 17 promotion, and Google SRE disaster recovery testing. The retained PostgreSQL log-shipping unit remains historical evidence. No runtime test or sufficiency claim."
     },
     {
       "pattern_id": "tycho.pattern.leader-election",
@@ -7149,11 +7217,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 329,
-    "read_units": 328,
+    "required_units": 334,
+    "read_units": 333,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 286
+    "ledger_records": 291
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

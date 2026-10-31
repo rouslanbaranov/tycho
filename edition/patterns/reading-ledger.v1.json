@@ -12196,6 +12196,201 @@
       "read_scope": "the sections listed above, excluding case-study detail and linked papers",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.aws-route53-failover.2026-10-31",
+      "source_id": "src.aws-route53",
+      "unit_url": "https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-types.html",
+      "unit_label": "Active-active and active-passive failover — Amazon Route 53 Developer Guide",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Active-active failover",
+        "Active-passive failover",
+        "Configuring active-passive failover with one primary and one secondary resource",
+        "Configuring active-passive failover with weighted records"
+      ],
+      "sections_not_read": [
+        "the multiple-primary procedure detail",
+        "linked console procedures",
+        "routing-policy value pages and navigation chrome"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Active-passive failover keeps a secondary resource or group of resources on standby in case all the primary resources become unavailable.",
+        "When the primary resource is unhealthy, Route 53 responds to DNS queries using the secondary record.",
+        "All records with nonzero weights must be unhealthy before Route 53 uses zero-weight records, which can make an application unreliable when the last healthy resource cannot absorb the load.",
+        "Active-active failover treats records with the same name, type and routing policy as active unless Route 53 considers them unhealthy."
+      ],
+      "claims_not_supported": [
+        "data authority, replication position or application consistency",
+        "a DNS record change or failover run",
+        "linked console procedures and routing-policy pages"
+      ],
+      "limitations": "AWS living documentation; health routing only, with no statement about data authority, replication position or application consistency; no DNS record was changed.",
+      "content_sha256": "cbeed64d283f62bee4eea0355236fd8973f1ef114b7e2e40a75a345ef2f4f600",
+      "read_scope": "the sections listed above, excluding linked pages, console procedures and navigation chrome",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.azure-asr-failover.2026-10-31",
+      "source_id": "src.azure-site-recovery",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-failover",
+      "unit_label": "Run a failover from on-premises to Azure — Azure Site Recovery",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Before you start",
+        "Run a failover",
+        "Track failovers",
+        "Next steps"
+      ],
+      "sections_not_read": [
+        "connection-preparation tables",
+        "planned failover",
+        "automation",
+        "IP addressing",
+        "per-platform instructions and linked pages"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A disaster recovery drill should be run before a full failover to ensure that everything works as expected.",
+        "After failover, sign in to the VM to validate it.",
+        "Cancelling an in-progress failover stops failover but does not start replication, and replication cannot be started again.",
+        "Committing a failover deletes all recovery points available with the service."
+      ],
+      "claims_not_supported": [
+        "application write consistency",
+        "a Site Recovery job, recovery point or failover run",
+        "planned failover, automation and per-platform instructions"
+      ],
+      "limitations": "Virtual-machine failover orchestration, not application write consistency; no Site Recovery job, recovery point or failover was run.",
+      "content_sha256": "5b1475e4cdc175e5e5285a55b28bdc92b655f7ecf7f7a5cef6a5bcda42eeccb8",
+      "read_scope": "the sections listed above, excluding linked pages and per-platform instructions",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.azure-asr-failback.2026-10-31",
+      "source_id": "src.azure-site-recovery",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-tutorial-failback",
+      "unit_label": "Tutorial: Fail back Azure VM to the primary region — Azure Site Recovery",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Prerequisites",
+        "Fail back to the primary region",
+        "Reprotect VMs"
+      ],
+      "sections_not_read": [
+        "cleanup",
+        "next steps",
+        "the full-settings networking, automation and troubleshooting pages"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The source-region VM must be shut down before failback because changes are synced from failover VM disks to source-region disks during failback.",
+        "The VM must be healthy and synchronization complete before failback.",
+        "A powered-on source VM fails the failback operation.",
+        "Reprotect sends initial data to the target location and then replicates delta information for the VMs to the target."
+      ],
+      "claims_not_supported": [
+        "application-level reconciliation",
+        "a failback or reprotect run",
+        "cleanup, networking, automation and troubleshooting pages"
+      ],
+      "limitations": "A virtual-machine failback tutorial, not application-level reconciliation; no failback or reprotect was run.",
+      "content_sha256": "dd092294983216ac84f44d8d8a75972cb281fc59cb2f61bb1db0cba60f28eb71",
+      "read_scope": "the sections listed above, excluding cleanup, networking and troubleshooting pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.pg-failover.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/17/warm-standby-failover.html",
+      "unit_label": "26.3. Failover — PostgreSQL 17 documentation",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "26.3. Failover"
+      ],
+      "sections_not_read": [
+        "26.2 standby configuration pages",
+        "26.4 Hot Standby",
+        "linked sections and version archive"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "If the primary server fails, the standby server should begin failover procedures.",
+        "A log-shipping standby is promoted with pg_ctl promote or pg_promote().",
+        "When the old primary restarts, a mechanism must inform it that it is no longer the primary.",
+        "STONITH is necessary to avoid two systems believing they are primary, which leads to confusion and data loss.",
+        "A standby server must be recreated to return to normal operation, and pg_rewind can speed the rebuild on large clusters."
+      ],
+      "claims_not_supported": [
+        "a PostgreSQL cluster, promotion or replication test",
+        "standby configuration pages and Hot Standby behavior",
+        "a release-tagged version, because the page is living documentation"
+      ],
+      "limitations": "A conceptual failover page; it names pg_ctl and pg_promote() but no PostgreSQL cluster, promotion or replication test was run.",
+      "content_sha256": "bd1cf093ea7bef538e9bf69234da2a4ca699bd3b722198170b40be14e4167ad9",
+      "read_scope": "the section listed above, excluding linked sections and the version archive",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.sre-testing-disaster.2026-10-31",
+      "source_id": "src.sre",
+      "unit_url": "https://sre.google/sre-book/testing-reliability/",
+      "unit_label": "Testing for Reliability — Site Reliability Engineering, section Testing Disaster",
+      "unit_type": "book-chapter",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP fetch on 2026-10-31; canonical text extracted with scripts/source_content_hash.py",
+      "sections_read": [
+        "Testing Disaster"
+      ],
+      "sections_not_read": [
+        "the other chapter sections",
+        "figures",
+        "linked papers and the rest of the book"
+      ],
+      "tables_figures": [
+        "tables and figures in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "CC BY-NC-ND 4.0 book chapter; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Disaster recovery tools should compute a checkpoint state equivalent to cleanly stopping the service.",
+        "Broken offline constraints make it much harder to show confidence that the tool implementation will work at short notice.",
+        "A distributed system may have eventually consistent behavior that interacts badly with repair."
+      ],
+      "claims_not_supported": [
+        "a current product description or benchmark",
+        "a disaster exercise or recovery measurement",
+        "the other chapter sections and linked papers"
+      ],
+      "limitations": "A 2017 book chapter, CC BY-NC-ND 4.0, with contextual production examples, not a benchmark or a current product description; no disaster exercise was run.",
+      "content_sha256": "425eb0ec229b85678058f57cb1e4bb1c7b7bacb2e10164d4313d9cf60dc2bed7",
+      "read_scope": "the Testing Disaster section only, excluding the rest of the book",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

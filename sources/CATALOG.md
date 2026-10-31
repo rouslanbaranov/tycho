@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 326.
+Inventory date: 2026-10-31. Entries: 328.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -226,6 +226,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.lambda / supporting | [AWS Lambda Execution Environments](https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtime-environment.html) — AWS | Execution environment reuse, lifecycle and deployment constraints. | admitted-for-research / public-web-or-author-download |
 | src.istio-traffic-mirroring / supporting | [Istio Mirroring](https://istio.io/latest/docs/tasks/traffic-management/mirroring/) — Istio | Request mirroring, fire-and-forget responses and fractional mirroring. | admitted-for-research / public-web-or-author-download |
 | src.aws-elastic-load-balancing / core | [Health checks for Application Load Balancer target groups](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/target-group-health-checks.html) — Amazon Web Services | Health-check thresholds, target ejection and fail-open behavior for load-balanced backends. | admitted-for-research / public-web-or-author-download |
+| src.aws-route53 / supporting | [Active-active and active-passive failover](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/dns-failover-types.html) — Amazon Web Services | Health-checked DNS failover modes, standby selection and the weighted-record caveat for the failover/failback decision card. | admitted-for-research / public-web-or-author-download |
+| src.azure-site-recovery / supporting | [Azure Site Recovery failover and failback](https://learn.microsoft.com/en-us/azure/site-recovery/site-recovery-failover) — Microsoft | Virtual-machine failover and failback execution gates for the failover/failback decision card. | admitted-for-research / public-web-or-author-download |
 
 ## Security
 
