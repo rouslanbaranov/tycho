@@ -1,0 +1,396 @@
+{
+  "items": [
+    {
+      "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+      "id": "V4-A002",
+      "path": "book/application/architecture-evolution-and-extraction.md",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "title": "Architecture evolution: when to keep, modularize or extract a service"
+    },
+    {
+      "excerpt": "# Cross-model comparison and synchronization **Owning question:** Which extra authority and recovery obligations appear when stores are combined? This page belongs to [V05/C04 \u2014 Alternative data models and stores](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.c75a11f9786442a5b5456f11c2412df4:6 -->",
+      "id": "V4-A002",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c04-alternative-data-models-and-stores/multi-store-selection.md",
+      "question": "Why is a local read model a poor substitute for a synchronous dependency when every read requires strong consistency?",
+      "title": "Cross-model comparison and synchronization"
+    },
+    {
+      "excerpt": "# API contracts and effect identity **Owning question:** Which promises belong to transport semantics and which require application deduplication? This page belongs to [V02/C05 \u2014 Public APIs, HTTP/RPC and compatibility](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:1 -->",
+      "id": "V4-A003",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/effect-identity.md",
+      "question": "How can a client recover the status of a submitted job when the initial acknowledgment is lost?",
+      "title": "API contracts and effect identity"
+    },
+    {
+      "excerpt": "# Control planes, placement and reversibility **Owning question:** What work can continue when orchestration or placement control is unavailable? This page belongs to [V08/C03 \u2014 VMs, containers, orchestration and serverless](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:2 -->",
+      "id": "V4-A004",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/static-stability.md",
+      "question": "What infrastructure must exist before Envoy can use the service-discovery approach described by the card?",
+      "title": "Control planes, placement and reversibility"
+    },
+    {
+      "excerpt": "# Resequencer > **Pattern atlas:** > [Resequencer](../../v11-pattern-atlas/c03-messaging-integration/resequencer.md#resequencer) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#resequencer) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Use a resequencer only when the message contract declares a required order, a reliable sequence domain, and a bounded buffer whose gap timeout and late-message disposition have owners. Partition by key instead when global order is unnecessary; when the buffer cannot be bounded, reject the resequence",
+      "id": "V4-A005",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/resequencer.md",
+      "question": "Why does a split message require an owned completion or partial-release rule when the number of parts is unknown?",
+      "title": "Resequencer"
+    },
+    {
+      "excerpt": "# Session-visible consistency **Owning question:** Which observations must a user session retain when requests move between replicas? > **Pattern atlas:** > [Session Consistency](../../v11-pattern-atlas/c08-coordination/README.md#session-consistency) \u2014 decision conditions and contraindications.",
+      "id": "V4-A006",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/session-consistency.md",
+      "question": "What failure can arise if a claim token is published before its payload is durably stored?",
+      "title": "Session-visible consistency"
+    },
+    {
+      "excerpt": "# Object publication and cross-store reconciliation **Owning question:** When may an application expose uploaded bytes if object storage and metadata do not share a transaction?",
+      "id": "V4-A008",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/publication-consistency.md",
+      "question": "Why must a consumer tolerate duplicate publication when an outbox relay crashes after sending?",
+      "title": "Object publication and cross-store reconciliation"
+    },
+    {
+      "excerpt": "# CQRS, event sourcing and reliable read projections > Tycho Issue [#80](https://github.com/rouslanbaranov/tycho/issues/80), proposed V04/C05\u2013C06. Primary publicly accessible writing examined on 2026-10-18; author-created scenarios and Mermaid diagrams only. **Not** an implemented event store, tested projector or global delivery guarantee. > **Pattern atlas:** > [CQRS](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#command-query-responsibility-segregation-cqrs) \u2014 decision conditions and contraindications. > [Event Sourcing](../volumes/v11-pattern-atlas/c04-consistency-events/README.md#event-sourcing) \u2014 decision conditions and contraindications. > [Domain Events](../volumes/v11",
+      "id": "V4-A010",
+      "path": "book/distributed/cqrs-event-sourcing-and-projections.md",
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
+      "title": "CQRS, event sourcing and reliable read projections"
+    },
+    {
+      "excerpt": "# V08/C08 \u2014 Network request paths, routing and edge delivery **Owning question:** Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+      "id": "V4-A011",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+      "question": "Why can removing an origin asset leave an old copy available after an edge purge?",
+      "title": "V08/C08 \u2014 Network request paths, routing and edge delivery"
+    },
+    {
+      "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+      "id": "V4-A012",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "question": "What version-retention condition helps static hosting support rollback?",
+      "title": "Edge caching, private content and origin recovery"
+    },
+    {
+      "excerpt": "# Rollback limits and semantic reconciliation **Owning question:** Which durable differences survive reverting the deployed binary? This page belongs to [V10/C05 \u2014 Target architecture versus transition states](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:4 -->",
+      "id": "V4-A013",
+      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/rollback-data.md",
+      "question": "What should happen to the user response if the candidate fails during a parallel run?",
+      "title": "Rollback limits and semantic reconciliation"
+    },
+    {
+      "excerpt": "# Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-A014",
+      "path": "book/cases/decisions/data-migration-correctness.md",
+      "question": "Why is mirrored production traffic unsafe for a shadow service that performs live writes?",
+      "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
+    },
+    {
+      "excerpt": "# Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity **Case ID:** `case.netflix.durable-data-project-identity` \u00b7 **Issue:** E16-05 #118 \u00b7 **Status:** evidence-bounded draft; independent acceptance pending. **Primary:** src.m9-n17, Amer Hesson, Marcelo Mayworm, James Mulcahy and Brittany Truong, [Netflix TechBlog, 2026-05-11](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e). Exact source sections: **Problem 1**, **Problem 2**, **Enter Data Projects**, **Grants and Roles**, **The Identity Umbrella**, **Securing Data Workflows**, **Data Projects: Durable Identity**, **Success Stories**, **Using Data Projects**, **Wh",
+      "id": "V4-A015",
+      "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+      "question": "What limits the exposure from a leaked credential issued for direct storage access?",
+      "title": "Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity"
+    },
+    {
+      "excerpt": "# Object capabilities, versions and lifecycle cleanup **Owning question:** How are object access, retained versions and cleanup governed after publication?",
+      "id": "V4-A015",
+      "path": "book/volumes/v05-data-models-engines-and-lifecycle/c08-object-storage-large-transfers-and-publication/access-lifecycle.md",
+      "question": "What limits the exposure from a leaked credential issued for direct storage access?",
+      "title": "Object capabilities, versions and lifecycle cleanup"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:-1 --> # HTTP and RPC contracts: compatibility, deadlines and retry safety > **Research status:** independent, source-grounded book draft, 2026-10-19. **Proposed owner:** V02/C05 (public APIs, HTTP/RPC and compatibility). No runtime tests, empirical benchmark, client interoperability test or independent technical acceptance is claimed. > > The content_review field retains the decomposition-era draft state; no independent > acceptance is asserted. <!-- /tycho-question-source --> > **Pattern atlas:** > [Backend for Frontend](../../v11-pattern-atlas/c02-api-communication/README.md#backend-for-frontend-bff) \u2014 decision conditi",
+      "id": "V4-A016",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/http-rpc-contracts-and-compatibility.md",
+      "question": "What kind of request should not be retried automatically by an ambassador proxy without an effect-safety contract?",
+      "title": "HTTP and RPC contracts: compatibility, deadlines and retry safety"
+    },
+    {
+      "excerpt": "# V08/C08 \u2014 Network request paths, routing and edge delivery **Owning question:** Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+      "id": "V4-A016",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+      "question": "What kind of request should not be retried automatically by an ambassador proxy without an effect-safety contract?",
+      "title": "V08/C08 \u2014 Network request paths, routing and edge delivery"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:-1 --> # Asynchronous APIs and streaming: demand, deadlines and cancellation > **Independent Tycho V03/C04 book draft, 2026-10-19.** This chapter compares contract and flow-control choices. Official Reactive Streams 1.0.4 and gRPC guides supply bounded public facts. The example and acceptance tests are original synthetic material; no streaming client/server, implementation or benchmark was exercised. <!-- /tycho-question-source --> > **Pattern atlas:** > [Asynchronous Request-Reply](../../v11-pattern-atlas/c02-api-communication/async-request-reply.md#asynchronous-request-reply) \u2014 decision conditions and contraindications.",
+      "id": "V4-A018",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/asynchronous-apis-streaming-and-cancellation.md",
+      "question": "When is polling a separate asynchronous status resource unnecessary for a client?",
+      "title": "Asynchronous APIs and streaming: demand, deadlines and cancellation"
+    },
+    {
+      "excerpt": "# V08/C08 \u2014 Network request paths, routing and edge delivery **Owning question:** Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+      "id": "V4-A019",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+      "question": "Why does endpoint discovery still need active health checks?",
+      "title": "V08/C08 \u2014 Network request paths, routing and edge delivery"
+    },
+    {
+      "excerpt": "# Discovery, load balancing and backend selection **Owning question:** How does an endpoint change become a correctly balanced request rather than merely a new address? > **Pattern atlas:** > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) \u2014 decision conditions and contraindications. > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) \u2014 decision conditions and contraindications. > [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Load Balancing](../../v11-pattern",
+      "id": "V4-A019",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+      "question": "Why does endpoint discovery still need active health checks?",
+      "title": "Discovery, load balancing and backend selection"
+    },
+    {
+      "excerpt": "# V04/C06 \u2014 Messaging families and delivery contracts",
+      "id": "V4-A020",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
+      "question": "When should a message router be preferred to a pass-or-discard filter?",
+      "title": "V04/C06 \u2014 Messaging families and delivery contracts"
+    },
+    {
+      "excerpt": "# Pipes and Filters > **Pattern atlas:** > [Pipes and Filters](../../v11-pattern-atlas/c03-messaging-integration/pipes-and-filters.md#pipes-and-filters) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [consumer requirements and messaging families page](message-selection.md#pipes-and-filters) on 2026-10-29. The other ownership notes remain on the chapter page. **Decision.** Compose processing as ordered stages only when each stage has an independent contract and the pipeline owns ordering, partial completion and recovery. If one stage needs the whole transaction, or per-stage latency and coordination exceed the value of isolation, keep one",
+      "id": "V4-A020",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/pipes-and-filters.md",
+      "question": "When should a message router be preferred to a pass-or-discard filter?",
+      "title": "Pipes and Filters"
+    },
+    {
+      "excerpt": "# V04/C06 \u2014 Messaging families and delivery contracts",
+      "id": "V4-A021",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
+      "title": "V04/C06 \u2014 Messaging families and delivery contracts"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:-1 --> # Stateful stream processing, Kafka Streams, Flink and CDC > Tycho Issue [#81](https://github.com/rouslanbaranov/tycho/issues/81), proposed V04/C08. Source reading 2026-10-18. **Pinned examples:** Apache Kafka Streams documentation 4.1, Apache Flink documentation release **2.1** (explicitly archived/outdated), PostgreSQL documentation 17 and Debezium 3.6. Original synthetic diagrams and arithmetic; not an executed stream processor, validated exactly-once guarantee or current-version benchmark. <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:0 -->",
+      "id": "V4-A021",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
+      "title": "Stateful stream processing, Kafka Streams, Flink and CDC"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:-1 --> # Outbox, inbox, sagas and durable workflow coordination > **Tycho manuscript \u2014 proposed V04/C05**, 2026-10-19. Primary public references: transactional-outbox and saga/consumer patterns, plus Debezium 3.6 configuration. Original synthetic sequence and state diagram. No broker, CDC process, workflow runner or actual database was deployed, exercised or independently reviewed. Earlier combined [outbox/idempotency research](../../../distributed/transactional-outbox-and-idempotency.md) remains preserved for line-level source comparison. <!-- /tycho-question-source --> > **Pattern atlas:** > [Distributed Workflow Orches",
+      "id": "V4-A022",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "title": "Outbox, inbox, sagas and durable workflow coordination"
+    },
+    {
+      "excerpt": "# Transactional Outbox > **Pattern atlas:** > [Transactional Outbox](../../v11-pattern-atlas/c04-consistency-events/transactional-outbox.md#transactional-outbox) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [outbox, inbox, sagas and durable workflows page](outbox-inbox-sagas-and-durable-workflows.md#transactional-outbox) on 2026-10-29. The integrated walkthrough remains on the chapter page. An outbox is a durable publication queue inside the state store. The business row and an intent row commit together; a relay leases rows, publishes them and records completion. The broker sees at-least-once attempts, not a distributed transaction. T",
+      "id": "V4-A022",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/transactional-outbox.md",
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "title": "Transactional Outbox"
+    },
+    {
+      "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+      "id": "V4-A023",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "question": "Why can synchronized expiry make a short cache TTL expensive during a traffic burst?",
+      "title": "Edge caching, private content and origin recovery"
+    },
+    {
+      "excerpt": "# V08/C08 \u2014 Network request paths, routing and edge delivery **Owning question:** Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+      "id": "V4-A025",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
+      "title": "V08/C08 \u2014 Network request paths, routing and edge delivery"
+    },
+    {
+      "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+      "id": "V4-A026",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+      "question": "Which edge-hosting responsibilities must be owned before static content is offloaded?",
+      "title": "Edge caching, private content and origin recovery"
+    },
+    {
+      "excerpt": "# V10/C05 \u2014 Target architecture versus transition states",
+      "id": "V4-A027",
+      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/README.md",
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
+      "title": "V10/C05 \u2014 Target architecture versus transition states"
+    },
+    {
+      "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+      "id": "V4-A028",
+      "path": "book/application/architecture-evolution-and-extraction.md",
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "title": "Architecture evolution: when to keep, modularize or extract a service"
+    },
+    {
+      "excerpt": "# Distributed protocol verification **Owning question:** How can histories, invariants and executable models expose a distributed correctness defect?",
+      "id": "V4-A028",
+      "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "title": "Distributed protocol verification"
+    },
+    {
+      "excerpt": "# V09/C04 \u2014 Logging, audit and lineage",
+      "id": "V4-A029",
+      "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/README.md",
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "title": "V09/C04 \u2014 Logging, audit and lineage"
+    },
+    {
+      "excerpt": "# Recovery hysteresis and overload experiments **Owning question:** What prevents a recovering dependency from being overwhelmed immediately? This page belongs to [V07/C05 \u2014 Overload protection and graceful degradation](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:6 -->",
+      "id": "V4-A030",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-recovery.md",
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "title": "Recovery hysteresis and overload experiments"
+    },
+    {
+      "excerpt": "# Shared dependencies and replica placement **Owning question:** Which dependency sets remain common despite nominal zone diversity? This page belongs to [V08/C06 \u2014 High availability and failure-domain placement](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.6b3725950fad4c0db82417b3d0225d32:1 -->",
+      "id": "V4-A030",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "title": "Shared dependencies and replica placement"
+    },
+    {
+      "excerpt": "# Request routing and health signals **Owning question:** Which route selects a backend, and which health signal may admit or remove it? A route decides where a request may go; a health signal decides whether an instance is eligible to receive it. Collapsing both into \"the load balancer is healthy\" hides stale routes, mixed readiness semantics and a backend that answers quickly but cannot do useful work. > **Pattern atlas:** > [Gateway Routing](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-routing) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Health Endpoint Monitoring](../../v11-pattern-atlas/c07-resilience/README.md#health-endpoint-monitoring) \u2014 de",
+      "id": "V4-A030",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md",
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "title": "Request routing and health signals"
+    },
+    {
+      "excerpt": "# Application architecture styles: modules, services and ownership boundaries > **Tycho research page \u2014 Issue #79**, proposed V02/C01\u2013C04. Public source reading: **2026-10-18**. Status: independently researched draft, *not* independently reviewed or evaluated on a deployed system. This page is original explanation and synthetic illustration; cited sources are bounded publications, not experimental performance guarantees.",
+      "id": "V4-B001",
+      "path": "book/application/architecture-styles-and-module-boundaries.md",
+      "question": "Why does a published interface specification not establish that a deployed service actually behaves that way?",
+      "title": "Application architecture styles: modules, services and ownership boundaries"
+    },
+    {
+      "excerpt": "# Behavioral compatibility and interface choice **Owning question:** Which old/new caller and server combinations must remain valid? This page belongs to [V02/C05 \u2014 Public APIs, HTTP/RPC and compatibility](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cccbd188936543a2aaf904f4002236d8:4 -->",
+      "id": "V4-B001",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c05-public-apis-http-rpc-and-compatibility/version-compatibility.md",
+      "question": "Why does a published interface specification not establish that a deployed service actually behaves that way?",
+      "title": "Behavioral compatibility and interface choice"
+    },
+    {
+      "excerpt": "# Adversarial requirements and candidate screening **Owning question:** Which missing evidence or hard gate must block a premature recommendation? This page belongs to [V10/C01 \u2014 Architecture requirement and workload profiles](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.868027aee4884210bea1d8a6542fbfb0:4 -->",
+      "id": "V4-B002",
+      "path": "book/volumes/v10-decision-support-and-modernization/c01-architecture-requirement-and-workload-profiles/evidence-screening.md",
+      "question": "What must be fixed in advance to compare two architecture changes without shifting the decision criterion after the test?",
+      "title": "Adversarial requirements and candidate screening"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.eb130a7f820544a2ba0e0883c0ce587b:-1 --> # Tail latency, fan-out and end-to-end deadline budgets > **Tycho V07/C04 integrated decision:** canonical topic in the 69-chapter table of contents. Source scope reviewed 2026-10-19. This page is original explanatory material with synthetic numbers; no live trace, experiment, performance benchmark, independent reviewer acceptance or production SLO is claimed. The content_review field retains the decomposition-era draft state; no independent acceptance is asserted. <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.page.eb130a7f820544a2ba0e0883c0ce587b:0 -->",
+      "id": "V4-B003",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c04-tail-latency-fan-out-and-time-budgets/tail-latency-fanout-and-deadline-budgets.md",
+      "question": "When should an architecture experiment stop instead of drawing a conclusion from apparently favorable latency?",
+      "title": "Tail latency, fan-out and end-to-end deadline budgets"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:-1 --> # Domain boundaries, data ownership and contract evolution > **Canonical integrated decision page \u2014 V02/C02**, 2026-10-19. Original explanatory text and fictional examples; independently public context-design references. This page is not a model of any real organization or its software. The content_review field retains the historical draft state; no independent acceptance is asserted. No operational measurement, customer research, migration or independent design review has been performed. <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.page.4681b3ba9e234c46bdb4b5993634b0e3:0 -->",
+      "id": "V4-B005",
+      "path": "book/volumes/v02-application-boundaries-and-contracts/c02-domain-boundaries-data-ownership-and-contracts/domain-boundaries-data-ownership-and-contracts.md",
+      "question": "What controls can make module ownership enforceable inside a single deployable?",
+      "title": "Domain boundaries, data ownership and contract evolution"
+    },
+    {
+      "excerpt": "# LinkedIn \u2014 tiered Kafka transport needs end-to-end completeness audits **Case ID:** `case.linkedin.kafka-tier-audit` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending. **Public primary:** src.m9-li01 [company engineering report](https://engineering.linkedin.com/kafka/running-kafka-scale) (2015-03-20, Todd Palino); source location: How Big is Big?; multi-datacenter tiers; Auditing Completeness; Bringing It All Together. Attributed public paraphrase, no mirrored graphs or copyrighted assets.",
+      "id": "V4-B012",
+      "path": "book/cases/linkedin-kafka-tiered-completeness.md",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "title": "LinkedIn \u2014 tiered Kafka transport needs end-to-end completeness audits"
+    },
+    {
+      "excerpt": "# Cancellation, reconnect and durable resume **Owning question:** Which persisted state permits replay after a disconnect and when must a client resnapshot? This page belongs to [V03/C04 \u2014 Asynchronous APIs and streaming](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5:4 -->",
+      "id": "V4-B012",
+      "path": "book/volumes/v03-execution-concurrency-and-flow-control/c04-asynchronous-apis-and-streaming/resume-cancellation.md",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "title": "Cancellation, reconnect and durable resume"
+    },
+    {
+      "excerpt": "# Consumer requirements and messaging families **Owning question:** Which ownership, retention and replay contract selects a messaging family? This page belongs to [V04/C06 \u2014 Messaging families and delivery contracts](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:1 -->",
+      "id": "V4-B012",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+      "question": "What can a consumer offset reset to earliest recover after older Kafka records have expired?",
+      "title": "Consumer requirements and messaging families"
+    },
+    {
+      "excerpt": "# Agreement, availability and uncertain observations **Owning question:** Which fault assumption separates an ordering claim from an agreement guarantee? This page belongs to [V04/C01 \u2014 Time, causality and ordering](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.d4822cc1e71c4f73896b7f6509f6daae:2 -->",
+      "id": "V4-B015",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c01-time-causality-and-ordering/agreement-failure.md",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "title": "Agreement, availability and uncertain observations"
+    },
+    {
+      "excerpt": "# Replica properties and quorum failure envelopes **Owning question:** Which partitions can make progress without allowing divergent authority? This page belongs to [V04/C02 \u2014 Replication, consensus and leader changes](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.1b2657011d454460856103419095031b:1 -->",
+      "id": "V4-B015",
+      "path": "book/volumes/v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/quorum-envelope.md",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "title": "Replica properties and quorum failure envelopes"
+    },
+    {
+      "excerpt": "<!-- tycho-question-source:tycho.page.49d9df04c0b4488e936b02e580a62271:-1 --> # Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability > **Original System Design chapter, V07/C06.** Public specifications reviewed 2026-10-19; synthetic > examples only. No autoscaler, Kubernetes cluster, cloud instance, load generator, production > telemetry or independent review was used to validate the proposed designs. > > The content_review field retains the decomposition-era draft state; no independent > acceptance is asserted. <!-- /tycho-question-source --> > **Pattern atlas:** > [Horizontal Scaling](../../v11-pattern-atlas/c09-scalability/README.md#horizontal-scaling) \u2014 decis",
+      "id": "V4-B015",
+      "path": "book/volumes/v07-performance-scale-and-resilience/c06-horizontal-vertical-scaling-and-autoscaling-delay/autoscaling-lag-and-capacity-limits.md",
+      "question": "Why do additional replicas not automatically increase a single authoritative shard\u2019s write capacity?",
+      "title": "Horizontal and vertical scaling: autoscaling lag, resource ceilings and stability"
+    },
+    {
+      "excerpt": "# Overloaded multitenant service project **Owning question:** How do tenant placement, budgets and bounded cells preserve useful service through overload and rollout failure?",
+      "id": "V4-B020",
+      "path": "book/volumes/v10-decision-support-and-modernization/c07-cross-domain-worked-comparisons-and-unresolved-cases/multitenant-project.md",
+      "question": "How can a priority queue protect critical work while avoiding indefinite starvation of other classes?",
+      "title": "Overloaded multitenant service project"
+    },
+    {
+      "excerpt": "# Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption **ID:** `decision.build-platform-and-adoption` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-B022",
+      "path": "book/cases/decisions/build-delivery-migration.md",
+      "question": "What runtime dependency did Airbnb\u2019s generated Bazel targets sometimes miss during its Gradle migration?",
+      "title": "Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption"
+    },
+    {
+      "excerpt": "# Delivery pipelines, progressive releases and schema evolution",
+      "id": "V4-B023",
+      "path": "book/delivery/README.md",
+      "question": "Why should a release gate compare the deployed artifact digest with the exact object that passed tests?",
+      "title": "Delivery pipelines, progressive releases and schema evolution"
+    },
+    {
+      "excerpt": "# V08/C04 \u2014 GitOps, rollout and progressive delivery",
+      "id": "V4-B024",
+      "path": "book/volumes/v08-delivery-deployment-and-recovery/c04-gitops-rollout-and-progressive-delivery/README.md",
+      "question": "What extra recovery coordination can a continuously reconciling GitOps controller require during an emergency rollback?",
+      "title": "V08/C04 \u2014 GitOps, rollout and progressive delivery"
+    },
+    {
+      "excerpt": "# Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-B025",
+      "path": "book/cases/decisions/data-migration-correctness.md",
+      "question": "In Netflix\u2019s Data Projects case, why could a scheduled job fail after its original owner left?",
+      "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
+    },
+    {
+      "excerpt": "# Incident chronology and competing explanations **Owning question:** Which observation separates containment from restored state correctness? This page belongs to [V09/C06 \u2014 Incident response and operational change](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.d87f9ba3852b49ee8188d150bb679716:4 -->",
+      "id": "V4-B028",
+      "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-evidence.md",
+      "question": "Why is the age of an application insufficient evidence that its architecture caused an incident?",
+      "title": "Incident chronology and competing explanations"
+    },
+    {
+      "excerpt": "# Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption **ID:** `decision.build-platform-and-adoption` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+      "id": "V4-B029",
+      "path": "book/cases/decisions/build-delivery-migration.md",
+      "question": "What is lost when a modernization baseline records repository structure but not the runtime and writer inventory?",
+      "title": "Decision Playbook \u2014 Build and delivery modernization: hermetic execution vs fleet adoption"
+    },
+    {
+      "excerpt": "# Migration mechanisms and no-return gates **Owning question:** What evidence permits a transition to cross an irreversible boundary? This page belongs to [V10/C05 \u2014 Target architecture versus transition states](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:6 -->",
+      "id": "V4-B033",
+      "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "title": "Migration mechanisms and no-return gates"
+    },
+    {
+      "excerpt": "# Queue and resource models **Question.** How should capacity, occupancy and waiting time be related in a queue model, and when does a finite-window measurement mislead? **Short answer.** Arrival rate, service capacity, utilization and occupancy are related but not interchangeable. Little's law connects average occupancy, arrival rate and average time in system under stated conditions. A finite simulation window is not the long-run average, so the model must report the window, the warmup and the uncertainty.",
+      "id": "V4-B034",
+      "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/queue-and-resource-models.md",
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "title": "Queue and resource models"
+    },
+    {
+      "excerpt": "# Multi-zone availability, multi-region disaster recovery and restore contracts > Original Tycho E14-09 technical chapter, 2026-10-19, linked to [issue #87](https://github.com/rouslanbaranov/tycho/issues/87). The plans, tables and example timeline are **fictional and proposed**, not an operated disaster recovery system or evidence of a successful restore.",
+      "id": "V4-B041",
+      "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+      "question": "Why does embedding SQLite in an application not by itself provide a networked multi-region database service?",
+      "title": "Multi-zone availability, multi-region disaster recovery and restore contracts"
+    }
+  ]
+}

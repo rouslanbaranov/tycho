@@ -1,0 +1,270 @@
+{
+  "batch": "RB07",
+  "items": [
+    {
+      "id": "V4-B031",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.357c2d162bd44f3aa06a995a1e691551:-1 --> # Schema lifecycle, semantic data migration and data retirement > **Tycho book draft V05/C06**, 2026-10-19. Original synthetic migration and source-led architecture explanation. Sources: Danilo Sato's public Parallel Change and PostgreSQL 17 ALTER TABLE documentation. No schema migration, data backfill, SQL execution or independent review occurred. Previous [combined rollout/schema research](../../../delivery/progressive-delivery-and-schema-evolution.md) is preserved until source claims are reconciled. <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.page.357c2d162bd44f3aa06a995a1e691551:0 -->",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c06-schema-evolution-data-migration-and-retention/schema-lifecycle-and-semantic-migration.md",
+          "title": "Schema lifecycle, semantic data migration and data retirement"
+        },
+        {
+          "excerpt": "# Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches **Case ID:** `case.meta.tao-social-graph-serving` | **M9:** E16-05 #118 | **Status:** original case draft; independent reviewer pending. **Public primary:** src.m9-me01 [company engineering report](https://engineering.fb.com/2013/06/25/core-infra/tao-the-power-of-the-graph/) (2013-06-25 first-party Facebook/Meta engineering account); source location: TAO data model and API; Implementation; Consistency. Attributed public paraphrase, no mirrored graphs or copyrighted assets.",
+          "path": "book/cases/meta-tao-social-graph-serving.md",
+          "title": "Meta/Facebook \u2014 TAO: specialized graph APIs over MySQL and tiered caches"
+        },
+        {
+          "excerpt": "# M9 \u2014 Historical Architecture Modernization Case Studies",
+          "path": "book/cases/README.md",
+          "title": "M9 \u2014 Historical Architecture Modernization Case Studies"
+        },
+        {
+          "excerpt": "# Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity **Case ID:** `case.netflix.durable-data-project-identity` \u00b7 **Issue:** E16-05 #118 \u00b7 **Status:** evidence-bounded draft; independent acceptance pending. **Primary:** src.m9-n17, Amer Hesson, Marcelo Mayworm, James Mulcahy and Brittany Truong, [Netflix TechBlog, 2026-05-11](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e). Exact source sections: **Problem 1**, **Problem 2**, **Enter Data Projects**, **Grants and Roles**, **The Identity Umbrella**, **Securing Data Workflows**, **Data Projects: Durable Identity**, **Success Stories**, **Using Data Projects**, **Wh",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "title": "Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity"
+        }
+      ],
+      "question": "In Meta\u2019s ingestion migration, where did the candidate job write during the initial shadow phase?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B032",
+      "page_new": [
+        {
+          "excerpt": "# Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
+        },
+        {
+          "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "title": "Architecture evolution: when to keep, modularize or extract a service"
+        },
+        {
+          "excerpt": "# Uber \u2014 Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness **Case ID:** `case.uber.cinnamon-database-overload-control` \u00b7 **M9:** E16-05 #118 \u00b7 **Status:** source-backed draft, independent review pending. **Primary src.m9-u06:** Dhyanam Vaidya, Prathamesh Deshpande, Mike Ma et al., Uber Engineering, **2026-04-20**, [How Uber Conquered Database Overload](https://www.uber.com/us/en/blog/from-static-rate-limiting-to-intelligent-load-management/), sections **Quota-Based Rate Limiting in the Query Engine Layer**, **Identifying the Right Signal**, **Balancing Resilience and Fairness**, **Controlled Delay**, **Scorecard Engine**, **Regulators**, **The Unified Load Shedding E",
+          "path": "book/cases/uber-cinnamon-admission-and-fairness.md",
+          "title": "Uber \u2014 Failed Static Quotas to Storage-Local Overload Control and Tenant Fairness"
+        },
+        {
+          "excerpt": "# Stripe \u2014 four-stage online migration of subscription data ownership **Case ID:** `case.stripe.online-subscriptions` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer. **Public primary:** src.m9-st01 [official engineering account](https://stripe.com/blog/online-migrations), 2017-02-02, Jacqueline Xu / Stripe; source anchors: A pattern for online migrations; Part 1: Dual writing; Part 2: Changing all read paths; Part 3: Changing all write paths; Part 4: Removing old data. No private materials or copyrighted graphics reproduced.",
+          "path": "book/cases/stripe-online-subscriptions-migration.md",
+          "title": "Stripe \u2014 four-stage online migration of subscription data ownership"
+        }
+      ],
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B033",
+      "page_new": [
+        {
+          "excerpt": "# Migration mechanisms and no-return gates **Owning question:** What evidence permits a transition to cross an irreversible boundary? This page belongs to [V10/C05 \u2014 Target architecture versus transition states](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:6 -->",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/cutover-gates.md",
+          "title": "Migration mechanisms and no-return gates"
+        },
+        {
+          "excerpt": "# Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
+        },
+        {
+          "excerpt": "# Meta \u2014 Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation **Case ID:** `case.meta.ingestion-shadow-lifecycle` \u00b7 **M9:** E16-05 #118 \u00b7 **Status:** evidence-backed draft; independent review pending. **Public first-party src.m9-me03:** Zihao Tao, Mohan Perumal Swamy, Grace Gong, Ailyn Tong, Peishan Wang, Nilay Kapadia, Md Mustafijur Rahman Faysal, Saurav Sen and Jameel Mohamed. [Meta Engineering, 2026-05-12: Migrating Data Ingestion Systems at Meta Scale](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/). Relevant original sections: **The Migration Challenge**, **Ensuring a Seamless Transition**, **The Migration L",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "title": "Meta \u2014 Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation"
+        },
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:-1 --> # Overload protection, admission control and graceful degradation > **Tycho book chapter draft V07/C05 (2026-10-19).** Original examples and diagrams, with scope-bound published SRE and Builders' Library guidance. No deployed protection, incident, load generator, performance comparison or independent expert review has been executed. > > The content_review field retains the decomposition-era draft state; no independent > acceptance is asserted. <!-- /tycho-question-source --> > **Pattern atlas:** > [Fallback](../../v11-pattern-atlas/c07-resilience/README.md#fallback) \u2014 decision conditions and contraindications. > [G",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-admission-control-and-graceful-degradation.md",
+          "title": "Overload protection, admission control and graceful degradation"
+        }
+      ],
+      "question": "When is a planned controlled cutover unsuitable because an essential source-side condition cannot be met?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B034",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b:-1 --> # Queueing, Little's Law and workload measurement boundaries > **Tycho technical chapter \u2014 first evidence-backed pilot**, issue > [#38](https://github.com/rouslanbaranov/tycho/issues/38), volume V07/C01. Research/read date: > **2026-10-18**. Status: independently public-source-grounded draft, self-reviewed mechanically; > **not** human-reviewed, a performance benchmark, production deployment or a capacity estimate. > > The content_review field retains the decomposition-era draft state; no independent > acceptance is asserted. <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.page.a9a28aaa4d1e4e9cb0ac",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c01-queueing-littles-law-and-measurement-boundaries/queueing-littles-law.md",
+          "title": "Queueing, Little's Law and workload measurement boundaries"
+        },
+        {
+          "excerpt": "# Workload shape and scalability laws > Tycho [#86](https://github.com/rouslanbaranov/tycho/issues/86). Original synthetic examples; public sources inspected 2026-10-19. No deployed workload or measured scalability is claimed.",
+          "path": "book/performance/workload-shape-and-scalability-laws.md",
+          "title": "Workload shape and scalability laws"
+        },
+        {
+          "excerpt": "# Reference engine architecture **Question.** Which components and determinism rules make the V12 reference engine small enough to verify and explicit enough to replay? **Short answer.** The engine is a dependency-free Python module with an event queue, a seeded random source, three model families, metric aggregation, a sensitivity screen and canonical hashing. It is intentionally separate from the book pages and from any production simulator.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c03-deterministic-and-des/reference-engine-architecture.md",
+          "title": "Reference engine architecture"
+        },
+        {
+          "excerpt": "# Uber \u2014 Project Mezzanine: moving trip data behind a compatibility seam **Case ID:** `case.uber.mezzanine-trip-data` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending. **Source:** src.m9-u02 \u2014 [original company engineering article](https://www.uber.com/us/en/blog/mezzanine-codebase-data-migration/) (historical Uber engineering account); primary evidence: From SQLAlchemy to Schemaless; Changing trip ids; Backfilling; Mirrored Writes; Validation. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.",
+          "path": "book/cases/uber-mezzanine-pg-to-schemaless.md",
+          "title": "Uber \u2014 Project Mezzanine: moving trip data behind a compatibility seam"
+        }
+      ],
+      "question": "Which quantities govern growth and drainage of the modeled modernization dual-write backlog?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B035",
+      "page_new": [
+        {
+          "excerpt": "# Cells and shuffle sharding **Owning question:** Which state, routing and rollout boundaries actually contain a tenant-triggered failure? > **Pattern atlas:** > [Cell-Based Architecture](../../v11-pattern-atlas/c09-scalability/README.md#cell-based-architecture) \u2014 decision conditions and contraindications. > [Shuffle Sharding](../../v11-pattern-atlas/c09-scalability/README.md#shuffle-sharding) \u2014 decision conditions and contraindications. > [Deployment Stamps](../../v11-pattern-atlas/c09-scalability/README.md#deployment-stamps) \u2014 decision conditions and contraindications.",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md",
+          "title": "Cells and shuffle sharding"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# Airbnb \u2014 JVM monorepo Gradle to Bazel: coexistence before mandatory cutover **Case ID:** `case.airbnb.jvm-bazel` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer. **Public primary:** src.m9-a01 [official engineering account](https://airbnb.tech/infrastructure/migrating-airbnbs-jvm-monorepo-to-bazel/), Airbnb Engineering first-party retrospective; source anchors: Why Bazel?; How did we migrate?; Proof of concept; results and lessons. No private materials or copyrighted graphics reproduced.",
+          "path": "book/cases/airbnb-jvm-monorepo-bazel.md",
+          "title": "Airbnb \u2014 JVM monorepo Gradle to Bazel: coexistence before mandatory cutover"
+        },
+        {
+          "excerpt": "# Discord \u2014 trillions of messages: ScyllaDB plus Rust request coalescing **Case ID:** `case.discord.cassandra-scylladb-messages` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-grounded draft, pending reviewer. **Public primary:** src.m9-di01 [official engineering account](https://discord.com/blog/how-discord-stores-trillions-of-messages), 2023-03-06, Bo Ingram / Discord; source anchors: Data Services Serving Data; A Very Big Migration; Several Months Later. No private materials or copyrighted graphics reproduced.",
+          "path": "book/cases/discord-cassandra-scylladb-messages.md",
+          "title": "Discord \u2014 trillions of messages: ScyllaDB plus Rust request coalescing"
+        }
+      ],
+      "question": "Which traffic-share schedule is declared in the synthetic staged modernization experiment?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B036",
+      "page_new": [
+        {
+          "excerpt": "# V12 validation gates **Question.** Which structural, model, statistical, calibration, decision and review gates does V12 pass, and what evidence supports each one? **Short answer.** V12-A through V12-E are implemented and checked locally. V12-F is an independent review gate and is recorded separately. A passing local check is not independent review, CI, owner acceptance or production validity.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/validation-gates.md",
+          "title": "V12 validation gates"
+        },
+        {
+          "excerpt": "# Model scope, boundary and abstraction **Question.** How should a modeling team choose what to include, what to omit and how much detail a decision actually needs? **Short answer.** Start from the decision, not from the system. State the purpose, the decision owner, the alternatives, the constraints and the observations that could change the choice. Then choose the smallest model that can distinguish those alternatives inside a declared validity domain. Everything outside that domain is an explicit omission, not an unstated assumption.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/model-scope-and-abstraction.md",
+          "title": "Model scope, boundary and abstraction"
+        },
+        {
+          "excerpt": "# V12 - Architecture modeling, simulation and decision validation **Status:** self-checked V12 candidate, 2026-10-29. The volume, contracts, reference engine, experiments, decision records and validators are present in this tree. No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/README.md",
+          "title": "V12 - Architecture modeling, simulation and decision validation"
+        },
+        {
+          "excerpt": "# Model verification **Question.** Which checks show that the V12 engine implements its models as specified, and which checks are still missing? **Short answer.** Verification covers units, conservation, non-negativity, boundary cases, event ordering, timeout interaction, retry conservation and deterministic replay. It does not cover operational validity, calibration or a production trace. The test matrix records what passed and what remains unverified.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c07-validation-and-limits/model-verification.md",
+          "title": "Model verification"
+        }
+      ],
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B037",
+      "page_new": [
+        {
+          "excerpt": "# Decision Playbook \u2014 JVM GC choice: pause-sensitive online services vs high-throughput batch **ID:** `decision.jvm-gc-performance-context` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "title": "Decision Playbook \u2014 JVM GC choice: pause-sensitive online services vs high-throughput batch"
+        },
+        {
+          "excerpt": "# Shopify \u2014 component governance is a migration, not a one-time refactor **Case ID:** `case.shopify.component-governance` | **Milestone:** M9 E16-05 #118 | **Status:** evidence-bound original draft; technical review pending. **Source:** src.m9-sh02 \u2014 [original company engineering article](https://shopify.engineering/shopify-monolith) (2020 Shopify Engineering follow-up); primary evidence: Under Deconstruction; component boundaries and dependency enforcement. Source reuse: original link and attributable paraphrase only; no copied diagrams or pages.",
+          "path": "book/cases/shopify-packwerk-boundary-evolution.md",
+          "title": "Shopify \u2014 component governance is a migration, not a one-time refactor"
+        },
+        {
+          "excerpt": "# Netflix \u2014 Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback **Case ID:** `case.netflix.casspactor-to-analytics` | **M9:** E16-04 #117 | **Status:** technically detailed evidence-backed draft, reviewer pending **Period:** [Netflix TechBlog, 2026-05-18](https://netflixtechblog.com/the-evolution-of-cassandra-data-movement-at-netflix-6e13329c80a1), src.m9-n11, Guil Pires, Jennifer Prince, Jose Camacho, Ken Kurzweil, Phanindra Chunduru. **Source sections:** \"Fragile Metadata Dependencies\", \"The New Stack\", \"Journey Towards a Safe Migration\", \"Pillar 1: Validation\", \"Pillar 2: Visibility\", \"Pillar 3: Safety\", \"Leveraging Abstraction: The Decider Pattern\".",
+          "path": "book/cases/netflix-casspactor-shadow-migration.md",
+          "title": "Netflix \u2014 Casspactor to Cassandra Analytics: migrate data pipelines with proof and fallback"
+        },
+        {
+          "excerpt": "# Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity **Case ID:** `case.netflix.durable-data-project-identity` \u00b7 **Issue:** E16-05 #118 \u00b7 **Status:** evidence-bounded draft; independent acceptance pending. **Primary:** src.m9-n17, Amer Hesson, Marcelo Mayworm, James Mulcahy and Brittany Truong, [Netflix TechBlog, 2026-05-11](https://netflixtechblog.com/data-projects-managing-data-assets-at-netflix-scale-7ca25888591e). Exact source sections: **Problem 1**, **Problem 2**, **Enter Data Projects**, **Grants and Roles**, **The Identity Umbrella**, **Securing Data Workflows**, **Data Projects: Durable Identity**, **Success Stories**, **Using Data Projects**, **Wh",
+          "path": "book/cases/netflix-data-project-durable-workload-identity.md",
+          "title": "Netflix Data Projects \u2014 From Human-Tied Credentials to Durable Data-Workload Identity"
+        }
+      ],
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B038",
+      "page_new": [
+        {
+          "excerpt": "# Metrics architecture, SLOs, collection and time-series retention > Tycho E14-11 [issue #89](https://github.com/rouslanbaranov/tycho/issues/89), original source-linked manuscript, 2026-10-19. No actual SLO measurements, telemetry pipeline, deployed collector, load test, audit or independent human review is asserted.",
+          "path": "book/observability/metrics-slo-timeseries-architecture.md",
+          "title": "Metrics architecture, SLOs, collection and time-series retention"
+        },
+        {
+          "excerpt": "# Netflix \u2014 Zuul 2: async gateway architecture with workload-dependent efficiency **Case ID:** `case.netflix.zuul2-nonblocking-gateway` \u00b7 **Owner:** M9 E16-02 #115 \u00b7 **Status:** evidence-backed draft; independent technical review pending **Primary:** src.m9-n07, Netflix Cloud Gateway Team, September 2016, \"Results of Zuul 2 in Production\"; src.m9-n08, Netflix Zuul 2.0 public architecture wiki (living documentation; snapshot not pinned). Company-reported results, not Tycho measurements.",
+          "path": "book/cases/netflix-zuul2-nonblocking-gateway.md",
+          "title": "Netflix \u2014 Zuul 2: async gateway architecture with workload-dependent efficiency"
+        },
+        {
+          "excerpt": "# Architecture decisions: from requirements, symptoms and legacy constraints to safe transition > Tycho E14-12 [issue #90](https://github.com/rouslanbaranov/tycho/issues/90), original cross-topic book chapter, 2026-10-19. All worked scenarios are **synthetic**; assumptions, results and verification requests are not measurements of a deployed system. Canonical decision authoring contracts exist separately in [decision navigation](../../authoring/models/decision-navigation.md), [requirement profiles](../../authoring/models/requirements-workload-profile.md), [legacy baseline](../../authoring/models/legacy-modernization-profile.md), [candidate ADRs](../../authoring/models/candidate-comparison-ad",
+          "path": "book/decisions/requirements-to-transition-decision-playbooks.md",
+          "title": "Architecture decisions: from requirements, symptoms and legacy constraints to safe transition"
+        },
+        {
+          "excerpt": "# State authority and coexistence transitions **Owning question:** Which owner is authoritative in every real intermediate configuration? This page belongs to [V10/C05 \u2014 Target architecture versus transition states](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.cf0ce38c73e44950aec5a9c2869bee63:1 -->",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/authority-states.md",
+          "title": "State authority and coexistence transitions"
+        }
+      ],
+      "question": "Which architectural view depicts a request\u2019s error branches and state transitions over time?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B039",
+      "page_new": [
+        {
+          "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "title": "Architecture evolution: when to keep, modularize or extract a service"
+        },
+        {
+          "excerpt": "# MVCC snapshots and the lifetime of row versions **Owning question:** Why can an old row version remain necessary after an update commits, and how does that differ from WAL durability? This page belongs to [V05/C02 \u2014 PostgreSQL MVCC, WAL and recovery](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits.",
+          "path": "book/volumes/v05-data-models-engines-and-lifecycle/c02-postgresql-mvcc-wal-and-recovery/mvcc-snapshots-and-vacuum.md",
+          "title": "MVCC snapshots and the lifetime of row versions"
+        },
+        {
+          "excerpt": "# M9 \u2014 Historical Architecture Modernization Case Studies",
+          "path": "book/cases/README.md",
+          "title": "M9 \u2014 Historical Architecture Modernization Case Studies"
+        }
+      ],
+      "question": "How can stable component identifiers keep architecture views coherent without building a separate graph service?",
+      "split": "book"
+    },
+    {
+      "id": "V4-B040",
+      "page_new": [
+        {
+          "excerpt": "# Vert.x, Netty, Quarkus, Mutiny and RxJava execution boundaries > **Tycho #82, public research inspected 2026-10-18.** Canonical question: how do the Java networking and reactive libraries allocate work, propagate demand and protect event loops? Source scopes: Vert.x **4.4.9** core guide, Netty **4.x** guide (rolling within major, exact patch not asserted), Quarkus **3.27**, SmallRye Mutiny **2.9.0**, RxJava **v3.1.9** tagged README. All examples are synthetic; no server or broker was run.",
+          "path": "book/execution/vertx-netty-quarkus-mutiny-and-rxjava.md",
+          "title": "Vert.x, Netty, Quarkus, Mutiny and RxJava execution boundaries"
+        },
+        {
+          "excerpt": "# Request-Reply Messaging **Decision.** Use messaging Request-Reply when a request and its reply travel as separate messages on separate channels and the requestor can wait or handle a callback. In the Synchronous Block case, the request thread waits for the reply, which implies one outstanding request or a reply channel private to the requesting thread. In the Asynchronous Callback case, the source states: \"This approach enables multiple outstanding requests to share a single reply channel, and a single reply thread to process replies for multiple request threads.\" Both the Synchronous Block messaging approach and a direct Remote Procedure Invocation block the caller's thread; the decision ",
+          "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md",
+          "title": "Request-Reply Messaging"
+        },
+        {
+          "excerpt": "# Decision Playbook \u2014 JVM GC choice: pause-sensitive online services vs high-throughput batch **ID:** `decision.jvm-gc-performance-context` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+          "path": "book/cases/decisions/gc-and-tail-latency.md",
+          "title": "Decision Playbook \u2014 JVM GC choice: pause-sensitive online services vs high-throughput batch"
+        },
+        {
+          "excerpt": "# Request-Reply Messaging > **Pattern atlas:** > [Request-Reply Messaging](../../v11-pattern-atlas/c03-messaging-integration/request-reply-messaging.md#request-reply-messaging) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [workflow state and messaging failure gates page](workflow-failure.md#request-reply-messaging) on 2026-10-29. The other ownership notes remain on the chapter page. Send a pair of Request-Reply messages, each on its own channel. The requestor sends a request and waits for a reply; the replier receives the request and responds. The request channel and reply channel are separate. The requestor waits for the reply; the re",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/request-reply-messaging.md",
+          "title": "Request-Reply Messaging"
+        }
+      ],
+      "question": "How did Discord\u2019s data-service layer reduce redundant reads for a hot message channel?",
+      "split": "book"
+    }
+  ]
+}

@@ -1,0 +1,275 @@
+{
+  "batch": "RB03",
+  "items": [
+    {
+      "id": "V4-A021",
+      "page_new": [
+        {
+          "excerpt": "# V04/C06 \u2014 Messaging families and delivery contracts",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/README.md",
+          "title": "V04/C06 \u2014 Messaging families and delivery contracts"
+        },
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:-1 --> # Stateful stream processing, Kafka Streams, Flink and CDC > Tycho Issue [#81](https://github.com/rouslanbaranov/tycho/issues/81), proposed V04/C08. Source reading 2026-10-18. **Pinned examples:** Apache Kafka Streams documentation 4.1, Apache Flink documentation release **2.1** (explicitly archived/outdated), PostgreSQL documentation 17 and Debezium 3.6. Original synthetic diagrams and arithmetic; not an executed stream processor, validated exactly-once guarantee or current-version benchmark. <!-- /tycho-question-source --> <!-- tycho-question-source:tycho.page.a2c47a0850154eaa95e1eb97e23f9c71:0 -->",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c08-stateful-event-time-stream-processing/stateful-stream-processing-and-cdc.md",
+          "title": "Stateful stream processing, Kafka Streams, Flink and CDC"
+        },
+        {
+          "excerpt": "# Stock-and-flow modeling versus stock-to-flow shorthand **Question.** What is the difference between a stock and a flow, and why does conflating them produce a model that cannot conserve its own quantities? **Short answer.** A stock is an accumulation at a point in time. A flow is a rate over an interval. A model is coherent only when every state variable has a stock unit, every rate has a per-time unit, and the integration step preserves the accounting identity. The phrase \"stock-to-flow\" is useful only as shorthand for a ratio of two different quantities; it is not a license to divide a level by a rate and call the result a time.",
+          "path": "book/volumes/v12-modeling-simulation-and-decision-validation/c01-foundations/stock-and-flow-vs-stock-to-flow.md",
+          "title": "Stock-and-flow modeling versus stock-to-flow shorthand"
+        },
+        {
+          "excerpt": "# Consumer requirements and messaging families **Owning question:** Which ownership, retention and replay contract selects a messaging family? This page belongs to [V04/C06 \u2014 Messaging families and delivery contracts](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.98616bdc3c514ea997b2cfe30ad7c070:1 -->",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/message-selection.md",
+          "title": "Consumer requirements and messaging families"
+        }
+      ],
+      "question": "What disposition should be specified for messages that arrive after a resequencer has advanced past a gap?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A022",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:-1 --> # Outbox, inbox, sagas and durable workflow coordination > **Tycho manuscript \u2014 proposed V04/C05**, 2026-10-19. Primary public references: transactional-outbox and saga/consumer patterns, plus Debezium 3.6 configuration. Original synthetic sequence and state diagram. No broker, CDC process, workflow runner or actual database was deployed, exercised or independently reviewed. Earlier combined [outbox/idempotency research](../../../distributed/transactional-outbox-and-idempotency.md) remains preserved for line-level source comparison. <!-- /tycho-question-source --> > **Pattern atlas:** > [Distributed Workflow Orches",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md",
+          "title": "Outbox, inbox, sagas and durable workflow coordination"
+        },
+        {
+          "excerpt": "# Local transaction, outbox publication and duplicate side effects > Tycho evidence-backed technical pilot, [#39](https://github.com/rouslanbaranov/tycho/issues/39); proposed owners V04/C04\u2013C05. Source inspection: **2026-10-18**. Status: original technical explanation with specifically inspected public-source passages, **not** a running integration, verified production guarantee or independent human review.",
+          "path": "book/distributed/transactional-outbox-and-idempotency.md",
+          "title": "Local transaction, outbox publication and duplicate side effects"
+        },
+        {
+          "excerpt": "# Outbox publication and ordering **Owning question:** Which local atomic record closes a dual-write loss window? This page belongs to [V04/C05 \u2014 Outbox, inbox, sagas and durable workflows](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:1 -->",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-publication.md",
+          "title": "Outbox publication and ordering"
+        },
+        {
+          "excerpt": "# Sagas, workflow recovery and compensation **Owning question:** What business recovery contract replaces a nonexistent global rollback? This page belongs to [V04/C05 \u2014 Outbox, inbox, sagas and durable workflows](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:4 -->",
+          "path": "book/volumes/v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md",
+          "title": "Sagas, workflow recovery and compensation"
+        }
+      ],
+      "question": "What should operators plan for when a poison row prevents an outbox relay from progressing?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A023",
+      "page_new": [
+        {
+          "excerpt": "# Local and distributed caching: correctness, invalidation and overload boundaries > Tycho [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84), original technical research based on publicly accessible Redis and Caffeine documentation, inspected **2026-10-19**. All scenarios and data are fictional. No measured cache hit rates, end-to-end speedup, consistency guarantee or independent review is claimed.",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "title": "Local and distributed caching: correctness, invalidation and overload boundaries"
+        },
+        {
+          "excerpt": "# Stampedes and source protection **Owning question:** How do expiry and cache loss concentrate demand on the origin? This page belongs to [V06/C02 \u2014 Hot keys, cache stampedes and read amplification](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:2 -->",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stampede-protection.md",
+          "title": "Stampedes and source protection"
+        },
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:-1 --> # Cache invalidation, stampedes and hot-key failure modes > **Original Tycho V06/C02 chapter draft**, 2026-10-19. Public Caffeine refresh, Redis cache-aside and EXPIRE sources describe mechanisms. All races and load examples here are educational inventions; no cache, Redis lock, version guard, database or benchmark was run or reviewed. The earlier [combined cache research](../../../scaling/local-distributed-caching-and-invalidation.md) remains intact until claims are reconciled. <!-- /tycho-question-source --> > **Pattern atlas:** > [Cache Invalidation](../../v11-pattern-atlas/c05-caching-retrieval/cache-invalidati",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/cache-invalidation-stampede-and-hot-keys.md",
+          "title": "Cache invalidation, stampedes and hot-key failure modes"
+        },
+        {
+          "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "title": "Edge caching, private content and origin recovery"
+        }
+      ],
+      "question": "Why can synchronized expiry make a short cache TTL expensive during a traffic burst?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A024",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:-1 --> # Local and distributed caching: authority, freshness and placement > **Independent Tycho draft V06/C01, 2026-10-19.** Public Redis cache-aside and Caffeine eviction/refresh specifications inform the mechanism. All examples are invented. No application, cache server, performance test or independent reviewer was involved. The former [combined caching research](../../../scaling/local-distributed-caching-and-invalidation.md) is retained for source/claim reconciliation. <!-- /tycho-question-source --> > **Pattern atlas:** > [Distributed Cache](../../v11-pattern-atlas/c05-caching-retrieval/README.md#distributed-cache) \u2014",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/local-and-distributed-cache-design.md",
+          "title": "Local and distributed caching: authority, freshness and placement"
+        },
+        {
+          "excerpt": "# Local and distributed caching: correctness, invalidation and overload boundaries > Tycho [Issue #84](https://github.com/rouslanbaranov/tycho/issues/84), original technical research based on publicly accessible Redis and Caffeine documentation, inspected **2026-10-19**. All scenarios and data are fictional. No measured cache hit rates, end-to-end speedup, consistency guarantee or independent review is claimed.",
+          "path": "book/scaling/local-distributed-caching-and-invalidation.md",
+          "title": "Local and distributed caching: correctness, invalidation and overload boundaries"
+        },
+        {
+          "excerpt": "# Eviction, refresh and cache-aside races **Owning question:** Which read/write interleaving invalidates a naive freshness promise? This page belongs to [V06/C01 \u2014 Local and distributed caching](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:3 -->",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md",
+          "title": "Eviction, refresh and cache-aside races"
+        },
+        {
+          "excerpt": "# Stale fills and regeneration ownership **Owning question:** Which version or fencing rule prevents a refresh from publishing obsolete state? This page belongs to [V06/C02 \u2014 Hot keys, cache stampedes and read amplification](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.e0f0d5b68f834acbae94cc6714895dd3:1 -->",
+          "path": "book/volumes/v06-caching-indexing-and-retrieval/c02-hot-keys-cache-stampedes-and-read-amplification/stale-fill.md",
+          "title": "Stale fills and regeneration ownership"
+        }
+      ],
+      "question": "What transient read behavior can remain immediately after a cache invalidation on write?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A025",
+      "page_new": [
+        {
+          "excerpt": "# Static Content Hosting > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/static-content-hosting.md#static-content-hosting) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [edge cache and origin page](edge-cache-origin.md#static-content-hosting) on 2026-10-29. The CDN and origin walkthrough remains on the chapter page. Static content hosting places static resources in a storage service that serves them directly, reducing load on the application compute that handles other requests. The host must own upload validation, origin protection and prewarming for a release. A retained version is the rollback p",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
+          "title": "Static Content Hosting"
+        },
+        {
+          "excerpt": "# V08/C08 \u2014 Network request paths, routing and edge delivery **Owning question:** Which network boundary owns routing, transport, trust and the fate of an interrupted request?",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/README.md",
+          "title": "V08/C08 \u2014 Network request paths, routing and edge delivery"
+        },
+        {
+          "excerpt": "# Compute models and operating constraints **Owning question:** Which workload, isolation and operating constraints make a runtime topology viable? This page belongs to [V08/C03 \u2014 VMs, containers, orchestration and serverless](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.ea94649bfd8c4be183f9114618d7ccaa:0 -->",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c03-vms-containers-orchestration-and-serverless/compute-models.md",
+          "title": "Compute models and operating constraints"
+        },
+        {
+          "excerpt": "# Parallelism, serial work and scaling models **Owning question:** Which model assumptions bound useful throughput as concurrency grows? This page belongs to [V07/C02 \u2014 Contention, saturation and scaling laws](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.7ad835c06d5a4e3aabf6b14632f92c86:1 -->",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "title": "Parallelism, serial work and scaling models"
+        }
+      ],
+      "question": "Why is dedicated static content hosting a poor fit for personalized content that cannot be cached?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A026",
+      "page_new": [
+        {
+          "excerpt": "# Edge caching, private content and origin recovery **Owning question:** Which representation may an edge reuse, and how is correctness preserved during origin failure? > **Pattern atlas:** > [CDN / Edge Caching](../../v11-pattern-atlas/c05-caching-retrieval/README.md#cdn--edge-caching) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/README.md#static-content-hosting) \u2014 decision conditions and contraindications.",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/edge-cache-origin.md",
+          "title": "Edge caching, private content and origin recovery"
+        },
+        {
+          "excerpt": "# Static Content Hosting > **Pattern atlas:** > [Static Content Hosting](../../v11-pattern-atlas/c09-scalability/static-content-hosting.md#static-content-hosting) \u2014 decision conditions and contraindications. This page owns the bounded technical note moved from the [edge cache and origin page](edge-cache-origin.md#static-content-hosting) on 2026-10-29. The CDN and origin walkthrough remains on the chapter page. Static content hosting places static resources in a storage service that serves them directly, reducing load on the application compute that handles other requests. The host must own upload validation, origin protection and prewarming for a release. A retained version is the rollback p",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/static-content-hosting.md",
+          "title": "Static Content Hosting"
+        },
+        {
+          "excerpt": "# Gateway boundaries and offloading **Owning question:** Which policy and connection functions may a gateway own without hiding backend authority? A gateway can centralize routing, quotas and common policy. That concentration is useful only when the trust boundary is explicit and the backend still enforces the authority it owns. > **Pattern atlas:** > [API Gateway](../../v11-pattern-atlas/c02-api-communication/README.md#api-gateway) \u2014 decision conditions and contraindications. > [Gateway Aggregation](../../v11-pattern-atlas/c02-api-communication/README.md#gateway-aggregation) \u2014 decision conditions and contraindications. > [Gateway Offloading](../../v11-pattern-atlas/c02-api-communication/REA",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md",
+          "title": "Gateway boundaries and offloading"
+        },
+        {
+          "excerpt": "# V11/C02 \u2014 API and service communication **Owning question:** Which API and discovery patterns fit the trust boundary?",
+          "path": "book/volumes/v11-pattern-atlas/c02-api-communication/README.md",
+          "title": "V11/C02 \u2014 API and service communication"
+        }
+      ],
+      "question": "Which edge-hosting responsibilities must be owned before static content is offloaded?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A027",
+      "page_new": [
+        {
+          "excerpt": "# V10/C05 \u2014 Target architecture versus transition states",
+          "path": "book/volumes/v10-decision-support-and-modernization/c05-target-architecture-versus-transition-states/README.md",
+          "title": "V10/C05 \u2014 Target architecture versus transition states"
+        },
+        {
+          "excerpt": "# Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover **ID:** `decision.data-migration-shadow-reconcile` | **Owner:** M9 E16-06 #119 | **State:** original analytical draft, independent reviewer pending. **Method:** compare contrasting historical cases; distinguish each company's *reported past decision* from the **synthetic** decision below. No company is claimed to have assessed the other firm's choices.",
+          "path": "book/cases/decisions/data-migration-correctness.md",
+          "title": "Decision Playbook \u2014 Data migration: compatibility, shadow differences and authoritative cutover"
+        },
+        {
+          "excerpt": "# Reader/writer compatibility and migration stages **Owning question:** Which combinations must work during expansion, coexistence and contraction? This page belongs to [V08/C05 \u2014 Backward-compatible database change](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.77957bf0f2d44c4a9bc819fc5b3e1ddb:1 -->",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md",
+          "title": "Reader/writer compatibility and migration stages"
+        },
+        {
+          "excerpt": "# Multi-zone availability, multi-region disaster recovery and restore contracts > Original Tycho E14-09 technical chapter, 2026-10-19, linked to [issue #87](https://github.com/rouslanbaranov/tycho/issues/87). The plans, tables and example timeline are **fictional and proposed**, not an operated disaster recovery system or evidence of a successful restore.",
+          "path": "book/deployment/multi-region-disaster-recovery-contracts.md",
+          "title": "Multi-zone availability, multi-region disaster recovery and restore contracts"
+        }
+      ],
+      "question": "What must be verifiable before the controlled cutover card recommends pausing writes and switching authority?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A028",
+      "page_new": [
+        {
+          "excerpt": "# Parallelism, serial work and scaling models **Owning question:** Which model assumptions bound useful throughput as concurrency grows? This page belongs to [V07/C02 \u2014 Contention, saturation and scaling laws](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.7ad835c06d5a4e3aabf6b14632f92c86:1 -->",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c02-contention-saturation-and-scaling-laws/scaling-models.md",
+          "title": "Parallelism, serial work and scaling models"
+        },
+        {
+          "excerpt": "# Meta \u2014 Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation **Case ID:** `case.meta.ingestion-shadow-lifecycle` \u00b7 **M9:** E16-05 #118 \u00b7 **Status:** evidence-backed draft; independent review pending. **Public first-party src.m9-me03:** Zihao Tao, Mohan Perumal Swamy, Grace Gong, Ailyn Tong, Peishan Wang, Nilay Kapadia, Md Mustafijur Rahman Faysal, Saurav Sen and Jameel Mohamed. [Meta Engineering, 2026-05-12: Migrating Data Ingestion Systems at Meta Scale](https://engineering.fb.com/2026/05/12/data-infrastructure/migrating-data-ingestion-systems-at-meta-scale/). Relevant original sections: **The Migration Challenge**, **Ensuring a Seamless Transition**, **The Migration L",
+          "path": "book/cases/meta-ingestion-shadow-migration-lifecycle.md",
+          "title": "Meta \u2014 Dataset Ingestion Cutover Across Thousands of Jobs with Shadow Validation"
+        },
+        {
+          "excerpt": "# Architecture evolution: when to keep, modularize or extract a service > **Tycho research page \u2014 Issue #79**, proposed V02/C03\u2013C06. Public source review: **2026-10-18**. Original explanation and wholly synthetic migration case; not a completed architecture assessment or independently verified modernization plan.",
+          "path": "book/application/architecture-evolution-and-extraction.md",
+          "title": "Architecture evolution: when to keep, modularize or extract a service"
+        },
+        {
+          "excerpt": "# Distributed protocol verification **Owning question:** How can histories, invariants and executable models expose a distributed correctness defect?",
+          "path": "book/volumes/v01-requirements-and-architecture/c04-evidence-hypotheses-and-architecture-experiments/protocol-correctness.md",
+          "title": "Distributed protocol verification"
+        }
+      ],
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A029",
+      "page_new": [
+        {
+          "excerpt": "<!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:-1 --> # Structured logging, authoritative audit and data lineage > **Tycho original System Design manuscript V09/C04, 2026-10-19.** Public OpenTelemetry Logs Data Model and OpenLineage specifications support narrow data representation claims. All cases are invented, with no real logs, private identifiers, audit store, workflow run or compliance approval used. > > The content_review field retains the decomposition-era draft state; no independent > acceptance is asserted. <!-- /tycho-question-source --> > **Pattern atlas:** > [Structured Logging](../../v11-pattern-atlas/c11-security-operations/structured-logging.md#structu",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/logs-audit-and-data-lineage.md",
+          "title": "Structured logging, authoritative audit and data lineage"
+        },
+        {
+          "excerpt": "# Logs, authoritative audit and lineage **Owning question:** Which question is answered by each kind of record? This page belongs to [V09/C04 \u2014 Logging, audit and lineage](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.436c2b22dc9e47acaaca7d18fadb511c:1 -->",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/record-semantics.md",
+          "title": "Logs, authoritative audit and lineage"
+        },
+        {
+          "excerpt": "# V09/C04 \u2014 Logging, audit and lineage",
+          "path": "book/volumes/v09-observability-security-and-operations/c04-logging-audit-and-lineage/README.md",
+          "title": "V09/C04 \u2014 Logging, audit and lineage"
+        },
+        {
+          "excerpt": "# Collection identity, privacy and retention **Owning question:** Which content and metadata may each caller observe across snapshots? This page belongs to [V09/C07 \u2014 Safety, isolation and privacy in agent-accessible services](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.0ae1aabac3b64c2f924cc427684bdbab:4 -->",
+          "path": "book/volumes/v09-observability-security-and-operations/c07-safety-isolation-and-privacy-in-agent-accessible-services/collection-privacy.md",
+          "title": "Collection identity, privacy and retention"
+        }
+      ],
+      "question": "Why is an audit trail unreliable if the actor being audited can modify or delete the records?",
+      "split": "atlas"
+    },
+    {
+      "id": "V4-A030",
+      "page_new": [
+        {
+          "excerpt": "# Practice and recovery readiness **Owning question:** What must an incident exercise demonstrate before the runbook is trusted? This page belongs to [V09/C06 \u2014 Incident response and operational change](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.d87f9ba3852b49ee8188d150bb679716:6 -->",
+          "path": "book/volumes/v09-observability-security-and-operations/c06-incident-response-and-operational-change/incident-practice.md",
+          "title": "Practice and recovery readiness"
+        },
+        {
+          "excerpt": "# Discovery, load balancing and backend selection **Owning question:** How does an endpoint change become a correctly balanced request rather than merely a new address? > **Pattern atlas:** > [Service Discovery](../../v11-pattern-atlas/c02-api-communication/service-discovery.md#service-discovery) \u2014 decision conditions and contraindications. > [Client-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#client-side-discovery) \u2014 decision conditions and contraindications. > [Server-Side Discovery](../../v11-pattern-atlas/c02-api-communication/README.md#server-side-discovery) \u2014 decision conditions and contraindications. > **Pattern atlas:** > [Load Balancing](../../v11-pattern",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md",
+          "title": "Discovery, load balancing and backend selection"
+        },
+        {
+          "excerpt": "# Shared dependencies and replica placement **Owning question:** Which dependency sets remain common despite nominal zone diversity? This page belongs to [V08/C06 \u2014 High availability and failure-domain placement](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.6b3725950fad4c0db82417b3d0225d32:1 -->",
+          "path": "book/volumes/v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/failure-domains.md",
+          "title": "Shared dependencies and replica placement"
+        },
+        {
+          "excerpt": "# Recovery hysteresis and overload experiments **Owning question:** What prevents a recovering dependency from being overwhelmed immediately? This page belongs to [V07/C05 \u2014 Overload protection and graceful degradation](README.md). Use the integrated walkthrough for the surrounding decision; the sections below own this narrower mechanism and its limits. <!-- tycho-question-source:tycho.page.c5d20ae7ef6445e5b23dd5fbac625060:6 -->",
+          "path": "book/volumes/v07-performance-scale-and-resilience/c05-overload-protection-and-graceful-degradation/overload-recovery.md",
+          "title": "Recovery hysteresis and overload experiments"
+        }
+      ],
+      "question": "Why should a liveness probe not restart a healthy process merely because a shared dependency is unavailable?",
+      "split": "atlas"
+    }
+  ]
+}
