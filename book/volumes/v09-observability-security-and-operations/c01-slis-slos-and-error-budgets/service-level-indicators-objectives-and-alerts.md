@@ -35,18 +35,26 @@ route_hints:
     - "error-budget"
     - "decisions"
 evidence_scope:
-  source_ids: []
+  source_ids:
+    - "src.sre"
+    - "src.sre-workbook"
+    - "src.prometheus"
+    - "src.openslo"
   claim_ids: []
-  status: "unknown"
-  notes: "Only exact URL matches to the global source register are normalized here. Page-local case and evidence ledger IDs remain in the body; no claim-level mapping or source inspection is inferred."
+  status: "source-linked"
+  notes: >-
+    Bounded pattern owner section for tycho.pattern.sli-slo-and-error-budgets.
+    The 2026-10-31 section binds Google SRE Workbook, Google SRE Book, OpenSLO
+    and Prometheus units; src.openslo is proposed and not yet in the shared
+    register. Exact digests and limits are recorded in the lane note.
 content_review:
-  status: "draft"
-  reviewed_at: null
-  reviewer: null
+  status: "self-checked"
+  reviewed_at: "2026-10-31"
+  reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-21"
-source_inspection_date: null
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.c987c475cc5340bcb967f4b6f963b295:-1 -->
@@ -55,7 +63,7 @@ content_verified_at: null
 
 > **Tycho chapter-owner draft V09/C01, 2026-10-19.** Public Google SRE Workbook, Prometheus and OpenTelemetry documentation inform the explanation. The workflow, numbers and examples are original fictional teaching material. No service SLO, alert rule, monitoring deployment, traffic trace, data sample or independent technical acceptance has been observed or executed.
 >
-> The content_review field retains the decomposition-era draft state; no independent
+> The content_review field records the 2026-10-31 self-check; no independent
 > acceptance is asserted.
 
 <!-- /tycho-question-source -->
@@ -108,19 +116,75 @@ The detailed pages separate the mechanisms that make this decision conditional:
 
 ### SLI-SLO and Error Budgets
 
-An SLI is a measured ratio of good events to valid events; an SLO is the target for that ratio over
-a window, and the error budget is the allowed failure quantity. The measurement contract precedes
-the number, because a green indicator built on the wrong denominator is worse than no indicator.
+**Mechanism.** The Google SRE Workbook defines an SLI as "an indicator of the level of
+service that you are providing" and recommends "treating the SLI as the ratio of two
+numbers: the number of good events divided by the total number of events." It states that
+"the SLO is a target percentage and the error budget is 100% minus the SLO." The SRE Book
+calls the SLO "a target value or range of values for a service level that is measured by an
+SLI" and the error budget "a rate at which the SLOs can be missed." OpenSLO likewise
+defines an SLO as "a target value or a range of values for a service level that is
+described by a service level indicator (SLI)."
+**Tycho reading:** the ratio, target and complement are a measurement contract, not a
+dashboard label. The arithmetic below is Tycho synthetic illustration, not a source claim:
+A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents,
+while this window has 30, **consuming 300% of the target's error allowance**.
 
-A hypothetical target SLO of 99.9% would allow at most 10 failures among 10,000 intents, while this
-window has 30, **consuming 300% of the target's error allowance**. Whether user cancellations,
-blocked abusive traffic, malformed requests and legitimate overload rejections count must be agreed
+**Invariant.** The SRE Book warns that "we often aggregate raw measurements. This needs to
+be done carefully" and recommends that teams "standardize on common definitions for SLIs so
+that you don’t have to reason about them from first principles each time." Its standard
+template names "Which requests are included" and gives "HTTP GETs from black-box monitoring
+jobs" as an example. The Workbook permits "a rolling window or a calendar-aligned window"
+and defines the ratio as good events over total events. Whether user cancellations, blocked
+abusive traffic, malformed requests and legitimate overload rejections count must be agreed
 before measurement; exclusion policy cannot change retrospectively to improve the score.
+**Tycho rule:** fix the eligible population, numerator, denominator, window, aggregation and
+exclusions before measurement, and publish them with the data source. A later change is a
+new SLO version and must be reviewed, not used to rewrite an earlier score.
 
-An instrumentation design that counts only HTTP 2xx responses among requests **admitted into the
-service**, excluding 500 deliberate overload rejections before the handler, can report misleading
-health. Publish the denominator, the exclusions and the data source, and review the budget with the
-product owner.
+**Failure and recovery.** The Workbook states that "once you exhaust your error budget (or
+come close to exhausting it), you should do something in order to restore stability to your
+system." Its policy must "cover the specific actions that must be taken when a service has
+consumed its entire error budget for a given period of time, and specify who will take
+them." The alerting chapter defines "Burn rate is how fast, relative to the SLO, the
+service consumes the error budget" and recommends "the multiwindow, multi-burn-rate alerting
+technique" as "the most appropriate approach to defending your application’s SLOs."
+Prometheus implements alerts with an optional `for` clause that waits for a condition to
+persist and a `keep_firing_for` clause that "tells Prometheus to keep this alert firing for
+the specified duration after the firing condition was last met." That clause can prevent
+"flapping alerts, false resolutions due to lack of data loss, etc." **Tycho reading:** a
+skipped evaluation is a real blind spot: "the next evaluation will be skipped" and
+`rule_group_iterations_missed_total` increments. The Book's control loop is to "Monitor and
+measure the system’s SLIs. Compare the SLIs to the SLOs, and decide whether or not action is
+needed. If action is needed, figure out what needs to happen in order to meet the target.
+Take that action."
+**Tycho runbook:** alert on user-visible burn, not raw 2xx counts; use multiwindow burn-rate
+rules with bounded `for` and `keep_firing_for`; treat missed rule evaluations as a monitoring
+gap; and on budget exhaustion execute the written policy (prioritize reliability work, freeze
+risky changes, allow reviewed security exceptions). An instrumentation design that counts
+only HTTP 2xx responses among requests **admitted into the service**, excluding 500
+deliberate overload rejections before the handler, can report misleading health.
 
-Metrics or a simpler availability check may be preferable when the user journey is not measurable.
-An SLO is a fit when the team can act on the budget and the indicator tracks a real user outcome.
+**Alternative.** OpenSLO aims "to provide an open specification for defining SLOs to enable a
+common, vendor–agnostic approach to tracking and interfacing with SLOs", but
+"Platform-specific implementation details are purposefully excluded from the scope of this
+specification." Prometheus takes the executable side: "Recording rules allow you to
+precompute frequently needed or computationally expensive expressions and save their result
+as a new set of time series", and "Alerting rules allow you to define alert conditions based
+on Prometheus expression language expressions and to send notifications about firing alerts
+to an external service."
+**Tycho choice rule:** use OpenSLO when one SLO definition must travel across tools and
+teams; use Prometheus recording and alerting rules when one execution environment owns the
+definition and executable queries and routing matter. Reverse when translation and duplicate
+maintenance cost exceeds the portability benefit, or when the platform-specific rule itself
+is the contract. Metrics or a simpler availability check may be preferable when the user
+journey is not measurable.
+
+**Bound source limits.** Six public units were read on 2026-10-31: Google SRE Workbook
+"Implementing SLOs" and "Alerting on SLOs"; Google SRE Book "Service Level Objectives";
+OpenSLO "Specification"; and Prometheus "Alerting rules" and "Defining recording rules."
+They are public documentation or specification pages, not benchmarks or production
+observations. Headers, digests and section lists are in the lane note. No SLO, alert rule,
+recording rule or monitoring deployment was created or executed; no budget, burn rate or
+alert latency was measured. The 99.9%/300% arithmetic, the 2xx-only blind spot and the
+action policy remain Tycho synthetic guidance. Quotes are short whitespace-normalized
+excerpts, not full-page reproductions.
