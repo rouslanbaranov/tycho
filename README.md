@@ -48,19 +48,20 @@ Tycho sits between open study guides, commercial interview courses, reference
 books, and AI documentation tools. The table reflects public product pages
 reviewed on 2026-11-01; it is not an exhaustive market scan.
 
-| Project | Open | Claim-level evidence | Agent surface | Focus |
-|---|---|---|---|---|
-| **Tycho** | MIT | In progress | MCP candidate | Decisions |
-| System Design Primer | CC BY 4.0 | Link list | No public MCP | Interviews |
-| ByteByteGo | Commercial | Not advertised | No public MCP | Interviews |
-| DDIA | Commercial | Bibliography | No public MCP | Concepts |
-| Hello Interview | Freemium | Not advertised | No public MCP | Interviews |
-| Context7 | Open source* | Docs links | MCP | Docs retrieval |
+| Project | Open | Claim evidence | Agent | Coverage | Focus |
+|---|---|---|---|---|---|
+| **Tycho** | MIT | In progress | MCP candidate | Book + 145 patterns | Decisions |
+| System Design Primer | CC BY 4.0 | Link list | No public MCP | Broad guide | Interviews |
+| ByteByteGo | Commercial | Not advertised | No public MCP | Course library | Interviews |
+| DDIA | Commercial | Bibliography | No public MCP | Data systems | Concepts |
+| Hello Interview | Freemium | Not advertised | No public MCP | Interview topics | Interviews |
+| Context7 | Open source* | Docs links | MCP | Docs index | Retrieval |
 
-Claim-level evidence means sources are linked to claims at section or revision
-level, not merely that a project has a bibliography. Agent surface means a public
-MCP or comparable agent-facing retrieval interface. Focus reflects each
-project's public positioning.
+Claim evidence means sources are linked to claims at section or revision level,
+not merely that a project has a bibliography. Agent means a public MCP or
+comparable agent-facing retrieval interface. Coverage is a positioning label;
+Tycho's pattern count is a catalogue count, not a claim that every entry has
+passed the same evidence or review gate. Focus reflects public positioning.
 
 \* Context7 is an open-source project with a hosted service; its public surface
 is documentation retrieval rather than decision support.
@@ -73,6 +74,13 @@ and [Context7](https://github.com/upstash/context7).
 
 ### Where Tycho is different
 
+- **Broad, structured system-design coverage.** The [book](book/README.md) runs
+  from requirements and application boundaries through concurrency, distributed
+  coordination, data, retrieval, resilience, delivery, operations, decision
+  support and modeling. The
+  [pattern atlas](book/volumes/v11-pattern-atlas/README.md) catalogues 145
+  patterns across 11 families. These are catalogue counts, not uniform evidence
+  or review coverage.
 - **Evidence layer, not just a bibliography.** Tycho is designed to bind
   material claims to exact public source sections and revisions, with support
   and limits recorded. This layer is in progress, and the README does not claim
