@@ -146,3 +146,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-10-31 | Codex / OpenAI (gpt-5.6-sol) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-codex.md` | `f50fc94a02638fa7bd60d2da9851a1d37bd0ad252d90972013c686c643514974` |
 | 2026-10-31 | DeepSeek Reviewer (same-vendor fallback; supplementary) | #540 Consistent Hashing | pass-with-findings | `2026-10-31-consistent-hashing-deepseek.md` | `3e5289deb8fb5cff4e8830f764a73a4eeb8a73b675ac86c7b9975384c6bd20a9` |
 | 2026-10-31 | DeepSeek Reviewer | #540 Circuit Breaker | pass | `2026-10-31-circuit-breaker-deepseek.md` | `a227c3153af91c19347c17ae5be6fc1a6d047da222e55d727e24fdcc0398da60` |
+| 2026-10-31 | DeepSeek Reviewer | #540 Expand-and-Contract | pass | `2026-10-31-expand-and-contract-deepseek.md` | `de6c491d59579fe6b3d3f1dc2343e8f15edadac752d2137b332ea620be7584d8` |
