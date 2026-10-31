@@ -13017,14 +13017,23 @@
         "mechanism": {
           "state": "supported",
           "quote": "A single authoritative registration database plus a graph/search/OLAP projection is a valid possible design—but then there are *two data representations*, not two automatically consistent sources of truth.",
-          "reason": "Fowler describes using different stores for different data; the authoritative-store-plus-projection design and its duplicate representation are Tycho synthesis.",
+          "reason": "Fowler describes using different stores for different data; Microsoft describes separate read and write models. The registration-authority-plus-projection design and its duplicate representation are Tycho synthesis, labelled in the page.",
           "binding": {
             "source_id": "src.fowler-polyglot",
             "ledger_record": "read.batch3-fowler-polyglot.2026-10-22",
             "section": "Polyglot Persistence",
             "quote": "One of the interesting consequences of this is that we are gearing up for a shift to polyglot persistence 1 - where any decent sized enterprise will have a variety of different data storage technologies for different kinds of data. There will still be large amounts of it managed in relational stores, but increasingly we'll be first asking how we want to manipulate the data and only then figuring out what technology is the best bet for it.",
             "revision": "2053ac45731c4b3002b606c9ad3eb38fde5a2081b405b58932c0972e2283d29a"
-          }
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-cqrs.2026-10-30",
+              "section": "Separate models in different data stores",
+              "quote": "The read model is eventually consistent with the write model.",
+              "revision": "469253bc1c554fc0697cff4f1bbdbcbf851bb40840d39579850c92e03d7f591f"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
