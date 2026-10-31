@@ -41,6 +41,23 @@ class ContractTests(unittest.TestCase):
         self.assertIn("frontmatter", meta)
         self.assertIn("next_offset", meta["pagination"]["page"]["outputs"])
         self.assertIn("tycho_page", meta["output_schemas"])
+        self.assertIn("atlas", [x["name"] for x in meta["layers"]])
+        self.assertIn("modeling-and-simulation",
+                      [x["name"] for x in meta["layers"]])
+        self.assertIn("offset-inside-diagram",
+                      meta["errors"]["tool_execution"]["codes"])
+
+    def test_layer_aliases_are_explicit(self):
+        import section_search
+        self.assertEqual(section_search.normalize_volume("atlas"), "v11")
+        self.assertEqual(
+            section_search.normalize_volume("modeling-and-simulation"), "v12")
+        server = mcp_server.TychoMcpServer(root=ROOT)
+        payload = server._tool_search({
+            "query": "pattern", "volume": "modeling-and-simulation",
+            "limit": 1})
+        payload = payload.get("structuredContent", payload)
+        self.assertEqual(payload["layer"], "modeling-and-simulation")
 
     def test_page_returns_frontmatter_related_and_next_offset(self):
         server = mcp_server.TychoMcpServer(root=ROOT)

@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tycho external-agent benchmark telemetry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "agent_id",
+    "question_id",
+    "snapshot",
+    "started_at",
+    "tool_calls",
+    "token_usage",
+    "derived",
+    "judge"
+  ],
+  "properties": {
+    "agent_id": {
+      "type": "string",
+      "description": "Unique independent agent/session ID."
+    },
+    "question_id": {
+      "type": "string",
+      "description": "Corpus question ID."
+    },
+    "snapshot": {
+      "type": "string",
+      "description": "Pinned retrieval snapshot."
+    },
+    "started_at": {
+      "type": "string",
+      "description": "ISO-8601 start timestamp."
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Agent model identifier if exposed."
+    },
+    "tool_calls": {
+      "type": "array",
+      "description": "Ordered MCP/CLI calls.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "tool",
+          "ok"
+        ],
+        "properties": {
+          "tool": {
+            "type": "string",
+            "description": "Tool or CLI command."
+          },
+          "args_summary": {
+            "type": "object",
+            "description": "Bounded argument summary, no secrets."
+          },
+          "ok": {
+            "type": "boolean",
+            "description": "Whether the call succeeded."
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Error text if failed."
+          },
+          "latency_ms": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "Call latency."
+          },
+          "returned": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Returned item count."
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Pages visited."
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Sections visited."
+          }
+        }
+      }
+    },
+    "token_usage": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Input tokens."
+        },
+        "output": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Output tokens."
+        },
+        "cached": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Cached input tokens."
+        },
+        "total": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total tokens."
+        },
+        "estimated": {
+          "type": "boolean",
+          "description": "True if approximated rather than provider-reported."
+        }
+      }
+    },
+    "derived": {
+      "type": "object",
+      "description": "Deterministic counters derived from tool_calls.",
+      "additionalProperties": true
+    },
+    "anomalies": {
+      "type": "array",
+      "description": "Cohort-relative anomalies.",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      }
+    },
+    "judge": {
+      "type": "object",
+      "description": "Judge scores and criteria; never human acceptance.",
+      "additionalProperties": true
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Harness/agent failure, not judge failure."
+    }
+  }
+}

@@ -88,8 +88,8 @@ failures return `-32700`. Batch requests are rejected explicitly.
 | `tycho_outline` | Topic planning route | `limit` 1–20 |
 | `tycho_compare` | Extractive cited option matrix | 2–5 options |
 | `tycho_context` | Bounded evidence bundle by role | `limit` 1–20 |
-| `tycho_read` | Bounded read from one section | 1–5,000 codepoints |
-| `tycho_page` | Page body, section map, frontmatter | 1–5,000 codepoints |
+| `tycho_read` | Bounded read from one section | 1–6,000 codepoints |
+| `tycho_page` | Page body, section map, frontmatter | 1–6,000 codepoints |
 | `tycho_patterns` | Draft pattern summaries and registry snapshot | `limit` 1–50 |
 | `tycho_pattern` | One draft pattern, family, card and owner citation | One ID |
 | `tycho_evidence` | Registered document/claim/source metadata | One ID only |
@@ -126,10 +126,16 @@ Every schema property has a description. `tycho_describe` additionally returns
 `related` list in addition to their bounded content. Search results include
 `summary`, `topics`, `perspectives` and `related_ids` from the route metadata.
 
+The default soft budget is 2,500 codepoints; the hard request cap is 6,000.
 Pagination is explicit: `tycho_page` and `tycho_read` return `offset`,
 `returned_chars`, `total_chars`, `next_offset` and `truncated`; call again with
-`offset=next_offset` until it is null. `tycho_search` has no offset/cursor;
-refine the query, with a maximum of 20 results.
+`offset=next_offset` until it is null. A fenced Mermaid block is never split:
+the slice extends to its closing fence even when that exceeds the soft budget.
+Use `budget_overrun_chars` and `diagram_completed` to observe the extension.
+An offset inside a diagram returns a text-only tool error (`isError: true`)
+with `requested_offset`, `diagram_start`, `diagram_end` and
+`suggested_offset`; retry at the suggested offset. `tycho_search` has no
+offset/cursor; refine the query, with a maximum of 20 results.
 
 ## Pattern registry
 
@@ -219,7 +225,7 @@ correctness remain separate gates.
   or tenancy. It is not a hosted endpoint and must not be exposed as one.
 
 Input limits are enforced before retrieval: search `limit` 1–20, pattern
-`limit` 1–50, read/page budget 1–5,000 codepoints, pattern `offset` at most
+`limit` 1–50, read/page budget 1–6,000 codepoints, pattern `offset` at most
 10,000, query 2,000 characters, path 500 characters and message size
 1,000,000 characters.
 

@@ -430,7 +430,7 @@ class SearchTests(unittest.TestCase):
         with self.assertRaises(section_search.SearchError) as caught:
             self.read("missing#section", 0, 10)
         self.assertEqual(caught.exception.status, "not-found")
-        for offset, budget in ((-1, 10), (0, 0), (0, 5001)):
+        for offset, budget in ((-1, 10), (0, 0), (0, 6001)):
             with self.assertRaises(section_search.SearchError):
                 self.read(key, offset, budget)
         with self.assertRaises(section_search.SearchError):

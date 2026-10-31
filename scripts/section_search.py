@@ -93,8 +93,17 @@ def _cache_put(key, value):
 
 
 def normalize_volume(value):
-    """Map user-facing atlas layer name to the indexed volume code."""
-    return "v11" if value == "atlas" else value
+    """Map canonical layer names to indexed volume codes."""
+    return {"atlas": "v11",
+            "modeling-and-simulation": "v12"}.get(value, value)
+
+
+def layer_name(volume):
+    if volume == "v11":
+        return "atlas"
+    if volume == "v12":
+        return "modeling-and-simulation"
+    return "book"
 
 
 def bm25_weights():
@@ -1067,11 +1076,13 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
             "result_scope": ("all-sections" if all_sections else
                              "section-rerank" if section_rerank_applied else
                              "best-section-per-document"),
+            "layer": layer_name(volume),
             "filters": {"kind": kind, "topic": topic,
                         "evidence_status": evidence_status,
                         "path_prefix": path_prefix,
                         "artifact_type": artifact_type,
                         "volume": volume,
+                        "layer": layer_name(volume),
                         "pattern_ids": list(pattern_ids)},
             "detail": detail,
             "max_chars": max_chars,
@@ -1119,6 +1130,58 @@ def search(root, query, limit=5, kind=None, topic=None, evidence_status=None,
         db.close()
 
 
+
+MERMAID_FENCE = re.compile(
+    r"^[ \t]*([" + chr(96) + r"]{3,}|~{3,})[ \t]*([^\n]*)$")
+
+
+def diagram_ranges(text):
+    """Return (start, end) ranges for complete Mermaid fenced blocks."""
+    ranges = []
+    lines = text.splitlines(keepends=True)
+    offset = 0
+    open_at = None
+    marker = None
+    for line in lines:
+        start = offset
+        offset += len(line)
+        match = MERMAID_FENCE.match(line.rstrip("\n"))
+        if match:
+            fence = match.group(1)
+            info = match.group(2).strip().lower()
+            if open_at is None and info.startswith("mermaid"):
+                open_at = start
+                marker = fence
+            elif open_at is not None and fence[0] == marker[0] and len(fence) >= len(marker):
+                ranges.append((open_at, offset))
+                open_at = None
+                marker = None
+    if open_at is not None:
+        ranges.append((open_at, len(text)))
+    return ranges
+
+
+def paginate_text(text, offset, budget):
+    """Return a diagram-safe end offset and metadata."""
+    if offset > len(text):
+        raise SearchError("offset is beyond the section length",
+                          "offset-out-of-range")
+    end = min(len(text), offset + budget)
+    ranges = diagram_ranges(text)
+    for start, stop in ranges:
+        if start < offset < stop:
+            raise SearchError(
+                "offset-inside-diagram: requested_offset=%d; "
+                "diagram_start=%d; diagram_end=%d; suggested_offset=%d; "
+                "retry with offset=%d or offset=%d"
+                % (offset, start, stop, start, start, stop),
+                "offset-inside-diagram")
+        if offset < stop and end > start and end < stop:
+            end = stop
+    overrun = max(0, end - (offset + budget))
+    completed = any(end >= stop for start, stop in ranges if start < end)
+    return {"end": end, "overrun": overrun, "diagram_completed": completed}
+
 def read(root, section_key, offset=0, budget_chars=2000, index_path=None,
          include_evidence=False):
     _require(isinstance(section_key, str) and section_key.strip(),
@@ -1127,8 +1190,8 @@ def read(root, section_key, offset=0, budget_chars=2000, index_path=None,
              "include_evidence must be boolean")
     _require(isinstance(offset, int) and offset >= 0,
              "offset must be a non-negative integer")
-    _require(isinstance(budget_chars, int) and 1 <= budget_chars <= 5000,
-             "budget_chars must be an integer in 1..5000")
+    _require(isinstance(budget_chars, int) and 1 <= budget_chars <= 6000,
+             "budget_chars must be an integer in 1..6000")
     root = Path(root).resolve()
     db, manifest = open_snapshot(root, index_path)
     try:
@@ -1151,8 +1214,8 @@ def read(root, section_key, offset=0, budget_chars=2000, index_path=None,
                  "Document changed after the snapshot was published",
                  "snapshot-mismatch")
         content = row["content"]
-        _require(offset <= len(content), "offset is beyond the section length")
-        end = min(len(content), offset + budget_chars)
+        slice_info = paginate_text(content, offset, budget_chars)
+        end = slice_info["end"]
         payload = {
             "status": "ok",
             "snapshot": manifest["snapshot_id"],
@@ -1167,6 +1230,9 @@ def read(root, section_key, offset=0, budget_chars=2000, index_path=None,
             "evidence_status": row["evidence_status"],
             "offset": offset,
             "returned_chars": end - offset,
+            "budget_requested_chars": budget_chars,
+            "budget_overrun_chars": slice_info["overrun"],
+            "diagram_completed": slice_info["diagram_completed"],
             "total_chars": len(content),
             "next_offset": end if end < len(content) else None,
             "truncated": end < len(content),
