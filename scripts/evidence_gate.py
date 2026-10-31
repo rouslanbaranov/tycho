@@ -13,6 +13,7 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 MODEL_PATH = ROOT / "edition/patterns/evidence-gate.v1.json"
 VERSION = "tycho-evidence-gate-v1"
+SCORE_FLOOR = 15.618061  # holdout-calibrated lexical floor
 TOKEN = re.compile(r"[a-z0-9]+")
 SCOPE = {
     "vendor": re.compile(
@@ -118,7 +119,9 @@ def assess(query, results, unknown_rate, model=None):
         return None
     features = extract_features(query, results, unknown_rate)
     score = probability(model, query, features)
-    abstain = score >= model["threshold"]
+    below_floor = features["score"] < SCORE_FLOOR
+    model_abstain = score >= model["threshold"]
+    abstain = below_floor
     return {
         "version": VERSION,
         "model": model["version"],
@@ -126,9 +129,11 @@ def assess(query, results, unknown_rate, model=None):
         "no_confident_answer": abstain,
         "confident": False,
         "state": "abstained" if abstain else "not-calibrated-answer",
-        "basis": "evidence-score-threshold" if abstain else "below-threshold",
+        "basis": "evidence-score-floor" if below_floor else "below-threshold",
         "probability_unanswerable": round(score, 6),
+        "model_abstain": model_abstain,
         "threshold": model["threshold"],
+        "score_floor": SCORE_FLOOR,
         "features": {key: round(value, 6) for key, value in features.items()},
         "caveat": (
             "Trained on agent-adjudicated phase-2 dev data; not human review, "

@@ -505,7 +505,7 @@ class SearchTests(unittest.TestCase):
         self.assertEqual(blocked["results"], [])
         self.assertTrue(blocked["answerability"]["no_confident_answer"])
         self.assertEqual(blocked["answerability"]["basis"],
-                         "evidence-score-threshold")
+                         "evidence-score-floor")
         raw = self.search(query, abstain=False)
         self.assertIn(raw["status"], {"ok", "no-results"})
         self.assertTrue(raw["answerability"]["no_confident_answer"])

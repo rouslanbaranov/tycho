@@ -34,6 +34,19 @@ class EvidenceGateTests(unittest.TestCase):
             self.assertIn(name, features)
             self.assertIsInstance(features[name], (int, float))
 
+    def test_score_floor_abstains_on_low_lexical_score(self):
+        results = [{
+            "score": 7.0,
+            "title": "Cache design",
+            "heading": "Cache invalidation",
+            "excerpt": "A cache miss reads the origin and fills a TTL value.",
+            "matched_terms": ["cache", "miss"],
+        }]
+        assessment = evidence_gate.assess(
+            "How does a cache miss work?", results, 0.0)
+        self.assertTrue(assessment["no_confident_answer"])
+        self.assertEqual(assessment["basis"], "evidence-score-floor")
+
     def test_probability_is_in_range(self):
         model = evidence_gate.load_model()
         results = [{

@@ -460,7 +460,7 @@ class McpServerTests(unittest.TestCase):
         self.assertEqual(payload["returned"], 0)
         self.assertTrue(payload["answerability"]["no_confident_answer"])
         self.assertEqual(payload["answerability"]["basis"],
-                         "evidence-score-threshold")
+                         "evidence-score-floor")
 
     def test_exploratory_mode_returns_separate_weak_results(self):
         payload = self.call(self.server(), "tycho_search", {
