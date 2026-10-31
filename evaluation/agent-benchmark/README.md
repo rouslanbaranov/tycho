@@ -5,7 +5,9 @@ independent external-agent runs.
 
 ## Files
 
-- `corpus.json` — 100 questions, expected evidence, criteria weights.
+- `corpus.json` — v1 questions and expected evidence.
+- `corpus-v2.json` — core/optional claims and 50/50 dev/holdout split.
+- `AGENT-PROMPT.md` — checklist prompt for independent sessions.
 - `telemetry-schema.json` — per-session telemetry and token accounting.
 - `logs/` — one JSONL file per agent session (created by the harness).
 - `results.json` — harness output after a run.
@@ -17,7 +19,8 @@ independent external-agent runs.
   --corpus evaluation/agent-benchmark/corpus.json \
   --agent-command '<external-agent-command>' \
   --judge-command '.venv/bin/python scripts/agent_judge.py' \
-  --jobs 4
+  --judge-command-2 '<second-judge-command>' \
+  --split holdout --jobs 4
 ```
 
 The agent command receives `TYCHO_TASK_JSON`, `TYCHO_QUESTION`,
@@ -25,7 +28,9 @@ The agent command receives `TYCHO_TASK_JSON`, `TYCHO_QUESTION`,
 JSON answer to stdout. The judge receives the task on `TYCHO_TASK_JSON` and
 the answer on stdin.
 
-Use `--limit N` for a pilot, and `--validate-only` to check the corpus.
+Use `--limit N` for a pilot, `--split dev|holdout` for isolation, and
+`--validate-only` to check the corpus. A dual-judge run reports agreement and
+uses strict consensus for the pass rate.
 
 ## Limits
 

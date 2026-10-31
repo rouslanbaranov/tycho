@@ -16,9 +16,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = {"id", "question", "layer_expected", "difficulty",
-            "required_evidence", "expected_answer_points",
-            "abstention_expected", "token_budget", "time_budget_s",
-            "rubric_weights"}
+            "required_evidence", "abstention_expected", "token_budget",
+            "time_budget_s"}
 
 
 def load_json(path):
@@ -37,10 +36,13 @@ def validate(corpus):
         missing = REQUIRED - set(item)
         if missing:
             errors.append("%s missing %s" % (item.get("id"), sorted(missing)))
-        for key in ("required_evidence", "expected_answer_points",
-                    "rubric_weights"):
+        for key in ("required_evidence",):
             if not isinstance(item.get(key), list):
                 errors.append("%s %s must be a list" % (item.get("id"), key))
+        if "core_claims" in item and not isinstance(item["core_claims"], list):
+            errors.append("%s core_claims must be a list" % item.get("id"))
+        if "split" in item and item["split"] not in ("dev", "holdout"):
+            errors.append("%s invalid split" % item.get("id"))
     return errors
 
 
@@ -111,9 +113,12 @@ def aggregate(rows, corpus):
     calls = []
     for row in rows:
         ans = parse_answer(row) or {}
-        judge = row.get("judge") or {}
-        if isinstance(judge, dict):
-            scores.append(judge.get("pass", False))
+        if row.get("consensus") is not None:
+            scores.append(bool(row["consensus"]))
+        else:
+            judge = row.get("judge") or {}
+            if isinstance(judge, dict):
+                scores.append(judge.get("pass", False))
         usage = ans.get("token_usage") or {}
         val = usage.get("total")
         if isinstance(val, (int, float)):
@@ -133,12 +138,18 @@ def aggregate(rows, corpus):
             if abs(z) >= 2:
                 anomalies.append({"id": row["id"], "token_z": round(z, 2),
                                   "tokens": val})
+    judged = [r for r in rows if r.get("judge") or r.get("judge2")]
+    dual = [r for r in rows if r.get("judge") and r.get("judge2")]
+    agreement = sum(r.get("judge_agreement") is True for r in dual)
     return {"questions": len(rows),
             "dispatched_ok": sum(1 for x in rows if x.get("ok")),
-            "judged": len(scores),
+            "judged": len(judged),
+            "dual_judged": len(dual),
+            "judge_agreement": round(agreement / len(dual), 4) if dual else None,
             "pass_rate": round(sum(bool(x) for x in scores) / len(scores), 4)
             if scores else None,
             "mean_tokens": round(mean, 1) if mean is not None else None,
+            "token_available": len(tokens),
             "mean_calls": round(statistics.mean(calls), 2) if calls else None,
             "token_anomalies": anomalies,
             "layers": {layer: sum(1 for q in corpus["questions"]
@@ -147,11 +158,28 @@ def aggregate(rows, corpus):
                                             for q in corpus["questions"]})}}
 
 
+
+def run_judge(command, row, item, timeout):
+    env = dict(os.environ)
+    env["TYCHO_TASK_JSON"] = json.dumps(item, ensure_ascii=False)
+    try:
+        proc = subprocess.run(
+            shlex.split(command), cwd=ROOT, env=env,
+            input=row.get("stdout", ""), text=True,
+            capture_output=True, timeout=timeout)
+        return json.loads(proc.stdout) if proc.returncode == 0 else {
+            "error": proc.stderr[-2000:]}
+    except (subprocess.TimeoutExpired, ValueError) as exc:
+        return {"error": str(exc)}
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--corpus", type=Path, required=True)
     ap.add_argument("--agent-command", required=True)
     ap.add_argument("--judge-command")
+    ap.add_argument("--judge-command-2")
+    ap.add_argument("--split", choices=("dev", "holdout"))
     ap.add_argument("--jobs", type=int, default=1)
     ap.add_argument("--timeout", type=int, default=900)
     ap.add_argument("--limit", type=int, default=0)
@@ -167,6 +195,8 @@ def main(argv=None):
         print(json.dumps({"ok": True, "questions": len(corpus["questions"])}, indent=2))
         return 0
     questions = corpus["questions"]
+    if args.split:
+        questions = [q for q in questions if q.get("split") == args.split]
     if args.limit:
         questions = questions[:args.limit]
     rows = []
@@ -179,22 +209,24 @@ def main(argv=None):
     rows.sort(key=lambda x: x["id"])
     for row in rows:
         row["telemetry"] = derive_telemetry(row.get("log", ""))
-    # Judge is an external command that receives the answer on stdin.
+    # Judges are external commands that receive the answer on stdin.
     for row in rows:
-        if not args.judge_command or not row.get("ok"):
+        if not row.get("ok"):
             continue
         item = next(q for q in corpus["questions"] if q["id"] == row["id"])
-        env = dict(os.environ)
-        env["TYCHO_TASK_JSON"] = json.dumps(item, ensure_ascii=False)
-        try:
-            proc = subprocess.run(
-                shlex.split(args.judge_command), cwd=ROOT, env=env,
-                input=row.get("stdout", ""), text=True,
-                capture_output=True, timeout=args.timeout)
-            row["judge"] = json.loads(proc.stdout) if proc.returncode == 0 else {
-                "error": proc.stderr[-2000:]}
-        except (subprocess.TimeoutExpired, ValueError) as exc:
-            row["judge"] = {"error": str(exc)}
+        if args.judge_command:
+            row["judge"] = run_judge(args.judge_command, row, item, args.timeout)
+        if args.judge_command_2:
+            row["judge2"] = run_judge(args.judge_command_2, row, item, args.timeout)
+        if row.get("judge") and row.get("judge2"):
+            a = bool(row["judge"].get("pass"))
+            b = bool(row["judge2"].get("pass"))
+            row["judge_agreement"] = a == b
+            row["consensus"] = a and b
+        elif row.get("judge"):
+            row["consensus"] = bool(row["judge"].get("pass"))
+        elif row.get("judge2"):
+            row["consensus"] = bool(row["judge2"].get("pass"))
     out = {"status": "ai-benchmark-not-human", "corpus": str(args.corpus),
            "agent_command": args.agent_command, "rows": rows,
            "summary": aggregate(rows, corpus),
