@@ -38,6 +38,7 @@ evidence_scope:
     - "src.cortex-shuffle-sharding"
     - "src.cell-boundaries"
     - "src.microsoft-multitenant"
+    - "src.sre-workbook"
   claim_ids: []
   status: "source-linked"
   notes: "10 cards cite read units; owner links are bounded."
@@ -47,8 +48,8 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-29"
-source_inspection_date: "2026-10-29"
+updated_at: "2026-10-31"
+source_inspection_date: "2026-10-31"
 content_verified_at: null
 ---
 # V11/C09 — Scalability and load distribution
@@ -247,25 +248,35 @@ scalability-pattern; priority core.
 **Decision question.** Should independent deployment units be replicated as stamps for
 scale, isolation or locality?
 
-**Good-fit conditions.** Each stamp can be independently operated; routing/state ownership
-is explicit; duplication cost is acceptable.
+**Good-fit conditions.** Each stamp can be operated and upgraded independently; a routing
+key and a single state authority are explicit; shared global dependencies are enumerated
+and owned; duplication cost is acceptable.
 
 **Hard contraindications.** Reject when one deployment suffices, when stamps would share a
-hidden global dependency, or when routing/state duplication is unowned.
+hidden global dependency, or when routing, state or upgrade ownership is unassigned.
 
-**Competing alternative.** Cell-based architecture or one shared deployment. Reverse the
-choice when stamp operations and duplication exceed isolation benefit.
+**Competing alternative.** Cell-based architecture when fault isolation is the primary
+goal, or one shared deployment when isolation does not justify duplication. AWS describes
+cells this way: "Each cell is independent, does not share state with other cells, and
+handles a subset of the overall workload requests." A cell routing layer "distributes
+requests to individual cells based on the partition key". AWS also says that "Building a
+cell-based architecture doesn't necessarily mean having to double, triple, or more your
+application's infrastructure"; Tycho reads that as making scale secondary to isolation.
+Reverse the choice when stamp operations and duplication exceed the isolation benefit; the
+isolation-first comparison and reversal condition are Tycho's.
 
-**Failure and recovery.** Configuration drift and state duplication are common; verify
-boundaries in the owner section.
+**Failure and recovery.** Configuration drift, split state and shared dependencies are
+common; verify routing, state reconciliation and upgrade ownership in the owner section.
 
-**Technical owner.** [Deployment Stamps](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — independent deployment units for scale, isolation or locality, with routing keys and upgrade ownership.
+**Technical owner.** [Deployment Stamps](../../v08-delivery-deployment-and-recovery/c06-high-availability-and-failure-domain-placement/cells-shuffle-sharding.md#deployment-stamps) — independent deployment units for scale, isolation or locality, with routing keys, state authority and upgrade ownership.
 
 **Sources.**
 [src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-deployment-stamps.2026-10-21: all thirteen served
-headings read. The source is a public pattern/documentation
-unit, not a benchmark.
+retained record read.batch5-deployment-stamps.2026-10-21, refreshed 2026-10-31
+(raw HTML revision `429616c3...`); [src.sre-workbook] record
+read.sre-workbook-canarying.2026-10-30; [src.cell-boundaries] record
+read.batch7-cell-boundaries.2026-10-22. The units are public documentation,
+not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
