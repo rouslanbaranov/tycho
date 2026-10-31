@@ -23,6 +23,10 @@ def main(argv=None):
     ap.add_argument("--log", default=os.environ.get("TYCHO_SESSION_LOG"))
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
+    if not 1 <= args.max_chars <= 6000:
+        ap.error("--max-chars must be in 1..6000")
+    if args.command == "outline" and not 1 <= args.limit <= 5:
+        ap.error("outline --limit must be in 1..5")
     server = mcp_server.TychoMcpServer(root=ROOT)
     t0 = time.perf_counter()
     try:
