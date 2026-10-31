@@ -28,7 +28,7 @@ class PatternRegistryTests(unittest.TestCase):
         self.assertEqual((result["core"], result["advanced"]), (123, 22))
         self.assertEqual(result["technical_owners"], 145)
         self.assertEqual(result["atlas_sections"], 145)
-        self.assertEqual(result["source_units"], 272)
+        self.assertEqual(result["source_units"], 278)
 
     def test_missing_pattern_is_rejected(self):
         data = self.copy()

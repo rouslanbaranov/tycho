@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-10-31. Entries: 306.
+Inventory date: 2026-10-31. Entries: 307.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -410,6 +410,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.fowler-branch / core | [Branch By Abstraction](https://martinfowler.com/bliki/BranchByAbstraction.html) — Martin Fowler | Primary article for mainline incremental replacement through abstraction seams. | admitted-for-research / public-web-or-author-download |
 | src.ibm-immutable-infrastructure / supporting | [What is Immutable Infrastructure?](https://www.ibm.com/think/topics/immutable-infrastructure) — IBM | Public overview of immutable infrastructure replacement and state boundaries. | admitted-for-research / public-web-or-author-download |
 | src.hashicorp-immutable-vms / core | [Create immutable virtual machines](https://developer.hashicorp.com/well-architected-framework/define-and-automate-processes/define/immutable-infrastructure/virtual-machines) — HashiCorp | Immutable VM rebuild, rollback and image metadata for the immutable-infrastructure failure/recovery dimension. | admitted-for-research / public-web-or-author-download |
+| src.fowler-parallel-change / core | [Parallel Change](https://martinfowler.com/bliki/ParallelChange.html) — Martin Fowler | Primary article for the expand/migrate/contract protocol, its old-client rule, downside and alternatives. | admitted-for-research / public-web-or-author-download |
 
 ## Scalability
 

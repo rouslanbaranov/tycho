@@ -9685,6 +9685,206 @@
       "read_scope": "the six listed sections of the public article, excluding linked pages, images and unrelated chrome",
       "reviewer": "Automated authoring agent",
       "status": "read"
+    },
+    {
+      "id": "read.fowler-parallel-change.2026-10-31",
+      "source_id": "src.fowler-parallel-change",
+      "unit_url": "https://martinfowler.com/bliki/ParallelChange.html",
+      "unit_label": "Parallel Change — martinfowler.com bliki",
+      "unit_type": "article",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTPS GET on 2026-10-31; HTTP 200 at 2026-10-31T14:01:40Z; 22,616-byte HTML; raw HTML SHA-256 4d958f564dc7e44e12b4233202d20cdadd1e0ba30a9ccfc0517d1a568f6d8bcc; canonical text 7,879 characters and 1,268 words, SHA-256 af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7; Last-Modified 2026-10-29T16:11:21Z; ETag \"5858-65efcee2d9c40\"; no version selector.",
+      "sections_read": [
+        "Article body"
+      ],
+      "sections_not_read": [
+        "navigation, comments and unrelated site chrome",
+        "linked pages",
+        "images and the Grid example were not reproduced"
+      ],
+      "tables_figures": [
+        "the Grid example was read in text form; not reproduced"
+      ],
+      "license_notes": "Public page; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Parallel change splits a backward-incompatible interface change into expand, migrate and contract phases.",
+        "The expand phase supports both old and new versions; the migrate phase updates clients; the contract phase removes the old version.",
+        "Existing clients continue to consume the old version while new changes are introduced incrementally.",
+        "During the migrate phase the supplier supports two versions and clients can be confused about which version is new.",
+        "If the contract phase is not executed the result can be worse than the starting state.",
+        "Parallel change is an alternative to an explicit API version, and branch by abstraction is preferable for a large client population."
+      ],
+      "claims_not_supported": [
+        "linked child pages",
+        "implementation behavior",
+        "an executed example, benchmark or production observation",
+        "independent reproduction"
+      ],
+      "limitations": "One living bliki article with no version selector; the author's Grid example was not reproduced. No database engine was exercised. The article describes a general interface-change pattern, not a migration runbook.",
+      "content_sha256": "af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7",
+      "read_scope": "the full article body, including the Grid example, database-refactoring, remote-API, branch-by-abstraction and downside paragraphs; excludes navigation, comments and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgresql-alter-table.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/sql-altertable.html",
+      "unit_label": "PostgreSQL 18.6 Documentation — ALTER TABLE",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP/2 GET on 2026-10-31; HTTP 200 at 2026-10-31T11:07:55Z; 102,234-byte HTML; raw HTML SHA-256 d9f4df96a79a07b39a58a6820c8ed5753d8dd80bd7b60bddb0f31525591f1a76; canonical text 51,194 characters and 8,669 words, SHA-256 2f8630304b6159e52681a0d9502a1d09b497da7ffb8918b86c0ebf4d76003924; no Last-Modified or ETag served; 18.6 identified by the served footer.",
+      "sections_read": [
+        "Description",
+        "Notes",
+        "Examples"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "the SQL command reference",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables in the inspected sections were read in text form; not reproduced"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "ALTER TABLE acquires an ACCESS EXCLUSIVE lock unless a subform explicitly notes otherwise; multiple subcommands take the strictest lock.",
+        "A non-volatile ADD COLUMN DEFAULT is stored in table metadata and avoids a table rewrite.",
+        "A volatile default, stored generated column, identity column or constrained domain type rewrites the table and its indexes.",
+        "DROP COLUMN makes a column invisible to SQL operations rather than physically removing it.",
+        "Rewriting forms of ALTER TABLE are not MVCC-safe; a rewritten table can appear empty to concurrent transactions using an older snapshot.",
+        "Large table or index rebuilds can take significant time and temporarily require as much as double the disk space."
+      ],
+      "claims_not_supported": [
+        "the lock level of every ALTER TABLE subform",
+        "an executed DDL statement or lock observation",
+        "performance timings",
+        "independent reproduction"
+      ],
+      "limitations": "Rolling current documentation identified as PostgreSQL 18.6 by the served footer; no PostgreSQL instance was run and no schema change was executed. Lock level can differ by subform; the default ACCESS EXCLUSIVE rule is not a statement about every ALTER TABLE form. The page does not prescribe expand-and-contract phases.",
+      "content_sha256": "2f8630304b6159e52681a0d9502a1d09b497da7ffb8918b86c0ebf4d76003924",
+      "read_scope": "the Description, Notes and add/drop-column examples of the ALTER TABLE page; excludes linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.postgresql-explicit-locking.2026-10-31",
+      "source_id": "src.postgresql",
+      "unit_url": "https://www.postgresql.org/docs/current/explicit-locking.html",
+      "unit_label": "PostgreSQL 18.6 Documentation — Explicit Locking",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP/2 GET on 2026-10-31; HTTP 200 at 2026-10-31T12:36:21Z; 46,826-byte HTML; raw HTML SHA-256 88b12e1ceb015e5cd9326e6b43a6f5b6160c3970f19416e5160522da611274cb; canonical text 17,232 characters and 2,931 words, SHA-256 defdd38bf3d5aeaa3174012e51c6e02c56cb76e1153fc21da8c5ffcb42646e23; no Last-Modified or ETag served.",
+      "sections_read": [
+        "13.3.1. Table-Level Locks"
+      ],
+      "sections_not_read": [
+        "other lock-level sections",
+        "linked pages",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "Public PostgreSQL documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "ACCESS EXCLUSIVE conflicts with locks of all modes.",
+        "Many forms of ALTER INDEX and ALTER TABLE also acquire a lock at this level.",
+        "Once acquired, a lock is normally held until the end of the transaction."
+      ],
+      "claims_not_supported": [
+        "an observed lock acquisition",
+        "an executed transaction",
+        "a deployment procedure",
+        "independent reproduction"
+      ],
+      "limitations": "One documentation section; no lock was observed and no transaction was run. The page describes PostgreSQL's lock manager, not a migration procedure.",
+      "content_sha256": "defdd38bf3d5aeaa3174012e51c6e02c56cb76e1153fc21da8c5ffcb42646e23",
+      "read_scope": "section 13.3.1 Table-Level Locks; excludes other lock sections and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.mysql-online-ddl.2026-10-31",
+      "source_id": "src.mysql",
+      "unit_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/innodb-online-ddl-operations.html",
+      "unit_label": "MySQL 8.4 Reference Manual — 17.12.1 Online DDL Operations",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP/2 GET on 2026-10-31; HTTP 200 at 2026-10-31T14:02:20Z; 86,823-byte HTML; raw HTML SHA-256 aa0f53d803220d1745b029c1a75639281096982087d08bf9b6f32d342f42b6ae; canonical text 30,947 characters and 4,728 words, SHA-256 6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de; no Last-Modified; ETag \"92922c7d72a1485d6da8814ab0be4914:1777984310.111838\"; canonical URL returned HTTP 403, so the Oracle-hosted manual copy is the representation.",
+      "sections_read": [
+        "Column Operations",
+        "Adding a column",
+        "Dropping a column",
+        "Changing the column data type"
+      ],
+      "sections_not_read": [
+        "other online DDL operation sections",
+        "linked pages",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "the column-operation support tables were read as table cells; not reproduced"
+      ],
+      "license_notes": "Public MySQL Reference Manual; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "INSTANT is the default algorithm in MySQL 8.4.",
+        "Adding a column is supported by the instant, in-place and copy algorithms with noted limits; dropping a column is supported by all five listed algorithms.",
+        "Changing the column data type is only supported with ALGORITHM=COPY.",
+        "The maximum number of row versions is 64 (255 as of MySQL 9.1.0).",
+        "When the row-version limit is reached, instant ADD COLUMN and DROP COLUMN are rejected and the table must be rebuilt with COPY or INPLACE.",
+        "A column with a functional index cannot be dropped using INSTANT; an INPLACE add rebuilds the table."
+      ],
+      "claims_not_supported": [
+        "storage-engine or version combinations not listed",
+        "an executed ALTER TABLE or timing",
+        "a migration plan",
+        "independent reproduction"
+      ],
+      "limitations": "The canonical dev.mysql.com host returned HTTP 403 to this lane; the Oracle-hosted manual copy pins the representation. The three table rows are quoted as table cells and are meaningful only with the page's column headings. No MySQL server was run and no ALTER TABLE was executed.",
+      "content_sha256": "6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de",
+      "read_scope": "the Column Operations, Adding a column, Dropping a column and Changing the column data type sections; excludes other operations and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.mysql-alter-table.2026-10-31",
+      "source_id": "src.mysql",
+      "unit_url": "https://docs.oracle.com/cd/E17952_01/mysql-8.4-en/alter-table.html",
+      "unit_label": "MySQL 8.4 Reference Manual — ALTER TABLE",
+      "unit_type": "documentation-page",
+      "access_date": "2026-10-31",
+      "access_method": "public HTTP/2 GET on 2026-10-31; HTTP 200 at 2026-10-31T14:02:20Z; 109,740-byte HTML; raw HTML SHA-256 942e4f1e5eee59463efa1a0a1d8276ef2579c228b3b3f99cb1b10acfe028f1e6; canonical text 46,542 characters and 7,609 words, SHA-256 d47cb8ed8933e515b8ec2771583aeea9916741840eb45704c2a5235a9c5d92f2; no Last-Modified; ETag \"bf95c7de5c876800a74caa7bca15fde8:1777984295.275\"; canonical URL returned HTTP 403, so the Oracle-hosted manual copy is the representation.",
+      "sections_read": [
+        "Performance and Space Requirements"
+      ],
+      "sections_not_read": [
+        "other ALTER TABLE sections",
+        "linked pages",
+        "examples not reproduced"
+      ],
+      "tables_figures": [
+        "tables in the inspected section were read in text form; not reproduced"
+      ],
+      "license_notes": "Public MySQL Reference Manual; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "COPY copies the original table row by row and does not permit concurrent DML.",
+        "INPLACE avoids copying table data but may rebuild the table in place; concurrent DML is typically supported.",
+        "INSTANT modifies only data-dictionary metadata and permits concurrent DML.",
+        "If ALGORITHM is omitted, MySQL uses INSTANT where supported, otherwise INPLACE, otherwise COPY."
+      ],
+      "claims_not_supported": [
+        "algorithm availability for every storage engine, version and operation",
+        "an executed ALTER TABLE or timing",
+        "a migration runbook",
+        "independent reproduction"
+      ],
+      "limitations": "One manual page; algorithm availability depends on storage engine, version and operation. The canonical dev.mysql.com host returned HTTP 403 to this lane; the Oracle-hosted manual copy pins the representation. No server was run and no timing was measured.",
+      "content_sha256": "d47cb8ed8933e515b8ec2771583aeea9916741840eb45704c2a5235a9c5d92f2",
+      "read_scope": "the Performance and Space Requirements section; excludes other ALTER TABLE sections and linked pages",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }

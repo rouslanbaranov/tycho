@@ -12334,7 +12334,7 @@
         "heading": "Expand-and-Contract",
         "anchor": "expand-and-contract",
         "level": 3,
-        "line": 101,
+        "line": 104,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Expand-and-contract",
@@ -12345,44 +12345,196 @@
       },
       "technical_evidence": {
         "mechanism": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain compatible with readers still running the previous version, and the contract phase is gated by observed reader absence.",
-          "reason": "Flyway page has no expand/migrate/contract phases."
+          "reason": "Fowler defines the expand, migrate and contract phases and requires the expand phase to support both versions; AWS orders schema-first and schema-last changes around the code deployment; PostgreSQL's ALTER TABLE takes an ACCESS EXCLUSIVE lock by default; MySQL instant and in-place DDL avoid a table copy for compatible changes while a type change is COPY-only. The deployment-protocol reading is Tycho.",
+          "binding": {
+            "source_id": "src.fowler-parallel-change",
+            "ledger_record": "read.fowler-parallel-change.2026-10-31",
+            "section": "Article body",
+            "quote": "Parallel change, also known as expand and contract, is a pattern to implement backward-incompatible changes to an interface in a safe manner, by breaking the change into three distinct phases: expand, migrate, and contract.",
+            "revision": "af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.aws-blue-green-deployments",
+              "ledger_record": "read.aws-blue-green-data.2026-10-30",
+              "section": "Decoupling Schema Changes from Code Changes",
+              "quote": "The schema is changed first, before the blue/green code deployment.",
+              "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-alter-table.2026-10-31",
+              "section": "Description",
+              "quote": "An ACCESS EXCLUSIVE lock is acquired unless explicitly noted.",
+              "revision": "2f8630304b6159e52681a0d9502a1d09b497da7ffb8918b86c0ebf4d76003924"
+            },
+            {
+              "source_id": "src.mysql",
+              "ledger_record": "read.mysql-online-ddl.2026-10-31",
+              "section": "Changing the column data type",
+              "quote": "Changing the column data type is only supported with ALGORITHM=COPY.",
+              "revision": "6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de"
+            }
+          ]
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "New writers must preserve enough old representation for old supported readers until a verified cutover.",
-          "reason": "Flyway has no old-reader/new-writer invariant."
+          "reason": "Fowler says existing clients continue to consume the old version; AWS requires backward-compatible database updates and tolerance of additional fields; PostgreSQL makes a dropped column invisible rather than physically gone; MySQL instant add/drop removes a table copy, not the compatibility obligation. The row-readability and write-representability rule is Tycho.",
+          "binding": {
+            "source_id": "src.aws-blue-green-deployments",
+            "ledger_record": "read.aws-blue-green-data.2026-10-30",
+            "section": "Decoupling Schema Changes from Code Changes",
+            "quote": "Database updates must be backward compatible, so the old version of the application can still interact with the data.",
+            "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.fowler-parallel-change",
+              "ledger_record": "read.fowler-parallel-change.2026-10-31",
+              "section": "Article body",
+              "quote": "Existing clients will continue to consume the old version, and the new changes can be introduced incrementally without affecting them.",
+              "revision": "af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7"
+            },
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-alter-table.2026-10-31",
+              "section": "Notes",
+              "quote": "The DROP COLUMN form does not physically remove the column, but simply makes it invisible to SQL operations.",
+              "revision": "2f8630304b6159e52681a0d9502a1d09b497da7ffb8918b86c0ebf4d76003924"
+            },
+            {
+              "source_id": "src.mysql",
+              "ledger_record": "read.mysql-online-ddl.2026-10-31",
+              "section": "Adding a column",
+              "quote": "The table is rebuilt if ALGORITHM=INPLACE is used to add a column.",
+              "revision": "6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Incompatible writes hold the rollout and may require forward repair rather than redeploying N.",
-          "reason": "Flyway has no forward-repair or incompatible-write recovery."
+          "reason": "AWS warns that deletive changes raise risk and make the earlier version non-operational; PostgreSQL rewrites are not MVCC-safe and a volatile default rewrites the table and indexes; MySQL caps instant row versions and falls back to COPY or INPLACE. The recovery order and forward-repair rule are Tycho's runbook, not a source procedure.",
+          "binding": {
+            "source_id": "src.aws-blue-green-deployments",
+            "ledger_record": "read.aws-blue-green-data.2026-10-30",
+            "section": "Decoupling Schema Changes from Code Changes",
+            "quote": "After this removal, the earlier application version is no longer operational.",
+            "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.postgresql",
+              "ledger_record": "read.postgresql-alter-table.2026-10-31",
+              "section": "Notes",
+              "quote": "The rewriting forms of ALTER TABLE are not MVCC-safe.",
+              "revision": "2f8630304b6159e52681a0d9502a1d09b497da7ffb8918b86c0ebf4d76003924"
+            },
+            {
+              "source_id": "src.mysql",
+              "ledger_record": "read.mysql-online-ddl.2026-10-31",
+              "section": "Column Operations",
+              "quote": "The maximum number of row versions permitted is 64 (255 as of MySQL 9.1.0), as each row version requires additional space for table metadata.",
+              "revision": "6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de"
+            },
+            {
+              "source_id": "src.mysql",
+              "ledger_record": "read.mysql-alter-table.2026-10-31",
+              "section": "Performance and Space Requirements",
+              "quote": "If the ALGORITHM clause is omitted, MySQL uses ALGORITHM=INSTANT for storage engines and ALTER TABLE clauses that support it.",
+              "revision": "d47cb8ed8933e515b8ec2771583aeea9916741840eb45704c2a5235a9c5d92f2"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A big-bang migration, a parallel run or a versioned API cutover may be preferable when no mixed-version compatibility window is possible or the dataset is small enough to migrate under a verified pause.",
-          "reason": "Flyway Undo is not a big-bang/parallel-run alternative."
+          "reason": "Fowler presents explicit API versioning as the alternative and branch by abstraction as better for a large client population; MySQL instant and in-place DDL avoids a table copy for a single compatible change while a type change is COPY-only and blocks concurrent DML. The reversal conditions and pause rule are Tycho.",
+          "binding": {
+            "source_id": "src.fowler-parallel-change",
+            "ledger_record": "read.fowler-parallel-change.2026-10-31",
+            "section": "Article body",
+            "quote": "This is an alternative to using an explicit version in the exposed API.",
+            "revision": "af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.fowler-parallel-change",
+              "ledger_record": "read.fowler-parallel-change.2026-10-31",
+              "section": "Article body",
+              "quote": "However, when you have a large number of clients, using branch by abstraction is a better strategy to narrow the surface of change and reduce confusion during the migrate phase.",
+              "revision": "af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7"
+            },
+            {
+              "source_id": "src.mysql",
+              "ledger_record": "read.mysql-alter-table.2026-10-31",
+              "section": "Performance and Space Requirements",
+              "quote": "Concurrent DML is not permitted.",
+              "revision": "d47cb8ed8933e515b8ec2771583aeea9916741840eb45704c2a5235a9c5d92f2"
+            },
+            {
+              "source_id": "src.mysql",
+              "ledger_record": "read.mysql-online-ddl.2026-10-31",
+              "section": "Changing the column data type",
+              "quote": "Changing the column data type is only supported with ALGORITHM=COPY.",
+              "revision": "6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "expand-and-contract",
         "question": "Should a schema change be rolled out in expand, migrate and contract stages?",
-        "competing_alternative": "Big-bang migration, parallel run or versioned API cutover. Reverse when no compatibility window is possible or the dataset is small enough to pause.",
+        "competing_alternative": "Big-bang migration, parallel run, explicit API versioning, branch by abstraction, or engine-native online DDL for a single compatible change. Fowler presents parallel change as an alternative to explicit versioning and calls branch by abstraction better for a large client population. MySQL instant and in-place DDL avoids a table copy for compatible changes, but a type change is COPY-only and blocks concurrent DML. Reverse when no compatibility window is possible, the dataset is small enough to pause, or the engine can complete the change online.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch3-flyway.2026-10-21",
-        "source_id": "src.flyway",
-        "unit_type": "documentation-page",
+        "ledger_record": "read.fowler-parallel-change.2026-10-31",
+        "source_id": "src.fowler-parallel-change",
+        "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.aws-blue-green-deployments",
+            "ledger_record": "read.aws-blue-green-data.2026-10-30",
+            "revision": "07eaa6ff45ca86872f743c07deb17577761f1216e04a840de89ae9c5bfa99442"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-alter-table.2026-10-31",
+            "revision": "2f8630304b6159e52681a0d9502a1d09b497da7ffb8918b86c0ebf4d76003924"
+          },
+          {
+            "source_id": "src.postgresql",
+            "ledger_record": "read.postgresql-explicit-locking.2026-10-31",
+            "revision": "defdd38bf3d5aeaa3174012e51c6e02c56cb76e1153fc21da8c5ffcb42646e23"
+          },
+          {
+            "source_id": "src.mysql",
+            "ledger_record": "read.mysql-online-ddl.2026-10-31",
+            "revision": "6f7b0113f99388ab4a29f9016a05fedb46b86277174162fe4bc5cbca295de3de"
+          },
+          {
+            "source_id": "src.mysql",
+            "ledger_record": "read.mysql-alter-table.2026-10-31",
+            "revision": "d47cb8ed8933e515b8ec2771583aeea9916741840eb45704c2a5235a9c5d92f2"
+          },
+          {
+            "source_id": "src.flyway",
+            "ledger_record": "read.batch3-flyway.2026-10-21",
+            "revision": "8952ed4d377476f95a6a4a90f93c5c01db800de6f6d076570298b1a9f490a897"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Heading uses expand-migrate-contract wording, not the catalog alias; unit is embedded."
+      "notes": "All four dimensions bound 2026-10-31 to Fowler Parallel Change, AWS blue/green schema guidance, PostgreSQL 18.6 DDL locking and MySQL 8.4 online DDL; the invariant, recovery runbook, choice rule and engine reading are Tycho. Coverage partial-bounded; no promotion or acceptance."
     },
     {
       "pattern_id": "tycho.pattern.controlled-cutover",
@@ -14198,12 +14350,12 @@
     "owner_units": 145,
     "dedicated_units": 145,
     "embedded_units": 0,
-    "mechanism_supported": 115,
-    "invariant_supported": 80,
-    "failure_recovery_supported": 74,
-    "alternative_supported": 79,
-    "technical_partial_bounded": 15,
-    "technical_partial": 68,
+    "mechanism_supported": 116,
+    "invariant_supported": 81,
+    "failure_recovery_supported": 75,
+    "alternative_supported": 80,
+    "technical_partial_bounded": 16,
+    "technical_partial": 67,
     "technical_name_only": 0,
     "technical_sufficient": 62,
     "decision_partial_bounded": 83,

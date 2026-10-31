@@ -106,10 +106,12 @@ compatibility window and old-reader inventory cost exceed the migration risk.
 **Mechanism — three phases over a compatibility window (Tycho summary, source-bound).**
 Expand-and-contract is a rollout protocol, not a schema diagram: each phase must remain
 compatible with readers still running the previous version, and the contract phase is
-gated by observed reader absence. Fowler's Parallel Change article describes it as "a
-pattern to implement backward-incompatible changes to an interface in a safe manner, by
-breaking the change into three distinct phases: expand, migrate, and contract." In the
-expand phase you "augment the interface to support both the old and the new versions"; in
+gated by observed reader absence. The protocol owns the compatibility window, the reader
+inventory and the rollback or forward-repair decision. Fowler's Parallel Change article
+describes it as "a pattern to implement backward-incompatible changes to an interface in
+a safe manner, by breaking the change into three distinct phases: expand, migrate, and
+contract." In the expand phase you "augment the interface to support both the old and the
+new versions"; in
 the migrate phase you "update all clients using the old version to the new version"; and
 after that you "perform the contract phase to remove the old version and change the
 interface so that it only supports the new version." AWS describes the same window for a

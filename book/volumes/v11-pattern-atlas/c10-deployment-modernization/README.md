@@ -277,56 +277,7 @@ See the [dedicated Dark Launching card](dark-launching.md).
 
 ### Expand-and-Contract
 
-**Identity.** Expand-and-Contract; family Deployment and legacy modernization; kind
-migration-pattern; priority core.
-
-**Decision question.** Should a schema change be rolled out in expand, migrate and
-contract stages?
-
-**Good-fit conditions.** Old and new readers coexist; each phase is additive and
-backward compatible; the compatibility window and reader inventory are owned; the
-backfill, validation and cutover gate are explicit; the engine's DDL lock or rewrite
-budget is known; a rollback or forward-repair path is defined.
-
-**Hard contraindications.** Reject when old and new readers cannot coexist, when the
-change requires an immediate destructive rewrite with no compatibility window, when a
-rollback cannot restore the old schema and data, or when no one owns the reader
-inventory.
-
-**Competing alternative.** Big-bang migration, parallel run, explicit API versioning,
-branch by abstraction, or engine-native online DDL for a single compatible change.
-Fowler presents parallel change as an alternative to explicit versioning and calls
-branch by abstraction better for a large client population. MySQL instant and in-place
-DDL avoids a table copy for compatible changes, but a type change is COPY-only and
-blocks concurrent DML. Reverse when no compatibility window is possible, the dataset is
-small enough to pause, or the engine can complete the change online.
-
-**Failure and recovery.** Partial backfills, old readers and destructive rewrites are
-common; hold the window, repair forward, and contract only after reader absence. AWS
-warns that deletive changes can make the earlier version non-operational; PostgreSQL
-rewrites are not MVCC-safe; MySQL limits instant column versions and falls back to
-COPY/INPLACE.
-
-**Technical owner.** [Expand-and-Contract](../../v08-delivery-deployment-and-recovery/c05-backward-compatible-database-change/reader-writer-matrix.md#expand-and-contract) — expand/contract is bounded to reader/writer compatibility.
-
-**Sources.** Public documentation, not benchmarks. Records (proposed unless marked
-existing): Danilo Sato, "Parallel Change," published 2014-05-13, canonical text
-SHA-256 `af2cd77b9048f39fdee984b371305ecc362f236d485a21ff02008a65787dfed7`;
-AWS, "Best Practices for Managing Data Synchronization and Schema Changes," historical
-reference, existing record `read.aws-blue-green-data.2026-10-30`; PostgreSQL 18.6,
-"ALTER TABLE" and "Explicit Locking," canonical text SHA-256 `2f863030...` and
-`defdd38b...`, records `read.postgresql-alter-table.2026-10-31` and
-`read.postgresql-explicit-locking.2026-10-31`; MySQL 8.4 Reference Manual,
-"Online DDL Operations" and "ALTER TABLE," canonical text SHA-256 `6f7b0113...` and
-`d47cb8ed...`, records `read.mysql-online-ddl.2026-10-31` and
-`read.mysql-alter-table.2026-10-31`. The retained Flyway record
-`read.batch3-flyway.2026-10-21` remains tooling context, not phase evidence.
-Tycho-labelled rules are synthesis.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Online Data Migration; Controlled Cutover; Reader/Writer
-Compatibility; Backup/PITR.
+See the [dedicated Expand-and-Contract card](expand-and-contract.md).
 
 ### Controlled Cutover
 
