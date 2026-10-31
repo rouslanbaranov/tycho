@@ -17,7 +17,7 @@ Use volume for layer-specific queries:
 
 | Layer | Request |
 |---|---|
-| Atlas | volume=v11 |
+| Atlas | volume=atlas |
 | V12 | volume=v12 |
 | Global | omit volume |
 
