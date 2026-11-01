@@ -10,7 +10,7 @@ tool contract, launchable client CLI and MCP-specific smokes/benchmarks.
 - `mcp_shared.py` - shared evidence and frontmatter helpers.
 - `mcp_contract.py` - constants, enums, tool metadata and schema loaders.
 - `schemas/input/*.json`, `schemas/output/*.json` - one schema per tool.
-- `INSTRUCTIONS.md` - detailed external-client onboarding, loaded by discover.
+- `INSTRUCTIONS.md` - spec-aligned high-level onboarding, loaded by discover.
 - `mcp_http_server.py` - authenticated HTTP MCP and book/search wrapper.
 - `agent_session_cli.py` - small read-only CLI drill-down entry point.
 - `tests/` - MCP unit tests, CLI tests and page/diagram tests.
