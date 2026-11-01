@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "authoring/promotion-entry-timing-2026-10-29.json"
-OUT = ROOT / "authoring/promotion-entry-timing-2026-10-29.svg"
+OUT = ROOT / "authoring/promotion-entry-timing-2026-11-01.svg"
 LATEST_OUT = ROOT / "authoring/promotion-entry-timing-latest.svg"
 
 

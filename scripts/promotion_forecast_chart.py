@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "authoring/promotion-forecast-2026-10-30.json"
-OUT = ROOT / "authoring/promotion-forecast-2026-10-30.svg"
+OUT = ROOT / "authoring/promotion-forecast-2026-11-01.svg"
 COLORS = {"optimistic": "#1e9650", "base": "#1e5ab4", "pessimistic": "#c85a1e"}
 
 
