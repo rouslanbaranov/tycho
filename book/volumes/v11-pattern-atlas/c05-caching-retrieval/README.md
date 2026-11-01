@@ -115,38 +115,7 @@ Caching.
 
 ### Cache-Aside / Lazy Loading
 
-**Identity.** Cache-Aside / Lazy Loading; family Caching and retrieval; kind
-caching-pattern; priority core.
-
-**Decision question.** Should the application populate the cache after a miss instead of
-routing every read through the cache layer?
-
-**Good-fit conditions.** The application can own fill and invalidation; misses are
-acceptable; duplicate fills are controlled; the source remains authoritative.
-
-**Hard contraindications.** Reject when every read must be served from cache, when fill
-races cannot be controlled, or when invalidation has no owner.
-
-**Competing alternative.** A shorter TTL with retried invalidation, or serving the read from
-the source when its latency budget allows. Reverse when fill and invalidation logic becomes
-duplicated and inconsistent.
-
-**Failure and recovery.** Stale fills and concurrent misses are common; gate fills by cached
-revision, distinguish a cold fill from a post-delete tombstone, retry failed invalidation and
-use single-flight for concurrent misses.
-
-**Technical owner.** [Cache-aside is a sequence, not a consistency theorem](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#4-cache-aside-is-a-sequence-not-a-consistency-theorem) — the sequence is bounded, not a complete cache-aside library guide.
-
-**Sources.**
-[src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-aws-caching.2026-10-21: sections "Caching patterns", "Cache-Aside
-(Lazy Loading)", "Write-Through". The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Read-Through Cache; Cache Invalidation; Cache Stampede Protection;
-Distributed Cache.
+See the [dedicated Cache-Aside / Lazy Loading card](cache-aside-lazy-loading.md).
 
 ### Read-Through Cache
 

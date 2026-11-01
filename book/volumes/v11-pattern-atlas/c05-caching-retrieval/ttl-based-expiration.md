@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.87e52392e206a451ea5c79a4194c384b"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved card."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "ttl-based expiration"
@@ -37,7 +37,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-29"
-updated_at: "2026-10-29"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-21"
 content_verified_at: null
 ---

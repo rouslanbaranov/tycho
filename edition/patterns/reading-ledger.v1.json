@@ -14577,6 +14577,174 @@
       ],
       "limitations": "App Service-specific guidance; not a general consistency proof; no failover test.",
       "content_sha256": "ec445f73d1d922b052ec786084532069f641b7cbde3c09fcc8a0ac8de5a4396e"
+    },
+    {
+      "id": "read.azure-cache-aside-pattern.2026-11-01",
+      "source_id": "src.microsoft-cloud-patterns",
+      "unit_url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside",
+      "unit_label": "Cache-Aside pattern",
+      "unit_type": "documentation-page",
+      "access_date": "2026-11-01",
+      "access_method": "public HTTP fetch; served HTML inspected; two fetches byte-identical",
+      "sections_read": [
+        "Context and problem",
+        "Solution",
+        "Problems and considerations",
+        "Consistency",
+        "Staleness after writes",
+        "Local caching",
+        "When to use this pattern",
+        "Workload design",
+        "Example",
+        "Related resources"
+      ],
+      "sections_not_read": [
+        "linked pages",
+        "images",
+        "code beyond the displayed example"
+      ],
+      "tables_figures": [
+        "the displayed example was read as text; images and diagrams were not reproduced"
+      ],
+      "license_notes": "Public Microsoft Learn documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "A cache-aside sequence writes the change to the data store and then invalidates the cached item.",
+        "The pattern does not guarantee consistency between the data store and the cache.",
+        "A reader can briefly see stale data between a write and the next read, and deleting before the update leaves a stale-fill window.",
+        "A malfunctioning cache can fall back to the origin data store, and sensitive data should come from the primary source."
+      ],
+      "claims_not_supported": [
+        "version gates",
+        "tombstones",
+        "durable invalidation",
+        "benchmarks",
+        "deployed-cache behavior"
+      ],
+      "limitations": "Living pattern documentation; intended application behavior, not a benchmark or a tested cache-aside implementation.",
+      "content_sha256": "f59a403f79981ad106f0c7c9a9aa1760d26e4cbdc6d591da947bfcafda97f841",
+      "read_scope": "selected public article text; page chrome, linked pages, images and code beyond the displayed example excluded",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-elasticache-best-practices.2026-11-01",
+      "source_id": "src.aws-caching-strategies",
+      "unit_url": "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/BestPractices.html",
+      "unit_label": "ElastiCache best practices and caching strategies",
+      "unit_type": "documentation-page",
+      "access_date": "2026-11-01",
+      "access_method": "public HTTP fetch; served Markdown inspected; two fetches byte-identical",
+      "sections_read": [
+        "Topics",
+        "TLS enabled dual stack ElastiCache clusters"
+      ],
+      "sections_not_read": [
+        "linked child pages except the caching-strategies unit",
+        "images"
+      ],
+      "tables_figures": [
+        "tables in inspected sections were read as text; not reproduced"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The hub is the recommended ElastiCache best-practices entry point and lists Caching strategies for Memcached."
+      ],
+      "claims_not_supported": [
+        "cache-aside mechanism",
+        "staleness semantics",
+        "failure recovery",
+        "configuration"
+      ],
+      "limitations": "Hub page; it carries no cache-aside sequence, staleness or failure semantics; no cache was configured.",
+      "content_sha256": "9186ee013a7ccf99d0a8ff03056222a60fa0b7df639f39b3fdf30827eae68d16",
+      "read_scope": "public Markdown alternate; landing page text and topic list",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.aws-caching-strategies.2026-11-01",
+      "source_id": "src.aws-caching-strategies",
+      "unit_url": "https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html",
+      "unit_label": "Caching strategies for Memcached",
+      "unit_type": "documentation-page",
+      "access_date": "2026-11-01",
+      "access_method": "public HTTP fetch; served Markdown inspected; two fetches byte-identical",
+      "sections_read": [
+        "Lazy loading",
+        "Advantages and disadvantages of lazy loading",
+        "Write-through",
+        "Advantages and disadvantages of write-through",
+        "Adding TTL"
+      ],
+      "sections_not_read": [
+        "Read replicas",
+        "pseudocode",
+        "linked pages",
+        "images"
+      ],
+      "tables_figures": [
+        "tables in inspected sections were read as text; not reproduced"
+      ],
+      "license_notes": "Public AWS documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "Lazy loading fills the cache only after a miss and leaves the cache stale when the database changes.",
+        "Write-through and TTL are the stated remedies, but TTL does not guarantee freshness.",
+        "Node failure is survivable with a miss penalty, and a miss can cost three trips."
+      ],
+      "claims_not_supported": [
+        "cache-aside consistency proof",
+        "version gates",
+        "authorization semantics",
+        "benchmark"
+      ],
+      "limitations": "Product strategy documentation; the title names Memcached and the statements are general caching-strategy claims, not a consistency proof. No node failure, TTL expiry or stampede was exercised.",
+      "content_sha256": "9382d8a93498e13e46b5b5b51252b87a4e2c3cd0dccc8f713cd8c82328cb78ca",
+      "read_scope": "public Markdown alternate; lead paragraphs, lazy loading, write-through and adding TTL",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
+    },
+    {
+      "id": "read.redis-cache-aside.2026-11-01",
+      "source_id": "src.redis-cache-aside",
+      "unit_url": "https://redis.io/docs/latest/develop/use-cases/cache-aside/",
+      "unit_label": "Redis cache-aside",
+      "unit_type": "documentation-page",
+      "access_date": "2026-11-01",
+      "access_method": "public HTTP fetch; served Markdown inspected; two fetches byte-identical",
+      "sections_read": [
+        "When to use Redis cache-aside",
+        "Why the problem is hard",
+        "What you can expect from a Redis solution",
+        "How Redis supports the solution",
+        "Ecosystem",
+        "Code examples to build your own Redis cache-aside"
+      ],
+      "sections_not_read": [
+        "linked command references",
+        "ecosystem guides",
+        "code examples"
+      ],
+      "tables_figures": [
+        "tables in inspected sections were read as text; not reproduced"
+      ],
+      "license_notes": "Public Redis documentation; cite short excerpts and paraphrase; do not mirror.",
+      "claims_supported": [
+        "The application falls back to the primary on a miss and writes the result back to Redis.",
+        "An update writes the primary and invalidates the cache key; a TTL bounds how long stale data can be served.",
+        "An in-process cache cannot be invalidated consistently, and an atomic mutex or probabilistic early refresh mitigates a key-expiry stampede."
+      ],
+      "claims_not_supported": [
+        "authorization semantics",
+        "cache-outage fallback",
+        "benchmark",
+        "local reproduction",
+        "version gate"
+      ],
+      "limitations": "Vendor use-case page; latency figures were not reproduced. It does not define an authorization model or a cache-outage fallback.",
+      "content_sha256": "392854e0c638038095f356216f4838cc6a4caa8e73a893fb6367b112d7920745",
+      "read_scope": "public Markdown alternate; all six use-case sections in text",
+      "reviewer": "Automated authoring agent",
+      "status": "read"
     }
   ]
 }
