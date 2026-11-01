@@ -15,14 +15,16 @@ def log(path, record):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("command", choices=("search", "read", "page", "outline"))
-    ap.add_argument("value")
+    ap.add_argument("command", choices=("search", "read", "page", "outline", "describe"))
+    ap.add_argument("value", nargs="?")
     ap.add_argument("--limit", type=int, default=5)
     ap.add_argument("--max-chars", type=int, default=4500)
     ap.add_argument("--offset", type=int, default=0)
     ap.add_argument("--log", default=os.environ.get("TYCHO_SESSION_LOG"))
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args(argv)
+    if args.command != "describe" and not args.value:
+        ap.error(args.command + " requires a value")
     if not 1 <= args.max_chars <= 6000:
         ap.error("--max-chars must be in 1..6000")
     if args.command == "outline" and not 1 <= args.limit <= 5:
@@ -42,6 +44,8 @@ def main(argv=None):
             payload = server._tool_page({"path": args.value,
                                          "budget_chars": args.max_chars,
                                          "offset": args.offset})
+        elif args.command == "describe":
+            payload = server._tool_describe({})
         else:
             payload = server._tool_outline({"topic": args.value,
                                             "limit": args.limit})
@@ -57,7 +61,8 @@ def main(argv=None):
                    "status": text.get("status"),
                    "latency_ms": round((time.perf_counter()-t0)*1000, 2)})
     if args.json or True:
-        print(json.dumps(text, indent=1)[:20000])
+        limit = 200000 if args.command == "describe" else 20000
+        print(json.dumps(text, indent=1)[:limit])
     return 0
 
 if __name__ == "__main__":

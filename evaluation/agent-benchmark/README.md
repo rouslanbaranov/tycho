@@ -8,7 +8,8 @@ independent external-agent runs.
 - `corpus.json` — v1 questions and expected evidence.
 - `corpus-v2.json` — heuristic core/optional claims and 50/50 split.
 - `corpus-v3.json` — AI-curated dev claims; v2 holdout is consumed.
-- `AGENT-PROMPT.md` — checklist prompt for independent sessions.
+- `AGENT-PROMPT.md` — v2 checklist prompt.
+- `AGENT-PROMPT-V3.md` — onboarding, facet/evidence matrix and detailed answer.
 - `telemetry-schema.json` — per-session telemetry and token accounting.
 - `logs/` — one JSONL file per agent session (created by the harness).
 - `results.json` — harness output after a run.
@@ -24,6 +25,7 @@ independent external-agent runs.
   --split holdout --jobs 4
 ```
 
+Agents must run `agent_session_cli.py describe` before searching (prompt v3).
 The agent command receives `TYCHO_TASK_JSON`, `TYCHO_QUESTION`,
 `TYCHO_TASK_ID` and `TYCHO_SESSION_LOG` in its environment. It must print one
 JSON answer to stdout. The judge receives the task on `TYCHO_TASK_JSON` and
