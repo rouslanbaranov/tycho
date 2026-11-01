@@ -1,0 +1,617 @@
+{
+  "task_id": "Q295",
+  "answer": "# Answer\n\n## Verdict\n\nThe reviewer's inference does not follow. Candidate B's 0.9996 success and 1.004 retry\namplification are modeled outputs of a synthetic discrete-event queue model (C1). In that\nmodel, success is a fraction of offered requests that complete before a deadline (C2), and\namplification is total attempts divided by offered requests (C3). Neither metric has a term\nfor a business effect, an idempotency key, an outcome record or a consumer deduplication\nmarker. The model's own failure-modes section says the queue model does not represent\nbusiness idempotency, and that retry-without-idempotency is outside its boundary and must be\nrecorded as a limitation rather than solved by a simulation parameter (C4).\n\nThe two numbers are therefore equally consistent with a path that never duplicates an effect\nand with a path that duplicates on every retried attempt (C2, C3, C4; C12, C13). Removing the idempotency\nrequirement is not a modeled conclusion; it is a decision to accept an unmeasured\neffect-integrity risk. The decision record must carry that risk as an explicit, unverified\nconstraint, together with the model boundary, layer-separated evidence statuses, the\nduplicate-effect measurement gap, an explicit status, reversal triggers, residual risk and an\nowner (C20). If removal is genuinely intended, it must be a superseding decision with\neffect-level evidence or explicit owner acceptance, not a success number (C21).\n\n**Layers and scope.** The question needs the modeling-and-simulation layer (scenario, run\nand decision contracts) and the book layer (retry, idempotency and duplicate-effect\nmechanism). The atlas was not needed: the question asks what a decision record must carry, not\nwhich pattern owns duplicate suppression, and no pattern promotion or coverage claim is made\nhere. All section keys below were read through the session CLI against snapshot\n4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.\n\n## 1. Facet matrix\n\nThe question has independent parts (the reported numbers, the success unit, the amplification\nunit, the model boundary, the duplicate mechanism, the decision-record obligations, the\nevidence-layer limits and the removal test), so the matrix has eight facets.\n\n- **F1. Candidate B's numbers and provenance.** Queries: \"candidate b retry budget\";\n  \"retry amplification success probability\"; \"B three attempts exponential backoff\".\n  Evidence: tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification;\n  tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b;\n  tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results.\n- **F2. What the success metric counts.** Queries: \"success rate metric denominator\";\n  \"offered requests completed\"; \"queue success rate\". Evidence:\n  tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection;\n  tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation.\n- **F3. What amplification counts.** Queries: \"retry amplification total attempts offered\";\n  \"retry load\"; \"attempts per request\". Evidence:\n  tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification;\n  tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets.\n- **F4. Model boundary and excluded mechanism.** Queries: \"model boundary assumptions\n  exclusions\"; \"queue model idempotency\"; \"outside model boundary\". Evidence:\n  tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes;\n  tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary;\n  tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed;\n  tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics;\n  tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits.\n- **F5. Duplicate effects on a publish path.** Queries: \"idempotency duplicate delivery\";\n  \"timeout after commit retry\"; \"at-least-once consumer deduplication\". Evidence:\n  tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route;\n  tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix;\n  tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches.\n- **F6. Decision-record obligations and status.** Queries: \"decision record contract\";\n  \"hard constraint non-quantitative\"; \"insufficient evidence\". Evidence:\n  tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure;\n  tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences;\n  tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence.\n- **F7. Evidence layers and precision limits.** Queries: \"model verified not production\";\n  \"replay proves\"; \"uncalibrated model\". Evidence:\n  tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers;\n  tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves;\n  tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration.\n- **F8. What would justify removal.** Queries: \"what would reverse recommendation\";\n  \"negative acceptance tests\"; \"duplicate rate\". Evidence:\n  tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation;\n  tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests;\n  tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome.\n\n## 2. What candidate B's numbers are\n\nThe comparison fixes a Poisson workload at 20 requests per second for 1,800 seconds after a\n300-second warmup, uses 30 replications and a shared seed base, and changes only the candidate\nconfiguration. B declares 12 servers, a 2-second timeout, three attempts, exponential backoff\nwith full jitter, a 240-request bulkhead and a relative cost of 8.0 (C1). Its reported result\nis success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34 and timeout 0.0041; A is\n0.9218 with amplification 1.000; C is 0.9679 with 1.079 (C1). The comparison is synthetic:\nthe confidence intervals are narrow because the workload is synthetic and the replications are\nindependent, and narrow intervals do not make the inputs measured (C13). The run is converged\nand replayable; replay would show that the stored inputs, engine version and seed produce the\nstored metrics, not that the model is valid (C13).\n\n## 3. Why the metrics cannot speak to duplicate effects\n\nSix independent reasons, each sufficient on its own: the metric's unit is wrong, the quantity\nis wrong, the model has no effect state, the boundary excludes the mechanism by declaration,\nthe evidence layer forbids the inference, and the metric is observationally constant across\nsafe and unsafe worlds.\n\n### 3.1 The success unit is a request, not an effect\n\nThe success rate is defined over offered requests. In the overload example, A \"succeeds on\n0.6488 of offered requests; 0.3495 time out and 0.0005 are rejected\" (C2). The discrete-event\nconservation check is \"offered = completed + rejected + failed + in_system\" (C2). Every offered\nrequest is counted once, and a request that completes is one success no matter how many\nbusiness effects it applied. If every successful request applied its effect twice, the\nidentity would still balance and success would still be 0.9996. Duplicate effects are not a\nnoisier version of a modeled quantity; they are a different unit that the numerator never\ncounts.\n\n### 3.2 Amplification is a load ratio, not an integrity ratio\n\nAmplification is \"total attempts divided by offered requests\" (C3). The page's own gloss is\nthat 1.05 attempts per request means 5% more load (C3). So 1.004 means B's retry layer adds\n0.4% attempts relative to offered requests. That is a genuine capacity statement: B's retries\ndo not materially raise load, unlike C's 1.079. But it bounds attempts, not their outcome.\nThe model does not know whether the timed-out attempt it is retrying had committed; a retry\nafter an uncommitted attempt and a retry after a committed-but-unacknowledged attempt are the\nsame transition (C4, C5). \"Safe\" in the retry-budget sentence means capacity-safe; \"safe\" in\nthe idempotency requirement means effect-safe. The reviewer equivocates between the two.\n\n### 3.3 The model has no effect state\n\nThe model's state is the request. Its scope is \"request admission, a bounded queue, a server\npool, per-attempt deadlines and bounded retries\"; excluded are \"dependency calls, storage,\nnetwork and deployment\" (C11). The resource state is exactly a fixed number of servers, a\nFIFO queue with a capacity, a bulkhead, a per-attempt timeout and a bounded retry budget\n(C24). The engine does not implement even priority or preemption; a model that needs them\nrequires a new contract and new tests, not an undocumented flag (C24). An effect ledger and a\ndedup marker would be additions of the same kind: new state, new contract, new tests. There\nis no key store, outcome record, dedup marker, consumer or effect ledger, so no derived\nmetric can be an effect metric. Conservation is \"necessary but\nnot sufficient\" even for assigning requests to outcomes (C2); it cannot see an effect at all.\nThis is a representation limit, not a statistical one: adding replications or narrowing the\ninterval cannot create a variable the engine never carries.\n\n### 3.4 The boundary excludes idempotency by declaration\n\nThe exclusion is declared, not incidental. The failure-modes list names \"Retry without\nidempotency\": \"A timed-out request may have committed an effect; the retry duplicates it. The\nqueue model does not represent business idempotency.\" It then says these failure modes are\n\"outside the queue model's boundary\" and \"must be recorded as limitations, not solved by a\nsimulation parameter\" (C4). The scope rule allows an omission only if \"the omitted parts cannot\nchange the comparison under the declared conditions\" (C11). An effect-integrity constraint can\neliminate a candidate or reverse a recommendation; a boundary mismatch can reverse the result\n(C11). A calibrated model can produce a simulation result that does not support the decision\nbecause a hard constraint was omitted (C12). This omission is material, not cosmetic.\n\n### 3.5 The evidence layer forbids the inference\n\nV12 separates five layers: source and claim evidence, model verification, calibration,\nsimulation evidence and decision evidence (C12). A model can be verified without being\ncalibrated; V12 has no operational validation against a real system, and every model is\nuncalibrated (C12). Replay proves reproducibility, not validity, measured inputs or a correct\ndecision (C13); more replications make an assumption more precise, not more representative\n(C13). The explicitly forbidden inferences include \"The simulation succeeded, so production\nwill succeed\" and \"The decision record recommends B, so B is safe to deploy\" (C19). The\nreviewer's inference is the second one: a model success number is being used as a\ndeployment-safety certificate.\n\n### 3.6 Observational equivalence: 0.9996 is constant across safe and unsafe worlds\n\nConsider two worlds that share the scenario, seed and engine. In W_safe the publish effect is\nnaturally idempotent, keyed or deduplicated, so no retry re-applies an effect. In W_dup every\nretry of a timed-out attempt that had committed re-applies it. The engine's transitions never\nconsult an effect ledger, so both worlds produce the same offered/completed/failed/attempt\ncounts, the same p95, the same cost and the same 0.9996/1.004. The likelihood of the observed\nmetrics is identical under W_safe and W_dup. A metric that is constant across a hypothesis and\nits negation has no diagnostic value for that hypothesis; the 95% CI quantifies sampling error\naround a quantity that cannot separate the worlds.\n\nThis equivalence is my inference from the model definitions (C2, C3, C4), not a sentence in\nthe sources. It is the precise sense in which the metrics \"say nothing\": not that they are\nnoisy, but that the measured quantity is blind to the effect layer. A test whose outcome is\nthe same whether the requirement is met or violated cannot justify removing the requirement.\n\n### 3.7 The success gain and the duplicate exposure are the same mechanism\n\nB's advantage over A is produced by retrying deadline misses: A 0.9218 with one attempt, B\n0.9996 with three (C1). A deadline miss is the model's representation of an attempt whose\noutcome is unknown; outside the model, that is exactly the state in which the effect may\nalready be committed (C5). The retry that converts a miss into a success can also re-apply\nthe effect. The model credits the recovery and has no term for the possible second\napplication. The more the retry budget improves success, the more this ambiguity has been\nexercised, not resolved. That is why the success number cannot be evidence for effect safety\neven in the direction one might expect.\n\n## 4. What a duplicate effect is on a publish path\n\nOn a publish path the effect is a state change visible outside the request. The idempotency\npage's central failure: \"After an acknowledgment is lost, a new identity can duplicate a\ncommitted effect\" (C5). A timeout \"is not evidence that the external job did not start\" (C5),\nand cancellation is not proof that a committed effect was undone (C5). Publication adds\nre-delivery: the practical contract is at-least-once delivery plus consumer idempotency; the\nsame event keeps identity E on redelivery; a broker's producer idempotence cannot make an\nunrelated consumer's external side effect globally exactly once (C8). The dedup marker must\ncommit in the same consumer transaction as the effect, or the alternative must be demonstrated\n(C8).\n\nThe positive requirement is the idempotency contract: one logical intent, caller/payload\nscope, retention window, an outcome record checked atomically with the effect, duplicate\nreturns the recorded outcome, and the guarantee ends at key expiry (C7). Retry budgets and\nbackoff are not a substitute: \"no combination makes non-idempotent effects safe by itself\"\n(C6), and \"Backoff does not make a non-idempotent effect safe\" (C6). A migration or replay\npath adds late arrivals and re-delivery; the V12 migration chapter explicitly does not model\nrecord-level reconciliation or schema compatibility, and treats assumed inputs as a reason for\ninsufficient evidence (C18).\n\n## 5. What the decision record must carry instead\n\nAt minimum the record must carry the following, with the idempotency requirement itself in\nthe constraints block rather than in the metrics block.\n\n1. **The requirement as a constraint.** A constraint entry with a statement, scope and owner:\n   every state-changing publish is idempotent under retry and redelivery for the declared\n   effect scope. The statement should reference the key/intent identity, caller and payload\n   scope, retention, atomic outcome record, duplicate response, conflict response and\n   inspectable record, or the alternative (natural idempotency, unique constraint,\n   compare-and-set, single writer) (C7, C9, C10). A hard constraint and a non-quantitative\n   constraint are different fields; the model cannot measure either (C10).\n2. **The model boundary and limitation.** The record must say, next to the metrics, that\n   success and amplification are request/attempt quantities and that business idempotency is\n   outside the queue model's boundary. The failure mode \"retry without idempotency\" is a\n   limitation, not a simulation parameter (C4, C11). The record must also carry the validity\n   limits: valid only for the synthetic workload; no dependency calls or storage in the\n   checkout model; no production claim without measurement; and a validity limit is a condition\n   on the result's use, not a disclaimer, so a decision that needs the omitted mechanism is\n   outside the model's domain (C25).\n3. **Layer-separated evidence statuses.** Model verification, calibration, simulation and\n   source evidence are separate; duplicate-effect evidence is unknown/absent, not \"assumed\n   zero\". The model is uncalibrated and the success number is modeled (C12, C14).\n4. **The measurement and test gap.** The record must carry the duplicate-effect measurement\n   plan and its execution status: count logical intents, transmitted attempts, accepted\n   effects, duplicate observable side effects and unresolved outcomes separately, with the\n   adversarial cases (same key and different payload, lost acknowledgment after commit, crash\n   around the atomic record, two consumers, replay after key expiry, downstream effect without\n   readback) and the acceptance criterion (C17, C8). The source says no such tests have been\n   executed for the idempotency chapter (C17).\n5. **An explicit outcome and status.** The status is one of proposed, decision-supported,\n   insufficient-evidence or rejected (C14). If the constraint is hard and cannot be evaluated\n   by the model, the correct outcome is insufficient evidence; if it is non-quantitative and\n   unverified, a conditional recommendation is possible only with the condition stated.\n   Neither outcome is \"safe\" (C15, C10).\n6. **Reversal triggers and what would change the outcome.** The record must name the\n   measurement, the range that would support or reject the decision, the owner, the\n   consequence of staying in the current state and the review trigger (C15). For this\n   decision that includes a measured duplicate rate, a measured retry or acknowledgment-loss\n   rate materially above the modeled value, a key retention shorter than the retry and replay\n   horizon, or a consumer without deduplication (C14, C15).\n7. **Residual risk and the consequence of being wrong.** A duplicate effect can be\n   irreversible while a skipped launch is detectable; where the outcomes are not equally\n   recoverable, the source's general preference is to fail closed, and that choice must be\n   recorded as a policy decision rather than hidden in a metric (C23, C15).\n8. **Provenance and non-claims.** Model and scenario hashes, engine version, seeds,\n   replications, limitations and result hash belong to the run record; replay proves\n   reproducibility, not truth; the record must not claim production validity, CI execution,\n   owner acceptance or pattern promotion (C13, C12).\n9. **Metric-set discipline.** A decision record cannot use a metric not declared in the\n   scenario (C19). Duplicate rate is not in the candidate-B scenario's metric list (success\n   rate, p95 latency, throughput, cost per 1000 successes, rejection rate and retry\n   amplification) (C19), so it must be carried as a constraint or unknown, not invented as a\n   modeled metric.\n10. **A superseding decision if removal is intended.** Removing a hard constraint is a new\n    decision, not a metric consequence: it needs evidence that the effect is duplicate-safe\n    (natural idempotency, uniqueness or conditional write, single writer, consumer dedup with\n    retention) or an explicit owner-accepted risk with rationale, residual risk and expiry\n    (C21, C16). The status field makes that change visible; a plan edit alone bypasses the\n    record.\n\nA migration plan is not the decision record. If the requirement lives in the plan, the plan\nmust reference the decision record's constraint and its verification gate. Removing it from\nthe plan without a superseding record would bypass the constraint, the evidence status and the\nreversal triggers at once.\n\n## 6. What would legitimately justify removing the requirement\n\nLegitimate routes to removal are effect-level, not load-level:\n\n- the effect is naturally idempotent or protected by a uniqueness constraint, compare-and-set\n  or single writer, so a retry cannot apply it twice (C7);\n- the consumer deduplicates and the marker commits with the effect, with retention covering\n  the retry and replay horizon (C8, C7);\n- executed adversarial tests show no duplicate observable effect within a declared tolerance,\n  and the duplicate-rate measurement supports the declared range (C17, C15);\n- the owner explicitly accepts the residual risk, with rationale, consequence and review\n  trigger (C15, C21).\n\nNone of these is a success or amplification number. What would not justify removal: more\nreplications or a narrower confidence interval (C13), a lower amplification (C3), a higher\nsuccess rate (C2), a matching replay (C13), or the absence of duplicate observations in a\nmodel that has no duplicate observable (C4).\n\n## 7. What the model does establish, and the record discipline it still needs\n\nThe model does establish something useful: under the synthetic workload, B completes more\nrequests and costs less per success than A, and its retry load is far below C's. That is a\nlegitimate input to the capacity and completion decision, and it is legitimate to recommend B\non those grounds with the operability constraint still unverified (C10). What it cannot do is\nadjudicate effect identity.\n\nThe worked example's reversal list already has the right shape: a measured retry rate\nmaterially above the modeled value, a measured p95 tail, a cost-weight change and a failed\noperability review; a narrower confidence interval would not reverse it (C14). One\nrecord-discipline defect is visible in the book itself: the worked example sets the reversal\nthreshold at a modeled retry rate of 1.003, while the retry page reports B's amplification as\n1.004 (C22). A decision record must bind one versioned value and state which one the trigger\nuses; otherwise a reviewer cannot tell whether the observed 1.004 is already outside the\ndeclared range. The inconsistency is small, but it is exactly the kind of thing the record\nexists to prevent.\n\n## 8. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification<br>tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b<br>tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results |\n| C2 | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection<br>tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation |\n| C3 | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification |\n| C4 | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes |\n| C5 | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route<br>tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches<br>tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets |\n| C6 | tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines<br>tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets |\n| C7 | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route |\n| C8 | tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers<br>tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix |\n| C9 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure |\n| C10 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences |\n| C11 | tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary<br>tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed<br>tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope |\n| C12 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers<br>tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here<br>tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration |\n| C13 | tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves<br>tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications<br>tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results |\n| C14 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records<br>tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity |\n| C15 | tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence<br>tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome<br>tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result |\n| C16 | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes<br>tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes<br>tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes |\n| C17 | tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests<br>tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines<br>tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix |\n| C18 | tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence |\n| C19 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences<br>tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics<br>tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b |\n| C20 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure<br>tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes<br>tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records<br>tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome |\n| C21 | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route<br>tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix<br>tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests<br>tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences |\n| C22 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation<br>tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification |\n| C23 | tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches |\n| C24 | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics |\n| C25 | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits |\n\n## 9. Unknowns, contradictions and limits\n\nThe decisive quantity, the duplicate-effect rate of the publish path under real retry,\nredelivery and replay behavior, is unknown in this evidence. No adversarial test of the kind\nthe chapter specifies has been executed (C17), and I found no production duplicate\nmeasurement in the sections read; a zero-result search does not prove absence. The consumer deduplication implementation, the key retention window relative to\nthe retry and replay horizon, and whether every consumer applies the effect idempotently are\nall unverified in this evidence. I did not read the actual migration plan or the decision\nrecord artifact; only the contracts, the worked example and the mechanism pages were read.\nThe specific publish operation's acknowledgment-loss and commit behavior was not observed: the\nsources establish the general failure mode, not this system's exposure. The model's retry path\nis taken from the page text and state diagram; I did not read the engine source, so the exact\nattempt accounting is not independently verified here.\n\nContradiction to resolve: the worked example's reversal trigger says the modeled retry rate is\n1.003, while the retry-amplification page reports B at 1.004 (C22). No claim of production\nbehavior, independent review, CI execution, owner acceptance or pattern promotion is made.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Candidate B's 0.9996 success and 1.004 retry amplification are outputs of the synthetic V12 A/B/C discrete-event comparison (three attempts with exponential backoff and full jitter), not production measurements.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "B has three attempts with exponential backoff and full jitter: retry amplification 1.004, timeout rate 0.0041, success 0.9996.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b",
+          "quote": "a 2-second timeout, three attempts, exponential backoff with base 0.2 seconds and full jitter, a 240-request bulkhead and a relative cost of 8.0 per server-hour.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The model's success rate is the fraction of offered requests that reach a terminal modeled outcome; the conservation identity counts each request once and has no term for applied business effects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+          "quote": "A with a 40-request queue and a one-second deadline succeeds on 0.6488 of offered requests; 0.3495 time out and 0.0005 are rejected.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+          "quote": "offered = completed + rejected + failed + in_system",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+          "quote": "Conservation is necessary but not sufficient. A model can conserve requests while assigning them to the wrong outcome.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Retry amplification is total attempts divided by offered requests; it measures retry-induced load, not the number or identity of effects produced by those attempts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "The retry amplification metric is total attempts divided by offered requests.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "If every request is attempted 1.05 times on average, the service load is 5% higher than the offered load.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The queue model explicitly does not represent business idempotency; retry-without-idempotency is declared outside its boundary and must be recorded as a limitation, not fixed by a simulation parameter.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+          "quote": "**Retry without idempotency.** A timed-out request may have committed an effect; the retry duplicates it. The queue model does not represent business idempotency.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+          "quote": "The last two are outside the queue model's boundary. They must be recorded as limitations, not solved by a simulation parameter.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A timeout or lost acknowledgment is not evidence that no effect was committed; a retry after that ambiguity can duplicate a committed effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches",
+          "quote": "A timeout is not evidence that the external job did not start. The scheduler must either make the external operation idempotent or be able to look up its authoritative state.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Reject the assumption that a cancelled response retracts committed state or emitted events.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Retry budgets, attempt caps, backoff, jitter and deadlines are capacity controls; no combination makes a non-idempotent effect safe by itself.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+          "quote": "Backoff/jitter, per-operation attempt budgets, total absolute deadline and cancellation are architectural controls, but no combination makes non-idempotent effects safe by itself.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Backoff does not make a non-idempotent effect safe.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Idempotency is a positive contract: one logical intent bound to caller/payload scope and retention, an outcome record checked atomically with the effect, a duplicate returns the recorded outcome, and the guarantee ends at key expiry.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "**Idempotency-key contract.** The key binds one logical intent, caller/payload scope and retention window to an authoritative outcome record. It must be stable across retries, scoped so another caller cannot collide, and checked atomically with the effect. The server returns the recorded outcome for a duplicate, rather than executing again.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "**Invariant.** A key is only useful while its outcome record is retained; after expiry, historical deduplication is no longer guaranteed.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "On a publish path, at-least-once redelivery plus consumer-side deduplication is the practical contract; redelivery keeps event identity, and producer/broker idempotence cannot make an unrelated consumer's external side effect exactly once.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+          "quote": "Re-delivery of the same event keeps its identity E; a new legitimate change gets a new event identity.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "quote": "The fourth and fifth rows show why **at-least-once delivery plus consumer idempotency** is a practical contract to investigate.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "quote": "A broker's producer idempotence or transactions—where provided in an exact version and configuration—cannot silently make an unrelated consumer's external database side effect globally exactly once.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "quote": "Retain same E; prove consumer application deduplication",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The decision-record contract requires constraints (hard, soft, non-quantitative), evidence (model verification, calibration, simulation, sources), an outcome, reversal triggers and limitations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The contract contains:\n\n- id, version, title and status;\n- question and context;\n- constraints: hard, soft and non-quantitative;\n- candidates: identifier, scenario, runs, pattern identifiers and owner pages;\n- metrics: identifier, unit, direction and business-comparable flag;\n- evidence: model verification, calibration, simulation and source identifiers;\n- outcome: recommendation, rationale and non-quantitative constraints;\n- reversal triggers, limitations and pattern links.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Hard constraints are not tradable for a better average; a non-quantitative constraint is one the model cannot measure, and if it remains unverified the recommendation is conditional.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A hard constraint is a condition a candidate must satisfy. If candidate C exceeds a declared cost ceiling, C is eliminated even if it has the highest success rate.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team or a regulatory approval.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "The record states that the operability constraint remains unverified, so the recommendation is conditional.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "A model boundary is acceptable only if the omitted parts cannot change the comparison; the declared discrete-event boundary excludes dependency calls, storage, network and deployment, and a boundary mismatch can reverse the decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+          "quote": "That is acceptable only if the omitted parts cannot change the comparison under the declared conditions.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+          "quote": "Boundary: request admission, a bounded queue, a server pool, per-attempt deadlines and bounded retries. Excluded: dependency calls, storage, network and deployment.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+          "quote": "**Boundary mismatch.** The decision is about a caller-visible outcome, but the model boundary starts after admission. The missing admission behavior can reverse the result.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "V12 separates source, verification, calibration, simulation and decision evidence; every model is uncalibrated and V12 has no operational validation against a real system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "A source can support a method without validating a model. A model can be verified without being calibrated. A calibrated model can produce a simulation result that does not support a decision because a hard constraint was omitted.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+          "quote": "V12 has no operational validation against a real system. Every model records that limit.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Replay and narrow confidence intervals establish reproducibility and precision of modeled outputs, not model validity, measured inputs or decision correctness; more replications do not make an assumption more representative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "Replay proves that the stored inputs, engine version and seed produce the stored metrics on the same platform family. It does not prove that the model is valid, that the inputs are measured or that the decision is correct.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "A replay that matches is a reproducibility check, not a truth check.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+          "quote": "If the input distribution is assumed, more replications make the assumption more precise, not more true.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "Narrow intervals do not make the inputs measured.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A decision-supported outcome with an uncalibrated model is conditional, and the record must state the condition and the measurements that would reverse it; the allowed statuses are proposed, decision-supported, insufficient-evidence and rejected.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result. It says the decision follows from the declared assumptions and constraints. It does not say the assumptions are true. The record must state the condition and the measurements that would reverse it.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision record separates three statuses:\n\n- model-verified, partially-verified or unverified for the engine and model;\n- calibrated, partially-calibrated or uncalibrated for the inputs;\n- decision-supported or insufficient-evidence for the outcome.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "quote": "an explicit recommendation or a no-recommendation outcome;\n- non-quantitative constraints kept separate;\n- reversal triggers and limitations.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "When a hard constraint cannot be evaluated by the model, the correct outcome is insufficient evidence, and the record must name the measurement, its range, owner, consequence and review trigger.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "a hard constraint cannot be evaluated by the model",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "Return a conditional decision when the missing evidence is explicitly non-quantitative and the decision record can state the condition.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "- the measurement;\n- the range that would support or reject the decision;\n- the owner of the measurement;\n- the consequence of staying in the current state;\n- the next review trigger.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+          "quote": "A decision record can conclude that the evidence is insufficient.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Removing a constraint because a metric looks good is a named decision-record failure: constraint laundering, score laundering, evidence inflation or unknown-as-zero.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "**Constraint laundering.** A hard cost ceiling becomes a soft preference after a candidate fails it. The decision record must show the constraint and the failure.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "**Score laundering.** A composite score hides the weights and the eliminated candidates.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "**Evidence inflation.** A model-verified engine is presented as a validated system.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+          "quote": "**Unknown as zero.** A missing input is set to zero and the model reports a precise but meaningless result.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Duplicate effects must be counted separately from intents, attempts, accepted effects and unresolved outcomes; no adversarial test of this kind has been executed for the idempotency chapter.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests",
+          "quote": "For each case count logical intents, transmitted attempts, accepted effects, duplicate observable side effects and unresolved outcomes **separately**. No such tests have been executed for this chapter.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+          "quote": "Retry only when an error class and the business contract permit it.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "quote": "In one consumer-side transaction couple dedup marker with local effect, or document a tested alternative",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The V12 migration-simulation chapter does not model record-level reconciliation, schema compatibility, deployment orchestration or business continuity ownership, and treats its assumed inputs as a reason for insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "quote": "The chapter does not model record-level reconciliation, schema compatibility, deployment orchestration or business continuity ownership.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+          "quote": "the decision record treats those assumptions as a reason for insufficient evidence.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The decision record's metric set is closed: a metric not declared in the scenario cannot be used, and duplicate rate is not among the declared metrics, so it must be carried as a constraint or unknown rather than a modeled metric.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The simulation succeeded, so production will succeed.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The decision record recommends B, so B is safe to deploy.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "A decision record that uses a metric not declared in the scenario is a validation failure.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b",
+          "quote": "The same file also declares the metrics: success rate, p95 latency, throughput, cost per 1000 successes, rejection rate and retry amplification.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "On the read sources, the decision record must carry the requirement as a constraint, the model boundary and limitation, layer-separated evidence statuses, the duplicate-effect measurement and test gap, an explicit status, reversal triggers and residual risk.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "- constraints: hard, soft and non-quantitative;",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+          "quote": "The last two are outside the queue model's boundary. They must be recorded as limitations, not solved by a simulation parameter.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision record separates three statuses:\n\n- model-verified, partially-verified or unverified for the engine and model;\n- calibrated, partially-calibrated or uncalibrated for the inputs;\n- decision-supported or insufficient-evidence for the outcome.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "- the measurement;\n- the range that would support or reject the decision;\n- the owner of the measurement;\n- the consequence of staying in the current state;\n- the next review trigger.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Removing the requirement is a superseding decision: it needs either effect-level evidence (natural idempotency, uniqueness/conditional write, single writer, consumer dedup) or an explicit owner-accepted risk, not an inference from success or amplification.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "**Alternative.** A naturally idempotent operation, a conditional/unique constraint, or a single-writer serialization may be preferable when the effect can be expressed without a key store.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+          "quote": "Retain same E; prove consumer application deduplication",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests",
+          "quote": "No such tests have been executed for this chapter.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The decision record recommends B, so B is safe to deploy.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The book's worked example sets the reversal threshold at a modeled retry rate of 1.003 while the retry page reports B's amplification as 1.004; a decision record must bind one versioned value.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A measured retry rate materially above the modeled 1.003.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "B has three attempts with exponential backoff and full jitter: retry amplification 1.004, timeout rate 0.0041, success 0.9996.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Where a skipped outcome and a duplicated outcome are not equally recoverable, the source's general preference is to fail closed, as a policy choice rather than a universal rule.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches",
+          "quote": "The source's general preference is to fail closed when the two outcomes are not equally recoverable; this is a policy choice, not a universal rule.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The model's resource state is a fixed number of servers, a FIFO queue with a capacity, a bulkhead, a per-attempt timeout and a bounded retry budget; it does not implement priority or preemption, and any additional needed semantics requires a new contract and new tests rather than an undocumented flag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "V12 implements a simpler resource:\n\n- a fixed number of servers;\n- a FIFO queue with a capacity;\n- a bulkhead limiting queue plus in-service requests;\n- a timeout per attempt;\n- a bounded retry budget.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+          "quote": "The engine does not implement priority or preemption. A model that needs them requires a new contract and new tests, not an undocumented flag.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Each model records validity limits (synthetic workload only; no dependency calls or storage in the checkout model; no production claim), and a validity limit is a condition on the result's use: if a decision needs the omitted mechanism, the model is outside its domain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "Each model records limits such as:\n\n- valid only for the synthetic workload in a scenario;\n- no individual latency in the stock-flow model;\n- no dependency calls or storage in the checkout model;\n- no record-level reconciliation in the modernization model;\n- no production claim without measurement.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "A validity limit is not a disclaimer appended to a result. It is a condition on the result's use. If a decision needs the omitted mechanism, the model is outside its domain.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#3-identity-across-retries-messages-and-consumers",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+    "tycho.page.33399db8d1574330951d9954801d6e71#7-negative-and-acceptance-tests",
+    "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
