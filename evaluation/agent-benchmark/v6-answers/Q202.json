@@ -1,0 +1,249 @@
+{
+  "task_id": "Q202",
+  "question": "After a rolling restart, a dashboard that differences cumulative request counters shows a brief negative rate and then a traffic collapse, and the team concludes that capacity was lost. Why is the counter reading not a business event, and what must the pipeline and query preserve to make the interval usable?",
+  "layers": [
+    "book"
+  ],
+  "facets": [
+    {
+      "facet": "Counter temporality and reset arithmetic: is a decrease in a cumulative counter an event?",
+      "queries": [
+        "cumulative counter reset after restart negative rate",
+        "monotonic counter delta derivation dashboard",
+        "conceptual: what changes at a process restart when a counter is cumulative"
+      ],
+      "evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality"
+      ]
+    },
+    {
+      "facet": "Reading versus business event: attempts, eligible population, audit authority",
+      "queries": [
+        "metric stream authorized business meaning audit trail",
+        "counter attempts versus unique booking decisions",
+        "SLI eligible population denominator window"
+      ],
+      "evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#1-separate-measurement-generation-from-retrieval",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations"
+      ]
+    },
+    {
+      "facet": "Collapse mechanism: series churn, scrape gaps, staleness inside an aggregate",
+      "queries": [
+        "staleness marker missing samples scrape gap series disappear",
+        "rolling restart capacity removed fleet traffic shift deployment",
+        "duplicate cumulative stream throughput doubled"
+      ],
+      "evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+        "tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality"
+      ]
+    },
+    {
+      "facet": "Pipeline preservation contract: temporality, identity, timestamps, missingness",
+      "queries": [
+        "temporality conversion start timestamp per-series state",
+        "source timestamp trusted ingestion time",
+        "event time watermarks late data business policy"
+      ],
+      "evidence": [
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#1-separate-measurement-generation-from-retrieval"
+      ]
+    },
+    {
+      "facet": "Query and interval preservation: reset-aware rate, per-series aggregation, gap handling",
+      "queries": [
+        "aggregate rates per instance before summing",
+        "query window interval alignment rate calculation dashboard",
+        "missing window versus zero traffic"
+      ],
+      "evidence": [
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+        "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety"
+      ]
+    },
+    {
+      "facet": "Capacity interpretation boundary: offered load, saturation, corroboration",
+      "queries": [
+        "capacity plan from served traffic saturation queue depth",
+        "dashboard green process healthy but user outcome broken",
+        "Little's law saturation overload"
+      ],
+      "evidence": [
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+        "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation"
+      ]
+    }
+  ],
+  "answer": "# Q202 — A counter reading is not a business event, and what an interval must preserve\n\n**Layer note.** The question is answerable in the canonical `book` layer: V09/C01 (SLIs, eligible\npopulation, window), V09/C02 (metrics transport, temporality, aggregation, retention), V09/C06\n(incident evidence), V08 (rolling replacement), V04/C08 (event-time windows). The CLI in this\nsession exposes only book search, so `atlas` and `modeling-and-simulation` were not separately\naddressable, and no pattern card, model or run artifact was used.\n\n## 1. Direct answer\n\nThe dashboard is showing two representation artifacts, not two business events. A cumulative\ncounter is monotone only inside one process epoch: restart or stream reset changes its start\ntimestamp, so the first difference afterwards is \"new epoch minus old epoch\" — arithmetic, not\nnegative requests. The \"traffic collapse\" that follows is usually the second artifact: the\naggregate loses series when old replicas stop, discovery/reachability/scrape fails, or samples go\nstale, and a shrinking or empty series set is rendered as zero demand. A counter sample is a\ntyped, scoped observation of *attempts*; it \"does not prove the event's authorized business\nmeaning\" and is not an audit trail. Capacity is likewise not a counter property: it is a relation\namong offered load, service time and saturation.\n\nThe interval becomes usable only when two things are preserved. The **pipeline** must keep what\nthe number means: metric kind, unit, resource and attribute identity, aggregation temporality,\nper-epoch start time, source timestamps, and missingness as an explicit state. The **query** must\nkeep the series and the window over which it was computed: reset-aware rate over one declared\ninterval, computed per series and only then aggregated, with gaps treated as unknown rather than\nzero, and the result read alongside target/scrape health.\n\n## 2. Mechanism and justification\n\n### 2.1 The negative rate is a differencing error across an epoch boundary\n\nThe corpus names this failure twice. The measurement-type table lists \"cumulative\nsum/histogram — accumulation since a start timestamp — **misreading process restart as a negative\nbusiness event**\", and separately lists \"using raw counter delta across reset without reset-aware\nprocessing\" as the failure to avoid. The temporality section states the rule: \"for cumulative\nstreams, restart or stream reset changes the start time; collectors must not infer a permanent\ncounter decrease as a legitimate negative operation.\" The dashboard contract is stated at the\npipeline boundary: \"distinguish reset, cumulative/delta and missing windows\", with \"counter reset\ninterpreted as negative successful requests\" as the interpretation to reject.\n\nSo the negative value tells you one thing only: the subtraction ignored the reset. It carries no\ninformation about demand, success or capacity.\n\n### 2.2 The \"collapse\" is usually series membership, not traffic\n\nThree mechanisms in the corpus produce exactly this shape:\n\n- **Targets leave the scrape set.** In a pull model, \"failure of discovery, reachability or scrape\n  duration can produce gaps\"; a rolling update \"gradually reduces old ReplicaSet replicas and\n  increases new ones\", so old targets exit while replacements start their counters at zero.\n  Replica readiness \"does not validate live business effects\".\n- **Missing samples are misread as no traffic.** \"Missing samples imply no user traffic\" is named\n  as a failure interpretation to reject at the SDK/exporter boundary; the required control is to\n  \"track sample freshness, target health and explicit unknown data\". More bluntly: \"an exporter\n  outage may look like a quiet service; missing metrics are themselves an observable incident\",\n  and collector saturation \"may remove exactly the samples needed to diagnose the incident\".\n- **An aggregate is not a counter when its membership changes.** A sum over series that vanish\n  loses their accumulated counts. The corpus gives the underlying reason: labels are series\n  identity (\"labels are not free annotations: they create independent time series\") and\n  \"aggregation cannot reconstruct distinctions already discarded\". The specific rule \"compute\n  per-series rates first, then sum, and never rate an already-aggregated counter whose membership\n  changed mid-window\" is my **inference** from those two statements; the book does not state a\n  query-language rule.\n\n### 2.3 Why the reading cannot be a business event\n\nThree independent limits:\n\n1. **Interpretability.** \"A series name, numeric value and timestamp are not enough to interpret\n   it. Include unit, resource scope, metric kind, attribute identity, aggregation temporality and\n   proper start/end semantics where applicable.\" A restarted cumulative stream without its start\n   timestamp is not even the same quantity as before the restart.\n2. **Unit of counting.** A counter counts attempts, and an attempt counter \"is not the same\n   denominator as successful unique booking decisions if clients retry\"; a metric counter \"alone\n   may double-count retries\". An SLI needs an eligible population, a clock-start boundary,\n   good/bad outcome classes, a treatment of pending/unknown outcomes, and a meaningful window —\n   otherwise \"a target without a specified event population can be meaningless\".\n3. **Authority.** An audit obligation \"cannot be satisfied simply by retaining sampled telemetry\".\n   Business meaning lives in an authoritative record of logical outcomes, not in a sampled\n   telemetry stream.\n\n### 2.4 What the pipeline must preserve\n\n1. **Per-series semantics:** kind, unit, resource scope, attribute identity, monotonicity, reset\n   semantics, aggregation temporality, and start/end time for interval data.\n2. **Epoch identity:** a restart is a new start timestamp, not a continuation; where duplicate\n   streams exist, \"source/writer identity and temporality-aware deduplication\" is required,\n   because a duplicate cumulative stream otherwise reads as \"throughput inexplicably doubled\".\n3. **Time provenance:** sample/source timestamp versus ingestion time (\"is source timestamp\n   trusted?\"), plus a declared lateness and finalization policy — \"a watermark or event-time\n   windowing policy tells operators how much lateness they expect and when to finalize a result\",\n   with an exact start/end boundary rather than a fuzzy one.\n4. **Missingness as a first-class state:** freshness, target health, dropped points and scrape\n   gaps monitored independently, with \"unknown\" never encoded as zero. Data-quality monitoring of\n   \"missing, late or duplicated telemetry\" is a pipeline stage in its own right.\n5. **Loss accounting through transforms:** temporality conversion needs per-series state;\n   downsampling and recording rules must keep boundaries (an hourly mean \"may erase evidence of\n   short-lived user-visible incidents\"); each retention tier must record what it can no longer\n   answer.\n6. **Proof under failure:** the pipeline \"must test the actual pipeline under restart, duplication,\n   dropped export and mixed-version instrumentation\". A declaration is not a test.\n\n### 2.5 What the query and the interval must preserve\n\n1. **Per-series first, aggregate second**, keeping instance/epoch identity in the grouping.\n2. **A reset-aware rate or increase over one declared window**, because the rule is to \"calculate\n   rates with reset handling and a valid window\" — the window is part of the definition, not a\n   display setting.\n3. **A gap is not a zero and not an extrapolation.** The query must distinguish \"no samples in\n   this window\" from \"no traffic in this window\", and surface sample coverage beside the value.\n4. **No rate over a pre-aggregated counter whose membership changed mid-window** (inference from\n   2.2).\n5. **Alignment with the observation boundary.** The window must be at least one scrape interval\n   long, must start after the first post-restart sample if the epoch is new, and must match the\n   boundary the question is asked about; an arbitrary dashboard step is not an interval.\n6. **Independent corroboration before interpretation:** target and scrape health, series count,\n   and — for a rolling restart — an explicit maintenance window whose suppression does not hide\n   real incidents.\n\n### 2.6 Why \"capacity was lost\" does not follow\n\nCapacity is a property of offered load, service time and saturation. \"At overload, arrival rate\ncan exceed completion rate and queues grow, invalidating careless steady-state interpretation\";\ncapacity evidence is \"CPU saturation, query plans, lock waits, pool acquisition, queue depth,\ntimeouts and downstream rate limits\". And a dashboard is not the user journey: \"correct journey\nrestored and sustained\" cannot be substituted by \"process liveness or dashboard green after data\ndivergence\". So the team's conclusion needs a demand-side observation and a saturation-side\nobservation; one differenced series supplies neither.\n\n## 3. Boundaries and trade-offs\n\n- **Reset-aware math does not prove demand was constant.** If demand really fell, a correct\n  interval will show it. The fix for a bad interval is not to explain away real drops.\n- **The narrow claim is that a reading is not an event**, not that counters are useless. A counter\n  remains the right instrument for counting attempts over intervals once resets and identity are\n  handled.\n- **Delta temporality fails differently.** A restart in a delta stream can appear as a gap or a\n  zero-filled step rather than a negative value; the preservation requirements are the same, the\n  diagnostic signature is not.\n- **Membership arithmetic versus real loss.** The discriminator is target/scrape health and\n  per-series continuity, not the aggregate value; a static snapshot after the fact cannot separate\n  them.\n- **Downsampling can hide the evidence.** If the dip is later only visible through an hourly mean,\n  its absence in a coarse view is not evidence that it did not occur.\n- **Each transformation has its own error mode.** Short windows, mixed-version instrumentation,\n  temporality conversion and duplicate exports are independent; testing one does not cover the\n  others.\n- **Search saturation.** Further queries on this facet returned no new mechanisms, so retrieval is\n  saturated for this corpus — which is not proof the corpus covers every backend behavior.\n- **Source limits.** This is a conceptual, source-linked manuscript with synthetic examples. It\n  states OpenTelemetry/Prometheus semantics, not the behavior of a specific backend's\n  implementation, and asserts no measured telemetry, collector, dashboard or incident.\n\n## 4. Evidence map\n\n| Claim | Section key | Observation or inference |\n|---|---|---|\n| Reset must not be read as negative work | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness | source-stated |\n| Cumulative counters fail when resets are not handled | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations | source-stated |\n| A metric counter is not authoritative business meaning | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations | source-stated |\n| Reading needs kind, identity, temporality, start/end | tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness | source-stated |\n| Rates need reset handling and a valid window | tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality | source-stated |\n| Labels create independent series | tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality | source-stated |\n| Missing samples imply no traffic is a rejected reading | tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage | source-stated |\n| Scrape/export failure looks like full availability | tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics | source-stated |\n| Missing metrics are themselves an incident | tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety | source-stated |\n| Aggregation discards distinctions | tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#integrated-decision-and-reading-route | source-stated |\n| Lag/lateness needs a declared window policy | tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies | source-stated |\n| Rolling update removes old replicas | tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent | source-stated |\n| Dashboard green is not restored user journey | tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations | source-stated |\n| SLI needs eligible population and window | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population | source-stated |\n| Capacity evidence is saturation, not a counter | tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation | source-stated |\n| Per-series-then-aggregate, gap-is-not-zero | tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage, tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design | **inference** |\n| Observation must record metric definition and window | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation | source-stated |\n\n## 5. Unknowns and confidence\n\n**Not established by the evidence.** Which backend and query language is in use; whether its rate\nfunction already implements reset handling; whether the observed collapse was missing series,\nmissing samples, or genuine demand loss; whether the fleet had headroom before the restart; and\nwhether the restart was declared maintenance.\n\n**What would change the answer.** Target and scrape health showing continuous coverage with a\nmonotone per-series counter would move the reading from \"artifact\" toward \"real drop\". An\nindependent request log showing stable demand would confirm telemetry loss. A documented backend\nimplementation would settle the reset-handling question that the corpus deliberately leaves\nversion-dependent.\n\n**Confidence.** High for the semantic claims: several independent sections state the reset rule,\nthe identity requirement and the missing-data caution. Moderate for the per-series-then-aggregate\nrule, which is an inference from stated principles rather than a stated query rule. Low for any\nclaim about this specific pipeline's actual behavior, which the evidence cannot reach.",
+  "citations": [
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+    "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#1-separate-measurement-generation-from-retrieval",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+    "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#integrated-decision-and-reading-route",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation"
+  ],
+  "evidence": [
+    {
+      "claim": "A cumulative counter's decrease after restart is a changed start time, not negative work.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#3-temporality-restarts-and-data-correctness",
+      "note": "\"For cumulative streams, restart or stream reset changes the start time; collectors must not infer a permanent counter decrease as a legitimate negative operation.\" Also: a series name, value and timestamp are not enough; kind, resource scope, attribute identity, temporality and start/end are required.",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Naive counter differencing across a reset is a named failure mode.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+      "note": "\"Using raw counter delta across reset without reset-aware processing\"; and \"Cumulative sum/histogram ... misreading process restart as a negative business event\".",
+      "type": "source-stated"
+    },
+    {
+      "claim": "A metric counter does not carry authorized business meaning and is not an audit trail.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#2-measurement-types-and-aggregation-limitations",
+      "note": "\"A metric counter alone may double-count retries. A metric stream may show something failed but does not prove the event's authorized business meaning or provide an authoritative audit trail.\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Rates require reset handling and an explicit valid window.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+      "note": "\"Counter / monotonic sum: ... calculate rates with reset handling and a valid window.\" A reset, changed start timestamp or temporality mismatch \"must not be misinterpreted as genuine negative work\".",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Labels are series identity, so per-instance series are not interchangeable.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+      "note": "\"Labels are not free annotations: they create independent time series.\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Missing samples read as 'no user traffic' is a rejected interpretation.",
+      "section_key": "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+      "note": "Boundary table: SDK/exporter failure interpretation to reject is \"missing samples imply no user traffic\"; dashboard/alert row requires \"distinguish reset, cumulative/delta and missing windows\" and rejects \"counter reset interpreted as negative successful requests\".",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Scrape/export failure otherwise looks like full availability; freshness and target health must be tracked.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+      "note": "Failure table: \"Scrape/export failure | Zero errors in an empty time series means full availability | Track sample freshness, target health and explicit unknown data.\" Duplicate stream row requires \"source/writer identity and temporality-aware deduplication\".",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Missing telemetry is itself an incident, and controlled maintenance needs explicit suppression.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+      "note": "\"An exporter outage may look like a quiet service; missing metrics are themselves an observable incident.\" Alerts need \"explicit suppression/muting during controlled maintenance without hiding real incidents\".",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Aggregation cannot restore distinctions already discarded.",
+      "section_key": "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#integrated-decision-and-reading-route",
+      "note": "\"An unbounded label can multiply storage and disclose identifiers; aggregation cannot reconstruct distinctions already discarded.\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Duplicate cumulative streams otherwise read as doubled throughput.",
+      "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+      "note": "\"Aggregation loses information by design\": a sum and count can reconstruct a mean under compatible populations but cannot reconstruct an arbitrary distribution; a daily average can hide a 10-minute crisis.",
+      "type": "source-stated"
+    },
+    {
+      "claim": "An interval is only usable with declared window boundaries and a late-data policy.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+      "note": "\"A watermark or event-time windowing policy tells operators how much lateness they expect and when to finalize a result.\" Required choices include exact window start/end and a correction/retraction policy.",
+      "type": "source-stated"
+    },
+    {
+      "claim": "A rolling update legitimately removes old replicas while replacements start fresh.",
+      "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#2-rolling-canary-and-blue-green-mechanisms-are-not-equivalent",
+      "note": "\"Kubernetes Deployments documentation ... describes how a RollingUpdate gradually reduces old ReplicaSet replicas and increases new ones.\" Replica readiness does not validate live business effects.",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Dashboard green is not restored user journey; SLIs need eligible population and window.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+      "note": "\"Incident recovery | Correct journey restored and sustained | Process liveness or dashboard green after data divergence.\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Eligible population, clock-start boundary and window must be declared before measurement.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+      "note": "Table: \"What is one eligible operation?\", \"Which boundary starts the clock?\", \"How are pending/unknown outcomes treated? Pending is not silently equivalent to completed\", \"What window is meaningful?\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Capacity evidence comes from offered load and saturation, not a counter difference.",
+      "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+      "note": "\"At overload, arrival rate can exceed completion rate and queues grow, invalidating careless steady-state interpretation\"; capture saturation, pool acquisition, queue depth, timeouts.",
+      "type": "source-stated"
+    },
+    {
+      "claim": "The observation record must keep the metric definition and window to be re-verifiable.",
+      "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#5-a-usable-incident-log-separates-observation-from-explanation",
+      "note": "\"Observation | Trace/sample/record revision, window, metric definition, access limitations | A graph or quote must be re-verifiable.\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Compute per-series rates before aggregating; treat a gap as unknown, not zero.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#3-pull-push-and-temporality",
+      "note": "Inference from 'labels create independent time series' plus 'aggregation cannot reconstruct distinctions already discarded' and 'missing samples imply no user traffic' (S8). No query-language rule is stated in the corpus.",
+      "type": "inference"
+    },
+    {
+      "claim": "A rate over a pre-aggregated counter whose membership changed mid-window is not a counter rate.",
+      "section_key": "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+      "note": "Inference: the dashboard/alert contract requires distinguishing reset, cumulative/delta and missing windows; nothing in the corpus states how a specific backend handles a shrinking aggregate.",
+      "type": "inference"
+    },
+    {
+      "claim": "Missing, late and duplicated telemetry needs independent data-quality monitoring, and queries run against admitted windows.",
+      "section_key": "tycho.page.ecb28b2c14af4100b2d31e8f2aafcf56#1-separate-measurement-generation-from-retrieval",
+      "note": "Pipeline includes \"independent data-quality monitoring of missing, late or duplicated telemetry\" and \"alert and dashboard queries against admitted time windows and stored samples\".",
+      "type": "source-stated"
+    },
+    {
+      "claim": "The pipeline stage must ask whether the source timestamp is trusted and whether recovery has independent corroboration.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#2-telemetry-collection-is-a-pipeline-not-a-database-write",
+      "note": "Stage table: receiver responsibility is \"obtain samples or accept pushed telemetry with identity and ingestion timing\" with the question \"Is source timestamp trusted?\"; alert/action row asks \"Is there enough independent corroboration to automate recovery?\"",
+      "type": "source-stated"
+    },
+    {
+      "claim": "Coarse rollups can erase the very interval under discussion.",
+      "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+      "note": "\"Rolling raw 10-second latency buckets into hourly averages may erase evidence of short-lived user-visible incidents.\" Record what each retention tier cannot answer after downsampling.",
+      "type": "source-stated"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,228 @@
+{
+  "task_id": "Q200",
+  "answer": "## 1. Direct answer\n\nA five-minute burn-rate threshold is one short-window ratio with no companion window, no persistence rule and one coarse consequence. That design fails in opposite directions. In a low-volume or bursty period a handful of failures is a large share of a five-minute denominator, so ordinary variance crosses the line and pages; the rule cannot separate a transient blip from a real incident because it never asks for a sustained signal or a minimum sample. In the other direction, a slow leak adds bad events a few at a time across days; no five-minute slice concentrates enough of them to cross the same line unless the leak is large enough to lift the five-minute ratio above the cut-off, so a genuinely slow leak stays silent while the error budget drains. Tying every fire to a release pause makes both errors operational: noise stops delivery, while the real leak triggers nothing. Before any burn-rate threshold is trusted, the adoption decision must establish the measurement contract behind the ratio (eligible population, good outcome, denominator, window, aggregation, exclusions), show that the window has enough valid events and that evaluations actually run, and fix the multiwindow structure, hysteresis, action, owner and exception path. The inspected evidence supplies no portable number: its threshold is explicitly hypothetical and no alert was executed or measured.\n\n## 2. Mechanism and justification\n\n### 2.1 Noise is a property of the denominator, not just the threshold\n\nBurn rate compares observed bad-event consumption with the budget's expected consumption rate, and the book states the trade-off directly: \"short windows can be noisy and long windows slow to detect severe faults\" [tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations]. Its trap table names \"Alert threshold selected without enough valid event samples\" [same section]. The SLI pages explain why a ratio can mislead: a target without a specified event population can be meaningless, and time-based and request-based ratios measure different effects under varying demand [tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target]; an attempt counter is not the same denominator as unique logical decisions when clients retry [tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level]. At idle, \"zero observed errors\" means \"insufficient demand to validate reliability\", not a perfect service [budget-actions section 4]. A five-minute slice has a small denominator, so one or two failures can move the ratio sharply at low traffic. A fixed cut-off cannot tell that from a genuine fast burn. The false-page rate is a consequence I infer from these sampling cautions; the corpus does not measure one.\n\n### 2.2 A slow leak is invisible to a short window\n\nA slow leak is defined by accumulation, not by any single slice. The book pairs \"Sustained slow burn\" with \"Review problem history and release/quality trade-offs\" and names the trap \"Ignoring long-term harm because there is no loud incident\" [budget-actions section 4]. Its synthetic 30-day example has 9,970 good outcomes from 10,000 eligible intents against a 99.9% target: 30 failures where 10 are allowed, \"consuming 300% of the target's error allowance\" [tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations]. Nothing in that pattern requires a dramatic five-minute spike; a steady trickle would exhaust the budget while each five-minute ratio looks ordinary. The workbook consequently recommends \"the multiwindow, multi-burn-rate alerting technique\" as \"the most appropriate approach to defending your application's SLOs\" [tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes], and the atlas lists \"window mismatch\" among common failures [tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview]. The trade-off is symmetric: a long window is slow to detect a severe fault, which is why the short window exists as a confirmation rather than as the only window [budget-actions section 4].\n\n### 2.3 The mistake is structural, not just a bad constant\n\nLowering the threshold to catch the slow leak makes noise pages worse; raising it to suppress noise makes the leak it misses worse. A single window sits at one point on the noise/detection-latency trade-off, so no single number escapes it; pairing a long window for accumulation with a short window for confirmation is the structural response [service-level indicators page, bounded pattern notes]. \"Burn rate and alerts are actions, not decorations\" [budget-actions section 4], and the book's safe decision sequence is explicit: check that the event population is correct and the window sufficiently sampled; compare logical operation outcomes, not network attempts; stop rollout on a mandatory correctness gate even with budget remaining; use \"confirmed burn and impact\" to choose mitigation, investigation or reversible rollback; verify recovery restores correct state; record the signal, alert version, decision and follow-up owner [tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision]. The integrated walkthrough's policy is conditional: delay \"nonessential risky deployments\", prioritize correctness recovery, and permit \"necessary security fixes through a separately reviewed exception\" [tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations]. A blanket pause on every fire has no severity gradation, no exception path and no test that the burning change is related to the release. The rollout evidence adds that gates must reflect \"actual severity and exposure rather than an arbitrary percentage\", that a canary with too few events is not a safety demonstration, and that a freeze must identify irreversible state because \"restoring old binaries is not restoration of old data\" [tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status].\n\n### 2.4 What the decision must establish\n\n1. **A valid measurement contract.** Name one eligible operation (intent identity, not HTTP attempt), the good outcome (durable domain result, not a 2xx), the denominator, the clock and boundary, the treatment of pending or unknown outcomes, the window, the aggregation and the exclusions. Document it before measurement; a later change is a new SLO version, not a rewrite of an earlier score [tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population; tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes; tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling].\n2. **A statistically usable window.** Show enough valid event samples for the ratio at the service's actual traffic, including its quiet periods; an idle window with zero errors is not evidence of reliability. Treat skipped rule evaluations as a monitoring blind spot, not as a healthy zero [budget-actions section 4; service-level indicators page, bounded pattern notes].\n3. **A structure that covers both burn speeds.** Use the multiwindow, multi-burn-rate form (a long window for sustained burn and a short window for confirmation), with bounded persistence (for) and reset (keep_firing_for) so that a transient blip neither pages nor falsely resolves. Alert on user-visible burn, not raw 2xx counts [service-level indicators page, bounded pattern notes; atlas overview].\n4. **A named, proportional action with an owner and an exception path.** The written policy must state which actions follow which burn pattern and who takes them; budget breach must have a consequence, but that consequence is not automatically \"stop every release\". Keep a hard correctness gate independent of budget, and allow reviewed security exceptions. An arbitrary threshold with no user consequence is an unacceptable substitution for an error-budget decision [tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations; tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview; tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision].\n5. **A recorded evidence basis and version.** Keep the numerator, denominator, units, target, data-source revision and effective date together; record the signal, source/alert version, decision and follow-up owner. State whether the threshold is locally calibrated or merely borrowed, and record the evidence limits [tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling; same page section 5; tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries].\n\n## 3. Boundaries and trade-offs\n\n- **Five minutes is not condemned as such.** The evidence I inspected never names a five-minute window and gives no canonical window pair. A short window can be a legitimate confirmation leg when its sample is sufficient. The failure described here is using it alone, without persistence, as the only trigger and the only action.\n- **A long-only rule is also wrong.** Long windows are slow to detect severe faults; the recommendation is a pair, not a replacement of the short window by a long one [budget-actions section 4].\n- **Low-traffic services may not be able to support this style of alerting at all.** A ratio with too few eligible events is uninformative; the atlas's hard contraindications are metrics that are not user-visible, arbitrary targets, and budget breaches with no consequence [atlas overview]. Synthetic checks or simpler availability indicators can be the better fit.\n- **The budget is not permission to violate invariants.** One duplicate or incorrect operation can remain forbidden even when the availability SLO is green [tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target]. That is why the release gate needs a correctness gate in addition to burn.\n- **A release pause can be the right response to a confirmed fast burn on a related change.** The book's policy freezes risky changes when the budget is exhausted and permits reviewed security exceptions; it does not make every alert fire an automatic, blanket freeze [service-level indicators page, bounded pattern notes; engineering walkthrough]. The objection is to the automatic, unvalidated, all-or-nothing coupling, not to pausing in principle.\n- **The governance choice is conditional.** The walkthrough explicitly calls its policy a \"conditional governance choice, not a rule universally imposed by Google's SRE guidance\" [engineering walkthrough]. The corpus does not establish that a blanket freeze is wrong in every organization; it establishes the conditions under which it is unjustified.\n- **The evidence is conceptual and synthetic.** The pages are source-linked public documentation plus original teaching examples, not production observations. No SLO, alert rule or monitoring deployment was created or executed, and no budget, burn rate or alert latency was measured [README section 7; budget-actions section 5; service-level indicators page, bounded pattern notes].\n\n## 4. Evidence map\n\n| Claim | Section key | Basis |\n|---|---|---|\n| Burn rate compares observed consumption with expected consumption; short windows are noisy and long windows slow to detect severe faults. | tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations | Observed |\n| A threshold selected without enough valid event samples is a named trap. | same section | Observed |\n| Sustained slow burn should trigger review, and ignoring long-term harm without a loud incident is a named trap. | same section | Observed |\n| Zero errors in an idle window means insufficient demand, not perfect reliability. | same section | Observed |\n| Thirty failures against an allowance of ten over a thirty-day window is 300% budget consumption (synthetic illustration). | tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations | Observed (synthetic) |\n| The workbook recommends the multiwindow, multi-burn-rate technique as the most appropriate way to defend SLOs. | tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | Observed (source claim reported by the book) |\n| Prometheus for and keep_firing_for provide persistence and bounded reset against flapping and false resolution. | same section | Observed |\n| A skipped rule evaluation is a real blind spot. | same section | Observed |\n| The safe rule checks population and sample, uses confirmed burn and impact, keeps a correctness gate, verifies recovery, and records signal, version, decision and owner. | tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision | Observed (Tycho synthetic guidance) |\n| The policy is conditional: delay nonessential risky deployments; allow reviewed security exceptions. | tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations | Observed (Tycho synthetic guidance) |\n| Gates must reflect actual severity and exposure, not an arbitrary percentage; too few events is not a meaningful safety demonstration; a freeze must assess irreversible state. | tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status | Observed (fictional scenario) |\n| The SLO contract fixes population, numerator, denominator, window, aggregation and exclusions before measurement, and later changes are new versions. | tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes; tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population | Observed |\n| A target without an event population can be meaningless; time-based and request-based ratios measure different effects. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target | Observed |\n| Retries make an attempt counter a different denominator from unique logical decisions. | tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level | Observed |\n| The atlas rejects arbitrary targets and budget breaches with no consequence, and requires population, outcome, denominator, window and action owner before first measurement. | tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview | Observed |\n| The sources do not establish portable universal alert parameters; the threshold is hypothetical and unexecuted, and no alert latency was measured. | tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries; tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision; tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | Observed |\n| A single five-minute threshold trades false pages against slow-leak misses; lowering it worsens noise and raising it worsens the miss. | tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations; tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes | Inference |\n| Pausing every release on every fire is not proportional to confirmed impact and lacks an exception path. | tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision; tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations; tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status | Inference |\n\n## 5. Unknowns and confidence\n\n- **No measured false-page rate.** The corpus gives no data on how often a five-minute threshold would fire on normal traffic, and no detection-latency measurement for a slow leak. The mechanism is well supported; the magnitude is not.\n- **No canonical window pair or threshold.** The pages explicitly disclaim universal parameters. They do not establish that five minutes is wrong in every service, nor which long/short pair is correct.\n- **The team's actual SLI and traffic regime are unknown.** Without inspecting their eligible population, denominator and quiet-period volume, I cannot say whether their five-minute rule pages more or less than the design suggests; I can only state the checks that would decide it.\n- **Whether releases are the right control point is a governance choice.** The corpus says the policy is conditional, not universal; it does not establish that pausing all releases is organizationally correct or incorrect.\n- **What would change the answer:** local calibration showing an acceptable false-page rate and slow-burn coverage; evidence that the SLI captures durable user outcomes; a documented action policy with an owner and exception path; and a long/short window pair tested against the service's own traffic.\n- **Confidence:** high on the qualitative mechanism and the trust checklist; low on any numeric parameter. The evidence is source-linked conceptual guidance with synthetic examples, not production observation.",
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Single-short-window noise and false pages",
+      "queries": [
+        "burn rate alert error budget",
+        "paging alert noise false positive on-call",
+        "alert threshold too few events sample window"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "finding": "A five-minute ratio has a small denominator. At low or variable traffic a few failures can cross a fixed cut-off, and the book explicitly warns that short windows are noisy and that thresholds set without enough valid event samples are a trap. This is a mechanism inference, not a measured false-page rate."
+    },
+    {
+      "id": "F2",
+      "facet": "Slow-burn blindness",
+      "queries": [
+        "sustained slow burn",
+        "slow burn sustained error budget consumption weeks",
+        "multiwindow burn rate alert window pair"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview"
+      ],
+      "finding": "A steady leak spreads bad events across days, so no five-minute slice concentrates them. The book pairs sustained slow burn with review, warns against ignoring long-term harm without a loud incident, recommends multiwindow multi-burn-rate alerting, and names window mismatch as a common failure."
+    },
+    {
+      "id": "F3",
+      "facet": "Binary release-pause action",
+      "queries": [
+        "error budget policy freeze releases",
+        "deployment freeze rollout gate error budget",
+        "release approval pause deployment risk"
+      ],
+      "evidence": [
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+        "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status"
+      ],
+      "finding": "Pausing every release on every fire is not tied to confirmed burn, impact or severity. The policy is conditional (nonessential risky deployments, reviewed security exceptions), gates must reflect severity and exposure, and a freeze must assess irreversible state because restoring binaries is not restoring data."
+    },
+    {
+      "id": "F4",
+      "facet": "Measurement contract and sample validity",
+      "queries": [
+        "eligible events SLI denominator",
+        "SLO window sampling and eligible population",
+        "alert threshold too few events sample window"
+      ],
+      "evidence": [
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling"
+      ],
+      "finding": "Before a threshold means anything, the decision must fix eligible population, good outcome, denominator, window, aggregation, exclusions and treatment of pending or unknown outcomes; a later change is a new SLO version. Retries and idle periods break naive ratios."
+    },
+    {
+      "id": "F5",
+      "facet": "Alert mechanics, action ownership and evaluation health",
+      "queries": [
+        "multiwindow multi-burn-rate alert",
+        "alert hysteresis flap reset",
+        "SLO alert fatigue threshold"
+      ],
+      "evidence": [
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview"
+      ],
+      "finding": "Trust requires multiwindow pairing, bounded for and keep_firing_for, alerting on user-visible burn, a written action with an owner and exception path, and monitoring of skipped evaluations. A target with an arbitrary threshold and no consequence is a dashboard number, not an SLO alert."
+    },
+    {
+      "id": "F6",
+      "facet": "Evidence limits and local calibration",
+      "queries": [
+        "1h 5m 6h 30m 3d 6h burn rate windows",
+        "burn rate 14.4 6 1",
+        "decision record alert policy threshold"
+      ],
+      "evidence": [
+        "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+        "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+        "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations"
+      ],
+      "finding": "The inspected evidence supplies no portable threshold and no measured false-page or detection-latency data. The example threshold is explicitly hypothetical and unexecuted, so the decision must record its evidence basis and calibrate locally rather than treating any number as proven."
+    }
+  ],
+  "citations": [
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+    "tycho.page.8c596999929c47e48af6a7a2896bb9b9#6-slos-need-revision-and-contradiction-handling",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#1-identify-the-service-boundary-and-eligible-population",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+    "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+    "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+    "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status"
+  ],
+  "evidence": [
+    {
+      "claim": "Burn rate compares observed bad-event consumption with expected consumption; short windows are noisy and long windows are slow to detect severe faults.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "\"short windows can be noisy and long windows slow to detect severe faults\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "A threshold selected without enough valid event samples is a named trap.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Trap column: \"Alert threshold selected without enough valid event samples\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "Sustained slow burn should trigger review of problem history and release/quality trade-offs; ignoring long-term harm without a loud incident is the trap.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Table row: \"Sustained slow burn\" / \"Ignoring long-term harm because there is no loud incident\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "Zero errors in an idle window means insufficient demand to validate reliability, not a perfect service.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "\"Zero observed errors at idle time\" / \"Insufficient demand to validate reliability\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "Thirty failures against an allowance of ten over a thirty-day window is 300% budget consumption (synthetic illustration).",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+      "note": "9,970 good outcomes of 10,000 intents, 99.9% target, 30 failures where 10 are allowed, \"consuming 300% of the target's error allowance\"; explicitly illustrative.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The workbook recommends the multiwindow, multi-burn-rate technique as the most appropriate way to defend SLOs.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "\"the multiwindow, multi-burn-rate alerting technique\" as \"the most appropriate approach to defending your application's SLOs\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "Prometheus for and keep_firing_for provide persistence and bounded reset against flapping and false resolution.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "for waits for a condition to persist; keep_firing_for prevents \"flapping alerts, false resolutions due to lack of data loss, etc.\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "A skipped rule evaluation is a real monitoring blind spot.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "\"a skipped evaluation is a real blind spot\" and rule_group_iterations_missed_total increments",
+      "basis": "observed"
+    },
+    {
+      "claim": "The safe rule checks population and sample, uses confirmed burn and impact, keeps a correctness gate, verifies recovery, and records signal, version, decision and owner.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+      "note": "Numbered safe-rule list; thresholds explicitly hypothetical and no PromQL query, SLO policy or alert executed.",
+      "basis": "observed"
+    },
+    {
+      "claim": "The policy is conditional: delay nonessential risky deployments and permit necessary security fixes through a reviewed exception.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+      "note": "\"conditional governance choice, not a rule universally imposed by Google's SRE guidance\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "Release gates must reflect actual severity and exposure, not an arbitrary percentage; too few events is not a meaningful safety demonstration; a freeze must assess irreversible state.",
+      "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#4-failure-chronology-request-outcomes-can-diverge-from-deployment-status",
+      "note": "Safety-gates table and canary discussion; \"restoring old binaries is not restoration of old data\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "The SLO contract fixes population, numerator, denominator, window, aggregation and exclusions before measurement, and later changes are new SLO versions.",
+      "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#bounded-pattern-ownership-notes",
+      "note": "\"fix the eligible population, numerator, denominator, window, aggregation and exclusions before measurement\" and \"A later change is a new SLO version\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "A target without a specified event population can be meaningless; time-based and request-based ratios measure different effects.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#2-an-sli-is-an-observation-an-slo-is-a-chosen-target",
+      "note": "\"A target without a specified event population can be meaningless\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "Retries make an attempt counter a different denominator from unique logical decisions.",
+      "section_key": "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level",
+      "note": "\"A counter of attempted requests ... is not the same denominator as successful unique booking decisions if clients retry\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "The atlas rejects arbitrary targets and budget breaches with no consequence, and requires population, outcome, denominator, window and action owner before first measurement.",
+      "section_key": "tycho.page.b8f80e03e8346a4ba26e9d692a38945d#overview",
+      "note": "Hard contraindications and Tycho condition; \"window mismatch\" among common failures",
+      "basis": "observed"
+    },
+    {
+      "claim": "The sources do not establish portable universal alert parameters; the threshold is hypothetical and unexecuted, and no alert latency was measured.",
+      "section_key": "tycho.chapter.16f93a5e11e845d5b4c01a9e6a25f0c7#7-evidence-and-review-boundaries",
+      "note": "Alerting-on-SLOs \"does not establish\" \"portable universal alert parameters\"; \"No data was collected, alert fired ...\"",
+      "basis": "observed"
+    },
+    {
+      "claim": "A single five-minute threshold trades false pages against slow-leak misses; lowering it worsens noise and raising it worsens the miss.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#4-burn-rate-and-alerts-are-actions-not-decorations",
+      "note": "Inference from the stated short/long window trade-off and the multiwindow recommendation; no measured rates.",
+      "basis": "inference"
+    },
+    {
+      "claim": "Pausing every release on every fire is not proportional to confirmed impact and lacks an exception path.",
+      "section_key": "tycho.page.8c596999929c47e48af6a7a2896bb9b9#5-an-original-synthetic-error-budget-decision",
+      "note": "Inference from the safe-rule sequence, the conditional policy and the safety-gate table.",
+      "basis": "inference"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
