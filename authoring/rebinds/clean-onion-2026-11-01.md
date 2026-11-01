@@ -2,7 +2,7 @@
 
 - Old page at 73df3da5: cece61766a1e5b648b22bf10850a043062332448fe1d8832ba3ec4d11781bfb8 (14,836 bytes).
 - New page: 26d04c12271431323b01c502c3941c71f60d8a132b36c9f418218b4a431013c7 (14,864 bytes).
-- Section boundary: `### Clean-Onion Architecture` through EOF, 2,506 bytes.
+- Section boundary: `### Clean-Onion Architecture` through EOF, 2,510 UTF-8 bytes (2,506 code points).
 - Old/new section: 0e7300dee300e26c227a2b01d7df656cd660de25c9f58e1bc2074ba4237f38c1, byte-identical.
 - `git diff -w 73df3da5` exits 1; hunk @@ -158,9 +158,9 @@ reserve(unitId, interval, operationId), then implement it with a local transacti
 - Clean-Onion card: 18a81ec3b6ca80f04d6c0c5584833562460612e2301bd48d1f51cc8370fe2cd6 -> bacb87d0f03fe8b7af9c186fb13d0dc613851e55fea866f3003244c15d811904; the decision body is unchanged, metadata/excludes updated.
@@ -11,4 +11,4 @@
 
 ## Byte-count proof
 
-At artifact 5e860219, `wc -c` returns 14,864 and `sha256sum` returns 26d04c12...; the packet fence is 26 bytes shorter because fenced-block extraction drops the surrounding blank lines, not because the file is 14,838 bytes.
+At artifact 5e860219, `wc -c` returns 14,864 and `sha256sum` returns 26d04c12...; the fence is byte-identical. The 26-byte difference from a code-point count comes from 13 multibyte characters (one em dash, twelve curly quotes), not from dropped lines. The bound page/card hashes are unchanged at content 7a1d6d4c and artifact ef920151.
