@@ -1,0 +1,592 @@
+{
+ "task_id": "Q328",
+ "answer": "# Q328 — Per-account order, acknowledgement order and a terminal path for one shared queue\n\n## 0. Scope, layers and method\n\nThe question needs two layers:\n\n- **book** — the mechanism and the delivery contract: V04/C04 (retries, idempotency,\n  duplicate effects), V04/C05 (inbox atomicity), V04/C06 (messaging families and delivery\n  contracts) and V04/C07 (Kafka partitions and offsets).\n- **atlas** — the pattern-selection cards: Competing Consumers, Point-to-Point Queue,\n  Publish/Subscribe, Dead Letter Channel / DLQ, Idempotent Receiver, Transactional Inbox\n  and Resequencer.\n\nIt does not need **modeling-and-simulation**: no model, run, scenario or decision record\nwould decide this queue contract. All evidence below is book or atlas guidance, not a\nproduction observation or a measured benchmark.\n\n`describe` was run with `--volume atlas`. `outline` returned\n`status: snapshot-mismatch` (\"Route metadata and index differ\") on every attempt, so\nplanning used `search`, page section maps and `read`. Every cited section was read\nthrough the CLI; the query trail is in\n`evaluation/agent-benchmark/v8-logs/Q328.jsonl`. Book and atlas text is\n`content_trust: untrusted-evidence`, and is treated as evidence, never as instruction.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. Why one queue with many consumers loses per-account order | \"partition key ordering queue consumers\"; \"competing consumers ordering\"; \"consumer group partition assignment\" | `tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes`; `tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit`; `tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory` |\n| F2. Partition-assignment contract | \"partition assignment consumer group rebalance\"; \"consumer group assignment partition owner\"; \"static membership session timeout rebalance\" | `tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit`; `tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions` |\n| F3. Acknowledgement order | \"acknowledgement commit offset\"; \"acknowledgement before durable write loss\"; \"cumulative acknowledgement offset commit gap\"; \"in-flight bound prefetch acknowledgement window\" | `tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own`; `tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points`; `tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity` |\n| F4. Lost acknowledgement and the double-applied fee | \"idempotent receiver\"; \"at-least-once duplicate delivery\"; \"transactional inbox\"; \"retry after lost acknowledgement\" | `tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview`; `tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview`; `tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity`; `tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects` |\n| F5. Poison event and terminal path | \"poison message dead letter queue\"; \"retry poison terminal\"; \"head of line blocking partition poison\"; \"visibility timeout redelivery\" | `tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview`; `tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery`; `tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix`; `tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines` |\n| F6. One ordered consumer per partition versus fan-out | \"fan-out ordered partition\"; \"publish subscribe fan-out copy each subscriber\"; \"one ordered consumer per partition\" | `tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory`; `tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes`; `tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview`; `tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking` |\n\nThe atlas is a small decision layer; several entries surface through the chapter inventory\nand dedicated cards rather than through broad keyword recall. I continued until every facet\nhad a read section and two consecutive searches added no new evidence.\n\n## 2. The short answer\n\nAdding consumers does not preserve per-account order because a queue without a partition\nkey has no per-account stream to serialize. The queue's ordering domain is the queue (or a\nsubscription or stream), not the account. Each delivery goes to whichever consumer is\nfree. With twelve consumers and any prefetch above one, events 1 and 2 for the same account\ncan be handled at the same time, and the ledger can commit 2 before 1. Delivery order is not\ncommit order; an acknowledgement retires only the message it names; and no consumer owns an\naccount. More consumers widen the in-flight window and therefore the reorder and duplicate\nexposure. The book is explicit: \"Pool parallelism removes per-key order unless partition\nassignment is explicit\", and \"Partitioned consumers own a stable key range and preserve\nper-key order; prefer competing consumers when order is not required and pool parallelism is\nthe goal.\"\n\nBefore the pool may call itself scalable it must declare three contracts:\n\n1. **Partition assignment.** The ordering key (account id) and its canonical encoding; the\n   partition count and key cardinality; one active owner per partition; a stable assignment\n   with generation fencing; what happens on rebalance (pause, drain or classify in-flight,\n   commit only resolved positions, hand off); what happens when the key encoding or\n   partition count changes; and the fact that the guarantee is per-account, not global.\n2. **Acknowledgement order.** Acknowledge only after the durable ledger effect and its\n   deduplication receipt are committed together; never before. Advance per-partition\n   acknowledgement only over resolved effects, bound the in-flight window, treat a lost\n   acknowledgement as expected redelivery, and resolve redelivery from the receipt rather\n   than from an assumption that the write succeeded.\n3. **Terminal path.** Classify transient, permanent and unknown outcomes; cap attempts and\n   total age with backoff; route permanent or exhausted work to a declared\n   quarantine/DLQ/repair path with reason, owner, alerting, retention and a controlled\n   redrive; and, because the stream is ordered, state whether the partition stops or the\n   event is skipped and reconciled. \"Retry forever\" is not a policy.\n\nOne ordered consumer per partition is better when per-account order is the dominant\nrequirement and parallelism can come from many accounts and partitions. Fan-out is better\nwhen several independent subscribers each need a copy of every event. Fan-out is not a way\nto divide one queue's work: each subscriber gets its own cursor and the load multiplies with\nsubscriber count. If both are needed, combine them: a partitioned stream with one ordered\nconsumer per partition in each subscription, not twelve competing consumers in one group.\n\n## 3. Mechanism: why adding consumers cannot create order\n\n### 3.1 The ordering domain is the queue, not the account\n\nA broker orders a declared stream. The comparison section is precise: \"Message ordering is\ntypically scoped to queue/subscription/stream/partition and concrete producer/consumer\nbehavior; no column implies global total order.\" Without a partition key, the only stream\nis the whole queue. If the queue is strictly FIFO and only one message is in flight, the\naccount order holds — but that is serial processing, not a twelve-consumer pool. As soon as\nmore than one message is in flight, the queue hands different messages to different workers.\nThe broker does not know that two events belong to the same account, so it cannot co-locate\nthem, cannot hold the second behind the first, and cannot fence a second worker.\n\nA stable key changes the shape: \"Events for one aggregate may require a stable key to land\nin one partition and maintain that partition's append sequence.\" The key is a correctness\nchoice, not a transparent optimisation.\n\n### 3.2 Delivery order is not completion order\n\nEven a queue that delivers in order does not order *effects*. Worker A can take event 1 and\nstall on a lock or a slow ledger write while worker B takes event 2 and commits first. The\nbroker's FIFO guarantee governs handoff or position, not the business transaction. This is\nthe mechanism behind the book's warning that \"Pool parallelism removes per-key order unless\npartition assignment is explicit\". Per-key order becomes effect order only when a stable key\nmaps the account to one partition and one active consumer owns that partition.\n\nThe atlas states the same boundary from the selection side: Competing Consumers are a good\nfit when work is independent per message and \"ordering requirements are partition-scoped\",\nand they should be rejected \"when global order is mandatory, when consumers mutate shared\nstate without coordination, or when a slow message has no bounded-attempt or terminal path.\"\nThe Point-to-Point card rejects the shape outright \"when strict global ordering is required\nwithout a partition key\".\n\n**Inference, not a quoted claim:** a consumer-side per-account lock could also serialize two\nhandlers, but that is partition assignment implemented outside the broker, with its own\nlease, fencing, failure and rebalance problems. It does not make the queue's competing\nconsumers order-preserving; it just moves the ownership contract into application code.\nDeclaring the key and the assignment at the broker is the simpler contract.\n\n### 3.3 More consumers widen the race; they do not add ordering capacity\n\nEvery extra consumer is another in-flight slot and another chance for two events of one\naccount to cross. The atlas names the failure direction: \"Concurrency increases duplicate\nand reorder exposure; verify ordering and acknowledgement in the owner section.\" A pool also\nneeds \"a visible in-flight count and a redelivery limit, not only higher prefetch.\"\n\nThere is a hard ceiling. \"A group with more instances than assignable partitions cannot\nincrease per-partition concurrent ownership without changing the consumer architecture.\" If\nthe queue has no partitions at all, there is no assignable ownership to add; the twelfth\nconsumer is just another worker racing on the same stream. If there are fewer partitions\nthan consumers, the extra consumers are idle or cause churn. And one hot account can cap the\nwhole design: \"A single hot key can concentrate traffic and limit parallel processing;\nblindly increasing partition count may not split that key.\"\n\n### 3.4 The poison event is a liveness failure, not a throughput failure\n\nA permanently invalid payment is not repaired by another attempt. In a strict queue it can\nhold the head of the line; in a visibility-timeout queue it is redelivered again and again,\npossibly to several consumers, multiplying attempts and log noise; if the queue lets later\nmessages pass it, the account's order is already broken. The failure matrix states the two\nhonest outcomes: a poison record means the partition \"may stop making progress or skip\ndata\", and the checks are a \"DLQ/quarantine contract, observability, schema handling.\"\nAdding consumers multiplies retries; it does not classify the error, cap the attempts or\ndecide what happens to the account's stream. At-least-once duplicate defenses are\nwork-level: a per-key lock or identity record lets a redelivery recognize already-processed\nwork, and transactional accounting couples the identity update to the effect. They address\nduplicate work, not an end-to-end atomic transfer between independent systems.\n\n### 3.5 The acknowledgement is a completion record, not a business receipt\n\nA consumer acknowledgement retires the message after the configured redelivery policy; a\npublisher confirm only means the broker accepted responsibility, \"not that a consumer\ncompleted the business effect.\" That asymmetry creates the two reported failures:\n\n- **Ack before the ledger write.** The queue retires the payment. If the process crashes\n  before the ledger commit, there is no message left to redeliver: the payment is silently\n  lost. The book: \"Committing offset before the external effect can cause that effect to be\n  silently lost after a crash.\"\n- **Write before ack, ack lost.** The ledger committed, but the acknowledgement did not\n  arrive. The broker redelivers. Without a durable receipt the fee is applied twice. The\n  book: \"Committing it after the effect can cause duplicates\", and \"No perfect ordering of\n  two independent commits creates an automatic global transaction.\"\n\nThese pull in opposite directions, which is why \"ack order\" alone cannot fix the system.\nThe pair of requirements is: commit the effect and the deduplication identity together,\nthen acknowledge; and make redelivery resolve to the recorded outcome. The acknowledgement\nremains a separate uncertain step even when the order is right.\n\nFor an external provider, a lost response is not a safe failure. If a scoped idempotency\nidentity exists, repeat with the same identity and reconcile to the durable outcome; if the\nprovider offers only a status read, query by stable business identity; if it offers neither,\nsurface an unknown outcome and reconcile under policy, or redesign the contract before\naccepting effects. Blind retry after a timeout can allocate again or trigger another\nnotification.\n\n## 4. What the pool must declare\n\n### 4.1 Partition assignment\n\nThe pool must publish, in the queue/topic contract and in code review, all of the following.\n\n1. **Ordering key and scope.** The exact key (for example tenant plus account id), its\n   canonical encoding and its stability across events. Every event that must be ordered\n   with an account must carry that key. The guarantee is per-account, not global; if a\n   business invariant spans two accounts (a transfer, a fee posted to a platform account, a\n   joint account), the contract must name the joint ordering domain or state that the\n   cross-account invariant is handled by a saga or reconciliation, not by this partition.\n2. **Partition count and mapping.** How the key maps to a partition (hash, range, explicit\n   map), the current partition count, and the key cardinality relative to that count. The\n   number of partitions is the upper bound on useful ordered consumers. A hot key is a\n   known limit, not something more consumers can fix.\n3. **One active owner per partition.** The consumer group and assignment strategy; the rule\n   that no two consumers may process the same partition at the same time; the maximum\n   consumer count (normally the partition count); static membership or an equivalent\n   session/heartbeat policy; and the maximum poll/lease interval.\n4. **Generation fencing.** How an old owner is prevented from committing or acknowledging\n   after its partition has been reassigned. A rebalance callback does not retract an\n   outstanding request: \"Stopping polling or receiving a rebalance callback does not retract\n   that remote request.\" The pool must \"drain or classify in-flight work, and commit only\n   positions for resolved effects owned under the selected consumer protocol.\"\n5. **Rebalance behaviour.** Pause intake on revoke, finish or classify in-flight work,\n   commit only resolved positions, then hand off. The expected duplicate window during\n   handoff must be covered by the deduplication receipt. A rebalance is not a safe point\n   unless the contract makes it one.\n6. **Key or partition-count changes.** A transition/ordering contract for re-keying or\n   repartitioning. \"Changing key encoding or partition count can change the partition\n   assignment of later records. An application requiring continuity across that change needs\n   a transition/ordering contract.\" A silent remap can move an account's later events to a\n   new partition while earlier events are still in the old one.\n7. **Topology.** Whether the twelve processes are one consumer group sharing work or twelve\n   independent subscriptions each receiving a copy. Competing consumers share the work; a\n   topic fans each publication out to every matching subscriber. The two topologies have\n   different duplicate and scaling behaviour and must not be conflated.\n8. **Failure scope.** Which partition and which accounts are affected when a poison event\n   stops progress; whether the terminal path stops that partition or skips the event; and\n   how the rest of the pool continues.\n\n### 4.2 Acknowledgement order\n\n1. **Commit before acknowledge.** The ledger effect and the deduplication receipt (consumer\n   identity plus event/effect identity, with a uniqueness constraint) commit in one local\n   transaction. The acknowledgement follows that commit. The inverse order can lose work;\n   the acknowledgement is not a substitute for the ledger write.\n2. **Per-partition order.** Acknowledgement advances only over resolved effects in that\n   partition. A later message must not be acknowledged while an earlier effect in the same\n   partition is unresolved. If the broker uses a cumulative position, a later commit can\n   retire an unresolved gap; the consumer protocol must prevent that, not rely on the broker\n   to infer it.\n3. **Bounded in-flight window.** The subscription declares a prefetch or in-flight bound and\n   an acknowledgement window; when the bound is reached, pause delivery or add capacity\n   rather than buffering without limit. For strict per-account order, one in-flight effect\n   per partition is the simplest safe setting; any higher concurrency needs a sequenced\n   commit protocol with an explicit proof that a later effect cannot overtake an earlier one.\n4. **Lost acknowledgement is normal.** At-least-once delivery means an acknowledgement can\n   be lost after a successful commit. Redelivery must resolve to the already-recorded\n   outcome through the receipt; otherwise the retry applies the fee twice. \"A worker crash\n   after the effect but before acknowledgement can cause redelivery, so nonrepeatable\n   effects need consumer-side deduplication and stable effect identity.\"\n5. **Unknown outcomes get reconciliation, not a guess.** If the effect is external to the\n   ledger transaction, record an in-progress state, perform the external action with its own\n   idempotency key, record completion, and reconcile stale records before acknowledging\n   redelivery. A local transaction cannot make an external provider atomic.\n6. **Revocation fencing.** A consumer that no longer owns the partition must not commit or\n   acknowledge for it. The old owner's in-flight request may still complete remotely, so the\n   effect identity and ownership generation must be checked at the effect boundary.\n7. **Batch semantics.** If acknowledgements are batched, the contract states that a failure\n   in the batch causes redelivery of the whole batch, and the receipt covers every event in\n   it. Batching reduces overhead but strengthens the need for deduplication.\n8. **Observability.** Acknowledgement latency, redelivery rate, unknown-outcome count and\n   in-flight depth are part of the contract. \"A consumer group offset is a replay position,\n   not proof that every user-visible effect succeeded.\"\n\n### 4.3 Terminal path\n\n1. **Classification.** Classify each failure as transient (timeout, lock contention, a\n   retryable downstream error), permanent (invalid schema, rejected business rule, an\n   unprocessable payment) or unknown (a timeout after an external send). Retry only classes\n   the business contract permits; \"Retry only when an error class and the business contract\n   permit it\" is the rule, and no retry policy makes a non-idempotent effect safe by itself.\n2. **Budgets.** Cap attempts per message and per key, cap total age or absolute deadline,\n   and use backoff with jitter. The pool-level retry policy must not multiply the\n   downstream's own retries. \"Backoff/jitter, per-operation attempt budgets, total absolute\n   deadline and cancellation are architectural controls, but no combination makes\n   non-idempotent effects safe by itself.\"\n3. **Terminal disposition.** Choose and declare one: dead-letter queue, quarantine table,\n   repair table/outbox, or drop with an audit record. Preserve the failure reason, headers,\n   trace identity and attempt count, while protecting payload privacy. \"Classify transient,\n   permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in\n   quarantine to diagnose without leaking payloads.\"\n4. **Ownership and alerting.** A named owner, an alert on terminal-path growth, a dashboard\n   and a triage procedure. The DLQ card's good-fit conditions are exactly this: \"Failure is\n   observable; poison messages have an owner and replay policy; retention and access are\n   bounded; alerting is defined.\" Reject the terminal path \"when no one owns the DLQ, or\n   when dead-lettering hides a programming error.\"\n5. **Retention and redrive.** Retain terminal evidence at least through the source queue's\n   retention and the replay horizon; AWS guidance in the card says to set the DLQ retention\n   \"longer than the retention period of the original queue.\" Redrive is a controlled\n   operation with authorization and the same logical effect identity, not a new id that\n   bypasses deduplication. \"A dead-letter queue is a holding mechanism, not successful\n   delivery or an automatically safe replayer.\"\n6. **Ordered-partition semantics.** State whether a terminal event stops the partition or is\n   skipped. Stopping preserves order but loses availability for that account; skipping\n   advances but leaves a gap that later events may depend on. A silent skip is a correctness\n   change, not an operational convenience. Record the decision, the gap and the\n   reconciliation before resuming.\n7. **Capacity and backpressure.** Bound the terminal path and alert before it fills. If the\n   quarantine cannot accept work, the pool needs an explicit admission/rejection decision,\n   not an unbounded local buffer.\n8. **Verification.** Exercise the crash windows: kill after the ledger commit but before the\n   ack, replay a quarantined event, expire a receipt, and revoke a partition with an\n   in-flight external call. Count logical effects, not just consumer lag.\n\n### 4.4 A declaration template\n\nThe following is a synthetic template, not a measurement or a recommendation for a specific\nbroker. Every value must be filled from the workload and the broker's actual contract.\n\n```text\nordering_key        = canonical(tenant_id, account_id), versioned\nordering_scope      = per account; cross-account invariants handled by <saga|reconciliation>\npartition_count     = N, mapping = <hash|range>, hot-key policy = <...>\nassignment          = one active owner per partition per group; strategy = <...>\nfencing             = generation/epoch; old owner cannot commit or ack after revoke\nrebalance           = pause intake; drain/classify in-flight; commit resolved only\nconsumer_count      = <= N; extra consumers are idle or churn\nkey_change          = drain/replay or dual-write transition; no silent remap\ntopology            = one group (work sharing) | one subscription per consumer (copy)\n\nack_order           = ledger effect + dedup receipt committed, then ack\nack_position        = contiguous resolved prefix per partition; no leapfrog\nin_flight           = <= B per partition; pause delivery at B\nlost_ack            = expected; redelivery resolves through the receipt\nunknown_outcome     = in-progress record + reconcile before ack\nbatch_ack           = whole-batch redelivery on failure; receipt covers every event\nrevocation          = fenced; no ack from a non-owner\n\nterminal_classify   = transient | permanent | unknown\nterminal_budget     = attempts <= A; age <= T; backoff + jitter\nterminal_disposition= <DLQ|quarantine|repair table|drop with audit>, reason preserved\nterminal_owner      = <name>, alert = <...>, retention >= <source + replay horizon>\nredrive             = authorized, same logical identity, dedup not bypassed\npoison_in_partition = <stop partition | skip and reconcile>; gap recorded\n```\n\n## 5. Decision: one ordered consumer per partition, partitioned work queue, or fan-out\n\n| Requirement | Shape | What it guarantees | What it costs or forbids |\n|---|---|---|---|\n| Independent work, no ordering requirement | One queue with competing consumers | Parallelism and burst smoothing; each message to one worker | Per-key order is lost unless assignment is explicit; the atlas rejects global order here |\n| Per-account order, parallelism across accounts | Keyed partitions with one ordered consumer per partition (a partitioned work queue) | Per-key order follows the partition sequence; parallel across keys | Consumers <= partitions; one hot key caps throughput; rebalance pause; duplicates on handoff must be deduplicated |\n| Per-account order and one account's rate exceeds one consumer | Cannot add consumers to that partition without breaking order | Only the single-owner partition shape preserves order | Need a finer key if semantics allow, batching/pipelining with sequenced commits, or accept latency; a second consumer on the same partition is the bug |\n| Several independent subscribers each need every event | Publish/subscribe fan-out, one subscription per consumer group | Each subscriber gets its own cursor and copy; independent failure domains | Load and retention grow with subscriber count; not a way to divide one queue's work; each subscription still needs its own ordering/ack contract |\n| Out-of-order events already exist or the key is unstable | Resequencer | Buffers and releases by sequence, with a gap timeout and late-message disposition | Needs a reliable sequence domain, bounded buffer and owners; one missing message can block the stream; not a substitute for a partition key |\n| Global total order | One serialization point or a global sequencer | A single order across all accounts | Caps throughput; partitioning deliberately does not provide this |\n\nThe decision rule is therefore:\n\n- Use **one ordered consumer per partition** when the invariant is *per account* and the\n  traffic can be spread over many accounts. The atlas states the alternative directly:\n  \"One ordered consumer per partition, or a partitioned work queue. Reverse the choice when\n  ordering dominates throughput.\" The book adds the ownership condition: partitioned\n  consumers \"own a stable key range and preserve per-key order\"; a per-key worker pool\n  preserves order \"only when partition assignment is stable.\"\n- Use **fan-out** when the requirement is independent delivery, not work division. The\n  Publish/Subscribe card's good-fit conditions are independent reactions, tolerable\n  fan-out, explicit delivery and retention semantics, and owned duplicate handling. The\n  book says \"each current subscriber gets its own cursor\", and fan-out cost \"grows with\n  subscriber count; an unknown or unbounded population makes load and retention unownable.\"\n  Fan-out is the right answer to \"the ledger team, the notification team and the analytics\n  team each need every payment event\", not to \"we need to process this queue faster.\"\n- Use **competing consumers on one queue** only when order is not required. The atlas is\n  blunt: they are a good fit when \"work is independent per message\" and \"ordering\n  requirements are partition-scoped\"; the Point-to-Point card rejects them when strict\n  ordering is required without a partition key.\n- Use a **resequencer** only as a bounded fallback when the key cannot be assigned or the\n  out-of-order state already exists. It needs \"a reliable sequence domain, and a bounded\n  buffer with a gap timeout and a late-message disposition\"; it is rejected when \"one\n  missing message would block the stream beyond the declared deadline.\"\n\nIf each of several independent subscribers also needs the per-account order, the shape is\nnot \"fan-out versus ordering\". It is a partitioned topic plus one ordered consumer per\npartition *within each subscription*. Each subscriber keeps its own cursor and its own\ndedup/terminal contract, and each still obeys the assignment and acknowledgement rules.\n\n## 6. The reported incidents, mapped\n\n| Reported symptom | Mechanism | Contract fix | Residual risk |\n|---|---|---|---|\n| Poison event retries forever and holds up progress | A permanent failure is treated as transient; no attempt/age cap and no terminal path. A strict queue blocks the head; a visibility-timeout queue redelivers it repeatedly, and adding consumers multiplies the attempts. | Classify transient/permanent/unknown; cap attempts and age; route permanent/exhausted work to a declared quarantine/DLQ with owner, alert and redrive. For an ordered partition, declare stop-the-partition or skip-and-reconcile. | Stopping loses availability for the account; skipping leaves a gap; a DLQ can hide a programming error if nobody owns it. |\n| Consumer acknowledges before writing the ledger, so a crash loses a payment | The acknowledgement retires the message. A crash after the ack and before the ledger commit leaves no message to redeliver. | Commit the ledger effect and the dedup receipt in one local transaction, then acknowledge. Never acknowledge before the durable effect. | The lost-ack direction now appears: a commit followed by a lost ack causes redelivery and needs deduplication. |\n| A retry after a lost acknowledgement applies a fee twice | The ledger committed, the ack was lost, the broker redelivered, and there was no durable receipt to make the second attempt a no-op. | Stable (consumer, event/effect) identity recorded atomically with the ledger effect, protected by a uniqueness constraint; retain it through the redelivery/DLQ/replay horizon; use the external provider's idempotency key and reconcile unknown outcomes. | An external provider is outside the local transaction; receipt expiry and cross-account effects remain; reconciliation is still needed. |\n| The team adds consumers to catch up and calls the pool scalable | No partition key and no assignment, so extra consumers add in-flight work and reorder/duplicate exposure. Beyond the partition count they add no ownership; a hot account caps the partition. | Declare the ordering key, partition count, one owner per partition, stable assignment/fencing, ack order, dedup and terminal path. Scale by keys/partitions and by per-key batching or async I/O inside the ordered consumer. | Per-account throughput is capped by one consumer per partition; rebalances pause processing; hot keys need a business decision, not more consumers. |\n\n## 7. Why \"we added consumers, therefore scalable\" is a category error\n\nScalability is a property of the partitioning and the contract, not of the replica count.\n\n- **The unit of ordered parallelism is the partition/key, not the consumer.** With N\n  partitions, at most N consumers can own work; the rest are idle or cause churn. With no\n  partitions, there is no ordered ownership to hand out at all.\n- **A hot key is a hard ceiling.** One account that dominates traffic occupies one\n  partition. More partitions do not split that key; more consumers cannot own it twice\n  without breaking order.\n- **Concurrency has a cost.** More in-flight messages mean more duplicate and reorder\n  exposure. Without the receipt and the acknowledgement contract, adding consumers increases\n  the probability of the double fee.\n- **Rebalances pause work.** Adding a consumer is itself a group change; assignments move,\n  in-flight work is drained or duplicated, and throughput can dip. Static membership and\n  cooperative assignment reduce the churn but do not create order.\n- **Prefetch is not capacity planning.** A larger prefetch just moves more unresolved work\n  into memory. The pool needs a visible in-flight count and a redelivery limit, and a\n  terminal path that keeps poison out of the head of the line.\n\nThe honest scaling statement is: \"Ordered throughput scales with the number of independent\naccounts/partitions, up to one ordered consumer per partition, with per-key batching or\nasynchronous I/O inside that consumer; fan-out scales independent subscribers, not the work\nof one queue.\" If the observed bottleneck is a single account, the answer is a business or\ndata-model decision (split the account, change the invariant, or accept latency), not more\nconsumers.\n\n## 8. Boundaries, unknowns and contradictions\n\n### 8.1 Unknowns that change the answer\n\n1. **Broker semantics.** The question does not name the queue. Whether it supports a\n   partition key/message group, manual acknowledgement, visibility timeout, max receive\n   count, native DLQ/redrive and retention is unknown. The declaration above is conditional\n   on the broker being able to enforce the key and the ack; if it cannot, the pool needs a\n   routing/partitioning layer or a different broker.\n2. **What the twelve consumers are.** One consumer group sharing work, or twelve independent\n   subscriptions each receiving a copy? The first is competing consumers; the second is\n   fan-out and will process every event twelve times unless the consumers are partitioned\n   subscribers. The duplicate-fee symptom suggests the topology is not declared.\n3. **Account-key stability.** Joint accounts, transfers between accounts, fees posted to a\n   platform account, account merges or splits, and multi-tenant identities can make a single\n   account id the wrong ordering domain. A composite key or a second ordering domain may be\n   required; the contract must say so.\n4. **Ledger boundary.** Is the ledger the same database as the receipt? If the fee is charged\n   at an external provider, the local transaction cannot include it, and the answer needs the\n   provider's idempotency key plus reconciliation. \"A Kafka transaction\" or any broker\n   transaction \"does not automatically enclose an unrelated SQL commit, payment provider or\n   email delivery.\"\n5. **Traffic shape.** Key cardinality, the hottest account's share, peak per-account rate,\n   backlog size and acceptable latency are not given. Without them the partition count,\n   consumer count and in-flight bound cannot be sized; only the shape of the contract can be\n   stated.\n6. **Poison nature.** A schema error, a permanent business rejection and an ambiguous\n   external timeout need different terminal treatments. The question says \"poison\" but not\n   which class.\n7. **Ack semantics.** Per-message versus cumulative acknowledgement, batch commit and\n   redelivery policy are unspecified. A cumulative position makes \"skip the poison and move\n   on\" especially dangerous, because a later acknowledgement can retire the skipped event.\n8. **Retention and audit.** Payment evidence may have legal retention and privacy\n   constraints. The DLQ/receipt retention must be reconciled with them; the sources give\n   operational guidance, not a compliance rule.\n\n### 8.2 Contradictions and tensions to keep visible\n\n- **DLQ as safety valve versus DLQ as a hiding place.** The card recommends a dead-letter\n  channel when failures are observable and owned, and rejects it when it \"hides a\n  programming error.\" Both are true: the terminal path must include triage and repair, not\n  just a queue.\n- **Retry forever versus drop silently.** Both avoid a decision. The bounded retry plus\n  quarantine plus stop-or-skip declaration is the decision.\n- **Fan-out \"scales\" versus fan-out amplifies.** Fan-out scales independent subscribers; it\n  multiplies load and duplicate effects. It is not a scaling mechanism for one queue's work.\n- **Exactly-once claims.** Broker transactions and offset commits are scoped to the broker.\n  They do not make an unrelated ledger or payment provider exactly-once; a consumer group\n  offset is \"a replay position, not proof that every user-visible effect succeeded.\"\n- **One ordered consumer per partition versus competing consumers.** They are alternatives,\n  not layers. Running several consumers inside one partition is competing consumption and\n  loses the order the partition was supposed to provide.\n- **Per-account order versus global order.** Partitioning gives per-key order. If the\n  business needs a global sequence across accounts, one partition or a global sequencer is\n  required; the comparison's \"no column implies global total order\" is the boundary.\n- **Hot key versus partition count.** Increasing partitions helps other keys but not the hot\n  one; the book says blindly increasing partition count \"may not split that key.\"\n\n### 8.3 Evidence limits\n\nThe claims are read from book and atlas sections, not from a running broker, a production\nincident or a benchmark. The atlas registry is marked draft and its coverage is not\nindependent review. No load test, failure injection or model run was performed. The\nthree-contract synthesis (assignment + acknowledgement order + terminal path) and the\npreference for broker-level partitioning over consumer-side locks are my reasoning over the\nsources, not a quotation from a single Tycho section. Broker-specific values (partition\ncount, attempt budget, retention) must be verified against the actual broker and workload.\n\n## 9. Evidence map\n\n| Claim | Short form | Section key(s) |\n|---|---|---|\n| C1 | One queue, per-message delivery, parallel workers; per-key order removed without explicit assignment | `...#bounded-pattern-ownership-notes` |\n| C2 | Stable key maps an account to one partition and preserves append order | `...#2-kafka-s-partition-is-an-ordering-and-load-unit`; `...#bounded-pattern-ownership-notes` |\n| C3 | Atlas rejects point-to-point without a partition key and competing consumers under mandatory order | `...entry-inventory` |\n| C4 | More instances than partitions cannot increase per-partition ownership | `...#2-kafka-s-partition-is-an-ordering-and-load-unit` |\n| C5 | A hot key caps parallelism; more partitions may not split it | `...#2-kafka-s-partition-is-an-ordering-and-load-unit` |\n| C6 | Assignment must be stable; key/partition changes need a transition contract | `...#bounded-pattern-ownership-notes`; `...#2-kafka-s-partition-is-an-ordering-and-load-unit` |\n| C7 | Rebalance does not retract in-flight work; drain/classify and commit resolved only | `...#rebalance-external-effects-and-expired-replay-positions` |\n| C8 | Acknowledgement follows the durable effect; ack before effect loses work | `...#bounded-pattern-ownership-notes` |\n| C9 | Commit before effect loses, after effect duplicates; no automatic global transaction | `...#4-consumer-offset-effect-and-crash-points` |\n| C10 | Ack is an uncertain step; crash after commit before ack redelivers | `...#3-inbox-and-consumer-local-atomicity`; `...#bounded-pattern-ownership-notes`; `...#5-message-redelivery-and-consumer-effects` |\n| C11 | Effect and stable identity commit atomically, with a uniqueness constraint | `...idempotent-receiver#overview`; `...#3-inbox-and-consumer-local-atomicity` |\n| C12 | Receipt retention covers redelivery, DLQ and replay horizons | `...transactional-inbox#overview`; `...#3-inbox-and-consumer-local-atomicity` |\n| C13 | Ack ordering and identity are subscription-contract obligations | `...#bounded-pattern-ownership-notes`; `...#rebalance-external-effects-and-expired-replay-positions` |\n| C14 | Permanent poison is not repaired by retrying; cap attempts/age and route to terminal path | `...#scheduled-runs-durable-timers-and-poison-work-recovery`; `...#bounded-pattern-ownership-notes`; `...#6-retry-policy-must-protect-overload-and-deadlines` |\n| C15 | Terminal path classifies, preserves quarantine evidence, is owned and alerted; DLQ is not delivery | `...#scheduled-runs-durable-timers-and-poison-work-recovery`; `...dead-letter-channel#overview` |\n| C16 | Retention, monitoring and redrive are part of the DLQ contract | `...dead-letter-channel#overview` |\n| C17 | A poison record may stop progress or skip data; declare the contract | `...#5-failure-and-recovery-matrix` |\n| C18 | Fan-out is independent subscribers with own cursors; cost grows with subscribers | `...entry-inventory`; `...#bounded-pattern-ownership-notes` |\n| C19 | One ordered consumer per partition when order dominates; fan-out when copies are needed | `...entry-inventory`; `...#bounded-pattern-ownership-notes` |\n| C20 | Resequencer needs reliable sequence, bounded buffer, gap timeout, late disposition | `...resequencer#overview` |\n| C21 | Concurrency increases duplicate and reorder exposure | `...entry-inventory`; `...#bounded-pattern-ownership-notes` |\n| C22 | Broker transaction/offset is not an external ledger transaction | `...#4-consumer-offset-effect-and-crash-points` |\n| C23 | Acknowledgement retires the message; publisher confirm is not business completion | `...#1-first-identify-what-a-consumer-must-own` |\n| C24 | Ordering is scoped to queue/subscription/stream/partition, not globally | `...#2-requirement-driven-comparison-not-a-ranking` |\n| C25 | Crash after effect before ack redelivers; durable storage is not idempotency | `...#1-first-identify-what-a-consumer-must-own` |\n| C26 | In-flight/ack window is bounded; pause rather than buffer without limit | `...#bounded-pattern-ownership-notes` |\n| C27 | Competing consumers share work; each topic subscription gets a copy | `...#1-first-identify-what-a-consumer-must-own` |\n| C28 | The queue contract states ordering scope and terminal path; pool needs in-flight/redelivery limits | `...#bounded-pattern-ownership-notes` |\n| C29 | A lost external acknowledgement is an unknown outcome, not a safe failure; reconcile with a stable identity | `...#4-the-critical-lost-acknowledgment-problem` |\n| C30 | At-least-once duplicate defenses are work-level, not cross-system atomicity | `...#at-least-once-semantics-four-actual-duplicate-defenses` |\n\nThe full verbatim quotes are in the answer JSON `claims` array; every quote above was read\nfrom the named section through the session CLI.\n\n## 10. Bottom line\n\nTwelve consumers are not an ordering mechanism. They are twelve independent chances to\nprocess the same account's events in the wrong order. Per-account order comes from a stable\nkey, a partition that carries every event for that account, and one active owner of that\npartition at a time. A durable payment comes from acknowledging only after the ledger and\nits deduplication receipt commit. A single fee comes from resolving every redelivery against\nthat receipt. A poison event stops being a policy problem only when the pool declares a\nbounded retry budget and a terminal path, with an explicit stop-or-skip decision for the\nordered stream. One ordered consumer per partition is the right shape when per-account order\nmust survive and parallelism can come from many accounts; fan-out is the right shape when\nindependent subscribers each need a copy. Adding consumers to one unkeyed queue is neither.\n",
+ "claims": [
+  {
+   "claim_id": "C1",
+   "text": "A single queue with competing consumers has no per-account ordering domain: each message goes to whichever consumer is free, so two events for one account can be handled concurrently and their effects can commit in either order.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "Several consumers read from one queue, and each message is delivered to one of them so the work is processed in parallel.",
+     "supports": "C1",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "Pool parallelism removes per-key order unless partition assignment is explicit",
+     "supports": "C1",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C2",
+   "text": "Per-account order requires a stable key that maps every event for the account into one partition, where a consumer group assigns the partition to one reader and per-key order follows the partition append sequence.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+     "quote": "Events for one aggregate may require a stable key to land in one partition and maintain that partition's append sequence.",
+     "supports": "C2",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "Partitioned consumers own a stable key range and preserve per-key order; prefer competing consumers when order is not required and pool parallelism is the goal.",
+     "supports": "C2",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C3",
+   "text": "A point-to-point queue shared without a partition key is explicitly contraindicated for strict ordering, and competing consumers are contraindicated when global order is mandatory.",
+   "evidence": [
+    {
+     "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+     "quote": "Reject when every subscriber needs a copy, when strict global ordering is required without a partition key, or when consumers cannot handle duplicates.",
+     "supports": "C3",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+     "quote": "Reject when global order is mandatory, when consumers mutate shared state without coordination, or when a slow message has no bounded-attempt or terminal path.",
+     "supports": "C3",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C4",
+   "text": "Adding consumers to one queue cannot exceed the number of assignable partitions in useful per-partition ownership; more instances than partitions add no ownership.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+     "quote": "A group with more instances than assignable partitions cannot increase per-partition concurrent ownership without changing the consumer architecture",
+     "supports": "C4",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C5",
+   "text": "Even with keys, one hot account limits parallelism because a single key lands in one partition, and increasing partition count does not split that key.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+     "quote": "A single hot key can concentrate traffic and limit parallel processing; blindly increasing partition count may not split that key.",
+     "supports": "C5",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C6",
+   "text": "The pool must declare an explicit, stable partition assignment: a stable key range per consumer, one active owner per partition, and a transition contract when key encoding or partition count changes.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "A per-key worker pool preserves order only when partition assignment is stable.",
+     "supports": "C6",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+     "quote": "Changing key encoding or partition count can change the partition assignment of later records. An application requiring continuity across that change needs a transition/ordering contract.",
+     "supports": "C6",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C7",
+   "text": "On rebalance or ownership change the old consumer's in-flight request is not retracted; the pool must drain or classify it and commit only positions for resolved effects it owned.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+     "quote": "Stopping polling or receiving a rebalance callback does not retract that remote request.",
+     "supports": "C7",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+     "quote": "Guard the external effect with its own identity/ownership contract, drain or classify in-flight work, and commit only positions for resolved effects owned under the selected consumer protocol.",
+     "supports": "C7",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C8",
+   "text": "Acknowledgement must follow the durable business effect; acknowledging before the write can silently lose the payment because the queue considers the message done.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "Acknowledgment must follow the durable business effect, and redelivery after a missing acknowledgment must not duplicate that effect.",
+     "supports": "C8",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "acknowledging before the effect can lose work",
+     "supports": "C8",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C9",
+   "text": "There is no automatic atomic order between a broker position or acknowledgement and an external ledger commit: committing before the effect can lose it, committing after can duplicate it, and no ordering of two independent commits creates a global transaction.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "Committing offset *before* the external effect can cause that effect to be silently lost after a crash. Committing it *after* the effect can cause duplicates.",
+     "supports": "C9",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "No perfect ordering of two independent commits creates an automatic global transaction.",
+     "supports": "C9",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C10",
+   "text": "The acknowledgement is a separate uncertain step: a crash after the ledger commit but before the ack causes redelivery, so redelivery must resolve to the recorded outcome.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "treat the acknowledgement as a separate uncertain step",
+     "supports": "C10",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "A worker crash after the effect but before acknowledgement can cause redelivery, so nonrepeatable effects need consumer-side deduplication and stable effect identity.",
+     "supports": "C10",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+     "quote": "Crash after DB commit, before ack | Redelivery resolves previously recorded outcome",
+     "supports": "C10",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C11",
+   "text": "The duplicate-fee path is closed only when a stable event or effect identity and the business effect are recorded atomically in the same local transaction, with a uniqueness constraint; a marker written before or after a separate external effect leaves a loss or duplication window.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+     "quote": "Messages carry stable identity; effect and identity are recorded atomically; retention covers the redelivery window; concurrent duplicates are handled.",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+     "quote": "Avoid this failure window by writing the deduplication marker and the business side effects in the same transaction.",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "Use a uniqueness constraint on the deduplication key such that two transactions can attempt to insert a key, but only one can succeed.",
+     "supports": "C11",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C12",
+   "text": "Deduplication is not permanent: the receipt must be retained through the maximum redelivery, DLQ replay and historical replay horizon, or an expired identity becomes a new message and duplicates the fee.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+     "quote": "retain the marker through the replay horizon and treat the broker acknowledgement as a separate uncertain step.",
+     "supports": "C12",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+     "quote": "The marker lifetime must cover the maximum broker redelivery, DLQ replay and historical replay horizon; a shorter window turns an expired identity into a new message and can duplicate the effect.",
+     "supports": "C12",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C13",
+   "text": "The pool must declare acknowledgement order for each partition and advance it only over resolved effects; the handler, not the framework default, owns effect identity, deduplication and acknowledgement ordering.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "It must own effect identity, deduplication and acknowledgement ordering.",
+     "supports": "C13",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "Concurrency and ordering requirements belong to the subscription contract, not to the framework default.",
+     "supports": "C13",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+     "quote": "commit only positions for resolved effects owned under the selected consumer protocol.",
+     "supports": "C13",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C14",
+   "text": "A permanent poison event is not repaired by retrying forever; attempts and total age must be capped and permanently failing work routed to a declared terminal path.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+     "quote": "An invalid schema or permanently rejected target is not repaired by retrying forever.",
+     "supports": "C14",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "bound attempts and route permanently failing work to a declared terminal path",
+     "supports": "C14",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+     "quote": "Backoff/jitter, per-operation attempt budgets, total absolute deadline and cancellation are architectural controls, but no combination makes non-idempotent effects safe by itself.",
+     "supports": "C14",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C15",
+   "text": "The terminal path must classify transient, permanent and unknown outcomes, preserve quarantine evidence, and be owned and alerted; a dead-letter queue is a holding mechanism, not successful delivery or a safe automatic replayer.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+     "quote": "Classify transient, permanent and unknown outcomes; cap attempts and total age; preserve enough evidence in quarantine to diagnose without leaking payloads.",
+     "supports": "C15",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+     "quote": "A dead-letter queue is a holding mechanism, not successful delivery or an automatically safe replayer.",
+     "supports": "C15",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+     "quote": "Failure is observable; poison messages have an owner and replay policy; retention and access are bounded; alerting is defined.",
+     "supports": "C15",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C16",
+   "text": "The terminal path must also declare retention and access, monitoring for silent abandonment, and a controlled redrive or replay procedure; otherwise the DLQ hides a programming error or becomes an unowned graveyard.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+     "quote": "monitor DLQ growth and silent abandonment",
+     "supports": "C16",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+     "quote": "it is a best practice to always set the retention period of a dead-letter queue to be longer than the retention period of the original queue.",
+     "supports": "C16",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+     "quote": "Reject when failures are transient and immediate retry is safe, when no one owns the DLQ, or when dead-lettering hides a programming error.",
+     "supports": "C16",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C17",
+   "text": "In an ordered partition a poison record forces an explicit choice: stop the partition's progress or skip data; the pool must state which happens and reconcile before resuming.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+     "quote": "Poison record | Partition may stop making progress or skip data | DLQ/quarantine contract, observability, schema handling",
+     "supports": "C17",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C18",
+   "text": "Fan-out is for independent subscribers that each need a copy of the event, not for dividing one queue's work: each subscriber gets its own cursor and the cost grows with subscriber count.",
+   "evidence": [
+    {
+     "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+     "quote": "Subscribers have independent reactions; the publisher can tolerate fan-out; delivery and retention semantics are explicit; duplicate handling is owned.",
+     "supports": "C18",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "each current subscriber gets its own cursor",
+     "supports": "C18",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "Fan-out cost grows with subscriber count; an unknown or unbounded population makes load and retention unownable.",
+     "supports": "C18",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C19",
+   "text": "When per-key order dominates throughput, the choice is one ordered consumer per partition or a partitioned work queue; fan-out is chosen when several independent subscribers need a copy.",
+   "evidence": [
+    {
+     "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+     "quote": "One ordered consumer per partition, or a partitioned work queue. Reverse the choice when ordering dominates throughput.",
+     "supports": "C19",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "fan-out fits when several independent subscribers need a copy",
+     "supports": "C19",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C20",
+   "text": "Resequencing is a bounded fallback, not a substitute for partitioning: it needs a reliable sequence domain, a bounded buffer, a gap timeout and a late-message disposition; partition by key instead when global order is unnecessary.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+     "quote": "Buffer and release out-of-order messages only when an ordering requirement, a reliable sequence domain, and a bounded buffer with a gap timeout and a late-message disposition have owners. Partition by key instead when global order is unnecessary.",
+     "supports": "C20",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+     "quote": "Reject when order is irrelevant, when the sequence domain is unstable, when the buffer cannot be bounded, or when one missing message would block the stream beyond the declared deadline.",
+     "supports": "C20",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C21",
+   "text": "The pool is not scalable in the ordered sense just because consumers were added: concurrency increases duplicate and reorder exposure, and a pool needs in-flight and redelivery limits, not merely more prefetch.",
+   "evidence": [
+    {
+     "section_key": "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+     "quote": "Concurrency increases duplicate and reorder exposure; verify ordering and acknowledgement in the owner section.",
+     "supports": "C21",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "A worker pool needs a visible in-flight count and a redelivery limit, not only higher prefetch.",
+     "supports": "C21",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C22",
+   "text": "A broker transaction or offset commit is scoped to the broker and does not atomically include an unrelated ledger database, so exactly-once cannot be claimed for the payment effect.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "**Kafka transaction** can coordinate publication to Kafka partitions and (in supported consume-transform-produce workflows) offsets with Kafka output, but it does not automatically enclose an unrelated SQL commit, payment provider or email delivery.",
+     "supports": "C22",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+     "quote": "A consumer group offset is a replay position, not proof that every user-visible effect succeeded.",
+     "supports": "C22",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C23",
+   "text": "A consumer acknowledgement retires the message after the configured redelivery policy, while a publisher confirm only means the broker accepted responsibility; neither proves that the consumer completed the business effect.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+     "quote": "a consumer acknowledgement retires the message (after any configured redelivery policy).",
+     "supports": "C23",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+     "quote": "A publisher confirm means the broker accepted responsibility, not that a consumer completed the business effect.",
+     "supports": "C23",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C24",
+   "text": "Ordering is scoped to a queue, subscription, stream or partition and to concrete producer and consumer behavior; no broker comparison implies a global total order.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking",
+     "quote": "Message ordering is typically scoped to queue/subscription/stream/partition and concrete producer/consumer behavior; no column implies global total order.",
+     "supports": "C24",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C25",
+   "text": "A crash after the local business effect but before the acknowledgement causes redelivery, and consumer-side deduplication is necessary for nonrepeatable effects; durable storage does not make the business effect idempotent.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+     "quote": "If the worker crashes after local effect but before acknowledgement, task redelivery may occur. Consumer-side deduplication is necessary for nonrepeatable effects.",
+     "supports": "C25",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+     "quote": "durable storage does not make the business effect idempotent.",
+     "supports": "C25",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C26",
+   "text": "A subscription must declare an in-flight bound and an acknowledgement window, and pause delivery or add capacity when the bound is reached instead of buffering without limit.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "The subscription declares a prefetch or in-flight bound and an acknowledgement window; when in-flight work reaches the bound, pause delivery or add capacity rather than buffering without limit.",
+     "supports": "C26",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C27",
+   "text": "The topology must be declared: competing consumers in one group share the work, while a topic fans each publication out to every current matching subscriber.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+     "quote": "A queue dispatches each message to one eligible consumer; competing consumers share the work",
+     "supports": "C27",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+     "quote": "A topic fans each publication out to every current matching subscriber",
+     "supports": "C27",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C28",
+   "text": "The queue contract must state its ordering scope and its terminal path for poison messages, and a worker pool needs a visible in-flight count and a redelivery limit, not only higher prefetch.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "The queue contract must state its ordering scope and terminal path for poison messages.",
+     "supports": "C28",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+     "quote": "A worker pool needs a visible in-flight count and a redelivery limit, not only higher prefetch.",
+     "supports": "C28",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C29",
+   "text": "After a lost acknowledgement of an external commit, the adapter must not treat the timeout as a safe failure: with a scoped idempotency identity it repeats with the same identity and reconciles to the durable outcome; without one it surfaces an unknown outcome and reconciles under policy, or redesigns the contract before accepting effects.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+     "quote": "If a scoped idempotency identity exists, repeat with the same identity and reconcile to the durable original outcome.",
+     "supports": "C29",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+     "quote": "Surface **unknown outcome**, use bounded manual/automated reconciliation subject to business policy, or redesign the contract before accepting effects.",
+     "supports": "C29",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+     "quote": "If the foreign system provides neither, the adapter cannot honestly guarantee that blind retries are safe.",
+     "supports": "C29",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C30",
+   "text": "At-least-once duplicate defenses are work-level: a per-key lock or identity record lets a redelivery recognize already-processed work, and transactional accounting couples the identity update to the effect; they do not create an end-to-end atomic transfer across independent systems.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+     "quote": "2. **Per-key transfer lock:** consumers lock an object identity while processing; successful completion removes the key from the tracking database. A later redelivery whose key is absent can be recognized as already processed.",
+     "supports": "C30",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+     "quote": "3. **Transactional accounting:** inserting/deleting object keys and updating pending counts are coupled so failure to commit does not incorrectly advance the completed-object total.",
+     "supports": "C30",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+     "quote": "These defenses address duplicate **work**, not a magic end-to-end atomic transfer",
+     "supports": "C30",
+     "status": "observed"
+    }
+   ]
+  }
+ ],
+ "citations": [
+  "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+  "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+  "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+  "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+  "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+  "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+  "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+  "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+  "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+  "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+  "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+  "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+  "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+  "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+  "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+  "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking",
+  "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem",
+  "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses"
+ ],
+ "missing_required_anchors": [],
+ "abstain": false
+}
