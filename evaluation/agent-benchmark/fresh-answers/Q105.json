@@ -1,0 +1,18 @@
+{
+  "task_id": "Q105",
+  "answer": "A verified upload is evidence about bytes only; exposure is a separate, metadata-owned authorization decision, because the object store and the metadata database share no transaction. Four reasons a verified object is still unsafe to expose.\n\n1. No atomic cross-store commit. Committing a metadata row does not atomically commit a remote object write, and object existence alone does not authorize exposure. The visible-state invariant is that an entry is exposed only when metadata references an immutable, validated object version belonging to the permitted owner. Two independent effects can diverge in either order, so success or acknowledgement on one side proves neither the pair nor the reader-visible state; readers must follow the published reference and have current permission enforced.\n\n2. Verification is not validation. A checksum verifies bytes against a trusted expected value; it does not establish permission, safe content, or the authenticity of a maliciously supplied manifest. Completion outcomes that cannot be resolved unambiguously after a timeout must be quarantined for repair rather than published as guessed bytes, since a matching key alone is insufficient if another writer may have replaced it.\n\n3. Verification is not durable against replacement. Unless the reference is bound to an immutable object version, another writer can change the bytes at a mutable name between verification and later use. Conditional writes and ETag preconditions protect only the scoped object operation; they do not commit the separate database row, so the gap between check and publication needs a version or precondition protocol plus restricted overwrite and delete rights on verified candidates.\n\n4. Exposure introduces new races and access questions. An object-created notification is a wake-up signal, not authority for a business publication decision: it may arrive before validation or more than once, so a worker must consult current metadata and be idempotent. A collector must not delete objects simply because they appeared unreferenced at some observation time, because publication could establish a reference afterwards; retirement must be metadata-owned with a grace/state protocol. And an unguessable key is not a complete authorization design, while an already-issued capability can outlive revocation of the catalogue permission.\n\nSo a successfully verified upload becomes safe only after metadata atomically records publication against the exact validated object version, and readers resolve exposure through that reference under current permission.",
+  "citations": [
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races",
+    "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

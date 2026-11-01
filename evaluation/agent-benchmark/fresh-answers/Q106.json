@@ -1,0 +1,20 @@
+{
+  "task_id": "Q106",
+  "answer": "A valid signature over build provenance is not a promotion authorization because the tag is a mutable name, not the artifact identity, and cryptographic validity is not policy authority.\n\n**Subject binding.** The artifact is the subject, not the tag: a signed attestation bound to digest A is not evidence for digest B even when both share an image name (provenance-subjects §1). The artifact boundary is defined by digest, package and provenance, and \"a mutable tag is sufficient\" is explicitly a false inference (build-identity §1). Approving a run before a downstream job resolves a mutable tag is not equivalent to approving deployed bytes (build-identity §2), and the promotion failure matrix requires comparing the actual digest with the digest that passed the gates and freezing promotion when a tag points to a different image (promotion-rollout §6). \"Currently the same tag\" therefore asserts only a name-level coincidence at one observation; the bytes behind the tag can differ from the digest that was verified.\n\n**Authenticity is not authorization.** A signature or attestation envelope is only a cryptographic link between a statement and an authenticated key; it cannot establish that the signer was authorized or that the statement is true (provenance-subjects §1). A promotion gate must bind the exact subject digest, signature trust root, allowed issuer/signing workflow and builder identity, approved source revision, dependency/SBOM coverage, and named target/environment eligibility (promotion-authorization §4). A correctly signed artifact from an unapproved fork or an out-of-policy builder is rejected, and a signed artifact whose digest does not match the candidate is refused as a digest mismatch (promotion-authorization §5; chapter walkthrough).\n\n**Scope of provenance.** Provenance describes the builder, process and materials within a declared scope; it cannot establish runtime correctness, complete dependency coverage, or deployment permission (provenance-subjects §1). Promotion is a conditional authorization to expose an approved artifact at a named workload and data-compatibility boundary, and a release identity mismatch with the validated digest is a stop condition (promotion-rollout §5). The building party must not be the sole authority for its own output; independent policy evaluation belongs outside the artifact (promotion-authorization §7).\n\nSo a signature over provenance for one digest answers only \"who attested what about these bytes?\" Promotion additionally requires \"are these the exact bytes now being promoted, from an authorized builder and source, with all required evidence, into this environment?\" If the current digest differs, or cannot be re-resolved and recorded at promotion time, the signature is irrelevant to the candidate and promotion must be refused.",
+  "citations": [
+    "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#4-authenticity-is-not-authorization",
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately",
+    "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#7-a-release-gate-belongs-outside-the-artifact-itself",
+    "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#engineering-walkthrough-authentic-artifact-incomplete-evidence-and-denied-promotion"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

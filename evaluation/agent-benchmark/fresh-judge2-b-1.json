@@ -1,0 +1,218 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q101",
+      "question": "Why can a virtual thread blocked inside a synchronized block pin a carrier on JDK 21 but not on JDK 24, and which blocking paths can still pin?",
+      "layer_expected": "book",
+      "answer": "JDK 21-23: a virtual thread unmounts from its carrier only at blocking operations the scheduler supports. Blocking inside a synchronized block or method was not such an operation: the virtual thread stayed mounted while it waited to enter or while it held the monitor, so its carrier could not run another virtual thread. Long or frequent pinned waits can exhaust the carrier pool; then a signaled virtual thread that has been unmounted still needs a free carrier, so requests can stall even after the lock is released - a scheduler/resource interlock rather than necessarily a permanently held mutex. JEP 444 treats this as a scalability risk, not a correctness failure.\n\nJDK 24 (JEP 491) changes monitor handling so a virtual thread can unmount while holding a monitor, while waiting to enter a monitor, and during Object.wait(). In normal HotSpot monitor handling (the default LM_LIGHTWEIGHT and LM_MONITOR modes), blocking while owning or entering a Java monitor therefore no longer implies the JDK 21 monitor-pinning problem.\n\nBlocking paths that can still pin:\n- Native method or foreign-function calls: a virtual thread in such a frame can still pin, and JEP 491 does not guarantee that every native/foreign callback unmounts.\n- Exceptional VM paths: the source says these still require diagnosis, but does not enumerate them.\n- Legacy LM_LEGACY locking mode: the reviewed monitor fix covered LM_LIGHTWEIGHT and LM_MONITOR but not LM_LEGACY, so that mode remains a path to check.\n\nCaveats: JEP 491 does not make a Java monitor non-serializing, remove lock contention or add downstream capacity. Short in-memory monitor sections did not by themselves require replacement; long or frequent pinned waits were the concern. Verify the exact JDK build and locking-mode flags rather than assuming pinning is gone; JDK 21's JEP 444 describes JFR jdk.VirtualThreadPinned events and the historical jdk.tracePinnedThreads diagnostic. Cross-cutting libraries (tracing, security, metrics) may still contain native calls and should be tested under load.",
+      "citations": [
+        "tycho.page.8ece705ef365401395fd06585173b1f1#the-mechanism",
+        "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem",
+        "tycho.page.8ece705ef365401395fd06585173b1f1#transferability-limits",
+        "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release"
+      ],
+      "core_claims": [
+        "On JDK 21 through 23, JEP 444 documents a virtual thread pinning its carrier when it blocks inside a synchronized region or a native or foreign method, and long frequent pinned waits can exhaust carriers.",
+        "A signaled virtual thread that was unmounted needs a free carrier before it can run, so a process can appear stuck behind an already released lock when every carrier is pinned.",
+        "JDK 24's JEP 491 changes monitor handling so a virtual thread can unmount while owning or entering a monitor and during Object.wait(), superseding the blanket JDK 21 warning about blocking under synchronized.",
+        "Native and foreign calls, exceptional VM paths, and the legacy LM_LEGACY locking mode are outside that monitor fix and still require diagnosis of the exact build and flags.",
+        "Virtual threads make tasks cheap but create no downstream capacity; a semaphore bounds database calls, not the number of virtual threads waiting for permits."
+      ],
+      "optional_claims": [
+        "JDK 24 does not make a Java monitor stop serializing the logic it protects, nor does it remove database and backpressure limits.",
+        "The case page's diagnostic framing is Tycho synthesis, and the publisher incident report behind it remains an unresolved citation."
+      ],
+      "required_evidence": [
+        "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release",
+        "tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not",
+        "tycho.page.8ece705ef365401395fd06585173b1f1#why-this-can-look-like-a-lock-problem"
+      ]
+    },
+    {
+      "task_id": "Q109",
+      "question": "Why does a single-flight guard inside each replica fail to bound origin load when one hot cache key expires, and what would bound it?",
+      "layer_expected": "book",
+      "answer": "Single-flight is per process, not per key globally. Its in-flight registry and waiters live in one replica's memory, so it merges only callers that reach that replica while its own leader is loading. A hot key's expiry is correlated across the fleet: every replica misses at the same instant, each elects its own leader, and the guards cannot see one another. The origin therefore receives roughly one load per replica (N concurrent loads), plus further loads as staggered arrivals or retries begin after a leader finishes. The guard converts 'many duplicate loads per process' into 'one load per process', which is a local concurrency cap; it does not bound aggregate origin concurrency or total source work, and the resulting N is set by fleet size rather than by what the origin can absorb. Jittered TTLs separate expiry of different keys but leave one extremely hot key stampeding, and a local stale-serving asynchronous refresh is likewise only a local optimization, not a global lock.\n\nWhat would bound it is a shared admission and ownership decision covering both per-key concurrency and total source work. Use a cross-replica refresh lease so one owner fetches per key per refresh window; because a paused owner can resume after lease expiry, pair the lease with source revision/fencing or a conditional fill, and state explicitly whether ownership is a performance optimization or a correctness property. Cap concurrent origin loads per key and overall with an admission budget or bulkhead, and give excess requests a bounded wait, explicit reject or approved stale response rather than unlimited retries. Stale-while-revalidate is valid only where the operation accepts the stale value, with a bounded and observable stale window; if coordination is unavailable, fail closed with a bounded wait or a declared stale value. Prewarm and ramp the cache on restart, classify it as a latency or capacity cache (a capacity cache means the source cannot absorb full miss traffic), and verify with per-key origin QPS and queue age, including a restart of every replica rather than only one expired key.",
+      "citations": [
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#bounded-pattern-ownership-notes",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock",
+        "tycho.page.f39fa61013ca41abbfba82ef48250f8f#5-failure-operation-cost-model",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#integrated-decision-and-reading-route",
+        "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission"
+      ],
+      "core_claims": [
+        "A synchronized cache expiry can make many readers miss at once and issue redundant expensive loads against the origin.",
+        "In-process single-flight deduplicates only loads triggered inside one process, so other replicas can still load the same key in parallel.",
+        "Jittered TTLs desynchronize expiry across different keys but do not protect one extremely hot key from a stampede.",
+        "Bounding origin load requires per-key coalescing plus a total source-admission budget with an explicit wait, reject or degrade response when that budget is exhausted.",
+        "A refresh lease is not a correctness lock because an expired lease can allow a second refresh while the first writer is still active, so a monotonic cache property needs source revision, fencing or a conditional update."
+      ],
+      "optional_claims": [
+        "Stale-while-revalidate is valid only when the operation accepts a stale value; an authoritative reservation or access grant may require an explicit rejection instead.",
+        "Cache loss is a load event as well as a latency event, so a capacity cache cannot fall back to unbounded database traffic without admission control."
+      ],
+      "required_evidence": [
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock"
+      ]
+    },
+    {
+      "task_id": "Q117",
+      "question": "Why can a chain of per-hop timeouts that are each individually reasonable still outlive the caller's end-to-end deadline?",
+      "layer_expected": "book",
+      "answer": "Because a per-hop timeout bounds only one wait, and a chain of separate caps never adds up to the caller's budget. Individually reasonable values still overrun the end-to-end deadline through five compounding effects.\n\n1) Composition is not a budget. Independent per-hop timeouts limit different operations; for sequential hops the worst case is their sum, plus retries. The book's hypothetical 900 ms request budget partitioned into 50 ms edge/auth, 100 ms queueing, 450 ms downstream, 100 ms durable write and 200 ms margin notes that per-hop independent 900 ms timeouts 'would allow the aggregate to vastly exceed the caller's deadline.' Each hop should use at most the remaining deadline minus its own processing and margin, then propagate the remainder.\n\n2) Retries and backoff spend the same budget repeatedly. Each attempt consumes the remaining deadline and attempt budget, and retries at proxy, API and downstream layers compound into a 'combinatorial retry explosion'; a timeout that silently becomes a retry multiplies load, and jitter/backoff delay can spend budget after the result stopped being useful. An exponential curve without a deadline check can outlive usefulness.\n\n3) Key segments are outside the timed region. The deadline must include admission, executor queue wait, connection acquisition, execution and response transfer, yet a socket/read timeout typically starts after queueing. A bounded pool with an unbounded queue can add latency while reporting few immediate errors, so per-hop numbers look fine while elapsed time does not.\n\n4) Fan-out amplifies tails. When a parent waits for all of N parallel dependencies, a per-hop threshold met by each child 99% of the time gives 0.99^10 \u2248 90.4% composed success for ten calls and about 60.5% for fifty: some branch exceeds its 'reasonable' timeout far more often than the per-hop number suggests. Percentiles do not add, and a shared pool, lock or executor can re-serialize nominally parallel branches.\n\n5) Enforcement is optional and expiry does not stop work. A propagated deadline without an enforcement point is only a hint; clock skew, a lost header or a hop that ignores expiry breaks it. Expiry does not undo a committed effect or necessarily halt downstream work, because cancellation is cooperative; the caller can abandon the request while servers keep working, and detached work must get its own durable deadline rather than inherit the request's remaining time.\n\nTherefore the chain outlives the deadline: budget is consumed where per-hop timeouts do not measure (queueing, connection acquisition, response transfer) and in multiples they do not model (retries, fan-out tails), while enforcement and cancellation are best-effort. The remedy is one end-to-end deadline, propagated and enforced at every hop with remaining-time arithmetic, retries charged against it at a single layer, queue and pool waits counted inside it, and durable reconciliation for effects that outlive the response.",
+      "citations": [
+        "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+        "tycho.page.43414664520b4866929f7f006f27f59b#bounded-pattern-ownership-notes",
+        "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#platform-pools-queues-and-deadlines",
+        "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+        "tycho.page.e067b74eabc24cabb209ca8835c0f7cd#4-cancellation-is-not-rollback-and-reconnect-is-not-replay"
+      ],
+      "core_claims": [
+        "A deadline is the latest useful completion time at a named boundary, while a per-hop timeout is only that hop's local waiting limit.",
+        "A chain of individually generous per-hop timeouts can outlive the caller, waste resources and amplify queueing after an upstream failure.",
+        "When an early segment overruns its reservation, later stages must recompute the remaining time against the original absolute deadline instead of granting the full budget again.",
+        "A queue that admits already-expired work adds cost without useful output, and cancellation can stop further calculation but cannot undo committed state or external side effects.",
+        "Per-hop retry ownership, attempts, backoff and cumulative budget must be explicit, because retries started at independent layers can raise aggregate load while completed useful work falls."
+      ],
+      "optional_claims": [
+        "Work that must finish after the response deadline belongs to a separate durable job contract, not to an invisible extension of the synchronous request.",
+        "The 1,000 ms allocation in the worked budget is a set of negotiated planning reservations, not a measured percentile."
+      ],
+      "required_evidence": [
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial"
+      ]
+    },
+    {
+      "task_id": "Q125",
+      "question": "In a federation, why must a resource server check that an access token was issued for it rather than accept any token signed inside a trust chain?",
+      "layer_expected": "atlas",
+      "answer": "A trusted issuer's signature proves only that the issuer minted the token and that it was not tampered with; it does not prove that the token was minted for this recipient. In a federation one trust anchor or authorization server serves many clients and many resource servers, so issuer trust is shared across the whole federation. If a resource server accepts any token the issuer signed, every resource server becomes an interchangeable acceptor: a token legitimately obtained for service A can be presented to sibling service B, and B, believing that authentication already settled the question, acts on the client's delegated authority at the wrong resource. That is a confused-deputy path and a cross-service privilege escalation, and it is the same failure as treating a gateway's token validation as object authorization.\n\nThe audience claim is what binds the delegation to a specific recipient. Verifying the intended audience (together with issuer, lifetime, scope and any sender constraint) means the resource server refuses a token that was meant for someone else, so delegated authority stays confined to the resource the client actually asked for. This also limits the blast radius of bearer-token theft: a bearer token is replayable by any holder until it expires or is revoked, so without audience binding one leaked token \u2014 from logs, a trace, or a compromised service \u2014 unlocks every resource in the federation that trusts the same issuer. Audience binding makes a stolen token useless outside its one intended service, and sender-constrained tokens are the complementary control when possession must be proven.\n\nIn multilateral federations the point is structural, not incidental: entities publish metadata, keys and policies per entity, and each resource server has its own tenants, objects and ownership rules. Issuer-level trust is deliberately broad; recipient-level checks are the only thing that keeps each entity's authorization boundary meaningful. Audience-bound access tokens are therefore stated as a good-fit condition for federated identity, a required element of the credential contract, and an explicit verification gate. The practical test is negative: replay a token issued for another audience or another resource and require rejection, alongside wrong-issuer, expired and revoked cases. A resource server that skips the audience check has replaced authentication-by-issuer with authorization, which it is not.",
+      "citations": [
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+        "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+        "tycho.page.cd2585308f28ccb08b55c4b00e42925b#overview",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+        "tycho.page.96c78f4525504257baf5861e2397dab8#7-verification-and-decision-gates"
+      ],
+      "core_claims": [
+        "A federation Entity publishes a signed Entity Statement, a JWT whose subject is the Entity and whose issuer is the party that issued it, and a Trust Anchor signs statements about its immediate subordinates, so a resolvable trust chain establishes which keys and metadata to accept rather than who may use a given resource.",
+        "The atlas card's good-fit condition is that access tokens are audience-bound, and the bounded owner note states that a resource server verifies an access token was meant for it and refuses otherwise, so a valid signature from a trusted issuer does not satisfy that check on its own.",
+        "Entity Configuration expiration controls how often federation keys are refetched and expired metadata must be refreshed, so the key material a resource server validates against is only as current as its own refresh cycle.",
+        "A trust chain runs from the Entity Configuration to a Trust Anchor with metadata policies applied along the chain, and key rollover publishes the new jwks member before old keys are removed.",
+        "Verified identity is not resource authorization: the integrated route states that a valid token does not grant permission to every object, and the zero-trust card requires authorization at the resource with deny-by-default policy and tests of indirect paths."
+      ],
+      "optional_claims": [
+        "Bilateral direct trust between two organizations is the named alternative when multilateral third-party mediation is impractical.",
+        "OpenID Federation supplies revocation status data for keys and trust marks but no revocation process, so federation-specific replay and revocation mechanics remain synthetic guidance."
+      ],
+      "required_evidence": [
+        "tycho.page.cd2585308f28ccb08b55c4b00e42925b#overview",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route",
+        "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview"
+      ]
+    },
+    {
+      "task_id": "Q133",
+      "question": "Why must a claim-check token be published only after the payload write, and which failures remain after that ordering is enforced?",
+      "layer_expected": "atlas",
+      "answer": "A claim check sends a reference, not the payload, so a consumer can act only by resolving that reference in the external store. The store write and the token publication are separate systems with no shared atomic commit; if the token is published first, consumers can receive references to payloads that do not exist or are not yet retrievable, and the consumer cannot repair that. Publishing only after the payload write succeeds makes every published token point to a payload that was at least written, and pushes the residual inconsistency to the store side: a payload whose token was never published is an orphaned object to expire and collect, rather than a broken reference in a consumer's hands. But ordering is not atomicity. A crash after the write and before publication still orphans the payload; a retry can publish a duplicate claim check; and a token that was resolvable at publication can later become unresolvable through store outage, data loss, or message expiration overtaking payload retention. Integrity mismatch also remains possible, and the token does not authorize access: authorization stays an independent interaction between producer or consumer systems and the store. So the ordering removes only the publication-time dangling-reference failure mode. The remaining failures are orphaned payloads, later unresolvable tokens, duplicate claim checks, integrity mismatches, store outage or data loss, and retention/deletion ownership gaps; they require an idempotent consumer, a disposition for integrity mismatches, coordinated message-expiration and payload-retention policy, a durable and available store, claim cleanup, and failing closed when retrieval is impossible.",
+      "citations": [
+        "tycho.page.d44c30621fd941318453e3ff995a3e93#overview",
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview"
+      ],
+      "core_claims": [
+        "The Claim Check card requires the token to be published only after the payload write succeeds because the write and publish form a non-atomic pair that can otherwise leave an orphaned payload or a token consumers cannot resolve.",
+        "Even with that ordering the card names duplicate claim checks, integrity mismatches, store outages and data loss, and it requires an idempotent consumer for duplicate claim checks.",
+        "The card's guidance is to expire and garbage-collect claims and to fail closed when retrieval is impossible, so an unresolvable token becomes a declared failure rather than a silent partial read.",
+        "Claim Check is rejected when the extra retrieval hop cannot meet the latency target, when payload lifecycle or failure handling has no owner, or when authorization cannot remain an independent interaction between producer or consumer systems and the store.",
+        "The C03 Idempotent Receiver card supplies the deduplication conditions: messages must carry stable identity, identity and effect must be recorded atomically, and retention must cover the redelivery window."
+      ],
+      "optional_claims": [
+        "The C04 Idempotency Key card applies the same retention logic to client-supplied keys: expiry ends historical deduplication, and a reused key with changed intent is a conflict rather than idempotency.",
+        "When the payload fits the transport and latency budget and no sensitivity, retention or repeated-serialization reason applies, the card prefers keeping the payload inline."
+      ],
+      "required_evidence": [
+        "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview",
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory"
+      ]
+    },
+    {
+      "task_id": "Q141",
+      "question": "Why can a success rate near 1.0 make the V12 sensitivity shares unstable even when the modeled effect is real?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The V12 sensitivity shares are normalised ratios, not effect sizes. The first-order Sobol' index is the share of output variance V explained by one input alone, and the total-order index adds every interaction involving that input, so each reported share is a fraction whose denominator is V. A success rate near 1.0 is a bounded metric: near the ceiling there is little room left to vary, and the book records the resulting ceiling effect - when success is near 1.0 the variance is small and the interval is narrow. Dividing a small numerator by a small denominator amplifies error, and V12 does not use a full pick-freeze analysis here: it fits a quadratic response surface to only 48 input rows and decomposes the fitted variance into shares. The page calls that screen an approximation, not a full Sobol' analysis, and notes that sensitivity estimators are noisy at small sample sizes and are a screen, not a precision estimate. The corpus does not give a numeric formula for share error versus V, but the mechanism follows from the definitions: when V is thin, the screen's own approximation and sampling error are no longer negligible relative to the denominator, so the same real effect can produce shares that move or even reorder between samples. The stated failure mode is exactly this bounded-output distortion: a success rate near 1.0 has little variance, so a variance decomposition can look unstable even when the underlying effect is real. A share also cannot be read as a causal claim, and a first-order index near zero does not mean the input is irrelevant because the input may act only through an interaction. To read such a run safely, keep the shares next to the absolute variance contributions and the total V, report the sample size and a convergence or error check (reported indices without them are a listed failure mode), keep the 48-row screen labelled as a screen, repeat it across seeds or wider samples before trusting a ranking, and preserve an insufficient-sample marking instead of smoothing it - the page's own stressed two-replication run is marked insufficient-sample and its ranking is acknowledged as reversible. In short, near a ceiling the shares are dominated by how little the output varies, not by whether the modeled effect exists.",
+      "citations": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity"
+      ],
+      "core_claims": [
+        "The V12 screen fits a quadratic surface to 48 sampled rows and decomposes the fitted variance into first-order and total-order shares.",
+        "Bounded-output distortion is a recorded failure mode: a success rate near 1.0 has little variance, so a variance decomposition can look unstable even when the underlying effect is real.",
+        "Candidate B's success rate is 0.9996, and a bounded metric near its ceiling has little variance, which is the condition the page names bounded-output distortion.",
+        "The screen assumes a quadratic surface is adequate over the sampled range and that input standardization is meaningful, so its shares are an approximation rather than a precision estimate.",
+        "The page calls the indices a screen and notes the 48-row sample is small, so they identify what to measure first rather than what dominates in production."
+      ],
+      "optional_claims": [
+        "The candidate B shares are arrival 0.361 first-order and 0.464 total-order, and service mean 0.536 and 0.639, with the first-order values summing to 0.897.",
+        "A bounded success rate also cannot reveal failures the model does not represent, because the metric is compressed near its ceiling."
+      ],
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+      ]
+    },
+    {
+      "task_id": "Q149",
+      "question": "How can a V12 decision be decision-supported when every model input remains assumed?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A decision can be decision-supported only as a conditional status, not as a claim about the world. V12 separates three statuses in a decision record: model-verified/partially-verified/unverified for the engine, calibrated/partially-calibrated/uncalibrated for the inputs, and decision-supported/insufficient-evidence for the outcome. A decision-supported outcome on an uncalibrated model is therefore defined as a conditional result: it says the decision follows from the declared assumptions and constraints, it does not say the assumptions are true, and the record must state the condition and the measurements that would reverse it.\n\nSupport is then constructed, not discovered in the numbers:\n\n1. Keep every assumption visible with a status. All nine V12 inputs (arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity, divergence threshold) are assumed, each paired with the measurement that is missing; repeating an assumed value in a decision record does not make it measured, and a derived value inherits the weakest status of its inputs.\n\n2. Bind the recommendation to declared constraints and declared priorities. The record keeps hard, soft and non-quantitative constraints in separate fields from metrics and evidence statuses. Candidates are eliminated by constraint rather than by a weighted score (C fails the cost and p95 latency ceilings), survivors are compared on business-comparable metrics, and the tie-break between them is declared as a decision, not as a simulation output.\n\n3. Do not let precision substitute for validity. Narrow replication intervals do not make inputs measured; the sensitivity screen is used to rank what to measure first, not to prove a production driver; and the recommendation stays bounded by a declared range (a measured arrival above 22 requests/second or a mean service time above 0.65 seconds moves the utilization boundary).\n\n4. Record the exit. Reversal triggers, limitations and unverified non-quantitative constraints (an untested operability review) keep the claim conditional and revisitable; the conditional form is the mechanism, not a defect.\n\nWhen the assumed ranges span the decision boundary, the same machinery must instead return insufficient-evidence with recommendation none - a hard input assumed whose range crosses the boundary, a hard constraint the model cannot evaluate, or a confidence interval containing both a pass and a fail. That is a complete outcome, not a model failure, and the record names the measurement, the supporting/rejecting range, the measurement owner, the consequence of staying put and the next review trigger. The V12-D and V12-E gates check that calibration statuses and decision evidence are present, and the gates explicitly establish neither production validity nor owner acceptance.",
+      "citations": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+      ],
+      "core_claims": [
+        "Decision evidence is a separate layer from calibration: it asks whether the outcome follows from the model and the declared constraints, not whether the inputs match a real system.",
+        "A decision-supported outcome with an uncalibrated model is conditional; it holds under the declared assumptions and does not claim that those assumptions are true.",
+        "The record must state the condition and the measurements that would reverse the decision.",
+        "Treating a recommendation as a deployment certificate crosses a layer boundary, because simulation success does not imply production success.",
+        "The checkout record can be decision-supported under its declared constraints while the operability constraint remains unverified, which makes the recommendation conditional."
+      ],
+      "optional_claims": [
+        "The decision record can still rank what to measure first; it cannot substitute for the measurement."
+      ],
+      "required_evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change"
+      ]
+    }
+  ]
+}

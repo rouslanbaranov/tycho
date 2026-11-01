@@ -1,0 +1,191 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q105",
+      "question": "When object bytes are stored outside the metadata database, why is a successfully verified upload not yet safe to expose to readers?",
+      "layer_expected": "book",
+      "answer": "A verified upload is evidence about bytes only; exposure is a separate, metadata-owned authorization decision, because the object store and the metadata database share no transaction. Four reasons a verified object is still unsafe to expose.\n\n1. No atomic cross-store commit. Committing a metadata row does not atomically commit a remote object write, and object existence alone does not authorize exposure. The visible-state invariant is that an entry is exposed only when metadata references an immutable, validated object version belonging to the permitted owner. Two independent effects can diverge in either order, so success or acknowledgement on one side proves neither the pair nor the reader-visible state; readers must follow the published reference and have current permission enforced.\n\n2. Verification is not validation. A checksum verifies bytes against a trusted expected value; it does not establish permission, safe content, or the authenticity of a maliciously supplied manifest. Completion outcomes that cannot be resolved unambiguously after a timeout must be quarantined for repair rather than published as guessed bytes, since a matching key alone is insufficient if another writer may have replaced it.\n\n3. Verification is not durable against replacement. Unless the reference is bound to an immutable object version, another writer can change the bytes at a mutable name between verification and later use. Conditional writes and ETag preconditions protect only the scoped object operation; they do not commit the separate database row, so the gap between check and publication needs a version or precondition protocol plus restricted overwrite and delete rights on verified candidates.\n\n4. Exposure introduces new races and access questions. An object-created notification is a wake-up signal, not authority for a business publication decision: it may arrive before validation or more than once, so a worker must consult current metadata and be idempotent. A collector must not delete objects simply because they appeared unreferenced at some observation time, because publication could establish a reference afterwards; retirement must be metadata-owned with a grace/state protocol. And an unguessable key is not a complete authorization design, while an already-issued capability can outlive revocation of the catalogue permission.\n\nSo a successfully verified upload becomes safe only after metadata atomically records publication against the exact validated object version, and readers resolve exposure through that reference under current permission.",
+      "citations": [
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races",
+        "tycho.page.df45fc7c08edd5544234864073ea5cc0#address-access-and-retention-are-different-properties"
+      ],
+      "core_claims": [
+        "Object storage and the metadata database do not share a transaction, so object existence alone does not authorize exposure, and committing a metadata row does not atomically commit the remote bytes.",
+        "The visible-state protocol uses a pending operation, a nonpublic candidate identity, verification of that exact object version, and then an atomic metadata publish that records the exact version and any outbox event.",
+        "Each crash window leaves different persisted evidence and needs a different recovery: before upload, after upload before completion, during validation, after publish commit before response, and after publication before event delivery.",
+        "Conditional writes such as create-if-absent or ETag preconditions protect one scoped object operation but cannot commit a separate database row, and a mutable key lets another writer replace the bytes between verification and later use.",
+        "A collector must not delete every object it observed unreferenced at one instant, because publication can establish a reference afterward; retirement needs a metadata-owned grace and state protocol over immutable object identities."
+      ],
+      "optional_claims": [
+        "An object-created notification is a wake-up signal that may arrive before validation or more than once, so the worker must consult current metadata and handle duplicate notices idempotently.",
+        "A completed multipart object's ETag is not necessarily the MD5 of its bytes, so a documented checksum algorithm must be verified instead."
+      ],
+      "required_evidence": [
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#crash-windows",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races",
+        "tycho.page.60ae29b6b2a422214c18be04cf012b6e#resolve-ambiguity-before-starting-again"
+      ]
+    },
+    {
+      "task_id": "Q113",
+      "question": "Why can a highly selective metadata filter leave an approximate nearest-neighbor query short of the k results it requested?",
+      "layer_expected": "book",
+      "answer": "The shortfall comes from the order of operations and the candidate budget, not from the filter being wrong. An approximate index (HNSW graph traversal or IVF list probing) selects and examines a bounded candidate set by vector distance; the metadata predicate is evaluated on those candidates afterwards, so a row limit of k counts surviving rows, not candidates scanned. With selectivity s, a candidate pool of m yields roughly s*m eligible items, while the scan budget (ef_search, nprobe, fetch size) is normally sized for k or a small multiple of k rather than k/s. A highly selective filter (one tenant or version among thousands) therefore leaves too few eligible rows. Approximation compounds this: traversal is steered only by distance, ineligible nodes still consume the budget, eligible nodes may be reachable only through them or sit in unprobed IVF lists, and the engine stops when its budget or search bounds are exhausted, not when k eligible rows are found. The result is a silently short, lower-recall answer set; a synthetic example in the book scans 40 candidates of which 2 are tenant-eligible, so LIMIT 10 returns 2. That shortfall is a recall measurement problem, not evidence that the corpus holds no relevant material and not a reason to infer restricted counts or relax authorization. Mitigations, all version-scoped: iterative index scans that continue under configured bounds until enough eligible rows or exhaustion (documented for pgvector 0.8.0+), partitioning or partial indexes per filter value or tenant so each index contains only eligible rows, a larger candidate budget with exact re-check/rerank, filter-aware or hybrid indexes, and exact-scan fallback when the eligible population is small. Evaluate recall@k against an exact top-k restricted to eligible documents, and record candidate budget, filter selectivity and snapshot between runs.",
+      "citations": [
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#4-metadata-filtering-creates-a-subtle-recall-and-security-boundary",
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance",
+        "tycho.page.411a855b84384e86b3b7fb60a3f63464#5-pgvector-versus-faiss-versus-a-vector-database",
+        "tycho.page.411a855b84384e86b3b7fb60a3f63464#6-failure-cases-and-evaluation",
+        "tycho.page.66d2977575264168a8616e09d0900af6#3-ann-index-types-and-their-trade-offs"
+      ],
+      "core_claims": [
+        "With an approximate vector index, the mandatory metadata filter can run after candidate scanning, so the first pass may rank neighbors without regard to eligibility.",
+        "When only a small fraction of nearest neighbors satisfy a restrictive topic, version or tenant filter, the first scan may return fewer than the requested LIMIT and lower observed recall.",
+        "The documented mitigations are iterative index scans, partitioning and partial indexes, and their availability is version-specific.",
+        "Raising the candidate budget may find eligible neighbors, but it must never change what is authorized, and filtering early is not by itself proof of recall.",
+        "Recall should be judged against an exact search over the same authorized population, recording candidate budget, filter selectivity and snapshot between runs."
+      ],
+      "optional_claims": [
+        "An empty result inside the permitted scope is not proof that the corpus contains no relevant document.",
+        "An approximate index must not reveal restricted titles or excerpts through snippets or side-channel counts."
+      ],
+      "required_evidence": [
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#4-metadata-filtering-creates-a-subtle-recall-and-security-boundary",
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance",
+        "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline"
+      ]
+    },
+    {
+      "task_id": "Q121",
+      "question": "Why is a saga's compensating action not a rollback, and what must the workflow preserve when that compensation fails?",
+      "layer_expected": "book",
+      "answer": "A saga's compensating action is not a rollback because each saga step is a separately committed local transaction in an independent owner: there is no global transaction, lock or undo log, intermediate states are visible to other readers, and some effects (a delivered message, a captured payment, a handed-over kit) cannot be reversed at all. A compensation is therefore a new, forward business action that creates an acceptable counter-effect, with its own authorization, evidence, ordering and failure mode, and it can fail or arrive late. When compensation fails, the workflow must preserve (1) durable workflow/step/effect identity and the recorded per-step outcome (committed, failed or unknown); (2) the failed compensation as a durable repair item and user-visible unknown state with an accountable owner, not reclassified as success; (3) durable history plus idempotent activities so recovery can replay and retry without duplicating effects; (4) an observable terminal-state/audit record for reconciliation; and (5) the correct authoritative business result as the acceptance criterion, so the saga is never marked complete while an irreversible or uncountered effect remains. Compensation ordering follows declared reverse dependency order, not an assumed reversal, and the cost/risk test decides whether compensating at all is safer than leaving the failed step unresolved.",
+      "citations": [
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+        "tycho.page.3c78e2b17ac74973b2ae658977843c2a#engineering-walkthrough-the-cancel-versus-accept-invariant-crosses-a-transaction-boundary",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+        "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#bounded-pattern-ownership-notes",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path"
+      ],
+      "core_claims": [
+        "A saga coordinates a sequence of local transactions across independent owners and never claims global atomicity or rollback, so other readers can observe a partially completed business outcome.",
+        "A compensating transaction is a new business action that creates an acceptable counter-effect, with its own authorization, evidence and terminal-state check, and it can fail.",
+        "Some effects cannot be undone at all, such as a delivered message or a kit already handed to a participant, so the domain must decide which steps require manual reconciliation.",
+        "Before dispatching a step the workflow records workflow identity, step identity and expected outcome, then records committed, failed or unknown; a lost acknowledgment is an unknown outcome rather than a failure.",
+        "A failed compensation remains an owned repair item with a user-visible unknown state, and compensation ordering is declared rather than assumed to be the forward path reversed."
+      ],
+      "optional_claims": [
+        "One local transaction or two-phase commit may be preferable when the steps do not cross independent owners or when compensation cannot be made safe.",
+        "A distributed trace can show correlation across a choreographed saga but does not establish durable business truth."
+      ],
+      "required_evidence": [
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path"
+      ]
+    },
+    {
+      "task_id": "Q129",
+      "question": "Why does replacing a failed worker in a shuffle-sharded pool not restore the isolation the assignment promised?",
+      "layer_expected": "atlas",
+      "answer": "A shuffle shard assigns each tenant a random subset of s workers from a pool of N, so isolation is a statistical property of the assignment, not a property of any worker. One failed worker touches only the tenants whose subset includes it \u2014 roughly s/N of tenants \u2014 so the promise is reduced overlap and a smaller affected population, not a durable boundary or a fixed percentage of impact. Replacing the failed worker does not restore that promise because the new worker takes the same position in the pool: every tenant whose subset included the dead worker now includes the replacement, so the overlap pattern, and with it the correlated-failure surface, is preserved. Containment after a failed worker therefore requires reassigning the affected tenants and rechecking the shared dependency graph; the replacement restores capacity, not separation. Two further conditions survive the swap. First, the workers are rarely the real failure domain: a shared database pool, queue, cache or control plane can dominate the assignment, and if all workers await one shared pool the endpoint assignment proves little. Second, hash-based assignment alone does not prove statistical independence \u2014 capacity skew, placement constraints, correlated failure and retries all change overlap, and an unstable assignment across restarts erodes the isolation benefit. The correct test is recovery time and measured tenant impact under the new assignment, not steady-state isolation; without a bounded reassignment rate and reserved recovery capacity, failing every affected tenant over at once can exhaust the survivors.",
+      "citations": [
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies"
+      ],
+      "core_claims": [
+        "A shuffle shard gives each tenant a random subset of a worker pool so tenants overlap in only some eligible workers; a failed worker affects every tenant whose subset includes it, roughly s/N of tenants for shard size s in a pool of N, which is not an unconditional reduction against a fixed shard.",
+        "Replacing the worker alone can preserve the same overlap, so containment requires reassigning the affected tenants and rechecking the shared dependency graph.",
+        "Hash-based assignment does not prove statistical independence: capacity skew, placement constraints, correlated failure and retries all change overlap and impact, so the actual assignment algorithm and tenant workload must be measured or modelled.",
+        "The assignment bounds impact only where the alternate worker is usable, which requires retry and dispatch behaviour that can reach it, bounded queues, and no shared bottleneck such as one database pool underneath.",
+        "Recovery must be judged by measured recovery time and tenant impact rather than steady-state isolation, and too few shards or an assignment that is unstable across restarts erodes the benefit until cell-based partitioning or dedicated shards becomes the better choice."
+      ],
+      "optional_claims": [
+        "Shuffle sharding does not by itself partition durable state or guarantee a fixed percentage of impact.",
+        "A fixed cell instead gives a tenant a durable home and a clear population boundary, which is preferable when many tenants need a known placement rather than a random subset."
+      ],
+      "required_evidence": [
+        "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions"
+      ]
+    },
+    {
+      "task_id": "Q137",
+      "question": "When is it acceptable for a V12 model to omit a dependency such as the payment network or the database, and what must the scope statement record so the omission is reviewable rather than hidden?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "V12 accepts omitting a dependency such as the payment network or the database only as a bounded simplification: when the omitted parts cannot change the comparison under the declared conditions. The test is decision-relative \u2014 the omission must not be able to reverse the choice on the observable metric inside the declared validity domain; otherwise the dependency must be modeled. Omitting it is not acceptable when a boundary that starts after admission hides caller-visible behavior and can reverse the result, or when externalizing a downstream timeout as a constant service time hides the failure that motivates the decision. Detail is added when it can change a decision-reversing metric, and the new validity limit is then recorded. The scope statement must make omissions explicit rather than unstated assumptions and must record: purpose (which decision the model informs, plus the decision owner); the alternatives compared; the observable metric that distinguishes them; the excluded actors, dependencies and failures; and validity (the ranges and conditions under which the result is intended to hold). A reviewable statement also records the boundary, the resolution (time/state units, request class, priorities), the workload and constraints, and whether any production claim is made (the example ends 'no production claim'). It must be short enough for a reader to challenge whether the omitted dependency is material, whether the resolution is enough, and whether the workload is representative. The record must also state which validity condition holds \u2014 conceptually reasonable but operationally validated or unvalidated. The V12 model contract mirrors this in its scope field (what is included and what is explicitly excluded), its abstraction field (boundary and resolution), and validity_limits, assumptions and unknowns; a model that cannot answer purpose, alternatives, observable, excluded and validity is not ready for a scenario.",
+      "citations": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview"
+      ],
+      "core_claims": [
+        "A model boundary is the line between the model's state and the rest of the world, not a service boundary or a team boundary.",
+        "Omitting the payment network, the database or the deployment platform is acceptable only if the omitted parts cannot change the comparison under the declared conditions.",
+        "A reviewable boundary statement names the purpose, the compared alternatives, the observable that distinguishes them, the excluded actors and dependencies, and the validity ranges and conditions.",
+        "Everything outside the declared validity domain is an explicit omission, not an unstated assumption, and the scope example records excluded dependency calls, storage, network and deployment.",
+        "Fixing a constant service time in place of a downstream timeout is a listed scope failure mode because the model then cannot show the failure that motivates the decision."
+      ],
+      "optional_claims": [
+        "The model contract carries scope, abstraction and validity limits as explicit fields, so a reader can see the boundary without reading the engine.",
+        "Added detail is justified only when it can change a metric that could reverse the decision."
+      ],
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ]
+    },
+    {
+      "task_id": "Q145",
+      "question": "Why can a model contract pass every automated check and still misstate its evidence?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A model contract is a record about evidence, not evidence itself, and the automated checks inspect the record. In V12 the validator enforces strict schema conformance, unique identifiers, reference resolution and stored-hash matches. Each of those is a property of the artifact: a claim is present, well-typed, resolvable and internally consistent. The book states the limit plainly: the validator cannot check that a source actually supports a parameter, because that is an editorial and review task; the contract only prevents an obvious mismatch between the label and the record. A contract does not prove the model is useful, it makes the model's claims inspectable. Presence is what is checked \u2014 a missing field is a validation failure, not a note \u2014 so passing certifies completeness and consistency, not truth.\n\nMisstating evidence is therefore invisible by construction, and the book names the ways it survives a green check: verification theater (a case marked pass with fields filled but a false claim, which the strict schema cannot detect), calibration laundering (an assumed value copied into a measured field, which source and measurement requirements make harder but not impossible), and evidence inflation (a model-verified engine presented as a validated system). Parameter drift leaves the run executable while the evidence status becomes ambiguous. Hashes do not close the gap either: the recorded failure is a hash over the wrong fields, where a hash covering only metrics makes a changed limitation or convergence status invisible, and replay is a reproducibility check, not a truth check \u2014 it shows stored inputs, engine and seed reproduce stored metrics, not that the model is valid or the inputs measured.\n\nFull gate coverage is layered, not cumulative: a passing local check is not independent review, CI, owner acceptance or production validity; the independent review gate is not claimed by the validator; and the gates do not establish that the source claims are true. A record can even be valid while declaring insufficient evidence, since that is a complete outcome, not a failure. The contract is a guardrail, not a reviewer; it does not replace source evidence, calibration, security review or owner acceptance, and it makes those gaps visible rather than closing them.\n\nSo the root cause is that the evidence claim is self-declared and the check is closed over the same record and the same files the author controls. Schema, hash and replay detect inconsistency, not correspondence with a source or a system. Correspondence requires an independent reader, which is why the book assigns it to editorial and independent review and keeps the residual uncertainty explicit in the contract's own fields instead of treating a green validator as proof.",
+      "citations": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.chapter.3a47e8385cccb8a2ce764bfa765cc740#boundaries-and-evidence",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish"
+      ],
+      "core_claims": [
+        "The validator checks strict schema conformance, a unique tycho.model identifier, scenario resolution to that identifier, and the presence of a source and measurement record for every parameter marked measured.",
+        "It cannot check that a cited source actually supports the parameter value, so linking the label to the record remains an editorial and review task.",
+        "The schema rejects a verification case that lacks a test path or an observed result, but it cannot detect a case that claims a pass without one.",
+        "Unit fields make a state-versus-rate mismatch visible, yet the validator performs no dimensional analysis.",
+        "An orphan model, a scenario override that leaves the calibration note stale, and an assumed value copied into a measured field all survive structural validation."
+      ],
+      "optional_claims": [
+        "An uncalibrated status is a complete contract value rather than a missing field.",
+        "The contract makes a model's claims inspectable; it does not prove that the model is useful."
+      ],
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram"
+      ]
+    }
+  ]
+}

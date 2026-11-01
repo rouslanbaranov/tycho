@@ -1,0 +1,18 @@
+{
+  "task_id": "Q136",
+  "answer": "Both events are expiries observed only on the local side, and neither settles the remote state transition. In a lease, the holder renews before expiry and the coordinator may reassign after expiry, creating a new epoch: a renewal that receives no response may have been committed, or may have been lost while the lease expired and a successor was granted authority. The old holder's clock and local belief are not the authority, and a paused holder can resume later, so a missed renewal makes ownership uncertain, not failed, and must not be read as a successful renewal. A request timeout has the same shape: it is only a local wait bound, the server may have committed the effect before the reply was lost, and cancellation does not undo a committed effect, so no answer does not mean no commit. The workflow must preserve what is needed to resolve the ambiguity rather than guess: a stable logical operation identity (scoped to owner, payload and a declared retention window) that survives retries and leader changes; a durable authoritative outcome record - new, in-progress, committed, rejected or incompatible duplicate - committed atomically with the effect, retained for the retry/reconciliation horizon and queryable when an acknowledgment is lost; for ownership, a monotonic epoch/fencing token persisted and checked atomically at the destination, with a defined takeover linearization point and no token reuse; and the explicit unknown state itself, so it is reconciled or repaired and never collapsed into false success or false failure.",
+  "citations": [
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.5778597986df46439eee0aa162de2729#4-the-critical-lost-acknowledgment-problem"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "task_id": "Q115",
+  "answer": "A component inventory produced from a source checkout cannot establish the released container image's component set because it describes a different subject with a narrower scope. First, the source revision is only a versioned authoring input: it cannot establish whether the same bytes produced the deployed artifact, and source, build, artifact and promotion are separately controlled boundaries; the artifact digest, not a mutable tag or source tree, identifies the released object. Second, image assembly adds content that source visibility does not include: base-image operating-system packages, build-stage tools, generated code, bundled binaries and artifacts copied into a runtime layer can all be present in the image without appearing in a source scan; the book's synthetic error is precisely an obsolete OS package copied into a runtime layer after source scanning. Third, no SBOM format creates perfect coverage without a capable generator and suitable input visibility; a credible inventory must declare its scope (build-time, runtime, transitive, platform/system packages, generated code and bundled binaries), unresolved identities, known omissions, and nested image-layer or dynamically loaded dependencies. Package metadata may be unavailable, and aliases, forks and vendored source leave component identity uncertain. Fourth, the inventory must be bound to the exact release artifact and digest, not merely to the source tree; an SBOM whose subject digest belongs to a previous release must be rejected. To establish the image's component set, inspect the actual released image/digest and its layers, bind the result to that digest, and disclose per-scanner coverage and omissions; if that cannot be done, preserve the gap as a verification task rather than reporting no vulnerabilities.",
+  "citations": [
+    "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+    "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#6-original-worked-decision-controlled-artifact-promotion"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

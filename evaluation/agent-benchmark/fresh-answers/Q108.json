@@ -1,0 +1,18 @@
+{
+  "task_id": "Q108",
+  "answer": "An UPDATE does not overwrite the row in place: it produces a new row version, and COMMIT makes that new version visible and durable but does not end the old version's useful life. MVCC visibility is decided per reader, so a transaction whose snapshot predates the commit may still be entitled to see the replaced version; the writer's commit is not the event that makes that version reclaimable. How long the old version must survive depends on the snapshot contract: Read Committed takes per-statement snapshots, while Repeatable Read holds a transaction-wide view, so a long-running or apparently idle transaction can retain an old visibility horizon. VACUUM is gated by that same horizon. It can make obsolete-version space reusable only once no transaction can still observe the old version; while such a snapshot remains open, the dead version cannot be removed or its space reused, dead versions accumulate, and cleanup/vacuum pressure grows. The corpus therefore says to inspect transaction age and blockers, not just active query duration. Two further limits prevent space from coming back promptly even after cleanup: successful vacuum reuses space inside the relation rather than immediately shrinking the file on the operating system, and VACUUM FULL is a separate lock/rewrite contract and not a generic first remedy; vacuum itself also consumes resources. Indexes add write, maintenance and bloat cost because every index entry must stay consistent with the base row, but the read sections do not document index-entry cleanup phases or tuple-header mechanics. No runtime experiment, measured threshold or universal retention magnitude is supplied; commit alone is not evidence that the old version can disappear.",
+  "citations": [
+    "tycho.page.021b06125a5c46d488493b87d384509f#visibility-is-a-question-about-a-reader",
+    "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+    "tycho.page.021b06125a5c46d488493b87d384509f#old-versions-consume-a-lifecycle-budget",
+    "tycho.page.021b06125a5c46d488493b87d384509f#failure-probe-and-limits",
+    "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+    "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+    "tycho.page.9176c39f97f544f884666e291ae38b90#6-failure-recovery-and-a-deliberately-unanswered-question"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

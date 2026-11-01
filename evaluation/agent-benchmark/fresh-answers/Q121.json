@@ -1,0 +1,18 @@
+{
+  "task_id": "Q121",
+  "answer": "A saga's compensating action is not a rollback because each saga step is a separately committed local transaction in an independent owner: there is no global transaction, lock or undo log, intermediate states are visible to other readers, and some effects (a delivered message, a captured payment, a handed-over kit) cannot be reversed at all. A compensation is therefore a new, forward business action that creates an acceptable counter-effect, with its own authorization, evidence, ordering and failure mode, and it can fail or arrive late. When compensation fails, the workflow must preserve (1) durable workflow/step/effect identity and the recorded per-step outcome (committed, failed or unknown); (2) the failed compensation as a durable repair item and user-visible unknown state with an accountable owner, not reclassified as success; (3) durable history plus idempotent activities so recovery can replay and retry without duplicating effects; (4) an observable terminal-state/audit record for reconciliation; and (5) the correct authoritative business result as the acceptance criterion, so the saga is never marked complete while an irreversible or uncountered effect remains. Compensation ordering follows declared reverse dependency order, not an assumed reversal, and the cost/risk test decides whether compensating at all is safer than leaving the failed step unresolved.",
+  "citations": [
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+    "tycho.page.3c78e2b17ac74973b2ae658977843c2a#engineering-walkthrough-the-cancel-versus-accept-invariant-crosses-a-transaction-boundary",
+    "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+    "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#bounded-pattern-ownership-notes",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

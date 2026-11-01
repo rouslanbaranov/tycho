@@ -1,0 +1,14 @@
+{
+  "task_id": "Q129",
+  "answer": "A shuffle shard assigns each tenant a random subset of s workers from a pool of N, so isolation is a statistical property of the assignment, not a property of any worker. One failed worker touches only the tenants whose subset includes it — roughly s/N of tenants — so the promise is reduced overlap and a smaller affected population, not a durable boundary or a fixed percentage of impact. Replacing the failed worker does not restore that promise because the new worker takes the same position in the pool: every tenant whose subset included the dead worker now includes the replacement, so the overlap pattern, and with it the correlated-failure surface, is preserved. Containment after a failed worker therefore requires reassigning the affected tenants and rechecking the shared dependency graph; the replacement restores capacity, not separation. Two further conditions survive the swap. First, the workers are rarely the real failure domain: a shared database pool, queue, cache or control plane can dominate the assignment, and if all workers await one shared pool the endpoint assignment proves little. Second, hash-based assignment alone does not prove statistical independence — capacity skew, placement constraints, correlated failure and retries all change overlap, and an unstable assignment across restarts erodes the isolation benefit. The correct test is recovery time and measured tenant impact under the new assignment, not steady-state isolation; without a bounded reassignment rate and reserved recovery capacity, failing every affected tenant over at once can exhaust the survivors.",
+  "citations": [
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#failure-and-recovery-policies"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

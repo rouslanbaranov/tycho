@@ -1,0 +1,18 @@
+{
+  "task_id": "Q109",
+  "answer": "Single-flight is per process, not per key globally. Its in-flight registry and waiters live in one replica's memory, so it merges only callers that reach that replica while its own leader is loading. A hot key's expiry is correlated across the fleet: every replica misses at the same instant, each elects its own leader, and the guards cannot see one another. The origin therefore receives roughly one load per replica (N concurrent loads), plus further loads as staggered arrivals or retries begin after a leader finishes. The guard converts 'many duplicate loads per process' into 'one load per process', which is a local concurrency cap; it does not bound aggregate origin concurrency or total source work, and the resulting N is set by fleet size rather than by what the origin can absorb. Jittered TTLs separate expiry of different keys but leave one extremely hot key stampeding, and a local stale-serving asynchronous refresh is likewise only a local optimization, not a global lock.\n\nWhat would bound it is a shared admission and ownership decision covering both per-key concurrency and total source work. Use a cross-replica refresh lease so one owner fetches per key per refresh window; because a paused owner can resume after lease expiry, pair the lease with source revision/fencing or a conditional fill, and state explicitly whether ownership is a performance optimization or a correctness property. Cap concurrent origin loads per key and overall with an admission budget or bulkhead, and give excess requests a bounded wait, explicit reject or approved stale response rather than unlimited retries. Stale-while-revalidate is valid only where the operation accepts the stale value, with a bounded and observable stale window; if coordination is unavailable, fail closed with a bounded wait or a declared stale value. Prewarm and ramp the cache on restart, classify it as a latency or capacity cache (a capacity cache means the source cannot absorb full miss traffic), and verify with per-key origin QPS and queue age, including a restart of every replica rather than only one expired key.",
+  "citations": [
+    "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+    "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+    "tycho.page.edc267f2fa954e66891e006ddfbfb15f#bounded-pattern-ownership-notes",
+    "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock",
+    "tycho.page.f39fa61013ca41abbfba82ef48250f8f#5-failure-operation-cost-model",
+    "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#integrated-decision-and-reading-route",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

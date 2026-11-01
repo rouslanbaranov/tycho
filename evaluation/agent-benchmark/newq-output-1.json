@@ -1,0 +1,133 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Why does restoring a consistent stream-processing checkpoint not prove that an external side effect happened exactly once?",
+      "required_evidence": [
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ],
+      "core_claims": [
+        "A checkpoint stores operator state and source positions consistently so that recovery can resume from a defined input position.",
+        "An arbitrary external sink remains outside that guarantee unless a compatible sink commit protocol and recovery semantics are demonstrated.",
+        "If the sink is outside the checkpoint commit protocol, restoring the input position can process the event again after its external effect already occurred, so the sink needs its own idempotency or compensation contract.",
+        "Snapshotting state cannot retroactively cancel an external effect such as an email send, which has its own acknowledgment and idempotency contract.",
+        "Recovery tests must verify restored state, emitted output and input position, and must test a real external effect separately instead of inferring correctness from internal guarantees."
+      ],
+      "optional_claims": [
+        "A checkpoint is not automatically a migration artifact because a version upgrade can change state serialization, operator identity and restore compatibility.",
+        "Event-time watermarks and late-data handling remain business policies rather than properties proven by checkpointing."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does committing an update fail to make the replaced row version immediately reclaimable, and what keeps vacuum from reusing its space?",
+      "required_evidence": [
+        "tycho.page.021b06125a5c46d488493b87d384509f#visibility-is-a-question-about-a-reader",
+        "tycho.page.021b06125a5c46d488493b87d384509f#old-versions-consume-a-lifecycle-budget",
+        "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+        "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work"
+      ],
+      "core_claims": [
+        "Under MVCC each statement reads from a snapshot, so a committed update does not automatically become every concurrent reader's current view.",
+        "A replaced or deleted row version cannot be removed while another transaction may still need to see it under its snapshot.",
+        "Vacuum can make an obsolete version's space reusable only after the version is no longer needed.",
+        "A long-lived read transaction keeps an old visibility horizon open, so the writer's commit is not the event that makes the old version reclaimable.",
+        "Reuse of space inside a relation is not the same as shrinking the relation's file, and VACUUM FULL adds a different lock and rewrite contract."
+      ],
+      "optional_claims": [
+        "Snapshot visibility and WAL durability answer different questions, so snapshot consistency does not prove that a committed write survives a crash.",
+        "Repeatable Read keeps a stable transaction view but does not exclude every serialization anomaly, so a serializable transaction can still need a retry protocol."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does a single-flight guard inside each replica fail to bound origin load when one hot cache key expires, and what would bound it?",
+      "required_evidence": [
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#2-stampede-at-a-synchronized-expiry",
+        "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#3-a-refresh-lock-is-not-automatically-a-correctness-lock"
+      ],
+      "core_claims": [
+        "A synchronized cache expiry can make many readers miss at once and issue redundant expensive loads against the origin.",
+        "In-process single-flight deduplicates only loads triggered inside one process, so other replicas can still load the same key in parallel.",
+        "Jittered TTLs desynchronize expiry across different keys but do not protect one extremely hot key from a stampede.",
+        "Bounding origin load requires per-key coalescing plus a total source-admission budget with an explicit wait, reject or degrade response when that budget is exhausted.",
+        "A refresh lease is not a correctness lock because an expired lease can allow a second refresh while the first writer is still active, so a monotonic cache property needs source revision, fencing or a conditional update."
+      ],
+      "optional_claims": [
+        "Stale-while-revalidate is valid only when the operation accepts a stale value; an authoritative reservation or access grant may require an explicit rejection instead.",
+        "Cache loss is a load event as well as a latency event, so a capacity cache cannot fall back to unbounded database traffic without admission control."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a CPU-utilization autoscaler reduce replica count while request latency is rising, and what should be examined instead?",
+      "required_evidence": [
+        "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst"
+      ],
+      "core_claims": [
+        "When requests wait on a slow database rather than consume CPU, application CPU utilization can stay low while latency and pending work rise.",
+        "A CPU-driven controller can interpret that low utilization as excess capacity and scale in, increasing pressure and the fraction of pending requests.",
+        "Replica count is not a direct measure of useful capacity because a replica can be limited by a shared downstream budget it does not control.",
+        "Controller design separates scale-up urgency from scale-down conservatism because reacting to every spike causes oscillation while excessive smoothing underreacts to sustained overload.",
+        "The remedy may be upstream admission limits, query or lock repair, or a database budget change rather than additional application instances."
+      ],
+      "optional_claims": [
+        "Scale-out response time decomposes into metric, decision, provisioning, warm-up and routing stages that can overlap, so summing their averages is not an empirical estimate.",
+        "A deferred queue operation is not equivalent to a completed synchronous operation when the user contract requires an answer within a deadline."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a validly signed build attestation for an artifact digest still fail to establish that the artifact is eligible for release?",
+      "required_evidence": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes",
+        "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity"
+      ],
+      "core_claims": [
+        "The artifact digest is the subject, so an attestation bound to digest A is not evidence for digest B even when both share an image name.",
+        "A signature proves a cryptographic link between a statement and an authenticated key, not that the signer was authorized or that the statement is true.",
+        "Provenance describes builder identity, build process and materials within a declared scope, not runtime correctness or freedom from vulnerabilities.",
+        "Verification must check the expected builder identity, signature, build type and parameters against a release policy, because accepting any validly signed statement is not a meaningful policy.",
+        "SLSA Build and Source tracks are separately scoped, so one artifact's attestation does not automatically attain a level, and intended inputs, allowed builder process and target release constraints cannot collapse into a single signed check."
+      ],
+      "optional_claims": [
+        "SBOM coverage depends on the generator and its input visibility, so a source-only SBOM cannot establish the component set of the released runtime image.",
+        "A dependency name without exact identity is insufficient for exposure analysis, and aliases, forks or vendored source preserve uncertainty."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why can a metric label such as a tenant identifier multiply storage and query cost even when request volume is unchanged, and what should carry the per-tenant detail instead?",
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage"
+      ],
+      "core_claims": [
+        "Metric series identity combines the metric name with its label value sets, so a label with many distinct values creates many separately indexed and retained series.",
+        "Cardinality is multiplicative across label dimensions, so the walkthrough's 40 routes x 5 status classes x 3 zones x 2,000 tenants is an upper bound of 1,200,000 potential series.",
+        "Removing tenant_id from that example reduces the upper-bound combination count to 600, showing how much of the cost came from one label.",
+        "Cardinality is not the same as sample volume because scrape interval, compression, retention, index overhead and query fan-out also determine cost.",
+        "Unique request, customer or trace identifiers may leak sensitive data, so bounded route templates and status classes are preferred for metrics while detailed correlation belongs in access-controlled logs or traces."
+      ],
+      "optional_claims": [
+        "Aggregation and downsampling lose information by design: percentiles cannot be averaged across groups, and sampled telemetry cannot satisfy an audit obligation.",
+        "A daily average can hide a ten-minute queue crisis, and histograms with incompatible bucket boundaries misrepresent the merged distribution."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

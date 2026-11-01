@@ -1,0 +1,18 @@
+{
+  "task_id": "Q111",
+  "answer": "A validly signed attestation is an authenticated *statement about a build*, not a release approval. Its leading limits are: (1) envelope scope — a signature/attestation envelope establishes only a cryptographic link between a statement and an authenticated key/identity; it cannot establish that the signer was authorized or that the statement is true, so \"valid signature, therefore approved\" is an explicit false inference. (2) Claim strength and scope — SLSA Build/Source tracks are versioned and level-scoped: provenance can exist at Build L1 without platform-generated signed provenance (L2) or build-time tampering resistance (L3), and a level is not attained merely because an artifact carries an attestation or a custom script writes signed JSON. A consumer must know and check the expected builder identity, build type, parameters, source revision and trust root, not merely that the envelope verifies; validation also depends on pinned tool/format/issuer policy, key rotation/revocation and expiry. (3) Subject binding and policy mismatch — the artifact is the subject, never a mutable tag; an attestation bound to digest A is not evidence for digest B, and even a correctly bound, authentic attestation fails the gate when the issuer, signing identity, builder, source revision or target environment is not on the release allowlist (a CI account from an unapproved fork can sign correctly and still be rejected). (4) Eligibility is a separate, target-specific policy decision — release requires additional evidence beyond build provenance: SBOM coverage of the released object, scan/vulnerability freshness, target/environment eligibility and mixed-version runtime/data safety, evaluated by a gate outside the artifact that cannot be bypassed, with recorded decisions and a failure/exception process. A transparency-log entry supports inclusion/accountability but does not establish the publisher's authority. Consequently, provenance about how bytes were built cannot establish correctness, security or permission to deploy: a signed artifact remains a candidate whose release eligibility must be independently verified, and passing yields candidate eligibility, not proof of operational safety.",
+  "citations": [
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#4-authenticity-is-not-authorization",
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately",
+    "tycho.page.46fdc865ee574e828bb2e50436587b6b#7-a-release-gate-belongs-outside-the-artifact-itself",
+    "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+    "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+    "tycho.page.faf8361106c2458b97e046319d7fa979#3-provenance-reproducibility-and-signatures"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

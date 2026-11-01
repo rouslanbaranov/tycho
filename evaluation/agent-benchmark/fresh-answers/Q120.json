@@ -1,0 +1,20 @@
+{
+  "task_id": "Q120",
+  "answer": "Horizontal autoscaling acts through a delayed feedback loop, so a burst can be over — or can already have exhausted the old capacity — before any new replica becomes useful; a controller that eventually selects the 'correct' replica count has still lost the race.\n\n(1) Timescale mismatch. The book decomposes scale-out response time into metric event/aggregation, decision, capacity provisioning, application warm-up and effective service/routing delay, and warns that stages may overlap so average sums are not an empirical estimate. Its synthetic walkthrough doubles arrivals for 40 s while measurement (15 s) + decision (10 s) + scheduling (20 s) + warm-up (25 s) places the first healthy extra capacity at about 70 s — after the burst ended. Capacity that arrives after a short burst cannot absorb the initial surge; unlimited admission lets unfinished work grow during the gap.\n\n(2) Desired count is not useful capacity. Replicas must be placed, started, warmed (runtime init, compilation, connection establishment, cache fill), pass readiness and receive routed traffic; a new replica can be marked running while its downstream database budget is still exhausted, so readiness timestamps overstate usable capacity.\n\n(3) Correct count is not effective throughput. When the scarce resource is shared or serial — a hot item lock, database locks, a fixed connection ceiling, an external quota — adding replicas multiplies contention, connection churn and retries instead of goodput; a ten-replica deployment opening 30 connections each can request 300 backend connections. A CPU-targeted policy can meanwhile see low utilization while requests wait on the database and even scale in, increasing pressure.\n\n(4) Damage accumulates and outlives the delay. With unbounded admission, queue occupancy and age, expired deadlines, duplicated retries and cold-start effects build up; after the burst, newly scaled replicas may wake into a backlog and interfere with normal requests. Retry amplification can keep load high after the trigger disappears, so the system stays degraded even once the replica count is right.\n\n(5) Feedback is lagged and smoothed. Stabilization windows and tolerances that are necessary to stop replica oscillation necessarily underreact to a genuine fast overload, and the decision is computed from a measurement window that already describes the past; policy metrics can also be distorted by newly started instances' initialization signals. The chosen count can therefore overshoot or land on the falling edge of the burst.\n\nThe chapter's integrated conclusion is to compare demand timescale with detection, provisioning, readiness and warm-up delay before relying on autoscaling: pre-provision headroom for the measured lag, use scheduled/predictive capacity or warm pools when the scale-out path is slower than the burst, and add queueing, admission control or load shedding for the gap. A converged desired-replica value must not be read as achieved availability, and no single CPU threshold or replica number is universally optimal.",
+  "citations": [
+    "tycho.chapter.1d8d87e683bc428e8dbed087106f37fd#decision-and-worked-result",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst",
+    "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+    "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#purpose-and-mission"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

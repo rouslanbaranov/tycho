@@ -1,0 +1,17 @@
+{
+  "task_id": "Q141",
+  "answer": "The V12 sensitivity shares are normalised ratios, not effect sizes. The first-order Sobol' index is the share of output variance V explained by one input alone, and the total-order index adds every interaction involving that input, so each reported share is a fraction whose denominator is V. A success rate near 1.0 is a bounded metric: near the ceiling there is little room left to vary, and the book records the resulting ceiling effect - when success is near 1.0 the variance is small and the interval is narrow. Dividing a small numerator by a small denominator amplifies error, and V12 does not use a full pick-freeze analysis here: it fits a quadratic response surface to only 48 input rows and decomposes the fitted variance into shares. The page calls that screen an approximation, not a full Sobol' analysis, and notes that sensitivity estimators are noisy at small sample sizes and are a screen, not a precision estimate. The corpus does not give a numeric formula for share error versus V, but the mechanism follows from the definitions: when V is thin, the screen's own approximation and sampling error are no longer negligible relative to the denominator, so the same real effect can produce shares that move or even reorder between samples. The stated failure mode is exactly this bounded-output distortion: a success rate near 1.0 has little variance, so a variance decomposition can look unstable even when the underlying effect is real. A share also cannot be read as a causal claim, and a first-order index near zero does not mean the input is irrelevant because the input may act only through an interaction. To read such a run safely, keep the shares next to the absolute variance contributions and the total V, report the sample size and a convergence or error check (reported indices without them are a listed failure mode), keep the 48-row screen labelled as a screen, repeat it across seeds or wider samples before trusting a ranking, and preserve an insufficient-sample marking instead of smoothing it - the page's own stressed two-replication run is marked insufficient-sample and its ranking is acknowledged as reversible. In short, near a ceiling the shares are dominated by how little the output varies, not by whether the modeled effect exists.",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 24000,
+    "estimated": true
+  }
+}

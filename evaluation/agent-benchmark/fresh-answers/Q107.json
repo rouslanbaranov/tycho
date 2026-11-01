@@ -1,0 +1,21 @@
+{
+  "task_id": "Q107",
+  "answer": "A consistent checkpoint is a consistent cut of what the stream runtime manages: operator state plus source positions. The snapshot contains no record of the external system's state, so restoring it replays input from the checkpointed position and re-issues any external call made after that cut. The checkpoint proves 'internal state and input position are mutually consistent at this cut', not 'this business effect happened once'. The same document set states the limit directly: a consistent processor checkpoint cannot recover an expired input or reverse an independently committed external effect.\n\nTwo failure windows expose the gap. (1) The effect is committed, then the process crashes before a checkpoint covering it: restore replays the input and performs the effect again, a duplicate unless the sink deduplicates. (2) A local 'done' marker is committed before the external call, then the process crashes: the replayed input is skipped and the effect is lost. After a lost acknowledgment the process cannot distinguish 'applied' from 'not applied'; a timeout is not evidence that an external job did not start, nor that an RPC was sent. The checkpointed state records intent and offsets, not the external outcome.\n\nThere is no atomic transaction spanning the processor and the external system. The outbox analysis makes this explicit: one local transaction can cover business state plus publication intent, yet a relay may still send twice, and a consumer's call into another external system is outside the local commit; the consumer must own the effect under its own atomic authority or define reconciliation. Product guarantees are scoped the same way: Kafka Streams exactly_once_v2 and Flink checkpoints cover their own sources, state, and commit protocols, and the Kafka Streams documentation notes the scoped guarantee does not encompass an unrelated SQL transaction, payment, or email.\n\nExactly-once for the external world must therefore be supplied at the destination: a stable effect or idempotency key whose outcome record commits atomically with the effect; an idempotent/upsert or transactional sink that participates in the checkpoint commit protocol; destination-checked monotonic epochs that reject a stale writer; or an authoritative outcome lookup with reconciliation. Where the downstream supports neither a stable effect key nor readback, no wrapper can establish a business-level exactly-once claim - the corpus says to record unknown and design recovery. Restored state and a running job are evidence about the processor, not about the external effect; the effect needs its own identity/readback and a crash-injection test that includes the external call.\n\nSo 'effectively once' is an operational property - at-least-once replay plus idempotence, dedup, or an atomic sink - rather than a theorem implied by checkpoint consistency.",
+  "citations": [
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#integrated-decision-and-reading-route",
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+    "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect",
+    "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#2-kafka-streams-tasks-state-stores-and-changelogs"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

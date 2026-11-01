@@ -1,0 +1,131 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Why can a highly selective metadata filter leave an approximate nearest-neighbor query short of the k results it requested?",
+      "required_evidence": [
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#4-metadata-filtering-creates-a-subtle-recall-and-security-boundary",
+        "tycho.page.9145b7ce81d4461b90d3c6285128c18a#original-ranked-set-counterexample-authorization-is-not-optional-relevance",
+        "tycho.page.66d2977575264168a8616e09d0900af6#2-exact-nearest-neighbors-are-the-reference-baseline"
+      ],
+      "core_claims": [
+        "With an approximate vector index, the mandatory metadata filter can run after candidate scanning, so the first pass may rank neighbors without regard to eligibility.",
+        "When only a small fraction of nearest neighbors satisfy a restrictive topic, version or tenant filter, the first scan may return fewer than the requested LIMIT and lower observed recall.",
+        "The documented mitigations are iterative index scans, partitioning and partial indexes, and their availability is version-specific.",
+        "Raising the candidate budget may find eligible neighbors, but it must never change what is authorized, and filtering early is not by itself proof of recall.",
+        "Recall should be judged against an exact search over the same authorized population, recording candidate budget, filter selectivity and snapshot between runs."
+      ],
+      "optional_claims": [
+        "An empty result inside the permitted scope is not proof that the corpus contains no relevant document.",
+        "An approximate index must not reveal restricted titles or excerpts through snippets or side-channel counts."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "What must hold before a service may expose bytes uploaded to object storage when the metadata database and the object store share no transaction?",
+      "required_evidence": [
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#the-visible-state-invariant",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+        "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#garbage-collection-races"
+      ],
+      "core_claims": [
+        "Publication state belongs to the metadata database: object existence alone does not authorize exposure, and committing a metadata row does not atomically commit the remote object write.",
+        "The protocol starts with a pending operation ID, uploads into a nonpublic candidate identity, verifies the object, then atomically changes metadata to published with the exact object version and any required outbox event.",
+        "Conditional writes can guard the scoped object operation, but they cannot commit a separate database row, so the metadata transition remains the authority.",
+        "If readers resolve content by a mutable name, another writer can replace the bytes between verification and later use; an immutable version-bound reference, or restricted overwrite and delete rights, must prevent that replacement.",
+        "A collector must use a metadata-owned retirement decision and grace protocol rather than deleting every object it observed unreferenced, because publication may establish a reference after that observation."
+      ],
+      "optional_claims": [
+        "An object-created notification is a wake-up signal, not authority for a business publication decision, and it may arrive before validation or more than once.",
+        "Keeping content and metadata in one database can eliminate this cross-store protocol for a small workload."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a component inventory produced from a source checkout fail to establish the component set of the released container image?",
+      "required_evidence": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.56bd7133980b4b1992816a98308be676#3-sbom-completeness-and-dependency-identity",
+        "tycho.page.38bb8a14ebb54866a7004080318b47e1#purpose-and-mission"
+      ],
+      "core_claims": [
+        "An SBOM enumerates components and relationships only within its format and generator coverage, and the evidence-object table says it cannot establish the absence of undiscovered dependencies.",
+        "A scan performed at source checkout may omit runtime image layers: the worked example copies an obsolete operating-system package into a runtime layer after the source scan.",
+        "Because the artifact is the subject rather than a mutable tag, a statement bound to digest A is not evidence for digest B even when both carry the same image name.",
+        "Release verification therefore binds the inventory and provenance to the exact released digest, states each scanner's scope and known omissions, and inspects the actual image instead of inferring from the source tree.",
+        "A valid signature proves only that a statement was made by an authenticated key; it does not show that the signer was authorized or that the statement is true."
+      ],
+      "optional_claims": [
+        "Dependency names without exact identity leave exposure analysis uncertain because aliases, forks, vendored source and missing metadata obscure which component is present.",
+        "A report of no vulnerabilities from one scanner is a point-in-time observation, not proof of absence."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why are a database log position, a Kafka partition offset, a processor checkpoint and an external sink commit not interchangeable as recovery cursors?",
+      "required_evidence": [
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#2-kafka-streams-tasks-state-stores-and-changelogs",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ],
+      "core_claims": [
+        "The database WAL position, the Kafka partition offset, the application state-store checkpoint and the external sink commit are distinct cursors, so an implementation cannot treat any one of them as the cursor that defines recovery.",
+        "An implementation must document where alignment among those cursors is guaranteed and where duplicates or gaps may be replayed after a restart or rebalance.",
+        "Connector lag, slot retention, schema change and snapshot-to-stream gaps are common; a missing or expired slot can require resnapshotting the source, and that recovery point must be explicit.",
+        "Restoring a state store replays its changelog, and catch-up time depends on state size, disk and IO bandwidth, compaction, standby replicas and live arrivals, so fault tolerance does not imply instant recovery.",
+        "A Kafka Streams exactly_once_v2 setting is scoped to its Kafka processing and does not by itself cover an unrelated SQL transaction or remote provider; external effects need separate idempotency or compensation evidence."
+      ],
+      "optional_claims": [
+        "A recovery test should inject a crash after the state update but before the output or offset checkpoint, then verify restored state, emitted output and input position rather than only process start.",
+        "When log access is unavailable or the source cannot retain a slot, an outbox relay, dual-write reconciliation or scheduled extraction may be preferable to CDC."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a chain of per-hop timeouts that are each individually reasonable still outlive the caller's end-to-end deadline?",
+      "required_evidence": [
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial"
+      ],
+      "core_claims": [
+        "A deadline is the latest useful completion time at a named boundary, while a per-hop timeout is only that hop's local waiting limit.",
+        "A chain of individually generous per-hop timeouts can outlive the caller, waste resources and amplify queueing after an upstream failure.",
+        "When an early segment overruns its reservation, later stages must recompute the remaining time against the original absolute deadline instead of granting the full budget again.",
+        "A queue that admits already-expired work adds cost without useful output, and cancellation can stop further calculation but cannot undo committed state or external side effects.",
+        "Per-hop retry ownership, attempts, backoff and cumulative budget must be explicit, because retries started at independent layers can raise aggregate load while completed useful work falls."
+      ],
+      "optional_claims": [
+        "Work that must finish after the response deadline belongs to a separate durable job contract, not to an invisible extension of the synchronous request.",
+        "The 1,000 ms allocation in the worked budget is a set of negotiated planning reservations, not a measured percentile."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "When a caller submits an unauthorized document ID copied from a citation, why is omitting that document from ranked results insufficient, and what else must the service deny?",
+      "required_evidence": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8#6-a-synthetic-negative-test-matrix"
+      ],
+      "core_claims": [
+        "Each document read must be evaluated against the actual authorized subject and object, not a collection-wide login, and an end-user identity is not permission to read every document that matches a query.",
+        "A search that ranks a forbidden title but excludes its body can still leak metadata, so count, title, snippet, related links and citations must also be evaluated against authorization.",
+        "For an unauthorized ID obtained from a citation, the required behavior is to deny reading and metadata for that subject; hiding the item from ranking alone does not prove denial.",
+        "A cached snippet from a different scope must not be served, and neither a cache hit ratio nor a successful authentication is evidence of entitlement.",
+        "Denial cases should be exercised end-to-end with synthetic restricted fixtures and independent authorization configurations, because passing a boundary check covers only the tested patterns."
+      ],
+      "optional_claims": [
+        "Model-generated action arguments should be rejected by deterministic schema and access-policy checks rather than by trusting the model's promise to send correct input.",
+        "Refusing an unsupported write through a search tool requires the side-effect API to be absent, not just a claim that the surface is read-only."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

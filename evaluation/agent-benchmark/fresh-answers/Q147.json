@@ -1,0 +1,15 @@
+{
+  "task_id": "Q147",
+  "answer": "Use batch means when the reported metric is computed from one simulation run (a single realization or one long run) and the observations within that run are dependent, so the run's n observations are not n independent samples. In that case the independent-replication formula se = s/sqrt(n) treats correlated observations as if each added independent information and understates the standard error. Batch means divides the single run into batches, averages within each batch, and estimates the standard error from the spread of the resulting approximately independent batch means. Kim and Whitt recommend batch means for simulation output analysis and for finite-window measurement, where warm-up and edge effects also matter. Use the independent-replication standard error when the metric is an average over n genuinely independent replications, as in V12: each replication has its own seed, se = s/sqrt(n), and the 95% interval is mean +/- 1.96*se. That formula does not become more valid if replications are correlated or the output is heavy-tailed; a shared random stream makes the standard error too small. The practical test is therefore how the output was produced and whether the units being averaged are independent: separate-seed replications support the replication-based standard error, while a single long run with autocorrelated output (or only a finite measurement window) requires batch means or another dependence-aware error method. V12 itself uses independent replications and therefore does not apply batch means; its limitations state this, and it notes that a future model with one long run would need a different error method. Batch means corrects the error estimate for within-run dependence, not bias from warm-up, model misspecification, or a nonstationary window.",
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,253 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q000",
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "core_claims": [
+        "Authentication establishes a claimed subject and a tenant context; it does not decide whether that subject may perform a specific action on a specific object, which authorization must evaluate separately for subject, action, object and tenant.",
+        "A tenant identifier supplied in a URL is untrusted input, and even a tenant identifier derived from a signed session does not by itself establish access to an arbitrary object.",
+        "Object identifiers can be unique only within a tenant, so an item or reservation reference cannot be resolved safely without its tenant context; the policy decision must cover the actual tenant and that specific object.",
+        "Tenant membership does not authorize every object, property or action inside the tenant: a public read permitted across tenants does not imply authority to cancel a tenant-specific reservation.",
+        "A tenant-aware query filter protects only the path that executes it; caches, search indexes, background jobs, event consumers and bulk exports can reach the same state with broader credentials, so each sensitive authority must enforce object policy across the complete effect path."
+      ],
+      "optional_claims": [
+        "A certificate verified at the TLS endpoint identifies the endpoint the client contacted, not the final application process, and it does not authorize a particular business object.",
+        "A separate database per tenant would not by itself prevent identity confusion, guessable object identifiers, an unscoped shared read projection or noisy-neighbour resource exhaustion, because those failures belong to different isolation dimensions."
+      ],
+      "required_evidence": [
+        "tycho.chapter.5426707ddf264b758016aafe71f342b7#decision-and-worked-result",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.37a28a568f7e987941749e198c03439a#the-trust-question",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#1-model-assets-principals-and-actions",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#2-fictional-example-community-equipment-libraries"
+      ]
+    },
+    {
+      "task_id": "Q002",
+      "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+      "core_claims": [
+        "An in-place runtime upgrade fits when the concrete driver is lifecycle or security support (a documented unsupported runtime or dependency) and the existing public API and persisted state do not need to move; its declared costs are runtime/library compatibility, old data encoding and mixed-version release.",
+        "In-place modernization keeps the externally visible state owner unchanged by default and uses branch-by-abstraction or a compatible migration step where internal changes cannot be made atomically, instead of reassigning data ownership.",
+        "The upgrade is proven in stages: old version unaffected under additive interfaces/schema (T1), cross-version reads/writes, idempotency and rejection in the mixed T2 phase, promotion only after measured SLO and data-integrity gates (T3), and cleanup only when no historic replay requires the old encoding (T4).",
+        "The alternative is falsified when the required dependency/runtime combination cannot run or externally required behavior cannot be preserved, and a new database alone does not make a replacement authoritative while two writers can accept edits without a conflict-resolution rule (dual write without a coordinated correctness protocol is not atomic commit).",
+        "A precondition is that the modernization outcome is defined independently of technology, for example removing a documented unsupported dependency without invalidating persisted data or external contracts, because age alone does not explain failure and an unknown issue requires investigation rather than a design imperative."
+      ],
+      "optional_claims": [
+        "For the synthetic runtime case the recorded decision state is CONDITIONAL_CANDIDATE for in-place upgrade and insufficient evidence for big-bang service extraction until an independent data/API boundary is demonstrated.",
+        "The DGS/Spring GraphQL consolidation illustrates the same boundary: the problem was compatibility-preserving consolidation for hundreds of dependent services, not replacing the query technology itself."
+      ],
+      "required_evidence": [
+        "tycho.page.19145078d87143b28387ab187d345c32#4-four-modernization-alternatives-and-contraindications",
+        "tycho.page.210134080fac4c09bebb593befd0cb25#1-old-software-is-not-itself-an-architecture-defect",
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#purpose-and-mission",
+        "tycho.page.5a4108bc167f4e2387dbf019eac7881e#architecture-question",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+        "tycho.page.b2d1285c1c1a4a698a2306c4e766a4f1#purpose-and-mission"
+      ]
+    },
+    {
+      "task_id": "Q004",
+      "question": "Which extra isolation concern remains when tenants share a connection pool but data permissions are correct?",
+      "core_claims": [
+        "The concern that remains is resource isolation: one tenant's burst can exhaust a shared connection, compute or queue pool even when every tenant's data permissions and row-level ACLs are correct.",
+        "Authorization answers which objects a request may touch, not how much shared capacity it may consume, so a correct tenant predicate cannot prevent noisy-neighbour interference or starvation in a common pool.",
+        "Sharing a pool therefore needs explicit fairness, per-tenant admission or resource quotas, and a test that saturates shared downstream resources to measure the noisy-neighbour effect separately from confidentiality.",
+        "Isolation is multidimensional - identity/authorization, data, resource and lifecycle/operations (or process, network, compute, data, cache, cryptographic and control plane) - and correctness in one dimension does not establish any other.",
+        "A dedicated pool is justified only when measured noisy-neighbour cost exceeds its operational cost, and a shared pool that strands capacity or fails to enforce quotas is a reversal condition rather than a deployment detail."
+      ],
+      "optional_claims": [
+        "A correct database tenant policy does not automatically protect a shared cache, search index or background consumer; those paths need tenant-scoped keys and tests with a foreign identifier.",
+        "In a cell-based deployment the router, identity service, configuration publisher, network and outbound dependencies remain shared risks, and outbound calls need per-cell connection and deadline budgets or isolated workers still block on one shared pool.",
+        "A tenant-aware query does not protect a wrongly scoped cache or background task; isolation must hold across the complete effect path."
+      ],
+      "required_evidence": [
+        "tycho.chapter.5426707ddf264b758016aafe71f342b7#decision-and-worked-result",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#tenant-based-resource-isolation",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.4856fd39b7e1bfa3b7430427192179fa#common-dependencies-and-cost",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+        "tycho.page.c0dd410ffc6344b78e5a9c72589bf06f#4-object-authorization-and-tenant-scoping-must-compose"
+      ]
+    },
+    {
+      "task_id": "Q006",
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "core_claims": [
+        "The retrospective traces the migration motivation to a major database corruption event that interrupted DVD shipping for three days in 2008.",
+        "The event exposed concentration of failure and scaling dependencies in the company's specific vertically scaled datacenter environment, not a defect inherent in DVDs, relational databases or centralized architecture.",
+        "The engineering response was to rebuild for elastic, fault-contained services instead of transferring the unchanged monolithic application to rented machines, so lift-and-shift was rejected.",
+        "The target operating model was multiple independently operated cloud services with domain data boundaries, supported by a shared delivery platform, rather than the vertically scaled shared backend with central database dependencies."
+      ],
+      "optional_claims": [
+        "Customer-facing capabilities were largely in the cloud before the last remaining datacenter streaming components were switched off in early January 2016, so the change took years rather than a weekend conversion.",
+        "The case diagram is labelled a simplified, original educational view, not a literal inventory of services.",
+        "Architecture descriptions must state their evidence state: a drawing that shows only a desired topology is called proposed and is never presented as the observed running implementation."
+      ],
+      "required_evidence": [
+        "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+        "tycho.page.629374fc3ed84a848794c0b63c4d4ddf#6-keep-descriptions-correct-through-change",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected"
+      ]
+    },
+    {
+      "task_id": "Q008",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "core_claims": [
+        "The V12 modernization model's rollback trigger sets the target traffic share to zero, so after the trigger all newly offered traffic is sent to the legacy path rather than the target.",
+        "The legacy path must absorb that offered traffic while the target drains its dual-write backlog and accumulated divergence; the model's state diagram returns from Rollback to Legacy only after the drain completes.",
+        "The staged experiment triggers rollback at t=1,200 seconds of a 2,400-second, 10-requests-per-second run, after target share reaches 1.0 at t=600, so the target receives no new traffic for the final 1,200 seconds.",
+        "The model records whether rollback completed within the horizon, the time from trigger to drain (or a value censored at the horizon), and the maximum divergence seen before the trigger; a non-completing rollback is a finding that declared reconciliation capacity is insufficient, not a model failure.",
+        "The reported staged run gives a rollback-completed value of 0.1 and a mean rollback duration of 1,080 seconds, with non-completions censored at 1,200 seconds after the trigger, so most modeled drains did not finish within the observation window."
+      ],
+      "optional_claims": [
+        "The model represents coexistence as a stage schedule plus stocks: dual_write_backlog, divergence, legacy_share/target_share and a rollback timer.",
+        "The model is a fluid approximation and does not represent individual records, schema compatibility or deployment orchestration, which are part of its validity limit.",
+        "The no-cutover baseline keeps target share at zero and never triggers rollback; it reports zero divergence and zero backlog, while the staged path adds divergence risk and a rollback requirement without adding modeled throughput."
+      ],
+      "required_evidence": [
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#diagram",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting"
+      ]
+    },
+    {
+      "task_id": "Q010",
+      "question": "Why is p99 latency not a valid substitute for mean residence time in Little\u2019s Law?",
+      "core_claims": [
+        "Little's Law, L = lambda x W, is an average identity: W is the mean residence time of the same population inside the same measured boundary, whereas p99 is a tail threshold of the latency distribution, so the two are different quantities and p99 cannot stand in for W.",
+        "Substituting p99 changes the computed result rather than refining it: with 95% of requests at 0.10 s and 5% at 2.10 s the mean is 0.20 s, so at 120 completed operations/s the law infers 24 average outstanding operations, while inserting p99 = 2.10 s would produce 252, which is not a required concurrency.",
+        "A single mean equation cannot recover the latency distribution or guarantee an SLO, so the law can neither predict tail latency nor decide thread-pool, connection-pool, worker or instance counts.",
+        "Both inputs must describe the same boundary, population and time semantics: the rate must count the operations whose residence time W summarizes, and mixing a p99 from one dashboard scope with throughput from another breaks the accounting rather than merely adding error.",
+        "A finite observation window that ends with unfinished work invalidates the substitution: in the one-request toy timeline (arrival at t=0, exit at t=10, window [0,5)) the naive 0.20 x 10 = 2 contradicts the actual mean occupancy of 1, because the full residence time extends beyond the window."
+      ],
+      "optional_claims": [
+        "Kim & Whitt (2013) section 2.2 gives a special finite-interval equality only when the observed system begins and ends empty; a general finite-window estimate needs uncertainty analysis, not a screenshot of three averaged metrics.",
+        "Alternatives answer different questions: per-stage queue depth and service-time instrumentation, queueing models or simulation with validated distributions, controlled open or closed workload tests, and admission controls that report rejected work; none of these is supplied by the mean identity itself.",
+        "Even a correctly computed mean occupancy is not an observed maximum or a capacity setting: 24 is an inferred mean for the boundary, not a pool size, worker count, queue capacity or memory budget, and enlarging a pool can increase downstream contention instead of creating capacity."
+      ],
+      "required_evidence": [
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#decision-and-worked-result",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.335682a8957c46d294535b5912762e91#architecture-little-s-law-is-an-average-identity",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#integrated-decision-and-reading-route",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#purpose-and-mission",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#4-simple-demand-arithmetic-and-its-boundaries"
+      ]
+    },
+    {
+      "task_id": "Q012",
+      "question": "Why must a parallel-run comparison preserve an authoritative old result while testing a candidate?",
+      "core_claims": [
+        "A parallel run keeps the old implementation authoritative and returning the user-visible response while the candidate processes the same work only for comparison, so a candidate error or mismatch cannot reach the response.",
+        "Comparison is only meaningful against a preserved old result, and parallel run fits only side-effect-free, comparable outputs: running both implementations for side-effecting work such as sending an email or charging a card duplicates business effects.",
+        "The old authority is also the rollback route until cutover, and the old implementation may be retired only after explicit acceptance gates pass, such as matching row counts and checksums, no landing-latency regression and comparable resource use.",
+        "Meta's ingestion migration implemented this as a per-job lifecycle: an isolated shadow table first, then reverse shadow in which the new job writes production while the old job writes shadow, preserving a runnable rollback path and continuing comparisons.",
+        "Reverting routing is not a valid recovery after an incompatible data mutation; that state requires forward repair or tested recovery rather than treating the old path as a guaranteed undo."
+      ],
+      "optional_claims": [
+        "For dual-representation migrations with phased read/write authority, the decision playbook requires consumer inventory, mutation parity, reconciliation and a rollback horizon as evidence.",
+        "Doubled compute and comparison storage are real costs, and a comparison that ignores nondeterminism or side effects produces false confidence.",
+        "Equal row counts plus a coarse checksum can still miss business-significant semantics if the fingerprint omits a column, and a green shadow table can be stale when the source snapshot window differed; the playbook labels these hypothetical risks, not reported incidents."
+      ],
+      "required_evidence": [
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#7-public-sources-and-nonclaims",
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#decision-and-worked-result",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#decision-transfer-negative-cases-and-synthetic-adr",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q014",
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "core_claims": [
+        "A physical point-in-time restore requires a consistent physical base backup of the cluster, not a set of periodic SQL dumps.",
+        "The restore also needs the complete archived WAL chain covering the interval from the base backup to the chosen recovery point, together with the matching timeline.",
+        "Recovery must run on a compatible PostgreSQL runtime with the required configuration, storage and access to keys; a missing WAL segment, wrong encryption key or inaccessible archive blocks the restore.",
+        "The base backup and WAL artifacts must first restore into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover, because a running database alone does not prove recovery.",
+        "A streaming replica is not a substitute for these artifacts: it may already have replayed the deletion or corruption, so it cannot serve as a historical recovery source."
+      ],
+      "optional_claims": [
+        "PostgreSQL 17 continuous-archiving documentation supports base backup plus WAL recovery, timelines and backup-chain constraints, but the Tycho chapter executed no restore and measured no RPO/RTO.",
+        "Archive lag increases data-loss risk, so the intended recovery point must fall inside the WAL coverage actually retained.",
+        "Logical replication is not a physical whole-cluster backup and cannot stand in for base backup plus WAL replay."
+      ],
+      "required_evidence": [
+        "tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope",
+        "tycho.chapter.388c48be24414421a63481b37d05fdce#decision-and-worked-result",
+        "tycho.chapter.b4272c1342514a40afce9d3872a9664c#exact-public-evidence-ledger",
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#2-replication-is-not-historical-recovery",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command"
+      ]
+    },
+    {
+      "task_id": "Q016",
+      "question": "What evidence should gate an irreversible migration of authoritative state?",
+      "core_claims": [
+        "The gate is a bidirectional comparison of the old and new representations - expected records, ordering and duplicate handling in both directions - because bounded sample checks, row counts or full-backup metadata alone cannot prove business equivalence.",
+        "Read authority may be switched only when measured replication lag, completeness and read semantics meet owner-agreed thresholds; write authority only when rollback behavior and consistency across old and new clients are documented.",
+        "Every intermediate configuration must have exactly one declared authoritative owner, and mixed-version compatibility must be demonstrated in both directions before authority moves.",
+        "An irreversible destructive migration needs explicit approval beyond successful code pull requests, plus a rehearsed recovery path: old binaries must interpret new persisted state, consumers must still accept the old contract and new-only durable effects must be reconcilable before cleanup removes the old schema.",
+        "The cutover itself is gated on operational evidence - verified replication health, a cleared dead-letter queue, data freshness at zero and an active reverse-replication fallback - before writes are switched."
+      ],
+      "optional_claims": [
+        "When evidence is insufficient, the documented decision route is to measure or preserve the current state rather than adopt a pattern, and to prefer the smallest reversible change validated by shadow or canary comparison.",
+        "A target architecture and its transition states are different artifacts: even a sound target still requires coexistence of old and new code, data and consumers, and no transition arrow guarantees automatic data rollback."
+      ],
+      "required_evidence": [
+        "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#decision-and-worked-result",
+        "tycho.chapter.0a5e430b39094337aa6a211d9b5b4bd0#pages-and-reasoning-route",
+        "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#purpose-and-mission",
+        "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+        "tycho.page.19145078d87143b28387ab187d345c32#5-target-architecture-and-transition-states-are-different-artifacts",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview"
+      ]
+    },
+    {
+      "task_id": "Q018",
+      "question": "Why does a bounded queue smooth a brief burst but fail to create sustainable processing capacity?",
+      "core_claims": [
+        "A bounded queue or admission discipline placed before the bottleneck absorbs a transient surge by converting concurrent execution into waiting or explicit rejection, stabilizing resource use only where deferral or rejection is permitted by the user contract.",
+        "A queue does not create processing capacity: when attempts on one authoritative key arrive faster than that key's safe serialization capacity, queue age and rejections grow while accepted completions stay capped by the invariant, however many application workers exist.",
+        "It only moves the work in time, so sustained offered demand above the scarce resource's service rate grows backlog, retry amplification and time-to-drain, and a system sustaining high RPS with unbounded queue age can still fail its latency SLO.",
+        "The queue adds obligations of its own: fairness, capacity and retry behavior must be measured, deferral can violate a synchronous-confirmation contract, and a queue does not replace the transaction correctness of the seat-allocation invariant.",
+        "Capacity has to be added at the verified scarce resource, because the bottleneck moves after optimization and more workers or deeper queues can worsen useful throughput when coordination cost or a downstream limit dominates."
+      ],
+      "optional_claims": [
+        "Measurement must respect boundaries: offered, admitted and exit rates are distinct, the exact balance N(t1) = N(t0) + A - D holds for a finite interval of accepted arrivals and all exits, and it does not assert rate equality during an overloaded burst.",
+        "For the burst example the decision state is MEASURE_FIRST: the queue and the extraction are both unjustified until offered load and the actual limiter are measured at an identical offered arrival schedule."
+      ],
+      "required_evidence": [
+        "tycho.chapter.b9bf60e22dc04878a05aeca98610b5d1#purpose-and-mission",
+        "tycho.chapter.e365b78505784c20a4f3d72fe7904d9b#decision-and-worked-result",
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#2-first-example-a-burst-does-not-imply-a-service-split",
+        "tycho.page.335682a8957c46d294535b5912762e91#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#4-identify-the-actual-contended-authority",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#7-choosing-a-response-to-saturation",
+        "tycho.page.7ad835c06d5a4e3aabf6b14632f92c86#integrated-decision-and-reading-route"
+      ]
+    }
+  ]
+}

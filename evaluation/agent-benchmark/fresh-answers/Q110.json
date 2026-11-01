@@ -1,0 +1,17 @@
+{
+  "task_id": "Q110",
+  "answer": "A CPU-utilization autoscaler regulates CPU busyness, not whether requests are making progress. When requests wait on a slow downstream (a database lock, remote I/O, a connection pool, a broker quota), they consume little or no application CPU while their latency and the pending backlog grow. The autoscaler therefore observes low utilization and, especially with a scale-in stabilization window or tolerance, removes replicas. That is backwards: fewer replicas supply less concurrency and admission capacity for work that is already waiting, so queue age and latency rise further. The controller is scaling a resource that is not the bottleneck. A replica-average utilization can also hide one hot replica, and a short or smoothed measurement window can treat a transient as spare capacity.\n\nExamine the scarce resource and the user-visible outcome instead:\n- Latency: p95/p99 end-to-end latency against an SLO, separated into queue/wait time and service/downstream spans, not only mean app CPU.\n- Queue and concurrency: queue depth and age, pending/in-flight requests, per-replica concurrency, and counts of offered versus admitted, completed, rejected and timed-out work.\n- Errors and retries: rejection and timeout ratios, retry amplification, duplicate side effects, and successful completion rate rather than attempts.\n- Downstream saturation: backend CPU and connections, database lock waiting, pool hold times and wait counts, broker quota, cache hit/miss and external quotas. Instrument the named downstream wait; unchanged application CPU elsewhere is a clue, not proof of spare capacity.\n- The control loop: when the autoscaler observed the metric, when it decided, what it requested, and when the units became usefully ready; plus measurement-window staleness, scale-in stabilization, in-flight drain, min/max limits and missing metrics.\n\nThen choose the matching action. If a shared downstream is the bottleneck, bounded admission/backpressure, query or lock repair, or a downstream budget change may be correct, and adding application replicas can increase contention and retries. Use CPU as the scaling signal only when the work is genuinely CPU-bound and partitionable; otherwise target queue age, latency or concurrency, or a custom downstream-budget signal, paired with an independent guardrail. Evaluate the policy end-to-end with a replayable offered-demand trace so scale-in is tested against rising latency.",
+  "citations": [
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#4-controller-stability-scale-out-and-scale-in-are-asymmetric",
+    "tycho.page.d2a71d85f3144ba395303b8432b38d37#6-test-plan-evaluate-the-complete-feedback-loop",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+    "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

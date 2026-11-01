@@ -1,0 +1,161 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "When is it acceptable for a V12 model to omit a dependency such as the payment network or the database, and what must the scope statement record so the omission is reviewable rather than hidden?",
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ],
+      "core_claims": [
+        "A model boundary is the line between the model's state and the rest of the world, not a service boundary or a team boundary.",
+        "Omitting the payment network, the database or the deployment platform is acceptable only if the omitted parts cannot change the comparison under the declared conditions.",
+        "A reviewable boundary statement names the purpose, the compared alternatives, the observable that distinguishes them, the excluded actors and dependencies, and the validity ranges and conditions.",
+        "Everything outside the declared validity domain is an explicit omission, not an unstated assumption, and the scope example records excluded dependency calls, storage, network and deployment.",
+        "Fixing a constant service time in place of a downstream timeout is a listed scope failure mode because the model then cannot show the failure that motivates the decision."
+      ],
+      "optional_claims": [
+        "The model contract carries scope, abstraction and validity limits as explicit fields, so a reader can see the boundary without reading the engine.",
+        "Added detail is justified only when it can change a metric that could reverse the decision."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "How does the V12 engine prevent a completion event that was scheduled before a timeout from freeing a server a second time?",
+      "required_evidence": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering"
+      ],
+      "core_claims": [
+        "A stale event is an event scheduled before a state change and no longer valid; a completion after a timeout and a timeout after a completion are both stale.",
+        "The engine does not delete stale events from the heap; it checks the request state when the event is processed, which keeps the heap simple and the behavior deterministic.",
+        "When a timeout fires first, an in-service request releases its server and schedules a retry if attempts remain, so the later completion event finds no in-service request.",
+        "The verification tests include timeout-before-completion, completion-before-timeout and a stale completion that must not free a second server.",
+        "Double release is a listed failure mode because a timeout and a completion both freeing the same server would raise capacity beyond the configured pool."
+      ],
+      "optional_claims": [
+        "The event queue orders by time, then priority, then insertion sequence, and service completion and timeout share priority 0.",
+        "A timeout that fires after a completion is ignored by the request state rather than removed from the queue."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does candidate C, with two attempts and linear backoff, show higher retry amplification and a higher timeout rate than candidate B?",
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+      ],
+      "core_claims": [
+        "Retry amplification is total attempts divided by offered requests, and V12 reports it for every discrete-event run.",
+        "Candidate A has amplification 1.000 and a 0.0778 timeout rate, B has 1.004 and 0.0041, and C has 1.079 and 0.111.",
+        "B's three attempts with exponential backoff and full jitter absorb transient service-time variation without materially increasing offered load.",
+        "C's two attempts with linear backoff raise attempts per request while still timing out 11.1% of requests, so its retry budget adds load without meeting the deadline.",
+        "Jitter reduces synchronized retry waves, without which many clients that failed at the same time retry at the same time."
+      ],
+      "optional_claims": [
+        "C's success rate of 0.9679 is below B's 0.9996 even though C has the largest server pool of the three candidates.",
+        "All three candidates receive the same Poisson workload at 20 requests per second, so the amplification difference comes from the retry policy rather than from arrivals."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does V12 fix the replication count in the scenario instead of stopping the run when the relative-error threshold is reached?",
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields"
+      ],
+      "core_claims": [
+        "V12 does not adapt n during a run: the scenario declares the replication count and the run reports the achieved error.",
+        "The documented stopping rule runs a pilot of at least 10 replications, estimates the standard error of the primary metric, computes the required n, then runs to that n or to a smaller declared budget.",
+        "An adaptive stopping rule would need its own seeded decision log to keep the run reproducible.",
+        "Peeking, meaning stopping when the interval looks favorable, invalidates the nominal coverage.",
+        "The seed is part of the scenario input contract, not a number chosen after seeing the result, and the run record stores the seed base and replication count."
+      ],
+      "optional_claims": [
+        "The seed comes from the scenario rather than the wall clock, which is what makes a predeclared n replayable.",
+        "The run record stores convergence status, metric, relative error, threshold and replications, so a reader can see whether the target was met."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a success rate near 1.0 make the V12 sensitivity shares unstable even when the modeled effect is real?",
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+      ],
+      "core_claims": [
+        "The V12 screen fits a quadratic surface to 48 sampled rows and decomposes the fitted variance into first-order and total-order shares.",
+        "Bounded-output distortion is a recorded failure mode: a success rate near 1.0 has little variance, so a variance decomposition can look unstable even when the underlying effect is real.",
+        "Candidate B's success rate is 0.9996, and a bounded metric near its ceiling has little variance, which is the condition the page names bounded-output distortion.",
+        "The screen assumes a quadratic surface is adequate over the sampled range and that input standardization is meaningful, so its shares are an approximation rather than a precision estimate.",
+        "The page calls the indices a screen and notes the 48-row sample is small, so they identify what to measure first rather than what dominates in production."
+      ],
+      "optional_claims": [
+        "The candidate B shares are arrival 0.361 first-order and 0.464 total-order, and service mean 0.536 and 0.639, with the first-order values summing to 0.897.",
+        "A bounded success rate also cannot reveal failures the model does not represent, because the metric is compressed near its ceiling."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why is a normal-approximation confidence interval acceptable for the V12 success rate but risky for its p95 latency?",
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results"
+      ],
+      "core_claims": [
+        "V12 computes the standard error as s divided by the square root of n and reports a 95% interval as the mean plus or minus 1.96 standard errors across independent replications.",
+        "The normal approximation is reasonable for a bounded metric such as success rate at 30 replications, but for a heavy-tailed latency it can understate the tail uncertainty.",
+        "A 95% interval covers the true mean in repeated sampling under the model's assumptions; it does not cover a single future request or the production value when the model is biased or the inputs are mis-specified.",
+        "Replications are independent because each uses its own seed, so batch means are not applied; a metric computed from one long run would need a different error method.",
+        "The candidate B run reports 30 replications and p95 latency 1.206 seconds, and its limitations record that the confidence intervals use a normal approximation."
+      ],
+      "optional_claims": [
+        "Candidate A's success rate has a relative error of about 0.00041, while the p95 values in the worked comparison are reported without an interval.",
+        "A bounded success rate avoids some heavy-tail problems but introduces a ceiling effect that a latency metric does not share."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "What evidence status does a V12 input carry when it is computed from one measured and one assumed value, and what can change that status?",
+      "required_evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure"
+      ],
+      "core_claims": [
+        "V12 uses four calibration statuses: measured, assumed, derived and unknown.",
+        "A derived input is computed from measured or assumed inputs by a stated formula.",
+        "A derived input inherits the weakest status of its inputs unless the derivation itself is validated, so an input computed from one measured and one assumed value carries assumed status.",
+        "A parameter changes status only with new evidence, and repeating an assumed value in a decision record does not make it measured.",
+        "An unknown input has no defensible value, and the model must not invent one."
+      ],
+      "optional_claims": [
+        "A recorded status of uncalibrated is a complete value in the model contract, not a missing field.",
+        "Every parameter in the model contract carries a unit, value type, evidence status, source identifiers and a note."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

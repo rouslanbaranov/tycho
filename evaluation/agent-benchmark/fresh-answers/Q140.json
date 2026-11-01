@@ -1,0 +1,17 @@
+{
+  "task_id": "Q140",
+  "answer": "V12 fixes the replication count because it treats n as a declared input, not an outcome. The page states the design directly: V12 does not adapt n during a run; the scenario declares the replication count and the run reports the achieved error, which keeps the result reproducible, whereas an adaptive stopping rule would need its own seeded decision log. Three connected reasons support this. First, reproducibility and provenance: the count is part of the input contract that binds the base seed plus deterministic per-replication seed, and the run record stores the base seed and replication count under a result hash, so a mid-run stop would change the hashed record and what replay verifies. Second, statistical validity: stopping once the interval looks favorable is 'peeking' and invalidates nominal coverage, and re-setting the threshold after seeing the result is 'threshold shopping' - both listed failure modes. Third, the threshold is a decision aid, not a universal rule: a metric near zero can have a small absolute error but a large relative error, and a metric with a wide business tolerance can accept a larger relative error, so the 0.02 rule is not a sound automatic stop trigger. V12 therefore applies the threshold ex post as a status, not a control: a run is marked converged or insufficient-sample, and V12-C states that a run failing the 0.02 relative-error threshold is not used as converged evidence. The deliberate two-replication convergence-stress run (relative error 0.032) is marked insufficient-sample rather than truncated or extended, showing the intended behavior - the shortfall is recorded and the evidence is rejected as converged, instead of the sample size being retrofitted to the result.",
+  "citations": [
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

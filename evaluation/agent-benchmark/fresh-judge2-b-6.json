@@ -1,0 +1,195 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q106",
+      "question": "Why is a valid signature over build provenance for one artifact digest insufficient to authorize promoting an image that currently has the same tag?",
+      "layer_expected": "book",
+      "answer": "A valid signature over build provenance is not a promotion authorization because the tag is a mutable name, not the artifact identity, and cryptographic validity is not policy authority.\n\n**Subject binding.** The artifact is the subject, not the tag: a signed attestation bound to digest A is not evidence for digest B even when both share an image name (provenance-subjects \u00a71). The artifact boundary is defined by digest, package and provenance, and \"a mutable tag is sufficient\" is explicitly a false inference (build-identity \u00a71). Approving a run before a downstream job resolves a mutable tag is not equivalent to approving deployed bytes (build-identity \u00a72), and the promotion failure matrix requires comparing the actual digest with the digest that passed the gates and freezing promotion when a tag points to a different image (promotion-rollout \u00a76). \"Currently the same tag\" therefore asserts only a name-level coincidence at one observation; the bytes behind the tag can differ from the digest that was verified.\n\n**Authenticity is not authorization.** A signature or attestation envelope is only a cryptographic link between a statement and an authenticated key; it cannot establish that the signer was authorized or that the statement is true (provenance-subjects \u00a71). A promotion gate must bind the exact subject digest, signature trust root, allowed issuer/signing workflow and builder identity, approved source revision, dependency/SBOM coverage, and named target/environment eligibility (promotion-authorization \u00a74). A correctly signed artifact from an unapproved fork or an out-of-policy builder is rejected, and a signed artifact whose digest does not match the candidate is refused as a digest mismatch (promotion-authorization \u00a75; chapter walkthrough).\n\n**Scope of provenance.** Provenance describes the builder, process and materials within a declared scope; it cannot establish runtime correctness, complete dependency coverage, or deployment permission (provenance-subjects \u00a71). Promotion is a conditional authorization to expose an approved artifact at a named workload and data-compatibility boundary, and a release identity mismatch with the validated digest is a stop condition (promotion-rollout \u00a75). The building party must not be the sole authority for its own output; independent policy evaluation belongs outside the artifact (promotion-authorization \u00a77).\n\nSo a signature over provenance for one digest answers only \"who attested what about these bytes?\" Promotion additionally requires \"are these the exact bytes now being promoted, from an authorized builder and source, with all required evidence, into this environment?\" If the current digest differs, or cannot be re-resolved and recorded at promotion time, the signature is irrelevant to the candidate and promotion must be refused.",
+      "citations": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#1-five-separately-controlled-boundaries",
+        "tycho.page.faf8361106c2458b97e046319d7fa979#2-workflow-and-runner-topology",
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#6-failure-matrix-and-discriminating-checks",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#4-authenticity-is-not-authorization",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately",
+        "tycho.page.6d05e9cca5a14d31a4637b8495ec0d05#5-progressive-promotion-and-stop-conditions",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#7-a-release-gate-belongs-outside-the-artifact-itself",
+        "tycho.chapter.92bd770bf87d4d6c9ab6e71cfa291132#engineering-walkthrough-authentic-artifact-incomplete-evidence-and-denied-promotion"
+      ],
+      "core_claims": [
+        "Authenticity and authorization are different questions: a signature can verify while the signing identity, builder, source revision or target environment is absent from the release allowlist, and the correct outcome is rejection.",
+        "The subject is the exact artifact digest, so an attestation bound to digest A is not evidence for digest B even when both carry the same image name or tag.",
+        "A signature or attestation envelope binds a statement to an authenticated key or identity, but it does not establish that the signer was authorized or that the statement is true.",
+        "A release gate must bind the subject digest, trust root, allowed issuer and identity, approved immutable source revision, build parameters, SBOM coverage and target eligibility, and a missing required proof should fail closed.",
+        "Passing verification makes an artifact eligible for controlled promotion, not proof of runtime correctness or operational safety, so post-build runtime and data gates still apply."
+      ],
+      "optional_claims": [
+        "SLSA 1.2 separates Source and Build tracks and Build levels L1 through L3, and a level is not attained merely because an attestation exists or a custom script writes a JSON file.",
+        "Transparency-log inclusion can support accountability or inclusion verification but does not approve the publisher's authority."
+      ],
+      "required_evidence": [
+        "tycho.page.56bd7133980b4b1992816a98308be676#1-distinguish-evidence-objects-and-subjects",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#4-authenticity-is-not-authorization",
+        "tycho.page.46fdc865ee574e828bb2e50436587b6b#5-missing-evidence-must-fail-the-gate-appropriately",
+        "tycho.page.56bd7133980b4b1992816a98308be676#2-slsa-1-2-levels-and-provenance-have-explicit-scopes"
+      ]
+    },
+    {
+      "task_id": "Q114",
+      "question": "Why can a retry budget enforced independently at several layers still amplify offered load beyond the budget of any one layer?",
+      "layer_expected": "book",
+      "answer": "A retry budget bounds the population its layer can see, not the end-to-end logical operation; when several layers retry independently, each layer's retries become the next layer's offered load, so the budgets compose multiplicatively rather than additively.\n\nUnder a deliberately simplified fully nested model, three layers that each allow three attempts per request can produce up to 27 downstream attempts for one logical intent, while every layer still reports that it honored its own cap; the corpus records this as a pathological upper bound, not an observed measurement (V07/C05). A lower layer's 'offered requests' denominator already includes retries injected above it, so its locally correct ratio or token bucket is applied to an already inflated base, and its amplification is invisible to the layer that caused it.\n\nThree scope leaks make this possible. First, identity: a connection, an HTTP/2 stream, one attempt and a logical business operation have different identities, so a budget keyed on attempts at one hop cannot tell that many attempts descend from one operation (V08/C08). Second, aggregation: a budget enforced per instance or replica is multiplied by replica count and routing, just as independent local token buckets let aggregate spend approach N times the intended scope; a shared quota needs atomic accounting, leases or a documented approximation (V07/C05 local limits). A per-request attempt cap bounds one operation but not the aggregate work of many clients, a per-client ratio can be unstable for sparse clients, and only a process- or service-wide retry budget directly protects a shared dependency (V02/C05). Third, timing: retries are triggered exactly when capacity is degraded, and without jitter clients retry in lockstep and turn a brief failure into a sustained wave; a timeout larger than the caller's deadline keeps work running after the caller gave up, and per-hop independent timeouts let the aggregate vastly exceed the caller's budget (V12/C03; V02/C05). The feedback is positive: retries consume the capacity whose shortage caused the failures, raising timeouts and therefore further retries (V12/C03).\n\nJitter and backoff spread attempts but do not bound aggregate load; a retry storm can still overload a shared dependency (V02/C05). The corpus's remedy is to designate retry ownership, retry only at the layer immediately above the layer that rejected the request, propagate a specific 'overloaded; do not retry' result instead of a generic error that every layer retries, make every attempt consume the same end-to-end deadline and attempt budget, and measure retry amplification by layer with original attempts and retries counted separately (V02/C05; V12/C03). That is why budgets enforced independently at several layers can still amplify offered load beyond any one layer's budget: no single layer holds the end-to-end attempt counter or the shared capacity signal.",
+      "citations": [
+        "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#local-limits-global-quotas-and-fair-admission",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer"
+      ],
+      "core_claims": [
+        "A retry budget at one layer bounds only that layer us attempts; callers and downstream layers can retry the same logical operation again, so aggregate attempts can exceed any single budget.",
+        "Retries are triggered by failures, which are most likely when the service is already saturated, so the added attempts arrive at the worst time and increase queueing and timeout risk.",
+        "Local retry limits do not compose into an end-to-end limit: without one retry owner and an end-to-end deadline/attempt budget, each layer can independently multiply attempts for one offered request.",
+        "Aggregate amplification is bounded by choosing one retrying layer, passing the remaining deadline, using jittered backoff, rejecting at admission, and making retried effects idempotent."
+      ],
+      "optional_claims": [
+        "A bounded retry policy can absorb transient service-time variation with little amplification, while a badly chosen retry policy adds load without preventing timeouts.",
+        "The retry-amplification metric is total attempts divided by offered requests, not a per-layer success ratio."
+      ],
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission"
+      ]
+    },
+    {
+      "task_id": "Q122",
+      "question": "Why can an evenly distributed shard set still leave one tenant on an overloaded shard, and what must a resharding move preserve?",
+      "layer_expected": "book",
+      "answer": "An even shard set equalizes assigned rows, keys or hash ranges \u2014 not work. Because the shard map makes each key range single-owner, a tenant whose key dominates the workload stays pinned to one owner no matter how many shards are added: the synthetic example of 2,000 write attempts/s where one workshop contributes 1,500/s leaves a 1,500/s hot key, and the 20/s mean across 100 workshops misrepresents the hottest owner. Spreading the other 500/s cannot split that single-owner workload, and uniform-key load tests hide the effect because real requests concentrate on one resource. Key choice compounds this: hash partitioning of a high-cardinality key reduces skew only across otherwise uniform distinct keys (a single hot key stays hot), ordered-range partitioning adds a right-edge insert hotspot, and directory routing can place hot tenants deliberately but pays control-plane availability and routing-cache freshness. Placement endpoints alone do not isolate a tenant either: cells give a durable home and shuffle shards reduce overlap, but only if retries and queues can actually use the spare endpoints and no shared dependency sits underneath, and hashing does not make assignments statistically independent.\n\nA resharding move must preserve correctness during movement, not just produce a correct target topology. The invariants are: exactly one authoritative owner per key at every moment; old and new routing epochs recorded and clients compatible while both exist; copy plus ordered change capture with a determinate resume position so no update is lost or double-applied; verification of counts and domain invariants (equal row counts prove nothing about referential correctness); fencing of stale writers and stale routing caches at cutover so a cached old epoch cannot commit on both shards; reconciliation on divergence instead of declaring success; observation of hot-key traffic, retries, tail latency and replication lag; and a forward-repair plan rather than a promise of rollback after irreversible new state. A delayed old-version delete or update can even resurrect a record in the new owner, so stable operation identity and source ordering must be defined before the new owner is exposed.\n\nBefore resharding, confirm the bottleneck is distribution itself: query/index tuning, bounded pools, read replicas, caching immutable reads and isolating one tenant may remove the need, and replicas do not expand single-authority write serialization.",
+      "citations": [
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#integrated-decision-and-reading-route",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#2-why-shard-key-selection-cannot-be-made-from-average-rps",
+        "tycho.page.3b048fab91c24b9f8121564b9b0e59bb#3-four-partition-strategies-and-their-drawbacks",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+        "tycho.page.f66686aeabca4f5b8f550696bf37e557#5-distribution-and-correlation-matter"
+      ],
+      "core_claims": [
+        "Sharding assigns each key to a shard through a versioned shard map, and one authoritative owner must exist per key; cross-shard operations need an explicit protocol rather than a local transaction.",
+        "Evenly distributing rows does not evenly distribute work, because a low-cardinality key or a single hot tenant can leave one shard overloaded.",
+        "A resharding move must fence writes or preserve a verifiable handoff, since map drift, split brain and a failed migration are common failure modes.",
+        "A key that changes often creates a move storm, so key stability matters alongside row-count balance.",
+        "Partitioning inside one database, read replicas or vertical scaling may be preferable when distribution would add cross-shard coordination without relieving the measured constraint."
+      ],
+      "optional_claims": [
+        "Queries that omit the partition key fan out across every partition, so pruning must be checked against actual access paths.",
+        "The shard map is a versioned routing contract rather than a physical-layout detail, so changing it is part of the application protocol."
+      ],
+      "required_evidence": [
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#integrated-decision-and-reading-route",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#sharding-ownership-notes",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q130",
+      "question": "Why must a compensating transaction carry its own authorization, evidence and failure mode rather than undo the failed step?",
+      "layer_expected": "atlas",
+      "answer": "Because a saga has already committed partial effects and no global rollback exists, a compensating transaction is a second forward business commitment, not the restoration of prior state, so each of the three properties must be carried by the compensation itself. Authorization: the domain decides which effects are reversible and which need manual reconciliation; only an owner can decide the business reversal, and the explicit cost/risk test (compensate only when the counter-effect costs less than leaving the failed step unresolved) is a business judgement, not a technical undo. The pattern card rejects compensation when no owner can decide the business reversal, and choreography's conflicting compensations require declared or centrally enforced ordering. Evidence: before dispatch the workflow records workflow identity, step identity and expected outcome; after it records committed, failed or unknown. The compensation needs idempotent effect identity and a confirmed release or repair state, and a trace proves correlation, not durable business truth; when the counter-effect cannot be proven, the honest output is a user-visible unknown state rather than a claimed reversal. Failure mode: the compensation can fail or be applied twice; a release can fail, a delivered message cannot be un-delivered and a handed-over kit may be irreversible, so a failed compensation remains a repair item needing bounded retries, retry/repair ownership, a terminal-state check and manual reconciliation. Hiding a failed compensation behind an automatically completed workflow state is a named orchestration risk. Treating compensation as undo falsely assumes that an inverse exists, that it always succeeds, that it restores the previous state, and that it needs no new authority or record; therefore compensation ordering is declared in reverse dependency order rather than assumed to be the reverse of the forward path, and the compensation is modelled as a second business decision with its own failure semantics.",
+      "citations": [
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback"
+      ],
+      "core_claims": [
+        "A saga coordinates local transactions across independent owners with no global lock and no hidden intermediate state, so other readers can observe a partially completed business outcome before any compensation runs.",
+        "A compensation is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail, because a release can itself fail, a delivered message cannot be un-delivered and goods may already have changed hands.",
+        "The domain must therefore decide which actions are reversible and which require manual reconciliation, and compensation ordering must be declared from dependency order instead of assumed to be the reverse of the forward path.",
+        "Safe compensation needs idempotent effect identity, retry and repair ownership, a terminal-state check and a user-visible unknown state when the counter-effect cannot be proven, and a failed compensation remains a repair item rather than a closed failure.",
+        "A lost acknowledgment is an unknown outcome rather than a failure, and the saga claims neither atomicity nor rollback, so one local transaction or two-phase commit is the alternative when steps do not cross independent owners or compensation is unsafe."
+      ],
+      "optional_claims": [
+        "Choreography carries the protocol in versioned event contracts with correlation identity, deduplication, dead-letter handling and an observable terminal state, while a trace shows correlation rather than durable business truth.",
+        "The cost and risk test is explicit: compensate only when the counter-effect cost is lower than the risk of leaving the failed step unresolved."
+      ],
+      "required_evidence": [
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q138",
+      "question": "How does the V12 engine prevent a completion event that was scheduled before a timeout from freeing a server a second time?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "V12 prevents a second free with a state check at event-processing time, not by cancelling the completion in the heap. The event queue holds the completion scheduled at dispatch, and the engine leaves stale events in the heap (it does not delete them) and validates the request state whenever an event is popped. If the timeout fires first, the timeout handler performs the one release: an in-service request releases its server, the attempt is counted as timed out, and a retry is scheduled after backoff (or the request terminally fails). When the still-queued completion event is later processed, the request is no longer in service for that attempt, so the engine finds no in-service request and ignores the event; the release path is never entered and the server is freed only once. The rule is symmetric: if the completion is processed first, the request completes and the later timeout finds a completed request and is ignored. Ordering keeps this deterministic: the heap orders by (time, priority, insertion sequence) with a monotonically increasing insertion counter, so ties are total; completion and timeout both use priority 0, and insertion sequence decides when timestamps are equal. Any tie resolves to one first event that mutates state, and the second is neutralized by the same state check. The worked sequence shows the case directly: a request waits 0.9 s, starts service, has its completion at t=1.3 and timeout at t=1.0; the timeout releases the server and schedules a retry, and the completion at t=1.3 finds no in-service request and is ignored. The double-release risk is named as a failure mode (a timeout and a completion both freeing the same server, raising capacity beyond the configured pool), and the verification matrix records test_timeout_before_completion and test_completion_before_timeout as passing; the event-ordering checks include that a stale completion after a timeout does not free a second server. Limits: this is a synthetic reference engine; the verification tests show a deterministic, self-consistent timeout state machine, not that the priority order matches a production scheduler, and the book asserts no production validation.",
+      "citations": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix",
+        "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules"
+      ],
+      "core_claims": [
+        "A stale event is an event scheduled before a state change and no longer valid; a completion after a timeout and a timeout after a completion are both stale.",
+        "The engine does not delete stale events from the heap; it checks the request state when the event is processed, which keeps the heap simple and the behavior deterministic.",
+        "When a timeout fires first, an in-service request releases its server and schedules a retry if attempts remain, so the later completion event finds no in-service request.",
+        "The verification tests include timeout-before-completion, completion-before-timeout and a stale completion that must not free a second server.",
+        "Double release is a listed failure mode because a timeout and a completion both freeing the same server would raise capacity beyond the configured pool."
+      ],
+      "optional_claims": [
+        "The event queue orders by time, then priority, then insertion sequence, and service completion and timeout share priority 0.",
+        "A timeout that fires after a completion is ignored by the request state rather than removed from the queue."
+      ],
+      "required_evidence": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#a-worked-sequence",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering"
+      ]
+    },
+    {
+      "task_id": "Q146",
+      "question": "Why can a larger bounded queue lower the rejection rate while increasing the share of requests lost to timeouts?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Rejection and timeout are different exits, so a bigger buffer moves loss from the door to the waiting line. Rejection happens only when the bounded queue or bulkhead is full; timeout happens after admission, when an attempt's deadline expires while it is queued or in service. For each attempt the deadline is set when that attempt arrives (arrival plus timeout), so queue waiting consumes the same budget as service; a queued request that reaches its deadline is removed and counted as timed out.\n\nEnlarging the bound admits requests that a smaller queue would have refused, so the rejection rate falls. But extra slots add waiting, not service capacity: when offered load exceeds drain rate, backlog and queue age grow even while every worker is busy. The marginal admitted request waits past its remaining deadline, so it leaves as a timeout instead of a rejection. Because expired requests leave the queue, the buffer need not stay full, so full-queue rejections remain rare even under saturation. The V12 overload run shows the accounting: 30 requests/s offered to 24/s capacity with a 40-request queue and a one-second deadline produced 0.0005 rejection, 0.3495 timeout and 0.6488 success, with mean queue length 12.79 and server utilization 0.9966; the queue was large enough to absorb arrivals but not large enough to prevent deadline expiry.\n\nThe effect is amplified when a timeout does not cancel the underlying work (capacity is spent on results no caller can use) and when timed-out attempts are retried. It is also bounded: without expiry or abandonment, a larger queue only postpones rejection; once the buffer fills under sustained overload, the excess must still be rejected. That is why rejection rate alone is misleading. Report offered, admitted, rejected, timed-out and completed populations separately, size the buffer by maximum acceptable queue age against the deadline, and prefer deadline-aware admission: a fast refusal of work that cannot meet its deadline is safer than admitting it to expire later.",
+      "citations": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+        "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#original-decision-model-a-finite-worker-and-waiting-budget",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+        "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome"
+      ],
+      "core_claims": [
+        "Queue capacity bounds waiting requests and rejects arrivals once full, while the bulkhead and timeout impose separate admission limits.",
+        "A queue large enough to absorb arrivals rejects almost nothing: the overload run reports a rejection rate of 0.0005 with a mean queue length of 12.79 requests.",
+        "Waiting longer pushes requests past the one-second deadline, so 0.3495 of requests time out even though almost none are rejected.",
+        "The dominant loss mechanism therefore shifts from rejection to deadline expiry, and a report that focuses on rejection misses most of the loss.",
+        "Retries add attempts to an already saturated pool, so retry amplification raises load instead of creating capacity."
+      ],
+      "optional_claims": [
+        "An unbounded queue never rejects, accumulates backlog and reports a latency that is an artifact of the observation horizon.",
+        "Exponential backoff with full jitter reduces synchronized retry waves, and the scenario must declare the choice for the run to be reproducible."
+      ],
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes"
+      ]
+    }
+  ]
+}

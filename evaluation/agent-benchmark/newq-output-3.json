@@ -1,0 +1,135 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "Why can a closed-loop load generator report low latency and low throughput while an independent arrival stream would overload the same service?",
+      "required_evidence": [
+        "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.bfa3a283746b42998825234aca63b101#1-write-the-experiment-claim-before-starting-a-load-generator"
+      ],
+      "core_claims": [
+        "An open arrival model issues requests independently of service completion, while a closed model starts each next iteration only after the previous one finishes.",
+        "With 20 concurrent virtual users at 0.2 seconds per iteration the idealized ceiling is about 100 iterations per second; when service time becomes 2 seconds the same closed population can offer only about 10 per second.",
+        "A response-driven generator therefore hides the queue that independent arrivals would create, which is the coordinated-omission problem.",
+        "Dropped or unsent scheduled iterations are not service rejections, so scheduled arrivals, transmitted attempts, admitted operations and completed useful operations must be recorded as separate denominators.",
+        "Histogram correction can model missing intervals from a known expected schedule, but corrected samples are not observations of requests that never happened, so raw data and correction assumptions must both be preserved."
+      ],
+      "optional_claims": [
+        "A lower p99 accompanied by fewer successful and more rejected requests is not a performance improvement without an explicit service-level contract permitting that trade-off.",
+        "A timestamped claim that a generator sent a target rate is not evidence until the actual sent and unsent intended workloads are reported together."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can horizontal autoscaling fail to prevent overload during a burst even when the controller eventually selects the correct replica count?",
+      "required_evidence": [
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#engineering-walkthrough-a-burst-ends-before-new-replicas-become-useful",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+        "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#purpose-and-mission"
+      ],
+      "core_claims": [
+        "Autoscaling is a feedback loop whose useful capacity arrives only after metric aggregation, decision, provisioning, application warm-up and routing, and those stages can overlap rather than sum as measured latencies.",
+        "While that delay runs, new demand still reaches the old infrastructure, so a burst can end before the first additional replica is able to serve work.",
+        "In the book's synthetic walkthrough, 15 seconds of measurement, 10 of decision, 20 of scheduling and 25 of warm-up place the first useful capacity about 70 seconds after onset, after a 40-second burst.",
+        "In a separate synthetic example, 300 attempted operations per second against a 160 per second warm ceiling for 15 seconds, with a 45-second scale-out sequence, leave roughly 2,100 attempted operations unserved under fixed rates.",
+        "Reserved headroom, scheduled scaling, bounded queues, admission control and faster warm-up address the gap, while deferring work asynchronously does not satisfy a contract that requires a synchronous answer within 700 ms."
+      ],
+      "optional_claims": [
+        "Adding replicas can worsen correct throughput when all replicas contend on the same downstream bottleneck, such as a single hot reservation key.",
+        "A newly started replica can be marked running before its downstream budget or caches are usable, so readiness timestamps alone do not measure useful extra capacity."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why is a saga's compensating action not a rollback, and what must the workflow preserve when that compensation fails?",
+      "required_evidence": [
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path"
+      ],
+      "core_claims": [
+        "A saga coordinates a sequence of local transactions across independent owners and never claims global atomicity or rollback, so other readers can observe a partially completed business outcome.",
+        "A compensating transaction is a new business action that creates an acceptable counter-effect, with its own authorization, evidence and terminal-state check, and it can fail.",
+        "Some effects cannot be undone at all, such as a delivered message or a kit already handed to a participant, so the domain must decide which steps require manual reconciliation.",
+        "Before dispatching a step the workflow records workflow identity, step identity and expected outcome, then records committed, failed or unknown; a lost acknowledgment is an unknown outcome rather than a failure.",
+        "A failed compensation remains an owned repair item with a user-visible unknown state, and compensation ordering is declared rather than assumed to be the forward path reversed."
+      ],
+      "optional_claims": [
+        "One local transaction or two-phase commit may be preferable when the steps do not cross independent owners or when compensation cannot be made safe.",
+        "A distributed trace can show correlation across a choreographed saga but does not establish durable business truth."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why can an evenly distributed shard set still leave one tenant on an overloaded shard, and what must a resharding move preserve?",
+      "required_evidence": [
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#integrated-decision-and-reading-route",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#purpose-and-mission",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#sharding-ownership-notes",
+        "tycho.page.0d34dd26886340b89fd4f1499d790a81#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "Sharding assigns each key to a shard through a versioned shard map, and one authoritative owner must exist per key; cross-shard operations need an explicit protocol rather than a local transaction.",
+        "Evenly distributing rows does not evenly distribute work, because a low-cardinality key or a single hot tenant can leave one shard overloaded.",
+        "A resharding move must fence writes or preserve a verifiable handoff, since map drift, split brain and a failed migration are common failure modes.",
+        "A key that changes often creates a move storm, so key stability matters alongside row-count balance.",
+        "Partitioning inside one database, read replicas or vertical scaling may be preferable when distribution would add cross-shard coordination without relieving the measured constraint."
+      ],
+      "optional_claims": [
+        "Queries that omit the partition key fan out across every partition, so pruning must be checked against actual access paths.",
+        "The shard map is a versioned routing contract rather than a physical-layout detail, so changing it is part of the application protocol."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does a subscriber's bounded request(n) not by itself protect a reactive service from overload?",
+      "required_evidence": [
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#2-reactive-streams-is-demand-coordination-not-a-magic-queue",
+        "tycho.page.114da51171c2474ebd56ee3bebad3bcb#engineering-walkthrough-subscriber-demand-does-not-protect-an-unseen-blocking-queue",
+        "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#1-nonblocking-i-o-is-an-end-to-end-contract"
+      ],
+      "core_claims": [
+        "Reactive Streams coordinates demand through request(n) only when publisher and operators respect the protocol, and an uncontrollable upstream still needs a documented buffer, drop, backoff or fail policy.",
+        "A blocking JDBC callback or unbounded internal queue on an event loop can enqueue work before demand is honored, so the public request protocol does not cap that queue.",
+        "Blocking an event loop stalls unrelated operations assigned to it, and moving the blocking call to a bounded elastic scheduler protects responsiveness but only relocates waiting and resource budgeting.",
+        "Cancellation asks a stream to stop delivering new work, but it does not establish that a database transaction, HTTP request or external effect was rolled back.",
+        "Reactive programming does not automatically mean parallel execution, faster computation, a durable queue or a stronger transaction."
+      ],
+      "optional_claims": [
+        "A synchronous stack may be adequate when libraries and requirements are blocking, because nonblocking's principal benefit is resource efficiency under I/O waits.",
+        "A bounded reactive path should be compared with thread-per-request execution under equal offered messages before it is chosen."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does limiting a canary to five percent of traffic not bound the fraction of old-version readers that can encounter an incompatible new state?",
+      "required_evidence": [
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#5-deciding-which-exposure-mode-fits",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#6-proposed-negative-experiments"
+      ],
+      "core_claims": [
+        "A canary controls routing exposure, not the durable writes that the candidate commits to a shared authoritative database.",
+        "In the book's fictional case, release N+1 writes reservation_state=CONFIRMED_V2 that release N cannot read, so five percent of traffic can still create records that old readers later encounter.",
+        "Reverting deployment replicas to the old release can increase failures when the old binary cannot read the persisted new state, so recovery may need version-compatible forward repair or verified data restoration under the data owner's authority.",
+        "A small canary sample may also omit rare tenant or long-tail operations, so missing coverage is incomplete measurement rather than a green result.",
+        "Turning a feature flag off after an irreversible side effect does not undo persisted state, and route rollback is safe only when the old binary can read everything the candidate wrote."
+      ],
+      "optional_claims": [
+        "Retaining the old write format while rolling out new readers and collecting compatibility evidence may be the minimal safe option.",
+        "A go/no-go record should include offered traffic by cohort, the exact binary mix, new-state write count, domain-result failures, reconciliation lag, deadline and the named approver of irreversible changes."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

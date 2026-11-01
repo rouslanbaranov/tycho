@@ -1,0 +1,15 @@
+{
+  "task_id": "Q135",
+  "answer": "The atlas does not present permissive mutual TLS as an end state; it presents it as a bounded migration mode. Its Workload Identity / mTLS card sets strict versus permissive mTLS as the decision, and describes permissive as accepting plaintext and mutual TLS during migration, then switching to STRICT once workloads have sidecars. The technical-owner notes state the reason directly: permissive mode is most useful during migrations when workloads without a sidecar cannot use mutual TLS. Because those workloads cannot participate in mTLS until a sidecar is injected, a STRICT-only policy would leave them without an accepted path instead of migrating them. The atlas also makes strict mTLS conditional on a workload identity issuer, automated certificate rotation, and policy that binds identity to service, and it lists network location as the only identity or non-automatable rotation as hard contraindications. Turning on STRICT before those conditions hold would not yield authenticated workload identity anyway.\n\nThe destination remains strict: the card says to switch to STRICT once workloads are migrated with sidecar injection. That matches the book's per-hop TLS view, where a certificate identifies the endpoint it was presented to rather than the final application, and each hop whose encryption terminates at a proxy needs its own declared protection; a global strict flag cannot authenticate hops whose proxies do not yet exist. The TLS guidance applies the same staging principle to credential replacement: plan overlap and verify the new chain before making it the only accepted path.\n\nThe trade-off is explicit. While permissive mode is on, plaintext is accepted, so peer authentication is not enforced for those connections, and a valid certificate authenticates the workload, not every operation it requests. Certificate issuance availability is part of the request path and a failed rotation can be an outage; the page labels those claims plausible but synthetic, and its source boundary supports permissive mode but not revocation, trust-root bootstrapping, key storage or lifetime policy, or rotation-failure impact. The card's decision state is applicable-under-conditions, which is why permissive is allowed only as a transition with a defined exit to STRICT, not as an indefinite substitute for it.",
+  "citations": [
+    "tycho.page.e18ec327be0da89802c1b579dfbd6044#overview",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+    "tycho.page.37a28a568f7e987941749e198c03439a#the-trust-question",
+    "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "task_id": "Q144",
+  "answer": "Because a model boundary is a decision instrument, not a replica of the system. The book starts from the decision: name the purpose, the alternatives being compared, the observable that would distinguish them, the exclusions and the validity conditions, then keep the smallest model that can distinguish those alternatives inside that declared domain. The test for an omission is therefore not whether the dependency exists in reality, but whether it can alter the comparison the model is asked to support.\n\nIf the omitted actor, dependency or failure cannot change the decision-relevant metric, the ranking, or a hard-constraint pass/fail under the declared conditions, the omission is decision-invariant: the model still preserves every distinction the decision uses. Including the detail would add state, parameters and verification burden without changing the answer, and could obscure the original question through scope creep. That is the positive reason to leave it out.\n\nIf the omitted dependency can change the comparison, the model can return a different answer than the alternatives warrant. The book names the failure modes: a boundary mismatch, where missing admission behavior can reverse the result, and an omitted dependency, where a downstream timeout is replaced by a constant service time and the model can no longer show the failure that motivates the decision. The comparison then ranks a model artifact rather than the real candidates, so its result cannot justify the choice.\n\nThe declared conditions turn \"cannot change\" into a bounded, reviewable claim. They fix workload, metrics, constraints and the validity range; the identical-workload rule makes the comparison like-for-like, and hard constraints define elimination. Without them, the invariance claim has no scope and cannot be challenged. The model contract records exclusions explicitly, and a validity limit is a condition on the result's use, not a disclaimer: if the decision later needs the omitted mechanism, the model is outside its domain. Reversal triggers name the conditions under which the recommendation would change.\n\nSo the operative test is materiality to the comparison, not completeness: does the omitted or added detail change a metric that can reverse the decision? If yes, it belongs inside the boundary or the comparison is invalid; if no, it may be omitted and must be declared. When the conditions change, the claim must be re-established, or the omission becomes validity drift.",
+  "citations": [
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-checklist-before-adding-detail",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

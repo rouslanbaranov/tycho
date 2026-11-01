@@ -1,0 +1,18 @@
+{
+  "task_id": "Q125",
+  "answer": "A trusted issuer's signature proves only that the issuer minted the token and that it was not tampered with; it does not prove that the token was minted for this recipient. In a federation one trust anchor or authorization server serves many clients and many resource servers, so issuer trust is shared across the whole federation. If a resource server accepts any token the issuer signed, every resource server becomes an interchangeable acceptor: a token legitimately obtained for service A can be presented to sibling service B, and B, believing that authentication already settled the question, acts on the client's delegated authority at the wrong resource. That is a confused-deputy path and a cross-service privilege escalation, and it is the same failure as treating a gateway's token validation as object authorization.\n\nThe audience claim is what binds the delegation to a specific recipient. Verifying the intended audience (together with issuer, lifetime, scope and any sender constraint) means the resource server refuses a token that was meant for someone else, so delegated authority stays confined to the resource the client actually asked for. This also limits the blast radius of bearer-token theft: a bearer token is replayable by any holder until it expires or is revoked, so without audience binding one leaked token — from logs, a trace, or a compromised service — unlocks every resource in the federation that trusts the same issuer. Audience binding makes a stolen token useless outside its one intended service, and sender-constrained tokens are the complementary control when possession must be proven.\n\nIn multilateral federations the point is structural, not incidental: entities publish metadata, keys and policies per entity, and each resource server has its own tenants, objects and ownership rules. Issuer-level trust is deliberately broad; recipient-level checks are the only thing that keeps each entity's authorization boundary meaningful. Audience-bound access tokens are therefore stated as a good-fit condition for federated identity, a required element of the credential contract, and an explicit verification gate. The practical test is negative: replay a token issued for another audience or another resource and require rejection, alongside wrong-issuer, expired and revoked cases. A resource server that skips the audience check has replaced authentication-by-issuer with authorization, which it is not.",
+  "citations": [
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+    "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+    "tycho.page.cd2585308f28ccb08b55c4b00e42925b#overview",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+    "tycho.page.96c78f4525504257baf5861e2397dab8#7-verification-and-decision-gates"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

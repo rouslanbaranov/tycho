@@ -1,0 +1,134 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "In a federation, why must a resource server check that an access token was issued for it rather than accept any token signed inside a trust chain?",
+      "required_evidence": [
+        "tycho.page.cd2585308f28ccb08b55c4b00e42925b#overview",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route",
+        "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview"
+      ],
+      "core_claims": [
+        "A federation Entity publishes a signed Entity Statement, a JWT whose subject is the Entity and whose issuer is the party that issued it, and a Trust Anchor signs statements about its immediate subordinates, so a resolvable trust chain establishes which keys and metadata to accept rather than who may use a given resource.",
+        "The atlas card's good-fit condition is that access tokens are audience-bound, and the bounded owner note states that a resource server verifies an access token was meant for it and refuses otherwise, so a valid signature from a trusted issuer does not satisfy that check on its own.",
+        "Entity Configuration expiration controls how often federation keys are refetched and expired metadata must be refreshed, so the key material a resource server validates against is only as current as its own refresh cycle.",
+        "A trust chain runs from the Entity Configuration to a Trust Anchor with metadata policies applied along the chain, and key rollover publishes the new jwks member before old keys are removed.",
+        "Verified identity is not resource authorization: the integrated route states that a valid token does not grant permission to every object, and the zero-trust card requires authorization at the resource with deny-by-default policy and tests of indirect paths."
+      ],
+      "optional_claims": [
+        "Bilateral direct trust between two organizations is the named alternative when multilateral third-party mediation is impractical.",
+        "OpenID Federation supplies revocation status data for keys and trust marks but no revocation process, so federation-specific replay and revocation mechanics remain synthetic guidance."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why must workload identity be paired with an authorization policy before a caller's operations are allowed?",
+      "required_evidence": [
+        "tycho.page.e18ec327be0da89802c1b579dfbd6044#overview",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#bounded-pattern-ownership-notes",
+        "tycho.page.6023770f1256fc30b9784e10d312a3da#overview"
+      ],
+      "core_claims": [
+        "Mutual TLS authenticates both ends of a service connection with automatically rotated credentials, so it establishes which workload is on the connection rather than which operations that workload may perform.",
+        "Secure naming checks that the service account in the server certificate is authorized to run the target service; it binds an identity to a service, not a caller to an action.",
+        "The bounded owner note states that a valid certificate authenticates the workload, not every operation it requests, so authorization policy must bind identity to service while least privilege scopes each identity to the permissions its current task needs.",
+        "Expired or shared credentials break authentication, and certificate issuance sits in the request path: expiry must be monitored and keys rotated periodically, while the bounded note treats a failed rotation as a plausible outage risk rather than a measured one.",
+        "Permissive mTLS accepts both mutual TLS and plain text while workloads without a sidecar are migrated and should switch to STRICT once sidecar injection is complete, so permissive mode is a migration state with an owned exit rather than a steady state."
+      ],
+      "optional_claims": [
+        "The card rejects workload identity when network location is the only available identity or when certificate rotation cannot be automated.",
+        "Certificate revocation, trust-root bootstrap, key storage, lifetime policy and rotation-failure impact are outside the cited source headings and remain synthetic guidance."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why does a monotonic fencing token protect a resource only when the destination stores the highest accepted epoch atomically?",
+      "required_evidence": [
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#bounded-pattern-ownership-notes",
+        "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#chapter-result-and-counterexample"
+      ],
+      "core_claims": [
+        "A lease is a time-bounded grant: the coordinator can reassign ownership after expiry and issue a new epoch, but it cannot make a paused holder disappear or stop that holder from resuming and writing.",
+        "The fencing card requires that the destination can compare tokens, that tokens increase monotonically, and that a stale owner may still run but cannot commit; a token that is never compared, or compared after the effect, is decoration rather than mutual exclusion.",
+        "Protection holds only where the destination checks and persists the highest accepted token atomically with the protected effect, and comparing against the last observed token does not prove the old holder lost the lease if the new epoch has not yet been established at that destination.",
+        "The design must define the takeover linearization point and the handling of in-flight writes; after a missed renewal, ownership is uncertain rather than failed, so protected mutations should stop while coordination quorum is unavailable.",
+        "Fencing does not deduplicate: two writes within the same epoch need effect identity or a conditional state version, and epoch reuse after a restored lease store breaks monotonicity unless generation continuity is part of the recovery contract."
+      ],
+      "optional_claims": [
+        "Where the destination cannot enforce tokens, route the effect through an authoritative owner or retain an explicit unresolved-safety boundary.",
+        "For a single database, a transactional conditional update or unique constraint can provide the same exclusion without a separate lock service."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "When does an open circuit breaker hide the underlying fault instead of containing it?",
+      "required_evidence": [
+        "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+        "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities"
+      ],
+      "core_claims": [
+        "The breaker rejects calls fast to avoid repeating costly calls to a dependency whose failures are fast and amplifying, so an open state is a decision about call cost rather than a measurement of the dependency's health.",
+        "An open caused by local resource exhaustion hides the real bottleneck, because the breaker is scoped to one dependency and does not replace a timeout, backpressure or a retry budget.",
+        "Rejected calls are not dependency failures and need their own metric; without it, the open state is read as dependency evidence that the rejection never established.",
+        "A fallback that calls the same dependency or an unbounded alternate path only hides the outage, so an explicit fallback or fail-fast contract with recorded user-visible degradation is required.",
+        "Open is not recovery: half-open admits a bounded probe with limited concurrent probes and closes only after consecutive successes, and the threshold needs a minimum request volume so one failure does not trip a quiet dependency."
+      ],
+      "optional_claims": [
+        "When failures are not fast, a retry budget with jitter, an admission limit or a bounded timeout may be preferable to a breaker.",
+        "The atlas reverses the breaker choice when its state adds more coordination than the repeated-call cost it avoids."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does replacing a failed worker in a shuffle-sharded pool not restore the isolation the assignment promised?",
+      "required_evidence": [
+        "tycho.chapter.3b9ec227ed58b92c0004eb0d39099142#entry-inventory",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#bounded-pattern-ownership-notes-2",
+        "tycho.page.1849584c8a3fadc9e06c8d2edead5789#cells-and-shuffle-shards-solve-different-placement-questions"
+      ],
+      "core_claims": [
+        "A shuffle shard gives each tenant a random subset of a worker pool so tenants overlap in only some eligible workers; a failed worker affects every tenant whose subset includes it, roughly s/N of tenants for shard size s in a pool of N, which is not an unconditional reduction against a fixed shard.",
+        "Replacing the worker alone can preserve the same overlap, so containment requires reassigning the affected tenants and rechecking the shared dependency graph.",
+        "Hash-based assignment does not prove statistical independence: capacity skew, placement constraints, correlated failure and retries all change overlap and impact, so the actual assignment algorithm and tenant workload must be measured or modelled.",
+        "The assignment bounds impact only where the alternate worker is usable, which requires retry and dispatch behaviour that can reach it, bounded queues, and no shared bottleneck such as one database pool underneath.",
+        "Recovery must be judged by measured recovery time and tenant impact rather than steady-state isolation, and too few shards or an assignment that is unstable across restarts erodes the benefit until cell-based partitioning or dedicated shards becomes the better choice."
+      ],
+      "optional_claims": [
+        "Shuffle sharding does not by itself partition durable state or guarantee a fixed percentage of impact.",
+        "A fixed cell instead gives a tenant a durable home and a clear population boundary, which is preferable when many tenants need a known placement rather than a random subset."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why must a compensating transaction carry its own authorization, evidence and failure mode rather than undo the failed step?",
+      "required_evidence": [
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "A saga coordinates local transactions across independent owners with no global lock and no hidden intermediate state, so other readers can observe a partially completed business outcome before any compensation runs.",
+        "A compensation is a new business action that creates an acceptable counter-effect; it is not rollback and it can fail, because a release can itself fail, a delivered message cannot be un-delivered and goods may already have changed hands.",
+        "The domain must therefore decide which actions are reversible and which require manual reconciliation, and compensation ordering must be declared from dependency order instead of assumed to be the reverse of the forward path.",
+        "Safe compensation needs idempotent effect identity, retry and repair ownership, a terminal-state check and a user-visible unknown state when the counter-effect cannot be proven, and a failed compensation remains a repair item rather than a closed failure.",
+        "A lost acknowledgment is an unknown outcome rather than a failure, and the saga claims neither atomicity nor rollback, so one local transaction or two-phase commit is the alternative when steps do not cross independent owners or compensation is unsafe."
+      ],
+      "optional_claims": [
+        "Choreography carries the protocol in versioned event contracts with correlation identity, deduplication, dead-letter handling and an observable terminal state, while a trace shows correlation rather than durable business truth.",
+        "The cost and risk test is explicit: compensate only when the counter-effect cost is lower than the risk of leaving the failed step unresolved."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

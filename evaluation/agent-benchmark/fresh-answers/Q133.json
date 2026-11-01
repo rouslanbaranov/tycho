@@ -1,0 +1,13 @@
+{
+  "task_id": "Q133",
+  "answer": "A claim check sends a reference, not the payload, so a consumer can act only by resolving that reference in the external store. The store write and the token publication are separate systems with no shared atomic commit; if the token is published first, consumers can receive references to payloads that do not exist or are not yet retrievable, and the consumer cannot repair that. Publishing only after the payload write succeeds makes every published token point to a payload that was at least written, and pushes the residual inconsistency to the store side: a payload whose token was never published is an orphaned object to expire and collect, rather than a broken reference in a consumer's hands. But ordering is not atomicity. A crash after the write and before publication still orphans the payload; a retry can publish a duplicate claim check; and a token that was resolvable at publication can later become unresolvable through store outage, data loss, or message expiration overtaking payload retention. Integrity mismatch also remains possible, and the token does not authorize access: authorization stays an independent interaction between producer or consumer systems and the store. So the ordering removes only the publication-time dangling-reference failure mode. The remaining failures are orphaned payloads, later unresolvable tokens, duplicate claim checks, integrity mismatches, store outage or data loss, and retention/deletion ownership gaps; they require an idempotent consumer, a disposition for integrity mismatches, coordinated message-expiration and payload-retention policy, a durable and available store, claim cleanup, and failing closed when retrieval is impossible.",
+  "citations": [
+    "tycho.page.d44c30621fd941318453e3ff995a3e93#overview",
+    "tycho.page.a684d25ff3d94fd1930186b57b5d3703#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

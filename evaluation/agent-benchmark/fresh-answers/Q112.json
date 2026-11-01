@@ -1,0 +1,19 @@
+{
+  "task_id": "Q112",
+  "answer": "Cost follows series count, not request count. A metrics backend identifies a time series by its metric name plus the complete set of label/attribute values, so every distinct value combination becomes a separate series with its own label-index entry, compressed chunks, write-ahead/duplication and retention copies, and its own place in the query working set. Adding tenant_id does not add requests; it multiplies the series space by the number of tenant values. One hypothetical metric family with 40 routes, 5 status classes, 3 zones and 2,000 tenants has a potential product of 1,200,000 series; removing tenant_id leaves 600. At an unchanged request volume the same requests are merely spread across far more series, so storage, index, compaction and query resources grow while throughput stays flat. Cardinality is therefore not volume: retention time and query cost depend on the number of series and samples kept, not on how many requests were counted.\n\nQuery cost rises through the same mechanism. Label-index lookups, fan-out, aggregation, query concurrency and long-range analytical scans must resolve and touch every matching series, and dashboards or alerts evaluate per series even when the application is healthy. High-cardinality labels also leak tenant identity and enlarge the disclosure blast radius; an unbounded dimension can saturate ingestion and drop samples, which corrupts the very evidence the label was meant to provide.\n\nWhat should carry the per-tenant detail instead: keep metrics bounded using route templates, explicit status classes and service/queue dimensions, with a stated tenant aggregation and redaction policy and only a small number of bounded per-tenant series where operational diagnosis truly needs them. Put request, session, user and tenant identifiers in access-controlled logs and traces with strict attribute allowlists, separate retention and separate access scopes/index privileges. Put authoritative per-tenant accounting, authorization decisions, irreversible effects and audit obligations in a dedicated audit store with enforceable retention and immutability, not in metric labels. Where routine per-tenant aggregates are required, derive them with recording rules or downsampled rollups, accepting that aggregated data cannot later reconstruct per-tenant tails or expose per-tenant fairness and authorization failures, and that a cheaper dashboard must not hide severe tail errors.\n\nLimits: all numeric examples in the cited sections are hypothetical upper-bound arithmetic, not measured TSDB footprint, and no benchmark or production data was used.",
+  "citations": [
+    "tycho.page.61b76bbbef8b42de8cc8603a5bc9bf53#engineering-walkthrough-how-one-unbounded-metric-label-multiplies-storage",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#4-cardinality-is-multiplicative-and-architectural",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#4-cardinality-and-storage-cost",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+    "tycho.page.6b9a3f5c7bae455ab4f56f151f17b406#6-architecture-decisions-and-access-controls",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#5-downsampling-recording-rules-and-semantic-loss",
+    "tycho.chapter.49cb8db3af4e406ea6988c8e5e852acf#decision-and-worked-result"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

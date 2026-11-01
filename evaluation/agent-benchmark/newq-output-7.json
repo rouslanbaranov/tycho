@@ -1,0 +1,141 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "Why is an omitted dependency acceptable in a model boundary only when it cannot change the comparison under the declared conditions?",
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+      ],
+      "core_claims": [
+        "A model boundary separates the model's own state from the rest of the world and is not the same as a service boundary or a team boundary.",
+        "An omitted actor, dependency or failure is acceptable only if the omitted part cannot change the comparison under the declared conditions.",
+        "Replacing a downstream timeout with a constant service time removes the failure that motivates the decision, so the model can no longer show the effect being compared.",
+        "A boundary placed after request admission can reverse a result when the decision concerns a caller-visible outcome.",
+        "A reviewable scope statement records purpose, alternatives, deciding observable, excluded items and validity range so a reader can challenge whether each exclusion is material."
+      ],
+      "optional_claims": [
+        "A stock-and-flow model can show utilization and backlog growth at 20 requests per second against 24 per second but cannot report the p95 latency of successful requests.",
+        "Sargent separates conceptual-model validity from operational validity, and a scope statement addresses only the conceptual side."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a model contract pass every automated check and still misstate its evidence?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram"
+      ],
+      "core_claims": [
+        "The validator checks strict schema conformance, a unique tycho.model identifier, scenario resolution to that identifier, and the presence of a source and measurement record for every parameter marked measured.",
+        "It cannot check that a cited source actually supports the parameter value, so linking the label to the record remains an editorial and review task.",
+        "The schema rejects a verification case that lacks a test path or an observed result, but it cannot detect a case that claims a pass without one.",
+        "Unit fields make a state-versus-rate mismatch visible, yet the validator performs no dimensional analysis.",
+        "An orphan model, a scenario override that leaves the calibration note stale, and an assumed value copied into a measured field all survive structural validation."
+      ],
+      "optional_claims": [
+        "An uncalibrated status is a complete contract value rather than a missing field.",
+        "The contract makes a model's claims inspectable; it does not prove that the model is useful."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "Why can a larger bounded queue lower the rejection rate while increasing the share of requests lost to timeouts?",
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#the-overload-boundary",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes"
+      ],
+      "core_claims": [
+        "Queue capacity bounds waiting requests and rejects arrivals once full, while the bulkhead and timeout impose separate admission limits.",
+        "A queue large enough to absorb arrivals rejects almost nothing: the overload run reports a rejection rate of 0.0005 with a mean queue length of 12.79 requests.",
+        "Waiting longer pushes requests past the one-second deadline, so 0.3495 of requests time out even though almost none are rejected.",
+        "The dominant loss mechanism therefore shifts from rejection to deadline expiry, and a report that focuses on rejection misses most of the loss.",
+        "Retries add attempts to an already saturated pool, so retry amplification raises load instead of creating capacity."
+      ],
+      "optional_claims": [
+        "An unbounded queue never rejects, accumulates backlog and reports a latency that is an artifact of the observation horizon.",
+        "Exponential backoff with full jitter reduces synchronized retry waves, and the scenario must declare the choice for the run to be reproducible."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "When does a simulated output require batch means instead of the independent-replication standard error?",
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#batch-means-and-dependence",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications"
+      ],
+      "core_claims": [
+        "With n independent replications the standard error of the mean is s divided by the square root of n, and V12 gives each replication its own seed so replications are independent by construction.",
+        "Within a single replication, events are dependent by design, so a metric computed from one long run cannot use the independent-replication formula.",
+        "Batch means estimate the standard error by splitting one long run into batches, and V12 does not apply them because it uses independent replications.",
+        "The run's limitations must state which error method was used, and a future model based on one long run would need a different method.",
+        "V12 does not adapt the replication count during a run; the scenario declares it, and an adaptive rule would need its own seeded decision log."
+      ],
+      "optional_claims": [
+        "A shared random stream across replications makes the reported standard error too small.",
+        "The stopping rule uses a pilot of at least ten replications to estimate the standard error, then computes the required n for the target relative error."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "Why does a 100% target traffic share not establish that a cutover succeeded?",
+      "required_evidence": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover"
+      ],
+      "core_claims": [
+        "Traffic share is one modeled stock, while dual-write backlog, accumulated divergence and the rollback drain are separate state variables with different failure modes.",
+        "A cutover state can expose a reconciliation backlog that legacy ownership had hidden, so serving traffic is not evidence that records reconcile.",
+        "In the staged run the target serves the synthetic load with success 1.0, yet maximum divergence reaches 8,925.5 records and rollback completes in only 10% of replications.",
+        "The false-cutover failure mode is treating a 100% traffic share as success while divergence is still growing.",
+        "A supported cutover requires measured lag and reconciliation capacity, a rehearsed rollback inside the observation window, sustained measured divergence below the business threshold and a confirmed runbook."
+      ],
+      "optional_claims": [
+        "A shadow state can look healthy while the target's write path is untested, because the target receives traffic without owning the authoritative response.",
+        "Divergence is a synthetic proxy that accumulates when the dual-write backlog exceeds the reconciliation capacity, not a measured data-quality metric."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "How can a V12 decision be decision-supported when every model input remains assumed?",
+      "required_evidence": [
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change"
+      ],
+      "core_claims": [
+        "Decision evidence is a separate layer from calibration: it asks whether the outcome follows from the model and the declared constraints, not whether the inputs match a real system.",
+        "A decision-supported outcome with an uncalibrated model is conditional; it holds under the declared assumptions and does not claim that those assumptions are true.",
+        "The record must state the condition and the measurements that would reverse the decision.",
+        "Treating a recommendation as a deployment certificate crosses a layer boundary, because simulation success does not imply production success.",
+        "The checkout record can be decision-supported under its declared constraints while the operability constraint remains unverified, which makes the recommendation conditional."
+      ],
+      "optional_claims": [
+        "The decision record can still rank what to measure first; it cannot substitute for the measurement."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}

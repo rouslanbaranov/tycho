@@ -1,0 +1,16 @@
+{
+  "task_id": "Q124",
+  "answer": "A canary percentage bounds request routing, not state: it says only that roughly five percent of offered traffic reaches N+1, while N+1 writes to the same authoritative database that every N replica uses. An old-version reader is therefore not confined to the canary cohort and does not need to receive canary traffic to encounter an incompatible record. In the book's fictional registration example, N+1 adds a required `reservation_state = CONFIRMED_V2` that N cannot interpret; the canary's own requests succeed, and later old N instances fail reading those same records. The source of the error is that the exposure percentage does not bound the fraction of old-version readers that can encounter the new state.\n\nThree mechanisms break the apparent containment. First, persistence decouples writer count from reader count: one committed write is durable and can be read many times, later, by every old replica, batch job, database view, backup, delayed queue consumer and mobile or partner client. Second, the old-version reader population is the whole remaining fleet plus asynchronous consumers, not a traffic slice; there is no per-record cohort isolation, so a single write can surface in any old reader's read path. Third, time extends exposure past the canary window: old API instances and delayed event consumers can outlive the candidate rollout, and replay after the candidate is gone still carries the new state.\n\nRollback does not restore the bound either. Reverting routing or replicas does not un-write committed state, and once N+1 has emitted new-only state, restoring the N image can increase failures rather than reduce them; recovery then requires a version-compatible forward repair or verified data restoration under the data owner's authority. The effective bound must instead be a compatibility invariant enforced before exposure: N can read every value N+1 is allowed to write, or N+1 stays on the old write format until N readers are retired. That invariant is checked through a reader/writer matrix and an expand-migrate-contract window with an inventory of old consumers, delayed events and external effects, where any incompatible persisted write holds the rollout rather than shrinking the percentage.",
+  "citations": [
+    "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+    "tycho.page.21388c50717d4fa89384bedadcb0d3bd#5-deciding-which-exposure-mode-fits",
+    "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

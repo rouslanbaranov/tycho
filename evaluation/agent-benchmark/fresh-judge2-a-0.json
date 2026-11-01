@@ -1,0 +1,225 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q100",
+      "question": "Under PostgreSQL repeatable read, why can two transactions that both find no conflicting reservation still commit overlapping accepted bookings?",
+      "layer_expected": "book",
+      "answer": "Both transactions run a check-then-insert: read accepted reservations overlapping the requested interval, and if none exist, insert a new accepted booking. Under PostgreSQL REPEATABLE READ each transaction reads from a single stable transaction snapshot fixed at its first non-transaction-control statement. Both SELECTs therefore see the same committed state from before either insert and both correctly find no conflicting reservation. Repeatable read guarantees that this view will not change for the rest of the transaction; it does not force a concurrent writer to re-check the reader's predicate. The corpus states that this level disallows phantom reads as repeated reads, yet serialization anomalies remain possible, so snapshot stability is not proof of a serializable invariant.\n\nThe two INSERTs create different new rows. No row version is written by both, so there is no shared write-write conflict for the database to detect, and the row inserted by the other transaction is invisible to this transaction's snapshot even if it commits first. There is also no predicate or gap protection over the empty interval: the corpus warns that locks may be missing for absent rows, so SELECT ... FOR UPDATE over a predicate that returns no rows locks nothing, and a mutex inside one application instance does not protect multiple replicas. With no conflicting row and no failing constraint, both transactions reach COMMIT and both accepted bookings persist.\n\nThe invariant \"no overlapping accepted bookings for the same unit\" is cross-row, so an application-level SELECT cannot enforce it. A general CHECK constraint cannot reference other rows, a plain unique index encodes identity rather than interval overlap, and naming GiST does not itself install the rule. Enforcement belongs at the data authority: an exclusion constraint such as EXCLUDE USING gist (unit_id WITH =, reserved_during WITH &&), typically requiring btree_gist and a partial WHERE accepted clause, makes the second INSERT fail; alternatively SERIALIZABLE isolation makes one transaction abort with a serialization failure that must be retried as the complete transaction from fresh state, or an explicit single-owner conditional state model decides the winner. The corpus presents this anomaly as a proposed failure model, not an executed PostgreSQL trace, and its SQL is an unrun teaching sketch.",
+      "citations": [
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#3-a-synthetic-two-transaction-anomaly",
+        "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+        "tycho.page.9176c39f97f544f884666e291ae38b90#2-mvcc-is-about-snapshot-visibility-not-a-replacement-for-reasoning-about-writes",
+        "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#4-serializable-still-needs-a-retry-protocol",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#5-correctness-and-query-performance-must-be-evaluated-together"
+      ],
+      "core_claims": [
+        "Repeatable Read gives each transaction a stable snapshot beginning at its first non-transaction-control statement, not necessarily at BEGIN, and PostgreSQL disallows phantom reads at that level while serialization anomalies remain possible.",
+        "Two transactions can both read the same interval as free and then insert different reservation rows, so no row-level write-write conflict necessarily forces either one to abort.",
+        "A pre-insert application SELECT does not enforce a cross-row overlap rule; the invariant needs an exclusion constraint over tool identity and overlapping ranges, a Serializable transaction with retries, or a single-owner conditional state model.",
+        "A serialization failure must be retried from the complete read-and-decision state under a bounded retry policy, not by resending only the final INSERT with stale reads.",
+        "A failed transaction is not an accepted booking, while a committed booking whose reply was lost is a different condition that requires a durable operation ID and a status lookup."
+      ],
+      "optional_claims": [
+        "A mutex inside one application instance does not protect a deployment with multiple replicas.",
+        "A general CHECK constraint that refers to other rows cannot guarantee ongoing consistency of a cross-row overlap invariant."
+      ],
+      "required_evidence": [
+        "tycho.page.8d8150a14bc04b989fc34432ab7c99e1#2-a-snapshot-is-not-an-invariant",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#3-a-synthetic-two-transaction-anomaly",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#4-serializable-still-needs-a-retry-protocol",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#5-correctness-and-query-performance-must-be-evaluated-together"
+      ]
+    },
+    {
+      "task_id": "Q108",
+      "question": "Why does committing an update fail to make the replaced row version immediately reclaimable, and what keeps vacuum from reusing its space?",
+      "layer_expected": "book",
+      "answer": "An UPDATE does not overwrite the row in place: it produces a new row version, and COMMIT makes that new version visible and durable but does not end the old version's useful life. MVCC visibility is decided per reader, so a transaction whose snapshot predates the commit may still be entitled to see the replaced version; the writer's commit is not the event that makes that version reclaimable. How long the old version must survive depends on the snapshot contract: Read Committed takes per-statement snapshots, while Repeatable Read holds a transaction-wide view, so a long-running or apparently idle transaction can retain an old visibility horizon. VACUUM is gated by that same horizon. It can make obsolete-version space reusable only once no transaction can still observe the old version; while such a snapshot remains open, the dead version cannot be removed or its space reused, dead versions accumulate, and cleanup/vacuum pressure grows. The corpus therefore says to inspect transaction age and blockers, not just active query duration. Two further limits prevent space from coming back promptly even after cleanup: successful vacuum reuses space inside the relation rather than immediately shrinking the file on the operating system, and VACUUM FULL is a separate lock/rewrite contract and not a generic first remedy; vacuum itself also consumes resources. Indexes add write, maintenance and bloat cost because every index entry must stay consistent with the base row, but the read sections do not document index-entry cleanup phases or tuple-header mechanics. No runtime experiment, measured threshold or universal retention magnitude is supplied; commit alone is not evidence that the old version can disappear.",
+      "citations": [
+        "tycho.page.021b06125a5c46d488493b87d384509f#visibility-is-a-question-about-a-reader",
+        "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+        "tycho.page.021b06125a5c46d488493b87d384509f#old-versions-consume-a-lifecycle-budget",
+        "tycho.page.021b06125a5c46d488493b87d384509f#failure-probe-and-limits",
+        "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.9176c39f97f544f884666e291ae38b90#6-failure-recovery-and-a-deliberately-unanswered-question"
+      ],
+      "core_claims": [
+        "Under MVCC each statement reads from a snapshot, so a committed update does not automatically become every concurrent reader's current view.",
+        "A replaced or deleted row version cannot be removed while another transaction may still need to see it under its snapshot.",
+        "Vacuum can make an obsolete version's space reusable only after the version is no longer needed.",
+        "A long-lived read transaction keeps an old visibility horizon open, so the writer's commit is not the event that makes the old version reclaimable.",
+        "Reuse of space inside a relation is not the same as shrinking the relation's file, and VACUUM FULL adds a different lock and rewrite contract."
+      ],
+      "optional_claims": [
+        "Snapshot visibility and WAL durability answer different questions, so snapshot consistency does not prove that a committed write survives a crash.",
+        "Repeatable Read keeps a stable transaction view but does not exclude every serialization anomaly, so a serializable transaction can still need a retry protocol."
+      ],
+      "required_evidence": [
+        "tycho.page.021b06125a5c46d488493b87d384509f#visibility-is-a-question-about-a-reader",
+        "tycho.page.021b06125a5c46d488493b87d384509f#old-versions-consume-a-lifecycle-budget",
+        "tycho.page.021b06125a5c46d488493b87d384509f#isolation-determines-how-the-view-evolves",
+        "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work"
+      ]
+    },
+    {
+      "task_id": "Q116",
+      "question": "Why are a database log position, a Kafka partition offset, a processor checkpoint and an external sink commit not interchangeable as recovery cursors?",
+      "layer_expected": "book",
+      "answer": "Because each of the four is a position in a different log, owned by a different authority, with different granularity, ordering, durability meaning and expiry behavior - and no transaction spans all four.\n\n1. Different history, different authority.\nA database log position (WAL/LSN) is an address inside one database's own redo history. It is what makes a consistent snapshot plus subsequent changes replayable: CDC uses the log position, not the connector's wall clock, as the cursor, and a snapshot taken at a defined position establishes the starting boundary. A Kafka partition offset is an index into one partition of a broker log, meaningful only relative to that partition's retained records. A processor checkpoint is a consistent snapshot of operator state together with the source positions known to that topology. An external sink commit is a record in a system the pipeline does not own, keyed by effect identity, not by input position. Four numbers can look alike and still be coordinates in four unrelated spaces.\n\n2. Different ordering domains.\nA publication page separates transaction commit order, an aggregate's version or domain sequence, connector capture and relay time, broker partition offset, consumer application time and business-effect completion. Kafka preserves order only within a partition; an offset is not a global order. A database LSN orders log records in one cluster but says nothing about publication order, and an event timestamp alone grants no total order across independent producers. So 'position 70' on one side does not identify the same event as 'position 70' on another; even a documented mapping holds only for the events it actually records.\n\n3. Different durability and acknowledgment contracts.\nA database commit acknowledgment means the configured WAL/commit policy was satisfied (subject to synchronous_commit, fsync, full_page_writes, replica and storage caveats); it does not mean a broker stored the change or that a sink accepted an effect. Committing a Kafka position before the external effect can skip an effect that never committed; committing the effect before the position without deduplication can repeat it; only a durable receipt written atomically with the effect lets a successor resolve the duplicate. A checkpoint covers declared operator state and source progress, but an arbitrary external sink stays outside that guarantee: snapshotting state cannot unsend an email. Likewise read_committed is a Kafka visibility contract, not isolation for the application database.\n\n4. Different failure and expiry modes.\nAn offset can fall outside retention; auto.offset.reset then chooses a configured behavior and cannot recreate deleted records - latest may skip missing history, and earliest means the earliest retained history, not the beginning of business events, so a silent reset can look healthy while producing incomplete output. A checkpoint can become unrestorable when state serialization, operator identity or topology changes. An external sink has its own deduplication window, retention and irreversible acknowledgments. A cursor that is valid, expired or misleading in one system therefore cannot be substituted for another.\n\nConsequence: recovery needs per-boundary positions plus a bridging effect identity - a durable receipt or inbox record committed atomically with the local effect - and reconciliation or a rebuild when a position is unavailable. One number presented as 'the checkpoint' cannot bound both loss and duplication across a database log, a broker partition, an operator snapshot and an external sink; a recovery plan must name which boundary is being resumed and which skip/duplicate window is accepted at every hop.",
+      "citations": [
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#2-publication-schema-and-ordering-boundaries",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#4-event-time-watermarks-and-late-data-are-business-policies",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#bounded-pattern-ownership-notes",
+        "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+        "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#2-acknowledgments-and-replication-are-not-one-binary-switch",
+        "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments",
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect"
+      ],
+      "core_claims": [
+        "The database WAL position, the Kafka partition offset, the application state-store checkpoint and the external sink commit are distinct cursors, so an implementation cannot treat any one of them as the cursor that defines recovery.",
+        "An implementation must document where alignment among those cursors is guaranteed and where duplicates or gaps may be replayed after a restart or rebalance.",
+        "Connector lag, slot retention, schema change and snapshot-to-stream gaps are common; a missing or expired slot can require resnapshotting the source, and that recovery point must be explicit.",
+        "Restoring a state store replays its changelog, and catch-up time depends on state size, disk and IO bandwidth, compaction, standby replicas and live arrivals, so fault tolerance does not imply instant recovery.",
+        "A Kafka Streams exactly_once_v2 setting is scoped to its Kafka processing and does not by itself cover an unrelated SQL transaction or remote provider; external effects need separate idempotency or compensation evidence."
+      ],
+      "optional_claims": [
+        "A recovery test should inject a crash after the state update but before the output or offset checkpoint, then verify restored state, emitted output and input position rather than only process start.",
+        "When log access is unavailable or the source cannot retain a slot, an outbox relay, dual-write reconciliation or scheduled extraction may be preferable to CDC."
+      ],
+      "required_evidence": [
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#2-kafka-streams-tasks-state-stores-and-changelogs",
+        "tycho.page.57478c7e1ff6443fb3f41a2f143caa9b#6-failure-recovery-experiments"
+      ]
+    },
+    {
+      "task_id": "Q124",
+      "question": "Why does limiting a canary to five percent of traffic not bound the fraction of old-version readers that can encounter an incompatible new state?",
+      "layer_expected": "book",
+      "answer": "A canary percentage bounds request routing, not state: it says only that roughly five percent of offered traffic reaches N+1, while N+1 writes to the same authoritative database that every N replica uses. An old-version reader is therefore not confined to the canary cohort and does not need to receive canary traffic to encounter an incompatible record. In the book's fictional registration example, N+1 adds a required `reservation_state = CONFIRMED_V2` that N cannot interpret; the canary's own requests succeed, and later old N instances fail reading those same records. The source of the error is that the exposure percentage does not bound the fraction of old-version readers that can encounter the new state.\n\nThree mechanisms break the apparent containment. First, persistence decouples writer count from reader count: one committed write is durable and can be read many times, later, by every old replica, batch job, database view, backup, delayed queue consumer and mobile or partner client. Second, the old-version reader population is the whole remaining fleet plus asynchronous consumers, not a traffic slice; there is no per-record cohort isolation, so a single write can surface in any old reader's read path. Third, time extends exposure past the canary window: old API instances and delayed event consumers can outlive the candidate rollout, and replay after the candidate is gone still carries the new state.\n\nRollback does not restore the bound either. Reverting routing or replicas does not un-write committed state, and once N+1 has emitted new-only state, restoring the N image can increase failures rather than reduce them; recovery then requires a version-compatible forward repair or verified data restoration under the data owner's authority. The effective bound must instead be a compatibility invariant enforced before exposure: N can read every value N+1 is allowed to write, or N+1 stays on the old write format until N readers are retired. That invariant is checked through a reader/writer matrix and an expand-migrate-contract window with an inventory of old consumers, delayed events and external effects, where any incompatible persisted write holds the rollout rather than shrinking the percentage.",
+      "citations": [
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#5-deciding-which-exposure-mode-fits",
+        "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+        "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+        "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary"
+      ],
+      "core_claims": [
+        "A canary controls routing exposure, not the durable writes that the candidate commits to a shared authoritative database.",
+        "In the book's fictional case, release N+1 writes reservation_state=CONFIRMED_V2 that release N cannot read, so five percent of traffic can still create records that old readers later encounter.",
+        "Reverting deployment replicas to the old release can increase failures when the old binary cannot read the persisted new state, so recovery may need version-compatible forward repair or verified data restoration under the data owner's authority.",
+        "A small canary sample may also omit rare tenant or long-tail operations, so missing coverage is incomplete measurement rather than a green result.",
+        "Turning a feature flag off after an irreversible side effect does not undo persisted state, and route rollback is safe only when the old binary can read everything the candidate wrote."
+      ],
+      "optional_claims": [
+        "Retaining the old write format while rolling out new readers and collecting compatibility evidence may be the minimal safe option.",
+        "A go/no-go record should include offered traffic by cohort, the exact binary mix, new-state write count, domain-result failures, reconciliation lag, deadline and the named approver of irreversible changes."
+      ],
+      "required_evidence": [
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#3-original-fictional-canary-failure",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#5-deciding-which-exposure-mode-fits",
+        "tycho.page.21388c50717d4fa89384bedadcb0d3bd#6-proposed-negative-experiments"
+      ]
+    },
+    {
+      "task_id": "Q132",
+      "question": "Why can a TTL shorter than the business freshness requirement still be rejected when a hard read-after-write contract exists?",
+      "layer_expected": "atlas",
+      "answer": "Because a TTL and a read-after-write contract are different kinds of claim, and shortening the TTL only changes the size of a gap it never closes. A freshness requirement is an age budget (data may lag up to N seconds); a TTL is a wall-clock lifetime that starts when a value is filled or loaded, and expiry is driven by the clock, not by writes. A hard read-after-write guarantee is instead an ordering claim: after a write completes, a later read (at least in the same session) must include that write. Since expiry is not tied to writes, a copy loaded just before the write remains eligible for up to almost the whole TTL afterwards, so a TTL below the freshness budget bounds worst-case age but still leaves a nonzero window in which a read returns pre-write state. The ordering gap is the real defect: the cache knows when it loaded a value, not which source revision the value carries, so it cannot prove the value is newer than the write, and a short TTL plus retried invalidation 'bounds the damage' without proving freshness. The stale-fill race shows the violation survives invalidation itself: a reader that loaded V1 can write V1 back with a fresh TTL after the writer committed V2 and invalidated the key, resurrecting pre-write state for another full TTL. Shortening the TTL further is also not a free fix, because synchronized expiry stampedes the source, which the pattern card lists as a separate hard contraindication. What can satisfy the contract is a mechanism tied to the write rather than to elapsed time: versioned keys and a revision gate on fill, an invalidation intent made durable at commit (outbox) and retried, or a version-checked/authoritative read on the sensitive path, as in the exclusive-booking case where the cached availability value must not authorize a decision; the cache can keep serving the paths whose requirement really is only bounded staleness.",
+      "citations": [
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#name-the-observation-that-must-survive-routing"
+      ],
+      "core_claims": [
+        "The TTL-Based Expiration card makes a TTL shorter than the business freshness requirement a good-fit condition rather than a guarantee, and additionally requires that staleness be bounded by time and refresh cost be acceptable.",
+        "Its hard contraindications include a hard read-after-write contract, synchronized expiry that would stampede the source, and a TTL longer than the acceptable stale window; shortening the TTL does not remove the first two conditions.",
+        "The card's competing alternatives are explicit invalidation or versioned keys, and it says to reverse the choice when TTL expiry causes unacceptable misses or stale decisions.",
+        "The Cache Invalidation card requires an authoritative change that can emit an invalidation signal and consumers that tolerate a bounded stale window, and it is rejected when no reliable invalidation path exists or stale reads violate a hard contract.",
+        "Even explicit invalidation does not promise immediate freshness: the same card states that a reader can miss or briefly see stale data immediately after a write."
+      ],
+      "optional_claims": [
+        "The C05 entry inventory adds Write-Around as a card that rejects read-after-write freshness when invalidation is unreliable, so TTL and write-around fail the same contract for different reasons.",
+        "The TTL card names synchronized expiry and stale reads as its common failure modes, so the decision turns on correctness rather than on expected hit rate."
+      ],
+      "required_evidence": [
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory"
+      ]
+    },
+    {
+      "task_id": "Q140",
+      "question": "Why does V12 fix the replication count in the scenario instead of stopping the run when the relative-error threshold is reached?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "V12 fixes the replication count because it treats n as a declared input, not an outcome. The page states the design directly: V12 does not adapt n during a run; the scenario declares the replication count and the run reports the achieved error, which keeps the result reproducible, whereas an adaptive stopping rule would need its own seeded decision log. Three connected reasons support this. First, reproducibility and provenance: the count is part of the input contract that binds the base seed plus deterministic per-replication seed, and the run record stores the base seed and replication count under a result hash, so a mid-run stop would change the hashed record and what replay verifies. Second, statistical validity: stopping once the interval looks favorable is 'peeking' and invalidates nominal coverage, and re-setting the threshold after seeing the result is 'threshold shopping' - both listed failure modes. Third, the threshold is a decision aid, not a universal rule: a metric near zero can have a small absolute error but a large relative error, and a metric with a wide business tolerance can accept a larger relative error, so the 0.02 rule is not a sound automatic stop trigger. V12 therefore applies the threshold ex post as a status, not a control: a run is marked converged or insufficient-sample, and V12-C states that a run failing the 0.02 relative-error threshold is not used as converged evidence. The deliberate two-replication convergence-stress run (relative error 0.032) is marked insufficient-sample rather than truncated or extended, showing the intended behavior - the shortfall is recorded and the evidence is rejected as converged, instead of the sample size being retrofitted to the result.",
+      "citations": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity"
+      ],
+      "core_claims": [
+        "V12 does not adapt n during a run: the scenario declares the replication count and the run reports the achieved error.",
+        "The documented stopping rule runs a pilot of at least 10 replications, estimates the standard error of the primary metric, computes the required n, then runs to that n or to a smaller declared budget.",
+        "An adaptive stopping rule would need its own seeded decision log to keep the run reproducible.",
+        "Peeking, meaning stopping when the interval looks favorable, invalidates the nominal coverage.",
+        "The seed is part of the scenario input contract, not a number chosen after seeing the result, and the run record stores the seed base and replication count."
+      ],
+      "optional_claims": [
+        "The seed comes from the scenario rather than the wall clock, which is what makes a predeclared n replayable.",
+        "The run record stores convergence status, metric, relative error, threshold and replications, so a reader can see whether the target was met."
+      ],
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields"
+      ]
+    },
+    {
+      "task_id": "Q148",
+      "question": "Why does a 100% target traffic share not establish that a cutover succeeded?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A 100% target traffic share says where requests are being addressed, not what happened to them. It is compatible with a failed cutover for at least five reasons.\n\n1. Share is an allocation, not an outcome. The routing contract separates the externally resolved name, the membership view, the connection destination and the backend actually selected per request; a stale membership view can outlive a rollout. The discriminating observations for a '100%' dashboard are requests still reaching a retired backend after publication, direct calls that skip the declared policy point, and traffic to a draining instance after readiness changed. None of those appear in the share value.\n\n2. Cutover is a state, not a date, and the decision variables are stocks. The modernization model holds target_share next to dual-write backlog, reconciliation capacity, accumulated divergence and a rollback timer; a cutover state can expose a reconciliation backlog that legacy ownership was hiding. In the page's own staged scenario the share moves 0.2, 0.5, 1.0 and the run reports success rate 1.0 (all modelled traffic is served) while maximum divergence is 8,925.5 records and rollback completes in only 10% of replications. The page names this exact pattern a 'false cutover signal' and returns insufficient evidence, so a 100% share demonstrably coexists with an unsupported cutover.\n\n3. The share cannot certify equivalence. A green shadow comparison does not guarantee semantics: row counts and checksums can match while time windows differ, null/value canonicalization is lossy, or the fingerprint omits business-critical fields. The comparison is only meaningful as a tuple of source snapshot, schema version, partition identity, job revision, equality rule and freshness window. Identical outputs can also reflect one shared semantic bug, and a near-total progress figure such as 99.9999% is not source-independent proof of correctness.\n\n4. Verification does not end at the switch. The reported ingestion lifecycle keeps the old job running as a reverse shadow after the new job takes the production table, continues comparisons, and retires the old job only after renewed quality and resource gates. The first live switch is not the end of verification. Retiring the old path the moment the share reads 100% removes both the evidence and the recovery boundary that would show whether the cutover held.\n\n5. The share carries none of the evidence that would support the claim: a measured dual-write lag with a bounded upper confidence limit, a measured reconciliation capacity in the target environment, a rehearsed rollback that completes inside the observation window, measured divergence below the business threshold across a sustained period, and a confirmed continuity and reconciliation runbook. Without named snapshot/offset identity and a repair path, a migration status of '100%' remains insufficient evidence of completeness. Rollback failure modes - a target that keeps receiving work after the trigger, a backlog too large to drain in the window, or a rollback the operating team cannot execute - are all fully compatible with a 100% share.",
+      "citations": [
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#failure-and-recovery",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+        "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete"
+      ],
+      "core_claims": [
+        "Traffic share is one modeled stock, while dual-write backlog, accumulated divergence and the rollback drain are separate state variables with different failure modes.",
+        "A cutover state can expose a reconciliation backlog that legacy ownership had hidden, so serving traffic is not evidence that records reconcile.",
+        "In the staged run the target serves the synthetic load with success 1.0, yet maximum divergence reaches 8,925.5 records and rollback completes in only 10% of replications.",
+        "The false-cutover failure mode is treating a 100% traffic share as success while divergence is still growing.",
+        "A supported cutover requires measured lag and reconciliation capacity, a rehearsed rollback inside the observation window, sustained measured divergence below the business threshold and a confirmed runbook."
+      ],
+      "optional_claims": [
+        "A shadow state can look healthy while the target's write path is untested, because the target receives traffic without owning the authoritative response.",
+        "Divergence is a synthetic proxy that accumulates when the dual-write backlog exceeds the reconciliation capacity, not a measured data-quality metric."
+      ],
+      "required_evidence": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover"
+      ]
+    }
+  ]
+}

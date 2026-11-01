@@ -1,0 +1,16 @@
+{
+  "task_id": "Q137",
+  "answer": "V12 accepts omitting a dependency such as the payment network or the database only as a bounded simplification: when the omitted parts cannot change the comparison under the declared conditions. The test is decision-relative — the omission must not be able to reverse the choice on the observable metric inside the declared validity domain; otherwise the dependency must be modeled. Omitting it is not acceptable when a boundary that starts after admission hides caller-visible behavior and can reverse the result, or when externalizing a downstream timeout as a constant service time hides the failure that motivates the decision. Detail is added when it can change a decision-reversing metric, and the new validity limit is then recorded. The scope statement must make omissions explicit rather than unstated assumptions and must record: purpose (which decision the model informs, plus the decision owner); the alternatives compared; the observable metric that distinguishes them; the excluded actors, dependencies and failures; and validity (the ranges and conditions under which the result is intended to hold). A reviewable statement also records the boundary, the resolution (time/state units, request class, priorities), the workload and constraints, and whether any production claim is made (the example ends 'no production claim'). It must be short enough for a reader to challenge whether the omitted dependency is material, whether the resolution is enough, and whether the workload is representative. The record must also state which validity condition holds — conceptually reasonable but operationally validated or unvalidated. The V12 model contract mirrors this in its scope field (what is included and what is explicitly excluded), its abstraction field (boundary and resolution), and validity_limits, assumptions and unknowns; a model that cannot answer purpose, alternatives, observable, excluded and validity is not ready for a scenario.",
+  "citations": [
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#overview"
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
