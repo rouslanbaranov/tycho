@@ -55,6 +55,8 @@ class McpToolContractTests(unittest.TestCase):
         self.assertNotIn("@@", onboarding)
         self.assertEqual(onboarding.count("`") % 2, 0)
         self.assertIn("`tycho_describe`", onboarding)
+        self.assertLessEqual(len(onboarding), 2500)
+        self.assertNotIn("## Tool map", onboarding)
         self.assertEqual(mcp_contract.INSTRUCTIONS, onboarding.strip())
         self.assertEqual(mcp_server.INSTRUCTIONS, onboarding.strip())
 
