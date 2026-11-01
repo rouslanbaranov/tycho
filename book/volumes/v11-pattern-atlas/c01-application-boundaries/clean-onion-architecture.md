@@ -24,7 +24,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "clean architecture"

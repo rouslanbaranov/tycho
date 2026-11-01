@@ -42,10 +42,10 @@ evidence_scope:
     Card cites read.aws-hexagonal.2026-10-21; owner section and limits are
     bounded.
 content_review:
-  status: "self-checked"
+  status: "independent-reviewed"
   reviewed_at: "2026-11-01"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "https://github.com/rouslanbaranov/tycho/blob/466d9044/authoring/ai-reviews/2026-11-01-hexagonal-deepseek.md"
 authored_at: "2026-11-01"
 updated_at: "2026-11-01"
 source_inspection_date: "2026-10-21"
