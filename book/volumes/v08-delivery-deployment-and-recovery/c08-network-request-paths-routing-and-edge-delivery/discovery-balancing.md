@@ -43,7 +43,9 @@
   "evidence_scope": {
     "source_ids": [
       "src.sre-frontend-enrichment",
-      "src.sre-balancing-enrichment"
+      "src.sre-balancing-enrichment",
+      "src.envoy",
+      "src.microservices-patterns"
     ],
     "claim_ids": [],
     "status": "source-linked",
@@ -74,7 +76,7 @@
 
 
 > **Pattern atlas:**
-> [Load Balancing](../../v11-pattern-atlas/c09-scalability/README.md#load-balancing) — decision conditions and contraindications.
+> [Load Balancing](../../v11-pattern-atlas/c09-scalability/load-balancing.md) — decision conditions and contraindications.
 
 ## DNS and discovery have different update boundaries
 
@@ -257,9 +259,8 @@ operated as a critical dependency.
 
 ### Load Balancing
 
-Load balancing chooses among eligible backends. The invariant is that no request reaches an
-ineligible backend and no retry loop is unbounded; it needs fresh health/selection signals and
-retry-safe callers. Signal freshness, selector state and retry storms are the limits, and failover
+Load balancing chooses among eligible backends. The invariant the selector is designed to preserve is that a request goes to a backend with
+capacity and healthy connectivity; the sinkhole below is the documented violation. Signal freshness, selector state and retry storms are the limits, and failover
 plus stale membership must be tested. A selector can count connections, active requests, completed
 work, errors or resource utilization; these signals answer different questions and fail in
 different ways.
