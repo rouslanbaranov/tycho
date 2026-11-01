@@ -1,0 +1,63 @@
+{
+  "task_id": "Q183",
+  "answer": "Both negatives are keyed to the lookup request, not the changed state, so neither create-and-grant nor the policy revision reaches them. The cached 404 still asserts absence because creation does not delete or version its key. The cached 403 still asserts denial because its key omits caller and policy revision, and sharing the document does not touch it. A shared cache compounds this: an authorization-bearing response may be reused only when a directive permits it.\n\nEach key must bind its change dimension. The 404 key needs document identity, tenant/visibility scope and an existence generation, or must be deleted/versioned on create and delete; it must never become a universal absence. The 403 key needs tenant, principal or scope, checked operation, resource and policy revision, and must not be shared across principals.\n\nEach lifetime must bind the event that ends it. The 404 lifetime is a short TTL capped by create/delete. The 403 lifetime is the shorter of TTL and the revocation deadline, ending on grant, revoke or policy change, with recheck and fail-closed. TTL alone is insufficient: a stale fill can resurrect an entry after invalidation.\n\nEvidence: V06 negative-cache section 4, Negative Caching card, cache-aside section 4, security section 2. Unknowns: deployment TTLs, policy-revision ordering and propagation bounds are not stated; mechanism confidence is high, concrete bounds are not.",
+  "citations": [
+    "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+    "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract"
+  ],
+  "evidence": [
+    {
+      "claim": "A cached not-found can hide a newly created object.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed: 'if a new object is created, a cached not-found may hide it.'"
+    },
+    {
+      "claim": "A cached denial can outlive a grant or revocation.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed: 'A cached denial can outlive a grant or a revocation'; OWASP: 'a cached permit must not outlive a required revocation deadline'."
+    },
+    {
+      "claim": "The 403 key must include tenant, principal or scope, checked operation and policy revision.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed Tycho rule: the key includes those fields; 'a key that omits one of these is not shared'."
+    },
+    {
+      "claim": "Lifetime and change handling: bound by shorter of TTL and revocation deadline, delete/version on create, grant, revoke, delete.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed Tycho rule in the same section; alternatives are per-principal key, short TTL or bypass."
+    },
+    {
+      "claim": "A shared cache must not reuse an authorization-bearing response unless a directive explicitly permits it.",
+      "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+      "note": "Observed: RFC 9111 storage rule quoted; also repeated on the Negative Caching card."
+    },
+    {
+      "claim": "404/410 get a short default edge TTL; other statuses are not cached by default and a 403 needs an explicit origin directive.",
+      "section_key": "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+      "note": "Observed: Cloudflare 3-minute default; CloudFront 403 only with max-age/s-maxage."
+    },
+    {
+      "claim": "TTL or deletion alone does not prove freshness; a stale fill can resurrect an entry without a version gate or tombstone.",
+      "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+      "note": "Observed: stale-fill race and version-fenced fill discussion."
+    },
+    {
+      "claim": "Policy decisions must record policy revision, expiry and enforcement point, and be rechecked when relevant state changes.",
+      "section_key": "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+      "note": "Observed: 'record policy revision... expiry... enforcement point and outcome'; asynchronous path performs a new decision."
+    },
+    {
+      "claim": "Cache key, freshness policy and authorization boundary must agree; caller-dependent content needs a separate key.",
+      "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract",
+      "note": "Observed: classification of immutable public, mutable public and private caller-dependent content."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

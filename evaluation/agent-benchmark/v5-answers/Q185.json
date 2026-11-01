@@ -1,0 +1,57 @@
+{
+  "task_id": "Q185",
+  "answer": "A yes vote is only a promise to commit if asked; it is not the decision. The coordinator collects every participant's vote, then records one commit-or-abort decision that participants apply while still holding prepared state. A participant cannot tell \"no decision yet\" from \"decision recorded but notification lost\", and its local state plus the unanimous votes never reveal what the coordinator recorded.\n\nCommitting alone would make one resource manager's effects durable while another participant might still roll back, breaking atomicity across resources. Aborting alone is equally unsafe: another prepared participant may already have applied a commit (or may still receive it), and abort cannot undo that. Oracle's prepared nodes wait for a COMMIT or ROLLBACK from the global coordinator; PostgreSQL expects an external transaction manager to track and close prepared transactions out.\n\nRecovery must therefore rest on the coordinator's durable commit-point record, replayed by coordinator recovery or that transaction manager and applied identically by every participant. Until then, prepared data stays locked for reads and writes. If no decision record is recoverable, the transaction stays in doubt and blocked rather than guessed: that blocking risk, not the vote count, is the real cost, and the book documents no full termination protocol.\n\nBoundary: a saga replaces atomic commit with compensations, losing isolation and automatic rollback.",
+  "citations": [
+    "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+    "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+    "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+    "tycho.page.db64c44e7af846f9b54a524a37a1b9dd#5-failure-matrix-and-an-experiment-contract"
+  ],
+  "evidence": [
+    {
+      "claim": "Votes are inputs; one commit-or-abort decision is recorded afterwards, and no participant may commit before the coordinator's durable decision.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "Observed: 'A coordinator asks every participant to prepare, collects the votes, then records one commit or abort decision'; 'No participant may commit before the coordinator's durable decision.'"
+    },
+    {
+      "claim": "The decision must survive coordinator failure for prepared participants to recover, and a commit-point log plus external transaction manager track it.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "Observed (quoting Oracle): prepared state in redo logs so it can 'subsequently either commit or roll back the transaction, regardless of intervening failures'; at the commit point 'the commit point log contains a record of the commit'."
+    },
+    {
+      "claim": "Prepared nodes wait for COMMIT or ROLLBACK from the global coordinator, and data remains locked for reads and writes until resolution.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "Observed: prepared nodes 'wait until a COMMIT or ROLLBACK request is received from the global coordinator'; 'the data is locked for both reads and writes'. PostgreSQL prepared state holds locks and is closed out by an external transaction manager."
+    },
+    {
+      "claim": "A failure after prepare leaves the transaction in doubt; resolution may be automatic or forced, and coordinator availability plus acceptable blocking are fit conditions.",
+      "section_key": "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+      "note": "Observed: failure-after-prepare paragraph and good-fit/contraindication bullets; coordinator failure that blocks critical resources is a hard contraindication."
+    },
+    {
+      "claim": "Distributed commit is a protocol choice requiring documented recovery behavior; coordinator or participant failure and locks may affect progress.",
+      "section_key": "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+      "note": "Observed: section 3, coordinator and participant need documented recovery behavior."
+    },
+    {
+      "claim": "An ambiguous outcome after a commit requires a stored result so retry recovers the same outcome rather than guessing.",
+      "section_key": "tycho.page.db64c44e7af846f9b54a524a37a1b9dd#5-failure-matrix-and-an-experiment-contract",
+      "note": "Observed: failure-matrix row 'Crash after commit but before reply' -> client key plus stored result."
+    },
+    {
+      "claim": "Inference: a participant cannot distinguish 'no decision' from 'decision durable but notification lost', so its own prepared state and unanimous votes do not establish the outcome; a unilateral abort also cannot undo a commit another participant already applied. With no recoverable decision record, the safe resolution is rollback of prepared work, which the book does not spell out as a termination protocol.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "Inference from the recorded-decision mechanism and the 'in doubt' description; not stated verbatim. Book gap retained."
+    },
+    {
+      "claim": "Saga is the stated alternative: local transactions plus compensations, with lack of automatic rollback and lack of isolation.",
+      "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+      "note": "Observed: Alternative paragraph quoting the public Saga pattern."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
