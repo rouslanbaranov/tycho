@@ -1,0 +1,333 @@
+{
+  "task_id": "Q311",
+  "answer": "## Layers and scope\n\nLayers needed: **book only**. The question is about HTTP conditional-request\nsemantics, lost-update mechanics, atomicity at a state authority, and retry\nsafety. Those are conceptual/contract questions owned by book prose. The atlas\nlayer would add pattern identity and coverage status, and\nmodeling-and-simulation would add model, run or decision artifacts; neither is\nneeded for this mechanism question, and no claim below depends on them. I used\nvolume=book for every search and read. All sections cited were read through the\nCLI against snapshot\n3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Why a full-object write loses the title | \"lost update\"; \"read-modify-write\"; \"workshop capacity revision conflict\"; \"lost update read modify write stale overwrite\" | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives |\n| F2. What If-Match and an ETag actually promise | \"If-Match ETag conditional request lost update\"; \"If-Match precondition entity tag strong validator\"; \"412 Precondition Failed\"; \"ETag\"; \"validator representation metadata\" | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication |\n| F3. Where the check must live and what it must be atomic with | \"optimistic concurrency version compare-and-swap\"; \"conditional write test and set version atomic\"; \"atomic compare and set single authoritative\"; \"version column optimistic lock update where version\" | tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes |\n| F4. What a lost response does to retry reasoning | \"idempotency key retry lost response\"; \"lost update\"; \"412 Precondition Failed\" | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post; tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication; tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery |\n| F5. Why a fresh validator is not a merge or outcome record | \"partial update merge patch full replacement\"; \"strong comparison conditional request\"; \"weak validator strong comparison entity tag representation\" | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives; tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result |\n| F6. Title versus capacity: merge semantics and invariants | \"workshop capacity revision conflict\"; \"optimistic concurrency version compare-and-swap\" | tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions; tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result; tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example |\n\n## Answer\n\n### 1. Short answer\n\nIf-Match is a **request precondition**, not a transaction, merge rule, lock or\noperation log. It says only: apply this method if the current selected\nrepresentation still carries the supplied validator. It does not by itself\nguarantee that (a) the validator was generated from the exact representation the\nclient read, (b) the comparison happens at the authority that owns the state,\n(c) the comparison and the write are one atomic operation, or (d) the request\nbody is a correct merge of concurrent changes. Each of those is an\nimplementation and protocol obligation around the header, not a property of the\nheader.\n\nIn the question's sequence, the server does an application-side read/compare and\nthen, in a later step, writes the full object. A commits the title change in that\nwindow. B's condition was therefore evaluated against a state that no longer\nexisted when B's bytes landed. B's full object still contains revision 12's\ntitle, so the write restores the old title and erases A's change. The precondition\nwas not \"bypassed\" in the abstract; it was evaluated at the wrong time relative\nto the write.\n\n### 2. The mechanism, step by step\n\n1. Both clients read a representation at revision 12 and receive a validator\n   that is supposed to identify that representation.\n2. A writes a new title and commits. The authoritative representation is now\n   revision 13 (or some new state); its validator should differ from revision\n   12's validator if the validator covers the title.\n3. B constructs a **full object** from its revision-12 read and changes only\n   capacity. The other fields in B's body, including title, are still revision\n   12 values.\n4. B sends If-Match with the revision-12 validator.\n5. The server reads the current state, compares the validator in application\n   code, and then writes the full object as a separate operation.\n6. If A's commit happens between the comparison and the write, B's comparison\n   saw revision 12 and B's write applies to revision 13. The write is a full\n   replacement, so it writes B's stale title as well as B's capacity.\n7. The final state has B's capacity and revision-12's title: A's title change is\n   lost.\n\nThere are two independent ways this can happen, and either is sufficient:\n\n- **Temporal/atomicity failure.** The compare and the write are not one\n  indivisible operation at the authoritative owner. Another commit can interleave\n  between them. This is the classic check-then-act race. Application code is not\n  inherently wrong here; a transaction or compare-and-set expressed in\n  application code can be correct. The defect is the separate read/compare and\n  write, not the language layer.\n- **Semantic/coverage failure.** The thing called an ETag is a row revision, a\n  checksum of a subset, a value from a different store, or otherwise not a\n  validator of the representation being replaced. A title change might not\n  change it, so the check can pass even at write time. The book is explicit that\n  an ETag is a representation validator, not automatically a database row\n  revision or content checksum.\n\nThe question's scenario exhibits the first. The second is why \"we send If-Match\"\nis not a complete design statement: the validator must actually identify the\nrepresentation the client read.\n\n### 3. Why the If-Match header does not by itself prevent the lost update\n\nSeveral distinct reasons compose here.\n\n**3.1 The header constrains acceptance at an instant, not concurrency.** It is a\ncondition on the request, evaluated against whatever the server treats as the\ncurrent representation. It cannot prevent another writer from committing after\nthe evaluation and before the mutation. The protocol's protection is only as\nstrong as the server's atomic compare-and-mutate. The book's formulation is\ndirect: If-Match uses strong comparison; a failed condition normally produces\n412; and \"its evaluation must not be an application-side read followed by an\nunguarded write.\"\n\n**3.2 It does not know the diff.** If-Match compares a validator for a\nrepresentation. It does not know that B intends to change only capacity. When B\nsends a full object, the method writes every field. The header can say \"the\nrepresentation you read was current at check time\" but it cannot say \"only the\nfields I intended to change will change.\" A conditional full replacement is\nstill a full replacement.\n\n**3.3 It is not a history or an outcome record.** A validator identifies a\nstate; it does not identify how that state was reached or what a previous\nattempt did. After B's first write, the newest validator describes the state\nthat already lacks A's title. A check against that validator can pass against the\ndamaged state. Nothing in the validator says \"A's title was lost.\" This is why a\nfresh validator is not an outcome-resolution mechanism.\n\n**3.4 It does not resolve the lost response.** If B's first write committed and\nthe response was lost, B does not know that. A 412 or 2xx on a retry does not by\nitself prove whether the first attempt committed, whether a third party changed\nthe state, or what the durable outcome was. The book says a precondition failure\non retry alone does not prove which attempt succeeded.\n\n**3.5 It is not self-enforcing.** HTTP describes the conditional-request\nsemantics; a server that ignores If-Match, compares the wrong value, or checks\nthen writes is not protected by the mere presence of the header. The book's\nrequirement is architectural: return the representation and validator, submit\nthe update with that validator, and atomically compare and mutate at the\nauthoritative owner.\n\n### 4. What the validator must be bound to\n\nThe validator (the ETag or equivalent) must be bound to the **exact selected\nrepresentation that the client read**, at the resource and authority that owns\nthat representation.\n\nConcretely:\n\n1. **Bound to the representation, not to an unrelated counter.** It must be\n   generated from the representation the client received and must change when\n   any part of that representation changes. If the title is part of the\n   representation, a title change must change the validator. A row revision or a\n   content checksum can be used only if it actually has that property; the book\n   warns that an ETag is not automatically either.\n2. **Bound to the whole write scope.** If the write is a full replacement, the\n   validator must identify the whole representation that the replacement\n   overwrites. If the representation spans multiple stores, a precondition that\n   protects only one store does not protect the others.\n3. **Strong enough for If-Match.** If-Match uses strong comparison, so the\n   validator must be a strong validator of that representation; a weak validator\n   is not a valid basis for an If-Match precondition. This is an inference from\n   the strong-comparison requirement, but it follows directly.\n4. **Opaque but representation-derived.** It is not a portable checksum and not\n   a content hash that can be recomputed independently of the server's\n   representation semantics. The book's object-storage example warns against\n   treating an opaque validator as a portable checksum.\n5. **Returned with the representation and used unchanged.** The client must\n   store the validator together with the exact representation it read. A\n   validator fetched later, or fetched from a different resource, is not the\n   validator of the body being written.\n6. **Scoped to the same resource and authority.** A validator from a cache, a\n   read replica, or a different store is not evidence about the authoritative\n   state. If the application reads by a mutable name, another writer can change\n   the bytes between verification and later use.\n\nA useful test: ask \"if any field in the body changes, does this validator\nchange?\" and \"is this validator returned with the representation the client\nactually based its edit on?\" If either answer is no, If-Match is not protecting\nthe intended state.\n\n### 5. What the check must be bound to\n\nThe check must be bound to the **same atomic durable operation as the mutation,\nat the authoritative owner**, and it must cover the same state and the same\nwrite scope.\n\nConcretely:\n\n1. **One atomic operation.** The comparison and the write must be a single\n   transaction, compare-and-set/version condition, state-machine conditional\n   write, or equivalent at the authority. The book's state-authority contract\n   names the validation boundary as the place \"where consistency, authorization\n   and required preconditions are checked atomically,\" and names concurrency\n   control as a transaction, compare-and-set/version, serialized owner, or a\n   proven multi-writer model.\n2. **The same state the validator identified.** The comparison must be against\n   the current committed representation inside that operation, not against a\n   snapshot read earlier in the request. A read, a compare in application code,\n   and a later write are three operations, even if they share a process.\n3. **The same write scope.** The condition must cover every field, row, object\n   or store that the method can modify. A conditional object-store write\n   protects the scoped object operation; it does not commit a separate database\n   row. If the representation is assembled across stores, either use a single\n   authority that owns a version covering the whole representation, or design a\n   spanning protocol; a check in one store is not enough.\n4. **The same resource, tenant and authorization scope.** The check must be\n   against the resource being written, under the same command ownership and\n   permission boundary. A passing check for one resource or principal does not\n   authorize another.\n5. **An operation identity for retries.** The check alone cannot resolve a lost\n   response. The write path needs a stable logical operation identity and a\n   durable outcome record, or a safe state-resolution protocol, so a repeat is\n   recognized as the same intent rather than applied as a new write.\n\nFor a relational example, the check belongs inside the write statement or\ntransaction, for example an update restricted by the expected version with an\naffected-row check, not a separate select-then-update in application code. The\nbook does not prescribe a specific SQL form; the requirement is the atomic\nboundary, and the state-authority contract names compare-and-set/version as one\nvalid mechanism.\n\n### 6. Why retrying with a fresh validator is unsafe\n\nA fresh validator is a point-in-time statement about the **current state**. It\nis not a statement that the client's body was derived from that state, and it is\nnot a statement about what the first attempt did. That mismatch produces several\nfailure modes.\n\n**6.1 It re-tags a stale body as current.** The original precondition meant \"the\nstate I read still matches.\" Fetching the newest validator and resubmitting the\nold or locally merged full object changes the meaning to \"whatever is current\nnow may be overwritten.\" The check can pass while the body still contains fields\nthe client never observed at their current values. The retry has not merged; it\nhas laundered a conflict into a successful overwrite.\n\n**6.2 The fresh validator may describe an already-damaged state.** If B's first\nwrite committed, the title is already gone. The newest validator is computed\nover the state without A's title. Retrying with that validator can pass against\nthe very state that lost the update. The validator cannot reveal the loss,\nbecause it identifies a state, not a history. A receipt of what was stored is\nnot the same as a record of which earlier edits were overwritten; the book\nseparates a receipt from the observed frontier.\n\n**6.3 The lost response makes the first outcome unknown.** The first write may\nhave committed. A retry with a fresh validator is a second write, not a replay.\nWithout a stable operation identity and durable outcome, the client cannot tell\nwhether the effect occurred once or twice. For an absolute field assignment\nthis may look idempotent, but the general pattern is not: increments, appends,\nallocations and notifications can duplicate. The book's rule is to bind retries\nto a stable logical intent and an authoritative recorded outcome, and to resolve\na lost response from durable operation identity rather than retrying as a fresh\nwrite. A precondition result on retry does not prove which attempt succeeded.\n\n**6.4 A fresh validator does not make the read-modify-write atomic.** If the\nclient obtains the newest validator in one request, merges locally, and writes\nin another, the same check-then-write window remains. The validator is newer,\nbut the comparison still happens before the write and another commit can\ninterleave. The retry can loop: read, merge, write, conflict, read again. Under\ncontention this can starve or amplify load. The book warns not to blindly retry\na stale replacement with the latest validator.\n\n**6.5 It can hide the conflict that should be surfaced.** A 412 is evidence that\nthe client's base is stale. Re-tagging and resubmitting suppresses that signal.\nFor independent descriptive fields a merge may be legitimate, but for a finite\nresource or a coupled invariant, the correct result may be a visible conflict or\nan authoritative transaction, not an automatic overwrite. The book says on a\nmismatch to reread and decide whether to merge or abandon, and it separates\nmergeable descriptive state from authoritative transitions such as permissions\nand finite-resource assignment.\n\nThe narrow case where a fresh validator can be safe is not \"retry with the newest\nETag\" as a generic rule. It requires all of: the body is derived from the exact\nrepresentation whose validator is sent; the merge preserves every concurrent\nchange; the comparison and write are one atomic operation at the owner; and the\noperation has a stable identity or the prior outcome is known, so the retry is\nnot a duplicate effect. Without those conditions, a fresh validator is unsafe.\n\n### 7. What to do instead\n\n- **On 412:** reread the representation, decide whether the changes can be\n  merged under the product's semantics, and if so submit the intended change\n  against the state actually read with that state's validator and an atomic\n  compare-and-mutate. If not, surface a conflict or abandon. Do not re-tag the\n  old body.\n- **On a lost response:** resolve by stable operation identity and durable\n  outcome lookup; make the operation application-idempotent with a stable\n  intent and a recorded result; only then retry. A generic HTTP status or a\n  validator equality test is not an outcome record.\n- **On the server:** evaluate the precondition inside the same transaction or\n  conditional write that performs the mutation, at the authoritative owner;\n  return the new representation and validator; reject stale writes with 412;\n  ensure the validator covers the full representation and the write scope.\n- **On the data model:** do not use whole-object last-writer-wins for independent\n  fields if both edits matter. A title is descriptive state that can retain\n  concurrent alternatives or be merged with explicit semantics. Capacity may be\n  a finite-resource policy: if it constrains registrations, a per-object version\n  check on the workshop row is not enough; the capacity invariant needs an\n  authoritative transaction or constraint. Taking a union of two locally valid\n  approvals can still violate the limit.\n\n### 8. Boundaries and unknowns\n\n- The book's workshop example is explicitly fictional and its cases are\n  proposed, not executed. No server, database, client or network was\n  implemented or tested here. No production observation, benchmark or\n  independent conformance test is claimed.\n- The scenario does not say how the server generates the ETag, whether the\n  title is covered, or what isolation the store provides. If the ETag covered\n  the whole representation and the compare-and-write were atomic, B's first\n  request should have received 412 after A committed. The observed loss is\n  therefore evidence of a temporal race, a coverage gap, or both; the answer\n  states the requirements rather than asserting which one occurred.\n- The book summarizes RFC 9110's validator and conditional-request semantics\n  (sections 8.8 and 13) and states that If-Match uses strong comparison. It does\n  not provide a runtime conformance test, and it does not establish that any\n  particular framework, proxy or database implements the requirement correctly.\n- The exact merge semantics for title and capacity are a product decision. The\n  book says to choose the product meaning first and to separate mergeable\n  descriptive state from authoritative transitions; it does not prescribe a\n  universal merge algorithm.\n- A fresh validator is not universally wrong. It is unsafe as a blind retry\n  because it does not resolve the unknown first outcome and does not make the\n  body current. The safe conditions are narrow, as stated in section 6.\n- If the representation spans multiple authorities, the book gives scoped\n  mechanisms (object-store conditional writes, metadata transactions) but does\n  not claim a cross-store atomic transaction. A design must state which\n  authority owns the version and how the other stores are protected.\n\n### 8.1 Behavioral compatibility and acceptance evidence\n\nThe book treats version compatibility as behavioral and asymmetric: a versioned\nschema is necessary but not sufficient, and wire-parse compatibility must be\ndistinguished from semantic compatibility and operational coexistence. The same\nis true of a conditional-write contract: parsing an If-Match header or passing a\nschema checker does not prove that the server compares the right representation\natomically with the write. The acceptance section lists acknowledgment loss\nafter effect commit, duplicates with identical and conflicting keys, restart\nacross the deduplication boundary, and retry-storm/overload bounds as required\ncases. The question's lost-response retry belongs to that class. A passing\nOpenAPI checker or isolated happy-path test cannot establish the guarantee; where\nthe case is untested, the unresolved guarantee must be stated. No such test was\nexecuted for this answer.\n\n## Evidence map\n\n| Claim | Main evidence |\n|---|---|\n| C1 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives |\n| C2 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns |\n| C3 | tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking; tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example; tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts |\n| C4 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication |\n| C5 | tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication; tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns |\n| C6 | tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes |\n| C7 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives; tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result |\n| C8 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post; tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication; tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery |\n| C9 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.8743d09eab614132692f934fb22c5649#normal-operation-and-a-worked-conflict |\n| C10 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns |\n| C11 | tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions; tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result; tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example |\n| C12 | tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts; tycho.page.8743d09eab614132692f934fb22c5649#normal-operation-and-a-worked-conflict; tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication |\n| C13 | tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric; tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence |\n\n## Unknowns\n\n1. Whether B's first write actually committed before the response was lost; the\n   scenario leaves this ambiguous by construction.\n2. Whether the server's \"revision-12 ETag\" covered the title and capacity as one\n   representation, or was a row revision/checksum that could diverge.\n3. Whether the server used a single authoritative transaction and simply failed\n   to include the comparison in it, or compared in a cache/replica.\n4. The exact merge algorithm the client used for the retry, and whether it\n   preserved every concurrent field.\n5. What the product intends for capacity: a descriptive attribute or a finite\n   allocation limit. The answer treats both cases and states the stronger\n   requirement for the limit.\n6. No runtime behavior, implementation conformance or production observation is\n   established by the book sections cited.\n7. No mixed-version, lost-acknowledgment or retry-storm test was executed; the\n   book's acceptance list is a requirement, not an observed result.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The lost update is a stale full-object replacement: B's body carries revision 12's title, and a full replacement writes every field, so when B's write lands after A's title change it restores the old title and erases A's committed edit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "Clients A and B read fictional workshop revision 12. A changes the title; B changes the capacity using an old full-object representation. An unconditional replacement by B can erase A's title change.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives",
+          "quote": "A single last-writer timestamp for an entire document is simple but can discard independent edits and gives clock order undue authority over intent.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "If-Match is a request precondition, not a concurrency-control mechanism: it only asks the server to apply the method if the supplied validator matches the current representation, and it does not by itself make the comparison and the write one atomic operation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "If-Match uses strong comparison. A failed condition normally produces 412; its evaluation must not be an application-side read followed by an unguarded write.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "where consistency, authorization and required preconditions are checked atomically.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "An application-side read/compare followed by a separate write is a check-then-act race: another writer can commit between the check and the write, so the precondition can be true when evaluated and false when the stale full object is written.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+          "quote": "Two simultaneous first attempts cannot both pass a naive read-then-insert check unless the state authority makes their identity decision atomic.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example",
+          "quote": "two concurrent transactions may see the same apparent capacity. A correct schema/transaction protocol must enforce the seat invariant, potentially rejecting/retrying a transaction.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "make the check atomic with mutation at the authoritative owner.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The validator must be a strong representation validator bound to the exact representation the client read, returned with that representation and used unchanged; it is not automatically a row revision, a content checksum or a portable checksum.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "An ETag is a representation validator, not automatically a database row revision or content checksum.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "Require a precondition tied to the state B actually read",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "rather than treating an opaque validator as a portable checksum.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "If the application reads by a mutable name, another writer can change the bytes between verification and later use.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A validator or check is only as wide as its scope: a conditional write protecting one object or store does not commit or protect a separate database row or another part of the representation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "S3 conditional writes support create-if-absent and ETag-based preconditions for particular write APIs. They protect the scoped object operation; they do not commit a separate database row.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "exactly which operation may create, mutate, cancel or delete authoritative state.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The check must be bound to one durable authoritative operation - a transaction, compare-and-set/version condition or state-machine conditional write - rather than to a separate application read or a different authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "transaction, compare-and-set/version, serialized owner or a proven multi-writer coordination model.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "A durable database uniqueness constraint or state-machine conditional write can enforce one logical-effect record when scoped to the correct business domain.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+          "quote": "It also requires the data store, not application logic, to arbitrate a\nconcurrent claim",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A fresh validator does not make a stale or merged body current: it attests the current state at check time, not that the body was derived from that state, so the retry can overwrite changes the client never read.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "Do not blindly retry a stale replacement with the latest validator.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives",
+          "quote": "A single last-writer timestamp for an entire document is simple but can discard independent edits and gives clock order undue authority over intent.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+          "quote": "A last-writer register chooses one according to a deterministic total order; clock order is not evidence of user intent.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "When the response is lost, the prior attempt may already have committed; retrying with a fresh validator is a new write, not a replay, and without operation identity or a durable outcome the client cannot tell whether the first attempt committed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "For a lost response after a successful mutation, use operation identity or a safe state-resolution protocol; a precondition failure on retry alone does not prove which attempt succeeded.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "quote": "Response lost after S2 commit | Resolve from durable operation identity | Blindly retry as a fresh write",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "A generic HTTP status alone may not tell the client whether its requested business change committed.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery",
+          "quote": "A retry with the same identifier cannot become a second application-level action.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A precondition result is not a history: a fresh validator can match a state that already lost a concurrent edit, and a failed condition cannot itself tell the client which attempt committed or what was overwritten.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "a precondition failure on retry alone does not prove which attempt succeeded.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8743d09eab614132692f934fb22c5649#normal-operation-and-a-worked-conflict",
+          "quote": "A receipt says which edits were stored; a separate frontier describes the state the client has observed.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The safe response to a mismatch is to reread and decide whether to merge or abandon, then resubmit against the state actually read with the matching validator and an atomic compare-and-mutate; re-tagging the stale body is not a merge.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "On a mismatch, reread and decide whether to merge or abandon.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "An original protocol is: return representation and validator; submit the update with that validator; atomically compare and mutate; return the new representation/validator.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "how retries identify the same logical operation; how a lost acknowledgment is resolved.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Title and capacity have different merge semantics: descriptive text can retain concurrent alternatives, but a finite capacity limit must be enforced by an authoritative transaction or invariant, not by whole-object last-writer or a per-object validator alone.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions",
+          "quote": "Taking the union converges and still violates the capacity invariant.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+          "quote": "A useful offline document separates mergeable text or annotations from authoritative transitions such as publication, permissions and finite-resource assignment.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example",
+          "quote": "An explicit uniqueness or capacity condition can make a conflict observable.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example",
+          "quote": "A correct schema/transaction protocol must enforce the seat invariant, potentially rejecting/retrying a transaction.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "After B's first write committed, the newest validator describes the state that already lacks A's title; a fresh validator can therefore pass against the damaged state and cannot itself reveal or restore the lost edit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+          "quote": "For a lost response after a successful mutation, use operation identity or a safe state-resolution protocol; a precondition failure on retry alone does not prove which attempt succeeded.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8743d09eab614132692f934fb22c5649#normal-operation-and-a-worked-conflict",
+          "quote": "A receipt says which edits were stored; a separate frontier describes the state the client has observed.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+          "quote": "If the application reads by a mutable name, another writer can change the bytes between verification and later use.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A versioned schema and a passing interface checker do not prove that the conditional-write and lost-response retry behavior is safe: compatibility is behavioral and asymmetric, and the acceptance evidence must exercise acknowledgment loss after commit, duplicate or conflicting keys and retry bounds, stating any untested guarantee as unresolved.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+          "quote": "A versioned schema is necessary for safe evolution, but not sufficient.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence",
+          "quote": "Acknowledgment loss after effect commit, duplicates with identical and conflicting keys, restart across the deduplication boundary.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence",
+          "quote": "Where untested, state the unresolved guarantee.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+    "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#normal-operation-failure-and-recovery",
+    "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#three-original-workload-decisions",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+    "tycho.page.55e76c3f0ab496d04873ae3a1e52bf3f#prevent-replacement-not-only-duplication",
+    "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+    "tycho.page.8743d09eab614132692f934fb22c5649#chosen-boundaries-and-rejected-alternatives",
+    "tycho.page.8743d09eab614132692f934fb22c5649#normal-operation-and-a-worked-conflict",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#3-original-synthetic-sequence-double-submit-on-equipment-booking",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
