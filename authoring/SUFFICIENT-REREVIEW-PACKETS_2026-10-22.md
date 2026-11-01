@@ -17,7 +17,7 @@
 | Rejected after review | 0 |
 | Awaiting current external review | 10 |
 
-Packet statuses: {"awaiting-current-external-review": 10, "page-changed-since-review": 95, "reviewed-by-independent-agent": 40}.
+Packet statuses: {"awaiting-current-external-review": 10, "hash-mismatch": 3, "page-changed-since-review": 92, "reviewed-by-independent-agent": 40}.
 
 ## Review procedure
 
@@ -135,7 +135,7 @@ blank verdict template in the machine-readable file.
 
 - **Client-Side Discovery**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: hash-mismatch.
 
 - **Command Query Responsibility Segregation (CQRS)**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -347,7 +347,7 @@ blank verdict template in the machine-readable file.
 
 - **Load Balancing**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: hash-mismatch.
 
 - **Load Shedding**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
@@ -499,7 +499,7 @@ blank verdict template in the machine-readable file.
 
 - **Server-Side Discovery**
   Current: pass; historical: None; re-review: pass; report: pass-with-findings.
-  Status: page-changed-since-review.
+  Status: hash-mismatch.
 
 - **Service Discovery**
   Current: reject; historical: None; re-review: pass; report: pass-with-findings.
