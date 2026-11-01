@@ -1,0 +1,173 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "a team keeps one seed base across candidates but also restarts every replication of a candidate from that same base, so all thirty replications of each candidate see identical arrivals. the run still reports a standard error and a converged status. why does sharing the stream across candidates count as a declared experimental choice while sharing it within a candidate destroys the interval, and what do the scenario and run contracts actually preserve about the scheme?",
+      "required_evidence": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields"
+      ],
+      "core_claims": [
+        "V12 uses a base seed plus a deterministic per-replication seed, and a larger replication count reduces the standard error but does not remove input uncertainty.",
+        "The standard error se = s / sqrt(n) and the 95% normal-approximation interval assume independent replications; a shared random stream makes the standard error too small, which is a named failure mode.",
+        "Reusing one stream across candidates creates common random numbers, which is sometimes desirable for a comparison but must be a declared choice; V12 uses the same seed scheme for all candidates while sampling independently per replication.",
+        "Reusing one stream within a candidate makes the replications copies of one draw, so the sample variance, standard error and relative error collapse and the run can report a converged status from copied samples rather than independent evidence.",
+        "The run contract's provenance fields list a seed base and replication count, so the independence claim is carried by the scenario's seed declaration and cannot be audited from the convergence status alone."
+      ],
+      "optional_claims": [
+        "Because a larger n only narrows the interval, thirty copies of one draw are thirty runs but one sample; the honest fix is a declared scheme that keeps candidate-level common draws and gives each replication its own seed.",
+        "The scenario contract already treats seed reuse across candidates as a choice that must be declared, so an undeclared reuse is a scenario defect even when the run is numerically stable."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a reviewer calls the staged cutover versus no-cutover comparison an a/b test and asks for a significance test on the difference in modeled divergence. the two runs share a workload and model, and the baseline keeps the target share at zero. why is that framing wrong, why does the baseline's zero divergence carry no treatment effect, and what does the comparison actually establish?",
+      "required_evidence": [
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+      ],
+      "core_claims": [
+        "Both paths use the same workload and model: the staged path shifts target share to 0.2, 0.5 and 1.0 at 0, 300 and 600 seconds and triggers a rollback at 1,200 seconds, while the baseline keeps target share at zero and never triggers a rollback.",
+        "The comparison is not an A/B test of two production systems; it is a synthetic check of how the declared inputs move the modeled divergence and rollback time.",
+        "The baseline's zero divergence and zero backlog follow structurally from zero target traffic, so the contrast between the paths is not an estimated treatment effect and a significance test on that difference has nothing to sample.",
+        "The experiment establishes only that the target path can serve the synthetic traffic, that the backlog grows when lag times throughput exceeds reconciliation capacity, that rollback completes in 10% of replications inside the horizon, and that the divergence range crosses plausible business thresholds.",
+        "It does not establish correctness, record reconciliation, operational rollback or the real divergence, and the decision stays insufficient evidence because the inputs are assumed over wide ranges.",
+        "The correct next step is measurement of lag, reconciliation throughput, rollback duration and divergence followed by a rerun; the comparison sets a measurement agenda rather than ranking two observed systems."
+      ],
+      "optional_claims": [
+        "Both paths report success 1.0 and 10 requests per second, so the staged path adds divergence risk and a rollback requirement but no modeled throughput; the model does not contain the business reason for modernizing.",
+        "The baseline uses 10 replications against the staged path's 20, which sharpens the staged interval but cannot create a contrast; a narrower interval is not a treatment effect."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "candidate b's retry budget lifts modeled success to 0.9996 with retry amplification 1.004, so a reviewer concludes that the publish path's retries are safe and removes the idempotency requirement from the migration plan. why can the queue model's success and amplification metrics say nothing about duplicate effects, and what must the decision record carry instead?",
+      "required_evidence": [
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure"
+      ],
+      "core_claims": [
+        "Retry amplification is total attempts divided by offered requests: A reports 1.000, B 1.004 and C 1.079, and B's three attempts with exponential backoff and full jitter absorb transient service-time variation without materially increasing load.",
+        "The modeled resource is a fixed server count, a FIFO queue with capacity, a bulkhead, a per-attempt timeout and a bounded retry budget; it has no representation of an external effect or of effect identity.",
+        "A timed-out attempt may already have committed an effect, so a retry duplicates it; the queue model does not represent business idempotency, and this failure mode together with a timeout larger than the caller deadline sits outside the queue model's boundary and must be recorded as a limitation rather than fixed by a simulation parameter.",
+        "A validity limit is a condition on the result's use, not a disclaimer: if the decision needs the omitted mechanism, the model is outside its domain and no production claim follows without measurement.",
+        "Success rate and an amplification near one are load and completion metrics, not evidence that an effect happened once, so they cannot discharge an idempotency requirement in a migration plan.",
+        "The decision record's required structure includes limitations alongside the recommendation and non-quantitative constraints, so the duplicate-effect risk must appear as a limitation rather than be inferred from the success rate."
+      ],
+      "optional_claims": [
+        "A per-attempt timeout larger than the caller's deadline leaves the server working after the caller has given up, so a completion the model counts can land after the business request was already reported as failed.",
+        "Candidate C shows the opposite error: 1.079 amplification without a useful retry budget adds load and still leaves an 11.1% timeout rate, so neither amplification nor success alone establishes effect safety."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "to keep a verification suite green, a team sets each reference case's expected value from the current run output and adds a 95% coverage check over 20 synthetic samples that passes at 19 of 20. why is neither a reference case, and what must a case record before it counts as verification evidence?",
+      "required_evidence": [
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#a-reference-case-record",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-5-known-answer-checks-not-yet-implemented",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix"
+      ],
+      "core_claims": [
+        "A reference case should have an analytic known answer, a clear tolerance and a failure mode the test can detect; V12's current cases cover conservation, boundary cases, deterministic replay and a sensitivity sanity check, and they do not validate a real model.",
+        "Each verification case record carries an identifier, description, expected result, observed result, pass, fail or not-run status and a test path; a case without a test path is not a verification case and a pass without an observed result is a claim, not evidence.",
+        "An expected value copied from the current output makes the test unable to fail, and a coverage check with too few samples cannot detect a real coverage error.",
+        "V12 does not claim the stronger known-answer checks, such as estimating pi from uniform samples, an exponential mean with known variance, an M/M/1 mean wait or empirical interval coverage over many samples; they are recorded as future verification work.",
+        "A 95% interval covers the true mean in repeated sampling under the model's assumptions, but it does not cover the production value when the model is biased or the inputs are mis-specified.",
+        "A green suite built on a moving oracle and an underpowered coverage check reports verification theater; the repair is an external known answer with a declared tolerance plus a check with enough samples to detect the error it claims to detect."
+      ],
+      "optional_claims": [
+        "The test matrix names tests in tests/test_tycho_v12_engine.py, and a renamed test must update the contract's verification case path, so a stale path breaks the case record even while the suite is green.",
+        "The current reference cases exercise accounting, event order and sensitivity sanity, not the statistical calibration of the sampler."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a reviewer reads the checklist line that a hard constraint the model cannot evaluate requires no recommendation and asks why the checkout record is still decision-supported while operability stays unverified. why is that classification not a contradiction, and what must the record state for the conditional outcome to be complete?",
+      "required_evidence": [
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+      ],
+      "core_claims": [
+        "The checklist returns insufficient evidence when a hard constraint cannot be evaluated by the model, and separately allows a conditional decision when the missing evidence is explicitly non-quantitative and the record can state the condition.",
+        "A hard constraint is a condition a candidate must satisfy, a soft constraint is a preference that can be traded, and a non-quantitative constraint is a condition the model cannot measure, such as operability by the existing team or a regulatory approval.",
+        "The checkout record declares C1, C2, C4 and C5 hard, treats C3 operability as non-quantitative and unverified, eliminates C on cost 3.63 above 3.0 and p95 1.769 above 1.5, and recommends B over A on success and cost while A's lower p95 is a tradeoff rather than a failure.",
+        "Because the quantitative constraints are satisfied and the missing item is non-quantitative with a stated condition, decision-supported is consistent; the insufficient-evidence rule would apply only if C3 had been declared hard and left unevaluated.",
+        "The required structure carries the outcome's non-quantitative constraints, rationale, limitations and reversal triggers, so the conditional outcome is complete only when the operational review is named as the condition and the record states what would reverse the recommendation.",
+        "Insufficient evidence is about the world rather than the code, and a conditional recommendation does not upgrade the model's verification or calibration."
+      ],
+      "optional_claims": [
+        "C is eliminated by two independent hard constraints, so its higher modeled success cannot rescue it; hard constraints are pass-or-eliminate conditions, not weights in a ranking.",
+        "The status may be proposed, decision-supported, insufficient-evidence or rejected, and recommendation none is a complete outcome; the conditional case is a decision-supported record whose missing item is stated rather than hidden."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team re-expresses a long run in microsecond timestamps so that sub-millisecond deadlines are representable, keeping the engine's 12-decimal rounding, float equality and declared priority order. why does simultaneity become a representational choice rather than a modeled fact, and what must the model contract and verification cases declare before such a run is cited?",
+      "required_evidence": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here"
+      ],
+      "core_claims": [
+        "Two events at the same timestamp can produce different results, since a completion and a timeout at t=1.0 yield success or failure depending on which is processed first, so the order must be a declared total order of time, then priority, then insertion sequence.",
+        "The three priorities, 0 for completion and timeout, 1 for arrival and 2 for retry, are a modeling choice rather than a universal rule; the property that matters is that the order is declared and tested.",
+        "The engine rounds scheduled times to 12 decimal places and compares event times as floats; the page calls that sufficient for the synthetic scenarios and says a model with very small time units would need a declared tolerance, while float equality without a tolerance is a named failure mode.",
+        "The time unit and resolution are part of the model contract's abstraction, so changing the time unit is a model change, and a model change requires verification and validation again.",
+        "At a finer resolution, which events are simultaneous depends on the numeric representation and the rounding guard rather than on a declared tolerance, so tie-break and timeout outcomes stop being a property of the model.",
+        "Before the run is cited, the contract must declare the new time unit and an explicit comparison tolerance, and the verification cases must exercise ties and timeouts at that resolution."
+      ],
+      "optional_claims": [
+        "The priority order is unchanged by a new time unit, but the set of events sharing a timestamp can change, so the same priority rule can select a different winner.",
+        "A replay on the same platform can still be resolution-sensitive, because replay checks determinism at the stored inputs, not the adequacy of the tolerance."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a team needs two priority classes, so it folds them into one fifo queue with an averaged service time because the scenario contract has no priority field. the run converges and the report cites its p95 as evidence for a priority-sensitive design. why is a converged result from an unmodeled scheduling rule outside the model's validity domain, and what must be restated or re-verified before the number is cited?",
+      "required_evidence": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ],
+      "core_claims": [
+        "V12's resource is a fixed server count, a FIFO queue with capacity, a bulkhead, a per-attempt timeout and a bounded retry budget; priority and preemption are not implemented, and a model that needs them requires a new contract and new tests, not an undocumented flag.",
+        "A reviewable scope statement declares the observable, the resolution, including one request class and no priorities, and the validity ranges under which the result holds; validity is purpose- and domain-dependent.",
+        "Reusing a model for another workload without restating the domain is validity drift: the run can execute and converge while the question has moved outside the model's resolution.",
+        "A validity limit is a condition on use, so a decision that depends on the omitted mechanism is outside the model's domain; the limit is complete as a declaration but not a licence to cite the number.",
+        "Convergence means the sampling error of the reported metric is small under the declared model; it does not mean the model is valid, the inputs are measured or the decision is correct, and more replications cannot fix a biased model.",
+        "The FIFO approximation cannot let a high-priority request overtake an earlier arrival, so its p95 is a FIFO p95; the record must state the approximation and the new contract, tests and measured inputs a priority-sensitive decision would need."
+      ],
+      "optional_claims": [
+        "The example scope statement already declares one request class and no priorities, so the reuse silently changes a declared resolution field rather than adding a parameter.",
+        "Because a model change requires verification and validation again, a passing replay of the reused scenario says nothing about the priority behavior."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

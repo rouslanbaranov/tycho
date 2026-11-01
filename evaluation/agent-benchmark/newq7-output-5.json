@@ -1,0 +1,149 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "a payments integration routes every message that fails processing to one shared dead-letter queue: a malformed payload, a permanently rejected authorization and a transient database timeout all land there, an operator replays the whole queue weekly under fresh message ids, and nobody owns the queue or its retention. why is quarantine not evidence that the work will be delivered or repaired, what must the queue and its replay procedure declare before a failure counts as terminal, and when is a repair table, outbox or recorded drop the better choice?",
+      "required_evidence": [
+        "tycho.page.a91747aee5c745d2a503de341ea1b7f6#overview",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+        "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview"
+      ],
+      "core_claims": [
+        "A dead-letter channel is a quarantine that receives messages the system cannot or should not deliver once their retry or age policy is exhausted, and the owner note states that it is a holding and triage mechanism, not delivery, repair or an automatically safe replay.",
+        "Retrying cannot repair an invalid schema or a permanently rejected target, so transient, permanent and unknown outcomes must be classified, attempts and total age capped, and diagnostic evidence kept in quarantine without leaking payloads.",
+        "The quarantine needs an owner, an alert threshold, a retention horizon, a capacity limit, an access policy and a cleanup owner; Azure Service Bus adds that there is no automatic cleanup, while SQS bounds entry with maxReceiveCount and advises DLQ retention longer than the source queue's.",
+        "A replay must preserve the original effect identity, re-check authorization and verify whether the effect was already committed before republishing, because replaying under a new id to bypass deduplication risks a duplicate external effect.",
+        "Deduplication depends on a stable identity recorded atomically with the effect and retained across the redelivery window; a crash after a separate external effect but before its marker can duplicate the effect, while a marker written before the effect leaves an in-progress record that needs reconciliation.",
+        "Bounded retry with an audit record, a drop with recorded disposition, a repair table, database persistence or an outbox are alternatives when the failure is deterministic or the broker cannot retain evidence, and the DLQ choice reverses when replay becomes frequent and needs automated policy or when quarantine cost exceeds the value of preserving the message."
+      ],
+      "optional_claims": [
+        "Azure Service Bus adds dead-letter reason and dead-letter description properties to dead-lettered messages, and SQS maxReceiveCount counts receives from the source queue before the move.",
+        "Monitoring should catch DLQ growth and silent abandonment; without capacity, retention and cleanup ownership a quarantine accumulates unread payloads while the pipeline reports success.",
+        "The card's fit conditions require observable failure, an owner and replay policy, bounded retention and access, and defined alerting, while its hard contraindications reject a DLQ when immediate retry is safe or when dead-lettering would hide a programming error."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team introduces an interface between callers and two pricing implementations, ships both in one deployable and switches by configuration. one module still constructs the old implementation directly, the new implementation rounds totals differently, the switch defaults to the new path during rollout, no one owns removing the old path, and the comparison of the two runs only in staging. why is coexisting code not yet branch by abstraction, what must the seam, the switch and the removal contract preserve, and when do version-control branching, a strangler facade or a parallel run fit better?",
+      "required_evidence": [
+        "tycho.page.3950620546fc4c09a829132bd19bb69a#overview",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+        "tycho.page.277dbc6a75e842ee9105dcc953ceb283#overview"
+      ],
+      "core_claims": [
+        "Branch by abstraction inserts an internal interface between callers and the old and new implementations so both can run in one deployable while traffic moves gradually, and the switch is a runtime or configuration decision rather than a long-lived source branch.",
+        "The mechanism table fits it when an internal interface can route old and new implementations with one deployable, and treats it as failing when components cannot be separated without untested side effects.",
+        "Old and new implementations behind the interface must preserve the same contract and observable effects, the switch must remain reversible until the old path is removed, and untested side effects, a bypass around the abstraction or divergent implementations break that contract; contract tests and a bounded switch detect it.",
+        "The system must build and run correctly at all times while the replacement proceeds, each increment must stay reversible and backward compatible, and an easily flipped switch such as a feature toggle lets the team return to the old functionality if problems appear.",
+        "A verification step that calls both new and old functionality can implement a fallback as a Tycho technique, but the seam still needs a removal owner and date, and the seam is removed once the old path is gone.",
+        "Version-control branching is the source's explicit alternative, while a strangler facade fits an external boundary and a parallel run another one; interception may be impossible, the facade can become a single point of failure or bottleneck, and a per-service rollback plan is required to revert to the old way quickly and safely."
+      ],
+      "optional_claims": [
+        "The card's fit conditions require a seam that can be introduced without breaking callers, a reversible switch, and a removal owner and date, with both implementations preserving the same contract as a Tycho review condition.",
+        "The card's hard contraindications reject branch by abstraction when no internal seam exists, when the abstraction adds no substitution value, or when the old implementation cannot coexist.",
+        "The card records coverage as partial-bounded and self-checked with no promotion, and its owner section is bounded to internal-interface replacement rather than external routing."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team puts a validation gatekeeper in front of its billing api: it checks payload schemas, terminates the login flow and consults a role cache refreshed every 30 minutes, and the billing service now trusts a forwarded user-role header instead of checking invoice ownership. two finance batch jobs reach billing through a second ingress, a legacy debug route calls billing directly, and the gatekeeper runs in one zone. why does that arrangement not establish that a caller may act on a specific invoice, what must the gatekeeper and the billing service each own before the gatekeeper counts as a trust boundary, and when is backend-side validation or an api gateway with a narrow policy the better choice?",
+      "required_evidence": [
+        "tycho.page.e709abf2484148c4a0d0fe76321a09b6#overview",
+        "tycho.page.31cda61d174248eaa326559d256ce352#bounded-pattern-ownership-notes",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.12f7ef77f1f7271ddf7a1571a72be9a6#overview"
+      ],
+      "core_claims": [
+        "A gatekeeper is a dedicated request-validation boundary that validates and sanitizes requests before forwarding them and can centralize authentication initiation and authorization checks, but the protected service must reject calls that bypass it or repeat the security-relevant checks.",
+        "The boundary is a trust boundary only when it exposes a limited operation and credential surface and the bypass surface is closed; a gatekeeper that initiates authentication without resource authorization shifts the decision rather than owning it.",
+        "Redundancy and autoscaling address the gatekeeper's own availability; they do not repair a stale policy or an undeclared direct path, so acceptance evidence must combine network policy, denial logs and a bypass test.",
+        "Tenant isolation has four non-equivalent layers: authentication verifies subject, issuer and audience; object authorization checks subject, action, object and tenant at every sensitive authority; data placement and infrastructure isolation are separate, a tenant id in a url is untrusted input, and revocation must reach caches and asynchronous consumers.",
+        "Zero trust requires every access to be authenticated and authorized at the resource rather than trusted because it is inside a network, with deny-by-default, tests of indirect and legacy paths, and a bounded audited break-glass path during an identity-provider outage.",
+        "Backend-side validation and authorization, or an api gateway with a narrow policy, are the alternatives when gatekeeper complexity and blast radius exceed the reduced attack surface, and validation logic that needs backend domain state is a contraindication."
+      ],
+      "optional_claims": [
+        "The owner note quotes the admitted guidance that a gatekeeper can be a single point of failure and recommends redundant instances and autoscaling, while keeping stale-policy and bypass checks as separate Tycho acceptance conditions.",
+        "The card's hard contraindications are a gatekeeper that becomes the only authorization check, forwards unchecked identity or tenant headers, blocks all access during an outage, or needs domain state that only the backend holds.",
+        "Gatekeeper availability, policy freshness and bypass routes are costs, and the owner note records no gatekeeper deployment or failure test."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team keeps one physical database for orders, billing and shipping: each service has its own schema prefix but reads the other schemas' tables for joins, checkout writes billing rows directly, and a reporting job joins all three. a plan to split the schemas into separate databases is blocked because checkout needs one transaction across orders and billing, and the proposed saga has no compensating action or owner. why is a schema prefix not a service boundary, what must be declared before each service owns its data, and when is a shared database with enforced module ownership the better choice?",
+      "required_evidence": [
+        "tycho.page.a6cac42ca5b94af1acdfebbda52de94a#overview",
+        "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#bounded-pattern-ownership-notes",
+        "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work"
+      ],
+      "core_claims": [
+        "Database per service is an ownership rule: each service owns its schema and storage and other services reach that data only through the owner's contract or published events, even when several schemas share one physical server; only the owning service writes its records and no critical-path query joins another service's tables without an explicit contract.",
+        "Shared-table shortcuts and distributed joins reappear as hidden coupling, so the boundary must be detected through schema ownership review and cross-service access inspection rather than assumed from separate schema names.",
+        "The pattern's resulting context states that business transactions spanning services are not straightforward and that joining data across databases is challenging, and it routes those gaps to saga, api composition and cqrs rather than to a shared table.",
+        "Cross-service effects use an outbox or idempotent reconciliation because a command must update the database and send messages atomically, a message sent after commit can be lost on a crash, the relay may publish more than once so the consumer must be idempotent, and a saga adds compensating transactions; coordination cost is reduced, not removed.",
+        "A shared database whose module ownership is enforced by schema grants, code review and dependency checks is simpler when one team releases the modules together, because schema coordination stays inside one release; the shared-database page lists simpler operation and familiar acid transactions but warns of development-time and runtime coupling.",
+        "The boundary needs expected logical outcomes as acceptance evidence, including concurrent bookings for the same unit, a simultaneous maintenance restriction, a lost command response and an old client replay, rather than the presence of api calls."
+      ],
+      "optional_claims": [
+        "The card rejects database per service when strong cross-service transactions are unavoidable, reporting needs one shared schema, one team with a shared release cadence would be cheaper, or the pattern is implemented as one server with shared tables.",
+        "Replica freshness before joining and reconciliation as a repair loop are Tycho guidance, not source claims; the pattern pages mention replication only as a scaling fact.",
+        "The shared-database and database-per-service pages disagree about cross-service access, and the owner note keeps both readings while rejecting the shared-database page's free access."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team patches running production hosts for an urgent library fix and records the change in a ticket, while the next deploy builds a new image from the repository and never compares it with what is running. drift remediation is manual, several hosts keep local state, and rollback means re-running the old patch script. the team says it already uses immutable infrastructure because images are built in ci. why does building images not make the fleet reproducible, what must each instance, image and rollback path record before replacement is safe, and when is configuration management on long-lived hosts the better choice?",
+      "required_evidence": [
+        "tycho.page.f1083bfaf6f74ba53bdc746c3cd78866#overview",
+        "tycho.page.4ed3324a562c4b2fadc7b94ee5665abe#overview",
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#placement-and-topology-constraints",
+        "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility"
+      ],
+      "core_claims": [
+        "Immutable infrastructure replaces instances from a versioned image or definition instead of mutating running hosts, so each instance is reproducible from a recorded artifact and drift is detected rather than tolerated.",
+        "The owner page's record rule makes a digest the concrete identity of the recorded artifact, while the sources require versioned recorded artifacts and drift detection without mandating a digest format; AWS calls unmanaged drift something to detect and remediate, and HashiCorp records which git commit built each image.",
+        "A rebuilt image that no longer matches the deployed artifact turns replacement into an uncontrolled change, so the rebuild path must be exercised and the rebuilt digest compared with the deployed digest; HashiCorp rebuilds the previous image and records its metadata and build ancestry, IBM creates a clean image for rollback, and AWS keeps the previous working version unchanged.",
+        "Infrastructure as code is a versioned desired declaration plus a change mechanism, not an availability mechanism: the source commit, reviewed plan, resulting state, external drift and a tested restore are separate, and a stored file is not proof that production matches it.",
+        "Configuration management on long-lived hosts is cheaper when state locality dominates, while immutable replacement is chosen when reproducibility, an automated replacement path and artifact rollback speed matter; an unreachable image registry or lost infrastructure-as-code state can block cold starts and safe reconstruction even while running replicas are healthy.",
+        "Immutable replacement is not a backup: data, secrets and external effects still need lifecycle ownership, toolchain and base-image provenance must be reproducible, a rollback restores an artifact rather than necessarily compatible data, and rebuild time or image size are costs rather than proofs of reproducibility."
+      ],
+      "optional_claims": [
+        "The card's fit conditions require versioned and recorded images, detected and remediated drift, externalized state, and automated replacement, rebuild and rollback, while it rejects the pattern when in-place state cannot be externalized, replacement is too slow, drift is invisible, or artifact identity and rebuild cannot be tested.",
+        "The competing alternative is mutable servers with configuration management, reversed when replacement cost exceeds the drift and recovery benefit.",
+        "The card's decision state is applicable-under-conditions, and its owner section is bounded to replacement and drift rather than a cloud product or an availability guarantee."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a team publishes an order event to one topic and attaches subscribers for email, analytics and fraud. a subscriber added after a busy morning expects the earlier orders, one subscriber restarts and loses the events published while it was down, the same event is delivered twice after an acknowledgement is lost, and the subscriber list keeps growing with tenant-specific consumers. the team treats the topic name as the business identity and calls the integration fire-and-forget. why is publish-subscribe a delivery contract rather than fire-and-forget, what must each subscription and consumer declare, and when is a queue or a durable consumer the better fit?",
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#evidence-and-known-limits"
+      ],
+      "core_claims": [
+        "Publish-subscribe is a delivery contract, not a fire-and-forget call: a publisher names a topic, each current subscriber gets its own cursor, and a subscriber absent during publication sees nothing unless its subscription is durable, so ephemeral versus durable must be recorded before any guarantee is claimed.",
+        "The atlas entry asks whether one event should reach all interested subscribers without the publisher knowing their count, and its fit conditions require independent subscriber reactions, tolerance for fan-out, explicit delivery and retention semantics, and owned duplicate handling.",
+        "Redelivery follows an effect that committed before its acknowledgement, while the opposite order loses work, so each consumer needs an effect key, a deduplication rule and an acknowledgement policy; a subscription name is not a business identity.",
+        "Fan-out cost grows with subscriber count, and an unknown or unbounded population makes load and retention unownable, so registration must be capped or the topic partitioned; ephemeral publish-subscribe is suitable only when losing a signal with no listener is acceptable.",
+        "A durable business task needs a persisted consumer or queue rather than a best-effort subscription, and the entry's competing alternative is a point-to-point queue with explicit routing for the case where one work item needs one consumer rather than an independent copy per subscriber.",
+        "The delivery choice starts from whether the work must survive an absent subscriber and whether independent readers must replay retained history, and every option still needs business-level identity and failure handling."
+      ],
+      "optional_claims": [
+        "The family landing records that owner links are bounded sections, that cards are self-checked, and that no entry claims sufficient technical or decision coverage, so the entry supports selection rather than proving delivery.",
+        "A publisher confirmation is not proof that a consumer performed a business transaction, and the broker's acknowledgement to the publisher is independent of the consumer's acknowledgement of processing.",
+        "The family entry's hard contraindications include a requirement that one consumer receive every message exactly once, an unknown and unbounded subscriber population, and a broker that cannot express retention when durable delivery is required."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    }
+  ]
+}
