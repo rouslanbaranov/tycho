@@ -61,10 +61,11 @@ The binding rule for this volume is:
 
 > V12 references existing patterns. Existing patterns do not reference V12.
 
-The rule protects the evidence layer. Existing cards and owner pages have promotion hashes,
-source ledgers and review records. Adding a V12 backlink would change a protected file and
-invalidate those records. The protection is not a matter of style; it is a requirement for
-keeping the existing sufficiency claims reproducible.
+The rule protects the evidence layer. A sufficient, promotion-bound card or owner page has a
+promotion hash, source ledger and review record; the other entries do not. Adding a V12
+backlink would change a canonical file, stale review and source records, and can invalidate a
+promotion where one exists. The protection is not a matter of style; it is a requirement for
+keeping existing evidence reproducible.
 
 V12 therefore uses:
 
@@ -92,8 +93,9 @@ The reverse index is generated from V12 records, not maintained by hand. It maps
 
     pattern_id -> [model, scenario, run, decision]
 
-A reader who starts from a pattern can find V12 artifacts that mention it. A reader who starts
-from a V12 decision can follow the owner page to the technical explanation. The index is
+A reader or tool that consults the reverse index by pattern_id can find V12 artifacts that
+mention it; pattern pages themselves do not link back. A reader who starts from a V12 decision
+can follow the owner page to the technical explanation. The index is
 regenerated when V12 records change; the existing pattern corpus is read-only.
 
 The index is not a graph of semantic relationships. It is a lookup table with provenance. A
@@ -112,8 +114,8 @@ The owner pages are in V02 and V07. The decision record references them; those p
 reference V12. The candidate mapping is a reading route, not a claim that the pattern
 caused the simulated metric.
 
-The modernization decision links parallel run, controlled cutover and strangler fig. The
-first two are existing patterns with owner pages in V10. The decision record uses them to
+The modernization decision links parallel run, controlled cutover and strangler fig. All three
+are existing patterns with owner pages in V10. The decision record uses them to
 explain coexistence and rollback; it does not edit them.
 
 ## What a link does not mean
@@ -153,9 +155,10 @@ no write-back edge to V12.
 - **Manual reverse map.** The reverse index is edited by hand and drifts from the records.
 - **Orphan link.** A pattern identifier or owner page does not exist in the registry.
 
-The V12 validator checks that every linked pattern identifier exists, every owner document
-identifier exists and every owner path exists. It does not check that the relation is
-semantically apt; that remains an editorial review.
+The V12 validator resolves each linked pattern identifier in the edition-level registry and
+checks the canonical triple: the owner document identifier and owner path must both match that
+pattern's registry entry. A link to another pattern's valid owner page fails. It does not check
+that the relation is semantically apt; that remains an editorial review.
 
 ## Evidence ledger
 

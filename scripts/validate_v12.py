@@ -81,6 +81,19 @@ def protected_check() -> dict:
             "changed": len(changed), "missing": len(missing), "leaked": len(leaked)}
 
 
+
+def canonical_link(link, patterns, index, root):
+    """Validate a V12 pattern link against the registry's canonical owner triple."""
+    pattern = patterns.get(link["pattern_id"])
+    require(pattern is not None, "decision link unknown pattern")
+    owner = pattern.get("technical_owner", {})
+    require(link["owner_document_id"] == owner.get("document_id"),
+            "decision link owner id mismatch")
+    require(link["owner_page"] == owner.get("path"), "decision link owner page mismatch")
+    require(link["owner_document_id"] in index, "decision link unknown owner id")
+    require((root / link["owner_page"]).is_file(), "decision link owner page missing")
+
+
 def validate(root: Path = ROOT) -> dict:
     root = Path(root).resolve()
     manifest = load(root / V12 / "manifest.json")
@@ -177,9 +190,7 @@ def validate(root: Path = ROOT) -> dict:
         evaluation_ids = {item["constraint_id"] for item in data["constraint_evaluation"]}
         require(constraint_ids == evaluation_ids, "decision constraint evaluation mismatch")
         for link in data["pattern_links"]:
-            require(link["pattern_id"] in patterns, "decision link unknown pattern")
-            require(link["owner_document_id"] in index, "decision link unknown owner id")
-            require((root / link["owner_page"]).is_file(), "decision link owner page missing")
+            canonical_link(link, patterns, index, root)
 
     # Derived reverse index must match the artifacts exactly.
     expected = {}

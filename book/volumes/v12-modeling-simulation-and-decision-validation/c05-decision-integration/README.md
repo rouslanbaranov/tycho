@@ -86,9 +86,10 @@ insufficient-evidence outcome and reversal triggers.
 
 ## Boundaries and evidence
 
-MADR and Nygard support the context, options, outcome and consequences structure. Sargent
-supports the separation of model verification from validity for a purpose. The pattern
-links use the existing registry and owner pages without modifying them.
+The [decision-record contract](decision-record.md) cites MADR and Nygard for the record
+structure. The validation chapter cites Sargent for separating verification from validity for
+a purpose. This landing adds no source claim of its own. The pattern links use the
+edition-level registry and owner pages without modifying them.
 
 The chapter does not promote a pattern, claim owner acceptance or create a second canonical
 explanation of a pattern.

@@ -44,6 +44,20 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(len(manifest["chapters"]), 7)
         self.assertGreaterEqual(len(ledger["records"]), 10)
 
+    def test_canonical_pattern_link_rejects_wrong_owner(self):
+        registry = load(ROOT / "edition/patterns/registry.v1.json")
+        patterns = {item["id"]: item for item in registry["patterns"]}
+        route = load(ROOT / "generated/route-index.v1.json")
+        index = {doc["id"]: doc for doc in route["documents"]}
+        first, second = list(patterns.values())[:2]
+        link = {
+            "pattern_id": first["id"],
+            "owner_document_id": second["technical_owner"]["document_id"],
+            "owner_page": second["technical_owner"]["path"],
+        }
+        with self.assertRaisesRegex(ValueError, "owner id mismatch"):
+            validate_v12.canonical_link(link, patterns, index, ROOT)
+
     def test_manifest_page_hashes(self):
         manifest = load(ROOT / "edition/v12/manifest.json")
         for document in manifest["documents"]:
