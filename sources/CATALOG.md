@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-11-01. Entries: 354.
+Inventory date: 2026-11-01. Entries: 356.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -89,6 +89,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.microservices-patterns / core | [Microservice Architecture Patterns](https://microservices.io/patterns/) — Chris Richardson | Pattern-level reference and implementation links. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-cloud-patterns / core | [Cloud Design Patterns](https://learn.microsoft.com/en-us/azure/architecture/patterns/) — Microsoft Learn | Pattern catalog admission and source-unit planning for E17 Phase 2. | admitted-for-research / public-web-or-author-download |
 | src.microsoft-ddd / core | [Use domain analysis to model microservices](https://learn.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis) — Microsoft Learn | Bounded public page for domain analysis, bounded contexts, ubiquitous language and context maps. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-dotnet-soa / core | [.NET Microservices Architecture - Service-oriented architecture](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/architect-microservice-container-applications/service-oriented-architecture) — Microsoft Learn | Central broker, orchestrator and ESB practice for the SOA failure/recovery dimension. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-service-orientation / core | [Microsoft Application Architecture Guide, 2nd Edition - Chapter 3: Architectural Patterns and Styles](https://learn.microsoft.com/en-us/previous-versions/msp-n-p/ee658117(v=pandp.10)) — Microsoft Learn | Service contract, independent versioning and interface-compatibility claims for the SOA invariant. | admitted-for-research / public-web-or-author-download |
 | src.monolith-first / core | [Monolith First](https://martinfowler.com/bliki/MonolithFirst.html) — Martin Fowler | Counterweight to premature distribution. | admitted-for-research / public-web-or-author-download |
 | src.soa-model / core | [Reference Model for Service Oriented Architecture 1.0](https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html) — OASIS | Technology-neutral SOA vocabulary and service relationships. | admitted-for-research / public-web-or-author-download |
 

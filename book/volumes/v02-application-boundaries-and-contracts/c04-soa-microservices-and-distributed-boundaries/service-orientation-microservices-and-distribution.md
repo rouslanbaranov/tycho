@@ -146,7 +146,7 @@ brokers, central orchestrators at the organization level, and the Enterprise Ser
 in the microservice community." Fowler and Lewis observe that ESB products "often include
 sophisticated facilities for message routing, choreography, transformation, and applying
 business rules." Tycho synthesis: a centralized bus is a shared bottleneck and single point
-that must be sized and failed over; keep an observed fallback path that does not depend on
+that must be sized and failed over. Keep an observed fallback path that does not depend on
 it. These sources do not state a timeout, a recovery-time bound or a failover procedure.
 
 **Alternative.** Microservices may be preferable when capabilities map to independent product

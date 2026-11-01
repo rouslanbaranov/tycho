@@ -38,6 +38,9 @@ evidence_scope:
     - "src.microsoft-cloud-patterns"
     - "src.fowler-layering"
     - "src.microservices"
+    - "src.soa-model"
+    - "src.microsoft-service-orientation"
+    - "src.microsoft-dotnet-soa"
     - "src.clean-architecture"
     - "src.microservices-patterns"
   claim_ids: []
@@ -129,56 +132,7 @@ See the [dedicated Microservices Architecture card](microservices-architecture.m
 
 ### Service-Oriented Architecture (SOA)
 
-**Identity.** Service-Oriented Architecture; alias SOA; family Application architecture
-and boundaries; kind architecture-style; priority core.
-
-**Decision question.** Should independently governed services and contracts be composed
-across organizational boundaries, rather than designed as one application or one
-microservice estate?
-
-**Good-fit conditions.** Heterogeneous systems have separate governance; contracts and
-mediation are explicit; integration spans ownership boundaries; service lifecycle and
-versioning can be governed; the organization accepts integration overhead.
-
-**Hard contraindications.** Reject the claim for one team and one deployable, when no
-service governance exists, when SOA is used as a synonym for an enterprise bus, or when
-contracts cannot be versioned and owned.
-
-**Competing alternative.** Microservices for independent product capabilities, or a
-modular monolith for one ownership boundary. Reverse the choice when governance and
-mediation overhead exceeds the integration benefit.
-
-**Failure and recovery.** Contract drift, a centralized bus bottleneck and semantic
-mismatch are common. Microsoft reports that "large central brokers, central orchestrators
-at the organization level, and the Enterprise Service Bus (ESB)" are typical SOA
-features, and that "in most cases, these are anti-patterns in the microservice
-community"; Fowler and Lewis note that ESB products "often include sophisticated
-facilities for message routing, choreography, transformation, and applying business
-rules." Tycho synthesis: size, observe and fail over a shared mediation path. Recovery
-requires contract ownership and mediation observability; the linked owner section states
-the remaining limits.
-
-**Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
-
-**Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, all twenty-four
-headings read, including "Smart endpoints and dumb pipes" and "Many languages, many
-options"; revision
-`a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8`.
-OASIS SOA Reference Model v1.0, §2.1, §3.3.1 and §3.3.2.2; representation revision
-`69a28ce6d4337c11c4ecebd45219adefa1fd9915d07c476b2662440a7cbd2924`.
-Microsoft service-oriented architectural style, "Service-Oriented Architectural Style";
-raw HTML revision
-`f84461f8c3b6c14a9e9404eff4bfcf8b4c58ff2a265f936f3e530c552a08f320`.
-Microsoft .NET service-oriented architecture guidance; raw HTML revision
-`f54a1ae99d25994eb2e48af4f0fe56bd49f00bb4894c0326c4bff8dd8966d7af`.
-The OASIS model is technology-neutral and does not mandate a bus or a service
-granularity.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Microservices Architecture; Modular Monolith; Anti-Corruption
-Layer; Canonical Data Model.
+See the [dedicated Service-Oriented Architecture (SOA) card](service-oriented-architecture.md).
 
 ### Hexagonal Architecture / Ports and Adapters
 
