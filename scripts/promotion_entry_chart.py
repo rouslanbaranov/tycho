@@ -17,9 +17,9 @@ def main():
     lo, hi = min(post), max(post)
     forecast_slots = 4
     total_slots = len(entries) + forecast_slots
-    width = 1500
-    height = 600
-    left, top, right, bottom = 80, 60, 40, 190
+    width = 1900
+    height = 820
+    left, top, right, bottom = 80, 90, 60, 250
     plot_w = width - left - right
     plot_h = height - top - bottom
     max_v = 10 * ((max(observed + [hi]) + 9) // 10)
@@ -52,6 +52,11 @@ def main():
         lx = x + bar_w / 2
         ly = top + plot_h + 16
         parts.append(f'<text x="{lx:.1f}" y="{ly:.1f}" text-anchor="end" transform="rotate(-45 {lx:.1f} {ly:.1f})" font-family="Verdana" font-size="10" fill="#323232">{item["label"]}</text>')
+    latest = entries[-5:]
+    lx0 = width - 430
+    parts.append(f'<text x="{lx0}" y="24" font-family="Verdana" font-size="13" fill="#141414">Latest promotions</text>')
+    for j, item in enumerate(reversed(latest)):
+        parts.append(f'<text x="{lx0}" y="{44 + j*17}" font-family="Verdana" font-size="11" fill="#323232">{item["label"]}: {item["minutes"]} min</text>')
     parts.append(f'<text x="{left}" y="25" font-family="Verdana" font-size="16" fill="#141414">Single-entry promotion time and forecast</text>')
     parts.append(f'<text x="{left}" y="44" font-family="Verdana" font-size="11" fill="#606060">orange: pre-optimization; blue bars: observed; dashed band: next-entry range</text>')
     parts.append('</svg>')
