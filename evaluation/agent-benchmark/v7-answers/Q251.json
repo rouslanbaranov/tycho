@@ -1,0 +1,414 @@
+{
+  "task_id": "Q251",
+  "answer": "# Q251 — Two-tier cached association API: scope, contracts and pilot evidence\n\n## Direct answer\n\nThe design is a **workload-scoped serving product, not a general graph database**, because its value comes from making a few predicted access shapes cheap and cacheable — typed object reads, association point reads, creation-time-ordered range reads with a cursor, and optional maintained counts — while deliberately refusing join, arbitrary pattern matching, multi-hop traversal and server-side set intersection. Graph-shaped data does not create a traversal requirement: the case records that the migration was chiefly a read-dominated cache and API ownership decision, not a demand for graph query algorithms. A graph database stays the right alternative when arbitrary traversal is genuinely required, and the source does not claim it compared one, so the case is a scope statement rather than a verdict on graph databases.\n\nCounts, inverse links and follower-cache reads each need an **explicit contract** because each is derived state maintained outside the authoritative object/association write: each has its own write path, lag, repair obligation and failure mode, so \"the graph service returns the truth\" is not a specification. A pilot must compare the current ad-hoc join baseline and the typed API **on the real workload** — results and ordering, freshness and invalidation, failure behaviour, tail latency and resource cost, divergence, rollback time and SRE toil — and must revert when coherence, permissions, write acceptance or cross-region freshness diverge from the stated contract.\n\n## Layer selection and method\n\n**Layers needed: `book`.** This is a conceptual and applicability question about a documented architecture case plus supporting method pages (caching, session consistency, workload profiling, benchmark validity). All searches used `--volume book`. I opened the `atlas` entry point once for pattern identity, but atlas cards are navigation over owner pages and cite heading anchors, not section keys, so no atlas citation appears in the ledger. The `modeling-and-simulation` layer was not needed: no model, run or decision artifact states these contracts or pilot criteria. Every citation below was read as a section through the CLI (not taken from a search snippet), at snapshot `4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a`.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence section |\n|---|---|---|\n| F1 Product shape and read path | \"association API graph database workload\"; \"typed object API narrow interface\"; \"two tier cache local cache in front of distributed cache\" | TAO pressure; TAO persistent authority |\n| F2 Scope boundary versus graph database | \"graph database property graph traversal query language\" (0 hits); \"graph API\"; \"workload scoped serving product not general purpose\"; \"graph database traversal versus specialized API\" | TAO bounded semantics; TAO outcomes; TAO adopt |\n| F3 Typed reads and creation-time ordering | \"association range read cursor creation time\"; \"social graph serving association list\"; \"ordered association lists\" | TAO bounded semantics |\n| F4 Counts contract | \"maintained association count consistency contract\"; \"denormalized aggregate counter maintained total\"; \"count maintenance consistency operational contract\" | TAO bounded semantics |\n| F5 Inverse-link contract | \"inverse association automatic bidirectional link\"; \"inverse edge automatic creation bidirectional semantics\" | TAO bounded semantics |\n| F6 Region authority and stale follower reads | \"primary region per shard write ownership\"; \"leader cache tier follower cluster write path\"; \"read-your-writes guarantee client\"; \"cache coherence invalidation contract stale window\" | TAO persistent authority; TAO migration; Session Consistency; caching purpose |\n| F7 Pilot comparison and adoption metrics | \"capacity experiment workload profile compare baseline\"; \"benchmark validity generator demand population\"; \"workload profile read write mix latency objective\" | TAO adopt; TAO legacy transfer; workload shape; benchmark validity; caching measurement |\n| F8 Cache semantics in general | \"stale follower cache read replica lag contract\"; \"cache invalidation hot key thundering herd\"; local-cache walkthrough | caching purpose; caching measure; local-cache walkthrough |\n\nSearch converged: after the TAO case page was found, repeated formulations (inverse edges, maintained counts, stale replicas, region ownership, graph alternatives) returned only that page and the supporting cache/consistency pages; two consecutive searches added no new candidate section.\n\n## 1. What the team would actually be adopting\n\nThe proposed product has the shape the case documents: a **narrow object/association API plus a geodistributed cache in front of sharded MySQL**, offering association point/range/count reads, ordered association lists and typed inverse edges, with follower/leader cache tiers handling reads and write-through coherency, and shard primaries defining persistence authority.\n\nThe read contract is deliberately small and typed:\n\n- **Object** — unique ID, type and named fields; a generic SQL join API is not exposed.\n- **Association** — typed, directed link between objects; multiple types may exist between the same pair; rich arbitrary pattern matching is not offered.\n- **Point read** — find (id1, type, id2); not a complete multi-hop reachability query.\n- **Range read** — recent associations of (id1, type) by creation time, with a cursor; optimized for time-ordered activity, not spatial locality.\n- **Count** — optional maintained total for one association list, whose maintenance and consistency require their own operational contract.\n- **Inverse association type** — optionally created/deleted automatically, but it must preserve the intended relationship semantics; not every association is necessarily bidirectional.\n\nMechanically, the product is a **two-tier read path over sharded authority**: requests reach regional follower caching clusters; a follower miss is served by a leader cache tier that can fetch from MySQL; the leader also handles local cache consistency; a write travels through follower to leader and successful write responses update caches down the path; data and cache servers are separately scaled; hotspots are handled by moving or copying shards. One primary region per shard owns durable updates, secondaries follow via MySQL replication, secondary-originated writes are forwarded to the primary, and a primary region can be changed for recovery. That ownership model is a central availability/consistency boundary, not proof of globally synchronous multi-region writes.\n\n**Terminology note (Tycho inference).** The case's two tiers are regional follower clusters in front of a leader cache tier over the sharded authority. If the team instead means a process-local cache in front of a regional cache, the tier count changes but the contracts in sections 3-5 and the pilot in section 7 do not: those attach to how each value is derived and invalidated, not to the number of cache layers.\n\nThe historical failure is the argument for the product: with direct MySQL plus independently managed memcache, changing one item in an association list often invalidated the **entire cached list**, fetching a few relevant associations required transferring a potentially much larger cached value, and application-side invalidation produced stale results, hot-object thundering herds and inconsistent reads. The migration was therefore chiefly a **read-dominated cache and API ownership decision**, not a demand to run general-purpose graph query algorithms.\n\n## 2. Why this is a workload-scoped serving product, not a general graph database\n\n1. **The scope is the access pattern, not the data model.** The API deliberately does not expose general pattern matching, multi-hop traversal or server-side set intersection. That is a scope and workload decision: the majority of the reported feed workload could use cheap, predictable point/range/count calls. A directed multigraph model does not imply a graph product; the case explicitly says Tycho's own graph product infrastructure is retired.\n2. **Narrowness is the enabling condition, not a missing feature.** Fixed key shapes, bounded list values, time-ordered ranges and per-list counts are what make a two-tier cache, shard-local authority and predictable capacity planning possible. The failure this design replaced was a caching/invalidation failure (whole-list invalidation, oversized cached values, stale results, thundering herds), so the product's core is cache ownership and a typed read contract — not query expressiveness.\n3. **A query engine and a serving product optimise different things.** General graph engines spend complexity on traversal planning and flexible indexing; this product spends it on cache locality, bounded responses, shard ownership and write-through coherency. The case states TAO deliberately avoids general graph traversal and pattern matching and is not a general-purpose graph analytics replacement.\n4. **The product is not a library; it is an operated service.** It owns an API contract, a cache fleet, shard/region authority, consistency modes and on-call. The case is explicit that a specialized cache-service fleet requires deep SRE ownership, and that default eventual consistency may be unacceptable for money movement or regulatory records — both are product-scope commitments, not query semantics.\n5. **A graph database remains a legitimate alternative, and the case does not settle it.** A general graph database is an option for applications that genuinely need arbitrary traversal, but the source does not claim it evaluated every such database. So \"not a general graph database\" here means the workload does not require traversal; it is not evidence that a graph database would be slower or worse if traversal were real.\n\nIn short: the team would not be building a graph database with a cache in front. It would be building a **serving contract for a known read shape**, where the graph is only the data model and the product is the small, cacheable, shard-owned API surface.\n\n## 3. Why counts need an explicit contract\n\nThe count is described as an **optional maintained total** for one association list, and the case says count maintenance and consistency require their own operational contract. The contract is unavoidable because the count is a second representation of a fact the authoritative store can only produce by scanning the list:\n\n- **It is derived state with its own write path.** Increments and decrements must be applied on create/delete, survive retries and idempotency, handle deleted objects, and be repaired after a failed update. Nothing about the object/association row write determines the counter's value.\n- **It can be exact, approximate or advisory, and the API must say which.** A product that returns a maintained total without saying whether it is exact, what its lag bound is, or how it is repaired invites consumers to use it for ranking, authorization or money decisions.\n- **Its inclusion rules must be stated.** Does it count deleted, hidden or blocked edges, inverse edges, or multiple association types on the same pair? Does it cover one list, one type, one shard, or a cross-shard total?\n- **It may be served from a different tier than the list.** A follower tier can answer a count while a range read is served from another tier or the primary; count and list can legitimately disagree at the same instant, so the contract must say which one is authoritative for which decision.\n- **A single popular object makes the counter a write hotspot.** Exact maintenance under hot-item skew is a capacity and contention problem; the product must decide whether to shard, batch or approximate it. (This last point is Tycho inference about the maintenance burden; the case states the maintenance obligation, not a specific counter design.)\n\nWithout that contract the visible failure is mundane and corrosive: a profile says N connections while the paged list returns fewer, a lost increment never heals, and consumers quietly start treating an approximate hint as an exact fact.\n\n## 4. Why inverse links need an explicit contract\n\nAn inverse association type is **optionally created or deleted automatically** for a related directed link, and it must preserve the intended relationship semantics because not every association is necessarily bidirectional. That single sentence bundles several decisions that must be written down:\n\n- **Which types are inverse-paired.** Follow/like/block-style semantics are asymmetric; a blanket automatic inverse would create relationships the domain never intended, while a missing inverse makes reverse lookup silently under-report.\n- **Who writes it and in what consistency boundary.** The inverse is a second edge derived from the first. If it is created in a separate operation, a partial failure leaves a one-sided relationship; the contract must say whether inverse creation is inside the forward write's consistency boundary, retried idempotently, or repaired asynchronously.\n- **What creation time it carries.** Reverse ranges are ordered by creation time with a cursor, so whether the inverse inherits the forward edge's timestamp or records its own copy time changes the order and pagination of the reverse list, and therefore what users see first. (This ordering consequence is Tycho inference; the case fixes the ordering rule but does not publish the inverse timestamp policy.)\n- **Visibility and cascade rules.** Permissions may differ by direction (a one-way follow, a hidden edge), and deletion may or may not cascade; dangling inverses must be detectable and repairable.\n- **Whether counts and inverse edges agree.** If counts include inverse edges, the count contract and the inverse contract must use the same inclusion rules.\n\nWithout the contract the product can be simultaneously wrong in both directions: reverse queries miss real edges, and automatic inverses leak relationships that were meant to be one-way.\n\n## 5. Why stale follower reads need an explicit contract\n\nThe consistency menu in the case is already a contract sketch, which is why it cannot be left implicit:\n\n- **Eventual consistency by default** prioritizes availability when replicas or regions lag, and clients can observe stale associations during propagation.\n- **Read-your-writes** is aimed at with high probability, aided by write-through caching, but it is not a mathematically unconditional global guarantee.\n- **A stronger per-client option** exists at extra processing and availability cost, and its cost and region-failure behaviour must be measured for the required invariants.\n- **A primary-region switch** is an operational mechanism to restore availability, but fencing of the old primary and stale follower reads must be verified in another design.\n\nA comparable design must therefore make consistency mode explicit, validate read-your-writes where required, define cache-fill concurrency and hot-key suppression, and plan primary-region switching. The general caching rule is the same: state what may safely be served without consulting the authority, for how long, and how the system behaves when entries or entire caches disappear. And a successful local invalidation is not global freshness — in the chapter's synthetic two-replica example, one replica invalidates only its own local cache while the other keeps serving the older version until TTL expiry.\n\nThe contract must name, per read: the consistency mode, the staleness bound, the session guarantees and their token lifetime and the failure callers receive before the first routed read, what happens during a primary-region change, and whether permission-bearing data may ever be served stale. A sticky route or a token that cannot survive failover is not a session guarantee. Without this, the classic failures are user-visible: a user posts and cannot see the post, a block or unlink is not reflected, an authorization decision is made on a stale inverse edge, or an irreversible business action is taken on an eventually consistent read.\n\n## 6. Why these are contracts rather than implementation details (Tycho inference)\n\nAll three contested semantics are **derived state maintained outside the single authoritative object/association write**. A count is derived by maintenance, an inverse is derived by copying a relationship, and a follower read is derived by replicating a region. Each has its own producer, its own lag, and its own repair path. That is why an API that promises \"typed object and association reads\" must separately promise what counts mean, what inverse edges exist, and what freshness a read has — otherwise the cache tier silently becomes a second, undocumented database with different answers.\n\n## 7. What a pilot must compare before adoption\n\nThe case's own adoption gate is comparative, not absolute: keep or tune the current design, adopt the documented pattern only when the same bottleneck exists and teams can operate the new abstraction, insert an intermediate compatibility adapter to split the change, or stay at \"unknown until instrumented\" rather than presenting speculation as an endorsed architecture. Within that frame, the pilot must compare the following.\n\n### 7.1 Baseline the demand, not the technology\n\nBefore comparing implementations, count **positive and negative relationship lookups**, the number of association elements actually returned per call, cache churn, hot-item skew, required ordering, write freshness and multi-region semantics. Record the workload profile first — offered vs admitted vs completed rates, read/write mix, payload percentiles and hot keys, and the SLO and invariants (p95/p99, errors, freshness, correctness, recovery) — because a faster response is not success if data becomes wrong. The fit test is explicit: a service-specific association facade plus multi-tier cache is attractive when reads are dominated by creation-time locality and fixed-point/range/count access; ordinary SQL plus a managed cache is simpler when datasets are small, association queries are variable, or strong multi-record transactions dominate.\n\n### 7.2 Compare correctness and ordering\n\nCompare user-visible object results between the current join path and the typed API, including association ordering and cursor stability, negative lookups (no edge), and deleted or inverse-association cases. The acceptance plan requires comparing source and target results **including timestamps and retries**, not just happy-path payloads. Divergence and correctness are a first-class metric, not a debugging detail.\n\n### 7.3 Compare freshness and invalidation\n\nCompare cache invalidation under hot-key bursts, including stale-fill and invalidation-race behaviour, read-your-writes for the client flows that need it, and cross-region freshness. The cache chapter's measurement list is the concrete checklist: hit rate by key popularity, size distribution, origin query timing, source IO, p95/p99 under representative offered arrivals, eviction, cold start, stampede under TTL expiry, node loss and operational recovery — a high hit ratio is not enough if rare misses coincide with high-cost queries and violate p99.\n\n### 7.4 Compare failure behaviour\n\nInject follower-cache loss, a stale replica, a network partition and primary failover. Check what happens to writes accepted in a secondary region, to caches during a primary-region switch, and to callers when a session guarantee cannot be met. Revert if cache coherence, application permissions, write acceptance or cross-region freshness diverge from the defined contract.\n\n### 7.5 Compare cost, tail latency and operability\n\nCompare actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, over a historical time window, against the current baseline and against the alternative of tuning the current design. Include the cache fleet's own cost and the operational ownership of a specialized service, because the case is explicit that such a fleet requires deep SRE ownership.\n\n### 7.6 Compare alternatives, including a graph database if traversal is real\n\nCompare at least: keep/tune the current design; adopt the documented pattern; introduce an intermediate compatibility adapter with dual routes. If any genuine requirement needs arbitrary traversal or pattern matching, the pilot must include a graph-database arm — the case does not claim to have evaluated every such database, so it neither endorses nor excludes one. The benchmark itself must be valid: a synthetic workload whose key distribution, user decisions or failure mix does not resemble the engineering problem can yield impeccable charts and still choose an unsuitable architecture.\n\n### 7.7 Decide with revert criteria\n\nThe safe pilot is: keep the existing authoritative MySQL store; expose one typed association API with explicit shard/region ownership and a secondary cache; compare user-visible object results and cache invalidation under hot-key bursts; test negative lookup and deleted/inverse-association cases; inject follower-cache loss, stale replica, network partition and primary failover; and revert if cache coherence, application permissions, write acceptance or cross-region freshness diverge from the defined contract. Establish rollback while the old path is still operational, and define rate limits, fallbacks and alerting before the pilot starts.\n\n## 8. Boundaries and contraindications\n\n- Do not use it for arbitrary traversal, pattern matching, multi-hop reachability or server-side set intersection; the API deliberately excludes them.\n- Do not use it where strong multi-record transactions and heterogeneous data access dominate; ordinary SQL plus a managed cache may be simpler.\n- Default eventual consistency may be unacceptable for money movement or regulatory records without a per-client stronger mode and measured cost.\n- The advertised scale (>1 billion reads/second, millions of writes/second) characterises the 2013 deployment and is not portable capacity per shard; the source publishes no 2026 inventory, replication lags or universal read-after-write error probability.\n- The case page is a draft pending review, and no new performance measurement or independent replication was performed by Tycho.\n\n## 9. Evidence map\n\n| Claim | Section(s) | Status |\n|---|---|---|\n| C1 product shape | TAO pressure | observed |\n| C2 follower/leader tiers and write path | TAO persistent authority | observed |\n| C3 no traversal/pattern matching as primary API | TAO bounded semantics | observed |\n| C4 multigraph model does not imply a graph product | TAO bounded semantics | observed |\n| C5 not general graph analytics; SRE ownership | TAO outcomes | observed |\n| C6 graph database only for genuine traversal | TAO adopt | observed |\n| C7 object and association typed semantics | TAO bounded semantics | observed |\n| C8 point/range read boundaries and ordering | TAO bounded semantics | observed |\n| C9 count needs its own contract | TAO bounded semantics | observed |\n| C10 inverse must preserve semantics | TAO bounded semantics | observed |\n| C11 the original failure and migration motive | TAO evolution | observed |\n| C12 one primary region per shard | TAO persistent authority | observed |\n| C13 consistency menu and switch verification | TAO persistent authority | observed |\n| C14 explicit consistency mode and transition gates | TAO migration | observed |\n| C15 workload fit test | TAO adopt | observed |\n| C16 safe pilot and revert criteria | TAO adopt | observed |\n| C17 required adoption metrics; no new measurement | TAO legacy transfer | observed |\n| C18 numbers are 2013 and not portable | TAO persistent authority | observed |\n| C19 synthetic acceptance plan | TAO migration | observed |\n| C20 alternatives discipline | TAO outcomes | observed |\n| C21 session guarantees named and tested | Session Consistency | observed |\n| C22 what may be served without authority | caching purpose | observed |\n| C23 local invalidation is not global freshness | local-cache walkthrough | observed |\n| C24 cache experiment measurements | caching measurement | observed |\n| C25 workload profile and SLO/invariants | workload shape | observed |\n| C26 benchmark validity risk | benchmark validity | observed |\n| C27 derived state needs its own contract | TAO bounded + persistent | inference |\n\n## 10. Unknowns and unverified claims\n\n- The source does not state whether inverse creation is atomic with the forward write, nor how inverse timestamps are assigned; the ordering consequence described in section 4 is Tycho inference.\n- The source does not publish a count exactness policy, a staleness bound, or a repair/backfill procedure for maintained counts; these must be invented and validated for a new product.\n- The source does not publish replication lag distributions or a read-after-write error probability; any freshness SLO for a new deployment is unverified until measured.\n- Whether the team's workload actually matches creation-time locality and point/range/count access is unknown until instrumented; the case's own gate says \"unknown until instrumented\" is the honest state without a baseline.\n- The case does not compare TAO's approach with any specific graph database, so no claim is made here that a graph database would fail this workload, only that the API does not need one.\n- The 2013 scale figures are the publisher's observations, not a capacity plan; no independent replication or new benchmark was run by Tycho.\n- The draft case is pending independent review; its provenance notes list open review gates.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The proposed product is the case shape: a narrow object/association API plus a geodistributed cache in front of sharded MySQL, offering association point/range/count reads, ordered association lists and typed inverse edges, with follower/leader cache tiers for reads and write-through coherency and shard primaries defining persistence authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#pressure-legacy-baseline-and-actual-chosen-direction",
+          "quote": "TAO supplied a narrow object/association API and geodistributed cache service in front of sharded MySQL persistence. The service offers association point/range/count reads, ordered association lists and typed inverse edges. Cache follower/leader tiers handle reads and write-through coherency while shard primaries define persistence authority.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The two cache tiers are regional follower caching clusters and a leader cache tier: a follower miss goes to the leader, which can fetch from MySQL; the leader handles local cache consistency; a write travels follower to leader and successful responses update caches down the path; data and cache servers scale separately and hotspots are handled by moving or copying shards.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "In each region, client requests reach **follower caching clusters**. A follower cache miss is served by a **leader cache tier** which can fetch from MySQL. The leader also handles local cache consistency; a write travels through follower to leader, and successful write responses update caches down the path. Data and cache servers are separately scaled, and hotspots can be redistributed by moving/copying shards.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The API deliberately excludes general pattern matching, multi-hop traversal and server-side set intersection; that exclusion is described as a scope and workload decision because the majority of the reported feed workload could use cheap, predictable point/range/count calls.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "The first-party article intentionally does **not** expose general pattern matching, multi-hop traversal or server-side set intersection as the primary API. That is a scope and workload decision: the majority of the reported feed workload could use cheap, predictable point/range/count calls.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Modelling the domain as a directed multigraph does not imply building a curated knowledge-graph product; the case states Tycho's own graph product infrastructure is explicitly retired.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "The fact that the social domain is modeled as a directed multigraph does **not** imply that Tycho should build a curated knowledge graph; Tycho's own graph product infrastructure is explicitly retired.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "TAO is explicitly not a general-purpose graph analytics replacement: it avoids general graph traversal and pattern matching, its default eventual consistency may be unacceptable for money movement or regulatory records, and a specialized cache-service fleet requires deep SRE ownership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#outcomes-and-negative-lessons",
+          "quote": "TAO deliberately avoids general graph traversal and pattern matching; it is not a general-purpose graph analytics replacement. Its default eventual consistency may be unacceptable for money movement or regulatory records. A specialized cache-service fleet requires deep SRE ownership.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A general graph database remains a legitimate alternative only for applications that genuinely need arbitrary traversal, and the source does not claim it evaluated every such database, so the case does not settle a graph-database comparison.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original",
+          "quote": "A general graph database is another option **for applications that genuinely need arbitrary traversal**, but the TAO source does not claim it evaluated every such database.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Typed object reads expose a unique ID, type and named fields and do not expose a generic SQL join API; associations are typed directed links with multiple types allowed between the same pair and no rich arbitrary pattern matching.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Object | Unique ID, type and named fields | A generic SQL join API is not exposed |",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Association | Typed, directed link between objects; multiple types allowed between same pair | Rich arbitrary graph pattern matching is **not** offered |",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Association point reads are bounded to an (id1, type, id2) lookup and are not a complete multi-hop reachability query; range reads return recent associations of (id1, type) by creation time with a cursor and are optimized for time-ordered activity, not spatial locality.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Association point read | Find `(id1, type, id2)` | Not a complete arbitrary multi-hop reachability query |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Association range read | Recent associations of `(id1,type)` by creation time, with cursor | Optimized for time-ordered activity, not spatial locality |",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Counts are an optional maintained total for one association list, and the case states that count maintenance and consistency require their own operational contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Association count | Optional maintained total for one association list | Count maintenance and consistency require their own operational contract |",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "An inverse association type is optionally created or deleted automatically for a related directed link, and it must preserve the intended relationship semantics because not every association is necessarily bidirectional.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Inverse association type | Optionally created/deleted automatically for related directed link | Must preserve intended relationship semantics, not every association is necessarily bidirectional |",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The failure being solved was the ad-hoc MySQL-plus-memcache client path: changing one item in an association list often invalidated the entire cached list, fetching a few associations required transferring a much larger cached value, and application-side invalidation caused stale results, hot-object thundering herds and inconsistent reads; the migration was chiefly a read-dominated cache and API ownership decision, not a demand for graph query algorithms.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#evolution-of-the-api-and-the-real-failure-being-solved",
+          "quote": "The client-side API had subtle failure costs: changing one item in an association list often invalidated the **entire cached list**, and fetching a few relevant associations required transferring a potentially much larger cached value to the web server. Independent application-side cache invalidation caused stale results, hot-object thundering herds and inconsistent reads. The TAO migration was therefore chiefly **a read-dominated cache and API ownership decision**, not a demand to run general-purpose graph query algorithms.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "One primary region per shard owns durable updates; secondaries receive changes through MySQL replication and forward writes to the primary; a primary region can be changed for recovery, and this ownership is a central availability and consistency boundary rather than proof of globally synchronous multi-region writes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "One **primary region per shard** owns its durable updates; secondary regions receive changes through MySQL replication. Writes originated in a secondary are forwarded to the shard's primary region. A primary region can be changed for recovery. That primary ownership model is a central availability/consistency boundary, not proof of globally synchronous multi-region writes.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The consistency menu is explicit: eventual consistency by default lets clients observe stale associations during propagation; read-your-writes is aimed at with high probability rather than as an unconditional global guarantee; a stronger per-client option costs extra processing and availability; and a primary-region switch requires fencing of the old primary and verification of stale follower reads.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "| Eventual consistency by default | Prioritizes availability when replicas/regions lag | Clients can observe stale associations during propagation |",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "| Read-your-writes emphasis | Source aims for this with **high probability**, aided by write-through caching | This is not a mathematically unconditional global guarantee |",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "| Stronger per-client option | Certain clients can override default at extra processing/availability cost | Must measure the cost and region-failure behavior for required invariants |",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "| Primary-region switch | Operational mechanism to restore availability | Fencing of old primary and stale follower reads must be verified in another design |",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A comparable design must make consistency mode explicit, define cache-fill concurrency and hot-key suppression, define shard ownership and replication, validate read-your-writes where required and plan primary-region switching; the case labels these extra transition gates as Tycho synthesis.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability",
+          "quote": "A comparable design must define cache fill concurrency and hot-key suppression, shard ownership and replication; validate read-your-writes where required, make consistency mode explicit and plan primary-region switching.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The fit test is quantitative workload evidence: positive and negative relationship lookups, the number of association elements actually returned, cache churn, hot-item skew, required ordering, write freshness and multi-region semantics; a service-specific facade plus multi-tier cache fits when reads are dominated by creation-time locality and fixed-point/range/count access, while ordinary SQL plus a managed cache is simpler for small datasets, variable association queries or strong multi-record transactions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original",
+          "quote": "An unrelated application should first count **positive and negative relationship lookups**, the number of association elements actually returned, cache churn, hot-item skew, required ordering, write freshness and multi-region semantics.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original",
+          "quote": "A service-specific association facade plus multi-tier cache may be attractive when reads are dominated by *creation-time locality* and fixed-point/range/count access. Ordinary SQL plus a managed cache may be simpler when datasets are small, association queries are variable or strong multi-record transactions dominate.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The safe pilot keeps the existing authoritative MySQL store, exposes one typed association API with explicit shard/region ownership and a secondary cache, compares user-visible object results and cache invalidation under hot-key bursts, tests negative lookups and deleted/inverse-association cases, injects follower-cache loss, stale replica, network partition and primary failover, and reverts if cache coherence, permissions, write acceptance or cross-region freshness diverge from the defined contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original",
+          "quote": "**Safe pilot:** keep the existing authoritative MySQL store; expose one typed association API with explicit shard/region ownership and a secondary cache; compare user-visible object results and cache invalidation under hot-key bursts; test negative lookup and deleted/inverse-association cases; inject follower-cache loss, stale replica, network partition and primary failover. Revert if cache coherence, application permissions, write acceptance or cross-region freshness diverge from the defined contract.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The required pre-adoption metrics are actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil over a historical time window; Tycho performed no new performance measurement or independent replication and scopes source-reported numbers to the publisher's observations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#legacy-modernization-decision-transfer",
+          "quote": "**Metrics required before reuse:** actual p95/p99, throughput versus CPU/storage, error and retry rate, divergence/correctness, rollback time and SRE toil, with historical time window.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#legacy-modernization-decision-transfer",
+          "quote": "No new performance measurement or independent replication was performed by Tycho. All source-reported numbers are scoped to this publisher's observations.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The source does not publish a 2026 inventory, all replication lags or a universal read-after-write error probability; its billion-read and million-write figures characterize the 2013 deployment and are not portable capacity per shard.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "The source does not publish a 2026 server inventory, all data center replication lags, or a universal read-after-write error probability. Its **>1 billion reads/second and millions of writes/second** characterize the **2013 deployment**, not portable capacity per shard.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The synthetic acceptance plan requires baselining the real workload and maintenance cost, specifying the one invariant that cannot change, staging compatible dual routes or immutable job inputs, comparing source and target results including timestamps and retries, defining rate limits, fallbacks and alerting, and establishing rollback while the old path stays operational.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability",
+          "quote": "**Synthetic acceptance plan for a different legacy stack:** baseline real workload and maintenance cost; specify the one invariant that cannot change; stage compatible dual routes/data or immutable job inputs; compare source and target results including timestamps and retries; define rate-limit, fallbacks and alerting; establish rollback while the old path remains operational.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The alternatives discipline is explicit: keep or tune the current design when SLOs hold, adopt the documented pattern only when the same bottleneck exists and teams can operate the new abstraction, introduce an intermediate compatibility adapter to split the change, and treat 'unknown until instrumented' honestly rather than presenting speculation as an endorsed architecture.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#outcomes-and-negative-lessons",
+          "quote": "| Adopt the documented pattern | Same bottleneck and teams capable of operating new abstraction | Workload/version/data semantics may not match original |",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#outcomes-and-negative-lessons",
+          "quote": "| Unknown until instrumented | No trustworthy baseline or correctness oracle | Do not present speculation as an endorsed architecture |",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Session guarantees must be named and tested independently: name the guarantee set per session, name token lifetime and the failure callers receive before the first routed read, and do not treat a sticky route or a token that cannot survive failover as a session guarantee.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+          "quote": "**Tycho condition:** name the guarantee set per\nsession (read-your-writes, monotonic reads, monotonic writes, writes-follow-reads) and test\neach independently; also name token lifetime and the failure callers receive before the first\nrouted read.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+          "quote": "**Tycho rule:** a sticky\nroute or a token that cannot survive failover is not a session guarantee.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The general caching rule is that the architectural question is what may safely be served without consulting the authority, for how long, and how the system behaves when entries or entire caches disappear.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#purpose-and-mission",
+          "quote": "The architectural question is what can safely be served **without consulting the authority**, for how long, and how the system behaves when entries or entire caches disappear.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "A successful local invalidation is not global freshness: in the chapter's synthetic two-replica example, one replica invalidates only its own local cache and the other keeps serving the older version until TTL expiry.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+          "quote": "A writes v18 and invalidates *its own* local cache. B continues serving v17 until TTL expiry. A successful local invalidation has not provided globally strong freshness.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "A cache experiment must report hit rate by key popularity, size distribution, origin query timing, source IO, p95/p99 under representative offered arrivals, eviction, cold start, stampede under TTL expiry, node loss and operational recovery, because a high hit ratio is insufficient if rare misses coincide with high-cost queries.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#6-measure-before-adding-cache-or-another-layer",
+          "quote": "A useful experiment reports cache hit rate by key popularity, size distribution, origin query timing, source IO, p95/p99 under representative offered arrivals, eviction, cold start, stampede under TTL expiry, node loss and operational recovery. A high hit ratio is not enough if the rare misses coincide with a high-cost query and violate p99.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "The workload profile must be recorded before technology choice, including SLO and invariants (p95/p99, errors, freshness, correctness, recovery), because a faster response is not success if data becomes wrong.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#1-workload-profile-before-technology",
+          "quote": "| SLO and invariants | p95/p99, errors, freshness, correctness, recovery | A faster response is not success if data becomes wrong |",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Benchmark validity is a real adoption risk: a synthetic workload whose key distribution, user decisions or failure mix does not resemble the engineering problem can produce impeccable charts and still select an unsuitable architecture.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission",
+          "quote": "A synthetic workload whose key distribution, user decisions or failure mix does not resemble the stated engineering problem may yield impeccable charts and still choose an unsuitable architecture.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Tycho inference: counts, inverse links and follower-cache reads are all derived state maintained outside the single authoritative object/association write, so each has its own write path, lag and repair obligation and cannot be inherited implicitly from the primary store.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Association count | Optional maintained total for one association list | Count maintenance and consistency require their own operational contract |",
+          "supports": "C27",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+          "quote": "| Inverse association type | Optionally created/deleted automatically for related directed link | Must preserve intended relationship semantics, not every association is necessarily bidirectional |",
+          "supports": "C27",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+          "quote": "| Eventual consistency by default | Prioritizes availability when replicas/regions lag | Clients can observe stale associations during propagation |",
+          "supports": "C27",
+          "status": "inference"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#pressure-legacy-baseline-and-actual-chosen-direction",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#persistent-authority-cache-hierarchy-and-region-semantics",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#bounded-data-and-query-semantics",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#outcomes-and-negative-lessons",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#adopt-only-for-matching-access-patterns-tycho-original",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#evolution-of-the-api-and-the-real-failure-being-solved",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#migration-mechanics-and-reliability",
+    "tycho.page.1e37e65ac62345da9b836a32cc4eb6b9#legacy-modernization-decision-transfer",
+    "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#purpose-and-mission",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#6-measure-before-adding-cache-or-another-layer",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#1-workload-profile-before-technology",
+    "tycho.page.1cfb9cfdf1604fada0f508c123fe8b2e#purpose-and-mission"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
