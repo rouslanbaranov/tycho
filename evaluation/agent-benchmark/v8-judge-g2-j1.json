@@ -1,0 +1,802 @@
+{
+  "status": "ai-judge-not-human",
+  "items": [
+    {
+      "task_id": "Q302",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E2",
+          "reason": "C1-E1 gives the conditional factors (wait share, long-held connections, listener/upstream, scheduling, nonblocking filters); C1-E2 states the CPU-filter harm and that swapping the network library cannot speed cryptography, serialization or business logic; C1-E3 states the waiting-connection saving. The three quotes jointly entail C1."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E2",
+          "reason": "C2-E1 reports no material CPU-efficiency gain for the API-facing, computation-heavier cluster; C2-E2 reports about 25% throughput improvement with associated CPU reduction for the lower-work logging cluster. That is the non-uniform outcome asserted."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E2",
+          "reason": "C3-E1 supplies the trade from per-request stacks to callback lifecycle, context propagation and manual resource cleanup; C3-E2 names ByteBuf leaks, file-descriptor leaks and dropped responses as possible failures of incomplete async error paths."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 states a downstream latency spike and repeated retries can amplify open connections, threads, memory and scheduler pressure; C4-E2 states an asynchronous interface does not make the receiver infinitely fast. Together they support the bounded 'not by itself' reliability claim."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 gives the tuned-blocking conditions; C5-E2 gives the mixed design preserving blocking libraries in worker pools with explicit budgets; C5-E3 gives the decision rule comparing connection-waiting capacity, CPU per request class and p99 under saturation separately."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 lists the operating guards (event-loop blocking detector, bounded offload executor, context/principal propagation, deadline/cancellation cleanup, leak detection, retry/admission limits, p99 by route and cohort); C6-E2 adds the known rollback version."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 states a blocking JDBC, mutex or HTTP call on the loop prevents unrelated operations assigned to that loop from progressing; C7-E2 adds that a nonblocking network stack does not make blocking JDBC nonblocking."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 states a shared connection pool, global lock, fan-in serialization or constrained executor can reintroduce an effectively serial bottleneck, so launching asynchronous code does not make it parallel."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E2",
+          "reason": "C9-E1 makes backpressure, cancellation, retry identity and durable replay distinct guarantees; C9-E2 denies a timeout signal proves the blocking operation was interrupted; C9-E3 states a ThreadLocal correlation ID may disappear or leak across interleaved requests."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E2",
+          "reason": "C10-E1 contrasts persistent-connection scalability with the non-uniform CPU outcome; C10-E2/E3 separate response time from resource service demand with the 300 ms / 4 ms CPU / 40 ms DB example; C10-E4 warns against aggregate throughput. The quotes support the capacity/occupancy versus goodput distinction."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 lists active connections/thread, event-loop stalls, canceled and retried requests, CPU per operation, p99 by class, queue age and dead-letter counts."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1 requires equivalent open-loop offered load and bounded concurrency with slow DB, slow consumer, disconnect, timeout and retry injection plus the listed recordings; C12-E2 adds canary by class at matched traffic."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 states a closed generator reduces offered load when the system stalls; C13-E2 requires observing offered/admitted/completed rates separately; C13-E3 says this can hide the backlog users would create."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 gives the rejection conditions exactly: unmeasured dominant bottleneck, unverified target stack, context that cannot cross execution boundaries, untested cleanup/rollback, and insufficient evidence instead of a guessed ranking."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 states the gateway must be operable and observable as a critical component; C15-E2/E3 name bypass, configuration drift, stale routes, quota failure and a total backend-blocking outage as common failure modes. The fragments jointly restate the condition and failure list."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 states a queue model that hides rejection can report a high success rate while refusing work at the front door; C16-E2 states the timeout rate, not the rejection rate, is the dominant failure mode."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C17-E2",
+          "reason": "C17-E1 classifies the cutover evidence as measurements and operational evidence rather than model parameters; C17-E2 includes a rehearsed rollback that completes inside the observation window; C17-E3 denies the model can create the measurement."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 records developer/operational cost as a narrative trade-off, not measured engineering hours; C18-E2 records retry-storm resilience as some benefit requiring tuning, not a zero-failure guarantee."
+        },
+        {
+          "claim_id": "C19",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C19-E1",
+          "reason": "C19-E1 denies a timeout on one socket is a complete request deadline; C19-E2 denies cancellation is proof that a previously committed effect was undone."
+        },
+        {
+          "claim_id": "C20",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C20-E1",
+          "reason": "C20-E1 lists CPU sampling's blind spot for waiting states and low-frequency events; C20-E2 lists wall-clock sampling overhead, thread grouping and signal/runtime limits."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C21-E1",
+          "reason": "C21-E1 makes a bounded platform-thread pool defensible for a CPU-heavy worker pool when useful CPU work saturates cores; C21-E2 forbids CPU-intensive crypto or JDBC on Netty's event loop."
+        },
+        {
+          "claim_id": "C22",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "C22-E1 states bulkhead bypass, undersized partitions and a shared hidden queue can defeat isolation, and requires detecting per-pool queue age, utilization and rejected work and failing the isolated class explicitly."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "All supplied claims graded as core rows (the input provides no core/optional id map); citation_resolution and required_anchor_coverage copied unchanged. All core claims supported."
+    },
+    {
+      "task_id": "Q306",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "C1-E1 states two unequal sets can have identical counts; C1-E2 says equal row counts hide duplicates and omissions; C1-E3 says equivalence cannot be assumed from equal row counts."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1-E4 support the TTL/tombstone, ordering, null/default and business-invariant parts, but no supplied quote covers authorization or visibility, which C2 names as unverified."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 says the experimental path should time out or error without changing the result delivered by the authoritative path; C3-E2 says a broken candidate must not corrupt a healthy request; C3-E3 says mirrored responses are discarded, so served error metrics are blind to candidate failure."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 requires exception/mismatch counters to carry the cohort denominator and observation interval; C4-E2 requires numerator, denominator, units, target, data-source revision and effective date together; C4-E3/E4 show aggregation can hide a region or a short crisis."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 says shadow traffic is not a user-behavior sample and coverage/data sensitivity bound what it proves; C5-E2 limits it to inspected requests and cases; C5-E3 lists mutation races, unobserved clients and rollback after deletion as unproved."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 calls exact set equality a relative parity guarantee, not independent verification; C6-E2 says identical outputs can reflect a shared semantic bug; C6-E3 forbids mistaking equality with a buggy legacy output for independent business correctness."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 models each comparison as snapshot + schema version + partition identity + job revision + equality rule + freshness window; C7-E2 rejects unnormalized tuple differences; C7-E3 says a matching checksum does not prove all data semantics."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 lists identity, ordering, null/default, trial/renewal, old-client serialization, authorization and temporal freshness; C8-E2 requires both old-minus-new and new-minus-old rows with schema-normalized keys; C8-E3 requires an explicit unknown instead of an invented ID. Two-sided rows cover duplicate/orphan handling."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "C9-E1 says a numeric difference may be legitimate snapshot timing or genuine logic divergence and a bare equality assertion cannot decide the policy; C9-E2 says time-window differences and lossy null/value canonicalization still diverge; C9-E3 says an extra row can be a legitimate snapshot/interpretation difference."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 gives the two-sided requirement, C10-E2 a threshold over a sustained period and C10-E4 the comparison key/snapshot/window/schema/adjudicator, but no supplied quote covers the sample floor that C10 names."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 limits a second scan to identified missing IDs and denies it proves field values, lifecycle transitions or exactly-once effects; C11-E2 says 'all rows copied' is not sufficient for a read cutover; C11-E3 requires live-write ordering."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1-E3 support coexistence and its divergence/reconciliation burden, but no supplied quote states that dual write does not prove read equivalence or transfer authority."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1-E3 support behavioral-oracle, old-path-authoritative and write-path-untested, but no supplied quote states that shadow responses are discarded."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 calls write-authority change a semantic cutover; C14-E2 says switching reads alone is not equivalent to retiring the write representation; C14-E3 says new-only features can end read toggling; C14-E4 warns against big-bang when every mutation class cannot be reconciled."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 states backfill is an inventory operation, dual write a coexistence mechanism, shadow read a behavioral oracle and write-authority change a semantic cutover, and none substitutes for the others."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 says the throw guard came after a staged migration and putting it in the first release would have broken old consumers; C16-E2 requires moving readers then writers in reversible cohorts and blocking obsolete-field use only after monitoring shows no consumers."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1 requires every live writer, async job and retry path to be accounted for before old data removal; C17-E2 lists the old background consumer's reject/misread risk; C17-E4 keeps a deliberately outdated reader to expose stale paths."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 requires readers then writers in independently reversible cohorts; C18-E2 has the old job write a shadow table after authority moves; C18-E3 records the exact cutover rollback window and irreversible effects."
+        },
+        {
+          "claim_id": "C19",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C19-E1",
+          "reason": "C19-E1-E3 support the general premises (bounded shadow coverage, guard timing, writer/job inventory), but the scenario-specific conclusion that the nightly reconciler is outside the shadow population and loses both consumer and detector is an unmarked inference; all three evidence items carry status inference."
+        },
+        {
+          "claim_id": "C20",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C20-E1",
+          "reason": "C20-E1-E3 support that counts alone are insufficient and divergence can persist behind a green signal, but offsetting errors, untested mutations and unobserved consumers are not stated in C20's quotes."
+        }
+      ],
+      "semantic_support": 1,
+      "core_coverage": 2,
+      "pass": false,
+      "notes": "All supplied claims graded as core rows (the input provides no core/optional id map); citation_resolution and required_anchor_coverage copied unchanged. Partial verdicts name the missing element; no claim is contradicted."
+    },
+    {
+      "task_id": "Q310",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "C1-E1 says a syntactically simple migration can block concurrent work or require a table rewrite depending on its exact form; C1-E2 says an additive DDL may still take substantial locks or rewrite depending on engine/version/type."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 states ACCESS EXCLUSIVE is acquired absent a weaker stated lock; C2-E2 states it is the default unless otherwise specified. That supports the default-lock and non-concurrency claim."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 states their safety requires knowing the PostgreSQL version, table size and workload."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1-E4 cover the preflight, queue-wait and long-transaction parts, but the head-of-line queue-ordering mechanism is inference (all evidence statuses are inference) and no quote states it."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 says a long-lived transaction may retain an old visibility horizon while the application appears idle; C5-E2 requires inspecting transaction age and blockers, not just active query duration."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 says a concurrent build performs additional phases/scans and waits for relevant transactions or snapshots, so CONCURRENTLY does not escape the analytics transaction."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 says a nullable column is not sufficient evidence of compatibility with brittle mapping, triggers or schema-dependent assumptions; C7-E2/E3 repeat that an additive column does not by itself establish semantic compatibility."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 lists index creation, constraints, validation, backfill and large DDL as consuming CPU, I/O, lock time, WAL and replica replay capacity; C8-E2 says schema migration is itself a workload with metadata locks, rewrites, index creation and log space."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C9-E1",
+          "reason": "C9-E2-E6 cover partial resume/cleanup, old/new reader failure, the stop point, rewrite-versus-block and rows/bytes/WAL/lag, but no supplied quote covers the lock mode/blocking duration or the long-transaction/connection-queue questions C9 lists."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 states a lock estimate is not a measurement and a realistic fixture is required; C10-E2/E3 list the measured baseline (held locks, long transactions, queued message age, lock waits, restore-point freshness)."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 requires bounded batches and idempotent checkpoints rather than one unbounded transaction; C11-E2 treats a checkpoint as durable-completed-range evidence, not reconciliation proof; C11-E3 requires replay-safe ranges and business-key reconciliation."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1 requires testing a crash between backfill commit and checkpoint persist, with retry producing one authoritative logical result; C12-E2 requires resuming without mapping divergence."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 says a failed build can leave an invalid index with update overhead; C13-E2 notes unique concurrent builds have enforcement-timing caveats; C13-E3 requires checking validity and query behavior before relying on the index."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 requires stop conditions and recovery before the run (max queue age, failed validations, lag budgets, uniqueness conflicts, restore coverage); C14-E2 adds the measured maintenance budget and old-transaction identification."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 states image rollback is safe only when old N can read and mutate every persisted state written by N+1; C15-E2 says image rollback is not business rollback; C15-E3 says a revert command is not recovery of acknowledged reservations or external effects; C15-E4 says new-only state can violate invariants."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 requires forward repair or tested data restore when data is incompatible with N, not blind image reversion; C16-E2 calls the old-stable branch conditionally valid; C16-E3 says traffic rollback is unsafe if N cannot read new data."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1 says the controller returns traffic to N and regards replica rollback as successful, and C17-E2 recommends stopping risky writes, but no supplied quote states that the persisted state remains unreadable while the controller reports success."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 names ForwardRepair for incompatible writes or partial migration; C18-E2 says reverting binaries cannot restore a removed column or reinterpret a new-only persisted value; C18-E3 frames data evolution as a semantic/authority transition."
+        },
+        {
+          "claim_id": "C19",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C19-E1",
+          "reason": "C19-E1-E4 support the compatibility-window, lock-budget, forward-repair and hold-rollout parts, but no supplied quote covers the owned reader inventory C19 names."
+        },
+        {
+          "claim_id": "C20",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C20-E1",
+          "reason": "C20-E1 states the contract step removes the easiest rollback path and that running an earlier image is not proof it can interpret newer records; C20-E2 says hold, repair forward, and contract only after reader absence."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C21-E1",
+          "reason": "C21-E1 states rewrites are not MVCC-safe (marked inference), but the consequences (no row-level undo, abort-and-retry with WAL and copied pages spent) are not stated by the supplied quotes."
+        },
+        {
+          "claim_id": "C22",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "C22-E1 requires recording the mapping revision, checkpoint, replay window and reconciliation rule; C22-E2 says a resume still needs a replay window and duplicate-tolerant apply."
+        },
+        {
+          "claim_id": "C23",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C23-E1",
+          "reason": "C23-E1 says acceptance includes correct user effects, database invariants, bounded downtime and actual recovery; C23-E2 says green migration SQL alone cannot close the gate."
+        },
+        {
+          "claim_id": "C24",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C24-E1",
+          "reason": "C24-E1 states larger pools worsen queue, p99 or deadlocks, supporting the lock-bound amplification, but no supplied quote covers redeploying during the lock wait."
+        }
+      ],
+      "semantic_support": 1,
+      "core_coverage": 2,
+      "pass": false,
+      "notes": "All supplied claims graded as core rows (the input provides no core/optional id map); citation_resolution and required_anchor_coverage copied unchanged. Partial verdicts name the missing element; no claim is contradicted."
+    },
+    {
+      "task_id": "Q327",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E2",
+          "reason": "C1-E1 separates probe failure meanings, dependency conflation and restart/traffic removal; C1-E2 denies a green liveness probe proves readiness, correct routing or a healthy dependency, supporting the no-collapse claim."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 makes the probe authoritative for reachability, not freshness, and calls for replication-lag monitoring; C2-E2 says a green regional probe is compatible with a broken global invariant."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 says health-based routing follows health status and health does not prove data authority; C3-E2 says stale membership plus continued reachability cannot establish write authority."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 states a caller needs a route to an eligible instance, not a timeless list of machines."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 limits a DNS TTL to the record caching contract and denies it is an application deadline or a guarantee existing connections stop; C5-E2 denies a DNS change is a drain or database failover protocol."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 names runtime retention of resolved addresses and established connections; C6-E2 requires marking the instance ineligible through the actual selector; C6-E3 says an executing operation cannot be moved without an interruption protocol."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 warns against treating lag as one scalar or a healthy replica as evidence it contains a named effect; C7-E2 states reads tolerate bounded lag and routing can separate stale reads."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 requires meeting an explicit replication/visibility condition, keeping the read on the authoritative path, or returning a declared pending/stale outcome; C8-E2 denies a successful SELECT on a reachable replica is sufficient."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "C9-E1 says failover to a stale replica can violate read-your-writes even when replication is healthy; C9-E2 says a sticky route or token that cannot survive failover is not a session guarantee."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 gives the atlas good-fit condition of a health signal plus a separate freshness gate; C10-E2 states geographic routers return a response whether the endpoint is healthy or not."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 says a previously healthy answer can outlive the health change; C11-E2 says cached or missing health can keep routing to a draining instance, covering the cached/fail-open claim."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C12-E2",
+          "reason": "C12-E1 marks process-liveness or dashboard-green after data divergence as an unacceptable substitute; C12-E2 requires a durable domain result, not merely 2xx; C12-E3 requires external monitoring of user-level success and dependency state."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 forbids turning one dependency fault into fleet-wide ejection; C13-E2 rejects one probe for every failure, liveness restarts on a shared dependency, and ignored startup."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 lists active-passive conditions (strict write-region, hard-to-replicate state, cost, RTO); C14-E3 adds the unresolved-conflict rejection."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 states active-active requires conflict-free data ownership and is not a safe default for one authoritative invariant."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 requires fencing, epoch/lease or other source-backed role control after ambiguous leader loss; C16-E2 requires solving writer fencing and historical acknowledged state separately; C16-E3 says a DNS-only failback can resurrect stale writes and split authority."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1 names the maximum tolerated age/version gap for the user journey, the declared freshness-contract element the claim requires."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E2",
+          "reason": "C18-E2 states a canary that reuses the same failing dependency is not an external observer; C18-E1 supports preferring a synthetic probe only when real traffic does not exercise the journey."
+        },
+        {
+          "claim_id": "C19",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C19-E2",
+          "reason": "C19-E1-E2 state the probe is authoritative for reachability, not freshness, and a 200 does not prove the region's writes are current; C19-E3 requires a reachability probe plus a separate freshness gate and fencing before failover."
+        },
+        {
+          "claim_id": "C20",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C20-E1",
+          "reason": "C20-E1 gives the active-passive conditions; C20-E2 warns that the passive path can drift."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C21-E1",
+          "reason": "C21-E1 states a regional failover can recover a process and still fail its business obligations; C21-E2 notes an asynchronous secondary may lack a recently accepted write."
+        },
+        {
+          "claim_id": "C22",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "C22-E1 states fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority; C22-E2 warns a second region without exclusive authority can create divergent accepted effects."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "All supplied claims graded as core rows (the input provides no core/optional id map); citation_resolution and required_anchor_coverage copied unchanged. All core claims supported."
+    },
+    {
+      "task_id": "Q339",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "C1-E1 defines service capacity as requests per second the server pool can complete when busy; C1-E2 defines utilization as offered load divided by capacity."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 states 12 servers at 0.5 s give 12/0.5 = 24 and 20/24 = 0.833; C2-E2 confirms the arithmetic for the synthetic case."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1-E3 are the A/B/C result rows, each showing capacity 24 at arrival 20; together with the worked capacity arithmetic they show C's 18 servers at 0.75 s equal A/B's 12 at 0.5 s."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 states the service-time-confusion failure mode: mean service time divided by servers in the wrong direction produces capacity too high or too low."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 says average CPU utilization is not comparable across different server counts unless cost and work units are stated; C5-E2 says every metric carries a direction and unit."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 fixes the Poisson 20 rps, 1,800 s horizon, 300 s warmup, 30 replications and seed base; C6-E2 gives C's 18 servers, 0.75 s mean, 120-request queue, 1.5 s timeout, two attempts, linear backoff, 160-request bulkhead and cost 14.0."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1-E3 give A/B/C success, p95, cost and timeout values; the claim's numbers match (A 0.870/1.81, B 1.206/1.34, C 1.769/3.63, success 0.9679 versus B 0.9996)."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 gives C's two attempts, linear backoff, amplification 1.079, timeout 0.111 and success 0.9679; C8-E2 says retries amplify load without preventing the timeout; C8-E3 gives the 5% load example; C8-E4 attributes B's higher p95 to waiting longer before timing out."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E3",
+          "reason": "C9-E1-E2 declare the hard cost 3.0 and p95 1.5 ceilings; C9-E3 states C is eliminated by both (3.63 > 3.0; 1.769 > 1.5) and A/B pass."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 states a hard constraint eliminates a candidate even with the highest success rate; C10-E3 names constraint laundering where a failed hard ceiling becomes a soft preference."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 says a comparison is invalid if candidates receive a different arrival pattern, duration or warmup; C11-E2-E3 fix the horizon, warmup and Poisson arrivals; C11-E4 says a candidate needing a different workload invalidates the comparison."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1-E5 enumerate the scenario-contract fields: workload, configuration, metrics with unit/direction/business-comparable flag, constraints, and evidence status with validity limits."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E2",
+          "reason": "C13-E1 lists the metric set; C13-E2 says the checkout model has no dependency calls or storage; C13-E3 forbids a production claim without measurement; C13-E4-E5 deny the gates establish a match to a real system or production behavior."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1-E3 mark arrival rate, service mean and servers as assumed; C14-E4 gives the 22 rps / 0.65 s reversal triggers."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 gives C's two-attempt policy with 1.079 amplification and 0.111 timeout; C15-E2 gives capacity 24 at 20 rps (0.833); C15-E3 gives p95 1.769 with timeout 0.111. The arithmetic 20*1.079/24 is about 0.90 and the p95 above the 1.5 s per-attempt deadline supports the inference."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 gives capacity 24 at arrival 20 (0.833), i.e. 4 rps spare; C16-E2 shows C also has capacity 24, so its extra servers add no capacity headroom."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1 gives the sensitivity numbers (arrival 0.361/0.464, service mean 0.536/0.639); C17-E2 says the screen does not prove production dominance; C17-E3 says it identifies what to measure first."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 labels mu as the pool's requests-per-second capacity; C18-E2 writes utilization as lambda/mu for one server; C18-E3 resolves capacity as servers divided by mean service time, supporting the claim that the per-server convention must be stated."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "All supplied claims graded as core rows (the input provides no core/optional id map); citation_resolution and required_anchor_coverage copied unchanged. All core claims supported."
+    }
+  ]
+}

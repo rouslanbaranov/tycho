@@ -1,0 +1,739 @@
+{
+  "status": "ai-judge-not-human",
+  "items": [
+    {
+      "task_id": "Q300",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C1-E2",
+          "reason": "C1-E2 states the company-reported 2024 adoption of JDK 21 plus Generational ZGC for more than half of critical streaming services and labels it 'not the entire Java fleet'; the March 2024 date is corroborated by C23-E1."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 separates older ZGC (about 36% more CPU), generational ZGC (about 10% better), and Parallel (6-8% throughput) as different experiments and denominators; C2-E2/E3 give the batch and worst-case rows and C2-E5 forbids treating a collector default as universal."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 states the amplification mechanism: GC stalls can trip client-side deadlines and cancellation, retries, hedging and fallbacks then increase offered work, matching the claim's loop and its 'not simply a local pause histogram' framing."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 requires application and downstream response tails, cancellations, retry traffic and non-GC bottlenecks and forbids declaring success on pause improvement alone; C4-E2 adds that quieter GC exposed previously masked causes."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 names volatile allocation, long-lived objects and unpredictable task duration as cases where G1 did better and Parallel helping a throughput precompute; C5-E2 separates latency, batch and memory-constrained contexts."
+        },
+        {
+          "claim_id": "C6",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 gives the large nightly batch row: G1 versus Parallel, completed jobs per hour, duration, RSS and CPU at equal inputs, and warns that a lowest-max-pause contest can be meaningless while completed batch work falls."
+        },
+        {
+          "claim_id": "C7",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 gives the interactive p99 row: G1 versus Generational ZGC on the same JDK and request mix, the better-pause-but-worse-footprint risk, and the allocation-spike, downstream-timeout and retry-feedback failure test."
+        },
+        {
+          "claim_id": "C8",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 requires GC pause and end-to-end p99/cancellation together because equal pause percentiles can mask memory or queueing changes; C8-E2/E3 add paired canaries at comparable CPU and response mix and a separate batch objective, and C8-E4 adds resource cost."
+        },
+        {
+          "claim_id": "C9",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C9-E3",
+          "reason": "C9-E1/E2 support the probabilistic pause goal and the CPU/memory-versus-throughput trade, but C9-E3 only says the objective is 'not a universal GC flag' and does not state the listed determinants (user journey, offered workload, allocation rate, live set, latency distribution); the enumerated basis is the missing part."
+        },
+        {
+          "claim_id": "C10",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 says a closed generator that waits for a response reduces offered load when the system stalls; C10-E2 requires observing the demand schedule and offered/admitted/completed rates separately."
+        },
+        {
+          "claim_id": "C11",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 defines coordinated omission and the waits excluded when a blocked generator stops scheduling, but it does not state the claim's added requirements that corrected histograms be disclosed, not treated as observed requests, and not used to infer burst behavior."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1 requires separating attempts from logical operations and admitted from offered demand and reporting percentile latency and error rate per operation class; C12-E2 adds counting retries separately from original demand."
+        },
+        {
+          "claim_id": "C13",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 states that averaging percentiles across groups is generally invalid and that aggregation can hide subgroup failures; C13-E2 gives the daily-average hiding a ten-minute queue crisis example."
+        },
+        {
+          "claim_id": "C14",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 states that a green CPU dashboard cannot show authorized completion or non-duplication, which is the claim's infrastructure-signal limitation; the user-visible indicator is its direct implication."
+        },
+        {
+          "claim_id": "C15",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E3 gives the (120-80)x20 = 800 queued-request arithmetic; C15-E1 says queue depth and request counts do not express remaining business effects once requests timed out or committed ambiguously; C15-E2 says the mean identity cannot predict tail latency or burst success."
+        },
+        {
+          "claim_id": "C16",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 states there is no automatic GC threshold and C16-E2 that fast medians can still miss the tail, but neither quote states the claim's added decision criterion that the measured critical resource and failure semantics decide whether redesign is justified."
+        },
+        {
+          "claim_id": "C17",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1 forbids moving JDK version, collector, compression and data access together; C17-E3 limits a single short benchmark to hypotheses; C17-E2 defines a winner only for tested workload and versions and preserves per-class exceptions."
+        },
+        {
+          "claim_id": "C18",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1/E3 give the worse-tail rollback trigger and the fail-fast contraindications and C18-E2 the insufficient-evidence result, but the quotes do not state the claim's added requirement that rollback and fail-fast thresholds be predefined."
+        },
+        {
+          "claim_id": "C19",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C19-E1",
+          "reason": "C19-E1 calls the adoption statistic scoped to a precise time and population; C19-E2 lists the missing change-ticket history, rollback cutoff, randomly assigned control group, long-horizon failure rate and all-service inventory."
+        },
+        {
+          "claim_id": "C20",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C20-E1",
+          "reason": "C20-E1/E3 support the cross-organization comparability point and the missing sample sizes, baselines, p99 values and variance, but C20-E2's 'without those' does not enumerate the target's JDK, pause-to-timeout causality, load, request class, retry policy and CPU/native budget named in the claim."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C21-E1",
+          "reason": "C21-E1 states the fixed additional native-memory overhead of about 3% of heap in the reported configuration; the container-budget rule is the direct operational implication. Limitation: the core point's compressed-reference/direct-buffer cost is not stated here."
+        },
+        {
+          "claim_id": "C22",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "C22-E1 states the company optimized tail latency and operational simplicity together, not peak allocation throughput alone."
+        },
+        {
+          "claim_id": "C23",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C23-E1",
+          "reason": "C23-E1 gives the 2024-03-06 period and the drafted, technical-review-pending status; C23-E2 says the observations are first-party and not independently reproduced by Tycho."
+        },
+        {
+          "claim_id": "C24",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C24-E1",
+          "reason": "C24-E1's symptom-matrix row pairs sudden synchronous pauses with JFR/GC pause times aligned to latency spikes and lists changing the garbage collector from a p99 graph as the unsafe shortcut."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "Core coverage is 2 in the claim matrix and all five core rows are supported. Limitation: core point 5's 'loss of compressed references or direct-byte-buffer processing' is not stated as a cost; compressed references and direct buffers appear only as transfer co-variates in section 2.4, which is noted rather than verdictless."
+    },
+    {
+      "task_id": "Q304",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C1-E1",
+          "reason": "C1-E1/E2/E3 support that Netty is not a workflow engine, SQL database or backpressure protocol, that Quarkus builds on Vert.x and exposes execution choices, and that the worker pool is bounded, but they do not state the named responsibilities in the core point (Netty channels/pipelines/event loops, Vert.x multi-event-loop dispatch, Mutiny/RxJava composition); the layer-responsibility synthesis is the missing part."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1/E2/E3 state worker, event-loop and virtual-thread dispatch under version and extension eligibility, and C2-E4 says a nonblocking stack does not make JDBC nonblocking, but no supplied quote supports the claim's added 'how much downstream capacity exists'; that capacity clause is the missing part."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 says every operation scheduled onto the same event loop can be delayed and that more workers elsewhere do not release a loop blocked by user code; the 600 ms duration is the answer's explicitly fictional illustration, not a measured threshold."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 says moving work to a worker executor isolates the event loop but transfers the queue, timeout and capacity problem and that an unbounded queue moves the outage; C4-E2/E3 add the boundedElastic relocation and the need for a bounded queue."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1/E3 state the carrier scheduler is not a backpressure mechanism, virtual-thread count is not a downstream limit, and a semaphore inside unlimited submissions bounds calls but not threads waiting for permits; C5-E2 adds retained heap, locks and a leased connection."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 states Quarkus 3.27 virtual-thread messaging enables concurrent processing and no longer preserves the default sequential per-channel behavior; C6-E2 says per-key order must be configured or enforced in application state and a dispatch annotation is not an ordering guarantee."
+        },
+        {
+          "claim_id": "C7",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 defines ordering by its enforcement point and C7-E2 says order within A and within B does not establish an order between unrelated streams; C7-E3 says partition order is not total topic order."
+        },
+        {
+          "claim_id": "C8",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 calls partition-key choice a correctness and scaling choice; C8-E2/E3 add hot-key concentration and reassignment of later records when key encoding or partition count changes."
+        },
+        {
+          "claim_id": "C9",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "C9-E1 gives the 1024 default as a framework-specific version default, not a universal JDK thread limit or a broker guarantee; C9-E2 forbids using it as the database capacity setting."
+        },
+        {
+          "claim_id": "C10",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 separates platform-thread, virtual-thread, subscriber and connection budgets and says more request concurrency does not create DB execution capacity; C10-E2 adds that virtual threads do not create database capacity."
+        },
+        {
+          "claim_id": "C11",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 says adding workers does not guarantee processor time, DB throughput, network quota, key authority or a larger completion rate; C11-E2 defines saturation."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1 requires a bounded queue, a deadline covering admission, executor queue wait and connection acquisition, and a rejection policy distinguishing retryable overload from uncertain committed effects."
+        },
+        {
+          "claim_id": "C13",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1/E2 say Reactive Streams demand coordinates only compliant participants and cannot cap an unrelated driver pool or hidden queue; C13-E3 requires a documented buffer, drop, backoff or fail policy."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 distinguishes Flowable as Reactive Streams/backpressure from Observable without backpressure; C14-E2 states that converting an unbounded Observable to Flowable needs an explicit overflow strategy that changes business semantics."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 forbids claiming a downstream Flowable has retroactively slowed an uncontrolled producer; C15-E2 says not to conflate thread switching with demand control and to define the unbounded hot-source policy."
+        },
+        {
+          "claim_id": "C16",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 says creating a reactive chain does not start a thread or perform the work; subscription starts it and operators default to executing on the thread delivering the signal."
+        },
+        {
+          "claim_id": "C17",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C17-E1",
+          "reason": "C17-E2 supports no retroactive slowdown and C17-E1 (inference) supports default operator execution on the delivering thread, but neither states the claim's added assertions that a Flowable adds demand signalling rather than an implicit queue, thread hop or rate limiter and that any buffering latency comes from an explicit overflow operator."
+        },
+        {
+          "claim_id": "C18",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 distinguishes a bounded reactive concurrency setting from a bounded virtual-thread handler count and says both can still exceed a remote dependency quota without an explicit budget."
+        },
+        {
+          "claim_id": "C19",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C19-E1",
+          "reason": "C19-E1/E2 show a shared outbound pool consumed by optional work delaying bookings and require a measurable bottleneck, a bounded queue and propagation of backpressure."
+        },
+        {
+          "claim_id": "C20",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C20-E1",
+          "reason": "C20-E1 says cancellation requests stopping new delivery but does not establish rollback of a database transaction, HTTP request or external effect; C20-E2 requires releasing buffers and leases and reconciling committed durable effects."
+        },
+        {
+          "claim_id": "C21",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C21-E1",
+          "reason": "C21-E1 requires verifying the exact version, handler thread, queue bounds, ordering contract, context propagation and recovery from partial completion; C21-E2 adds the injected-fault observations."
+        },
+        {
+          "claim_id": "C22",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "C22-E1 says reactive programming does not automatically mean parallel execution, faster computation, a durable queue or a stronger transaction; C22-E2 says a declarative chain can still contain a blocking call."
+        },
+        {
+          "claim_id": "C23",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C23-E1",
+          "reason": "C23-E1 only states that a subscriber signals demand with request(n); C23-E2 (inference) says operators default to the delivering thread. Neither states the claim's added conclusion that a Flowable paces a cooperative producer's emission to demand and changes who sets the rate without per-item wrapper overhead."
+        }
+      ],
+      "semantic_support": 1,
+      "core_coverage": 2,
+      "pass": false,
+      "notes": "All six core points are addressed, so core coverage is 2, but semantic support is 1 because C1's five-layer responsibility synthesis and C2's downstream-capacity clause are not entailed by the supplied evidence fragments."
+    },
+    {
+      "task_id": "Q308",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E2",
+          "reason": "C1-E2 says even transactional Kafka boundaries leave external SQL requiring cooperation and do not enclose an unrelated SQL commit, payment provider or email delivery; C1-E1/E3 add that the declared Kafka boundary is protected while the application must decide its own atomic persistence."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 says read_committed is not proof that every consumer's external side effect happens once; C2-E2 says it is a precise visibility contract, not an isolation mode for the application database."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 says stopping polling or receiving a rebalance callback does not retract the remote request; C3-E2/E3 require guarding the effect with its own identity, draining or classifying in-flight work and committing only resolved positions."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 says no perfect ordering of two independent commits creates an automatic global transaction; C4-E2 shows the durable receipt is what lets a successor recognize an existing result, so a replay without it repeats the capture."
+        },
+        {
+          "claim_id": "C5",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 requires a durable idempotency/effect key to suppress the duplicate row transition and C5-E2 supplies the receipt mechanism, matching the effect-before-position, no-deduplication scenario."
+        },
+        {
+          "claim_id": "C6",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1/E2 list the missing source input identity, sink transaction or idempotency, replay/failure tests, provider contract and reconciliation policy, but neither quote contains the claim's assertion that the book explicitly calls the 'transactions enabled therefore never twice' inference false."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 says a unique durable receipt for K committed atomically with the SQL effect lets the successor recognize the existing result; C7-E2/E3 require stable idempotent operation identities scoped to subscriber and effect."
+        },
+        {
+          "claim_id": "C8",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 requires the identity to include the correct subscriber and event/effect scope; C8-E2 says the store is keyed by a composite of consumer identity and message identity."
+        },
+        {
+          "claim_id": "C9",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "C9-E1 puts processed-event identity and business effect in one local transaction; C9-E2 requires a uniqueness constraint so only one of two concurrent inserts commits; C9-E3 scopes the guarantee to the declared retention window."
+        },
+        {
+          "claim_id": "C10",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 says an in-memory set is insufficient for restart-safe deduplication; C10-E2 requires the marker lifetime to cover broker, DLQ and historical replay horizons."
+        },
+        {
+          "claim_id": "C11",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 says the destination must reject stale epochs or the operation remains unsafe; C11-E2 says fencing alone does not deduplicate; C11-E3/E4 require stable idempotent identities or an explicit unresolved boundary."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1 scopes exactly-once processing to a bounded Kafka state/output topology; C12-E2/E3 add the exactly_once_v2 and checkpoint/connector/sink-specific guarantee scope."
+        },
+        {
+          "claim_id": "C13",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 says auto.offset.reset chooses a configured behavior when the requested offset no longer exists and cannot recreate deleted records."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 distinguishes latest, which may skip missing history, from earliest, which means the earliest retained history rather than the beginning; C14-E2 says a silent reset turns a recovery failure into apparently healthy but incomplete output."
+        },
+        {
+          "claim_id": "C15",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1/E2 tie retention loss to silent-reset incompleteness and removed history; C15-E3/E4 require a source snapshot with an explicit change boundary and a rebuild protocol, or insufficient evidence when that boundary is unavailable."
+        },
+        {
+          "claim_id": "C16",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 requires the marker lifetime to cover the maximum broker, DLQ and historical replay horizon and says an expired identity makes the record look new and can duplicate the effect."
+        },
+        {
+          "claim_id": "C17",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1 says a consumer-group offset is a replay position, not proof every user-visible effect succeeded; C17-E2 requires user-level effect completeness and resolved duplicates, not merely zero consumer lag; C17-E3 scopes the receipt protocol to its local-atomicity and retention assumptions."
+        },
+        {
+          "claim_id": "C18",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 says to avoid one universal claim that a missed poll immediately moves every partition, matching the claim's configuration- and protocol-dependent caveat."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "All six core rows are supported and coverage is 2. Limitation: core point 3's clause that an idempotent producer is not a business operation key across restarts and input sources is not discussed; the answer covers transactional producers only, which is noted rather than verdictless."
+    },
+    {
+      "task_id": "Q325",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "C1-E1 states a read-through cache cannot make per-read application authorization decisions and C1-E3 gives the rejection condition for application-specific per-read authorization; the service-identity mechanism is the direct reason for the quoted property."
+        },
+        {
+          "claim_id": "C2",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 requires authorization at an enforced boundary and says a copied permission bit is not its own authority; C2-E2/E3 scope cached entries to subject, action, resource, tenant and policy state and apply object ACLs to cached bodies."
+        },
+        {
+          "claim_id": "C3",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 lists per-principal keying, a short TTL and bypass as bounded alternatives and C3-E2 gives the negative-key scope, but neither states the claim's added conclusion that per-principal keying abandons the read-through property or that the cache is not the audited policy enforcement point."
+        },
+        {
+          "claim_id": "C4",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 forbids a cached negative becoming a universal absence statement; C4-E2 gives the service-level-authority confused-deputy case; C4-E3 requires a fill failure to be returned or mapped explicitly, never hidden as an ordinary miss."
+        },
+        {
+          "claim_id": "C5",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 says a cached permit must not outlive a required revocation deadline; C5-E2 requires deleting or versioning the key on revoke and bounding a denial by the shorter of TTL and deadline; C5-E3 requires an explicit fail-closed or approved safe-degradation rule."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1 says slow fills and error masking make the cache appear healthy while the source degrades; C6-E2 raises whether unknown source errors may be cached; C6-E3 calls a fill that hides source errors a correctness defect."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 requires an authority-issued version and admission only if it is not older than the cached high-water generation; C7-E2 says deletion alone does not fence an in-flight fill; C7-E3 requires monotonic versions and no-regression writes."
+        },
+        {
+          "claim_id": "C8",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 says failover to a stale replica can violate read-your-writes even when replication is healthy and C8-E2 rejects linearizable-only or unbounded-lag cases, but neither states the claim's added 'a version gate detects but cannot repair lag' or the leader/quorum routing remedy."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "C9-E1 requires combining concurrent misses for the same key into one source load; C9-E2/E4 say cache loss is a load event; C9-E3/E5 require admission and coalescing and a bounded fallback."
+        },
+        {
+          "claim_id": "C10",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 says a coalesced load cannot respect waiters needing independent cancellation or differing authorization and that a leader error is shared by every waiter; C10-E3 requires protecting the source and rejecting low-priority work."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E5",
+          "reason": "C11-E5 says a successful hit can return an inadmissibly stale value and cache availability is not authoritative correctness; C11-E6 requires distinguishing authoritative state from cached copies; C11-E7 requires explicit key scope, TTL/invalidation, stampede control and authorization."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C12-E2",
+          "reason": "C12-E2 says cache-aside with application-owned fill keeps loading policy visible and prefers read-through only when the cache can call the source and the loading contract is uniform; C12-E1/E3 give the app-owned fill conditions and the protocol, authentication and backpressure requirement."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 says to fall back to a blocking read at the declared stale bound; C13-E2 says a stale value may be forbidden for an authoritative grant and rejection with an explanation is better; C13-E3 says even a TTL cache can expose stale authorization or deleted content."
+        },
+        {
+          "claim_id": "C14",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 says a performance win based on unreported errors or stale authorization is not valid and C14-E2 requires measuring origin QPS, but the quotes do not state the claim's added requirement to count misses, denials and backend errors separately and to measure queue age and error rate."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "All five core points are addressed and all core rows are supported; optional rows C3, C8 and C14 are partial on added clauses that do not gate the task."
+    },
+    {
+      "task_id": "Q337",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1.0,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "C1-E1 defines measured as a named source plus a measurement method, sample size and period; C1-E2 says a parameter changes status only with new evidence; C1-E3 says an assumed input repeated in a decision record does not become measured."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "C2-E1 says every model is uncalibrated and the contracts list each parameter's evidence status and missing measurement; C2-E2/E3 name the missing measured lag distribution and measured reconciliation throughput."
+        },
+        {
+          "claim_id": "C3",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "C3-E1 gives the 0.5-2.5 second and 2-8 records-per-second ranges and the -0.4 correlation; C3-E2 gives the 8,925.5 maximum divergence and the 5,561.6-12,289.3 95% interval."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "C4-E1 states that a uniform range in a scenario is not a Type A or Type B component and is an assumed input range; C4-E2 gives the failure mode of treating it as if it came from a measured distribution."
+        },
+        {
+          "claim_id": "C5",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "C5-E1 says replications address sampling error, parameter draws address input uncertainty, and increasing replications does not reduce input uncertainty; C5-E2 gives the 20 replications and seed base."
+        },
+        {
+          "claim_id": "C6",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "C6-E1/E2 name the missing measured lag distribution and measured throughput under target load in the V12 input table."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "partial",
+          "quote_id": "C7-E1",
+          "reason": "C7-E1 only says JCGM distinguishes Type A and Type B components and shows how to combine them; it does not state the claim's added requirement that a Type B evaluation needs documented information such as a specification, calibration or prior measurement, or that a designer-chosen scenario bound lacks that basis."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "C8-E1 says a confidence interval across replications is a sampling interval, not a metrological coverage interval; C8-E2 says a 95% confidence interval covers the true mean under the model's assumptions but not the true production value if the model is biased or inputs are mis-specified."
+        },
+        {
+          "claim_id": "C9",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "C9-E1 gives the declared -0.4 correlation and the Gaussian copula; C9-E2 says a model that ignores a known correlation produces too narrow an output distribution and a decision that looks more certain than it is."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "C10-E1 states JCGM's measurement result as a measured value plus an uncertainty with a coverage interval at a stated coverage probability; C10-E2 says the divergence is a synthetic proxy, not a measured data-quality metric; C10-E3 says the experiment does not establish that the real divergence is inside the modeled range."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "C11-E1 says V12 uses the coverage vocabulary but does not perform a metrological uncertainty budget; C11-E2 names presenting a confidence interval across replications as an uncertainty budget for the input parameters."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "C12-E1 states the valid claim is conditional, that under the declared inputs the model produces the reported result, and the invalid claim is that the result describes a real system; C12-E2 says an uncalibrated model's decision is conditional on its assumptions."
+        },
+        {
+          "claim_id": "C13",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "C13-E1 says the decision remains conditional or insufficient evidence and the model can rank what to measure first but cannot substitute for the measurement; C13-E2 says the model can show what to measure and cannot create the measurement."
+        },
+        {
+          "claim_id": "C14",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "C14-E1 says the modernization decision returns insufficient evidence with recommendation none; C14-E2 says the model cannot tell whether a real migration would diverge by ten records or ten thousand; C14-E3 says a hard input assumed over a range spanning the decision boundary triggers insufficient evidence."
+        },
+        {
+          "claim_id": "C15",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "C15-E1 says a model can still fail to support a decision and the missing evidence is about the world; C15-E2/E3 say convergence does not mean the inputs are measured or the interval contains the production value; C15-E4 says a model-verified label does not imply calibration."
+        },
+        {
+          "claim_id": "C16",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "C16-E1 says a validity limit is a condition on the result's use, not a disclaimer appended to it; C16-E2 says no production claim without measurement."
+        },
+        {
+          "claim_id": "C17",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C17-E1",
+          "reason": "C17-E1/E2/E3 support the normal approximation across replications and the 95% confidence caveat, but they do not state the claim's added assertion that the run records no effective degrees of freedom or output distribution."
+        },
+        {
+          "claim_id": "C18",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C18-E1",
+          "reason": "C18-E1 says the engine's sampling applies the declared correlation and C18-E2 says JCGM distinguishes and combines Type A and Type B components, but neither states the claim's added conclusion that a covariance-omitting quadrature is not the metrological combination law or that the law includes covariance."
+        }
+      ],
+      "semantic_support": 1,
+      "core_coverage": 2,
+      "pass": false,
+      "notes": "Core coverage is 2, but semantic support is 1 because C7's Type B information-basis requirement is not entailed by the supplied JCGM fragment; the other core rows are supported."
+    }
+  ]
+}
