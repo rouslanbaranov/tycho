@@ -86,75 +86,11 @@ See the [dedicated Gateway Routing card](gateway-routing.md).
 
 ### Gateway Aggregation
 
-**Identity.** Gateway Aggregation; family API and service communication; kind
-integration pattern; priority core.
-
-**Decision question.** Should a gateway aggregate several downstream responses into one
-client-facing result, rather than making the client orchestrate every call?
-
-**Good-fit conditions.** Clients need a small stable response from several owners; the
-aggregation is read-mostly; per-call deadlines and partial-failure policy can be
-defined; the gateway can expose which dependency failed.
-
-**Hard contraindications.** Reject the claim when the aggregate needs strong
-consistency across owners; when one slow dependency would exhaust the gateway; when
-the aggregate becomes a hidden domain workflow; when partial results cannot be
-represented honestly.
-
-**Competing alternative.** Client-side composition or an API Composition layer with a
-narrow contract. Reverse the choice when aggregation latency and coupling exceed the
-client simplification benefit.
-
-**Failure and recovery.** Fan-out latency, partial failure and retry amplification are
-common. Recovery requires per-dependency deadlines and explicit partial results;
-verify the gateway boundary and aggregation mechanics in the owner section.
-
-**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#gateway-aggregation) — bounded edge boundary and aggregation mechanics.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-aggregation.2026-10-21: all nine served
-headings read. Vendor pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; API Composition; Gateway Routing; Backend for
-Frontend.
+See the [Gateway Aggregation](gateway-aggregation.md) card.
 
 ### Gateway Offloading
 
-**Identity.** Gateway Offloading; family API and service communication; kind integration
-pattern; priority core.
-
-**Decision question.** Should reusable cross-cutting functions be moved to a gateway
-without moving domain authority there?
-
-**Good-fit conditions.** TLS, authentication, rate policy or compression is shared
-across backends; the gateway can enforce and observe the function; backend authority
-and object-level authorization remain explicit.
-
-**Hard contraindications.** Reject the claim when the offloaded function needs domain
-state; when the gateway becomes the only authorization check; when a gateway outage
-blocks all work; when the team cannot own gateway configuration.
-
-**Competing alternative.** A library in each backend or a narrower reverse proxy.
-Reverse the choice when gateway configuration drift or blast radius exceeds the reuse
-benefit.
-
-**Failure and recovery.** Misconfigured TLS, stale policy, header spoofing and a gateway that
-becomes the only authorization point are common. Recovery requires configuration tests and
-an explicit trust boundary with downstream authorization.
-
-**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#gateway-offloading) — edge functions and trusted identity; not a complete offloading catalogue.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-offloading.2026-10-21: all eleven served
-headings read. Vendor pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; Reverse Proxy; Gatekeeper; Gateway Routing.
+See the [Gateway Offloading](gateway-offloading.md) card.
 
 ### Backend for Frontend (BFF)
 
@@ -166,37 +102,7 @@ See the [dedicated API Composition card](api-composition.md).
 
 ### Reverse Proxy
 
-**Identity.** Reverse Proxy; family API and service communication; kind infrastructure
-pattern; priority core.
-
-**Decision question.** Should a reverse proxy terminate client connections and forward
-requests to backends, rather than exposing backends directly?
-
-**Good-fit conditions.** Backends need connection management, TLS termination or
-header normalization; the proxy can be operated with health checks and draining; backend
-selection is explicit; the extra hop is acceptable.
-
-**Hard contraindications.** Reject the claim when one backend can be exposed safely;
-when the proxy would become an unowned single point; when it hides backend authorization;
-when connection draining or timeout behavior cannot be tested.
-
-**Competing alternative.** Direct backend exposure or a richer API gateway. Reverse the
-choice when proxy configuration and outage cost exceed the connection-management
-benefit.
-
-**Failure and recovery.** Stale connections, proxy bypass, header trust and draining failures
-are common. Recovery requires connection lifecycle tests and explicit forwarded-header and
-draining policy.
-
-**Technical owner.** [Gateway boundaries and offloading](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/gateway-boundaries-and-offloading.md#reverse-proxy) — proxy and gateway boundary; not a full Envoy operations guide.
-
-**Sources.** [src.envoy](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.envoy-http-connection.2026-10-21: all fourteen served headings read. Vendor
-documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; Gateway Offloading; Service Discovery; Sidecar.
+See the [Reverse Proxy](reverse-proxy.md) card.
 
 ### Service Discovery
 
@@ -204,39 +110,7 @@ See the [dedicated Service Discovery card](service-discovery.md).
 
 ### Client-Side Discovery
 
-**Identity.** Client-Side Discovery; family API and service communication; kind
-discovery pattern; priority advanced.
-
-**Decision question.** Should the caller own service lookup and backend selection,
-rather than delegating both to an intermediary?
-
-**Good-fit conditions.** Clients can maintain membership, backoff and observability;
-the client platform is controlled; selection policy is stable; stale membership can be
-detected and bounded.
-
-**Hard contraindications.** Reject the claim when clients cannot be upgraded; when
-discovery logic would be duplicated across many runtimes; when the client cannot observe
-backend health; when selection policy must be centrally governed.
-
-**Competing alternative.** Server-side discovery through a proxy or load balancer.
-Reverse the choice when client complexity and inconsistent policies exceed the
-resolution benefit.
-
-**Failure and recovery.** Registry outage, stale caches, divergent client policies and
-retry storms are common. Keep a last-known set for reads, detect staleness and bound retries.
-
-**Technical owner.** [Client-Side Discovery](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/discovery-balancing.md#client-side-discovery) — discovery and selection; client-specific policy is bounded to the linked section.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-client-discovery.2026-10-21: Client-side service
-discovery, sections "Context", "Problem", "Forces", "Solution", "Examples", "Resulting
-context", "Related patterns". Pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Service Discovery; Server-Side Discovery; Gateway Routing; Reverse
-Proxy.
+See the [Client-Side Discovery](client-side-discovery.md) card.
 
 ### Server-Side Discovery
 

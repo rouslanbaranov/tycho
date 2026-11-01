@@ -215,3 +215,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | Consistency card split batch | pass | `2026-11-01-consistency-card-split-deepseek.md` | `507eb700c6e109370083c9bfac2b544ea44e130c52fbc15674d6394e28156dc7` |
 | 2026-11-01 | DeepSeek Reviewer | Caching card split batch | pass | `2026-11-01-caching-card-split-deepseek.md` | `139084628511f82ea924ab4012b92c6ac0dfca3e795f9d48d8167e016c030ad3` |
 | 2026-11-01 | DeepSeek Reviewer | Coordination card split batch | pass | `2026-11-01-coordination-card-split-deepseek.md` | `948787f36d805473e9f3ee71c8298ff3262e10ccb5cb6ba719c68a94fc8082de` |
+| 2026-11-01 | DeepSeek Reviewer | API card split batch | pass | `2026-11-01-api-card-split-deepseek.md` | `57ca46a5d026ae0aee30ec1c6397055535b501bdd66b16d8ffe9e112d9c8f572` |
