@@ -23,7 +23,7 @@ route_hints:
     - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
     - "tycho.page.b21078a397214496a24305a2f016b021"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "correlation-identifier"

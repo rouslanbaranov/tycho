@@ -185,9 +185,8 @@ reflecting the MessageId of a message that is being replied to."
 propagation across every asynchronous boundary is part of the message contract. Do not use the
 identifier as an authorization token.
 
-**Failure and recovery.** A lost or duplicated identifier is the failure path. Azure Service Bus
-states: "If enabled, the duplicate detection feature identifies and removes second and further
-submissions of messages with the same MessageId." Quarantine unmatched messages, resolve by a
+**Failure and recovery.** Azure duplicate detection removes repeated MessageId submissions; a
+CorrelationId collision is not broker-detected and remains application-side. Quarantine unmatched messages, resolve by a
 secondary key or reissue; Tycho guidance: an expired identifier maps to a dead-letter or audit
 record with an owner.
 
