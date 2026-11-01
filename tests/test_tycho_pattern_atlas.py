@@ -28,7 +28,7 @@ class PatternAtlasTests(unittest.TestCase):
         result = validate_data(self.data, ROOT)
         self.assertEqual(result["volume"], "V11")
         self.assertEqual(result["chapters"], 11)
-        self.assertEqual(result["documents"], 102)
+        self.assertEqual(result["documents"], 103)
         self.assertEqual(result["patterns"], 145)
 
     def test_registry_hash_is_rejected(self):
