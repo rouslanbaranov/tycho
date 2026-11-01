@@ -1,0 +1,461 @@
+{
+  "task_id": "Q264",
+  "answer": "# Q264 — RF=3, acks=all, min.insync.replicas=1 and a lost producer acknowledgment\n\n**Layers used.** The question needs the book layer: the Kafka replication/ISR/acknowledgment page,\nthe partition-ordering page, the replication/consensus and leader-election pages, and the\nretries/idempotency pages. The atlas layer is consulted for the Leader Election pattern entry (C18). The modeling-and-simulation layer was searched once and held no structured Kafka durability\nmodel, scenario, run or decision artifact (its single hit was a comparative-decision sensitivity\nsection), so it supplies no evidence here.\n\n## 1. Direct answer\n\nThe team is wrong about three different things: what a replica count is, what an acknowledgment\ncovers, and what a timeout proves.\n\n**A replication factor is not a durability property.** RF=3 says how many copies the topic is\nconfigured to keep; it does not say that every acknowledged record sits on three brokers, nor that\nany one broker's loss preserves it. The book is explicit: do not equate \"replication factor 3\" with\n\"every record always survives any one failure\", because the actual durability guarantee depends on\nproducer acks, ISR/min ISR, leader-election configuration, storage health, producer retry and how a\ncommit is acknowledged (C1). acks=all and min.insync.replicas are a joint durability/availability\nsetting, and an insufficient ISR interrupts accepted production instead of silently preserving the\nsame guarantee with fewer replicas (C2). With min.insync.replicas=1 the acknowledgment condition can\nbe satisfied by an in-sync set no larger than the leader, so an acknowledged record can exist on a\nsingle broker while RF=3 is configured; that step is my inference from the coupling the page states,\nnot a sentence the page contains (C3).\n\n**A producer timeout is an unknown outcome, not a negative one.** The page says the producer \"must\nnot assume the record was absent\" when the acknowledgment never arrives, and its diagram note is\n\"Lost ack leaves producer outcome ambiguous\" (C4). The write may already have committed before the\nreply disappeared (C5). Leader election does not resolve the ambiguity: ELR \"does not let a client\ninfer whether its lost producer acknowledgment represents an appended record\", and an election does\nnot resolve an unknown outcome (C6). Retrying with a new identity can duplicate a committed record\n(C7). Even a genuinely durable record only proves log-entry durability under a declared\nretention/replication policy, not that it is the authoritative business transaction, and replay\nremains at-least-once even when producer retries are deduplicated (C20).\n\n**What to inspect.** The page itself is scoped as a narrower mechanism — \"Which replica and\nacknowledgment conditions bound durability and availability?\" — inside a broader integration\ncontract, so its answer is conditional by construction (C19). Before relying on leader election: the exact release and feature state (ELR is\n4.0, enabled by default only for new 4.1 clusters, not automatically after an upgrade), the ELR\nprotocol/configuration and partition state, ISR/min ISR, whether unclean election is permitted, and\nstorage and membership integrity (C8, C9, C10). Before relying on replay: the consumer position\nrelative to the external effect, retention and auto.offset.reset, the dedup identity and its\nretention, producer idempotence and retry policy, and identity-level end-to-end completeness rather\nthan counts (C12-C16). \"Replicated\" alone is not an acceptance criterion (C11).\n\n## 2. Facet matrix\n\n| Facet | Query formulations actually run | Evidence |\n|---|---|---|\n| F1 Acknowledgment condition (acks=all with min.insync.replicas) | \"acks=all min.insync.replicas acknowledgement\"; \"in-sync replicas\"; \"producer acks ISR\"; \"min ISR\"; \"acknowledgement condition leader\" | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope |\n| F2 RF=3 versus per-record durability | \"RF=3\"; \"replication factor\"; \"replication factor durability guarantee broker failure\"; \"three replicas\"; \"survive broker failure\" | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#overview; tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope; tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit; tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties |\n| F3 Timeout ambiguity and retry duplication | \"producer acknowledgement timeout\"; \"producer retry duplicates timeout unknown outcome\"; \"idempotent consumer replay\"; \"network timeout lost reply\" | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope; tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope; tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario |\n| F4 Leader election and ELR inspection | \"unclean leader election\"; \"leader election failover assumption\"; \"leader elections logs client observations\"; \"under-replicated partitions\"; atlas \"leader election failover\" | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope; tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations; tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment; tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory |\n| F5 Replay: offsets, retention and deduplication | \"replay offset retention\"; \"replay\"; \"delivery guarantee at-least-once duplicate\"; \"durability acknowledgement ambiguity\" | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points; tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix; tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions; tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary; tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit |\n| F6 Evidence scope and completeness checks | \"durability guarantee storage health\"; \"what to check before relying\"; \"delivery guarantee at-least-once duplicate\"; \"replay offset retention\" | tycho.page.0b493340594c4c4392c5d93940a7f319#applied-m9-evidence-what-transfers-and-what-does-not; tycho.page.9f1f71a670f345e9898fe78167b48cda#outcomes-and-negative-lessons; tycho.page.9f1f71a670f345e9898fe78167b48cda#migration-mechanics-and-reliability |\n\n## 3. Mechanism and justification\n\n### 3.1 The acknowledgment condition is a conjunction, not a copy count\n\nA Kafka partition has a leader and followers, and the in-sync replica set (ISR) tracks follower\nstatus with respect to the leader. acks=all is not a statement about the configured replication\nfactor; it is a statement about the acknowledgment boundary at the moment of the append, and\nacks/min.insync.replicas are described together as the expected durability/availability trade-off\n(C2). The page's sequence diagram acknowledges the producer only \"if configured commit conditions\nhold\", and its text says the broker acknowledgment depends on producer/topic configuration and\nreplica progress (C4).\n\nThe consequence is structural. RF=3 fixes a configured copy count, not the size of the in-sync set\nthat must acknowledge, and not the number of copies that a particular acknowledged record actually\nhas. When the ISR is healthy and min.insync.replicas is high, the acknowledgment can be a strong\nstatement; when the ISR shrinks toward its floor, the same configuration accepts writes with a\nweaker effective guarantee or rejects them. The book's matrix records both halves: below the\nrequired threshold \"Some acks/writes may reject rather than weaken durability\", and a leader crash\nduring replication means \"Partition ownership/ISR may change\" (C2, C12).\n\n### 3.2 Why \"RF=3\" is not a one-broker durability guarantee\n\nThe book rejects the equation directly (C1). The durability of an acknowledged record depends on a\nlist of independent conditions: producer acks, ISR/min ISR, leader-election configuration, storage\nhealth, producer retry and how a commit is acknowledged (C1). Two further observations make the\n\"one-broker guarantee\" a category error:\n\n- \"Replicated\" alone is not an acceptance criterion; each architecture must specify write\n  acknowledgment, eligible reader, membership configuration, failure domain, consistency,\n  reconfiguration and restore model (C11). The book also separates log durability from business\n  truth: a Kafka record is a durable log entry under a declared retention/replication policy, not\n  necessarily the authoritative business transaction (C20).\n- Acknowledged-write durability in a replicated log is contingent on correct stable storage and\n  membership behavior; a health endpoint or elected status is not proof of quorum (C10).\n\nSo there are two different claims that get conflated. RF=3 can support a tolerance statement about\nbroker unavailability only under the right acknowledgment and election settings, and even then it is\nconditional on storage, membership and the absence of unsafe election. Under the team's configuration it does\nnot guarantee that each acknowledged record survives any one broker failure: with\nmin.insync.replicas=1 an acknowledged record may have been acknowledged with an ISR of one, and it\nmay never have been replicated before a leader change.\nThe availability-oriented reading is also wrong: a failed leader or insufficient ISR interrupts\naccepted production rather than silently granting the same guarantee with fewer replicas (C2).\n\n### 3.3 What the missing acknowledgment leaves ambiguous\n\nThe missing acknowledgment is a one-bit observation about a multi-state outcome. The book gives both\npoles: a timed-out write may have committed before the reply disappeared (C5), and the client must\nnot assume the record was absent (C4). Between those poles the client cannot distinguish:\n\n1. **Never appended.** The request may have been rejected or lost before the leader appended it; the\n   safe inference table says a network timeout means \"outcome may be unknown\", while \"server did\n   nothing\" is the unsafe inference (C4). This state is a genuine negative, but the timeout alone\n   does not identify it.\n2. **Appended but not committed or not replicated.** The leader may hold an uncommitted append that\n   a leader change or a shrinking ISR does not preserve; ELR explicitly cannot tell the client\n   whether its lost acknowledgment represents an appended record (C6).\n3. **Committed and durable with only the reply lost.** \"Kafka effects may be durable, response may\n   be missing\"; the recovery rule is to resolve the logical business outcome from its authority and\n   \"do not infer from reply loss\" (C21).\n\nBeyond the write itself, the missing acknowledgment leaves ambiguous how many copies currently\nexist, what ISR state the record was acknowledged in, whether consumers will see it, and whether a\nretry has already produced a second copy. That is why the book treats broker redelivery as \"one\nevent can be delivered more than once\" (C7) and why an acknowledgment loss plus a new identity can\nduplicate a committed effect (C7). None of these questions is answered by waiting longer, by a\nleader election, or by reading the producer's timeout: an independent authority (status lookup,\nreadback by key, dedup record, offset/log inspection) is required (C14).\n\n### 3.4 What must be inspected before relying on leader election\n\n1. **Exact release and feature state.** ELR was introduced in Kafka 4.0 and is enabled by default\n   for new 4.1 clusters, which \"is not equivalent to saying it is active in every existing cluster\n   merely because its brokers were upgraded to 4.1\" (C8). A team that upgraded brokers has not\n   necessarily changed its failover contract.\n2. **ELR protocol/configuration and partition state.** The page requires explicit inspection before\n   using leader-election behavior as a durability assumption (C8).\n3. **The full failover-contract input list.** Broker release, feature/upgrade status, replication,\n   ISR, producer acks, client retries, storage integrity and whether unclean election is permitted\n   (C9).\n4. **What the election is allowed to pick.** ELR relies on strict minimum ISR/high-watermark\n   constraints and can elect a non-ISR replica only under those eligible conditions; it does not\n   make an arbitrary stale replica safe (C9).\n5. **Quorum, storage and membership evidence.** Replicated-log acknowledgments carry only a\n   protocol-specific durability/leader-completeness guarantee contingent on correct stable storage\n   and membership behavior; track term, commit index and voter configuration rather than counting\n   replicas (C10).\n6. **Pattern-level preconditions.** Leader election is applicable only when terms/epochs are\n   available, failover and stale leaders are handled, and clients can observe leadership; writes\n   stop without quorum and durability is treated as contingent on stable storage and membership\n   change (C18).\n7. **A negative test, not an assumption.** The book proposes comparing a freshly created 4.1 cluster\n   with an upgraded one, reducing in-sync replicas below configured limits, losing the producer reply\n   immediately before leader replacement, and then inspecting eligible leader metadata, acknowledged\n   offsets and consumer-visible records; this test was not run (C8, C17).\n\n### 3.5 What must be inspected before relying on replay\n\n1. **The relationship between consumer position and external effect.** Committing the offset before\n   the effect can silently lose the effect after a crash; committing after the effect can duplicate\n   it; no ordering of two independent commits creates an automatic global transaction (C12).\n2. **The meaning of the offset.** A consumer-group offset is a replay position, not proof that every\n   user-visible effect succeeded (C12).\n3. **Retention and reset behavior.** If the requested offset no longer exists, auto.offset.reset\n   cannot recreate deleted records; latest may skip history and earliest means only the earliest\n   retained history, so a silent reset can turn a recovery failure into apparently healthy but\n   incomplete output (C13).\n4. **In-flight work across ownership changes.** A rebalance callback does not retract a remote\n   request that a revoked consumer already issued; effects need their own identity/ownership\n   contract (C13).\n5. **The dedup authority and its retention.** Status lookup/reconciliation is required where an\n   acknowledgment may be lost, retention and expiry behavior must be defined, and a downstream that\n   can commit independently blocks any exactly-once business claim (C14).\n6. **Producer-side identity and retry configuration.** The failure matrix names idempotence\n   configuration, stable business/event IDs and retry policy as what to check when a producer\n   acknowledgment is lost, and configured min ISR, election and client retry behavior when a leader\n   crashes during replication (C12).\n7. **Completeness evidence.** Broker health and acknowledged writes do not substitute for end-to-end\n   tier/consumer completeness audits, equal counts can hide one loss plus one duplicate, and identity\n   plus partition offsets belong in validation (C16). At-least-once replay and idempotent consumers\n   remain relevant even when producer retries are deduplicated by the broker (C20). Require\n   user-level effect completeness and duplicates resolved, not merely zero consumer lag (C13).\n8. **Model the test before trusting the result.** The fault cases are proposed tests, not executed\n   experiments, so any replay claim is an untested hypothesis for the specific deployment until run\n   (C17).\n\n## 4. Boundaries and trade-offs\n\n- **Evidence scope.** The Kafka statements are anchored to the Kafka 4.1 documentation release, and\n  older folklore must not be substituted for the selected release's design and operations text\n  (C17). The book's failure cases are explicitly proposed, not executed; no fault injection, cluster\n  trace or independently reviewed proof exists in the evidence.\n- **Inference boundary.** The claim that min.insync.replicas=1 lets a leader-only in-sync set satisfy\n  acks=all is my inference from the stated acks/min ISR coupling, not a sentence in the book (C3).\n  Everything else attributed to Kafka in this answer is quoted from the section or the matrix.\n- **What RF=3 does buy.** The claim is not that RF=3 is useless. It provides configured redundancy and\n  can support availability and recovery under the right acks, min ISR, election and storage\n  conditions; the error is treating the configured copy count as a per-record, one-broker-fault\n  durability promise (C1, C9).\n- **The stronger alternative.** min.insync.replicas of 2 or 3 with acks=all, unclean election\n  disabled (or tightly bounded), verified storage, idempotent producers and stable business\n  identities move the acknowledgment toward a genuine multi-copy condition, at the cost of rejecting\n  writes when the ISR is too small (C2). Even then, the guarantee remains conditional and does not\n  extend to external effects.\n- **Replay is not automatically wrong.** Replay with idempotent effects and a durable dedup record is\n  a legitimate recovery mechanism; the error is assuming that an offset commit or a replayed record\n  proves the business effect happened once (C12, C14).\n- **What would change the answer.** Evidence that the topic sets a higher min.insync.replicas,\n  disables unclean election, has ELR actually active with verified storage, and that the producer uses\n  idempotence with stable keys would strengthen the per-record acknowledgment claim. It would still\n  not convert a lost acknowledgment into proof of a negative, and it would still not prove an external\n  business effect.\n- **What the book does not establish.** Per-message fsync/flush policy, the team's actual ISR and ELR\n  state, whether their client retries with the same identity, their retention settings, and whether\n  their dedup store survives restarts and expiry.\n\n## 5. Evidence map\n\n| Claim | Section key | Status |\n|---|---|---|\n| C1 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope | observed |\n| C2 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope | observed |\n| C3 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope | inference |\n| C4 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope; tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope | observed |\n| C5 | tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario; tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment | observed |\n| C6 | tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations; tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope | observed |\n| C7 | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route; tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points; tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope | observed |\n| C8 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope | observed |\n| C9 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope | observed |\n| C10 | tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations; tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope | observed |\n| C11 | tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties | observed |\n| C12 | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points; tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix | observed |\n| C13 | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions | observed |\n| C14 | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary; tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route | observed |\n| C15 | tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines; tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario | observed |\n| C16 | tycho.page.0b493340594c4c4392c5d93940a7f319#applied-m9-evidence-what-transfers-and-what-does-not; tycho.page.9f1f71a670f345e9898fe78167b48cda#outcomes-and-negative-lessons; tycho.page.9f1f71a670f345e9898fe78167b48cda#migration-mechanics-and-reliability | observed |\n| C17 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope; tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points | observed |\n| C18 | tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory | observed |\n| C19 | tycho.page.1f2f7c346c2d492290d39f45f0ad2283#overview | observed |\n| C20 | tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit | observed |\n| C21 | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points | observed |\n\n## 6. Unknowns and confidence\n\n**Unknowns about the team's deployment (none resolvable from the book):**\n\n- The effective topic/broker configuration: min.insync.replicas may be overridden per topic, acks is\n  a producer setting, and unclean-election policy is a cluster setting; none is given in the question.\n- Whether the producer has idempotence enabled, whether retries reuse the same delivery identity, and\n  what delivery timeout/deadline applies.\n- Whether ELR is actually enabled and active in their clusters, and on which broker versions.\n- Actual ISR/high-watermark state at the time of the timeout, and storage health on the leader.\n- Retention, compaction and auto.offset.reset policy, and whether the consumer's dedup store survives\n  restarts and outlives the replay window.\n- Whether the \"record was written\" question is being asked at broker-record level or application\n  effect level; the book's page limits itself to broker-record durability and explicitly excludes\n  application DB/payment exactly-once effects.\n\n**Confidence.** High on the conceptual claims (C1, C2, C4-C7, C10-C14) because they are stated\ndirectly in the read sections. Medium on C3 because the exact ack scope for min.insync.replicas=1 is\nan inference from the joint-setting sentence rather than a verbatim statement; a Kafka version-specific\noperations check should confirm it. Unknown for every deployment-specific question above. The\nevidence does not include an executed cluster test, so the recommended inspections are proposed, not\nverified for this team.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "RF=3 is a replication/placement setting, not a per-record durability guarantee: durability depends on producer acks, ISR/min ISR, leader-election configuration, storage health, producer retry and how a commit is acknowledged.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "Do not equate \"replication factor 3\" with \"every record always survives any one failure.\"",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "The actual durability guarantee depends on producer acks, ISR/min ISR, leader election configuration, storage health, producer retry and how a commit is acknowledged.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "acks=all and min.insync.replicas are a joint durability/availability setting; insufficient ISR can interrupt accepted production rather than silently preserve the same guarantee with fewer replicas, and writes may reject below the threshold.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "`acks=all` and `min.insync.replicas` are relevant to the expected durability/availability trade-off",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "A failed leader or insufficient ISR can interrupt accepted production rather than silently grant the same guarantee with fewer replicas.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+          "quote": "ISR below required threshold | Some acks/writes may reject rather than weaken durability | Broker/producer errors and documented availability gate",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Inference: with min.insync.replicas=1 the acknowledgment condition can be met by an in-sync set no larger than the leader, so an acknowledged record can exist on a single broker while RF=3 is configured.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "`acks=all` and `min.insync.replicas` are relevant to the expected durability/availability trade-off",
+          "supports": "C3",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A producer timeout or lost acknowledgment is an unknown outcome, not evidence that the record was not written; the producer must not assume the record was absent.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "if the producer never receives that acknowledgement it must not assume the record was absent",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+          "quote": "Network timeout or lost reply | Outcome may be unknown | Server did nothing",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A lost reply is undecidable from the timeout alone: the write may already have committed before the reply disappeared, so blind retry is unsafe without stable idempotency and readback.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+          "quote": "A timed-out write may have committed before the reply disappeared, so blind retry of an external effect is unsafe without stable idempotency and readback.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+          "quote": "A client whose response was lost before the partition cannot decide whether its operation committed.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Leader election or a leader change does not resolve the ambiguity; ELR cannot tell a client whether its lost acknowledgment represents an appended record, and retries still need stable effect identity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+          "quote": "Client retries still need stable effect identity because an election does not resolve an\nunknown outcome.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "nor does it let a client infer whether its lost producer acknowledgment represents an appended record",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Retrying a timed-out produce with a new identity can duplicate an already-committed record; an idempotent producer reduces duplicates only within its producer/broker contract, and one event can be delivered more than once.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "After an acknowledgment is lost, a new identity can duplicate a committed effect; an expired key cannot guarantee historical deduplication.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "reduces duplicates caused by eligible retried sends within its producer/broker contract",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+          "quote": "Broker redelivery | One event can be delivered more than once | Domain state changed again",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Before trusting leader election, verify the exact release and feature state: ELR was introduced in Kafka 4.0 and is enabled by default only for new 4.1 clusters, which is not the same as being active in an upgraded cluster; inspect the ELR protocol/configuration and partition state explicitly.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "ELR was introduced in Kafka **4.0** and is **enabled by default for new clusters starting with 4.1**.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "That is not equivalent to saying it is active in every existing cluster merely because its brokers were upgraded to 4.1.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "Explicitly inspect the cluster's ELR protocol/configuration and partition state before using its leader-election behavior as a durability assumption.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The failover contract depends on broker release, feature/upgrade status, replication, ISR, producer acks, client retries, storage integrity and whether unclean election is permitted; ELR can elect a non-ISR replica only under strict min ISR/high-watermark constraints and does not make an arbitrary stale replica safe.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "The actual failover contract still depends on broker release, feature/upgrade status, replication, ISR, producer `acks`, client retries, storage integrity and whether unclean election is permitted.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "The documented ELR logic relies on **strict minimum ISR/high-watermark constraints**, and under eligible conditions can elect a non-ISR replica that is safe according to that protocol.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Election safety is conditional on stable storage and membership behavior; a leader's health/elected status is not proof of quorum, and operators should track term, commit index and voter configuration rather than counting replicas.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+          "quote": "An acknowledged committed log entry has a protocol-specific durability/leader-completeness guarantee, contingent on correct stable storage and membership behavior.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+          "quote": "A leader process's health endpoint or elected status is not the same as the cluster having\nquorum and serving correct reads.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+          "quote": "Track term,\ncommit index and voter configuration, and repair or reconfigure deliberately rather than\ncounting replicas.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Replicated alone is not an acceptance criterion: each architecture must specify write acknowledgment, eligible reader, membership configuration, failure domain, consistency, reconfiguration and restore model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+          "quote": "For each architecture specify write acknowledgment, eligible reader, membership configuration, failure domain, consistency, reconfiguration and restore model. “Replicated” alone is not an acceptance criterion.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Before relying on replay, inspect the consumer position relative to the external effect: committing the offset before the effect can silently lose it, committing after can duplicate it, no ordering of two independent commits creates a global transaction, and an offset is a replay position rather than proof of effect success.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "Committing offset *before* the external effect can cause that effect to be silently lost after a crash. Committing it *after* the effect can cause duplicates.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "No perfect ordering of two independent commits creates an automatic global transaction.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "A consumer group offset is a replay position, not proof that every user-visible effect succeeded.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+          "quote": "Producer acknowledgement lost | Producer cannot tell if append occurred | Idempotence configuration, stable business/event IDs, retry policy",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+          "quote": "Leader crash during replication | Partition ownership/ISR may change | Configured min ISR, election, error response, client retry behavior",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Replay is bounded by retention: a missing offset cannot be recreated by auto.offset.reset, latest can skip history and earliest is only the earliest retained history, so a silent reset can look healthy while output is incomplete; a rebalance does not retract an in-flight external request.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "If the requested offset no longer exists, auto.offset.reset chooses a configured behavior; it cannot recreate deleted records.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "latest may skip missing history, while earliest means the earliest retained history, not the beginning of all business events. A silent reset can turn a recovery failure into apparently healthy but incomplete output.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+          "quote": "Stopping polling or receiving a rebalance callback does not retract that remote request.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Replay safety needs a dedup authority with stable business identity and retention: expose status lookup/reconciliation where an acknowledgment may be lost, define behavior after key expiry, and do not claim exactly-once business effect when a downstream can commit independently.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "Expose status lookup/reconciliation where an acknowledgment may be lost.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "Define retention and what happens after keys expire.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "If a downstream system can commit independently without supporting a stable effect key or readback, the caller may be unable to give an exactly-once **business** guarantee.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "A key is only useful while its outcome record is retained; after expiry,\nhistorical deduplication is no longer guaranteed.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A timeout must be surfaced as an explicit unknown outcome under a bounded retry policy, not suppressed as a failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+          "quote": "Degraded conditions need explicit rejection and **unknown outcome** states rather than suppressed failures.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+          "quote": "The business-facing API must distinguish a successful authoritative write, a rejection/unavailable result, and an **unknown outcome** after client timeout.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Completeness for replay must be verified with identity-level end-to-end audits, not counts: broker health and acknowledged writes do not substitute for tier/consumer completeness audits, and equal counts can hide one lost plus one duplicated message.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0b493340594c4c4392c5d93940a7f319#applied-m9-evidence-what-transfers-and-what-does-not",
+          "quote": "Kafka broker health and acknowledged writes do not substitute for end-to-end tier/consumer completeness audits.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9f1f71a670f345e9898fe78167b48cda#outcomes-and-negative-lessons",
+          "quote": "Counts alone can be equal despite one lost and one duplicated message.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.9f1f71a670f345e9898fe78167b48cda#migration-mechanics-and-reliability",
+          "quote": "include message identity and partition offsets in validation so matching counts cannot mask one dropped and one duplicate message",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The evidence is release-scoped and proposed rather than executed: Kafka 4.1 documentation governs, older folklore must not be substituted, and the failure tests described are proposed tests, not executed experiments.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "older Kafka folklore should not be substituted for the selected release's design and operations text",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "proposed tests, not executed Kafka/PostgreSQL experiments",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+          "quote": "compare a freshly created 4.1 cluster with an upgraded cluster for ELR enablement, reduce in-sync replicas below configured limits, lose the producer reply immediately before leader replacement, then inspect eligible leader metadata, acknowledged offsets and consumer-visible records",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "At pattern level, leader election applies only when terms/epochs exist, failover and stale leaders are handled and clients can observe leadership; durability is contingent on stable storage and membership change, writes stop without quorum, and retries stay idempotent.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+          "quote": "A single coordinator is useful; terms/epochs are available;\nfailover and stale leaders are handled; clients can observe leadership.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+          "quote": "Stop authoritative writes without quorum, keep retries\nidempotent, and treat durability as contingent on stable storage and membership change.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The book scopes this question to the narrower mechanism of replica and acknowledgment conditions bound to durability and availability, inside a broader integration contract; the answer is conditional by construction rather than a universal RF guarantee.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#overview",
+          "quote": "Which replica and acknowledgment conditions bound durability and availability?",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#overview",
+          "quote": "the sections below own this narrower mechanism and its limits.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A Kafka record is durable only under a declared retention/replication policy and is not necessarily the authoritative business transaction; at-least-once replay and idempotent consumers remain relevant even when producer retries are deduplicated by the broker.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+          "quote": "A Kafka record is a durable log entry under a declared retention/replication policy, **not necessarily the authoritative business transaction**.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+          "quote": "At-least-once replay and idempotent consumers are still relevant even if producer retries are deduplicated by the broker.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "After a Kafka output/offset commit, a missing client acknowledgment does not prove the effect was absent: the Kafka effects may be durable while only the response is missing, and the business outcome must be resolved from its authority rather than inferred from reply loss.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+          "quote": "After Kafka output/offset commit, before client acknowledgment | Kafka effects may be durable, response may be missing | Resolve the logical business outcome from its authority; do not infer from reply loss",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.bee261b76181706235dd8fa7ccde01a9#entry-inventory",
+    "tycho.page.0b493340594c4c4392c5d93940a7f319#applied-m9-evidence-what-transfers-and-what-does-not",
+    "tycho.page.1b2657011d454460856103419095031b#engineering-walkthrough-new-leader-old-client-and-a-lost-acknowledgment",
+    "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+    "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#overview",
+    "tycho.page.33399db8d1574330951d9954801d6e71#6-retry-policy-must-protect-overload-and-deadlines",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.9f1f71a670f345e9898fe78167b48cda#migration-mechanics-and-reliability",
+    "tycho.page.9f1f71a670f345e9898fe78167b48cda#outcomes-and-negative-lessons",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+    "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#2-http-method-idempotence-has-a-precise-scope",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
