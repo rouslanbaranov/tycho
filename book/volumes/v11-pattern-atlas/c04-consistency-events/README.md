@@ -90,73 +90,11 @@ See the [dedicated CQRS card](cqrs.md).
 
 ### Event Sourcing
 
-**Identity.** Event Sourcing; family Data consistency, transactions and event sourcing;
-kind data-pattern; priority core.
-
-**Decision question.** Should authoritative state be derived from an ordered event history
-rather than stored as current rows?
-
-**Good-fit conditions.** The event history is the business record; replay and audit are
-required; schema evolution and snapshots are owned; external effects are separated.
-
-**Hard contraindications.** Reject when current-state queries dominate, when event schema
-cannot evolve, or when replay side effects cannot be controlled.
-
-**Competing alternative.** Current-state store plus audit log/outbox or event notification.
-Reverse when full replay is unnecessary, schema ownership is absent or external side effects
-cannot be isolated.
-
-**Failure and recovery.** A stale expected version rejects the append; re-read and retry with
-the same operation identity. Replay needs versioned handlers and a rebuild plan; external
-effects and duplicate delivery need an explicit boundary, not an assumed idempotent projector.
-
-**Technical owner.** [Event sourcing: what becomes authoritative?](../../../distributed/cqrs-event-sourcing-and-projections.md#2-event-sourcing-what-becomes-authoritative) — event authority is the bounded owner, not a complete event-store design.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-event-sourcing.2026-10-21: all nine served headings
-read. The source is a public
-pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CQRS; Domain Events; Transactional Outbox; Materialized View.
+See the [Event Sourcing](event-sourcing.md) card.
 
 ### Domain Events
 
-**Identity.** Domain Events; family Data consistency, transactions and event sourcing;
-kind integration-pattern; priority core.
-
-**Decision question.** Should a meaningful state change be published as an event that
-other owners can react to?
-
-**Good-fit conditions.** The event represents a committed business fact with identity,
-version and causation; consumers own their reactions; publication reliability and ordering
-are explicit.
-
-**Hard contraindications.** Reject when the event is only a command in disguise, when
-publication is not tied to the state change, or when consumers need a shared transaction.
-
-**Competing alternative.** Synchronous call or a command message. Reverse the choice when
-event fan-out and eventual consistency exceed the decoupling benefit.
-
-**Failure and recovery.** Duplicate, late, out-of-order and schema-evolved events are
-common; deduplicate by identity, preserve aggregate order and keep an unknown/repair state
-when publication is not atomic with the state change.
-
-**Technical owner.** [Domain Events](../../../distributed/cqrs-event-sourcing-and-projections.md#domain-events) — the distinction is bounded, not a domain-event catalogue.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-domain-event.2026-10-21: sections "Context", "Problem", "Solution",
-"Related patterns", "See also". The page has no Forces/Example/Resulting context sections; event
-identity, ordering and reliability are synthetic guidance, not source claims. The source is a
-public pattern/specification unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Event Sourcing; Transactional Outbox; Saga; CQRS.
+See the [Domain Events](domain-events.md) card.
 
 ### Saga
 
@@ -164,36 +102,7 @@ See the [dedicated Saga card](saga.md).
 
 ### Saga Choreography
 
-**Identity.** Saga Choreography; family Data consistency, transactions and event sourcing;
-kind transaction-pattern; priority core.
-
-**Decision question.** Should saga participants react to events without a central
-coordinator?
-
-**Good-fit conditions.** Participants can own reactions; event contracts are stable;
-correlation, deduplication, dead-letter and timeout policy exist; the overall protocol is
-observable.
-
-**Hard contraindications.** Reject when no one can see global progress, when cyclic
-reactions are likely, or when compensation ordering must be centrally enforced.
-
-**Competing alternative.** Orchestrated saga or one local transaction. Reverse the choice
-when event chains become hard to trace and recover.
-
-**Failure and recovery.** Hidden coupling, unbounded event chains and conflicting
-compensations are common; traces show correlation, not durable business truth.
-
-**Technical owner.** [Saga Choreography](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-choreography) — event-driven saga coordination is bounded, not a complete orchestration product guide.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: all eleven served headings read.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga; Saga Orchestration; Domain Events; Process Manager.
+See the [Saga Choreography](saga-choreography.md) card.
 
 ### Saga Orchestration
 
@@ -201,36 +110,7 @@ See the [dedicated Saga Orchestration card](saga-orchestration.md).
 
 ### Compensating Transaction
 
-**Identity.** Compensating Transaction; family Data consistency, transactions and event
-sourcing; kind transaction-pattern; priority core.
-
-**Decision question.** Should a failed saga step be undone by an explicit business
-compensation rather than a rollback?
-
-**Good-fit conditions.** The original effect is durable; compensation is a meaningful
-business action; ordering and idempotency are defined.
-
-**Hard contraindications.** Reject when true rollback is possible, when compensation has
-irreversible side effects, or when no owner can decide the business reversal.
-
-**Competing alternative.** Avoid the effect, or use a transaction boundary that can roll
-back. Reverse the choice when compensation cost exceeds the failed-step risk.
-
-**Failure and recovery.** Compensation is a new business action that can fail or be applied
-twice; use idempotent effect identity, bounded retries and a repair state for unknown
-counter-effects.
-
-**Technical owner.** [Compensating Transaction](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#compensating-transaction) — compensation/branching is bounded, not a complete orchestration product guide.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-saga.2026-10-21: all eleven served headings read.
-The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Saga; Saga Orchestration; Idempotent Receiver; Workflow Failure.
+See the [Compensating Transaction](compensating-transaction.md) card.
 
 ### Transactional Outbox
 
@@ -250,69 +130,11 @@ See the [dedicated Change Data Capture (CDC) card](change-data-capture-cdc.md).
 
 ### Materialized View
 
-**Identity.** Materialized View; family Data consistency, transactions and event sourcing;
-kind data-pattern; priority core.
-
-**Decision question.** Should a query result be stored and refreshed explicitly rather
-than recomputed per request?
-
-**Good-fit conditions.** The query is expensive or cross-store; source version/offset and
-freshness contract are explicit; refresh ownership and locking are defined.
-
-**Hard contraindications.** Reject when strong freshness is required on every read, when
-refresh blocks critical traffic, or when invalidation has no owner.
-
-**Competing alternative.** Query on demand or a cache with TTL. Reverse the choice when
-refresh cost and staleness exceed query cost.
-
-**Failure and recovery.** Stale rows, refresh duration and lock contention are common; a
-plain refresh can block reads, while CONCURRENTLY needs a unique index covering all rows,
-allows one refresh at a time and still consumes I/O. Define the freshness contract and
-refresh trigger, monitor duration and locks, and rebuild from the base tables rather than
-treating the view as an authority.
-
-**Technical owner.** [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view) — stored-query freshness is bounded, not a full PostgreSQL materialized-view manual.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch9-pg-matview-refresh.2026-10-22: all eight served headings
-read. The source is public documentation, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CQRS; Command-Side Replica; Cache Invalidation; CDC.
+See the [Materialized View](materialized-view.md) card.
 
 ### Command-Side Replica
 
-**Identity.** Command-Side Replica; family Data consistency, transactions and event
-sourcing; kind data-pattern; priority advanced.
-
-**Decision question.** Should a command service keep a local read replica of remote facts
-to decide without synchronous calls?
-
-**Good-fit conditions.** The replica is read-only for decisions; staleness bounds are
-acceptable; reconciliation is owned; writes remain remote.
-
-**Hard contraindications.** Reject when command decisions require linearizable remote
-state, when reconciliation cannot be tested, or when the replica becomes a second writer.
-
-**Competing alternative.** Synchronous read or API composition. Reverse the choice when
-stale decisions and reconciliation cost exceed latency benefit.
-
-**Failure and recovery.** Stale replicas and split-brain decisions are common; verify
-authority in the owner section.
-
-**Technical owner.** [CQRS and asynchronous projection freshness](../../../distributed/cqrs-event-sourcing-and-projections.md#command-side-replica) — command-side replication is bounded to the projection discussion.
-
-**Sources.**
-[src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-command-side.2026-10-21: Forces is not a heading and no
-Example section exists. The source is a public pattern/specification
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** CQRS; Materialized View; Self-Contained Service; Database per
-Service.
+See the [Command-Side Replica](command-side-replica.md) card.
 
 ### Two-Phase Commit (2PC)
 
