@@ -74,7 +74,7 @@ validated claims; it does not prescribe this policy design.
 
 **Zero-trust mechanism.** Every request is authenticated and authorized at the resource
 boundary using principal identity, workload/device posture, policy and least privilege.
-Network location is not trust; a valid token is not object permission. Continuous
+**Tycho synthesis:** network location is not trust and a valid token is not object permission. Continuous
 verification applies to service-to-service and user-to-service paths alike. **Tycho synthesis:**
 the every-request/resource-boundary rule extends the ASVS session controls.
 
@@ -101,8 +101,8 @@ scope, action and time. Every credential must have a bounded scope, an owner and
 depend on the compromised principal. **Tycho analysis:** ASVS binds revocation mechanics, not
 this per-credential ownership rule.
 
-Permission creep and long-lived credentials widen the blast radius without any visible
-incident; review grants on a schedule and prefer short-lived scoped credentials.
+**Tycho guidance:** permission creep and long-lived credentials widen the blast radius without
+a visible incident; review grants on a schedule and prefer short-lived scoped credentials.
 
 **Alternative: dual control.** When no narrow role can express the task, keep a task-capable
 identity and require independent approval by more than one principal before a high-value

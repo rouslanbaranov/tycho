@@ -30,14 +30,14 @@ evidence_scope:
   status: "source-linked"
   notes: "Moved card page; source binding remains in the owner unit."
 content_review:
-  status: "self-checked"
+  status: "independent-reviewed"
   reviewed_at: "2026-11-01"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "authoring/ai-reviews/2026-11-01-zero-trust-least-privilege-deepseek.md"
 authored_at: "2026-10-27"
 updated_at: "2026-11-01"
 source_inspection_date: "2026-10-21"
-content_verified_at: null
+content_verified_at: "2026-11-01"
 ---
 # Zero Trust Architecture
 
