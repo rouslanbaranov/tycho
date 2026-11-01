@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-11-01. Entries: 340.
+Inventory date: 2026-11-01. Entries: 342.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -388,6 +388,8 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 |---|---|---|---|
 | src.idempotent-consumer-pattern / core | [Idempotent Consumer pattern](https://microservices.io/patterns/communication-style/idempotent-consumer.html) — Chris Richardson | Explain the local atomic boundary of recording message identity and its consumer effect. | admitted-for-research / public-web-or-author-download |
 | src.kleppmann-distributed-locking / core | [How to do distributed locking](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html) — Martin Kleppmann | Primary article for lock safety, fencing tokens and timing assumptions. | admitted-for-research / public-web-or-author-download |
+| src.aws-step-functions / supporting | [AWS Step Functions documentation](https://docs.aws.amazon.com/step-functions/latest/dg/) — Amazon Web Services | Durable orchestration failure, redrive and alternative boundaries. | admitted-for-research / public-web-or-author-download |
+| src.cadence / supporting | [Cadence documentation](https://cadenceworkflow.io/) — Cadence | Durable workflow, activity retry and queue alternative boundaries. | admitted-for-research / public-web-or-author-download |
 
 ## Reliability
 

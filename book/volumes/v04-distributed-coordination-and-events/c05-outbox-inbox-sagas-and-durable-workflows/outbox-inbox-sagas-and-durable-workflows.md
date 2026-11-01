@@ -49,7 +49,7 @@ content_review:
   proof_uri: null
 authored_at: "2026-10-19"
 updated_at: "2026-11-01"
-source_inspection_date: "2026-11-01"
+source_inspection_date: null
 content_verified_at: null
 ---
 <!-- tycho-question-source:tycho.page.aa810dd152884b35a84f0f4cbe4369e9:-1 -->

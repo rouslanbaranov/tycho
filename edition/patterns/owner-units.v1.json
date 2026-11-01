@@ -12543,11 +12543,20 @@
           "reason": "Defines the durable state machine and replay model.",
           "binding": {
             "source_id": "src.temporal",
-            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
-            "section": "Resuming a Workflow",
-            "quote": "When it's time to continue the Workflow, Temporal doesn't restore memory from a snapshot. It starts the Workflow code from the beginning, replays the Event History step by step, and uses that history to guide the code back to the exact state as before.",
-            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
-          }
+            "ledger_record": "read.temporal-workflows.2026-11-01",
+            "section": "How Workflow replay works",
+            "quote": "This history is the source of truth for everything that happens in the Workflow.",
+            "revision": "df74cfb4c9a2ea94427afeb8d3912baeece244ab0b09226d31c61045229a184a"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-workflow-engine.2026-11-01",
+              "section": "Workflows must be deterministic",
+              "quote": "Workflow code is replayed from its event history every time a worker picks it up.",
+              "revision": "efca8a8cc5d48d082cb26641cf073cecd9a2c9354afe1351ec00b19b06a91a01"
+            }
+          ]
         },
         "invariant": {
           "state": "supported",
@@ -12555,41 +12564,244 @@
           "reason": "States the recovery invariants.",
           "binding": {
             "source_id": "src.temporal",
-            "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+            "ledger_record": "read.temporal-workflows.2026-11-01",
             "section": "Resuming a Workflow",
-            "quote": "When a Workflow calls an Activity, the Activity runs once, its result is recorded in the Event History. During replay, that result is reused, not recomputed. So Activities aren't executed again during replay.",
-            "revision": "bf9ad7b23161652c799b0ccba76ed36f68efb0c9593b1c7a314f816d5e2403c2"
-          }
+            "quote": "When a Workflow calls an Activity, the Activity runs once, its result is recorded in the Event History. During replay, that result is reused, not recomputed.",
+            "revision": "df74cfb4c9a2ea94427afeb8d3912baeece244ab0b09226d31c61045229a184a"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.temporal",
+              "ledger_record": "read.temporal-activity-execution.2026-11-01",
+              "section": "Activity Execution lifecycle",
+              "quote": "If the Activity Task times out, the Activity Execution will be retried according to the Activity Execution Retry Policy.",
+              "revision": "710e839d78f8c05445f1d56ee5a6d747c2a46fd6a379185cbadec66f924f9a62"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Keep a repair state for an unknown external effect; a completed flag is not proof that the effect committed.",
-          "reason": "Temporal text has no unknown external-effect repair state."
+          "reason": "Temporal states that an Activity Task can be lost after the Activity Function is called and the Worker crashed and is retried after the Start-To-Close timeout; AWS Step Functions fails an activity with ExecutionTimedOut when no success, failure or heartbeat arrives, invalidates the task token and can redrive the Task; Cadence does not recover activity state and regular activities can run more than once under a retry policy; AWS Express workflows are at-least-once and Standard exactly-once is scoped to tasks and states and excludes declared Retry. The repair-state rule and completed-flag caution are Tycho guidance.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-activity-execution.2026-11-01",
+            "section": "Activity Execution lifecycle",
+            "quote": "Temporal guarantees that an Activity Task either runs or timeouts. There are multiple failure scenarios when an Activity Task is lost. It can be lost during delivery to a Worker or after the Activity Function is called and the Worker crashed.",
+            "revision": "710e839d78f8c05445f1d56ee5a6d747c2a46fd6a379185cbadec66f924f9a62"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.temporal",
+              "ledger_record": "read.temporal-activity-execution.2026-11-01",
+              "section": "Activity Execution lifecycle",
+              "quote": "If the Activity Task times out, the Activity Execution will be retried according to the Activity Execution Retry Policy.",
+              "revision": "710e839d78f8c05445f1d56ee5a6d747c2a46fd6a379185cbadec66f924f9a62"
+            },
+            {
+              "source_id": "src.temporal",
+              "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+              "section": "When to register compensations",
+              "quote": "For example, a credit card may be charged but the Activity fails before returning success.",
+              "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+            },
+            {
+              "source_id": "src.temporal",
+              "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+              "section": "When to register compensations",
+              "quote": "All compensations must be idempotent and able to handle cases where the forward Activity never executed.",
+              "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+            },
+            {
+              "source_id": "src.aws-step-functions",
+              "ledger_record": "read.aws-step-functions-workflow-types.2026-11-01",
+              "section": "Standard Workflows",
+              "quote": "Standard Workflows follow an exactly-once model, where your tasks and states are never run more than once, unless you have specified Retry behavior in ASL.",
+              "revision": "50c0618a8ebf3971d83f90998e12cad480b2550277ccd948e2500cdb33d79646"
+            },
+            {
+              "source_id": "src.aws-step-functions",
+              "ledger_record": "read.aws-step-functions-workflow-types.2026-11-01",
+              "section": "Express Workflows",
+              "quote": "Express Workflows use an at-least-once model, so an execution could potentially run more than once.",
+              "revision": "50c0618a8ebf3971d83f90998e12cad480b2550277ccd948e2500cdb33d79646"
+            },
+            {
+              "source_id": "src.aws-step-functions",
+              "ledger_record": "read.aws-step-functions-activities.2026-11-01",
+              "section": "Waiting for an Activity Task to Complete",
+              "quote": "If the execution doesn't receive either of these or a SendTaskHeartbeat call before the time configured in TimeoutSeconds, the execution will fail and the execution history will contain an ExecutionTimedOut event.",
+              "revision": "60a969cb473ef6a31578dea9e425739608e08120dda8321e0765e81ea70d5595"
+            },
+            {
+              "source_id": "src.aws-step-functions",
+              "ledger_record": "read.aws-step-functions-activities.2026-11-01",
+              "section": "Waiting for an Activity Task to Complete",
+              "quote": "After the task times out, Step Functions invalidates the task token.",
+              "revision": "60a969cb473ef6a31578dea9e425739608e08120dda8321e0765e81ea70d5595"
+            },
+            {
+              "source_id": "src.aws-step-functions",
+              "ledger_record": "read.aws-step-functions-redrive.2026-11-01",
+              "section": "Redrive behavior of individual states",
+              "quote": "If your workflow execution fails at the Task state, and you redrive the execution, the execution reschedules and then reruns the Task state.",
+              "revision": "89d736fbb430bdab823b6ebd749efa183a52d97552e909b1690fb1a813f64ab3"
+            },
+            {
+              "source_id": "src.aws-step-functions",
+              "ledger_record": "read.aws-step-functions-redrive.2026-11-01",
+              "section": "Redrive behavior of individual states",
+              "quote": "Step Functions preserves the results and execution history of the successful steps, which are not rerun when you redrive an execution.",
+              "revision": "89d736fbb430bdab823b6ebd749efa183a52d97552e909b1690fb1a813f64ab3"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-activities.2026-11-01",
+              "section": "Retries",
+              "quote": "Cadence does not recover activity state in case of failures.",
+              "revision": "af4e7c940c7464fa61c4dea4c14e8dfc6f1b6101b5ef985fa1a001d5ecb0b0e3"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-activities.2026-11-01",
+              "section": "Local Activities",
+              "quote": "Though regular activity could also execute multiple times when using retry policy, local activity has more chance of occurring.",
+              "revision": "af4e7c940c7464fa61c4dea4c14e8dfc6f1b6101b5ef985fa1a001d5ecb0b0e3"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-activities.2026-11-01",
+              "section": "Local Activities",
+              "quote": "Because local activity result is not recorded into history until DecisionTaskCompleted.",
+              "revision": "af4e7c940c7464fa61c4dea4c14e8dfc6f1b6101b5ef985fa1a001d5ecb0b0e3"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "Use choreography, a job table or a simple queue when steps are few, timers are short, or no engine can be operated.",
-          "reason": "Text does not compare choreography, job table or simple queue."
+          "reason": "Temporal reserves a Workflow for several activities or state between steps; Cadence says a queue is usually right for simple fire-and-forget fanout and that the queue-plus-database pattern works for simple flows while dispersing state across tables; Temporal's Saga comparison lists event-driven choreography with very loose coupling. The operability condition and selection rule are Tycho guidance.",
+          "binding": {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-job-queue.2026-11-01",
+            "section": "When to use a Standalone Activity instead of a Workflow",
+            "quote": "Use a Standalone Activity to run one Activity. Use a Workflow to orchestrate several, or to hold state between steps.",
+            "revision": "ab82e99d3c34b54e6e08e07c850c6f29f60f637b0a40a17e502cd6d76b2feff6"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-faq.2026-11-01",
+              "section": "When should I use Cadence instead of a message queue (Kafka, SQS, RabbitMQ)?",
+              "quote": "Message queues are great for point-to-point async delivery. They become painful when your process:",
+              "revision": "a03ad5efa8d5f3de3c03db1e03c172ccf6b9e12dd2ed433401a1ed27ce70aa07"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-faq.2026-11-01",
+              "section": "When should I use Cadence instead of a message queue (Kafka, SQS, RabbitMQ)?",
+              "quote": "Has to wait minutes, hours, or days between steps",
+              "revision": "a03ad5efa8d5f3de3c03db1e03c172ccf6b9e12dd2ed433401a1ed27ce70aa07"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-faq.2026-11-01",
+              "section": "When should I use Cadence instead of a message queue (Kafka, SQS, RabbitMQ)?",
+              "quote": "For simple fire-and-forget fanout or high-throughput streaming, a queue is usually the right tool.",
+              "revision": "a03ad5efa8d5f3de3c03db1e03c172ccf6b9e12dd2ed433401a1ed27ce70aa07"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-workflow-engine.2026-11-01",
+              "section": "How Cadence differs from queue + database patterns",
+              "quote": "The standard alternative to a workflow engine is to center coordination around a database and a message queue.",
+              "revision": "efca8a8cc5d48d082cb26641cf073cecd9a2c9354afe1351ec00b19b06a91a01"
+            },
+            {
+              "source_id": "src.cadence",
+              "ledger_record": "read.cadence-workflow-engine.2026-11-01",
+              "section": "How Cadence differs from queue + database patterns",
+              "quote": "This works for simple flows, but it fractures state across tables, makes the execution history invisible, and turns every failure scenario into a bespoke retry loop.",
+              "revision": "efca8a8cc5d48d082cb26641cf073cecd9a2c9354afe1351ec00b19b06a91a01"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "distributed-workflow-orchestration",
         "question": "Should a durable orchestration engine own multi-step progress, timers and recovery?",
-        "competing_alternative": "Saga choreography or a simple queue pipeline. Reverse the choice when central workflow state and engine operations exceed coordination benefit.",
+        "competing_alternative": "Saga choreography, a database-backed job table or a simple queue pipeline. Temporal's job-queue guidance reserves a Workflow for several activities or state between steps; Cadence says a queue is usually right for simple fire-and-forget fanout and that the queue-plus-database pattern works for simple flows while dispersing state across tables. Temporal's Saga comparison lists event-driven choreography. Reverse when central workflow state and engine operations exceed coordination benefit; that selection rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch2-temporal-workflows.2026-10-21",
+        "ledger_record": "read.temporal-workflows.2026-11-01",
         "source_id": "src.temporal",
         "unit_type": "documentation-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-activities.2026-11-01",
+            "revision": "63073f0e815ebf134c6cf165591aca9d66f1ce8ada22cfec0af635bedcc546b6"
+          },
+          {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-activity-execution.2026-11-01",
+            "revision": "710e839d78f8c05445f1d56ee5a6d747c2a46fd6a379185cbadec66f924f9a62"
+          },
+          {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-saga-pattern.2026-11-01",
+            "revision": "987aec66a21037418c7f9930c139aaeb2a20b76690ef140769d6886c5e11e5c9"
+          },
+          {
+            "source_id": "src.temporal",
+            "ledger_record": "read.temporal-job-queue.2026-11-01",
+            "revision": "ab82e99d3c34b54e6e08e07c850c6f29f60f637b0a40a17e502cd6d76b2feff6"
+          },
+          {
+            "source_id": "src.aws-step-functions",
+            "ledger_record": "read.aws-step-functions-workflow-types.2026-11-01",
+            "revision": "50c0618a8ebf3971d83f90998e12cad480b2550277ccd948e2500cdb33d79646"
+          },
+          {
+            "source_id": "src.aws-step-functions",
+            "ledger_record": "read.aws-step-functions-activities.2026-11-01",
+            "revision": "60a969cb473ef6a31578dea9e425739608e08120dda8321e0765e81ea70d5595"
+          },
+          {
+            "source_id": "src.aws-step-functions",
+            "ledger_record": "read.aws-step-functions-redrive.2026-11-01",
+            "revision": "89d736fbb430bdab823b6ebd749efa183a52d97552e909b1690fb1a813f64ab3"
+          },
+          {
+            "source_id": "src.aws-step-functions",
+            "ledger_record": "read.aws-step-functions-best-practices.2026-11-01",
+            "revision": "afc807f45a75bfcdb1956796397076526c21f54f4b8c05e377b821bc7843dc9d"
+          },
+          {
+            "source_id": "src.cadence",
+            "ledger_record": "read.cadence-activities.2026-11-01",
+            "revision": "af4e7c940c7464fa61c4dea4c14e8dfc6f1b6101b5ef985fa1a001d5ecb0b0e3"
+          },
+          {
+            "source_id": "src.cadence",
+            "ledger_record": "read.cadence-faq.2026-11-01",
+            "revision": "a03ad5efa8d5f3de3c03db1e03c172ccf6b9e12dd2ed433401a1ed27ce70aa07"
+          },
+          {
+            "source_id": "src.cadence",
+            "ledger_record": "read.cadence-workflow-engine.2026-11-01",
+            "revision": "efca8a8cc5d48d082cb26641cf073cecd9a2c9354afe1351ec00b19b06a91a01"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Four dimensions bound 2026-11-01 to Temporal workflows, activities, replay, saga and job queue; AWS Step Functions workflow types, activities, redrive and best practices; and Cadence activities, FAQ and workflow engine. The repair-state rule, completed-flag caution and selection rule remain Tycho; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.load-balancing",
@@ -17794,8 +18006,8 @@
     "embedded_units": 0,
     "mechanism_supported": 124,
     "invariant_supported": 96,
-    "failure_recovery_supported": 92,
-    "alternative_supported": 96,
+    "failure_recovery_supported": 93,
+    "alternative_supported": 97,
     "technical_partial_bounded": 14,
     "technical_partial": 51,
     "technical_name_only": 0,
