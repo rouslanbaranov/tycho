@@ -52,6 +52,9 @@ class McpToolContractTests(unittest.TestCase):
     def test_instructions_are_loaded_from_markdown(self):
         onboarding = (ROOT / "mcp/INSTRUCTIONS.md").read_text(encoding="utf-8")
         self.assertIn("# Tycho MCP onboarding", onboarding)
+        self.assertNotIn("@@", onboarding)
+        self.assertEqual(onboarding.count("`") % 2, 0)
+        self.assertIn("`tycho_describe`", onboarding)
         self.assertEqual(mcp_contract.INSTRUCTIONS, onboarding.strip())
         self.assertEqual(mcp_server.INSTRUCTIONS, onboarding.strip())
 
