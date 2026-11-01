@@ -67,7 +67,7 @@ effects and duplicate delivery need an explicit boundary, not an assumed idempot
 
 **Technical owner.**
  [Event sourcing: what becomes
-authoritative?](../../../distributed/cqrs-event-sourcing-and-projections.md#2-event-sourcing-what-becomes-authoritative)
+authoritative?](../../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#2-event-sourcing-what-becomes-authoritative)
 — event authority is the bounded owner, not a complete event-store design.
 
 **Sources.**

@@ -4821,8 +4821,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Rebuilds must check offset continuity and event schema compatibility.",
-          "reason": "States a must-hold rebuild precondition for snapshots and replay.",
+          "quote": "The application reconstructs an entity’s current state by replaying the events.",
+          "reason": "Richardson binds replay reconstruction from the append-only event log; expected-version mechanics are Tycho guidance.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-event-sourcing.2026-10-21",
@@ -4834,7 +4834,7 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "Replaying events can resend external updates",
-          "reason": "Fowler binds replay hazards: external update messages during replay are unsafe because external systems cannot distinguish replay from real processing.",
+          "reason": "Fowler binds the replay/external-update hazard; versioned handlers and an effect boundary are Tycho guidance.",
           "binding": {
             "source_id": "src.fowler-event-sourcing",
             "ledger_record": "read.fowler-event-sourcing.2026-11-01",
@@ -4845,13 +4845,13 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "State-stored CRUD with an audit log",
-          "reason": "Fowler allows the official system of record to be the current application state rather than event logs; an audit log is a complementary record.",
+          "quote": "the official system of record can be the event logs or the current application state.",
+          "reason": "Fowler allows current application state as the official system of record; audit log and CDC/outbox are Tycho guidance.",
           "binding": {
             "source_id": "src.fowler-event-sourcing",
             "ledger_record": "read.fowler-event-sourcing.2026-11-01",
             "section": "Snapshots",
-            "quote": "The official system of record can either be the event logs or the current application state.",
+            "quote": "the official system of record can be the event logs or the current application state.",
             "revision": "3e13fbecdd148ec6d8fdcc1626e716fd1ea74f46a56740df538518d56913766f"
           }
         }
@@ -4880,7 +4880,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Promoted and frozen: all four dimensions and decision evidence supported. Failure binds replay/external-update hazard; alternative binds current-state/audit boundary."
+      "notes": "Pending independent review: four dimensions and decision evidence bound; promoted status not yet claimed."
     },
     {
       "pattern_id": "tycho.pattern.domain-events",
