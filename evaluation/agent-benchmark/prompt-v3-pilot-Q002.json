@@ -1,0 +1,196 @@
+{
+  "task_id": "Q002",
+  "question": "When can an in-place runtime upgrade address a modernization problem without moving data ownership?",
+  "answer": "## 1. Direct answer\n\nAn in-place runtime upgrade can address a modernization problem without moving data ownership **only when the problem lives in the runtime/implementation layer and the ownership boundary stays fixed**. Concretely: the failing thing is an aging language runtime, framework, library set, build/dependency graph or internal module structure; the externally visible API, event formats and database schema can remain compatible (or be extended additively); the same component remains the single authoritative owner of the same state; the required transaction and consistency boundary does not change; and the switch can be executed as a compatible, staged transition (expand -> mixed-version -> contract) with a tested rollback or forward-repair path.\n\nIf the modernization problem is itself about who owns data - shared tables, ambiguous authority, a transaction spanning domains, or a need for independent data/scale/release boundaries - an in-place runtime upgrade does not solve it, and the data ownership must move through a migration program.\n\n## 2. Mechanism and justification\n\n**The decision frame is target versus transition.** The modernization comparison page separates four valid starting points (requirement, symptom, legacy constraint, modernization objective) and names four options: retain, in-place upgrade, branch-by-abstraction, extraction. It explicitly warns against assuming independent deployment is the goal. The runtime example then defines the target candidate as \"a supported runtime in the same deployment with unchanged public API\" and says internal changes that cannot be made atomically should use branch-by-abstraction or a compatible migration step \"without changing the externally visible state owner by default\" (tycho.page.2eb290...#3-second-example-runtime-modernization-without-data-loss). That single sentence is the core condition: the upgrade changes the implementation, not the owner of externally visible state.\n\n**Compatibility is a matrix, not a Boolean.** Even when the runtime changes in place, old and new binaries coexist during rollout. The progressive-delivery page requires old API, new API, background workers of both versions, external clients and replay/restore processes to be checked against old storage, additive transitional storage and new-only storage. A canary or rolling update does not remove that requirement: even 1% of new writes become visible to all old readers and asynchronous consumers (tycho.page.81add4...#1-four-distinct-deployment-modes, #2-compatibility-is-a-matrix-not-a-boolean). Therefore in-place is safe only if the data/API change is additive or the runtime swap is behavior-preserving for every deployed reader and writer.\n\n**The transition has named states and proofs.** T0 old stable, T1 expand, T2 mixed, T3 guarded promotion, T4 cleanup, each with required safety evidence (baseline and restore point; cross-version reads/writes, idempotency and rejection; measured SLO and data integrity; no historic replay needing the old encoding and a passing restore test). The page states plainly that \"an irreversible new-format commit can make an image-only rollback unsafe\" (tycho.page.2eb290...#3-second-example-runtime-modernization-without-data-loss).\n\n**Expand -> migrate -> contract supplies the gates.** S0 baseline including \"the exact owner of truth\"; S1 additive expand; S2 compatible read with one canonical business identity; S3 one authoritative writer or validated dual-write plus replay-safe backfill; S4 migrate clients/consumers under cross-version tests; S5 contract only after old writers and historic readers are demonstrably retired and an irreversible-effect recovery strategy is approved. Contract is called the riskiest step because removing old data destroys the easiest rollback path (tycho.page.81add4...#3-expand-migrate-contract-with-explicit-gates).\n\n**Inside one deployable, branch by abstraction is the mechanical form of a safe in-place change.** It inserts an internal interface between callers and old/new implementations so both run in one deployable while traffic moves gradually; the switch is a runtime/configuration decision, old and new implementations must preserve the same contract and observable effects, and the switch must remain reversible until the old path is removed (tycho.page.ea1c3ca...#bounded-pattern-ownership-notes). This is exactly the shape of a runtime modernization that must not move ownership: one deployable, one data owner, two implementations behind a seam.\n\n**Ownership is the discriminator, not deployment topology.** The architecture-evolution page's Option A keeps the deployment and improves the architecture: isolate modules, publish contracts, enforce dependency direction, \"protect data ownership\" and add tests, preserving the in-process interaction model. Its stated bad assumption is that module separation automatically solves shared-database contention, independent release constraints or poor failure isolation (tycho.page.47ffb5c...#2-three-credible-modernization-options). Extraction (Option B) becomes credible when a capability needs independent release cadence, specialized resource budgets or separate operational ownership, with cohesive ownership, a stable external contract and explicit authority; risk indicators include a transaction spanning both new stores and no way to replay or reconcile partial failures. The same page's transition state machine adds that routing reversal is invalid after an incompatible data mutation and requires forward repair or tested recovery (tycho.page.47ffb5c...#4-candidate-transition-states-not-just-a-target-diagram).\n\n**When ownership truly moves, the program is different in kind.** The data-migration playbook runs expand/dual-write/backfill/shadow-reads/cutover/contract for mutable billing data, defines one authoritative state at each transition, and says not to assume counts or full-backup metadata prove business equivalence; two independently written stores can diverge under retry races or partial failure (tycho.decision.c089ea2...#decision-tree-and-chosen-adr, #applicability-and-counterindications). That is a data-authority transfer with its own reconciliation and reversal triggers, not a runtime patch (tycho.decision.c089ea2...#modernization-plan).\n\n## 3. Boundaries and trade-offs\n\n- **The answer does not hold when the pain is data coupling.** If the modernization objective requires independent release, independent scaling, separate operational ownership or a new authoritative store, the state owner must move; a runtime upgrade leaves the coupling intact. The architecture-evolution page is explicit that module separation may not fix shared-database contention (tycho.page.47ffb5c...#2-three-credible-modernization-options).\n- **The answer does not hold for non-additive schema or contract change.** If old readers cannot understand new records, mixed-version operation is unsafe; the failed-canary illustration shows a controller rollback succeeding while committed data becomes unreadable (tycho.page.81add4...#4-illustrative-failed-canary).\n- **Rollback is not symmetric.** Running an earlier image is not proof it can interpret newer records; after an incompatible write the recovery choice is forward repair or tested restore (tycho.page.81add4...#3-expand-migrate-contract-with-explicit-gates).\n- **In-place still carries transition cost.** Mixed-version periods, feature negotiation, dual readers, backfills, observability, replay-safe checkpoints and stop conditions remain; \"in place\" bounds the topology, not the work (tycho.page.81add4...#5-online-ddl-and-resource-contention, #6-compatibility-and-deployment-strategy-jointly-constrain-choice).\n- **Evidence limits.** The corpus is conceptual and analytical: the runtime case is synthetic, several pages carry evidence_status unknown, and the progressive-delivery page states no upgrade, controlled rollout, restored backup or independent review was performed. The sources do not establish that any specific upgrade is compatible, nor do they quantify when upgrade cost beats extraction.\n\n## 4. Evidence map\n\n| Claim | section_key |\n|---|---|\n| In-place upgrade is one of four options; do not assume independent deployment is the goal | tycho.page.2eb290f6307f4797a5981510f1248d70#1-four-valid-starting-points |\n| Runtime target keeps the same deployment and public API, and should not change the externally visible state owner by default | tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss |\n| Transition states T0-T4 each need explicit safety proof; irreversible new-format commits break image-only rollback | tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss |\n| Rolling, canary and blue/green still share state and require N/N+1 compatibility | tycho.page.81add4a0d86b4053ae77f9301fd2281d#1-four-distinct-deployment-modes |\n| Compatibility must be tested across every deployed producer/reader combination | tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean |\n| Expand/migrate/contract gates, single authority, replay-safe backfill, risky contract step | tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates |\n| Constraints that make an additive, staged option safer than a breaking canary | tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice |\n| Branch by abstraction keeps both implementations in one deployable with a reversible switch | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes |\n| Option A preserves deployment and data ownership; module separation does not fix shared-database contention | tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options |\n| Extraction is justified by independent release/scale/ownership plus transferable data ownership | tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options |\n| Routing reversal is invalid after incompatible mutation; forward repair or tested recovery | tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram |\n| Ownership transfer is a phased, reconciled migration with one authority per transition | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr |\n| Do not generalize migration methods; dual stores can diverge and identical outputs can hide a shared bug | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications |\n| Migration plan: version contracts, old-source authority, dual-state writes, backfill, shadow, cutover, decommission | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan |\n\n## 5. Unknowns and confidence\n\n- Whether a specific upgrade is contract-preserving cannot be answered from the book; it requires the actual API, event and schema inventory, the list of deployed readers/writers, retention and replay needs, and a fixture matrix. The corpus supplies the decision method, not the verdict.\n- The corpus does not quantify the cost threshold at which in-place upgrade stops being worth it relative to extraction, and the runtime example is explicitly synthetic.\n- Compatibility guarantees are format-dependent: a schema registry's BACKWARD compatibility does not imply every older consumer can read new messages (tycho.page.81add4...#2-compatibility-is-a-matrix-not-a-boolean). Any real answer must be checked against the specific serializer and version.\n- Confidence: high that the condition is \"same authoritative state owner plus compatible contracts plus staged, reversible transition\"; low for any specific system without inspection. If evidence showed that the observed pain is data coupling or that old readers cannot tolerate new records, the answer would flip to \"ownership must move\" or \"a migration program, not an in-place upgrade, is required\".\n\nLayers: primarily book (v10 decision support, v08/delivery compatibility, v02/application evolution, v10 c05 transition gates), with atlas-owner notes consulted through the v11 pattern-atlas branch-by-abstraction ownership note; modeling-and-simulation was not needed because no model, run or decision artifact was cited.",
+  "citations": [
+    "tycho.page.2eb290f6307f4797a5981510f1248d70#1-four-valid-starting-points",
+    "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#1-four-distinct-deployment-modes",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+    "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+    "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+  ],
+  "evidence": [
+    {
+      "claim": "In-place upgrade is one of four modernization options, alongside retain, branch-by-abstraction and extraction; independent deployment is not automatically the goal.",
+      "section_key": "tycho.page.2eb290f6307f4797a5981510f1248d70#1-four-valid-starting-points",
+      "note": "Observed: comparison table of four entry points and four options."
+    },
+    {
+      "claim": "An in-place runtime modernization targets a supported runtime in the same deployment with an unchanged public API and should not change the externally visible state owner by default.",
+      "section_key": "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+      "note": "Observed: synthetic objective, target candidate and decision state CONDITIONAL_CANDIDATE."
+    },
+    {
+      "claim": "Runtime transition must pass T0-T4 states; an irreversible new-format commit makes image-only rollback unsafe.",
+      "section_key": "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+      "note": "Observed: transition table with required safety proofs."
+    },
+    {
+      "claim": "Rolling, canary and blue/green deployments still share durable state, so version compatibility remains required even under partial traffic.",
+      "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#1-four-distinct-deployment-modes",
+      "note": "Observed: four deployment modes and their hidden costs."
+    },
+    {
+      "claim": "Compatibility is a matrix across old/new APIs, workers, external clients and replay/restore, not a single Boolean.",
+      "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+      "note": "Observed: matrix of producer/reader combinations and unsafe cells."
+    },
+    {
+      "claim": "Expand-migrate-contract requires a baseline owner of truth, one authoritative writer, replay-safe backfill and contract only after retirement and recovery strategy.",
+      "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+      "note": "Observed: S0-S5 gates and risk warning about the contract step."
+    },
+    {
+      "claim": "An additive, staged option is safer than a breaking canary when old clients cannot upgrade at once or fast image rollback is required.",
+      "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+      "note": "Observed: constraint table of safer options and dangerous shortcuts."
+    },
+    {
+      "claim": "Branch by abstraction runs old and new implementations in one deployable behind an internal interface, with the switch reversible until the old path is removed.",
+      "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+      "note": "Observed: atlas-owner bounded pattern note; both paths must preserve contract and observable effects."
+    },
+    {
+      "claim": "Keeping the deployment while improving internal modules protects data ownership; module separation alone does not fix shared-database contention or release coupling.",
+      "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+      "note": "Observed: Option A definition, good candidates and stated bad assumption."
+    },
+    {
+      "claim": "Extraction is credible when independent release cadence, specialized resource budgets or separate operational ownership exist, with cohesive ownership and transferable data ownership.",
+      "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+      "note": "Observed: Option B conditions and risk indicators such as a transaction spanning both stores."
+    },
+    {
+      "claim": "A routing reversal is invalid after an incompatible data mutation; that state requires forward repair or tested recovery.",
+      "section_key": "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+      "note": "Observed: state machine text alternative."
+    },
+    {
+      "claim": "When data ownership moves, the work is phased expand/dual-write/backfill/shadow/cutover/contract with one authoritative state at each transition.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+      "note": "Observed: proposed ADR for a synthetic billing system."
+    },
+    {
+      "claim": "Migration evidence is not generalizable: two independently written stores can diverge under retry races or partial failure, and identical outputs can hide a shared semantic bug.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+      "note": "Observed: applicability and counterindications section."
+    },
+    {
+      "claim": "Ownership migration proceeds through version contracts, old-source authority, dual-state writes, backfill checkpoints, shadow comparison, write inversion and decommission.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+      "note": "Observed: modernization plan sequence."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 3600,
+    "estimated": true
+  },
+  "layers": [
+    "book",
+    "atlas"
+  ],
+  "onboarding": {
+    "describe_snapshot": "e7496a664281afd4a1fff483f68780107a9541e3771a44741322751322dfe8fa",
+    "ranker": "tycho-section-fts5-bm25-v5",
+    "citation_scheme": "tycho.section-key.v2",
+    "note": "Describe self-checked first: layers book/atlas/modeling-and-simulation, budgets 1-6000 chars, search has no offset, read/page paginate on next_offset. Question is conceptual plus atlas pattern identity, so the answer uses the book layer and one atlas-owner bounded note; modeling-and-simulation was not needed."
+  },
+  "facets": [
+    {
+      "facet": "Definition and shape of an in-place runtime upgrade",
+      "queries": [
+        "in-place runtime upgrade",
+        "runtime version upgrade",
+        "in-place upgrade",
+        "branch by abstraction"
+      ],
+      "evidence": [
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "facet": "What counts as a modernization problem and which options exist",
+      "queries": [
+        "modernization",
+        "strangler fig modernization",
+        "extraction data ownership",
+        "runtime modernization"
+      ],
+      "evidence": [
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#1-four-valid-starting-points",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options"
+      ]
+    },
+    {
+      "facet": "What moving data ownership means and when it is required",
+      "queries": [
+        "data ownership",
+        "data ownership service boundary",
+        "database per service",
+        "schema compatibility"
+      ],
+      "evidence": [
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr"
+      ]
+    },
+    {
+      "facet": "Conditions under which a runtime-only upgrade suffices",
+      "queries": [
+        "rolling upgrade without downtime",
+        "fleet adoption",
+        "shared database coupling",
+        "schema compatibility"
+      ],
+      "evidence": [
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+        "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss"
+      ]
+    },
+    {
+      "facet": "Failure modes, reversibility and alternatives",
+      "queries": [
+        "rolling upgrade without downtime",
+        "legacy runtime",
+        "branch by abstraction",
+        "database per service"
+      ],
+      "evidence": [
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+        "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications"
+      ]
+    }
+  ],
+  "searches": [
+    "in-place runtime upgrade",
+    "rolling upgrade without downtime",
+    "strangler fig modernization",
+    "data ownership service boundary",
+    "runtime modernization",
+    "runtime version upgrade",
+    "in-place upgrade",
+    "fleet adoption",
+    "legacy runtime",
+    "database per service",
+    "shared database coupling",
+    "branch by abstraction",
+    "extraction data ownership",
+    "schema compatibility",
+    "modernization",
+    "deployment upgrade",
+    "data ownership"
+  ],
+  "log": "evaluation/agent-benchmark/prompt-v3-logs-Q002.jsonl"
+}
