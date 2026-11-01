@@ -1,0 +1,84 @@
+{
+  "task_id": "Q189",
+  "answer": "The inference is invalid because the screen ranks shares of fitted variance in a quadratic approximation of one assumed workload, not variance in the target system. V12 says the screen \"does not prove that service time is the dominant production factor\"; its shares are fitted variance, valid \"under the declared distributions and the quadratic approximation.\" All ranked inputs are assumed, not measured: the V12 input table lists arrival rate, service mean and service CV as assumed, missing a measured sample and tail. A 48-row independent-input surface is \"not a full Sobol' analysis\"; the screen rejects correlated inputs, so a real arrival-service correlation would move the shares. Replications reduce sampling error only, so narrow intervals make the synthetic estimate more precise, not more representative: \"uncertainty theater.\" Cancelling the measurement is self-sealing, because reversal triggers are stated in measured terms (arrival above 22 requests per second, service mean above 0.65 seconds, a measured p95 tail), so nothing could disconfirm the model. The book names this failure mode \"Sensitivity as evidence.\"\n\nLegitimately, the ranking is measurement triage: \"The model can still rank what to measure first; it cannot substitute for the measurement.\" It orders calibration and data collection and scopes reversal triggers, conditional on declared ranges and model form; change either and the ordering can reverse.",
+  "citations": [
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+  ],
+  "evidence": [
+    {
+      "claim": "The screen reports service mean first-order 0.536 / total-order 0.639 against arrival rate 0.361 / 0.464, as shares of fitted variance in the sampled range.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+      "note": "Observed: 'It says service time explains more of the fitted variance in the sampled range. It does not prove that service time is the dominant production factor.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "The screen is a quadratic response-surface approximation over 48 rows that assumes independent inputs and an adequate quadratic form; it is not a full Sobol' analysis.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+      "note": "Observed: 'The screen is an approximation' ... 'requires independent inputs' ... 'The screen is not a full Sobol' analysis.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "The method page states the ranking is only 'under the declared distributions and the quadratic approximation', so it does not transfer to production importance.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+      "note": "Observed: 'The screen does not prove that service time is more important in production; it says that, under the declared distributions and the quadratic approximation, it explains more of the fitted variance.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Every ranked input is assumed rather than measured; the table lists a missing measured arrival trace, service-time sample and tail, and a measured distribution instead of a chosen service CV shape.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+      "note": "Observed: Arrival rate, Service mean and Service CV all have status 'assumed' with 'What is missing' entries.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Narrow replication intervals are sampling intervals, not input-parameter uncertainty budgets; more replications make a synthetic estimate more precise, not more representative.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+      "note": "Observed: 'Increasing replications does not reduce input uncertainty.' Paired with failure mode 'Uncertainty theater' in the calibration page.",
+      "kind": "observed"
+    },
+    {
+      "claim": "Cancelling the measurement removes the evidence that could falsify the screen, because the decision's reversal triggers are themselves expressed in measured terms.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+      "note": "Observed: 'A measured arrival rate above 22 requests per second or a mean service time above 0.65 seconds changes the utilization boundary'; also a measured p95 service tail.",
+      "kind": "observed"
+    },
+    {
+      "claim": "The ranking's legitimate use is ordering which measurement to take first; it cannot stand in for the measurement itself.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+      "note": "Observed: 'The model can still rank what to measure first; it cannot substitute for the measurement.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Using a sensitivity ranking to justify skipping a measurement is a named failure mode in the decision layer.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+      "note": "Observed: 'Sensitivity as evidence. A sensitivity ranking is used to fill a missing measurement.'",
+      "kind": "observed"
+    },
+    {
+      "claim": "Inference: because the two total-order minus first-order gaps are identical (0.103), the single interaction term is attributed to both factors, so the screen cannot say which factor drives the interaction.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+      "note": "Inference from the reported indices plus 'a first-order index near zero does not mean the input is irrelevant; it may act only through an interaction.'",
+      "kind": "inference"
+    },
+    {
+      "claim": "The conditional status persists even though the screen run converged; convergence of a synthetic run does not create input validity.",
+      "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+      "note": "Observed: a model can be verified, converged and executable 'and still fail to support a decision. The missing evidence is about the world, not the code.'",
+      "kind": "observed"
+    }
+  ],
+  "abstain": false,
+  "confidence": "high",
+  "unknowns": "No decision-record artifact or measurement plan was inspected directly; the conclusion rests on the V12 method, calibration and decision pages. The ranking's value for triage also depends on measurement cost and decision thresholds, which the book does not quantify for this case.",
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

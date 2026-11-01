@@ -1,0 +1,73 @@
+{
+  "task_id": "Q199",
+  "answer": "The V12 gates are ordered, scope-local checks over separate evidence layers, so passing one cannot repair another. V12-C owns sampling precision: seeds, replications, standard error and the 0.02 relative-error rule that marks a run insufficient-sample. V12-E only validates the decision record: candidates, constraints, declared evidence statuses and an explicit recommendation or no-recommendation outcome. The book states that a later gate cannot substitute for an earlier one, and that the layers are not a ladder, since a later layer never upgrades an earlier one. V12-E reads the recorded convergence status; it cannot add replications or shrink a standard error, and V12-F does not rerun the suite.\n\nA recommendation built on an unconverged run therefore has no valid evidence basis: that run is not used as converged evidence, so the record cannot be decision-supported. The correct outcome is insufficient-evidence with recommendation none, plus what would change it: replications until relative error is at most 0.02, then a fresh decision. Keeping the recommendation is forced recommendation and evidence inflation, which decision validity should reject rather than rescue. Calibration gaps can be handled by an explicitly conditional recommendation; an unstable estimate cannot, because conditionality does not stabilise the number. Confidence is high on the gate rule; individual JSON artifact statuses were not inspected.",
+  "citations": [
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records"
+  ],
+  "evidence": [
+    {
+      "claim": "V12 gates run in order and a later gate cannot substitute for an earlier one.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+      "note": "Observed text alternative: structural, model, statistical, calibration, decision and review gates, then 'A later gate cannot substitute for an earlier one.'"
+    },
+    {
+      "claim": "The five evidence layers are separate and not a ladder; a later layer never upgrades an earlier one.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+      "note": "Observed: 'The labels are not a ladder, and a later layer never upgrades an earlier one automatically.' Decision evidence asks whether the decision follows, not whether the estimate is stable."
+    },
+    {
+      "claim": "V12-C owns sampling precision and excludes a non-converged run from converged evidence.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+      "note": "Observed: the two-replication stress run is insufficient-sample at 0.032; 'A run that fails the 0.02 relative-error threshold is not used as converged evidence.'"
+    },
+    {
+      "claim": "V12-E validates record declarations (candidates, runs, constraints, evidence statuses, recommendation or no-recommendation), not statistical re-computation.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+      "note": "Observed field list; inference that a declaration check cannot create replications or reduce a standard error."
+    },
+    {
+      "claim": "Different gates are checked by different means: validator for structural, engine tests for model and statistical, records for decision evidence.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+      "note": "Observed. This is why a decision-record pass is not a statistical pass."
+    },
+    {
+      "claim": "The independent review gate does not rerun the test suite.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+      "note": "Observed: review checks artifacts and does not rerun the suite, so no later gate recovers the missing precision."
+    },
+    {
+      "claim": "Insufficient evidence is a complete outcome, and a record with recommendation none can hold it.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+      "note": "Observed: 'The correct outcome is insufficient evidence, not a recommendation'; status list includes insufficient-evidence and the modernization record recommends none."
+    },
+    {
+      "claim": "Forced recommendation and evidence inflation are named failure modes.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+      "note": "Observed list; inference that a recommendation resting on an insufficient-sample run instantiates both."
+    },
+    {
+      "claim": "Convergence means only that sampling error is small under the declared model; it does not make the decision correct.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+      "note": "Observed. Non-convergence conversely means the reported estimate is too noisy to serve as decision evidence."
+    },
+    {
+      "claim": "Calibration gaps may be carried as an explicitly conditional decision-supported outcome.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+      "note": "Observed: 'A decision-supported outcome with an uncalibrated model is a conditional result.' Conditionality is not extended to non-convergence."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -73,6 +73,82 @@
         "pass": true,
         "notes": "No core claim missing: intersection, version selection and repair, concurrent siblings, membership overlap with sloppy quorums and voter-set configuration are all addressed."
       }
+    },
+    {
+      "task_id": "Q170",
+      "question": "Why can a full-text index that contains a document still fail to match the exact API identifier the document contains, and what must be pinned so matching does not drift?",
+      "answer": "A full-text index stores the analyzer's output terms, not the document string. A page visibly containing `Http2GoAwayException` matches only if document analysis and query analysis produce the same postings terms. A tokenizer that splits CamelCase or punctuation differently between indexing and searching \"may miss an otherwise relevant record\": the document is present, but term identity differs. Presence is not matchability, and \"a raw query string is not an immutable analysis contract.\"\n\nPin the whole analysis chain, not the query text: tokenizer and character-filter rules, case and Unicode normalization, stopword and stemmer versions, synonym dictionaries, field schema/mapping and index format. Pin index generation and source revision too, because an \"analyzer version mismatch between old and new generations\" silently redefines terms; evaluate under a \"frozen analyzer/version snapshot\" with exact-token fixtures. Add an exact term/keyword field beside analyzed prose for APIs, exceptions and config keys, and fall back to exact source when generation comparison fails. Stemming helps prose but erodes symbol fidelity, so both paths are needed.\n\nLimits: pinning buys reproducibility, not relevance; the book reports no measured drift, and its examples are fictional. Evidence: analyzer walkthrough, inverted-index section, failure table, snapshot identity.",
+      "citations": [
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission"
+      ],
+      "core_claims": [
+        "An inverted index stores the terms an index-time analyzer produced, so a query matches only when the query-time analysis maps onto those stored terms.",
+        "Tokenizers that split CamelCase or punctuation and stemmers that merge morphological variants can erase the distinction between an API symbol and ordinary prose, leaving the identifier unsearchable as a term.",
+        "A dedicated keyword or exact-term field alongside analyzed prose preserves symbol lookup that a language analyzer would destroy.",
+        "The analyzer name and version belong to the index generation's identity, because changing them makes the same query text map to different terms while the posting lists still hold the old ones.",
+        "Ranking and provenance are separate: a well-scored hit still has to be bound to the index generation and source revision that produced it, since a cached snippet can cite a revision the rebuild already removed."
+      ],
+      "optional_claims": [
+        "PostgreSQL full-text search over tsvector and GIN is a workable lexical option for a modest transactional corpus, while Lucene-style analyzers fit cases where per-field tokenization must be tuned.",
+        "A BM25 score is calibrated only within one index, analyzer and corpus, so scores from two generations or two products are not directly comparable."
+      ],
+      "judge_0": {
+        "task_id": "Q170",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Missing core claim: ranking and provenance are separate, so a well-scored hit or cached snippet must be bound to the index generation and source revision that produced it."
+      },
+      "judge_1": {
+        "task_id": "Q170",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing; the answer covers analyzer-term identity, symbol-eroding tokenization, exact fields, generation pinning, and provenance, though hit-level provenance is implicit."
+      }
+    },
+    {
+      "task_id": "Q186",
+      "question": "Two client applications share one general-purpose API, and each filters fields and makes several calls. Why can a per-client backend improve the contract without becoming a second domain authority, and what release risk appears when it deploys independently?",
+      "answer": "A per-client backend (BFF) can improve the contract because a shared API cannot usually delegate query shape: field filtering, sorting and pagination make callers over-fetch, join in memory and issue several calls. A BFF owned by each client team selects only the fields that experience needs and composes the owner calls server-side into one response, so the two clients evolve independently and neither pays for the other's view. It remains a composition layer, not a second domain authority, because business rules and shared invariants stay with the owning service, cross-cutting concerns stay outside the BFF, and duplicated client-specific logic is an explicit trade-off. It crosses the line if it caches or authorizes domain objects or hides a domain workflow.\n\nThe release risk is alignment. The BFF is tightly coupled to its client but composes services with independent lifecycles, so releasing it independently of those services can leave its composition pointing at a changed or mismatched domain-API version or shape - version skew and drift that surface as broken or partially degraded client responses. Version the composition and contract-test the client on every release; prefer a shared API with client-side selection when differences are small. The evidence is pattern guidance, not a measured drift incident; confidence is medium.",
+      "citations": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+      ],
+      "core_claims": [
+        "A backend for frontend is a separate backend for one client experience, owned by the frontend team, that customizes the client API and may compose several owner service calls while the shared domain services remain authoritative.",
+        "It fits when client populations have materially different interaction needs and duplicated client-specific composition is acceptable; one shared API with client-side selection is the alternative when the differences are small.",
+        "Cross-cutting policy such as monitoring and authorization and domain logic stay outside the backend for frontend, and duplicated domain logic, an unowned lifecycle, or deployment multiplication without measured client benefit are contraindications.",
+        "Independent backend-for-frontend and domain-service lifecycles create release-alignment risk because the documented sources describe per-client malfunction isolation but not drift, composition versioning or client-contract tests, so the composition must be versioned and the client contract tested.",
+        "A per-client failure can be isolated to that client population, but that isolation does not make the backend authoritative or license its release to change shared domain behavior silently."
+      ],
+      "optional_claims": [
+        "Code duplication is a probable outcome of the pattern and must be traded against the better-tailored experience rather than assumed away.",
+        "The composition record should state which domain API versions the backend expects so an independently deployed domain change is detected before users encounter it."
+      ],
+      "judge_0": {
+        "task_id": "Q186",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: BFF ownership and composition, the fit condition with client-side selection as the alternative, policy and domain logic staying outside, release-alignment risk and non-authority are covered, though per-client failure isolation is only implicit."
+      },
+      "judge_1": {
+        "task_id": "Q186",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Omits the core claim that per-client failure isolation does not make the backend authoritative or license a silent change to shared domain behavior, and covers the unowned-lifecycle and deployment-multiplication contraindications only in passing."
+      }
     }
   ]
 }

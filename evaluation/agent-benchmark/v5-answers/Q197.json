@@ -1,0 +1,81 @@
+{
+  "task_id": "Q197",
+  "answer": "V12-A to V12-E are local gates: `scripts/validate_v12.py` checks structure, identifiers, links and hashes, while engine tests and contracts carry model, statistical, calibration and decision evidence. V12-F is different in kind: a fresh read-only reviewer outside the authoring session examines the artifacts, does not rerun the test suite, and its report is stored verbatim, indexed with SHA-256 and linked from the review record. A validator run by the author cannot supply that independence or external record; it is self-check, and the volume README calls the volume a self-checked candidate. The gate matrix states the review gate is not claimed by the validator. The local pass is pre-review triage, not the gate.\n\nA passing V12-F still does not establish owner acceptance or promote a pattern; the verdict is pass-with-findings and owner acceptance remains open. The gates do not establish that source claims are true, that models match a real system, that decisions are accepted, or that CI, deployment or production behavior exists. Review also does not rerun tests, so it checks artifacts and reports rather than reproducing results.\n\nUncertainty: the CLI exposes the gate page, not the V12 review record, so status rests on page narrative.",
+  "citations": [
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#overview",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences"
+  ],
+  "evidence": [
+    {
+      "claim": "V12-A to V12-E are implemented and checked locally; V12-F is a separate gate.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+      "note": "Observed: 'V12-A through V12-E are implemented and checked locally. V12-F is an independent review gate and is recorded separately.'"
+    },
+    {
+      "claim": "The validator covers the structural gates only, and the review gate is not claimed by it.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+      "note": "Observed: 'The validator scripts/validate_v12.py checks the structural gates... The review gate is not claimed by the validator.' Matrix lists V12-F as 'separate gate'."
+    },
+    {
+      "claim": "V12-F requires a fresh read-only reviewer outside the authoring session and does not rerun the test suite.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+      "note": "Observed: 'requires a fresh read-only reviewer outside the authoring session. It checks the V12 artifacts and does not rerun the test suite.'"
+    },
+    {
+      "claim": "V12-F has a distinct evidence trail: verbatim report, SHA-256 index, link from the review record.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+      "note": "Observed: 'Its report is stored verbatim, indexed with a SHA-256 and linked from the review record.'"
+    },
+    {
+      "claim": "A V12-F pass is not owner acceptance and does not promote a pattern; verdict is pass-with-findings with acceptance open.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+      "note": "Observed: 'A pass is not owner acceptance and does not promote a pattern... pass-with-findings... Owner acceptance remains open.'"
+    },
+    {
+      "claim": "The volume is labelled a self-checked candidate, with independent review recorded separately.",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#overview",
+      "note": "Observed: 'self-checked V12 candidate... No production measurement, independent review, owner acceptance or pattern promotion is asserted. The independent review gate is recorded separately when it runs.'"
+    },
+    {
+      "claim": "The gates do not establish source-claim truth, real-system model match, owner acceptance, CI/deployment/production behavior, or pattern promotion.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+      "note": "Observed list: source claims true; models match a real system; decisions accepted by owner; CI, deployment or production behavior; promotion of any existing pattern."
+    },
+    {
+      "claim": "Evidence layers are separate and not a ladder; a pass in one layer does not upgrade another.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+      "note": "Observed: 'The labels are not a ladder, and a later layer never upgrades an earlier one automatically.'"
+    },
+    {
+      "claim": "Cross-layer inferences such as verified-model-implies-correct-design are explicitly invalid.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+      "note": "Observed: forbidden list includes 'The model is verified, so the design is correct' and 'The simulation succeeded, so production will succeed.'"
+    },
+    {
+      "claim": "V12 has no operational validation against a real system and every model is uncalibrated.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+      "note": "Observed: 'V12 has no operational validation against a real system. Every model records that limit.' Validation-gates V12-D adds: 'Every model is uncalibrated.'"
+    },
+    {
+      "claim": "The gates are ordered, and the page states a later gate cannot substitute for an earlier one (one-way wording).",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+      "note": "Observed: flow A-to-F and 'A later gate cannot substitute for an earlier one.' Direction is one-way; general non-substitution rests on the separate gate definitions, not this sentence alone."
+    },
+    {
+      "claim": "The gate page itself does not carry the review status; the V12 review record does.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+      "note": "Observed: 'The review status is recorded in the V12 review record, not inferred from this page.' That record is not exposed by this CLI, so the pass status is a reported narrative, not an independently read artifact here."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q171",
+      "question": "Why can adding more workers past some point reduce throughput under the Universal Scalability Law, and why do the fitted coefficients not identify the cause?",
+      "layer_expected": "book",
+      "answer": "Under the Universal Scalability Law, relative capacity is C(N) = N / [1 + \u03b1(N\u22121) + \u03b2N(N\u22121)]. The numerator rises linearly with N, but the denominator contains a \u03b2N(N\u22121) coherency term that rises roughly quadratically. Once coordination work \u2014 shared locks, cache invalidation, cross-worker messaging \u2014 grows faster than the useful work each new worker adds, aggregate throughput peaks and then turns retrograde. Contention alone produces diminishing returns; positive \u03b2 is what can make extra workers counterproductive.\n\nThe fitted \u03b1 and \u03b2 cannot identify the cause. They are aggregate empirical parameters for contention and coherence, and the expression is not a mechanism detector: a particular lock, link or invalidation flow cannot be proven from the coefficients. Different mechanisms can produce similar curves, especially when the fit spans few points, a changing workload mix or confounded resource limits; warm-up, retries and generator limits add further ambiguity. Fitted coefficients support prediction inside the observed envelope, not causal diagnosis.\n\nDistinguishing causes requires controlled experiments: hold fixture, skew, versions and backend ceiling fixed, vary replicas, then inspect lock wait/hold time, per-key contention, pool acquisition, invalidation work and queue age. Confidence is conceptual: the source ledger records no fitted Tycho curve or benchmark.\n\nEvidence map: workload-shape-and-scalability-laws \u00a73; scaling-models \u00a73; measurement-model; contention-response \u00a7\u00a75\u20136.",
+      "citations": [
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+        "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#measurement-model",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+        "tycho.page.61c621bfa9a04a738e937416cec15e78#6-a-discriminating-scalability-experiment",
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#source-to-claim-ledger"
+      ],
+      "core_claims": [
+        "The normalized form C(N) = N / (1 + alpha(N-1) + beta N(N-1)) adds a coherency term that grows quadratically with N, while the contention term grows only linearly.",
+        "When beta is positive, added concurrency eventually costs more coordination than it contributes, so capacity peaks and then declines into retrograde throughput.",
+        "Amdahl's model has no coherency term and approaches a plateau rather than a decline, so a measured decline is not explained by a serial share alone.",
+        "Alpha and beta are empirical fitting parameters, and a good fit does not demonstrate that any particular lock, connection pool or invalidation flow is responsible for the loss.",
+        "The curve is usable only when fitted to comparable measured points under one workload mix and checked against withheld observations, so a few points do not justify a claim that more replicas will help."
+      ],
+      "optional_claims": [
+        "Horizontal scaling adds independently serving instances while multiplying shared downstream connections and coordination, so a per-node curve can shift as the fleet grows.",
+        "A vertical change can relieve one measured resource bottleneck but does not remove single-node availability limits."
+      ],
+      "required_evidence": [
+        "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#2-amdahl-s-conditional-bound",
+        "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead"
+      ]
+    },
+    {
+      "task_id": "Q177",
+      "question": "Why can a cached not-found keep hiding an object after it has been created, and what must a negative cache key include before a denial may be shared?",
+      "layer_expected": "atlas",
+      "answer": "A cached not-found is an ordinary cache entry. After a miss the read path stores the absence under a request key, and later reads answer from it without consulting the authority. Creating the object writes the authority, not the cache; unless the create path invalidates or versions that key, the negative entry keeps reporting \"absent\" until TTL expiry. A slow in-flight miss completing after a create can also reinsert the old negative, and a cached deny can outlive a grant or revocation.\n\nA denial may be shared only when its key binds tenant, principal or scope, the checked operation, and the policy revision (OWASP's same subject, action, resource scope, tenant and policy/input state). Omit any component and the entry is not shared; a negative must never become a universal absence when visibility varies by principal. Bound TTL by the shorter of TTL and revocation deadline, delete or version on create, grant, revoke and delete, keep no-entry, cached-negative and tombstone distinct, never cache unknown backend errors as absent, and fail closed. Otherwise prefer per-principal keys, a short TTL for public existence checks, or bypass when a revocation deadline is shorter than any useful TTL. Evidence is documented protocol and product guidance, not measured behavior; confidence is high on the rules, untested locally.",
+      "citations": [
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview"
+      ],
+      "core_claims": [
+        "Caching an absent result protects against repeated misses for nonexistent identifiers, but it creates a freshness question because a cached not-found can hide an object created later.",
+        "RFC 9111 permits storing negative results only inside its storage rules, and a shared cache must not reuse an authorization-bearing response unless a response directive allows storage by a shared cache.",
+        "A cached negative must not become a universal statement that an object does not exist for all principals: a decision has to be bound to the authenticated subject, action, resource, tenant and relevant context, and cached only for that same scope and policy state within the approved freshness limit.",
+        "A cached denial can outlive a grant or a revocation, so the denial must be bounded by the shorter of its TTL and the revocation deadline, the key must be deleted or versioned on create, grant, revoke and delete, and an unknown backend error must never be cached as absence.",
+        "Per-principal keying, a short TTL and bypass are the bounded alternatives: prefer per-principal keying for authorization decisions, a short TTL for public existence checks, and bypass when the revocation deadline is shorter than any useful TTL."
+      ],
+      "optional_claims": [
+        "CloudFront caches a 403 only when the origin sends max-age or s-maxage, while Cloudflare gives 404 and 410 a three-minute default edge TTL and does not cache other status codes by default.",
+        "Double keying adds material such as the referring site to a cache key; for authorization the analogous material is the principal, tenant and policy revision."
+      ],
+      "required_evidence": [
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment"
+      ]
+    },
+    {
+      "task_id": "Q183",
+      "question": "A shared cache stores a 404 for a document lookup and a 403 for a caller who lacked access. The document is later created and shared with that caller, and the policy revision changes. Why can both cached negatives remain wrong after the change, and what must each key and lifetime bind?",
+      "layer_expected": "atlas",
+      "answer": "Both negatives are keyed to the lookup request, not the changed state, so neither create-and-grant nor the policy revision reaches them. The cached 404 still asserts absence because creation does not delete or version its key. The cached 403 still asserts denial because its key omits caller and policy revision, and sharing the document does not touch it. A shared cache compounds this: an authorization-bearing response may be reused only when a directive permits it.\n\nEach key must bind its change dimension. The 404 key needs document identity, tenant/visibility scope and an existence generation, or must be deleted/versioned on create and delete; it must never become a universal absence. The 403 key needs tenant, principal or scope, checked operation, resource and policy revision, and must not be shared across principals.\n\nEach lifetime must bind the event that ends it. The 404 lifetime is a short TTL capped by create/delete. The 403 lifetime is the shorter of TTL and the revocation deadline, ending on grant, revoke or policy change, with recheck and fail-closed. TTL alone is insufficient: a stale fill can resurrect an entry after invalidation.\n\nEvidence: V06 negative-cache section 4, Negative Caching card, cache-aside section 4, security section 2. Unknowns: deployment TTLs, policy-revision ordering and propagation bounds are not stated; mechanism confidence is high, concrete bounds are not.",
+      "citations": [
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#cacheability-is-a-content-and-authority-contract"
+      ],
+      "core_claims": [
+        "Negative caching protects against repeated misses for absent values, but it creates a freshness question because a cached not-found can hide a later created object, and a stale allow or deny can outlive a grant or revocation.",
+        "A cached negative must be distinguishable from no entry and from an actual deletion or tombstone, and an unknown backend error must never be cached as absent, or a transient failure becomes a durable claim that the object does not exist.",
+        "An authorization-sensitive negative key must bind the authenticated subject or scope, tenant, checked operation and policy revision; a key that omits one of these is not shared, and a shared cache must not reuse an authorization-bearing response unless a response directive permits storage.",
+        "The denial lifetime must be the shorter of its TTL and the revocation deadline, with the key deleted or versioned on create, grant, revoke and delete, because a cached permit must not outlive a required revocation deadline and the service must fail closed when relevant state changes.",
+        "The page's proposed discriminating tests mutate an authorization-sensitive value during a permitted TTL and separately confirm that a backend read error returning no result is not negatively cached as absence; these tests are proposed, not reported as performed."
+      ],
+      "optional_claims": [
+        "Per-principal keying is preferred for authorization decisions, a short TTL for public existence checks, and bypass when the revocation deadline is shorter than any useful TTL.",
+        "CloudFront caches a 403 only when the origin explicitly marks it cacheable, while Cloudflare gives 404 and 410 a three-minute default edge TTL and does not cache other status codes by default."
+      ],
+      "required_evidence": [
+        "tycho.page.b6f0e0ea50474e29901d5b7b7f471bac#overview",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment"
+      ]
+    },
+    {
+      "task_id": "Q189",
+      "question": "A sensitivity screen reports that service mean explains more fitted variance than arrival rate, and the team proposes to cancel the planned service-time measurement because the model already shows what matters. Why is that inference invalid, and what is the ranking legitimately used for?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The inference is invalid because the screen ranks shares of fitted variance in a quadratic approximation of one assumed workload, not variance in the target system. V12 says the screen \"does not prove that service time is the dominant production factor\"; its shares are fitted variance, valid \"under the declared distributions and the quadratic approximation.\" All ranked inputs are assumed, not measured: the V12 input table lists arrival rate, service mean and service CV as assumed, missing a measured sample and tail. A 48-row independent-input surface is \"not a full Sobol' analysis\"; the screen rejects correlated inputs, so a real arrival-service correlation would move the shares. Replications reduce sampling error only, so narrow intervals make the synthetic estimate more precise, not more representative: \"uncertainty theater.\" Cancelling the measurement is self-sealing, because reversal triggers are stated in measured terms (arrival above 22 requests per second, service mean above 0.65 seconds, a measured p95 tail), so nothing could disconfirm the model. The book names this failure mode \"Sensitivity as evidence.\"\n\nLegitimately, the ranking is measurement triage: \"The model can still rank what to measure first; it cannot substitute for the measurement.\" It orders calibration and data collection and scopes reversal triggers, conditional on declared ranges and model form; change either and the ordering can reverse.",
+      "citations": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure"
+      ],
+      "core_claims": [
+        "The V12 screen fits a quadratic response surface to 48 sampled rows, so it assumes that a quadratic form is adequate over the sampled range, that input standardization is meaningful and that inputs are independent, and it is not a full Sobol analysis.",
+        "The reported shares describe the fitted variance under the declared distributions and sampled range, so service mean explains more there, but they do not prove that service time is the dominant production factor.",
+        "The decision record uses the ranking to identify what to measure first rather than to support a production claim, and treating a sensitivity ranking as a substitute for a missing measurement is an explicit failure mode.",
+        "A ranking supplies no value or distribution for the missing input, so the decision stays conditional until the named measurement exists, and a useful insufficient-evidence record names the measurement, the range that would change the outcome, the owner and the review trigger.",
+        "A ranking from an unstable sample can reverse, so the screen's shares are an approximation with their own sample and error limits rather than a durable fact."
+      ],
+      "optional_claims": [
+        "Correlated inputs are propagated by the separate Monte Carlo run, and the engine rejects a correlated screen because its variance decomposition assumes independent inputs.",
+        "A success rate near 1.0 has little variance, which can make the shares look unstable even when the modeled effect is real."
+      ],
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ]
+    },
+    {
+      "task_id": "Q195",
+      "question": "Why can a visible backlog look stable while total work grows, and what must a stock-and-flow model do about stocks that sit outside its boundary?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A visible backlog is one stock inside a chosen boundary, so a flat queue means only that local inflow equals local outflow. Work can keep accumulating in omitted stocks\u2014retry buffers, operator queues, database tables\u2014while the reported queue stays flat. The identity backlog(t+dt) = backlog(t) + arrivals(dt) - completions(dt) conserves work only inside the declared boundary; retries or entity redefinitions crossing it make attempts, unique operations and outcomes diverge. Rejecting work before the boundary can also flatten the internal queue while user-level success falls.\n\nA stock-and-flow model must therefore make the boundary and excluded stocks explicit: state purpose, alternatives, observable metric, exclusions and validity domain; record included and excluded stocks, units, evidence status and assumptions in the model contract; and justify that omitted stocks cannot reverse the comparison. If they can, enlarge the boundary, represent them as explicit exogenous stocks or flows, or add a sensitivity case. Count offered, admitted, exited, rejected and abandoned work consistently, and record start and end backlog plus residence-time cohorts so finite-window edge effects are visible. Silently omitted stocks are a conceptual-validity defect, not a rounding error.\n\nEvidence: V12 stock-and-flow/where-the-model-fails; V12 model-scope/from-decision-to-boundary and failure-modes-of-scope; V12 model-contract/required-structure; V07 measurement-boundary/orientation; V07 finite-window/counterexample. Confidence is high for the mechanism; whether a specific backlog is affected remains unknown because this is method evidence, not production measurement.",
+      "citations": [
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#from-decision-to-boundary",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#failure-modes-of-scope",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#orientation-four-numbers-that-are-not-interchangeable",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery"
+      ],
+      "core_claims": [
+        "A stock is an accumulation at a point in time, while a flow is a rate over an interval; only the stock carries memory and inertia, so a queue can remain long after the arrival rate falls.",
+        "Work waiting in a database, a client retry buffer or an operator queue is a stock too; if it is omitted, the visible backlog can look stable while total work grows elsewhere.",
+        "The accounting identity offered = completed + rejected + backlog must hold at every integration step, and a persistent gap means the model is creating or destroying work rather than merely accumulating floating-point error.",
+        "The V12 order-intake model checks that identity at every step and refuses a negative backlog; its fixed 0.1-second step and non-negativity assertion are part of the model contract, not private implementation details.",
+        "If a stock that can change the decision is outside the declared boundary, the model's output is outside its validity domain for that decision, so the omission must be recorded rather than hidden."
+      ],
+      "optional_claims": [
+        "A large integration step can admit a whole interval of arrivals at once, serve more than the available backlog and produce a negative stock.",
+        "The baseline order-intake run offers 20 requests per second for 3,600 seconds with a 300-second warmup and reports zero backlog, while the saturation run reports a 77.6-request average backlog; both results are synthetic."
+      ],
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#why-the-distinction-matters",
+        "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits"
+      ]
+    }
+  ]
+}

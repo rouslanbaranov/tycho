@@ -1,0 +1,156 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q173",
+      "question": "Why is telling an assistant to ignore instructions found in retrieved documents insufficient, and where must the boundary be enforced instead?",
+      "layer_expected": "book",
+      "answer": "Telling an assistant to ignore instructions in retrieved text is insufficient because the control sits inside the same probabilistic interpreter that must separate data from commands. Once retrieved text enters context, a hostile document can paraphrase, split, or out-rank the warning, and the book states there is no foolproof natural-language filter; the risk is structural when retrieved text is merged into high-priority instructions or read as a tool command. Provenance labels and channel separation reduce ambiguity but remain advisory.\n\nThe boundary must therefore sit outside the model, at the authority protecting each effect. Retrieval is a data pipeline: server-side, per-object authorization gates every document, section, snippet, title, and count. The agent gets a minimal capability set, ideally read-only, with no arbitrary filesystem or network tools. Any separate action API enforces its own ACL and effect contract, validates arguments against a narrow schema and allowed IDs, and re-checks entitlement at the executing authority rather than trusting an earlier search. Independent confirmation covers irreversible effects but never substitutes for ACLs.\n\nResidual failure modes: filters, model confidence, and chain-of-thought cannot replace deterministic checks; caches, related links, and cross-collection citations are views, not permissions. Evidence map: principal-tools sections 1-3, collection-privacy section 5, agent-negative-tests section 6. Limits: examples are synthetic and no malicious-input exercise was executed; moderate confidence.",
+      "citations": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries",
+        "tycho.page.b38397b1d9fe456dbdb30e5b2ec2f3c8#6-a-synthetic-negative-test-matrix",
+        "tycho.page.0ae1aabac3b64c2f924cc427684bdbab#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Retrieved prose is untrusted data carrying a source identity, revision and access classification, and merging it into the trusted instruction channel is the structural defect rather than a wording problem.",
+        "No natural-language filter reliably separates injected directives from legitimate content, so a guard that asks the model to ignore malicious text cannot be the control that protects an effect.",
+        "The enforceable boundary sits at the effect authority, where capabilities are denied by default, arguments are validated against a narrow schema and allowed identifiers, and entitlement is checked again where the side effect occurs.",
+        "A read-only reference service should expose no mutation or execution surface at all, keeping any legitimate action system's permissions isolated from search.",
+        "Human confirmation for irreversible actions supplements deterministic authorization, and neither model confidence nor reasoning text substitutes for an access check on the actual subject and object."
+      ],
+      "optional_claims": [
+        "The same boundary governs retained telemetry, which should carry minimally necessary principal and object identifiers instead of copied document content.",
+        "Negative tests with forged citation identifiers, mixed entitlements and injected tool directives are needed before ranked retrieval is treated as correct."
+      ],
+      "required_evidence": [
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#3-prompt-injection-is-a-trust-boundary-failure",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#2-treat-retrieval-as-a-data-pipeline-not-a-command-channel",
+        "tycho.page.6315cc62b4384a64b31f8694d77d1c35#1-define-distinct-security-principals",
+        "tycho.page.7987026eace9417a8c3a1d4dbc6c7da0#5-privacy-audit-and-retention-boundaries"
+      ]
+    },
+    {
+      "task_id": "Q179",
+      "question": "Why must a scatter-gather fix a completeness rule and a straggler policy before it can return an answer, and what must the response disclose about participants that did not reply?",
+      "layer_expected": "atlas",
+      "answer": "Scatter-gather returns a composed claim about a participant set, not an answer from one authority. Fixing the completeness rule first - all replies, quorum, first-best, or a fixed cutoff - tells the aggregator when an answer exists and whether it is complete or partial; that choice is a business invariant, and only after it is fixed can anyone say whether the slowest participant is on the critical path. The straggler policy then enforces the rule inside the caller's budget: per-recipient deadlines, at most one reply per recipient under a correlation key, ignoring or evicting late replies, cancelling outstanding work, and either failing or returning a bounded partial result. Without both, the caller cannot distinguish no data from no reply yet, and waiting for all participants lets the slowest one consume the budget.\n\nWhen participants do not reply, the response must disclose it: state that the result is incomplete and, for a quorum result, name which participants answered and which did not; mark missing parts in a versioned partial-response shape instead of silently omitting them; gateway-style aggregation should also expose which dependency failed. This is a correctness obligation, not cosmetic.\n\nBoundary: when atomicity or global consistency is required, scatter-gather is contraindicated. Confidence is high on this guidance; the cited source binds timeout and incomplete-response behavior, not measured results.",
+      "citations": [
+        "tycho.page.b864f32bd58a4f7b8eaaa223cdecfea7#overview",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+        "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+        "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+      ],
+      "core_claims": [
+        "Scatter-gather sends one request to several participants and gathers their responses, so it needs a completeness condition and a deadline; the source names wait-for-all, first-best and fixed-timeout strategies.",
+        "The controller can configure a timeout that ignores responses taking too long, and the aggregator then combines the partial responses into a result, so an implementation must communicate to the client that the response is incomplete.",
+        "A bounded implementation assigns a per-recipient deadline and a correlation key, accepts at most one reply per participant, and declares a quorum or completeness rule plus a policy for late and duplicate responses.",
+        "The aggregator needs correlation, a completeness condition, an aggregation algorithm and eviction of late responses, and a partial result needs a versioned schema and a caller-visible completeness marker naming who answered and who did not.",
+        "Do not use it when one authority must answer, when responses are not comparable, or when fan-out tail latency would exceed the caller's budget; cost and tail latency grow with the number of participants."
+      ],
+      "optional_claims": [
+        "An aggregator alone is the alternative when responses already exist and no broadcast is needed, because the gather step is the aggregator component inside scatter-gather.",
+        "When a required participant is missing or delayed, the incomplete set should raise an error after a timeout rather than block further processing indefinitely."
+      ],
+      "required_evidence": [
+        "tycho.page.b864f32bd58a4f7b8eaaa223cdecfea7#overview",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q185",
+      "question": "Every participant votes yes, then the coordinator crashes before recording its decision. Why can no participant safely commit or abort on its own, and what must the recovery decision be based on?",
+      "layer_expected": "atlas",
+      "answer": "A yes vote is only a promise to commit if asked; it is not the decision. The coordinator collects every participant's vote, then records one commit-or-abort decision that participants apply while still holding prepared state. A participant cannot tell \"no decision yet\" from \"decision recorded but notification lost\", and its local state plus the unanimous votes never reveal what the coordinator recorded.\n\nCommitting alone would make one resource manager's effects durable while another participant might still roll back, breaking atomicity across resources. Aborting alone is equally unsafe: another prepared participant may already have applied a commit (or may still receive it), and abort cannot undo that. Oracle's prepared nodes wait for a COMMIT or ROLLBACK from the global coordinator; PostgreSQL expects an external transaction manager to track and close prepared transactions out.\n\nRecovery must therefore rest on the coordinator's durable commit-point record, replayed by coordinator recovery or that transaction manager and applied identically by every participant. Until then, prepared data stays locked for reads and writes. If no decision record is recoverable, the transaction stays in doubt and blocked rather than guessed: that blocking risk, not the vote count, is the real cost, and the book documents no full termination protocol.\n\nBoundary: a saga replaces atomic commit with compensations, losing isolation and automatic rollback.",
+      "citations": [
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes",
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.e4a2ae7fb1d74eadbdc6d8eb07db46ec#3-distributed-transactions-are-a-protocol-choice-not-an-automatic-extension",
+        "tycho.page.db64c44e7af846f9b54a524a37a1b9dd#5-failure-matrix-and-an-experiment-contract"
+      ],
+      "core_claims": [
+        "In prepare/commit the coordinator asks every participant to prepare, collects the votes, then records one durable commit or abort decision that participants apply while holding prepared state; no participant may commit before that decision exists.",
+        "A failure after prepare leaves the transaction in doubt, prepared data stays locked for reads and writes until resolution, and the decision must survive coordinator failure for prepared participants to recover.",
+        "Neither a participant's yes vote nor its local locks prove that the global transaction committed or aborted, so a unilateral commit or abort can violate the cross-resource invariant that two-phase commit was chosen to preserve.",
+        "Recovery must find the coordinator's durable decision through a commit-point log or an external transaction manager; resolution may be automatic or forced, but it cannot be fabricated from one participant's local state when the decision is unavailable.",
+        "Two-phase commit is contraindicated when participants cannot prepare or coordinator failure would block critical resources, and a saga of local transactions with compensation or one local transaction is the alternative when global atomicity is not required."
+      ],
+      "optional_claims": [
+        "Even correct two-phase commit covers only participating resource managers, so a broker or external service outside the protocol still needs an outbox, idempotency or repair contract.",
+        "Local serializable transactions can abort and retry, so a business decision must be safe to re-execute and external irreversible effects must not leak during an attempt that may later roll back."
+      ],
+      "required_evidence": [
+        "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#1-define-the-invariant-before-naming-consistency",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#2-postgresql-transaction-isolation-as-a-concrete-bounded-example",
+        "tycho.page.5da19d9b920940fb837bbb28e8fefe77#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q191",
+      "question": "Candidate A has the lower p95 latency, yet the V12 comparative record recommends candidate B. Why is that not a contradiction, and which part of the recommendation is a value judgment rather than a simulated fact?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Not a contradiction: the V12 checkout comparison treats p95 latency as a declared constraint, not the objective. C5 makes p95 <= 1.5 s a hard ceiling, and both A (0.870 s) and B (1.206 s) pass; C fails C5 (1.769 s) and C4 (3.63 > 3.0) and is eliminated. Among survivors B wins on success rate (0.9996 vs 0.9218) and cost per 1,000 successes (1.34 vs 1.81). A's latency advantage is headroom inside an already-satisfied ceiling; the contract calls it \"a tradeoff rather than a failed constraint\" and applies no undeclared success threshold.\n\nThe value judgment is the priority ordering, not the simulated metrics: the record \"prioritizes successful completions and cost per success over the latency difference inside the 1.5-second ceiling,\" and states \"That prioritization is a decision, not a fact produced by the simulation.\" The weights are declared, not simulated; the contract warns a weighted score can hide them.\n\nBoundaries: the workload is synthetic - narrow intervals \"do not make the inputs measured.\" The recommendation is conditional because operability (C3) is untested, and it reverses if a measured cost weight makes B lose to A, B's measured p95 tail exceeds 1.5 s, or the operability review fails. Confidence is high for this reading, not for production behavior.",
+      "citations": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#why-a-decision-record-is-not-a-score",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation"
+      ],
+      "core_claims": [
+        "All three candidates receive the same 20 requests-per-second Poisson workload for 1,800 seconds after a 300-second warmup, with the same seed scheme and metric definitions, so the candidate configuration is the intended experimental variable.",
+        "Candidate C is eliminated by the hard constraints: its cost per 1000 successes of 3.63 exceeds the 3.0 ceiling and its p95 of 1.769 seconds exceeds the 1.5-second ceiling, while A and B pass both.",
+        "B has the higher success rate (0.9996 versus 0.9218) and the lower cost per 1000 successes (1.34 versus 1.81), while A has the lower p95 (0.870 versus 1.206 seconds), so neither candidate dominates on every metric.",
+        "The record recommends B because the declared decision prioritizes successful completions and cost per success over the latency difference inside the 1.5-second ceiling, and that prioritization is a decision rather than a simulation output.",
+        "The recommendation is conditional because the non-quantitative operability constraint C3 was not tested, and the record names measured arrival rate, service time, p95 tail, cost weight, retry rate and operability review as reversal triggers."
+      ],
+      "optional_claims": [
+        "All three runs are converged under the 0.02 relative-error rule, and narrow synthetic intervals do not make the assumed inputs measured.",
+        "Candidate B's higher p95 comes from waiting longer before timing out, and it still completes more requests at lower cost per success."
+      ],
+      "required_evidence": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation"
+      ]
+    },
+    {
+      "task_id": "Q197",
+      "question": "Why can a locally passing V12 validator not substitute for the V12-F review gate, and what does that gate still not establish?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "V12-A to V12-E are local gates: `scripts/validate_v12.py` checks structure, identifiers, links and hashes, while engine tests and contracts carry model, statistical, calibration and decision evidence. V12-F is different in kind: a fresh read-only reviewer outside the authoring session examines the artifacts, does not rerun the test suite, and its report is stored verbatim, indexed with SHA-256 and linked from the review record. A validator run by the author cannot supply that independence or external record; it is self-check, and the volume README calls the volume a self-checked candidate. The gate matrix states the review gate is not claimed by the validator. The local pass is pre-review triage, not the gate.\n\nA passing V12-F still does not establish owner acceptance or promote a pattern; the verdict is pass-with-findings and owner acceptance remains open. The gates do not establish that source claims are true, that models match a real system, that decisions are accepted, or that CI, deployment or production behavior exists. Review also does not rerun tests, so it checks artifacts and reports rather than reproducing results.\n\nUncertainty: the CLI exposes the gate page, not the V12 review record, so status rests on page narrative.",
+      "citations": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#overview",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences"
+      ],
+      "core_claims": [
+        "The validator checks the structural gates while the engine tests check the model and statistical gates, and neither claims the independent review gate.",
+        "V12-F requires a fresh read-only reviewer outside the authoring session; the reviewer checks the artifacts and does not rerun the test suite.",
+        "The review report is stored verbatim, indexed with a SHA-256 and linked from the review record; a pass is not owner acceptance and does not promote a pattern.",
+        "The recorded outcome is pass-with-findings with one raw-report line-length exception and no blocking, high or medium finding, while owner acceptance remains open.",
+        "The gates do not establish that source claims are true, that models match a real system, that decisions are owner-accepted, or that CI, deployment or production behavior occurred."
+      ],
+      "optional_claims": [
+        "V12-A through V12-E are implemented and checked locally, while V12-F is recorded as a separate gate.",
+        "A review pass does not close the question of whether the decision should be adopted."
+      ],
+      "required_evidence": [
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-f-independent-review",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#the-gate-matrix",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ]
+    }
+  ]
+}

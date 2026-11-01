@@ -1,0 +1,167 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q170",
+      "question": "Why can a full-text index that contains a document still fail to match the exact API identifier the document contains, and what must be pinned so matching does not drift?",
+      "layer_expected": "book",
+      "answer": "A full-text index stores the analyzer's output terms, not the document string. A page visibly containing `Http2GoAwayException` matches only if document analysis and query analysis produce the same postings terms. A tokenizer that splits CamelCase or punctuation differently between indexing and searching \"may miss an otherwise relevant record\": the document is present, but term identity differs. Presence is not matchability, and \"a raw query string is not an immutable analysis contract.\"\n\nPin the whole analysis chain, not the query text: tokenizer and character-filter rules, case and Unicode normalization, stopword and stemmer versions, synonym dictionaries, field schema/mapping and index format. Pin index generation and source revision too, because an \"analyzer version mismatch between old and new generations\" silently redefines terms; evaluate under a \"frozen analyzer/version snapshot\" with exact-token fixtures. Add an exact term/keyword field beside analyzed prose for APIs, exceptions and config keys, and fall back to exact source when generation comparison fails. Stemming helps prose but erodes symbol fidelity, so both paths are needed.\n\nLimits: pinning buys reproducibility, not relevance; the book reports no measured drift, and its examples are fictional. Evidence: analyzer walkthrough, inverted-index section, failure table, snapshot identity.",
+      "citations": [
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission"
+      ],
+      "core_claims": [
+        "An inverted index stores the terms an index-time analyzer produced, so a query matches only when the query-time analysis maps onto those stored terms.",
+        "Tokenizers that split CamelCase or punctuation and stemmers that merge morphological variants can erase the distinction between an API symbol and ordinary prose, leaving the identifier unsearchable as a term.",
+        "A dedicated keyword or exact-term field alongside analyzed prose preserves symbol lookup that a language analyzer would destroy.",
+        "The analyzer name and version belong to the index generation's identity, because changing them makes the same query text map to different terms while the posting lists still hold the old ones.",
+        "Ranking and provenance are separate: a well-scored hit still has to be bound to the index generation and source revision that produced it, since a cached snippet can cite a revision the rebuild already removed."
+      ],
+      "optional_claims": [
+        "PostgreSQL full-text search over tsvector and GIN is a workable lexical option for a modest transactional corpus, while Lucene-style analyzers fit cases where per-field tokenization must be tuned.",
+        "A BM25 score is calibrated only within one index, analyzer and corpus, so scores from two generations or two products are not directly comparable."
+      ],
+      "required_evidence": [
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#2-postgresql-17-full-text-search-is-a-real-candidate",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+        "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem"
+      ]
+    },
+    {
+      "task_id": "Q176",
+      "question": "Why can a session token guarantee read-your-writes without making stored data globally consistent, and what must happen when that token cannot survive failover?",
+      "layer_expected": "atlas",
+      "answer": "Read-your-writes is a per-process property: it says nothing about other clients. A session token encodes that process's observation requirement \u2014 \"writes through position 81 must be visible\" \u2014 and routing serves it from a replica whose applied position is sufficient, waits within a deadline, or reroutes to an authoritative replica. It is a minimum version barrier, not a pointer to a specific version, and constrains only reads carrying it. Another session may still read position 77. The guarantee is bought with routing metadata, not quorum coordination, so it implies no global order, cross-client freshness or linearizability; requiring every session to see the latest write is a stronger global obligation the token does not manufacture.\n\nFailover breaks those assumptions: positions may not compare under a new leader, and a token held only in client memory or pinned to a lost replica can vanish. The service must rebuild the requirement from durable state \u2014 persisting and validating the token, with an epoch or lineage field before crossing a leadership change \u2014 or narrow the guarantee. If it cannot be established, route to an authoritative replica or return a retryable failure that preserves the token. Never silently serve an older snapshot; stickiness is not failover proof, and a token that cannot survive failover is not a session guarantee.",
+      "citations": [
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#name-the-observation-that-must-survive-routing",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes",
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations"
+      ],
+      "core_claims": [
+        "Session consistency is scoped to one client session: Cosmos DB returns an updated session token after every write and promises read-your-writes and writes-follow-reads within that session, not across clients or processes.",
+        "The token acts as a minimum version barrier rather than a pinned historical version, and Cosmos session tokens are partition-bound, so a token cannot order reads that land on another partition.",
+        "Read-your-writes and monotonic reads are per-process properties in Jepsen's definitions and do not apply to operations performed by other processes, so another user may still observe an older state.",
+        "After client recreation the token cache is re-created, so the requirement must be rebuilt from durable state or narrowed; an epoch or lineage field is needed before a token may cross a leadership change, and a sticky route that cannot survive failover is not a session guarantee.",
+        "The routing layer owns the wait, reroute and rejection policy: when no replica can satisfy the token, return a retryable failure rather than an older snapshot, and do not collapse a multiwriter frontier into one scalar version."
+      ],
+      "optional_claims": [
+        "Causal consistency is the stronger adjacent contract, and MongoDB provides all four causal guarantees only with majority reads and majority writes.",
+        "A linearizable read path is the alternative when the product requires one latest state rather than per-client continuity."
+      ],
+      "required_evidence": [
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+        "tycho.page.67b469deedc503bc41ca1478e2ce737f#where-the-dependency-must-travel"
+      ]
+    },
+    {
+      "task_id": "Q182",
+      "question": "A three-voter metadata store is expanded to four voters to improve resilience, and reads and writes continue to use R + W > N. Why does the fourth voter add no failure tolerance while raising the commit quorum, and why can a read still be stale during the membership change?",
+      "layer_expected": "atlas",
+      "answer": "Majority quorum is floor(N/2)+1, so three voters need two acknowledgements and tolerate one loss, while four need three and still tolerate only one: the fourth voter enlarges the commit quorum without widening the failure budget, and commits now wait on three of four voters. Five voters, the next odd size, tolerate two; a non-voting learner adds capacity without that cost.\n\nR+W>N is a per-configuration intersection proof. It assumes reader and writer share the same member set (\"membership is correctly configured\"). During the change, a write may commit under the old three-voter configuration with W=2 (say A and B), while a read under the new four-voter configuration with R=2 (W=3 still satisfies 2+3>4) contacts C and D. The sets can be disjoint: 2+2 is not greater than the four distinct voters. R+W>N held in both configurations, yet the read returns the pre-commit value. The new voter may still be catching up, and follower reads are stale without lease or read-index semantics.\n\nFix: make membership a committed state-machine decision with joint or overlapping old and new quorums, catch the node up as a non-voting learner, then promote; select the highest version and repair. Limits: confidence is high on the counts, lower on product-specific reconfiguration, and the book's arithmetic is conditional, not an implementation test. Evidence: quorum-envelope sections 2-3; leader-recovery sections 4-6.",
+      "citations": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#5-reconfiguration-and-restoration-are-different-actions",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#6-failure-and-negative-experiment-matrix",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview"
+      ],
+      "core_claims": [
+        "Majority quorum is floor(N/2)+1, so a three-voter cluster requires two votes and tolerates one unavailable voter while a four-voter cluster requires three votes and still tolerates only one, meaning the extra voter can raise the commit threshold without increasing tolerated failures.",
+        "Quorum arithmetic is a conditional contract rather than a safety proof: it assumes the quorum protocol and membership-change rules are correct and the remaining voters can communicate with the necessary log state.",
+        "R + W > N makes the read and write sets intersect when membership is correctly configured, but intersection is necessary and not sufficient for freshness because the reader must also select the highest version and repair stale replicas.",
+        "A membership change that moves replicas can violate the intersection that reads depended on, so old and new quorums must overlap through supported joint or overlapping safeguards rather than a simple count update in configuration.",
+        "Overlap can still return a stale value when the write failed, membership was sloppy, or the selector ignores the newest replica, and a latency budget does not make a stale response correct; sloppy quorum deliberately trades strict membership overlap for availability."
+      ],
+      "optional_claims": [
+        "A non-voting learner can receive state before safe promotion under implementation-specific rules, and election and log commitment also require a quorum under the protocol's term rules.",
+        "A leader-based protocol or a single-writer partition is the alternative when quorum latency and availability cost exceed the safety benefit, although the leader still needs a majority for election and commit."
+      ],
+      "required_evidence": [
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q188",
+      "question": "A V12 decision record cites a stable pattern identifier and its canonical owner page, and the derived reverse index lists that pattern next to the decision. What does the link actually establish, and why must it not be read as promotion, validation or a second canonical explanation of the pattern?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "The link is a one-way, provenance-bearing reference, not an evidence relation. A V12 decision record names a stable tycho.pattern.* identifier, the owner document identifier and canonical path, and a V12-local relation (candidate, constraint, mechanism or reversal trigger) explaining why the pattern was considered. The derived reverse index is regenerated from V12 records and maps pattern_id to the V12 models, scenarios, runs and decisions that mention it; it is a lookup table with provenance, not a semantic graph.\n\nIt cannot promote or validate the pattern because promotion and coverage belong to the atlas/registry review process. Simulation evidence never promotes an entry to sufficient, and V12 does not change coverage, source ledgers, review records or promotion hashes. Co-occurrence proves mention, not causation or validation; a decision may be conditional or insufficient-evidence, and the V12 validator checks only the registry triple, not whether the relation is apt.\n\nNor is it a second canonical explanation: the owner page remains canonical for mechanism and guarantees. Duplicating that mechanism in V12 is a named \"duplicate owner\" failure, and writing back would alter a canonical file, stale review and source records and can invalidate an existing promotion. Production applicability is not established either. Evidence: Decision records and pattern links; V12 and V11 landings. Confidence high; this is documented policy, not independent review.",
+      "citations": [
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#what-this-volume-does-and-does-not-do",
+        "tycho.volume.fe327f72cf81df0237ce47b841e8aef5#purpose-and-mission",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result"
+      ],
+      "core_claims": [
+        "The volume follows a one-way rule: V12 records reference existing patterns, and existing patterns do not reference V12, so canonical cards, owner pages, promotion hashes and review records remain untouched.",
+        "A pattern link carries a stable pattern identifier, the owner document identifier and canonical owner path, and a relation such as candidate, constraint, mechanism or reversal trigger, where the relation is a V12 statement and not a change to the pattern's coverage, review or promotion state.",
+        "The derived reverse index is generated from V12 records and is a lookup table with provenance, so co-occurrence does not prove that the pattern causes the simulated result or that the decision validates the pattern.",
+        "A link does not promote a pattern, re-review its sources, create a second canonical explanation or establish production applicability, and simulation evidence never promotes a pattern to sufficient coverage.",
+        "The structural validator resolves the identifier and checks the owner document and path triple, but it does not check that the relation is semantically apt, which remains an editorial review."
+      ],
+      "optional_claims": [
+        "Adding a V12 backlink to an existing card would change its hash and can make an existing promotion stale.",
+        "A hand-maintained reverse map would drift from the records, which is why the index is regenerated from V12 artifacts."
+      ],
+      "required_evidence": [
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes"
+      ]
+    },
+    {
+      "task_id": "Q194",
+      "question": "Why does a V12 decision record link one way to existing pattern identifiers instead of writing a backlink into the pattern card, and what does such a link not establish?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "A V12 decision record links one way because it names an existing stable `tycho.pattern.*` identifier plus its canonical owner document identifier, path and relation, instead of writing a backlink into the card. The reason is evidence integrity: only a sufficient, promotion-bound card or owner page carries a promotion hash, and every entry retains source ledgers and review records. Editing a card to add a V12 backlink changes a canonical file, stales its hash and review/source records, can invalidate a promotion and breaks reproducibility. Discovery comes from a derived reverse index mapping `pattern_id` to V12 artifacts; it is regenerated from V12 records, so the existing pattern corpus stays read-only and no second canonical explanation appears.\n\nSuch a link does not promote the pattern, re-review it or change coverage, establish production applicability, or prove causation. The reverse index is a lookup table with provenance, not a semantic graph: co-occurrence does not show the pattern caused the result or that the decision validates it. The validator checks the canonical owner triple against the registry, not semantic aptness; that remains editorial review. Failure modes include backlink contamination, promotion by mention, duplicate owners, reverse-map drift and orphan links. Confidence is high for the rule; limits: draft registry, modeled evidence, no raw-artifact inspection. Evidence: C05 pattern-link page, C02 decision-record contract, C07 validation limits.",
+      "citations": [
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+        "tycho.volume.fd0c1a798f9968eed4a679b048deea14#purpose-and-mission",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+        "tycho.volume.fe327f72cf81df0237ce47b841e8aef5#evidence-and-known-limits"
+      ],
+      "core_claims": [
+        "The volume's iron rule is that V12 references existing patterns while existing patterns do not reference V12.",
+        "A backlink would change a canonical card or page, stale its review and source records, and can invalidate an existing promotion hash; the one-way rule keeps existing evidence reproducible.",
+        "A link records a stable pattern identifier, the canonical owner document identifier and path, and a relation such as candidate, constraint, mechanism or reversal trigger; the relation is a V12 statement, not a change to coverage, review or promotion state.",
+        "The reverse index is generated from V12 records and maps pattern identifiers to V12 models, scenarios, runs and decisions; it is a lookup table with provenance, not a semantic graph, and it is not hand-edited.",
+        "A link does not promote the pattern, re-review its source evidence, create a second canonical explanation, or establish production applicability."
+      ],
+      "optional_claims": [
+        "The V12-A structural gate resolves each linked pattern identifier and requires the owner document identifier and owner path to match the registry entry, so a link to another pattern's valid owner page fails.",
+        "The reverse index is regenerated when V12 records change, while the existing pattern corpus remains read-only."
+      ],
+      "required_evidence": [
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+        "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ]
+    }
+  ]
+}

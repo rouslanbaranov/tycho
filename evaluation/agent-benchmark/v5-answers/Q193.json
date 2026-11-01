@@ -1,0 +1,70 @@
+{
+  "task_id": "Q193",
+  "answer": "Full jitter replaces the computed backoff delay with a uniform draw between zero and that delay, spreading retries that would otherwise share a deadline. Without it, clients that failed together retry together, so a synchronized wave arrives when the service is least able to absorb load. Randomizing each delay decorrelates arrivals; the book's retry-storm failure mode calls the unjittered case an immediate load spike. Jitter alone is insufficient: retry budgets, backpressure and timeouts also bound amplification. A synthetic A/B/C run reported amplification 1.004 and 0.41% timeouts for three attempts, exponential backoff and full jitter, versus 1.079 and 11.1% for two attempts with linear backoff; differing parameters mean this illustrates the combination, not jitter alone.\n\nRecording is required because the policy is an input. V12 scenarios declare backoff and jitter, use a base seed with deterministic per-replication seeds, and run provenance stores model and scenario hashes plus the seed base; replay recomputes the result hash and fails on drift. If jitter is omitted, the scenario hash does not bind it; replay may draw under a different policy and metrics no longer match the recorded configuration. Confidence is high for mechanism and contracts; the run is synthetic, and replication does not validate assumed distributions.",
+  "citations": [
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields"
+  ],
+  "evidence": [
+    {
+      "claim": "Full jitter replaces the computed backoff delay with a uniform draw between zero and that delay.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+      "note": "Observed: 'Full jitter replaces the delay with a uniform draw between zero and the computed delay.'"
+    },
+    {
+      "claim": "Without jitter, many clients that failed at the same time retry at the same time, creating synchronized retry waves.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+      "note": "Observed: 'Jitter reduces synchronized retry waves: without it, many clients that failed at the same time retry at the same time.'"
+    },
+    {
+      "claim": "Retry storm is a failure mode in which every client retries immediately, adding a load spike when the service is least able to handle it.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+      "note": "Observed: 'Every client retries immediately. The service sees a load spike just as it is least able to handle it.'"
+    },
+    {
+      "claim": "In the synthetic A/B/C comparison, candidate B (three attempts, exponential backoff, full jitter) had retry amplification 1.004 and timeout rate 0.0041; candidate C (two attempts, linear backoff) had 1.079 and 0.111.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+      "note": "Observed: run-reported values. Inference: attempts, backoff shape and jitter differ together, so the comparison illustrates the combination rather than isolating jitter's effect."
+    },
+    {
+      "claim": "Jitter alone does not prevent overload; retry budget, backpressure, queue capacity and timeout limits must bound the system together.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview",
+      "note": "Observed: the overview says retry budgets, backoff and jitter are needed, and backpressure, queue capacity and bulkhead decide explicit rejection or collapse. Inference: no single mechanism is sufficient."
+    },
+    {
+      "claim": "The scenario declares the jitter choice, and a model that uses jitter without recording it is not reproducible.",
+      "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+      "note": "Observed: 'The scenario declares the choice. A model that uses jitter without recording it is not reproducible.'"
+    },
+    {
+      "claim": "The scenario contract's configuration includes attempts and backoff, alongside the model, workload, uncertainty, replications and seed scheme.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+      "note": "Observed: required structure lists configuration with attempts and backoff, plus replications and seed."
+    },
+    {
+      "claim": "V12 uses a base seed and deterministic per-replication seed; the run record stores the base seed and replication count.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+      "note": "Observed: 'A seed is not a random number chosen to make a result look stable. It is part of the input contract.'"
+    },
+    {
+      "claim": "Run provenance stores model and scenario hashes plus the seed base, and replay recomputes the result hash, failing on drift.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+      "note": "Observed: provenance includes 'model hash, scenario hash, seed base, replications'; 'Replay recomputes it and fails if the model, scenario or engine output has drifted.'"
+    },
+    {
+      "claim": "Replication reduces sampling error but does not validate assumed input distributions.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+      "note": "Observed: 'more replications make the assumption more precise, not more true.'"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

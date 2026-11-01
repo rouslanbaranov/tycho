@@ -1,0 +1,72 @@
+{
+  "task_id": "Q194",
+  "answer": "A V12 decision record links one way because it names an existing stable `tycho.pattern.*` identifier plus its canonical owner document identifier, path and relation, instead of writing a backlink into the card. The reason is evidence integrity: only a sufficient, promotion-bound card or owner page carries a promotion hash, and every entry retains source ledgers and review records. Editing a card to add a V12 backlink changes a canonical file, stales its hash and review/source records, can invalidate a promotion and breaks reproducibility. Discovery comes from a derived reverse index mapping `pattern_id` to V12 artifacts; it is regenerated from V12 records, so the existing pattern corpus stays read-only and no second canonical explanation appears.\n\nSuch a link does not promote the pattern, re-review it or change coverage, establish production applicability, or prove causation. The reverse index is a lookup table with provenance, not a semantic graph: co-occurrence does not show the pattern caused the result or that the decision validates it. The validator checks the canonical owner triple against the registry, not semantic aptness; that remains editorial review. Failure modes include backlink contamination, promotion by mention, duplicate owners, reverse-map drift and orphan links. Confidence is high for the rule; limits: draft registry, modeled evidence, no raw-artifact inspection. Evidence: C05 pattern-link page, C02 decision-record contract, C07 validation limits.",
+  "citations": [
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#purpose-and-mission",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+    "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.volume.fe327f72cf81df0237ce47b841e8aef5#evidence-and-known-limits"
+  ],
+  "evidence": [
+    {
+      "claim": "The one-way rule exists to protect the evidence layer: cards keep promotion hashes plus source and review records, and a backlink would change a canonical file and can invalidate a promotion.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-iron-rule",
+      "note": "Observed: 'Only a sufficient, promotion-bound card or owner page has a promotion hash... Adding a V12 backlink would change a canonical file, stale review and source records, and can invalidate a promotion where one exists.'"
+    },
+    {
+      "claim": "V12 is deliberately isolated: it may link to existing identifiers and owner pages, but existing cards, identifiers, ledgers, review records and promotion hashes are not edited; reverse discovery is derived.",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#purpose-and-mission",
+      "note": "Observed: 'Existing cards, owner pages, frontmatter, page identifiers, source ledgers, review records and promotion hashes are not edited. Reverse discoverability comes from a derived index, not from writing back into the existing corpus.'"
+    },
+    {
+      "claim": "A pattern link carries a stable identifier, owner document identifier, owner path and a relation that states relevance without changing coverage, review or promotion.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-pattern-link-contains",
+      "note": "Observed: relation is 'a V12 statement about why the pattern is relevant. It is not a change to the pattern's coverage, review or promotion state.'"
+    },
+    {
+      "claim": "The reverse index is generated from V12 records, maps pattern_id to V12 artifacts, and leaves pattern pages without backlinks.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+      "note": "Observed: 'The reverse index is generated from V12 records, not maintained by hand... pattern pages themselves do not link back.'"
+    },
+    {
+      "claim": "The reverse index is a provenance lookup, not a semantic graph; co-occurrence proves neither causation nor validation.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#the-derived-reverse-index",
+      "note": "Observed: 'It is not a graph of semantic relationships. It is a lookup table with provenance. A co-occurrence does not prove that the pattern causes the result or that the decision validates the pattern.'"
+    },
+    {
+      "claim": "A link does not promote the pattern, re-review its sources, change coverage, create a second canonical explanation, or establish production applicability.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#what-a-link-does-not-mean",
+      "note": "Observed: the section's four bullets state no promotion, no source re-review, no second canonical explanation and no production applicability."
+    },
+    {
+      "claim": "The validator checks the canonical owner triple against the registry but not semantic aptness; failure modes include backlink contamination and promotion by mention.",
+      "section_key": "tycho.page.b8e3757528ca1f60a472a6fd9deb7489#failure-modes",
+      "note": "Observed: 'The V12 validator resolves each linked pattern identifier... checks the canonical triple... It does not check that the relation is semantically apt; that remains an editorial review.'"
+    },
+    {
+      "claim": "The decision-record contract repeats that a pattern link is not a promotion and that simulation never promotes a pattern to sufficient.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+      "note": "Observed: 'A pattern link is not a promotion. It does not change the pattern's coverage state, source ledger or review status. A simulation result never promotes a pattern to sufficient.'"
+    },
+    {
+      "claim": "V12 validation gates do not establish source truth, model-reality match, owner acceptance, production behavior or pattern promotion.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+      "note": "Observed: the list explicitly disclaims truth of source claims, model match, owner acceptance, CI/deployment/production behavior and promotion of existing patterns."
+    },
+    {
+      "claim": "The atlas warns that naming a pattern does not establish fit and a passing link check is not technical evidence; its registry remains draft with partial-bounded coverage.",
+      "section_key": "tycho.volume.fe327f72cf81df0237ce47b841e8aef5#evidence-and-known-limits",
+      "note": "Observed: 'Naming a pattern does not establish fit... a passing link check is not technical evidence.' Also: 'Technical coverage is 145 partial-bounded... no entry is sufficient.'"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

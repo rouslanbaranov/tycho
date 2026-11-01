@@ -1,0 +1,91 @@
+{
+  "task_id": "Q192",
+  "answer": "The window [0,T) includes the startup transient, not steady state. An empty start keeps early waits below long-run levels; pooling them with the filled-queue regime makes p95 a quantile of a non-stationary mixture, biased downward here. The window may also end with unfinished work.\n\nA V12 scenario must declare warmup in its workload, with duration, time unit and arrival process; the schema requires every field. Candidates share horizon and warmup (1,800 s with 300 s in A/B/C); a shorter warmup is workload drift and invalidates comparison. Warmed, cold and recovery phases are declared, not silently discarded.\n\nThe engine must begin metric accumulation only after the declared warmup, stop at the declared duration, and use scenario time rather than the process clock. Pre-warmup completions must not enter metrics (warmup leakage); failed invariants abort the run rather than write a partial record.\n\nConvergence measures precision, not accuracy: V12's 0.02 relative-error rule and confidence intervals describe sampling error across replications of one scenario. Each replication repeats the same t=0 transient, so more replications converge on the same biased estimand; a stable biased estimate is still biased. Only correcting the window or edge bias removes it.\n\nEvidence map: queue/warmup caveat, scenario contract, engine determinism, convergence limits. Confidence: inferred; V12 is uncalibrated.",
+  "citations": [
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.687d2196433c3b076d00c73144dad431#components",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration"
+  ],
+  "evidence": [
+    {
+      "claim": "A finite window is neither a long-run average nor a stationary expectation; edge effects matter when the system does not start and end empty, and a finite warmup and horizon can bias the estimate.",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+      "note": "Observed: the page states a finite simulation window is not the long-run average, that the model must report the window, the warmup and the uncertainty, and that a finite warmup and horizon can bias the estimate."
+    },
+    {
+      "claim": "Counting pre-warmup completions in the measurement window is a named failure mode (warmup leakage).",
+      "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+      "note": "Observed: failure-modes bullet 'Warmup leakage. Pre-warmup completions are counted in the measurement window.'"
+    },
+    {
+      "claim": "The pooled p95 is biased because the empty-start transient is pooled with steady-state observations; the direction is downward here.",
+      "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+      "note": "Inference: the page states that with no initial backlog the surplus grows and that Little's Law does not support transient percentile predictions; it does not measure this p95 direction. The downward direction follows from an initially short queue."
+    },
+    {
+      "claim": "A scenario workload must declare duration, warmup, time unit and arrival process, and the schema requires every field.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+      "note": "Observed: workload lists duration, warmup, time unit and arrival process; 'The schema requires every field.'"
+    },
+    {
+      "claim": "Compared candidates must share the same horizon and warmup; a shorter warmup is workload drift and invalidates the comparison.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+      "note": "Observed: A/B/C share a 1,800-second horizon and 300-second warmup; a different warmup makes a comparison invalid, and the failure-modes list names workload drift."
+    },
+    {
+      "claim": "The engine derives metric windows from the declared warmup and duration, not from the process clock.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+      "note": "Observed: determinism rule 'Metric windows use the declared warmup and duration, not the process clock.'"
+    },
+    {
+      "claim": "A failed invariant aborts the run instead of writing a partial record, and the engine fails closed.",
+      "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#components",
+      "note": "Observed: 'A failed invariant aborts the run instead of writing a partial record.' The failure-modes section adds that the engine fails closed on unknown identifiers and failed invariants."
+    },
+    {
+      "claim": "Convergence is a sampling-precision test: a 0.02 relative-error threshold across replications.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+      "note": "Observed: relative error = se/|mean|, threshold 0.02, converged or insufficient-sample."
+    },
+    {
+      "claim": "More replications will not fix a biased model.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+      "note": "Observed: the list of what convergence does not mean includes 'more replications will fix a biased model'."
+    },
+    {
+      "claim": "A stable estimate of a biased model is still biased, and replications make an assumption more precise, not more true.",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#failure-modes",
+      "note": "Observed: 'Convergence without calibration. A stable estimate of a biased model is still biased.' Seeds-and-replications adds that more replications make an assumption more precise, not more true. Inference: the fixed scenario repeats the same t=0 transient in every replication."
+    },
+    {
+      "claim": "Warmed, cold and recovery phases should be declared rather than silently discarding inconvenient transients.",
+      "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+      "note": "Observed: control recommends declaring warmed, cold and recovery phases rather than discarding inconvenient transients."
+    },
+    {
+      "claim": "A finite-window p99 estimate from an arbitrary window is invalid; the record must state warmup and whether the window is stationary.",
+      "section_key": "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+      "note": "Observed: the page warns against estimating p99 by slicing arbitrary windows and requires recording start/end backlog, sampling, warmup and stationarity."
+    },
+    {
+      "claim": "V12 models are uncalibrated, so confidence is limited to the declared model.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+      "note": "Observed: 'Every model is uncalibrated'; the decision records repeat that status and make no production claim."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

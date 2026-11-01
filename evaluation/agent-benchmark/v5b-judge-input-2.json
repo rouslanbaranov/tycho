@@ -1,0 +1,161 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q172",
+      "question": "Why can a read that contacts a quorum of replicas still return a stale value after a write was acknowledged?",
+      "layer_expected": "book",
+      "answer": "Quorum overlap is necessary, not sufficient. With R read responses and W write acknowledgements over N replicas, R + W > N guarantees only that the two sets intersect when membership is correct; Tycho states overlap \"is necessary but not sufficient for freshness.\"\n\nFour mechanisms explain a stale quorum read. (1) Acknowledgement scope: an acknowledged write means W voters accepted it, not that every replica applied it; async acknowledgement can reply before a standby catches up, and weak write concerns can roll back. (2) Version selection: the reader must pick the highest version among responses and repair lagging replicas; a selector that takes the first or fastest reply, ignores the newest replica, or cannot order concurrent versions serves old data. (3) Membership and sloppiness: sloppy quorum with hinted handoff stores writes on fallback nodes outside the strict preference list, and range movement can leave old and new quorums non-overlapping. (4) Read routing: follower reads are stale by default; linearizable reads need valid lease, read-index or quorum confirmation, and a leader that cannot confirm quorum must refuse.\n\nRead repair and hinted handoff are \"only best-effort\"; convergence depends on anti-entropy. A highest-version selector, strict membership overlap and token- or lease-aware routing close these gaps. Evidence is documentary and synthetic, not production measurement.",
+      "citations": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#2-acknowledgments-and-replication-are-not-one-binary-switch",
+        "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+        "tycho.page.6f56fff79cb74db0b699c504412e1f54#overview",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+        "tycho.page.16e98b13fd4c3bf6f652a1d4693a016b#conflict-is-sometimes-the-correct-result",
+        "tycho.page.b256d263efff488c8cf549e116be9683#write-authority-and-the-recovery-contradiction"
+      ],
+      "core_claims": [
+        "R + W > N makes the read and write sets intersect only while membership is correctly configured and the responding voters are the ones the protocol considers eligible.",
+        "Overlap is necessary but not sufficient: the reader must select the newest version among the responses and repair replicas that missed the write, or the intersecting set can still yield an older value.",
+        "A sloppy quorum that sends requests to fallback nodes abandons strict overlap, and hinted handoff, read repair and anti-entropy repair are best-effort mechanisms that lag.",
+        "Where replicas can hold concurrent versions, the application must define the version order in advance, because a highest-version selector is a policy rather than a protocol property.",
+        "A write whose reply was lost is an unknown outcome rather than a failed write, so a stale read is not proof that the commit never happened."
+      ],
+      "optional_claims": [
+        "Membership change is itself a replicated decision, so the old and new quorums must overlap and a plain configuration edit can remove progress or violate consistency.",
+        "Consensus protects a replicated log under its assumptions but not against a software defect or a correlated loss of every voter, so an independent recovery path is still required."
+      ],
+      "required_evidence": [
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#bounded-pattern-ownership-notes",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#3-original-synthetic-network-partition-scenario",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#1-separate-replica-types-and-required-properties"
+      ]
+    },
+    {
+      "task_id": "Q178",
+      "question": "Why does one general-purpose API become a poor fit for materially different clients, and what must a per-client backend avoid becoming?",
+      "layer_expected": "atlas",
+      "answer": "A general-purpose API must serve the union of materially different client needs: payload shape, call granularity, latency budget, version capability and release cadence. Each client therefore filters fields, over-fetches, or compensates with extra calls, and every contract change must be negotiated across all clients; a shared contract cannot be tailored for one experience without affecting the others. Where differences are material, a per-client backend (BFF) composes owner APIs for one experience, owned by that client team, with duplicated composition accepted as the price of fit.\n\nThe BFF must avoid becoming a second domain authority: business rules, authoritative state and object authorization stay with the domain services; it handles client-specific composition only. It must also not absorb cross-cutting policy such as monitoring and authorization, which should be abstracted, and not regress into a shared general-purpose API or an unowned component whose composition drifts and whose deployments multiply without measured benefit. Small differences favor a shared API with client-side selection; reverse when BFF duplication and maintenance exceed the fit benefit.\n\nEvidence: BFF card and owner section; gateway-aggregation boundary. Unknowns: no drift incident, versioning scheme, client-contract test or measured cost is documented; vendor pattern guidance, not production evidence. Confidence: moderate on conditions, low on magnitudes.",
+      "citations": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+        "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+      ],
+      "core_claims": [
+        "A backend for frontend is a separate backend for one client experience, owned by the frontend team, that customizes the client API and may compose several service calls.",
+        "AWS defines the pattern as one backend per user experience instead of one general-purpose API, and Microsoft says it customizes one interface without affecting others while frontend teams independently manage their own BFF service.",
+        "Code duplication is a probable outcome that must be traded against a better-tailored experience, cross-cutting features such as monitoring and authorization should stay abstracted, and domain logic remains with the service that owns the business rule.",
+        "The BFF is tightly coupled to one client and released with it while the composed services have independent lifecycles, so the composition contract must be versioned and the client contract tested; divergence between composition and domain API is drift.",
+        "Reject the BFF when one contract serves all clients, when it would own core business rules, when no team owns its lifecycle, or when the split multiplies deployments without a measured client benefit."
+      ],
+      "optional_claims": [
+        "Isolating a service per frontend interface contains malfunctions, so one client's availability does not determine another client's access.",
+        "A shared API with client-side selection is the alternative when the client differences are small and can be expressed without a new authority."
+      ],
+      "required_evidence": [
+        "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+        "tycho.page.cccbd188936543a2aaf904f4002236d8#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q184",
+      "question": "A team replaces a join with an application-maintained index table and adds a covering column so the lookup avoids the base table. Why can the lookup return a stale or wrong row even though the base table is correct, and what must the write path and key preserve?",
+      "layer_expected": "atlas",
+      "answer": "The lookup row is derived state, not authority. A covering column is a snapshot copy of base values, and an index-only path can answer \"from an index alone without any heap access\", so nothing at read time re-checks the base row and divergence is silent. The base table stays correct while the copy drifts: the base commit and the lookup-row commit are two effects, so a crash or ambiguous retry between them leaves the base committed and the copy stale, missing, or duplicated; an older in-flight snapshot can repopulate the row after a newer write (the stale-fill race); a partial backfill leaves gaps; and duplicates survive because uniqueness covers the key column only, not the payload.\n\nThe write path must preserve: one local transaction for base row plus mapping, or a durable repair intent; idempotent, per-key-ordered apply with a monotonic source version so older applies cannot regress; delete-plus-insert on key change, never in-place mutation; and reconciliation, bounded rebuild, and plan re-check after shape changes.\n\nThe key must be exactly one, immutable lookup key defining row identity and duplicate meaning; payload columns must never become a second key or second source of truth. Otherwise a native covering index, materialized view, or query-time join is cheaper.",
+      "citations": [
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes",
+        "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#1-boundaries-why-the-naive-dual-write-is-unsafe",
+        "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "An index table is application-owned derived state that maps one query key to a primary key or row locator, while the base row remains authoritative and the application maintains the lookup on the write path because the query shape, sort order or cross-store join is not served by the primary store.",
+        "The mapping and the base write must commit in one local transaction or the write path must publish a durable repair intent, otherwise a crash or dual write leaves a lookup row pointing at an old or missing base row.",
+        "Exactly one lookup key defines what a row locates and what a duplicate means; payload or included columns must not become a second key or a second source of truth, the key should stay immutable, and stale or duplicate lookup rows need explicit reconciliation.",
+        "A covering path fails quietly when its shape changes: adding a filter can increase table access even though fewer rows are selected, and a plan's estimated cost is in planner units rather than elapsed milliseconds, while EXPLAIN ANALYZE executes the query and adds instrumentation overhead and side effects.",
+        "Adding an index is a data-lifecycle change that can raise write latency and WAL volume, storage and restore size, vacuum and cache pressure, planning time and lock exposure during creation, so its end-to-end workload cost must be compared with the scan or drift it removes."
+      ],
+      "optional_claims": [
+        "A native covering index, materialized view, query-time join or overloaded managed secondary index is the competing mechanism, and an application-owned table is justified only when those cannot serve the access path.",
+        "A concurrent index build reduces some write blocking but has its own phases, constraints and resource cost, so it is not a free online operation."
+      ],
+      "required_evidence": [
+        "tycho.page.41daaaaf1b34f0d26e3346804ac0e85e#overview",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#4-explain-is-not-a-user-latency-report",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#5-an-index-is-a-data-lifecycle-change",
+        "tycho.page.9b9c3ab86633469185416e4e88c0caca#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q190",
+      "question": "Two checkout candidates' 95% intervals overlap on success rate, so the review records no difference and keeps the cheaper candidate. Why is that an insufficient-evidence outcome rather than evidence of equivalence, and what must the record state instead?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "Overlapping 95% intervals show that this sample did not detect a difference; they do not show that none exists. Overlap is inconclusive at best: the data stay compatible with real differences, the per-candidate intervals are not an interval for the difference, and without a pre-declared equivalence margin the study cannot separate \"no effect\" from \"an effect too small for this sample to resolve\". Recording \"no difference\" converts absence of evidence into evidence of absence and quietly adopts an unstated margin.\n\nThe record must instead report insufficient evidence with no recommendation \u2014 a complete outcome, not a failed model \u2014 or a provisional cost tie-break explicitly labeled as such, not a performance finding. It must state: both success-rate estimates with intervals and units, and the outcome and denominator accounting behind \"success\"; the interval for the difference and which differences it fails to exclude; the decision criterion and equivalence margin, and that it was fixed before the result; trial count, observed noise and the smallest difference the design could detect; that a narrower interval would add precision, not representativeness; reversal triggers; and the measurement, its owner, the supporting range, the cost of the status quo and the next review trigger. Inconclusive results should reopen scoping, not close the question.",
+      "citations": [
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.3a5cdaf97d0b4e51ae5828507f033dd0#3-define-the-experiment-contract-before-the-result",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+        "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+        "tycho.page.dff5d6affea243cca3c426d04d290802#5-negative-evidence-and-the-stopping-condition",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "core_claims": [
+        "A 95% interval covers the true mean in repeated sampling about 95% of the time under the model's assumptions, but it does not cover the production value when the model is biased or the inputs are mis-specified, and it does not cover a single future request.",
+        "Overlapping intervals mean the runs did not separate the candidates on that metric at that confidence; they do not establish that the difference is zero or bound it to a decision-relevant margin.",
+        "The checklist returns insufficient evidence when a decision-relevant interval spans both pass and fail or when two candidates are indistinguishable on the declared metrics, so no difference is a non-result rather than a tie.",
+        "The record must name the measurement and the range that would separate the candidates, its owner, the consequence of staying in the current state and the next review trigger.",
+        "More replications would reduce sampling error but not input uncertainty, and they would not repair a biased model, so a narrower synthetic interval would still not make the inputs representative."
+      ],
+      "optional_claims": [
+        "More replications make an assumed input distribution more precise, not more true."
+      ],
+      "required_evidence": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome"
+      ]
+    },
+    {
+      "task_id": "Q196",
+      "question": "Why does V12 keep a two-replication convergence-stress run that fails the 0.02 relative-error threshold instead of discarding it or reporting it as converged?",
+      "layer_expected": "modeling-and-simulation",
+      "answer": "V12 keeps the two-replication convergence-stress run because it is a deliberate stress case that records a failure mode, not a usable estimate. The convergence rule defines relative error as standard error divided by the absolute mean and marks a run converged only when that value is at most 0.02. The stress run's 0.909 success rate yields 0.032, so its recorded status is insufficient-sample. Calling it converged would contradict the rule and the run record, whose convergence status is a substantive field covered by the result hash, so relabelling it would break replay and provenance.\n\nDiscarding it would hide the instability the case exists to show. V12 gave it wide input draws and a small replication budget; a ranking from such a sample can reverse, and the run records that instability instead of hiding it. V12-C states that a run failing the 0.02 threshold is not used as converged evidence, while V12-E treats an insufficient-evidence decision record as a valid outcome. The run therefore remains auditable evidence that the gate rejects an underpowered result, but it cannot support a converged claim or count as converged evidence for a decision. Confidence is high for the recorded status; no broader retention policy appears in these sections.\n\nEvidence map: convergence-and-error#relative-error, uncertainty-and-sensitivity#a-separate-insufficient-sample-case, validation-gates#v12-c-statistical-validity.",
+      "citations": [
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#relative-error",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#failure-modes",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#a-stopping-rule"
+      ],
+      "core_claims": [
+        "The sensitivity scenario itself converges at a 0.00016 relative error, but that only makes its sampling error small under the declared quadratic screening approximation, not a full Sobol analysis.",
+        "A separate two-replication convergence-stress run has a 0.032 relative error, above the 0.02 threshold, and is marked insufficient-sample.",
+        "Its wide input draws and small replication budget exhibit the failure mode: a ranking from an unstable sample can reverse, so the instability is recorded instead of hidden.",
+        "V12-C treats a run that fails the 0.02 relative-error threshold as not converged evidence, while convergence itself does not establish model validity, measured inputs or decision correctness."
+      ],
+      "optional_claims": [
+        "Convergence means the sampling error of the reported metric is small under the declared model, not that the confidence interval contains the production value.",
+        "The stress run is deliberately separate from the converged sensitivity run so that the screen's precision is not overstated."
+      ],
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#a-separate-insufficient-sample-case",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-c-statistical-validity",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+      ]
+    }
+  ]
+}
