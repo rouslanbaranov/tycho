@@ -6,7 +6,8 @@ independent external-agent runs.
 ## Files
 
 - `corpus.json` — v1 questions and expected evidence.
-- `corpus-v2.json` — core/optional claims and 50/50 dev/holdout split.
+- `corpus-v2.json` — heuristic core/optional claims and 50/50 split.
+- `corpus-v3.json` — AI-curated dev claims; v2 holdout is consumed.
 - `AGENT-PROMPT.md` — checklist prompt for independent sessions.
 - `telemetry-schema.json` — per-session telemetry and token accounting.
 - `logs/` — one JSONL file per agent session (created by the harness).

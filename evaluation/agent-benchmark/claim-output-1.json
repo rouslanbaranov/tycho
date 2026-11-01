@@ -1,0 +1,105 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q002",
+      "core_claims": [
+        "An in-place runtime upgrade fits when the concrete driver is lifecycle or security support (a documented unsupported runtime or dependency) and the existing public API and persisted state do not need to move; its declared costs are runtime/library compatibility, old data encoding and mixed-version release.",
+        "In-place modernization keeps the externally visible state owner unchanged by default and uses branch-by-abstraction or a compatible migration step where internal changes cannot be made atomically, instead of reassigning data ownership.",
+        "The upgrade is proven in stages: old version unaffected under additive interfaces/schema (T1), cross-version reads/writes, idempotency and rejection in the mixed T2 phase, promotion only after measured SLO and data-integrity gates (T3), and cleanup only when no historic replay requires the old encoding (T4).",
+        "The alternative is falsified when the required dependency/runtime combination cannot run or externally required behavior cannot be preserved, and a new database alone does not make a replacement authoritative while two writers can accept edits without a conflict-resolution rule (dual write without a coordinated correctness protocol is not atomic commit).",
+        "A precondition is that the modernization outcome is defined independently of technology, for example removing a documented unsupported dependency without invalidating persisted data or external contracts, because age alone does not explain failure and an unknown issue requires investigation rather than a design imperative."
+      ],
+      "optional_claims": [
+        "For the synthetic runtime case the recorded decision state is CONDITIONAL_CANDIDATE for in-place upgrade and insufficient evidence for big-bang service extraction until an independent data/API boundary is demonstrated.",
+        "The DGS/Spring GraphQL consolidation illustrates the same boundary: the problem was compatibility-preserving consolidation for hundreds of dependent services, not replacing the query technology itself."
+      ]
+    },
+    {
+      "task_id": "Q018",
+      "core_claims": [
+        "A bounded queue or admission discipline placed before the bottleneck absorbs a transient surge by converting concurrent execution into waiting or explicit rejection, stabilizing resource use only where deferral or rejection is permitted by the user contract.",
+        "A queue does not create processing capacity: when attempts on one authoritative key arrive faster than that key's safe serialization capacity, queue age and rejections grow while accepted completions stay capped by the invariant, however many application workers exist.",
+        "It only moves the work in time, so sustained offered demand above the scarce resource's service rate grows backlog, retry amplification and time-to-drain, and a system sustaining high RPS with unbounded queue age can still fail its latency SLO.",
+        "The queue adds obligations of its own: fairness, capacity and retry behavior must be measured, deferral can violate a synchronous-confirmation contract, and a queue does not replace the transaction correctness of the seat-allocation invariant.",
+        "Capacity has to be added at the verified scarce resource, because the bottleneck moves after optimization and more workers or deeper queues can worsen useful throughput when coordination cost or a downstream limit dominates."
+      ],
+      "optional_claims": [
+        "Measurement must respect boundaries: offered, admitted and exit rates are distinct, the exact balance N(t1) = N(t0) + A - D holds for a finite interval of accepted arrivals and all exits, and it does not assert rate equality during an overloaded burst.",
+        "For the burst example the decision state is MEASURE_FIRST: the queue and the extraction are both unjustified until offered load and the actual limiter are measured at an identical offered arrival schedule."
+      ]
+    },
+    {
+      "task_id": "Q034",
+      "core_claims": [
+        "Wire compatibility is only a claim about the payload and parser; compatibility is a matrix across versioned API, database record, event schema, business status, authorization scope and retention/replay history, so a service can satisfy one transport contract and fail another.",
+        "A field or enum value can parse successfully yet carry a different business meaning: an older consumer that reads a new 'Approved' as 'Pending' accepts the message while the user-visible effect is wrong.",
+        "Old code can also fail on structure: when version N expects workshop_code and N+1 introduces a new opaque identifier, the old client may not find its required field, and new enum values depend on each older consumer's unknown-value behavior.",
+        "Adding an optional display-only field is only potentially safe: old clients may ignore it, but actual parser strictness and data exposure still have to be verified, because ignoring a value and being unaffected by it are different properties.",
+        "Rollout evidence matters: 'we deployed the new producer' is not proof that the old contract disappeared, and a canary that writes incompatible shared state can affect every old instance regardless of its traffic share."
+      ],
+      "optional_claims": [
+        "A lost response after commit is compatible with transport failure, but blindly replaying a state-changing request can create a second effect, so operation identity and end-to-end budgets belong beside the wire format.",
+        "An anti-corruption layer exists because an old interface may call a request 'accepted' before durability while the new domain treats acceptance as a durable business promise; translating the word without its meaning is the failure mode.",
+        "Reverting binaries cannot restore a removed column or reinterpret a new-only persisted value, so the no-return point needs forward repair rather than a rollback assumption."
+      ]
+    },
+    {
+      "task_id": "Q050",
+      "core_claims": [
+        "The Audit Trail pattern's hard contraindication is exactly this case: reject when logs are mutable or deletable by the actor, because the pattern's premise is an append-only, attributable record.",
+        "An application that is compromised or self-interested can forge or erase evidence it writes itself, so accountability requires stronger isolation, append integrity (hash, sequence, signature or external witness) and verification rather than operational-log trust.",
+        "Attributability is part of the property: without recorded principal and delegation, action, target, policy decision, time and an immutable event identifier, a surviving byte sequence cannot be tied to an accountable actor.",
+        "Integrity must be designed and tested, not assumed: the distinction from operational logs is a durable event/effect identity with an explicit retention, access and integrity policy, since logs are often sampled, filtered, short-retention or best-effort.",
+        "Availability must be handled honestly: if the audit pipeline is unavailable the operator must pick a declared policy, such as rejecting the protected operation, buffering durably or accepting a stated loss risk, because best-effort asynchronous writing with a promise of no evidence gaps is a contradiction."
+      ],
+      "optional_claims": [
+        "An audit event must record what happened, not what code intended: an event written before a failed business transaction is not proof of a completed effect, so transactional or reconciliation mechanisms are needed when audit must agree with authoritative state.",
+        "Dropped operational logs and traces are diagnostic gaps, not evidence of 'no event', and least-privilege or role-based access choices both presuppose that some reviewable audit evidence exists."
+      ]
+    },
+    {
+      "task_id": "Q066",
+      "core_claims": [
+        "The forward change-data-capture replication pipeline must be verified active and free of permanent errors, with dead-letter errors resolved, before writes are paused.",
+        "Data freshness must be driven to zero and confirmed: pause the replication stream, confirm no events still pass through it, and only then repoint connection strings and start services against the target.",
+        "The target state must already be ready, meaning the target schema is deployed and the backfill job is complete, so completeness is verified rather than assumed.",
+        "A reverse-replication fallback must be configured and active before cutover starts, and reverse-replication errors must be monitored after the switch.",
+        "If writes cannot be paused or replication completeness cannot be verified, the card's hard contraindication rejects the controlled cutover and points to incremental authority movement through seams instead."
+      ],
+      "optional_claims": [
+        "The card frames cutover as switching authority during a planned downtime only after writes pause, replication drains and freshness reaches zero, which presumes an available downtime window.",
+        "The failure matrix adds that where an old binary cannot read post-cutover data while rollback is assumed safe, or the original write authority cannot be fenced, the cutover must not proceed.",
+        "Parallel run remains the alternative that keeps the old path authoritative until cutover, with a candidate failure never allowed to affect the response."
+      ]
+    },
+    {
+      "task_id": "Q082",
+      "core_claims": [
+        "Candidates must be run at the same offered arrival rate; the worked checkout comparison holds lambda at 20 requests per second for candidates A, B and C.",
+        "They must also share the same serving capacity and queueing boundary: capacity 24 with the declared admission, bounded queue, server pool, per-attempt deadlines and bounded retries, otherwise success, p95 and timeout differences measure different systems.",
+        "Model and scenario identity must be pinned by hash: the run stores the SHA-256 of the model file and of its scenario file, and replay fails before producing a new number if either changes.",
+        "Engine and sampling context must be recorded and held constant: engine name and version, deterministic flag, seed base, replication count and input hash are required provenance, so a comparison is not contaminated by a different execution or sampling setup.",
+        "Metric and candidate binding must be identical: each metric records identifier, unit, direction and a business-comparable flag, and each candidate entry names its scenario, run set and owner pages within one decision record."
+      ],
+      "optional_claims": [
+        "A reviewable scope statement fixes purpose, boundary, resolution and validity, for example event-level resolution with one request class at a synthetic 20 requests per second and no production claim.",
+        "Each run also reports convergence status, relative error and threshold plus its uncertainty method and correlated-input flag; a missing field is a validation failure, not a note."
+      ]
+    },
+    {
+      "task_id": "Q098",
+      "core_claims": [
+        "The chapter separates input uncertainty, where a parameter such as arrival rate, service time, timeout or dual-write lag is not known exactly, from sampling error, which is the estimation error of a finite number of replications.",
+        "Replications address sampling error only: increasing replications does not reduce input uncertainty, and increasing the number of input draws does not remove sampling error, so a tight interval cannot substitute for a measured input distribution.",
+        "Standard error, s divided by the square root of n, narrows with more replications but does not become more valid if replications are correlated or the output is heavy-tailed, and convergence only means the reported metric's sampling error is small under the declared model.",
+        "Convergence explicitly does not mean the model is valid, the inputs are measured, the decision is correct or the interval contains the production value, and more replications will not fix a biased model.",
+        "An assumed uniform range is an assumed input range rather than a metrological uncertainty component, and a confidence interval across replications is a sampling interval, not a coverage interval, so more replications make a synthetic estimate more precise, not more representative."
+      ],
+      "optional_claims": [
+        "A sensitivity screen converged to a 0.00016 relative error is still an approximation, while a two-replication stress run at 0.032 relative error is marked insufficient-sample to show that an unstable ranking can reverse.",
+        "Monte Carlo reference cases catch implementation errors such as a biased sampler, wrong denominator or ignored seed, but they cannot catch a correctly implemented model that is mis-specified for the decision."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q012",
+      "core_claims": [
+        "A parallel run keeps the old implementation authoritative and returning the user-visible response while the candidate processes the same work only for comparison, so a candidate error or mismatch cannot reach the response.",
+        "Comparison is only meaningful against a preserved old result, and parallel run fits only side-effect-free, comparable outputs: running both implementations for side-effecting work such as sending an email or charging a card duplicates business effects.",
+        "The old authority is also the rollback route until cutover, and the old implementation may be retired only after explicit acceptance gates pass, such as matching row counts and checksums, no landing-latency regression and comparable resource use.",
+        "Meta's ingestion migration implemented this as a per-job lifecycle: an isolated shadow table first, then reverse shadow in which the new job writes production while the old job writes shadow, preserving a runnable rollback path and continuing comparisons.",
+        "Reverting routing is not a valid recovery after an incompatible data mutation; that state requires forward repair or tested recovery rather than treating the old path as a guaranteed undo."
+      ],
+      "optional_claims": [
+        "For dual-representation migrations with phased read/write authority, the decision playbook requires consumer inventory, mutation parity, reconciliation and a rollback horizon as evidence.",
+        "Doubled compute and comparison storage are real costs, and a comparison that ignores nondeterminism or side effects produces false confidence.",
+        "Equal row counts plus a coarse checksum can still miss business-significant semantics if the fingerprint omits a column, and a green shadow table can be stale when the source snapshot window differed; the playbook labels these hypothetical risks, not reported incidents."
+      ]
+    },
+    {
+      "task_id": "Q028",
+      "core_claims": [
+        "Because a GitOps reconciler continuously drives live state back to versioned desired state, an emergency rollback must be recorded in or reconciled with that desired state; an out-of-band imperative revert can be re-applied over by the controller, creating opposing control loops.",
+        "Argo CD's automated-sync documentation cautions that rollback cannot be performed while automated sync is enabled, so operators must stop automated sync before rolling back and then deliberately restore the reviewed desired state.",
+        "When the controller is stuck or racing the emergency change, recovery requires freezing the conflicting automation and inspecting reconciliation history to establish the actual resource state.",
+        "A reconciler reporting Synced proves only that desired configuration converged, not that user outcomes or data invariants hold, so runtime acceptance checks remain separate from reconciliation status after a rollback.",
+        "A binary rollback does not reverse durable writes made by the new version: old-version read compatibility must be checked before routing users back, and forward repair chosen if the old image cannot decode stored data."
+      ],
+      "optional_claims": [
+        "Drift correction and pruning are separate controls that can be disabled, so enabling automated sync does not mean all drift is repaired.",
+        "The desired-state repository, artifact references, admission policy and credentials are all part of the rollback trust boundary, and a compromised repository or stale artifact reference is a common failure.",
+        "Direct push and pull reconciliation differ in where deployment privilege sits, and neither removes the need for live operational authorization, outcome checks and restore drills."
+      ]
+    },
+    {
+      "task_id": "Q044",
+      "core_claims": [
+        "Discord's Rust/Tokio gRPC data services coalesce concurrent identical reads: the first in-flight request for a row starts the database operation and simultaneous requests subscribe to that result instead of issuing their own reads.",
+        "Upstream requests are routed by channel ID so requests for the same hot channel tend to reach the same data-service instance, which is what lets single-flight coalescing collapse the duplicates.",
+        "Each data-service endpoint maps to one underlying query and deliberately carries no domain logic.",
+        "The aim is to collapse redundant reads before they reach an already overloaded Cassandra partition; the report says hot partitions still occurred after coalescing, only less frequently, so request shaping bought migration time without removing the storage bottleneck.",
+        "Coalescing must be bounded by request identity and semantics: different authorization contexts, mutable reads or different consistency levels may disqualify sharing one in-flight result."
+      ],
+      "optional_claims": [
+        "Discord's published gains combine the engine migration to ScyllaDB with request coalescing, so the report cannot isolate the new engine as the sole cause or compare equal server resources without adjustment.",
+        "Transferring the mechanism elsewhere requires identifying the exact workload, source date, runtime and protocol versions, state authority and failure/recovery gate."
+      ]
+    },
+    {
+      "task_id": "Q060",
+      "core_claims": [
+        "Mirroring duplicates real user requests, so a shadow service that performs live writes applies each business action a second time and creates duplicate effects, such as a second charge, message or order, that discarding the mirrored response cannot prevent.",
+        "Shadow traffic assumes the mirrored path is read-only: responses are fire-and-forget and discarded while the old path stays authoritative, and a write-capable shadow breaks that assumption by mutating shared production state.",
+        "Shadow requests that cause writes are a hard contraindication for dark launching, and parallel run likewise rejects side-effecting operations; the shadow path must be explicitly non-mutating or isolated before traffic is mirrored.",
+        "Flagging off or rolling back the shadow does not undo writes already committed, since a binary rollback does not undo committed data, so duplicate effects persist after the mechanism is disabled.",
+        "Mirrored traffic also consumes real capacity, so it needs an explicit load budget or it degrades the authoritative path it is meant to leave untouched."
+      ],
+      "optional_claims": [
+        "Shadow traffic is not a user-behavior sample, so comparison coverage and data sensitivity bound what it can prove.",
+        "Mirrored requests carry a -shadow host suffix and their responses are discarded, which protects the primary response only while the side-effect boundary holds.",
+        "The supporting read records cover hidden invocation, load assessment, feature-flag rollback, request mirroring and fractional mirroring; measurement method, side-effect suppression and capacity bounds remain synthetic."
+      ]
+    },
+    {
+      "task_id": "Q076",
+      "core_claims": [
+        "The model must satisfy the identity offered = completed + rejected + backlog after every integration step, not only at the end of the run.",
+        "Each state variable carries a stock unit, each flow carries that unit per unit of time, and every parameter that multiplies a flow carries a reciprocal unit or is dimensionless.",
+        "The integration step must be small enough that one step cannot admit a whole interval of arrivals or serve more than the available backlog, because that produces a negative stock; the V12 model uses a fixed 0.1-second step and asserts non-negativity after every update.",
+        "A persistent conservation gap is a modelling defect rather than floating-point noise, so the V12 model reports a conservation flag and aborts the run instead of writing a partial record.",
+        "Conservation is necessary but not sufficient: a model can conserve offered work while assigning it to the wrong outcome, so timeout and retry outcome paths are checked separately."
+      ],
+      "optional_claims": [
+        "In the saturation scenario 30 requests per second are offered against 24 per second of capacity, utilization reaches 1.0, throughput is 24 per second, rejection is 0.2 and the backlog stays at 77.6 requests.",
+        "The discrete-event variant of the identity adds failed and in_system: offered = completed + rejected + failed + in_system.",
+        "The conservation check is exercised on a below-capacity case, a saturation case and a zero-arrival or retry-heavy case, and a failure aborts the run."
+      ]
+    },
+    {
+      "task_id": "Q092",
+      "core_claims": [
+        "Estimating pi from uniform samples with a known standard error is recorded as future verification work, not as a completed reference test.",
+        "Estimating the mean of an exponential distribution with a known variance is likewise a proposed known-answer check that V12 does not claim.",
+        "Comparing an M/M/1 queue's mean wait with the analytic formula for a stable system is listed only as a stronger future reference check.",
+        "Checking empirical coverage of a confidence interval over many synthetic samples is not tested and is recorded both as future work and as a limit of the current evidence.",
+        "The current reference cases exercise the implemented accounting, event order and sensitivity sanity only, not the statistical calibration of the sampler."
+      ],
+      "optional_claims": [
+        "V12's interval uses se = s/sqrt(n) and mean +/- 1.96*se from the normal approximation, which is reasonable for 30 replications of a bounded metric such as success rate but can understate tail uncertainty for heavy-tailed latency.",
+        "A case marked pass without an observed result is a claim, not evidence, and a case without a test path is not a verification case.",
+        "Other recorded unverified limits include an unfitted service-time distribution, an arrival process not tested against a production trace, FIFO-only queue discipline, no dependency/network/storage representation and a sensitivity screen that is not a full Sobol' estimator."
+      ]
+    }
+  ]
+}

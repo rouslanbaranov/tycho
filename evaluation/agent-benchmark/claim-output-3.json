@@ -1,0 +1,93 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q006",
+      "core_claims": [
+        "The retrospective traces the migration motivation to a major database corruption event that interrupted DVD shipping for three days in 2008.",
+        "The event exposed concentration of failure and scaling dependencies in the company's specific vertically scaled datacenter environment, not a defect inherent in DVDs, relational databases or centralized architecture.",
+        "The engineering response was to rebuild for elastic, fault-contained services instead of transferring the unchanged monolithic application to rented machines, so lift-and-shift was rejected.",
+        "The target operating model was multiple independently operated cloud services with domain data boundaries, supported by a shared delivery platform, rather than the vertically scaled shared backend with central database dependencies."
+      ],
+      "optional_claims": [
+        "Customer-facing capabilities were largely in the cloud before the last remaining datacenter streaming components were switched off in early January 2016, so the change took years rather than a weekend conversion.",
+        "The case diagram is labelled a simplified, original educational view, not a literal inventory of services.",
+        "Architecture descriptions must state their evidence state: a drawing that shows only a desired topology is called proposed and is never presented as the observed running implementation."
+      ]
+    },
+    {
+      "task_id": "Q022",
+      "core_claims": [
+        "Inside one deployable, module ownership is enforced with module-level build packages, language visibility restrictions, dependency analysis, ArchUnit-like architecture tests or Spring Modulith verification APIs.",
+        "Dependency checks reject forbidden import paths and cycles, and a module's public contract can change without other modules gaining direct access to its internal state.",
+        "Each aggregate must have a clearly authoritative writer, since one writer per state owner is what makes the ownership boundary enforceable.",
+        "Module boundaries must also govern internal events: events must be replayable, delayable and duplicate-safe under the declared delivery contract, and one failing listener must not lose a committed mandatory operation.",
+        "Enforcement must be demonstrated rather than only documented: module integration tests must be independent enough to reveal unintended coupling, and the whole executable must still deploy and restore with its actual database and configuration."
+      ],
+      "optional_claims": [
+        "A modular monolith is not equivalent to one machine: it may run multiple replicas and retains a shared runtime and deployment cadence, avoiding distributed network fault handling but not coarse release and scaling.",
+        "Domain, module, data-ownership, API or event contract, and deployment boundaries are distinct, so making ownership enforceable does not require splitting the deployable.",
+        "Separating a module into its own process is justified only by measured capacity, operational isolation or release autonomy, and only while state authority stays unambiguous."
+      ]
+    },
+    {
+      "task_id": "Q038",
+      "core_claims": [
+        "Returning an old region to authority is a new migration, not the inverse of failover: the region is quarantined, divergent writes are reconciled under one selected source of truth, and user journeys are verified before it is reintroduced as a replica or standby.",
+        "The old region must be fenced or isolated against new writes before the replacement region is granted write authority, and a missing heartbeat alone does not prove that the old region is dead.",
+        "Fencing prevents future split-brain but cannot restore historical acknowledged effects, so acknowledged, rejected and unknown operation identities must be reconciled with externally committed effects under one authority.",
+        "If fencing or historical-state evidence is unavailable, writes should be held rather than declaring recovery successful; merely pointing DNS back can resurrect stale writes and split authority.",
+        "The alternative is to stay on the promoted region and rebuild the old one as a standby when failback risk exceeds its benefit, because active-active operation needs conflict-free data ownership and is not a safe default for one authoritative invariant."
+      ],
+      "optional_claims": [
+        "The recovery sequence records the selected recoverable database revision and timeline, verifies authorization, exclusive reservations, idempotent retries and the current client contract, then publishes the actual measured recovery interval and actual known loss rather than the desired target.",
+        "A zero-loss failover would require an acknowledgment and replication protocol with explicit partition behavior and its availability trade-off, and backups protect against corruption or deletion but cannot replace a live fencing decision.",
+        "Failover acceptance should verify that write ownership has exactly one valid epoch, which is a routing and fencing property rather than a per-region health check."
+      ]
+    },
+    {
+      "task_id": "Q054",
+      "core_claims": [
+        "Write-triggered cache invalidation depends on the authoritative write path emitting an invalidation signal that reaches each affected cache, so that a superseded entry is removed before a later read reuses it.",
+        "The pattern is contraindicated when no reliable invalidation path exists, because changes that cannot be reliably signaled cannot guarantee removal of superseded copies and stale reads may persist.",
+        "The dependency is broad because invalidation couples every writer to every cache and region; fan-out, multi-cache coherence and partial purge are architectural costs, so one unsignaled writer can leave some cache copies stale.",
+        "When no reliable purge path exists, TTL-based expiration bounds staleness by elapsed time instead of by a write signal, and it is itself rejected where a hard read-after-write contract exists.",
+        "Even with a working signal, writing the store and then removing the affected entry leaves a window in which a reader can see a cache miss or briefly stale data immediately after a write."
+      ],
+      "optional_claims": [
+        "Cache-aside likewise depends on the application owning both cache fill and invalidation, and its hard contraindication includes invalidation with no owner.",
+        "Static content hosting shows the same gap at the edge: changing, deleting or restricting access to origin content does not invalidate cached copies, and a CDN purge does not clear browser caches."
+      ]
+    },
+    {
+      "task_id": "Q070",
+      "core_claims": [
+        "After the state change commits but publication has not happened, the relay must resume from the durable outbox rows and retry publishing the persisted pending event instead of treating it as lost.",
+        "The relay records completion or a checkpoint only after publication, because a crash after publishing but before the checkpoint produces a duplicate that the relay will republish.",
+        "The relay gives at-least-once delivery: it leases unpublished rows, publishes them and records progress, while the broker sees delivery attempts and no transaction spans all components.",
+        "The relay must bound attempts and publication age, keep a publication key and per-aggregate ordering, and move poison rows to terminal quarantine while retaining the row, payload digest and attempt history for the declared window.",
+        "Because the outbox provides durable publication intent rather than atomicity with the broker or exactly-once delivery, duplicates must be deduplicated downstream by message identity or effect identity."
+      ],
+      "optional_claims": [
+        "The guarantee is conditional on the publication intent being inserted in the same local transaction as the business state; writing the outbox record after the business transaction completes still leaves a failure window.",
+        "The delayed notification is acceptable only within a bounded publication age, with pending-event or CDC lag observed and bounded while local state remains authoritative.",
+        "Snapshot or log-based CDC, transactional messaging, or direct publish with reconciliation may be preferable when an outbox table and relay are not operationally justified."
+      ]
+    },
+    {
+      "task_id": "Q086",
+      "core_claims": [
+        "Verification asks whether the computer program implementing the model is correct, and V12 verification evidence covers conservation, non-negativity, event ordering, timeout behavior and boundary cases.",
+        "Validation asks whether the model is adequate for its intended purpose, meaning its structure, data and output are adequate for the specific decision, and validity is purpose- and domain-dependent.",
+        "A model can be verified and still be invalid for a decision because its structure or data are wrong, so a verified engine is not a validated system.",
+        "V12 declares that it has no operational validation against a real system, and that absence is a recorded condition limiting what a decision record may claim rather than a hidden failure.",
+        "A change to the model requires both verification and validation to be repeated."
+      ],
+      "optional_claims": [
+        "Reproducibility is a separate claim from validity: a replayable result needs a versioned model, versioned scenario, stored seed, stored engine version and canonical and result hashes, and replay fails on drift but proves neither validity nor decision correctness.",
+        "The worked checkout comparison produced a decision-supported outcome for candidate B under declared constraints while explicitly leaving operability and production behavior unestablished.",
+        "The gate matrix marks structure, model and statistical, calibration and validity-limit, and decision-validity gates as implemented, while independent read-only review remains a separate gate that the validator does not claim."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q014",
+      "core_claims": [
+        "A physical point-in-time restore requires a consistent physical base backup of the cluster, not a set of periodic SQL dumps.",
+        "The restore also needs the complete archived WAL chain covering the interval from the base backup to the chosen recovery point, together with the matching timeline.",
+        "Recovery must run on a compatible PostgreSQL runtime with the required configuration, storage and access to keys; a missing WAL segment, wrong encryption key or inaccessible archive blocks the restore.",
+        "The base backup and WAL artifacts must first restore into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover, because a running database alone does not prove recovery.",
+        "A streaming replica is not a substitute for these artifacts: it may already have replayed the deletion or corruption, so it cannot serve as a historical recovery source."
+      ],
+      "optional_claims": [
+        "PostgreSQL 17 continuous-archiving documentation supports base backup plus WAL recovery, timelines and backup-chain constraints, but the Tycho chapter executed no restore and measured no RPO/RTO.",
+        "Archive lag increases data-loss risk, so the intended recovery point must fall inside the WAL coverage actually retained.",
+        "Logical replication is not a physical whole-cluster backup and cannot stand in for base backup plus WAL replay."
+      ]
+    },
+    {
+      "task_id": "Q030",
+      "core_claims": [
+        "During the initial shadow phase of Meta's ingestion migration, the new candidate ingestion job wrote to an isolated shadow table in pre-production, not to the production table.",
+        "The legacy production ingestion job kept writing the consumer-facing production table while the candidate ran, so the old job remained authoritative.",
+        "The candidate consumed production-realistic source inputs, including MySQL CDC input, while its shadow output was compared with the live production table on row counts and checksums.",
+        "Only after the comparison gates passed did reverse shadow switch the new job to the real production table while redirecting the old job to shadow.",
+        "The migration used a per-job lifecycle with a runnable rollback path: a mismatched or bad CDC partition stopped unsafe delta propagation and required repair before the legacy job was retired."
+      ],
+      "optional_claims": [
+        "Acceptance criteria also included no landing-latency regression and resource usage at least comparable to the legacy job, with extra criteria negotiated for critical tables.",
+        "Meta reports 100% transition/deprecation of the ingestion workloads but does not publish its comparator queries, private storage topology, total failed attempts or reproducible audit logs."
+      ]
+    },
+    {
+      "task_id": "Q046",
+      "core_claims": [
+        "Give each component a stable identifier, such as A-01, and reuse that same ID across static structure, runtime interaction and deployment views.",
+        "A simple Markdown cross-reference table listing stable ID, responsibility, runtime role, deployment mapping and evidence state is enough to keep the views coherent; no graph database or separate graph service is required.",
+        "Stable IDs plus versioned descriptions let a failure or ambiguous operation be followed across views without its meaning changing.",
+        "The cross-view links must have clear semantics: a cross-reference to an architecture item is not proof that the item exists at runtime.",
+        "Each mapping row should carry an evidence state (proposed versus observed), and a drawing must be labelled proposed when only the desired topology is known."
+      ],
+      "optional_claims": [
+        "Different diagrams answer different questions, so system context, container/deployment, component, runtime, state/data and failure/recovery views should keep a consistent abstraction level rather than being merged into one picture.",
+        "Architecture decision records work with the stable identities to keep the mapping coherent as the architecture changes."
+      ]
+    },
+    {
+      "task_id": "Q062",
+      "core_claims": [
+        "An ambassador proxy should not retry a non-idempotent, state-changing request automatically unless an application-level effect-safety contract makes the repeat safe.",
+        "A request whose response was lost after the server committed the effect is the dangerous case: transport failure is indistinguishable from success, and a blind replay can create a second charge, job or resource.",
+        "HTTP method semantics are not business-effect deduplication: POST has no general automatic-retry guarantee, and PUT or DELETE idempotency does not by itself record a durable outcome for the caller.",
+        "Safe automatic retry requires a stable operation identity (an idempotency key) plus a durable record of the original result, owned by the application, so a repeat resolves to the existing effect instead of creating a new one.",
+        "The ambassador contraindication is specifically about retrying writes; other offload uses of the proxy remain viable."
+      ],
+      "optional_claims": [
+        "A timeout on a write is an unknown outcome, so the caller needs an outcome-lookup or status operation to reconcile instead of an automatic replay.",
+        "The asynchronous request-reply pattern carries the same contraindication: it should be rejected when duplicate submission cannot be made idempotent."
+      ]
+    },
+    {
+      "task_id": "Q078",
+      "core_claims": [
+        "The confidence interval mean plus or minus 1.96 times s over the square root of n quantifies sampling error of the model's mean output across replications; it says nothing about whether the input distributions are measured or correct.",
+        "Its nominal coverage holds only under the model's assumptions of independent replications and, for the normal approximation, well-behaved tails; correlation, heavy tails, peeking or a biased model invalidate the stated 95%.",
+        "V12 represents input uncertainty separately through the recorded method, draws and correlated-input flag and through measured, assumed, derived and unknown calibration statuses; every model in the volume is uncalibrated.",
+        "V12 borrows measurement vocabulary but does not perform a metrological uncertainty budget, and it does not test confidence-interval coverage over many synthetic samples.",
+        "Repeating an assumed input in a decision record does not make it measured, and a derived input inherits the weakest status of its inputs, so a narrow interval cannot certify input calibration."
+      ],
+      "optional_claims": [
+        "A confidence interval does not cover a single future request, nor the true production value when the model is biased or mis-specified.",
+        "A bounded success rate near 1.0 yields a narrow interval while hiding failures that the model does not represent.",
+        "The sensitivity screen is not a full Sobol' estimator, so it ranks inputs rather than producing a complete variance decomposition or a causal claim."
+      ]
+    },
+    {
+      "task_id": "Q094",
+      "core_claims": [
+        "Convergence means only that the sampling error of the reported metric is small under the declared model; it does not establish model validity, measured inputs or a correct decision.",
+        "A V12 decision remains unsupported when one of the five evidence layers fails, namely source support, model verification, calibration, simulation evidence or decision evidence, even if the run converged.",
+        "A stable estimate of a biased model is still biased, and adding replications does not fix bias or mis-specified inputs, so convergence cannot rescue a decision that depends on them.",
+        "A decision that omits a hard constraint, or that needs production or operability evidence the record does not contain, remains unsupported for that use even when it is decision-supported under its declared constraints.",
+        "Insufficient evidence is a first-class outcome: the decision record must state its limits, uncalibrated inputs and reversal triggers rather than upgrading a converged run into a production claim."
+      ],
+      "optional_claims": [
+        "In the worked checkout comparison, candidate B was decision-supported under the declared constraints while arrival and service-time inputs stayed uncalibrated and operability was explicitly not established; deployment still required a measured pilot, a cost review and an operational readiness check.",
+        "Hard constraints must be kept separate from weighted preferences in the decision record."
+      ]
+    }
+  ]
+}
