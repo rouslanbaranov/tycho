@@ -1,0 +1,114 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q200",
+      "core_claims": [
+        "An error-budget burn rate compares observed bad-event consumption with the budget's expected consumption rate; because short windows are noisy and long windows are slow to detect severe faults, one five-minute window cannot settle both false paging and detection delay.",
+        "A five-minute rule can page on noise because the listed trap for fast-burn alerting is a threshold selected without enough valid event samples.",
+        "A sustained slow burn can go unnoticed because there is no loud incident, which the source lists as the trap of ignoring long-term harm.",
+        "Before any threshold is trusted, the eligible event population, measurement boundary, outcome classes and treatment of pending or unknown outcomes must be fixed and documented, because a target without a specified population is meaningless and changing the denominator can manufacture an apparent improvement.",
+        "The target window must also be sufficiently sampled, because too few valid events cannot support the burn conclusion and zero observed errors at idle demand cannot support a 100% availability claim.",
+        "A hard correctness failure stops or reverses a release even with budget remaining, because the error budget accounts for permitted bad events and is not permission to violate a non-negotiable invariant."
+      ],
+      "optional_claims": [
+        "The decision should record the signal, source or alert version, decision and follow-up owner, and the chapter's action thresholds remain hypothetical rather than universal.",
+        "A time-based downtime ratio and a request-based failure ratio measure different effects, and neither automatically captures incorrect durable writes.",
+        "An SLI is an observation and an SLO is a chosen target over a window; a signed external SLA is a separate agreement, not automatically the same as an internal SLO."
+      ]
+    },
+    {
+      "task_id": "Q208",
+      "core_claims": [
+        "A burn rate compares observed bad-event consumption with the budget's expected consumption rate; short windows are noisy and long windows detect severe faults slowly, so one window cannot serve both early detection and confirmation.",
+        "Remaining budget does not by itself stop a failing release: the safe rule stops a rollout when a mandatory correctness gate fails, even with budget remaining.",
+        "A short window can justify immediate investigation of a fast burn, but because it is noisy it should not by itself drive a durable release decision; the sustained window supplies confirmation, and confirmed burn plus measured impact chooses between mitigation, investigation and reversible rollback.",
+        "A green SLO can misrepresent users: retries, a shifted monitoring boundary or a new API version can change which outcomes count as good, and aggregate metrics can hide the worst users or an unrelated region.",
+        "Before trusting the quiet signal, the decision must confirm that the event population is correct, the window is sufficiently sampled, and outcomes are compared as logical operations rather than network attempts.",
+        "Recovery must be verified to restore correct booked state rather than merely reduce HTTP errors."
+      ],
+      "optional_claims": [
+        "Keep the numerator, denominator, units, target, data-source revision and effective date together, and expect the SLO to need revision when user experience changes.",
+        "The decision should record the signal, source or alert version, decision and follow-up owner; the chapter's action thresholds remain hypothetical.",
+        "The method does not imply universal thresholds, especially for services with intermittent traffic or where one incorrect operation is intolerable."
+      ]
+    },
+    {
+      "task_id": "Q216",
+      "core_claims": [
+        "Kafka orders records within a partition, where each record has a position, and does not establish a total order across all partitions of a topic.",
+        "A partition key is a correctness choice: events for one aggregate may require a stable key to land in one partition and maintain that partition's append sequence.",
+        "Changing the key encoding or the partition count can change the partition assignment of later records, so a customer's older and newer records may sit in different partitions and their relative order is no longer defined by one partition sequence, even though every event still carries a customer key.",
+        "Increasing the partition count may not split a single hot key, so added partitions may not add parallelism for that customer.",
+        "An application that needs continuity across the change requires an explicit transition or ordering contract rather than an assumption that key presence preserves order.",
+        "The retained-log contract that consumers rely on must state key or partition semantics, retention, consumer position and replay."
+      ],
+      "optional_claims": [
+        "Command, query, notification and durable event are distinct contracts, so ordering and durability guarantees from one should not be assumed of another.",
+        "A Kafka record is a durable log entry under a declared retention and replication policy, not automatically the authoritative business transaction; a relational store may stay authoritative while an outbox relays committed changes into Kafka.",
+        "A consumer group with more instances than assignable partitions cannot raise per-partition concurrent ownership without a consumer-architecture change, and at-least-once replay plus idempotent consumers still matter."
+      ]
+    },
+    {
+      "task_id": "Q224",
+      "core_claims": [
+        "An error budget is an accounting expression of permitted bad events under the chosen SLO, not permission to violate a non-negotiable state invariant, so one duplicate committed seat allocation remains forbidden even while availability looks green and budget remains.",
+        "A 99.98% figure is meaningful only with a fixed eligible population and outcome classification; counting HTTP attempts across retries, treating pending as completed, or changing the denominator can make the number misstate user experience or manufacture an apparent improvement.",
+        "Availability ratios do not automatically capture incorrect durable writes: a time-based downtime ratio and a request-based failure ratio measure different effects, and neither necessarily captures wrong booked state.",
+        "A hard correctness gate stops a rollout even with budget remaining, and recovery must be verified to restore correct booked state rather than merely reduce HTTP errors.",
+        "Before treating the canary as safe, the decision must check that the event population is correct and the window sufficiently sampled; zero observed errors at idle demand cannot support a 100% availability claim.",
+        "A burn-rate alert is a decision trigger, not decoration: short windows are noisy and long windows slow, and confirmed burn plus measured impact should choose between mitigation, investigation and reversible rollback."
+      ],
+      "optional_claims": [
+        "Under the page's synthetic arithmetic, a 99.9% target over 30 days with 500,000 eligible decisions permits 500 bad decisions if unit, population and boundary are counted consistently.",
+        "The decision should compare logical operation outcomes rather than network attempts and should record the signal, source or alert version, decision and follow-up owner.",
+        "The action thresholds remain hypothetical; no PromQL query, SLO policy or alert was executed for the chapter."
+      ]
+    },
+    {
+      "task_id": "Q232",
+      "core_claims": [
+        "Two stores hold two data representations, not two automatically consistent sources of truth: the authoritative commit and the projection update are separated by a change pipeline, so the search view can lag the transaction.",
+        "A successful double write in the request path is not evidence that the two representations agree, because dual-write ambiguity is a listed failure and the authoritative commit and the projection update are separate steps that can succeed independently.",
+        "Before the search view may serve reads, four invariants must be explicitly owned: freshness, rebuild, deduplication and schema migration, with failure recovery defined.",
+        "The projection must be rebuilt from the authority, and a half-migrated projection must be treated as unavailable rather than served as complete.",
+        "The design is contraindicated when no authoritative owner exists or when cross-store consistency and reconciliation ownership are undocumented.",
+        "The outbox commits publication intent in the same local transaction as the state change, but it does not make publication atomic with the change transport or the projection: a crash after publish and before completion duplicates the event, a crash after commit and before publish retries it, and duplicate publication must be deduplicated by the consumer."
+      ],
+      "optional_claims": [
+        "A relay must be able to publish later within a bounded age, its ownership and retention must be explicit, and a poison row can block progress, so attempts and age should be bounded and repair evidence kept.",
+        "The pattern sources recommend a transactional outbox plus an idempotent consumer, expose an event id to remove duplicate messages, and note that a logical-replication conflict stops replication until resolved manually.",
+        "Good-fit conditions require distinct responsibilities with materially different access patterns, a measured requirement one store cannot meet, and the ability to operate each store."
+      ]
+    },
+    {
+      "task_id": "Q240",
+      "core_claims": [
+        "The model and scenario hashes are SHA-256 digests of the input files themselves, so a whitespace-only reformat changes the recorded hash and replay fails before producing a new number.",
+        "The result hash is computed over the run record's substantive fields without the hash field, not over the record file's bytes, so reformatting the record leaves the result hash unchanged.",
+        "The asymmetry reflects roles: the model and scenario files are canonical inputs, while the run record is a derived artifact identified by its declared content.",
+        "Replay recomputes the result hash and fails when the model, scenario or engine output has drifted, so an edited input without a regenerated run leaves the old result stale.",
+        "Hashing only the metrics is a listed failure mode because a changed limitation or convergence status would be invisible; the result hash must cover the substantive record."
+      ],
+      "optional_claims": [
+        "The run record binds engine name and version, seed base and replication count, an input hash over model, scenario and engine version, Python and platform strings, and the invocation.",
+        "In the candidate B example the run has 30 replications, a 0.9996 success rate with a 95% CI of 0.9995-0.9997, p95 latency 1.206 seconds, relative error 0.00003, converged status against a 0.02 threshold, replication-based uncertainty and no correlated inputs, with a synthetic workload and normal-approximation intervals."
+      ]
+    },
+    {
+      "task_id": "Q248",
+      "core_claims": [
+        "The contract permits status insufficient-evidence with recommendation none; that record is valid rather than incomplete, because status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+        "Adding a least-bad recommendation is the listed failure mode of recommendation by default: a record with no recommendation is treated as incomplete, so an analyst invents one.",
+        "A model can be verified, converged and executable and still fail to support a decision when the missing evidence is about the world, such as an unmeasured dual-write lag, an unrehearsed rollback or a hard constraint awaiting approval.",
+        "Forcing a recommendation in those conditions hides the missing evidence, whereas the correct outcome is insufficient evidence plus a list of what would change it, not a recommendation to proceed and not a claim that the option is impossible.",
+        "An actionable insufficient-evidence record names the measurement, the range that would support or reject the decision, the measurement owner, the consequence of staying in the current state and the next review trigger."
+      ],
+      "optional_claims": [
+        "Other listed decision-record failure modes include recommendation without constraints, score laundering, evidence inflation, promotion by mention and a missing reversal trigger.",
+        "In the modernization example, rollback completes within the horizon in only 10% of replications, the staged candidate has a large synthetic divergence and the dual-write inputs are assumed; the triggers are measured dual-write lag and reconciliation capacity plus a rehearsed rollback and divergence below the business threshold.",
+        "The record's outcome field contains recommendation, rationale and non-quantitative constraints, so the recommendation is one component of the outcome rather than the signal that the record is complete."
+      ]
+    }
+  ]
+}

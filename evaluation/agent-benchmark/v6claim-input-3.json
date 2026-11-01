@@ -1,0 +1,93 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q203",
+      "question": "During a rolling deploy, the platform removes an instance from the load balancer and sends the shutdown signal immediately. Clients on long-lived HTTP/2 connections see resets, and one publish is reported as failed even though it may have committed. Why is removal from discovery not a drain, and what sequence and record must the operator require?",
+      "required_evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries"
+      ],
+      "preliminary_claims": [
+        "Removing an instance from the selector stops new selection, but resolvers, route caches and established connections can keep using it, and a DNS TTL bounds record caching rather than the life of a connection or an application deadline.",
+        "A bounded drain must allow route propagation, let admitted work finish within its budget, and record unresolved operation IDs before forced termination, because a hard deadline can leave effects unknown rather than atomically cancelled.",
+        "Readiness and liveness answer different questions, so a cached healthy answer can keep sending traffic to a draining instance, and losing a response after a commit requires reconciliation by the same logical operation identity."
+      ]
+    },
+    {
+      "task_id": "Q211",
+      "question": "A change-data-capture connector completes its initial snapshot and streams row changes, then its replication slot falls behind retention and is dropped. Why did the snapshot not prove the derived state was complete, and what must be recorded so that a rebuild stays bounded?",
+      "required_evidence": [
+        "tycho.page.b92e251caf4b47d58bd3101fde058206#overview",
+        "tycho.page.54c4335d1dd142e8b794daf4768fc3d2#1-from-a-database-change-to-a-replayable-input",
+        "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview"
+      ],
+      "preliminary_claims": [
+        "The initial snapshot reads a log position and then streams from it, and a snapshot that fails before completion restarts as a new snapshot, so a running stream does not by itself establish that the earlier snapshot was complete.",
+        "Slot retention bounds recoverability: a restart position behind the configured WAL keep limit invalidates the slot, dropping it loses changes that cannot be reconstructed, and a slot left behind prevents removal of required resources and can fill storage.",
+        "Delivery is at least once and duplicates can be emitted on a fault, so consumers apply changes idempotently by row key and log position, while DDL is absent from the logical stream and schema changes stay governed outside it."
+      ]
+    },
+    {
+      "task_id": "Q219",
+      "question": "A tool catalogue stores one asset_code that means a shared model in one business area and a single physical unit in another. The migration copies the old code into new model_id and unit_id columns, reports equal source and target row counts, and starts serving reads from the new columns. Why can this additive change corrupt reservations, and what must the migration do with identities it cannot prove and with writes that arrive during the backfill?",
+      "required_evidence": [
+        "tycho.page.d00c6081ca664f619308712e245ef523#1-distinguish-syntactic-change-from-semantic-change",
+        "tycho.page.d00c6081ca664f619308712e245ef523#2-original-synthetic-scenario-two-equipment-identities",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.357c2d162bd44f3aa06a995a1e691551#purpose-and-mission"
+      ],
+      "preliminary_claims": [
+        "An additive schema change can still break domain meaning: copying a code that conflates a shared model and a physical unit into model_id and unit_id can make one model look like one reservable unit and create collisions, incorrect reservations and misleading history.",
+        "The migration needs a totality analysis that classifies which old values identify a unique unit, which identify a model or type, which mappings are many-to-one, one-to-many or unknown, and how historical reservations convert; mappings it cannot prove must be marked unresolved for domain review rather than silently defaulted.",
+        "Because the backfill can run for hours while new writes arrive, the transition requires one authoritative writer, a versioned identity mapping, bounded resumable batches with durable checkpoints, and semantic reconciliation of post-snapshot changes before authority moves."
+      ]
+    },
+    {
+      "task_id": "Q227",
+      "question": "A program labels every integration a service, routes all calls through one central bus that applies transformations and business rules, and cannot name a contract version or a consumer for any capability. Why does the atlas reject this use of SOA, what must a governed service contract declare, and when are microservices or a modular monolith the better comparison?",
+      "required_evidence": [
+        "tycho.page.1a22dabeec74779dfeb28fadc98ade4a#overview",
+        "tycho.page.acb452608a8b42898aae7482c27f5f04#bounded-pattern-ownership-notes",
+        "tycho.page.acb452608a8b42898aae7482c27f5f04#integrated-decision-and-reading-route"
+      ],
+      "preliminary_claims": [
+        "SOA publishes capabilities as governed service contracts and routes consumers through a mediation layer, and the mediation layer implements ownership rather than creating it; the card rejects the claim for one team and one deployable, absent service governance, SOA used as a synonym for an enterprise bus, and contracts that cannot be versioned and owned.",
+        "A service contract must declare its capability, message semantics, version and consumer obligations with a maintained consumer inventory, and Microsoft adds that each service is maintained, deployed and versioned independently and that services share contracts and schemas rather than internal classes.",
+        "A centralized bus is a shared bottleneck and single point that must be sized, monitored and failed over with a fallback path that does not depend on it, while microservices fit independent product capabilities and a modular monolith fits one ownership boundary; the choice reverses when governance and mediation overhead exceeds the integration benefit."
+      ]
+    },
+    {
+      "task_id": "Q235",
+      "question": "An operator flips a feature-flag kill switch during an incident, but some replicas keep serving the feature, one replica falls back to an enabled default, and a permission check elsewhere was implemented as a flag. Why does the switch apply unevenly, why must a permission decision not inherit the flag's cache policy, and what must the snapshot, evaluation and lifecycle guarantee?",
+      "required_evidence": [
+        "tycho.page.69e0f95b57264cf38f279ceda2e9dadf#overview",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote"
+      ],
+      "preliminary_claims": [
+        "A configuration change is an asynchronous distributed transition: processes fetch at different times, disconnected workers retain old snapshots, and each reader must install a complete versioned snapshot atomically instead of assembling a request's limits from several revisions, while reporting its observed revision and snapshot age.",
+        "Evaluation failure must return a documented default that fails safe, and staying on an old value is a deliberate policy rather than evidence of convergence; a flag is not a substitute for an authorization check, and a permission or irreversible decision needs an authoritative path that cannot inherit the flag's cache policy.",
+        "A flag needs an owner, an expiry, a kill switch, an audited override and observable evaluation, because permanent flags become configuration debt and a flag that hides a broken deployment should be rejected in favour of a canary or a reversal of the deployment."
+      ]
+    },
+    {
+      "task_id": "Q243",
+      "question": "A reviewer treats an uncalibrated V12 model as an incomplete contract and demands a calibration number before the run may be cited. Why is 'uncalibrated' a complete declared status, and what does that run remain licensed to support?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified"
+      ],
+      "preliminary_claims": [
+        "The model contract treats a calibration status of uncalibrated as a complete value, and the order-intake contract records that no production data were used.",
+        "A validity limit is a condition on the result's use, so an uncalibrated model is outside its domain for a production claim rather than merely annotated as incomplete.",
+        "A model can be verified, converged and executable and still fail to support a decision, so the run supports the synthetic-workload comparison while the demand for a measured calibration remains the correct response."
+      ]
+    }
+  ]
+}

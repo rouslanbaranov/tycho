@@ -1,0 +1,101 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q205",
+      "core_claims": [
+        "Pool mode sets the reuse boundary for a server connection: session mode reassigns it only when the client session ends, transaction mode after each transaction, and statement mode after each statement.",
+        "In transaction mode a later statement from the same client need not reach the same backend, so session-specific state cannot be presumed across transactions even though the client connection appears stable.",
+        "Session-affine features such as prepared statements, temporary objects, LISTEN/NOTIFY, session settings and driver behavior can break under transaction pooling and must be audited rather than assumed compatible.",
+        "Protocol-level named prepared statements can be tracked since PgBouncer 1.21.0 when max_prepared_statements is nonzero, but this support is version- and configuration-scoped and does not attach a client permanently to one backend.",
+        "SQL-level PREPARE/EXECUTE and other session-affine state are not made safe by protocol-level prepared-statement tracking, so they must be identified and tested or removed, with session pooling used when the dependence remains; PgBouncer, libpq, JDBC driver versions and max_prepared_statements must be pinned.",
+        "max_client_conn bounds accepted client sessions while default_pool_size caps server connections per user/database pool, so total server connections can exceed one pool size and must be bounded with file-descriptor, memory and database capacity rather than one pool setting."
+      ],
+      "optional_claims": [
+        "The negative test prepares a named statement in one transaction and executes it in another transaction assigned to a different backend, repeats with max_prepared_statements off and on, and separately tests SQL PREPARE and a session setting in separate transactions; a passing prepared-statement test does not certify every driver feature or pool capacity.",
+        "In the synthetic budget of eight replicas at HikariCP maximum 20 and 60 PgBouncer server connections, 160 client leases are not 160 simultaneous database executions, and neither pool limit equals true throughput.",
+        "Failure modes include pool saturation despite idle database CPU, which calls for tracing connection hold time, transaction boundaries and pool wait, and transaction-mode breakage, which calls for auditing driver and session features and running compatibility tests."
+      ]
+    },
+    {
+      "task_id": "Q213",
+      "core_claims": [
+        "A DNS TTL governs only the caching contract for a DNS record; it is not an application transaction deadline or a guarantee that every client stops using an existing connection at that instant.",
+        "An application or runtime can retain resolved addresses and established connections beyond the TTL, so attempts to a removed endpoint can continue after route publication unless removal and connection shutdown are coordinated.",
+        "A DNS change alone is neither a drain procedure nor a database failover protocol, and continued reachability of an old endpoint cannot establish write authority.",
+        "Before retiring the former endpoint, the cutover must publish the replacement endpoint, establish its readiness and trust, and account for old route and connection lifetimes.",
+        "Startup eligibility, readiness, draining and permanent removal are separate lifecycle stages, and a draining backend may still own existing work while new work goes to active backends.",
+        "The exact resolver and runtime cache behavior remains product-specific, so the cutover plan must test attempts to the removed endpoint after route publication as the discriminating observation."
+      ],
+      "optional_claims": [
+        "Client-side discovery must bound cache age, refresh budget and a stale-cache alarm, and may use a last-known endpoint set only for reads with an explicit freshness bound.",
+        "A healthy proxy can keep routing to a backend that discovery has already removed; active health checks remove unhealthy backends but not a healthy backend absent from discovery until discovery converges or a drain completes.",
+        "The chapter's worked boundary decision requires the design to name the resolver or discovery owner, the backend selector, the termination points and the effect identity, because another replica does not resolve those contracts."
+      ]
+    },
+    {
+      "task_id": "Q221",
+      "core_claims": [
+        "When the orchestration control plane is unreachable, already-running pods can continue some existing requests through existing routes and working data-plane components.",
+        "The same outage can block new deployment, rescheduling and configuration change, while losing nodes degrades capacity over time because the control plane cannot repair placement promptly.",
+        "The observable service contract must distinguish existing steady-state survival from the ability to create or recover resources.",
+        "A container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state; a container is not its own kernel or availability zone.",
+        "A topology decision requires the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape and measured RPO/RTO, and without them the honest outcome is insufficient evidence.",
+        "The failure test must isolate orchestrator or API access while workers and the database remain reachable, issue existing reads and writes, then kill one node and measure degradation and recovery; a topology should be rejected if correct data-plane service depends on immediate control-plane participation beyond the declared outage duration."
+      ],
+      "optional_claims": [
+        "Runtime comparisons require the same observable outcome, admitted load, logical data correctness, named outage, staffing, steady-state cost and restore test, and package type does not imply a number of safe replicas.",
+        "The design should record the state writer, ingress, runtime instance, scheduler or control service, deployment mechanism, network path, secrets or identity service, failure domain and operator responsibility separately.",
+        "A simpler single-region, well-restorable design may be more defensible than two regions with untested conflict semantics."
+      ]
+    },
+    {
+      "task_id": "Q229",
+      "core_claims": [
+        "Vertical scaling changes the resources available to existing replicas and can raise per-replica throughput without adding partition or routing complexity.",
+        "One larger node is still one node, so vertical scaling changes the failure domain rather than removing it.",
+        "Serial or externally fixed bottlenecks can cap throughput regardless of node size, so the resource that actually saturates must be measured rather than only CPU, and the operating system, runtime and dependency must be verified able to use the larger allocation.",
+        "When in-place resize is unavailable, a resize requires restart or migration and the old capacity is unavailable during the change, so the maintenance window must be bounded and a fallback kept; the provider must allow the larger size and cost must not grow superlinearly.",
+        "The card is a fit only when the workload fits one node, the provider allows the larger size, and restart or downtime is acceptable only when in-place resize is unavailable; a 3x traffic forecast does not by itself establish any of these conditions.",
+        "The card reverses to horizontal scaling when the workload can be partitioned and a single node is an unacceptable failure domain, or when the larger node no longer meets availability or cost constraints."
+      ],
+      "optional_claims": [
+        "The card's hard contraindications are a near single-node ceiling, failover that requires multiple nodes, and cost that grows superlinearly.",
+        "Vertical scaling may be preferable when the bottleneck is per-replica resource or the workload cannot partition, while horizontal scaling is a fit when work is partitionable and coordination cost is lower than the capacity gain.",
+        "Adding replicas is not useful unless the work can be partitioned and the new replica becomes ready inside the demand window."
+      ]
+    },
+    {
+      "task_id": "Q237",
+      "core_claims": [
+        "For two inputs, the fitted output variance is partitioned into two main effects and a single interaction term, so each input's total-order share equals its first-order share plus that same interaction share.",
+        "The reported first-order shares 0.361 and 0.536 sum to 0.897, leaving 0.103, and each reported total-order share exceeds its own first-order share by exactly that 0.103.",
+        "The repeated 0.103 is therefore the shared interaction share in the fitted decomposition, not two independent estimates that happen to agree.",
+        "The equality is an accounting identity of the fitted quadratic surface: V12 enforces total-order at least first-order by construction because the total-order share includes the fitted interaction variance, and rejects a total below first-order as incoherent.",
+        "The 0.103 is not a measured interaction effect or a precision estimate; the screen uses 48 rows, assumes an adequate quadratic surface and independent inputs, and is not a full Sobol' analysis.",
+        "The screen supports only a conditional ranking under the declared distributions, in which the service mean has the larger fitted main effect and the arrival rate a substantial interaction share, not a production causal claim."
+      ],
+      "optional_claims": [
+        "The sensitivity scenario is converged at 0.00016 relative error, but the screen remains a screening approximation; a separate two-replication stress run at 0.032 relative error is marked insufficient-sample.",
+        "A first-order index near zero does not mean an input is irrelevant, because the input may act only through an interaction.",
+        "The decision record uses the sensitivity ranking to identify what to measure first, not to support a production claim."
+      ]
+    },
+    {
+      "task_id": "Q245",
+      "core_claims": [
+        "The referential check runs from scenarios to models: every scenario that names a model must resolve, but a model that no scenario names is not rejected.",
+        "An orphan model is treated as an unused artifact, not as evidence; the contract is a guardrail, not a reviewer, and cannot check that a source actually supports a parameter.",
+        "Evidence runs through a provenance chain in which model and scenario entities feed an engine run, the run produces a run record that feeds a decision, and replay recomputes the result hash; a standalone model file has none of those links.",
+        "V12-A establishes structure, schemas, unique identifiers, links and hashes, not that an artifact supports any decision, and a passing local structural check is not independent review, CI, owner acceptance or production validity.",
+        "Decision validity is a separate gate, V12-E, which requires a decision record to declare candidates and runs, constraints, business-comparable metrics, evidence statuses, a recommendation or no-recommendation, reversal triggers and limitations.",
+        "A unique identifier and strict schema make a model's claims inspectable but do not prove the model is useful; an assumed parameter cannot claim a measured source, and a measured parameter must name a source and measurement record."
+      ],
+      "optional_claims": [
+        "Verification theater is only partly blocked: the strict schema rejects a missing test path or observed result, but it cannot detect a false pass claim.",
+        "A unit mismatch is made visible by the unit fields, but the contract does not compute dimensional analysis.",
+        "The gate flow is cumulative: structural checks precede model, statistical, calibration, decision and review gates, and a later gate cannot substitute for an earlier one."
+      ]
+    }
+  ]
+}

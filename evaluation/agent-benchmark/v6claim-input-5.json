@@ -1,0 +1,93 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q205",
+      "question": "To cut server connections, a team switches a long-lived application from session pooling to PgBouncer transaction pooling. Prepared statements and session-scoped commands then fail intermittently under concurrency. Why does the pool mode change semantics rather than only connection reuse, and what must be pinned and tested before the switch?",
+      "required_evidence": [
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+        "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+        "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+        "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery"
+      ],
+      "preliminary_claims": [
+        "In transaction mode a server connection can be reassigned after each transaction, so session-specific state must not be presumed across transactions and later statements need not reach the same backend, while session mode preserves that state at lower multiplexing gains.",
+        "Prepared-statement support is version- and configuration-scoped: since PgBouncer 1.21.0 protocol-level named statements can be tracked when max_prepared_statements is nonzero, but SQL-level PREPARE/EXECUTE and other session-affine state are not thereby made safe, so versions and the setting must be pinned and prepare/execute tested across different backend leases.",
+        "max_client_conn bounds accepted client sessions while default_pool_size caps server connections per user and database pool, so total server connections can exceed one pool size and must be bounded with file descriptors, memory and database capacity."
+      ]
+    },
+    {
+      "task_id": "Q213",
+      "question": "A team shortens a DNS record's TTL to 30 seconds before removing a failed endpoint, yet some clients keep sending requests to that endpoint for several minutes. Why does the TTL not bound how long clients use the old endpoint, and what must the cutover plan establish before the endpoint is retired?",
+      "required_evidence": [
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#bounded-pattern-ownership-notes",
+        "tycho.chapter.8a86707018773def410689efbc79cf94#a-worked-boundary-decision"
+      ],
+      "preliminary_claims": [
+        "A DNS TTL bounds caching of the DNS record, not the lifetime of addresses already resolved by a runtime or of established connections.",
+        "A DNS change is neither a drain procedure nor a failover protocol, so it does not by itself stop existing work or transfer write authority.",
+        "Before retirement, the cutover must publish and validate the replacement endpoint and account for old route and connection lifetimes."
+      ]
+    },
+    {
+      "task_id": "Q221",
+      "question": "During an orchestration control-plane outage, already-running containers keep answering requests, and the team concludes that the platform has high availability. Why is that conclusion incomplete, and what must the availability claim and its failure test separate?",
+      "required_evidence": [
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+        "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome",
+        "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+        "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope"
+      ],
+      "preliminary_claims": [
+        "With the control plane unavailable, already-running instances can keep serving through existing routes, but new deployment, rescheduling and configuration change may not proceed, and losing nodes degrades capacity over time.",
+        "The availability claim must separate steady-state survival from the ability to create or recover resources, because a container or orchestrator label does not establish fault isolation, spare capacity or recoverable state.",
+        "A topology decision requires the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape and measured RPO/RTO; without them the honest outcome is insufficient evidence."
+      ]
+    },
+    {
+      "task_id": "Q229",
+      "question": "A team doubles its largest instance size after a 3x traffic forecast, sees throughput rise by less than half, schedules a restart for the resize, and plans to repeat the doubling next year. Why is that not a capacity plan, what must be measured and bounded before the next resize, and when does the card reverse to horizontal scaling?",
+      "required_evidence": [
+        "tycho.page.71f864d85c3e4213ad053e42e2976add#overview",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#bounded-pattern-ownership-notes",
+        "tycho.page.49d9df04c0b4488e936b02e580a62271#integrated-decision-and-reading-route"
+      ],
+      "preliminary_claims": [
+        "Vertical scaling changes the resources available to existing replicas and can raise per-replica throughput without adding partition or routing complexity, but one larger node is still one node, so it changes the failure domain rather than removing it.",
+        "Serial or externally fixed bottlenecks can cap throughput regardless of node size, the resize may require restart or migration that leaves the old capacity unavailable during the change, the provider must allow the larger size, and cost must not grow superlinearly, so the resource that actually saturates must be measured and the maintenance window bounded with a fallback.",
+        "The card reverses to horizontal scaling when the workload can be partitioned and a single node is an unacceptable failure domain."
+      ]
+    },
+    {
+      "task_id": "Q237",
+      "question": "The V12 sensitivity screen reports arrival rate first-order 0.361 and total-order 0.464, and service mean 0.536 and 0.639. Both total-minus-first gaps are 0.103, and the two first-order shares sum to 0.897. Why is the repeated 0.103 not a coincidence, and what does it represent?",
+      "required_evidence": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#first-order-and-total-order-sensitivity",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-4-sensitivity-sanity",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty"
+      ],
+      "preliminary_claims": [
+        "In a two-input variance decomposition, the output variance is partitioned into two main effects and one interaction term, so each input's total-order share contains the same interaction share.",
+        "With 0.897 explained by the two first-order shares, the remaining 0.103 is that shared interaction share, which is why both total-minus-first gaps are 0.103.",
+        "The equality is an accounting identity of the fitted quadratic surface, not a measured interaction effect or a precision estimate."
+      ]
+    },
+    {
+      "task_id": "Q245",
+      "question": "A model file has a unique tycho.model identifier and passes the strict schema, but no scenario or decision references it. Why does structural validation still accept the file, and why is the file not evidence?",
+      "required_evidence": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#a-provenance-chain",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural"
+      ],
+      "preliminary_claims": [
+        "The referential check runs from scenarios to models: every scenario that names a model must resolve, but a model that no scenario names is not rejected.",
+        "The orphan model is treated as an unused artifact rather than evidence, because evidence runs through a scenario, an engine run and a run record to a decision.",
+        "V12-A establishes structure, identifiers, links and hashes, not that an artifact supports any decision."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q207",
+      "core_claims": [
+        "A connection, an HTTP/2 stream, one request attempt and one logical business operation have different identities, so the layer that emitted an error must be named before a client message such as GOAWAY is interpreted.",
+        "The GOAWAY last-stream identifier is a per-hop boundary: streams above it were not processed by the sending endpoint, streams at or below it may already have been processed, and a missing response is not evidence that the application rolled back.",
+        "In the trace, stream 7 must be treated as not processed at that peer and moved to a replacement connection, while stream 5's publish may already have committed and is resolved by the same logical operation identity against authoritative state rather than retried blindly on a healthy connection.",
+        "A bounded drain marks the instance ineligible through the actual traffic selector, starts protocol-appropriate graceful shutdown with time for route caches and active work, and lets admitted work finish within its declared budget, cancelling only where cancellation semantics permit.",
+        "Before any forced termination the drain records unresolved operation IDs and exposes a reconciliation path, then removes the instance after the drain condition or an explicit bounded timeout.",
+        "A hard shutdown deadline may leave unknown effects and cannot manufacture atomic cancellation; the correct recovery for the ambiguous publish is a lookup of the existing operation, not a second effect."
+      ],
+      "optional_claims": [
+        "Connection pooling reduces repeated setup but couples many requests to one transport failure, and HTTP/2 multiplexing removes neither TCP-level loss effects nor unbounded application buffering: flow-control windows constrain transport data, not decoded requests, tasks or retained response objects.",
+        "Keepalive, idle timeout and maximum connection lifetime are different contracts; raising all of them can hide leaked resources or retain endpoints through maintenance, very short lifetimes can create setup storms, and values should follow measured traffic and actual peer behavior.",
+        "The GOAWAY trace and the bounded drain are original synthetic reasoning, and the page claims no network or client execution and no syntax rendering."
+      ]
+    },
+    {
+      "task_id": "Q215",
+      "core_claims": [
+        "A percentile is not an additive statistic, so averaging per-day or per-instance p99 values does not yield the p99 of the combined population; the monthly figure is an average of group statistics, not a quantile of the month's requests.",
+        "Because each daily p99 is computed over that day's own population and the days are then averaged, short crises that a daily p99 already dilutes are diluted again, so the rollup can hide a 10-minute queue crisis and understate the tail the retained data actually supports.",
+        "Deleting or coarsening histogram buckets removes resolution needed to estimate quantiles later, and aggregating histograms without compatible bucket boundaries misrepresents the merged distribution.",
+        "Sum and count can reconstruct the mean under compatible populations but cannot reconstruct an arbitrary high-percentile distribution, so what must be kept is the bucket boundaries together with their counts, not a single plotted percentile value.",
+        "The pipeline must record where transform loss occurs and verify the histogram and quantile mathematics rather than trust the plotted p99; misconfigured downsampling appears in the failure table as an apparently improved p99.",
+        "One recorded p99 without the rejected and timed-out populations cannot prove user experience, so instrumentation must carry a logical operation ID spanning retries, attempt/admission/final outcome including explicit unknown and timeout, elapsed time, route and operation classification, and reconciliation outcomes after lost acknowledgments."
+      ],
+      "optional_claims": [
+        "Retention and resolution should follow the question the telemetry must answer - real-time alert, incident diagnosis, historical capacity trend or audit need - and an audit obligation cannot be satisfied simply by retaining sampled telemetry.",
+        "Cardinality is multiplicative across labels, so an unbounded label such as raw URL or arbitrary client ID can saturate ingestion and storage; the synthetic catalogue therefore starts from bounded route/status histograms and a small gauge set rather than per-entity labels.",
+        "The synthetic catalogue comparison and its falsifiable test are proposed, not run, and the chapter reports no test data or result."
+      ]
+    },
+    {
+      "task_id": "Q223",
+      "core_claims": [
+        "A projector that crashes after applying an event but before recording its cursor can consume the same event again, so the read-side update must be idempotent or record the event or stream version atomically with the state change.",
+        "The projection change and its cursor must commit together and resume from a recorded cursor, so a partially applied version is neither skipped nor repeated.",
+        "Replaying authoritative events must not resend real money, email or notifications unless that is an explicitly isolated new business workflow, so a rebuild runs with external side effects disabled behind an explicit checkpoint.",
+        "A materialized view must record its source version or offset, refresh trigger and freshness contract; a stale view is a derived read, not authority, and a query that requires current state must use an authority path.",
+        "A rebuilt view may serve queries as current only within that declared freshness contract, after it has reached the version or offset the query requires; before that it must be presented as pending or stale, and an unknown or lagging view must be represented explicitly rather than served as current."
+      ],
+      "optional_claims": [
+        "CQRS separates update and read representations so each can be optimized, but physical isolation and asynchronous messaging are design choices, not inherent definitions.",
+        "A projection should measure projection age, offset gap, end-to-end good-event SLI and failure amplification, and a numeric freshness threshold requires an approved requirement and representative tests.",
+        "Publishing integration events does not inherit exactly-once execution from event sourcing, and a CRUD store plus transactional outbox is not automatically event sourcing."
+      ]
+    },
+    {
+      "task_id": "Q231",
+      "core_claims": [
+        "Consistent hashing moves only the keys whose ring ranges the new node takes over, so the moved fraction is bounded by token and virtual-node assignment rather than a rehash of every key, and that bound describes data movement, not the request load the origin receives.",
+        "When the moved keys are cached their entries become misses at once, and a per-key TTL or freshness policy does not bound the resulting concurrent burst on the origin; request coalescing, capped source admission and measured origin QPS are what bound it.",
+        "Virtual nodes make ownership ranges smaller and more even and change rebalance granularity, but they do not change key popularity, so a hot key or hot range remains hot; consistent hashing is contraindicated when ring hotspots cannot be mitigated, and hot ranges must be detected.",
+        "More tokens per node raise outage probability and maintenance cost, so token count is bounded rather than maximized.",
+        "A rebalance is admitted only with an owned ring, token/vnode count and replication factor, measured key and token distribution, a rebalance and repair path, and fencing of stale ownership during the change.",
+        "Resharding is a multi-state transition - prepare, copy, catch up, verify, switch, observe, retire - in which a correct target topology is insufficient: counts and domain invariants must be verified, stale writers and mapping caches fenced, hot-key traffic, retry rate, tail latency and replication lag observed, and a forward repair defined because reverse routing is not a universal rollback."
+      ],
+      "optional_claims": [
+        "TTL jitter, probabilistic early expiration, prewarming and request coalescing are the alternatives to stampede coordination, and the choice reverses when coordination latency and failure cost exceed the source protection gained.",
+        "Sharding is contraindicated when the partition key creates hot tenants or when cross-shard joins and transactions dominate, and hot-key throttling plus dual-read/verify are controls to verify in the owner section rather than assumed guarantees.",
+        "The migration trace and its stage table are a synthetic design-level outline, not a tested product sequence, and product documentation describes mechanisms rather than a universal zero-downtime promise."
+      ]
+    },
+    {
+      "task_id": "Q239",
+      "core_claims": [
+        "The four input statuses are measured, assumed, derived and unknown; unknown means no defensible value exists and the model must not invent one, and the dual-write lag input is assumed with the missing item recorded as a measured lag distribution.",
+        "Substituting zero is an assumption, not a neutral placeholder, and it changes the model: the verified test for zero lag passing with no divergence means a zero-lag run removes the divergence mechanism and answers a different model.",
+        "That run still emits precise metrics - success rate 1.0, a finite divergence interval and a rollback completion fraction - so the result is precise but meaningless, the recorded 'unknown as zero' failure mode, and it is not evidence about a real migration.",
+        "A model can be verified, converged and executable and still fail to support a decision, because the missing evidence is about the world rather than the code; the defensible outcome is therefore insufficient evidence, not a forced recommendation.",
+        "The insufficient-evidence record must name the missing measurement, the range that would support or reject the decision, the owner of the measurement, the consequence of staying in the current state and the next review trigger.",
+        "A hard input that is assumed and whose range spans the decision boundary is an explicit insufficient-evidence condition, and repeating an assumed value in a decision record does not make it measured; only new evidence changes a parameter's status."
+      ],
+      "optional_claims": [
+        "A sensitivity ranking is not evidence and must not be used to fill a missing measurement.",
+        "JCGM 100 supplies measurement and uncertainty vocabulary, but V12 does not perform a metrological uncertainty budget, and a confidence interval across replications is a sampling interval rather than a coverage interval for the inputs.",
+        "The modernization record's actionable remedy is a measured dual-write lag distribution, measured reconciliation throughput under target load, a rehearsed rollback and a measured divergence below the business threshold."
+      ]
+    },
+    {
+      "task_id": "Q247",
+      "core_claims": [
+        "The scenario schema requires every field - identity, workload, configuration, uncertainty, replications and seed, metrics, constraints, evidence status and validity limits - and a scenario with an empty constraints list is still a structurally valid scenario.",
+        "Structural validity is not decision sufficiency: the same contract states that a scenario with no constraints cannot support a decision record that claims to respect hard constraints.",
+        "A hard constraint is a condition a candidate must satisfy and it eliminates candidates that fail it, a soft constraint is a tradable preference, and a non-quantitative constraint is a condition the model cannot measure that is kept separate.",
+        "The decision-record contract requires declared hard, soft and non-quantitative constraints alongside candidates and runs, metrics with units and a business-comparable flag, evidence statuses, an explicit recommendation or none, reversal triggers and limitations.",
+        "V12-E decision validity checks exactly those declarations, so a record that claims to respect hard constraints while its scenario declares none has no declared basis, cannot show which candidates were eliminated, and fails the gate even though both artifacts validate structurally.",
+        "Constraint laundering - turning a hard cost ceiling into a soft preference after a candidate fails it - is a named failure mode that the record must expose, and a decision record using a metric not declared in the scenario is a validation failure."
+      ],
+      "optional_claims": [
+        "The identical-workload rule requires the same horizon, warmup, arrival process, metric definitions and seed scheme across candidates, with only the candidate configuration varying; a comparison that changes the workload is invalid.",
+        "A record with recommendation none can still be an insufficient-evidence outcome and is not an invalid record.",
+        "A metric mismatch such as using p99 latency while the scenario declares p95 causes the validator to reject the decision record."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q206",
+      "core_claims": [
+        "Modulo hashing assigns a key to hash(key) mod N, so changing the bucket count from 16 to 17 changes the divisor and can invalidate almost all existing mappings.",
+        "A consistent-hashing ring maps keys and nodes into one circular space and gives each key to the first node clockwise, so a membership change should move about the joining or departing node's share rather than the whole keyspace.",
+        "The ~1/N moved fraction is an expectation under balanced load, not a guarantee: random token placement, unequal vnode counts and hot keys can move more, so the actual moved fraction must be measured.",
+        "Each token adds failure combinations and raises outage probability, while uneven token ranges produce uneven request load, so raising the vnode count is not a monotonic improvement in ownership safety.",
+        "A hot key remains a single hot key regardless of how many virtual nodes its owner holds, because tokens divide ring ranges and cannot split the authoritative workload of one key.",
+        "Node loss is absorbed by moving the lost node's ranges and load to survivors and repairing divergence later with anti-entropy, with hinted handoff only temporary protection, so higher token counts increase the repair and outage cost that must be bounded."
+      ],
+      "optional_claims": [
+        "A membership change must record an ownership epoch and fence stale ownership, because a ring without epoch fencing can route one key to two owners during the change.",
+        "The choice rule favors consistent hashing only when membership churns and per-key movement must be bounded; a fixed node count favors modulo, range locality favors explicit ranges, and an unacceptable shared ring favors rendezvous hashing.",
+        "Ring operations and virtual-node tuning are themselves a cost that can exceed the movement they save, so the ring decision should be revisited when that cost dominates."
+      ]
+    },
+    {
+      "task_id": "Q214",
+      "core_claims": [
+        "A burn rate compares observed bad-event consumption with the budget's expected consumption rate, so the same threshold means different things depending on the event population and window behind it.",
+        "A short burn-rate window is noisy and a long window is slow to detect severe faults, so neither window alone avoids both false alerts and late detection.",
+        "The Google SRE Workbook's burn-rate method does not imply universal thresholds, especially for services with intermittent traffic or operations where one incorrect result is intolerable.",
+        "Before the threshold is treated as evidence, the policy must confirm that the event population is correct and the target window is sufficiently sampled.",
+        "The threshold must stay tied to a defined SLO whose numerator, denominator, units, target, data-source revision and effective date are kept together, because changing the population or boundary can manufacture an apparent improvement.",
+        "A mandatory correctness gate stops a rollout even while error budget remains, because an error budget is not permission to violate a state invariant or a contractual constraint."
+      ],
+      "optional_claims": [
+        "An SLO stops representing user experience when an API version, retry policy or monitoring boundary changes which outcomes count as good.",
+        "A request-based failure ratio and a time-based downtime ratio measure different effects, so the denominator must be declared before any target is set.",
+        "The policy should record the signal, alert version, decision and follow-up owner so the threshold's basis can be reviewed later."
+      ]
+    },
+    {
+      "task_id": "Q222",
+      "core_claims": [
+        "Transport flow control bounds buffered bytes only while the connection is live and does not constitute a durable event log or a replay cursor.",
+        "After the drop the server cannot tell whether the consumer processed sequence 41, so a reconnect from the last durably processed position can replay 41 as a duplicate or omit it as a gap.",
+        "Durable resume requires the event or offset to be stored outside the connection with a declared retention horizon; an ephemeral live stream cannot promise resumability and may require an explicit resnapshot.",
+        "The stream contract must define a cursor or checkpoint or stable event identifier, the exact ordering scope, and how gaps and duplicates are handled.",
+        "The contract must define whether an acknowledgment means transport receipt, consumer processing or a committed business effect, and a client may checkpoint only after its required local effect is durable.",
+        "Cancellation of a receive loop cannot roll back a posting another system already committed, so consumer effects must be idempotent when replay can resend an event."
+      ],
+      "optional_claims": [
+        "A durable job with persisted identity, state and cleanup is the alternative when completion must survive a client disconnect.",
+        "Protocol and schema versions must be declared so unsupported events fail explicitly rather than silently corrupting resume semantics.",
+        "Recovery tests should inject disconnects before and after acknowledgment, server restart, slow consumer and position expiry, and assert duplicates, gaps and an explicit resnapshot response."
+      ]
+    },
+    {
+      "task_id": "Q230",
+      "core_claims": [
+        "A deployment stamp is an independently operated deployment unit for scale, isolation or locality, and its invariant requires a routing key, a state authority, a deployment and upgrade process, and a rule for shared global dependencies.",
+        "Replicating the full stack into six stamps does not satisfy that invariant when the stamps share one identity service and one primary database, because those shared dependencies can fail every stamp together.",
+        "The routing key and the state authority are one ownership decision, so a tenant-to-stamp directory does not give a tenant an independent home while the tenant's authoritative data still lives in one primary database.",
+        "Each stamp needs a versioned definition, an ordered rollout and a tested rollback path, so hand-upgrading stamps without those cannot demonstrate the independent upgrade the invariant requires.",
+        "Before isolation is claimed, every shared global dependency must be enumerated and owned, with a statement of which failures cross the stamp boundary, and the design rejected when an unowned shared dependency dominates the isolation benefit.",
+        "A cell-based design is the better comparison when fault isolation is the primary goal and scale is secondary, because a cell is a boundary in the dependency graph and naming stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher."
+      ],
+      "optional_claims": [
+        "A stamp without a data authority or an upgrade owner becomes a snowflake.",
+        "A single shared deployment is preferable when isolation does not justify duplication.",
+        "A cell-based design need not double or triple infrastructure, so scale is secondary in the comparison with stamps."
+      ]
+    },
+    {
+      "task_id": "Q238",
+      "core_claims": [
+        "The conservation identity is a balance over outcome counts, so moving a request from completed to failed leaves the sum unchanged and the check still passes.",
+        "Conservation proves that no request is lost or invented, not that each request received the correct terminal outcome.",
+        "A conservation failure aborts the run before a partial record is written, which makes a pass necessary but not sufficient evidence for a correct outcome model.",
+        "The timeout tests cover the outcome path: a timeout before completion cancels the attempt and may retry, a completion before timeout succeeds and a later timeout is ignored, and a stale completion after a timeout does not free a second server.",
+        "The retry-conservation test checks the balance under repeated attempts, and the event-order test checks that equal-time events process by priority then insertion."
+      ],
+      "optional_claims": [
+        "The tests prove the implemented event order is deterministic and the timeout state machine self-consistent, not that the chosen priority order matches a production scheduler.",
+        "The conservation test exercises below-capacity, saturation and retry-heavy cases, so it spans several load regimes without testing outcome attribution.",
+        "In the stock-flow conservation case, a conservation gap or a negative backlog is the usual symptom of a broken service calculation."
+      ]
+    },
+    {
+      "task_id": "Q246",
+      "core_claims": [
+        "The model contract records each parameter's value together with its evidence status, source identifiers and note, and the calibration block records per-parameter evidence and limits.",
+        "The scenario contract independently declares configuration values such as server count, along with its own evidence_status and validity_limits.",
+        "A scenario can override a model parameter without editing the model file, and the run remains executable because the structural validator checks the schema, identifier, model resolution and measured-source presence rather than comparing the override against the calibration note.",
+        "The run's evidence status becomes ambiguous because the metrics were produced with the scenario's server count while the model's calibration note still records the original value and its assumed status.",
+        "The ambiguity is not invalidity: both contracts are schema-valid and the run executes, but a reader cannot tell which declared status belongs to the value actually used.",
+        "A parameter's status can change only with new evidence, and repeating an assumed value in a scenario or decision record does not make it measured."
+      ],
+      "optional_claims": [
+        "A parameter labeled measured must name a source, measurement method, sample size and period, while an assumed value cannot claim a measured source.",
+        "A derived value inherits the weakest status of its inputs, and unknown means the model must not invent a value.",
+        "The validator cannot check that a source actually supports a parameter, which remains an editorial and review task."
+      ]
+    }
+  ]
+}

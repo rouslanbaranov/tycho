@@ -1,0 +1,101 @@
+{
+  "status": "ai-curated-not-human",
+  "items": [
+    {
+      "task_id": "Q202",
+      "core_claims": [
+        "A cumulative counter accumulates since a start timestamp, so a rolling restart or stream reset changes that start time and can make the next sample smaller; the decrease is a reset, not a negative operation or proof that capacity was lost.",
+        "Differencing raw cumulative samples across a reset produces a spurious negative rate, so the query must compute rates with reset handling over a valid observation window instead of subtracting arbitrary endpoints.",
+        "Delta and cumulative temporality are not interchangeable: conversion requires per-series state and handling of overlapping time ranges, missing intervals, multiple writers and start-time changes, and a reset or temporality mismatch must not be read as genuine negative work.",
+        "A series name, value and timestamp are insufficient to interpret a measurement; the pipeline must preserve unit, resource scope, metric kind, attribute identity, aggregation temporality and start/end semantics.",
+        "A metric counter may double-count retries and shows only that something happened; it does not establish the authorized business outcome or provide an authoritative audit trail, which the system's log of individual outcomes can establish.",
+        "Telemetry collection is a lossy pipeline rather than a database write: receivers, processors and exporters can drop or transform signals, and saturation can remove exactly the samples needed to diagnose an incident, so collection gaps must be distinguished from zero traffic and monitored through queue depth, dropped points, exporter errors and scrape freshness."
+      ],
+      "optional_claims": [
+        "Pull-based collection can create gaps when discovery, reachability or scrape duration fails, while push-based collection can duplicate, delay or lose telemetry depending on buffering and backpressure.",
+        "The actual pipeline must be tested under restart, duplication, dropped export and mixed-version instrumentation before its rates are trusted.",
+        "A dashboard that differences cumulative counters without reset handling is a query defect, not evidence about capacity."
+      ]
+    },
+    {
+      "task_id": "Q210",
+      "core_claims": [
+        "A last-writer register converges by choosing one value under a deterministic total order, but convergence is a property of the merge and does not preserve an application invariant such as a finite-seat limit.",
+        "In the seat example with a limit of two and one existing approval, each disconnected replica's local approval is valid, but the combined state contains three approvals; a union converges and still violates the capacity invariant.",
+        "Last-writer selection can conceal one of two concurrent approvals after the fact, but it cannot undo an external action already performed on the concealed approval, so the capacity breach exists in the world and not only in the merged state.",
+        "Clock order is not evidence of user intent: a last-writer timestamp is an arbitrary tie-break, a timestamp tie needs a documented deterministic tie-breaker, and a clock adjustment must not make a future update permanently dominant.",
+        "Local acceptance, eventual incorporation, durable receipt and authoritative business completion are distinct states that the interface should expose when they differ; acknowledging durable receipt is not approval.",
+        "An authority-dependent approval must be held as a pending command, revalidated against the authority on reconnect, and exposed as authoritative completion or as a visible conflict or rejection instead of being merged locally."
+      ],
+      "optional_claims": [
+        "A label such as CRDT does not remove the transport, deduplication and ordering obligations of a replicated data type or prove the application's invariant.",
+        "Each edit should carry a stable operation identifier, replica identity and causal context; a retry with the same identifier cannot become a second application-level action, and expired history requires fresh synchronization rather than a guessed merge.",
+        "A revoked offline client may keep writing locally, but a client-controlled wall-clock timestamp cannot establish that an edit predates revocation; the authority must validate current permission and a declared policy for pre-revocation edits."
+      ]
+    },
+    {
+      "task_id": "Q218",
+      "core_claims": [
+        "A port is an application contract, not automatically a network port: the same signature can be backed by an in-process adapter or a remote service, and interface conformance does not make a multi-resource transaction atomic or remove the runtime dependency.",
+        "Replacing a local adapter with a remote call changes deadlines and introduces ambiguous outcomes even when the port signature is unchanged, so the substitution must make runtime failure boundaries explicit.",
+        "Replacing the SQL adapter with an in-memory object in a unit test cannot prove database locking, transaction isolation or cross-replica behavior; separate integration tests against the actual data backend and concurrent callers are required when exclusivity is promised.",
+        "The adapter or use-case contract must identify caller authorization, stable logical operation identity, transactional authority, and possible errors such as already-reserved or outcome-unknown, so a timeout is not treated as proof that no side effect occurred.",
+        "The test matrix must check concurrent same-unit bookings (at most one accepted authoritative reservation), backend connectivity loss (defined error or degraded state, no invented success), lost client responses (read-back or reconciliation by stable identity), and changed adapter durability or latency end to end.",
+        "A port inversion changes source dependencies only; when a commit succeeds and an external effect is lost, the core still needs a durable event or publication strategy, and the design must state which operations are synchronous in one transaction and which are asynchronous."
+      ],
+      "optional_claims": [
+        "A batch importer that writes reservations directly bypasses the public use-case port, so class or package structure alone does not enforce the invariant.",
+        "The chapter's failure-and-test matrix is a set of proposed tests, not measurements; a passing contract suite is not architecture acceptance and must include negative authorization and state-recovery tests.",
+        "An in-process adapter can still be a useful deterministic test double; it is simply not evidence about the remote backend's locking, isolation or failure behavior."
+      ]
+    },
+    {
+      "task_id": "Q226",
+      "core_claims": [
+        "A pipes-and-filters stage is not transactional: an error before a stage publishes to its output channel loses the message, and a failed middle stage leaves earlier effects already applied, so the pipeline rather than any single stage must own ordering, partial completion and recovery.",
+        "In the order pipeline, the committed audit record can survive while the confirmation stage fails without a durable record of the completed stage, so a redelivery re-enters the chain without knowing whether the audit effect is new or already applied.",
+        "A stage must commit its deduplication marker with its local business effect in one local transaction, and the marker identity must be scoped to the correct consumer and message or effect so that different consumers do not suppress each other's legitimate processing.",
+        "The deduplication marker must be retained through the maximum broker redelivery, dead-letter replay and historical replay horizon; an expired identity turns a redelivery into a new message and can duplicate the effect, so post-expiry behavior must be explicit reconciliation or rejection, never silent treatment as new.",
+        "The pipeline must declare an ordering scope: a parallel or multi-instance stage can reorder messages unless the pipeline runs one instance per ordered key or uses a resequencer.",
+        "The recovery checkpoint must record the stage identity, the input or message identity and the last completed stage so recovery resumes at the failed confirmation rather than replaying the audit; an external send that cannot join the local transaction needs a separate durable send-intent or in-progress record, reconciliation before acknowledgement, and acknowledgement treated as a separate uncertain step."
+      ],
+      "optional_claims": [
+        "Per-stage idempotency, backpressure and a completion checkpoint are Tycho guidance rather than source guarantees; a pipeline with no checkpoint owner becomes an unowned distributed workflow and is a hard contraindication.",
+        "A transactional client can make the filter transactional, and one cohesive consumer with internal functions is the alternative when the work must be atomic or stage isolation no longer pays for the message hops.",
+        "An in-memory processed set is not sufficient when restart-safe deduplication is required."
+      ]
+    },
+    {
+      "task_id": "Q234",
+      "core_claims": [
+        "A probe result proves only the path, identity, target, locations, frequency and success criteria it declares; it does not establish that the customer-visible checkout journey works.",
+        "A green probe can coexist with rejected business operations when it tests only a shallow endpoint or otherwise exercises a path, identity or success criterion that differs from the customer journey, or when the indicator counts only admitted HTTP 2xx successes and excludes rejects before the handler.",
+        "An SLI or SLO must name the eligible population, the good outcome, the denominator, the window and the action owner before the first measurement; a target without an owner, window or action is a dashboard number, not an SLO.",
+        "The three-successive-failure retry rule is hysteresis that suppresses transient noise, but it also delays detection of a real failure; the cited availability-test documentation reports only after three successive failures while noting that about 80% of failures disappear on retry, so the rule is a declared detection policy, not evidence of health.",
+        "Success must mean a durable domain result within the user deadline, not merely a 2xx response or queue acknowledgment, and recovery means the correct journey is restored and sustained rather than process liveness or a green dashboard after data divergence.",
+        "Before a probe result is used as evidence, it must declare its identity and authentication and what journey it exercises, target, locations, frequency, success assertions, exclusions, alert and retry policy, and the eligible population and window whose health it claims to represent."
+      ],
+      "optional_claims": [
+        "Credential expiry and probe blindness are possible; keep credential-expiry alerts distinct from product alerts and re-run with debug before declaring an outage.",
+        "Black-box probes complement rather than replace white-box, internal or real-user signals; for nonpublic endpoints the cited guidance prefers an internal health signal.",
+        "The 99.9% target and 10,000-intent figures in the walkthrough are illustrative, not a real SLO or an observed incident."
+      ]
+    },
+    {
+      "task_id": "Q242",
+      "core_claims": [
+        "The integration step determines how much arrival and service volume each update applies; a large step can admit a whole interval of arrivals at once, serve more than the available backlog and drive the stock negative, while a small step costs runtime but keeps the fluid approximation stable.",
+        "The step is part of the model's declared resolution: a different step produces a different discrete approximation, so leaving the step to the engine makes results depend on an implementation setting rather than on the model contract.",
+        "The V12 order-intake contract declares a fixed 0.1-second step in its dynamics and asserts non-negativity after every update, alongside invariants for request conservation, non-negative backlog and capacity-bounded admission.",
+        "A coarse step can produce overshoot or negative stock that is only a discretization artifact; reporting that artifact as system behavior is a step-size artifact, distinct from a unit or conservation failure or a conceptual-boundary problem.",
+        "The model contract's required structure includes abstraction with time unit, state unit, boundary and resolution, dynamics with equations and integration step, state non-negativity and invariants, so the step cannot be a private implementation detail.",
+        "The declared step is bounded by the model's verification and validity limits: the order-intake verification cases cover below-capacity, saturation and zero-arrival runs, and its assumed, uncalibrated parameters mean the model is valid only for the recorded synthetic workload."
+      ],
+      "optional_claims": [
+        "A persistent gap in the accounting identity is a modelling defect rather than an acceptable floating-point tolerance; unit or conservation failures are model-verification problems, hidden stock or an omitted boundary is a conceptual-model validity problem, and a rate mismatch is a data-validity problem.",
+        "The JSON excerpt in the chapter is illustrative; the full declared model is the order-intake object in edition/v12/models/order-intake.json.",
+        "A coarse-step result should be checked for step-size sensitivity before it is reported as behavior of the modeled system."
+      ]
+    }
+  ]
+}

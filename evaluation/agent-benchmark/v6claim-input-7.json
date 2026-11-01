@@ -1,0 +1,95 @@
+{
+  "tasks": [
+    {
+      "task_id": "Q207",
+      "question": "A server sends HTTP/2 GOAWAY with last-stream ID 5 while stream 5 carried a publish that may already have committed at the state owner. Why does the missing response not prove the effect failed, what does the boundary say about stream 7, and what must a bounded drain record before forced termination?",
+      "required_evidence": [
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#name-the-affected-layer",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#original-trace-graceful-shutdown-with-an-ambiguous-write",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+        "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#diagnose-before-changing-pool-settings"
+      ],
+      "preliminary_claims": [
+        "The GOAWAY last-stream identifier is a per-hop boundary: streams above it were not processed by the sending endpoint, while streams at or below it may already have been processed, so a missing response is not evidence that the application rolled back.",
+        "Recovery for the ambiguous publish resolves the same logical operation identity against authoritative state; retrying blindly on a healthy replacement connection can create a second effect.",
+        "A bounded drain removes the instance from the actual traffic selector first, lets admitted work finish within a declared budget, and records unresolved operation IDs before any forced deadline."
+      ]
+    },
+    {
+      "task_id": "Q215",
+      "question": "A dashboard computes each instance's p99 for a day and then averages those daily p99 values into a monthly figure. Why can the result understate the latency most requests experience, and what must be kept so the latency distributions can be merged correctly?",
+      "required_evidence": [
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#6-failure-modes-and-operational-economics",
+        "tycho.page.03bdffc1632345f390c2e845b52a3eb0#7-original-synthetic-architectural-choice",
+        "tycho.page.447ffb82d30f4a6999855c0a261e9a2a#3-measure-the-right-signals-at-the-right-level"
+      ],
+      "preliminary_claims": [
+        "A percentile is not an additive statistic, so averaging per-instance or per-day p99 values generally does not yield the p99 of the combined population.",
+        "Deleting or coarsening histogram buckets removes resolution needed to estimate quantiles from the retained data.",
+        "Merging distributions requires compatible bucket boundaries and counts, and the pipeline must verify the histogram and quantile math rather than trust the plotted p99."
+      ]
+    },
+    {
+      "task_id": "Q223",
+      "question": "A read projector is rebuilt from the beginning of the event log after a mapping change, and the same projector also sends confirmation email for every event it applies. Why must the rebuild suppress those side effects and commit the view and cursor together, and when may the rebuilt view serve queries as current?",
+      "required_evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#6-sufficient-evidence-and-pattern-contraindications",
+        "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview"
+      ],
+      "preliminary_claims": [
+        "A projector that applies an event and crashes before recording its cursor can consume the same event again, so the read-side update must be idempotent or commit the view change and the event version atomically.",
+        "Replaying authoritative events must not resend real money, email or notifications unless that is an explicitly isolated new business workflow, so a rebuild needs an explicit checkpoint and external side effects disabled.",
+        "A projection is a derived read that records its source version or offset, refresh trigger and freshness contract; a query needing current state must use the authority path, and the rebuilt view may serve as current only within the declared freshness bound."
+      ]
+    },
+    {
+      "task_id": "Q231",
+      "question": "A twelve-node cache ring using consistent hashing gains a thirteenth node during peak traffic; the team expects only a small fraction of keys to move, yet the primary database saturates and one tenant's key range stays hot. Why does bounded key movement not bound the load the origin sees, what does a higher virtual-node count change and what does it not change, and what must the rebalance own before it is admitted?",
+      "required_evidence": [
+        "tycho.page.ba4ee752a40342cfb6d6be5ac81c4bd3#overview",
+        "tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview",
+        "tycho.page.e59ddfc6c410468ab44119cedbe4c171#overview",
+        "tycho.page.94165346d83c4ff79634d4400f4a9ba7#4-resharding-is-a-multi-state-data-transition"
+      ],
+      "preliminary_claims": [
+        "Consistent hashing moves only the keys whose ring ranges the new node takes over, so the moved fraction is bounded by token and virtual-node assignment rather than requiring a rehash of every key; that bound describes data movement, not the request load the origin receives.",
+        "Every moved key becomes a miss at once, so the origin sees a concurrent burst that a per-key freshness policy does not bound; coalescing duplicate fills, capping source admission and measuring origin QPS are what bound it.",
+        "Virtual nodes make ownership ranges smaller and more even and change rebalance granularity, but they do not change key popularity, so a hot key or hot range remains hot; the card warns that more tokens raise outage probability and maintenance cost, so token count is bounded rather than maximized."
+      ]
+    },
+    {
+      "task_id": "Q239",
+      "question": "A dual-write lag input for the modernization model has no defensible measured value. Why does substituting zero yield a precise but meaningless result, and what must the decision record do instead?",
+      "required_evidence": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#the-test-matrix"
+      ],
+      "preliminary_claims": [
+        "The unknown status means no defensible value exists and the model must not invent one, so zero is an assumption rather than a neutral placeholder.",
+        "Setting the lag to zero removes the divergence mechanism, since the zero-lag case produces no divergence, so the run answers a different model.",
+        "That run still reports precise metrics, and the defensible outcome is an insufficient-evidence record that names the missing lag measurement and the range that would change the decision."
+      ]
+    },
+    {
+      "task_id": "Q247",
+      "question": "A scenario contract omits constraints entirely and still validates. Why can it be a valid scenario while being unable to support a decision record that claims to respect hard constraints?",
+      "required_evidence": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity"
+      ],
+      "preliminary_claims": [
+        "The scenario schema requires every field, but a scenario with no constraints is still a scenario, so the omission is schema-valid.",
+        "A hard constraint is a condition a candidate must satisfy, and a decision record must declare hard, soft and non-quantitative constraints to eliminate candidates and state the outcome.",
+        "V12-E requires the decision record to declare candidates, constraints and business-comparable metrics, so a record claiming hard constraints without declared scenario constraints has no basis for the claim."
+      ]
+    }
+  ]
+}
