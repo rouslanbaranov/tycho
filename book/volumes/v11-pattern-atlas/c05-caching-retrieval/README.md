@@ -122,26 +122,36 @@ caching-pattern; priority core.
 routing every read through the cache layer?
 
 **Good-fit conditions.** The application can own fill and invalidation; misses are
-acceptable; duplicate fills are controlled; the source remains authoritative.
+acceptable; duplicate fills are controlled; the source remains authoritative; a brief
+stale window after a write is tolerable; the origin can absorb a fallback read.
 
 **Hard contraindications.** Reject when every read must be served from cache, when fill
-races cannot be controlled, or when invalidation has no owner.
+races cannot be controlled, when invalidation has no owner, or when the data is "sensitive
+or security related" and must be retrieved "from the primary source".
 
 **Competing alternative.** A shorter TTL with retried invalidation, or serving the read from
 the source when its latency budget allows. Reverse when fill and invalidation logic becomes
 duplicated and inconsistent.
 
-**Failure and recovery.** Stale fills and concurrent misses are common; gate fills by cached
-revision, distinguish a cold fill from a post-delete tombstone, retry failed invalidation and
-use single-flight for concurrent misses.
+**Failure and recovery.** A miss-only fill leaves "no updates to the cache when data is
+changed in the database", so "data in the cache can become stale"; between a write and the
+next read a reader can "briefly see stale data". Azure states that a malfunctioning cache
+"can fall back to the origin data store", and AWS calls node failure survivable because a
+replacement empty node continues to serve "though with increased latency"; Redis recommends
+an atomic mutex or probabilistic early refresh against a key-expiry stampede. Tycho
+guidance: gate fills by cached revision, distinguish a cold fill from a post-delete
+tombstone, retry failed invalidation and use single-flight for concurrent misses.
 
 **Technical owner.** [Cache-aside is a sequence, not a consistency theorem](../../v06-caching-indexing-and-retrieval/c01-local-and-distributed-caching/refresh-semantics.md#4-cache-aside-is-a-sequence-not-a-consistency-theorem) — the sequence is bounded, not a complete cache-aside library guide.
 
-**Sources.**
-[src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-aws-caching.2026-10-21: sections "Caching patterns", "Cache-Aside
-(Lazy Loading)", "Write-Through". The source is a public pattern/documentation
-unit, not a benchmark.
+**Sources.** [src.aws-caching-strategies](../../../../edition/patterns/reading-ledger.v1.json)
+retained record `read.batch3-aws-caching.2026-10-21`; proposed records
+`read.aws-caching-strategies.2026-11-01`,
+`read.azure-cache-aside-pattern.2026-11-01` (src.microsoft-cloud-patterns) and
+`read.redis-cache-aside.2026-11-01` (src.redis-cache-aside). Sections: AWS "Lazy loading",
+"Advantages and disadvantages of lazy loading", "Adding TTL"; Azure "Consistency",
+"Staleness after writes", "When to use this pattern"; Redis "Why the problem is hard",
+"How Redis supports the solution". Public documentation, not a benchmark.
 
 **Decision state.** applicable-under-conditions.
 

@@ -37,7 +37,7 @@ content_review:
   reviewer: "Codex editorial decomposition"
   proof_uri: null
 authored_at: "2026-10-20"
-updated_at: "2026-10-20"
+updated_at: "2026-11-01"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -71,7 +71,18 @@ The installed Caffeine version and precise loader/executor policy must be checke
 ## 4. Cache-aside is a sequence, not a consistency theorem
 
 A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a
-TTL-bound value and invalidates on writes; stampede hazards follow from that sequence.
+TTL-bound value and invalidates on writes. The Azure Cache-Aside pattern states the same
+order: the application "writes the change to the data store and then invalidates the
+corresponding item in the cache"
+([Cache-Aside pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)).
+AWS lazy loading describes the miss path: "If the data doesn't exist in the cache or has
+expired, your application requests the data from your data store", then writes the result
+to the cache
+([Caching strategies](https://docs.aws.amazon.com/AmazonElastiCache/latest/dg/Strategies.html)).
+Redis says the application "falls back to the primary on a miss, and writes the result
+back to Redis" and, on update, "writes the primary and invalidates the cache key"
+([Redis cache-aside](https://redis.io/docs/latest/develop/use-cases/cache-aside/)).
+Stampede hazards follow from that sequence.
 
 ```mermaid
 flowchart TD
@@ -86,33 +97,60 @@ flowchart TD
 
 **Text alternative:** a read can reuse a local value, then a shared value, then the source, *only* when each value satisfies the required freshness and authorization. A source result may fill a cache if a competing update has not made it obsolete. The figure is original hypothetical topology, not evidence a version gate was implemented.
 
-**The stale-fill race.** Reader R misses and reads V1; writer W commits V2 and invalidates
-the key; R then writes V1 back with a fresh TTL, resurrecting stale data. A version gate on
-fill — compare the source revision with the cached revision under the shared key — narrows
-the window. An atomic compare-and-set or conditional write on that shared key closes the
-check/write gap only when it compares the cached revision or tombstone. Absence fails the
-compare only for a fill based on a previously observed revision; a cold key may write its
-first value when no tombstone exists. Distinguish never-cached absence from a post-delete
-tombstone with a durable tombstone or version record. A cache-key CAS cannot compare a source
-revision, and a naive SET NX after DEL still resurrects V1. A non-atomic check-then-write
-leaves the window open.
-A short TTL plus retried invalidation bounds the damage; neither proves freshness when the
-invalidation itself can be lost.
+**Invariant (Tycho synthesis).** None of the three descriptions claims consistency. Azure
+states that the pattern "doesn't guarantee consistency between the data store and the
+cache", and that "Between the write and the next read, a reader can experience a cache
+miss or briefly see stale data". AWS says a miss-only fill leaves "no updates to the cache
+when data is changed in the database", so "data in the cache can become stale"; a TTL
+"doesn't guarantee that a value isn't stale" but "keeps data from getting too stale".
+Redis bounds the same window with "a TTL that bounds how long stale data can be served".
+A cache-aside read is a freshness claim bounded by the fill revision, the invalidation
+path and the TTL, not a consistency theorem.
 
-When the read budget allows, serving from the source or a shorter TTL with retried
-invalidation is the alternative; reverse when fill and invalidation logic duplicates.
+**The stale-fill race (Tycho synthesis).** Reader R misses and reads V1; writer W commits
+V2 and invalidates the key; R then writes V1 back with a fresh TTL, resurrecting stale
+data. Azure documents the invalidation-order form of the same hazard: update the data
+store before removing the cached item, because deleting first leaves "a small window of
+time when a client might fetch the item before the data store is updated", and "This
+sequence leads to stale data in the cache". A version gate on fill — compare the source
+revision with the cached revision under the shared key — narrows the window. An atomic
+compare-and-set or conditional write on that shared key closes the check/write gap only
+when it compares the cached revision or tombstone. Absence fails the compare only for a
+fill based on a previously observed revision; a cold key may write its first value when no
+tombstone exists. Distinguish never-cached absence from a post-delete tombstone with a
+durable tombstone or version record. A cache-key CAS cannot compare a source revision, and
+a naive SET NX after DEL still resurrects V1. A non-atomic check-then-write leaves the
+window open. A short TTL plus retried invalidation bounds the damage; neither proves
+freshness when the invalidation itself can be lost.
 
-**Failure and recovery.** A write can commit while its delete fails. The invalidation intent
-must be durable at commit time — an outbox row in the same local transaction — and then
-retried; recording only after a failed delete can lose the intent in a crash. Without a TTL, a
-lost invalidation is unbounded. Alert on repeated failures. Concurrent misses need
-single-flight or a lease; a fallback authoritative read must stay bounded.
+**Failure and recovery (Tycho synthesis).** Azure states: "If the cache malfunctions, the
+workload can fall back to the origin data store." Azure also says: "In limited ways, it
+can preserve the availability of frequently accessed data if the origin data store
+becomes temporarily unavailable." AWS calls node failure survivable: "Node failures
+aren't fatal for your application"; a replacement empty node continues to serve, "though
+with increased latency", and each miss costs "three trips". Redis recommends an atomic
+mutex or probabilistic early refresh so an expiring popular key does not stampede the
+primary. Those rules bound the read path; they do not preserve the write path. A write
+can commit while its delete fails; the invalidation intent must be durable at commit time
+and retried. An outbox row in the same local transaction is one way to record it; recording
+only after a failed delete can lose the intent in a crash. Without a TTL, a lost
+invalidation is unbounded. Alert on repeated failures, keep a fallback authoritative read
+bounded, and use single-flight or a lease for concurrent misses.
 
-Even a cache with TTL may expose stale authorization or deleted content. Bypass caching or
-require strict verification for revocation-sensitive operations. Data authorization must be
-performed at an enforced boundary; a copied permission bit is not its own authority. Fill and
-invalidation must share a version authority; a cache that cannot identify the source revision
-cannot prove which value is newer.
+Even a cache with TTL may expose stale authorization or deleted content. Azure's
+contraindication is direct: for data that is "sensitive or security related", caching
+"might be inappropriate", and such data should always be retrieved "from the primary
+source". Tycho guidance: bypass caching or require strict verification for
+revocation-sensitive operations. Data authorization must be performed at an enforced
+boundary; a copied permission bit is not its own authority. Fill and invalidation must
+share a version authority; a cache that cannot identify the source revision cannot prove
+which value is newer.
+
+**Alternative (Tycho comparison).** When the read budget allows, serving from the source
+or a shorter TTL with retried invalidation is the alternative. Azure recommends
+write-through when "read-heavy paths need read-after-write freshness"; AWS names
+"Write-through and Adding TTL strategies" for the stale miss-only fill. Reverse when fill
+and invalidation logic duplicates; this selection rule is Tycho guidance.
 
 <!-- /tycho-question-source -->
 
