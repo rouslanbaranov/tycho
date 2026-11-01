@@ -66,7 +66,8 @@ timers and recovery?
 
 **Good-fit conditions.** Steps span services or long timers; progress must survive crashes;
 activities can be idempotent; retries, cancellation and compensation are business
-decisions; the team can operate a durable engine and version its histories.
+decisions; the team can operate a durable engine and version its workflow code while preserving
+replay compatibility.
 
 **Hard contraindications.** Reject when one local transaction suffices, when workflow state
 has no owner, when replay/versioning cannot be governed, or when orchestration becomes a
@@ -76,21 +77,23 @@ hidden monolith.
 pipeline. Temporal's job-queue guidance reserves a Workflow for several activities or state
 between steps; Cadence says a queue is usually right for simple fire-and-forget fanout and
 that the queue-plus-database pattern works for simple flows while dispersing state across
-tables. Temporal's Saga comparison lists event-driven choreography. Reverse when central
-workflow state and engine operations exceed coordination benefit; that selection rule is
-Tycho guidance.
+tables. Temporal's Saga comparison lists event-driven choreography as a distinct option.
+Reverse when central workflow state and engine operations exceed coordination benefit; that
+selection rule is Tycho guidance.
 
-**Failure and recovery.** Stuck workflows, duplicate activities, lost timers,
-nondeterministic replay and version conflicts are common. Temporal records that an
-Activity Task can be lost after the Activity Function ran and the Worker crashed, then
-retries it after a Start-To-Close timeout; AWS Step Functions times out an activity that
-does not report success or heartbeat, invalidates the task token and can redrive the Task;
+**Failure and recovery.** Stuck workflows, duplicate activities, delayed timers,
+nondeterministic replay and version conflicts are possible failure modes. Temporal records that an
+Activity Task can be lost after the Activity Function ran and the Worker crashed, then retries
+it under the activity retry policy; AWS Step Functions times out an activity when no success,
+failure or heartbeat arrives before TimeoutSeconds, invalidates the task token and can redrive
+the Task;
 Cadence does not recover activity state and regular activities can run more than once under
-a retry policy. AWS Standard workflows are exactly-once for "your tasks and states" unless
-`Retry` is declared; Express workflows are at-least-once. Replay from durable history, keep
-activities idempotent and use a repair state for unknown external effects; a completed flag
-is not proof that the effect committed. That repair rule and the completed-flag caution are
-Tycho guidance.
+a retry policy. AWS Standard workflows are exactly-once for "your tasks and states" per
+execution attempt unless `Retry` is declared; redrive reruns the failed Task state even
+without an ASL Retry, so external effects still need idempotency or a repair state.
+Express workflows are at-least-once. **Tycho runbook:** replay from durable history, keep
+activities idempotent, and use a repair state for unknown external effects; a completed flag
+is not proof that the effect committed.
 
 **Technical owner.** [Distributed Workflow Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/outbox-inbox-sagas-and-durable-workflows.md#distributed-workflow-orchestration) — durable workflow coordination is bounded, not a Temporal product guide.
 

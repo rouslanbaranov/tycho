@@ -158,7 +158,7 @@ while Express workflows are at-least-once (AWS workflow types,
 <https://docs.aws.amazon.com/step-functions/latest/dg/choosing-workflow-type.html>).
 Those guarantees cover the orchestration record, not the external effect. Keep a repair state for
 an unknown external effect; a completed flag is not proof that the effect committed. That repair
-rule is Tycho guidance. Version workflow code so replay preserves meaning. Record the workflow
+rule is Tycho guidance. **Tycho guidance:** version workflow code so replay preserves meaning. Record the workflow
 version and repair owner in the runbook.
 
 **Alternative (Tycho comparison).** Use choreography, a job table or a simple queue when steps
