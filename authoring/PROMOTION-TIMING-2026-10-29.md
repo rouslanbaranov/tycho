@@ -59,7 +59,7 @@ measurements. The chart is regenerated with `scripts/promotion_timing_chart.py`.
 
 ## Per-entry dynamics
 
-![Promotion time per entry](promotion-entry-timing-2026-10-29.svg)
+![Promotion time per entry](promotion-entry-timing-2026-11-01.svg)
 
 Promotion window estimates, minutes: TTL 43, Fencing 6, Gatekeeper 7,
 Health 7, Multi-Leader 8, Message Filter 11, Least Privilege 15,
@@ -81,7 +81,7 @@ delta cycles. These are timestamp estimates, not stopwatch measurements.
 
 ## Forecast for remaining entries
 
-![Promotion forecast](promotion-forecast-2026-10-30.svg)
+![Promotion forecast](promotion-forecast-2026-11-01.svg)
 
 Remaining tiers at 83 sufficient: 1 entry 4/4, 4 entries 3/4,
 9 entries 2/4, 22 entries 1/4, 26 entries 0/4. Continuous-day
