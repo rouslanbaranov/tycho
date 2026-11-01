@@ -50,17 +50,19 @@ evidence_scope:
     - "src.appconfig-rollout"
     - "src.aws-branch"
     - "src.hashicorp-immutable-vms"
+    - "src.argocd"
+    - "src.flux"
   claim_ids: []
   status: "source-linked"
-  notes: "12 cards cite read units; owner links are bounded."
+  notes: "12 cards cite read units; GitOps binds Argo CD and Flux 2026-11-01; owner links bounded."
 content_review:
   status: "self-checked"
-  reviewed_at: "2026-10-31"
+  reviewed_at: "2026-11-01"
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-31"
-source_inspection_date: "2026-10-31"
+updated_at: "2026-11-01"
+source_inspection_date: "2026-11-01"
 content_verified_at: null
 ---
 # V11/C10 — Deployment and legacy modernization
@@ -168,23 +170,34 @@ priority core.
 a Git source?
 
 **Good-fit conditions.** Desired state is declarative and reviewed; reconciliation is
-observable; secrets/drift are handled; rollback is a revert commit.
+observable; secrets/drift are handled; rollback is a revert commit; repository write access and
+commit signatures can be verified; reconciliation failure is monitored.
 
 **Hard contraindications.** Reject when imperative one-off changes dominate, when the
-reconciler is unowned, or when secrets cannot be managed safely.
+reconciler is unowned, when secrets cannot be managed safely, or when desired-state revisions and
+artifact references cannot be pinned and verified.
 
-**Competing alternative.** Pipeline-driven deployment or manual release. Reverse the
-choice when reconciliation latency/ownership exceeds audit benefit.
+**Competing alternative.** Pipeline-driven deployment, a manual sync or imperative changes.
+Argo CD records that automatic sync removes the pipeline's need for direct API access, that a
+manual sync remains available, and that some imperativeness may stay outside Git; Flux documents a
+registry-backed Gitless model. Reverse the choice when imperative changes dominate, the pipeline
+already holds deployment authority, or no reconciler owner exists; that rule is Tycho synthesis.
 
-**Failure and recovery.** Drift, controller outage, a compromised repository and stale
-artifact references are common; alert on drift, revert reviewed commits and scope credentials.
+**Failure and recovery.** Controller outage, drift, repository compromise and stale artifact
+references are common. Argo CD and Flux document periodic reconciliation, OutOfSync state after a
+successful sync, no retry against the same failed revision, rollback disabled under automated sync,
+manifest caching and repository write trust; verify commit signatures, pin tags to commit SHAs or
+digests, monitor reconciliation readiness, and revert the reviewed commit deliberately.
 
 **Technical owner.** [GitOps](../../v08-delivery-deployment-and-recovery/c01-ci-cd-architecture-and-artifact-provenance/ci-cd-provenance-and-gitops.md#gitops) — GitOps is bounded to desired-state reconciliation.
 
 **Sources.** [src.opengitops](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch5-opengitops.2026-10-21: all seven served headings read. The source
-is a public pattern/documentation
-unit, not a benchmark.
+retained record `read.batch5-opengitops.2026-10-21`; proposed 2026-11-01 records
+`read.opengitops-principles`, `read.argocd-auto-sync`, `read.argocd-diffing`,
+`read.argocd-best-practices`, `read.argocd-security`, `read.argocd-ha`, `read.flux-concepts`,
+`read.flux-kustomization`, `read.flux-gitrepository` and `read.flux-monitoring` (all dated
+2026-11-01). Public documentation, not a benchmark, cluster run, outage drill or
+repository-compromise test.
 
 **Decision state.** applicable-under-conditions.
 
