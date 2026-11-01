@@ -1,0 +1,53 @@
+{
+  "task_id": "Q170",
+  "answer": "A full-text index stores the analyzer's output terms, not the document string. A page visibly containing `Http2GoAwayException` matches only if document analysis and query analysis produce the same postings terms. A tokenizer that splits CamelCase or punctuation differently between indexing and searching \"may miss an otherwise relevant record\": the document is present, but term identity differs. Presence is not matchability, and \"a raw query string is not an immutable analysis contract.\"\n\nPin the whole analysis chain, not the query text: tokenizer and character-filter rules, case and Unicode normalization, stopword and stemmer versions, synonym dictionaries, field schema/mapping and index format. Pin index generation and source revision too, because an \"analyzer version mismatch between old and new generations\" silently redefines terms; evaluate under a \"frozen analyzer/version snapshot\" with exact-token fixtures. Add an exact term/keyword field beside analyzed prose for APIs, exceptions and config keys, and fall back to exact source when generation comparison fails. Stemming helps prose but erodes symbol fidelity, so both paths are needed.\n\nLimits: pinning buys reproducibility, not relevance; the book reports no measured drift, and its examples are fictional. Evidence: analyzer walkthrough, inverted-index section, failure table, snapshot identity.",
+  "citations": [
+    "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+    "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+    "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+    "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission"
+  ],
+  "evidence": [
+    {
+      "claim": "A full-text index matches analyzed terms, so a document that visibly contains an exact symbol can still fail to match when the tokenizer splits CamelCase or punctuation differently between indexing and searching.",
+      "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+      "note": "Observed: \"A tokenizer that splits CamelCase or punctuation differently between indexing and searching may miss an otherwise relevant record.\" Scenario queries Http2GoAwayException against a document containing that exact symbol."
+    },
+    {
+      "claim": "A raw query string is not an analysis contract, and stemming can reduce exact API-symbol fidelity.",
+      "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+      "note": "Observed: \"Stemming can help natural-language variants but can also reduce exact API-symbol fidelity. A raw query string is not an immutable analysis contract.\""
+    },
+    {
+      "claim": "Analyzer version mismatch between index generations changes term identity; evaluation needs a frozen analyzer/version snapshot, and results must bind to index generation and source revision.",
+      "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+      "note": "Observed Lucene row: \"Analyzer version mismatch between old and new generations\"; proposed evaluation \"under a frozen analyzer/version snapshot\"; \"Bind results to an index generation and source revision\" plus an exact-source fallback."
+    },
+    {
+      "claim": "Tokenization must account for code identifiers, dotted package names, camelCase, hyphens, Unicode and stemming; overaggressive stemming or splitting erases distinctions, so exact-match fields and preserved symbol forms may be needed alongside analyzed prose.",
+      "section_key": "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+      "note": "Observed: \"Overaggressive stemming or splitting can erase distinctions such as `Serializable` vs `serialization_failure`; exact-match fields and preserved code symbol forms may be needed alongside language-analyzed prose.\""
+    },
+    {
+      "claim": "The named failure is 'analyzer destroys exact code symbol', whose required check is unit fixtures for exact token and normalized forms.",
+      "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#5-failure-and-decision-criteria",
+      "note": "Observed failure table row: \"Analyzer destroys exact code symbol | Queries for configuration/API names miss target | Unit fixtures for exact token and normalized forms\"."
+    },
+    {
+      "claim": "Queries must pin one index generation within an admitted source revision; mixing document versions yields plausible answers whose sources never coexisted.",
+      "section_key": "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+      "note": "Observed: index generations belong to an admitted source revision and access scope; \"whether queries pin one generation\"; \"A mix of document versions can produce an internally plausible answer whose sources never coexisted at one point in time.\""
+    },
+    {
+      "claim": "Technical documents carry precise symbols (APIs, error codes, configuration keys), so exact-token evidence is a first-class retrieval requirement.",
+      "section_key": "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission",
+      "note": "Observed: \"Technical documents contain precise symbols: class names, APIs, issue IDs, error codes, configuration keys and product versions.\"; word overlap cannot guarantee the requested version or failure behavior."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

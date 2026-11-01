@@ -51,3 +51,10 @@ executed. The v5 holdout is incomplete and must not be tuned or reported as a
 - one judge pair per question;
 - token usage unavailable;
 - no book/atlas changes.
+
+## Progress update
+
+29 of 50 v5 questions now have fresh answers (Q150-Q178). Only the first 20
+book questions have been judged; the additional nine answers are unjudged.
+The remaining 21 questions Q179-Q199 have not been executed. The 50-question
+holdout is still incomplete.

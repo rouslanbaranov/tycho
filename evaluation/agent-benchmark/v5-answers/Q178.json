@@ -1,0 +1,62 @@
+{
+  "task_id": "Q178",
+  "answer": "A general-purpose API must serve the union of materially different client needs: payload shape, call granularity, latency budget, version capability and release cadence. Each client therefore filters fields, over-fetches, or compensates with extra calls, and every contract change must be negotiated across all clients; a shared contract cannot be tailored for one experience without affecting the others. Where differences are material, a per-client backend (BFF) composes owner APIs for one experience, owned by that client team, with duplicated composition accepted as the price of fit.\n\nThe BFF must avoid becoming a second domain authority: business rules, authoritative state and object authorization stay with the domain services; it handles client-specific composition only. It must also not absorb cross-cutting policy such as monitoring and authorization, which should be abstracted, and not regress into a shared general-purpose API or an unowned component whose composition drifts and whose deployments multiply without measured benefit. Small differences favor a shared API with client-side selection; reverse when BFF duplication and maintenance exceed the fit benefit.\n\nEvidence: BFF card and owner section; gateway-aggregation boundary. Unknowns: no drift incident, versioning scheme, client-contract test or measured cost is documented; vendor pattern guidance, not production evidence. Confidence: moderate on conditions, low on magnitudes.",
+  "citations": [
+    "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation"
+  ],
+  "evidence": [
+    {
+      "claim": "The named counter-pattern is one general-purpose API backend for all user experiences; one backend per experience/interface is recommended instead.",
+      "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+      "note": "BFF card decision question and good-fit conditions; AWS phrase 'one backend per user experience, instead of having only one general-purpose API backend' and Microsoft's 'separate backend service for each frontend interface' are quoted in the owner section; it also says not to use the BFF when one API contract serves all clients. The union/over-fetch/negotiation consequence is Tycho inference from those conditions, not a source measurement."
+    },
+    {
+      "claim": "Materially different client interaction needs are the trigger for a per-client backend; small differences favor a shared API with client-side selection.",
+      "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+      "note": "Good-fit condition 'client populations have materially different interaction needs'; competing alternative 'shared API with client-side selection when the differences are small'; reversal condition included."
+    },
+    {
+      "claim": "A per-client contract contains change impact and isolates malfunction for one interface, but couples that backend to its client's release.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Observed quotes: Microsoft 'customizes the client experience for a specific interface without affecting other interfaces' and per-client availability isolation; AWS tight coupling aligns releases. Tycho guidance adds drift/release-alignment risk."
+    },
+    {
+      "claim": "The BFF must not become a second domain authority; business rules and authoritative state stay with domain services.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Tycho guidance, explicitly not a source claim: 'domain authority stays with the service that owns the business rule, so the BFF does not become a second domain authority'; do not use it when the BFF would own core business rules."
+    },
+    {
+      "claim": "Cross-cutting policy such as monitoring and authorization must stay outside the BFF; caching or authorizing objects makes it another authority.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Observed Microsoft quote 'Cross-cutting features, such as monitoring and authorization, should be abstracted'; Tycho guidance 'a BFF that caches or authorizes objects becomes another authority'."
+    },
+    {
+      "claim": "Known costs are probable code duplication, an extra deployable, composition/domain drift, and per-BFF versioning, observability and client-matrix ownership.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#bounded-pattern-ownership-notes",
+      "note": "Observed 'Code duplication is a probable outcome'; the failure section states sources do not document drift, composition versioning or client-contract tests."
+    },
+    {
+      "claim": "Contraindications: one adequate contract, duplicated domain logic, no owning team, or deployment multiplication without measured client benefit.",
+      "section_key": "tycho.page.6b75e10be102574cdc7351525ebabac9#overview",
+      "note": "Hard contraindications listed on the card; duplicate of the owner-section limits."
+    },
+    {
+      "claim": "Composition must stay a narrow contract, not a hidden domain workflow.",
+      "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+      "note": "Observed: 'Do not aggregate when ... the composition is a hidden domain workflow'; BFF and API Composition are named alternatives in the same section."
+    },
+    {
+      "claim": "Client generations can differ in representable outcomes, so one shared contract must preserve legacy semantics or explicitly gate features.",
+      "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+      "note": "Synthetic compatibility table: returning PENDING is unsafe when a legacy client treats any 2xx as final; the page states no client/server interoperation was executed."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

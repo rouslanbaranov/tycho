@@ -1,0 +1,60 @@
+{
+  "task_id": "Q176",
+  "answer": "Read-your-writes is a per-process property: it says nothing about other clients. A session token encodes that process's observation requirement — \"writes through position 81 must be visible\" — and routing serves it from a replica whose applied position is sufficient, waits within a deadline, or reroutes to an authoritative replica. It is a minimum version barrier, not a pointer to a specific version, and constrains only reads carrying it. Another session may still read position 77. The guarantee is bought with routing metadata, not quorum coordination, so it implies no global order, cross-client freshness or linearizability; requiring every session to see the latest write is a stronger global obligation the token does not manufacture.\n\nFailover breaks those assumptions: positions may not compare under a new leader, and a token held only in client memory or pinned to a lost replica can vanish. The service must rebuild the requirement from durable state — persisting and validating the token, with an epoch or lineage field before crossing a leadership change — or narrow the guarantee. If it cannot be established, route to an authoritative replica or return a retryable failure that preserves the token. Never silently serve an older snapshot; stickiness is not failover proof, and a token that cannot survive failover is not a session guarantee.",
+  "citations": [
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#name-the-observation-that-must-survive-routing",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives",
+    "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes",
+    "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+    "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations"
+  ],
+  "evidence": [
+    {
+      "claim": "The token is a per-session minimum-version barrier used by routing, not a request for a specific historical version.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#bounded-pattern-ownership-notes",
+      "note": "Cosmos token \"is used as a minimum version barrier but not as a specific (possibly historical) version of the data\"; tokens are partition-bound (Cosmos DB quote recorded on the page)."
+    },
+    {
+      "claim": "Read-your-writes and monotonic reads scope to one process, so they do not constrain other clients or impose a global order.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#name-the-observation-that-must-survive-routing",
+      "note": "Neither property implies all users see the latest global state, nor that concurrent writes have one agreed order; compare versions or causal positions."
+    },
+    {
+      "claim": "Routing must select a replica whose applied position satisfies the requirement, waiting or rerouting within a bounded deadline, and otherwise fail retryably rather than serve an older snapshot.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+      "note": "Request carries the requirement; if no replica can satisfy it, return a retryable failure that preserves the token; do not silently serve an older snapshot."
+    },
+    {
+      "claim": "A session token does not manufacture global freshness: another session may read the older state, and requiring latest-write visibility everywhere is a stronger contract.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#worked-history-and-counterexample",
+      "note": "Worked example: session write at position 81, second session still observes 77; the stronger obligation changes quorum, routing and failure behavior."
+    },
+    {
+      "claim": "Across leadership changes positions must remain comparable via a stable lineage or epoch; a bare counter that resets on a new leader is insufficient.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#an-explicit-session-token",
+      "note": "Algorithm assumes positions stay meaningful across leadership changes; epoch-aware comparison must separate an established commit from a divergent suffix."
+    },
+    {
+      "claim": "A replica failure removes a serving location but must not erase the session requirement; a lost client token weakens the guarantee unless service-side state retains it, and stickiness is not failover proof.",
+      "section_key": "tycho.page.67b469deedc503bc41ca1478e2ce737f#failure-cost-and-alternatives",
+      "note": "Lost token can weaken the guarantee unless retained elsewhere; timed-out writes reconcile by operation identifier; sticky sessions reduce movement only."
+    },
+    {
+      "claim": "After client recreation or failover, rebuild the requirement from durable state or explicitly narrow the guarantee; a token that cannot survive failover is not a session guarantee.",
+      "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+      "note": "Tycho rule in the atlas card; epoch/lineage required before a token crosses a leadership change; retryable failure rather than stale read."
+    },
+    {
+      "claim": "Reads during a leader change need a separately defined policy, and a leader that cannot confirm quorum must not serve authoritative writes or linearizable reads.",
+      "section_key": "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+      "note": "Local follower reads can be stale; linearizable reads need valid confirmation/lease/read-index; retries need stable effect identity."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}
