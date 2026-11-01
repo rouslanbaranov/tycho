@@ -181,13 +181,14 @@ operation, not global. Azure Service Bus documents the transport property: "Enab
 application to specify a context for the message for the purposes of correlation; for example,
 reflecting the MessageId of a message that is being replied to."
 
-**Invariant (Tycho synthesis).** A read or reply must state the correlation scope it requires;
-propagation across every asynchronous boundary is part of the message contract. Do not use the
-identifier as an authorization token.
+**Invariant.** A reply carries a Correlation Identifier matching the Request ID of the request it
+answers. **Tycho synthesis:** a read or reply must state the correlation scope it requires, propagate
+it across every asynchronous boundary, define a retention window and check collisions. Do not use
+the identifier as an authorization token.
 
 **Failure and recovery.** Azure duplicate detection removes repeated MessageId submissions; a
-CorrelationId collision is not broker-detected and remains application-side. Quarantine unmatched messages, resolve by a
-secondary key or reissue; Tycho guidance: an expired identifier maps to a dead-letter or audit
+CorrelationId collision is not broker-detected and remains application-side. Quarantine
+unmatched messages, resolve by a secondary key or reissue; Tycho guidance: an expired identifier maps to a dead-letter or audit
 record with an owner.
 
 **Alternative (Tycho comparison).** A transport-native message identity is the alternative when

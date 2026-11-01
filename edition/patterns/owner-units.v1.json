@@ -3156,8 +3156,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "it needs a generation rule, propagation across asynchronous boundaries, a retention window and a collision check",
-          "reason": "EIP binds reply matching; generation, propagation, retention and collision checks are Tycho synthesis.",
+          "quote": "A reply carries a Correlation Identifier matching the Request ID of the request it answers.",
+          "reason": "EIP binds reply/request matching; generation, propagation, retention and collision checks are Tycho synthesis.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-correlation.2026-10-21",
@@ -3168,7 +3168,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Azure duplicate detection removes repeated MessageId submissions; a CorrelationId collision is not broker-detected.",
+          "quote": "Azure duplicate detection removes repeated MessageId submissions",
           "reason": "Azure binds MessageId duplicate detection; CorrelationId collision handling is Tycho guidance.",
           "binding": {
             "source_id": "src.azure-service-bus",
@@ -3215,7 +3215,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Mechanism and invariant bind EIP request/reply matching; failure binds Azure MessageId duplicate detection; generation, retention, collisions and repair are Tycho guidance. Coverage partial-bounded; promotion candidate."
+      "notes": "Technical and decision coverage sufficient after review; promotion record pending final pass."
     },
     {
       "pattern_id": "tycho.pattern.content-based-router",
