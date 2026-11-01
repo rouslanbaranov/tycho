@@ -1,0 +1,407 @@
+{
+  "task_id": "Q301",
+  "answer": "# Q301 — Why annotation compatibility did not prove execution parity, what the canary exposed, and the seams release tests must cover\n\n## Scope and layer selection\n\nLayers needed: **book only**. The question is a bounded case-and-test question about a documented framework consolidation and its release-test implications. Atlas pattern identity and modeling-and-simulation runs are not needed and would not add evidence about this migration. I ran `describe` first (snapshot 3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a, coverage complete) and then used `--volume book` throughout.\n\nThe searches converged on **book/cases/netflix-dgs-spring-graphql-convergence.md**. I read its ten substantive sections through the CLI, plus three boundary sections: version compatibility, the canary-release entry, and the V02 case lens. The query-only smoke-test point, the removed test configuration, the direct client API and the subscription protocol all resolve to the same case page; no second case page was needed.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Programming model versus execution-semantic parity | exact: \"annotation compatibility execution parity\"; synonyms: \"schema data-fetcher wiring\", \"programming model runtime semantics\"; conceptual: does preserving the declaration surface preserve request behavior? | tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations; tycho.page.5a4108bc167f4e2387dbf019eac7881e#three-temporal-architecture-states |\n| F2. Canary measurement and JVM attribution | exact: \"GraphQL canary CPU latency\", \"50% CPU 20% latency\"; synonyms: \"performance regression p99\", \"JVM hotspot\"; conceptual: was the regression an execution-lifecycle effect or a runtime/JVM effect? | tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption; tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations |\n| F3. Asynchronous request lifecycle and filter reentry | exact: \"automatic asynchronous HTTP processing filters repeated\"; synonyms: \"async filter reentry\", \"disable async processing baseline\"; conceptual: which request-path work is duplicated when transport handling becomes asynchronous? | tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption; tycho.page.5a4108bc167f4e2387dbf019eac7881e#transfer-choose-compatibility-as-a-first-class-architecture-artifact |\n| F4. Removed modules and protocol seams | exact: \"DgsAutoConfiguration EnableDgsTest\", \"DefaultGraphQLClient\", \"SSE /graphql subscription\"; synonyms: \"starter removal\", \"executor classes\", \"test configuration\"; conceptual: which optional integrations cross the new boundary? | tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release; tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations |\n| F5. Release tests, negative cases, stop and rollback gates | exact: \"negative test set compatibility\", \"p95 p99 filter invocation count\"; synonyms: \"compatibility tests rollback artifact\", \"auth-context regression\"; conceptual: what must pass before legacy modules are removed? | tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform; tycho.page.5a4108bc167f4e2387dbf019eac7881e#transfer-choose-compatibility-as-a-first-class-architecture-artifact; tycho.page.5a4108bc167f4e2387dbf019eac7881e#operational-gates-unknowns-and-temporal-discipline |\n| F6. Scope, temporal discipline and evidence limits | exact: \"reported parity tested services\", \"10.0.0 maintainer-reported outcome\"; synonyms: \"wire-parse semantic operational compatibility\", \"canary representativeness\"; conceptual: what does the evidence not establish? | tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions; tycho.page.5a4108bc167f4e2387dbf019eac7881e#overview; tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric; tycho.page.06d61faf8a9f48ebb03eb43d7e3dcda6#overview |\n\n## Answer\n\n### 1. Why preserving the programming model does not establish execution parity\n\nThe migration was explicitly **compatibility-preserving consolidation**, not a replacement of GraphQL itself (C23). DGS retained its schema provider and data-fetcher wiring; its query executor became a compatibility interface delegating to Spring GraphQL; and Spring GraphQL handled the HTTP/WebSocket request paths that DGS had maintained (C1). Application-facing DGS programming constructs were preserved while HTTP transport and execution internals shifted to Spring GraphQL (C22).\n\nThat is exactly the limit of the claim. Annotations, schema and data-fetcher wiring are a **declaration surface**: they say which resolver or schema element should answer a field. They do not, by themselves, say how a request is scheduled, which filter chain runs and how often, how request context and security identity propagate, when asynchronous completion occurs, how errors and cancellation surface, how a subscription is opened and resumed, or which client protocol is used. Those are runtime properties of the executor and transport. The case states the seam is narrower than \"all GraphQL applications need no changes\": custom web filters, test configuration, direct use of deprecated classes and subscription clients may still cross altered boundaries (C2).\n\nThe canary made the distinction empirical rather than theoretical: compatibility at the API level did not imply execution-semantic parity (C3). Annotation compatibility is therefore necessary for source migration but not sufficient for behavioral parity. Parity is a claim about the observed request lifecycle, and it must be tested as such.\n\nTwo broader book claims reinforce the same distinction. A versioned schema is necessary for safe evolution but not sufficient (C25), and compatibility analysis must distinguish wire-parse compatibility, semantic compatibility and operational coexistence over the real deployment and rollback window (C26). The release headline that most application code did not need changing is also not proof that every optional integration was unchanged (C14).\n\n### 2. What the failed canary revealed about the asynchronous lifecycle\n\nThe publisher compared two builds under production traffic against some of its largest services and observed CPU utilization, memory and request latency. The early comparison was worse, not automatically equivalent: more than **50% CPU degradation** and around **20% slower request latency**; after framework improvements, a residual **10–20% CPU degradation** remained (C4).\n\nThe mechanism was not primarily a generic JVM slowdown. The team traced an important source of overhead to **automatic asynchronous HTTP processing**: existing service filters were not designed with the new async lifecycle, so they executed repeatedly (C5). That is a request-lifecycle defect: the same filter work was being executed repeatedly under a different dispatch and completion model, adding duplicate work and scheduling overhead to requests that had previously followed a synchronous path. The repeated execution explains both the CPU penalty and the latency penalty better than a JVM compilation, GC or allocation story does; the case explicitly calls the finding a lifecycle-correctness insight, not just a JVM hotspot (C7). The table's \"more than a simple JVM optimization issue\" phrasing points the same way.\n\nThe remedy was compatibility-preserving rather than micro-optimization: disabling async request processing returned the integrated path to reported baseline parity for the measured services, while opting into async remained possible (C6). In other words, the new framework could run the old synchronous semantics for applications that were not async-aware, and asynchronous processing became a deliberate choice rather than an implicit default. Framework fixes helped, but they did not remove the residual penalty on their own (C4); changing the lifecycle default did.\n\nThe canary therefore revealed three things. First, annotation and schema compatibility can coexist with a changed asynchronous request lifecycle. Second, CPU and latency regressions in such a migration can come from duplicated application-level filter work, not from the JVM. Third, a performance conclusion must be scoped: reported parity applies to the tested services; the full traffic mix, per-service confidence interval and long-run defect rates were not published (C8).\n\n### 3. Which compatibility seams release tests must cover\n\nThe 10.0.0 release notice names five concrete seams (C9–C13), and the earlier case analysis adds the filter, context and test-harness boundaries (C2, C5, C16). A release test plan must cover all of them, not just a query.\n\n| Compatibility seam | What changed | Release tests that must exist |\n|---|---|---|\n| Dependency entry point and starter | The preferred **dgs-starter** aliases the Spring GraphQL integration starter; older web MVC/WebFlux/autoconfiguration starters were removed (C9). | Check the dependency graph, bootstrapping, web-stack selection and packaging before deleting compatibility adapters. |\n| Core test configuration | **DgsAutoConfiguration** was removed; official guidance favors **EnableDgsTest** for tests that named the deleted configuration class (C10). | Run suites that use the explicit old class; verify test-context loading and test slices, not only production queries. |\n| Direct client API | Legacy **DefaultGraphQLClient** was removed in favor of newer client choices (C11). | Audit and exercise direct client use, not just annotation-based server endpoints. Instantiate the client paths that applications actually call. |\n| Subscription transport | Spring GraphQL uses a newer SSE protocol and the **/graphql** endpoint, versus older DGS subscription behavior/path (C12). | Verify subscriptions, reconnect/resume semantics and endpoint routing across old clients. A query-only test cannot establish this. |\n| Query execution classes | Concrete legacy executor classes were removed while supported interfaces remain (C13). | Test custom adapters and reflection/code-generated references that depend on implementation classes. |\n| Custom servlet filters, auth and observability | Async processing can re-enter filters that were written for the synchronous lifecycle; filters can execute more than once (C5, C16). | Count filter invocations, verify auth context and distributed traces, and include a filter-executes-twice negative test. |\n| Data loader and request context | Request identity and context are part of the execution semantics, not the annotation surface (C2, C16). | Include a data-loader-loses-request-identity negative test and verify context propagation across async boundaries. |\n| Schema and data-fetcher baseline | The schema provider and data-fetcher wiring were retained (C1). | Keep query/schema regression tests, but treat them as necessary rather than sufficient. |\n\nThe **negative test set** in the case is the minimum adversarial suite: a custom servlet filter executes twice; a GraphQL subscription client reconnects to the wrong route; a test depends on a deleted auto-configuration class; a data loader loses request identity; and async error/cancellation semantics change while single-query happy-path checks pass (C16). Rollout should stop on any auth-context regression or unexplained CPU/latency penalty (C16).\n\nThis is why a **query-only smoke test** is structurally inadequate for sign-off. It exercises one successful query through resolver and serialization, but it does not open or resume a subscription or check the /graphql route (C12), does not load a test context that referenced DgsAutoConfiguration (C10), does not call the removed DefaultGraphQLClient (C11), does not count filter invocations (C5, C16), does not verify data-loader identity, and does not exercise async error or cancellation (C16). A query-only test can pass while every one of those seams is broken.\n\nThe release criterion is correspondingly explicit: deprecate modules only after each adopted feature has compatibility tests and a rollback artifact (C15); stop on auth-context regression or unexplained CPU/latency (C16); and if an adopter cannot test old clients or compare production-representative workloads, return insufficient evidence rather than infer drop-in compatibility from the release headline (C17).\n\n### 4. The release-test sequence and its gates\n\nThe case gives a synthetic but usable sequence (C15, C30):\n\n1. Inventory public programming APIs, data-loader/context behavior, HTTP and subscription transports, auth/observability filters and test harnesses.\n2. Implement a shared engine behind compatibility APIs.\n3. Canary equal traffic across old and new builds.\n4. Inspect CPU per request, p95/p99, errors, auth context, filter invocation count, memory and subscription paths.\n5. Deprecate modules only after each adopted feature has compatibility tests and a rollback artifact.\n\nThe transfer guidance adds the right comparison discipline: build an adapter layer that preserves application entrypoints; run old and new builds side by side under equivalent real traffic; compare CPU, latency, error rates, data-fetcher behavior, distributed traces and auth; and check request-lifecycle subtleties such as async filter reentry rather than benchmarking only the GraphQL query executor (C18). This is a Tycho synthetic recommendation, not Netflix's recorded exact runbook (C30).\n\nOpt-in adoption, the performance canary and removal of legacy modules are separate gates (C19). A rollback before legacy retirement can restore the old starter, but the exact rollback implementation, threshold and percentage of adopting services are not established (C19). A canary is also only interpretable under its good-fit conditions: a measurable signal, splittable traffic, defined abort/rollback, a representative canary, explicit shared-state compatibility and idempotent or safely reprocessed mirrored traffic (C27). Tycho guidance additionally warns that low-traffic blindness, metric leakage and sample-size limits can let a small cohort pass while a rare failure hides (C28).\n\n### 5. Boundaries, contradictions and unknowns\n\n**Boundaries.**\n\n- The strongest conclusion is bounded by the measured services: the case does not publish the full traffic mix, per-service confidence interval or long-run defect rates (C8).\n- API/source compatibility is not runtime behavioral parity. The 10.0.0 table lists documented migration hazards, not proof that every application used each feature; runtime parity in a measured canary must be distinguished from API/source compatibility of every optional integration (C14).\n- The 10.0.0 statement that Netflix migrated its services is a maintainer-reported outcome, not an independently counted 100%-service migration (C20). The 8.5.0 integration starter was opt-in, not evidence of immediate global cutover (C21). The April 2024 post described intended adoption, a later default switch and legacy removal as **plans**, not observed results (C31). After December 2024, the cited notes do not validate 2025/2026 deployment characteristics, request mixes or framework performance across every consumer (C32).\n- The case is an evidence-backed draft with human review pending (C24).\n- A separate book lens on the case adds that a staged 2024 DGS/Spring GraphQL journey does not guarantee API parity for arbitrary GraphQL implementations or later release versions (C29).\n- The canary conditions and limits above (C27, C28) are general Tycho guidance, not a source claim that this particular canary was invalid.\n\n**Apparent contradictions and their resolution.**\n\n1. \"Most application code did not need changing\" versus removed test configuration, removed direct client API and changed subscription transport. Resolution: the release note's scope is application code; the table's scope is optional integrations and test/client surfaces. Both can be true, and the case explicitly distinguishes runtime behavioral parity from API/source compatibility (C14).\n2. The April roadmap versus the December 2024 outcome. Resolution: these are different temporal states. The April dates were plans; the December announcement is later, maintainer-reported evidence (C20, C31).\n3. Framework improvements versus the residual regression. Resolution: improvements reduced but did not eliminate the penalty; the measured-service fix was to disable implicit async processing, not to rely on JVM tuning (C4, C6).\n4. A successful query smoke test versus broken subscriptions, test configuration or direct clients. Resolution: those surfaces are outside the query path; the case says compatibility is not established by a query-only test (C12, C16).\n\n**Unknowns.**\n\n- The exact rollback implementation, threshold and percentage of adopting services are not established (C19).\n- The full traffic mix, per-service confidence intervals and long-run defect rates are missing (C8).\n- Per-service migration success is not independently counted (C20); which optional integrations each service used is not established (C14).\n- The account says filters executed repeatedly but does not publish a thread-level trace, invocation count per request or a breakdown of the 10–20% residual by subsystem.\n- It is not established that disabling async processing is sufficient for every workload; it is only reported as returning the measured services to baseline, with async still available (C6).\n- The cited sources do not establish 2025/2026 behavior or later framework internals (C32).\n\n## Evidence map\n\nEvery claim below is in the JSON ledger with a verbatim quote from the cited section.\n\n| Claims | Section key | What the section establishes |\n|---|---|---|\n| C1, C2, C7, C8 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations | Executor/transport replacement; narrow compatibility seam; lifecycle attribution; scope of parity. |\n| C3, C4, C5, C6 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption | API compatibility did not imply execution parity; canary numbers; async filter reentry; disable-async result. |\n| C9, C10, C11, C12, C13, C14 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release | Starter, test configuration, direct client, subscription, executor-class seams; hazards are not universal. |\n| C15, C16, C17, C30 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform | Release sequence; negative test set; insufficient-evidence rule; synthetic status. |\n| C18 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#transfer-choose-compatibility-as-a-first-class-architecture-artifact | Side-by-side comparison and async filter reentry. |\n| C19 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#operational-gates-unknowns-and-temporal-discipline | Separate gates and rollback limits. |\n| C20, C21, C31, C32 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions | Temporal discipline and maintainer-reported status. |\n| C22 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#three-temporal-architecture-states | Programming constructs preserved while internals shift. |\n| C23 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#architecture-question | Compatibility-preserving consolidation. |\n| C24 | tycho.page.5a4108bc167f4e2387dbf019eac7881e#overview | Draft/review status. |\n| C25, C26 | tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric | Schema necessity versus sufficiency; wire/semantic/operational compatibility. |\n| C27, C28 | tycho.page.06d61faf8a9f48ebb03eb43d7e3dcda6#overview | Canary good-fit conditions and small-cohort limits. |\n| C29 | tycho.page.cccbd188936543a2aaf904f4002236d8#applied-m9-evidence-what-transfers-and-what-does-not | No guarantee for arbitrary implementations or later versions. |\n\n## Method note\n\nThe session ran `describe` first, selected book only, searched with exact, synonym and conceptual formulations across the six facets, read every cited section through the CLI, and checked the mechanical contract with the supplied validator. The evidence log is evaluation/agent-benchmark/v8-logs/Q301.jsonl.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "DGS retained its schema provider and data-fetcher wiring; its query executor became a compatibility interface delegating to Spring GraphQL, which handled the HTTP/WebSocket request paths previously maintained by DGS.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+          "quote": "DGS retained its schema provider and data-fetcher wiring. Its query executor became a compatibility interface delegating to Spring GraphQL; Spring GraphQL handled the HTTP/WebSocket request paths previously maintained by DGS.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The preserved compatibility was narrower than “all GraphQL applications need no changes”: custom web filters, test configuration, direct use of deprecated classes and subscription clients may still cross altered boundaries.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+          "quote": "This is narrower than “all GraphQL applications need no changes”: custom web filters, test configuration, direct use of deprecated classes and subscription clients may still cross altered boundaries.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The initial Spring GraphQL transport-integration canary showed that compatibility at the API level did not imply execution-semantic parity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption",
+          "quote": "Initial Spring GraphQL transport integration canary | CPU >50% worse; latency ~20% worse | Compatibility at API level did not imply execution-semantic parity",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Early canary comparisons against existing services reported more than 50% CPU degradation and around 20% slower request latency; after framework improvements, a residual 10–20% CPU degradation remained.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption",
+          "quote": "Early canary comparisons against existing services were **worse**, not automatically equivalent: Netflix authors reported more than **50% CPU degradation** and around **20% slower request latency**. Framework improvements helped, but a residual **10–20% CPU degradation** remained.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The team traced an important source of overhead to automatic asynchronous HTTP processing: existing service filters were not designed with the new async lifecycle, so they executed repeatedly.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption",
+          "quote": "They traced an important source of overhead to automatic asynchronous HTTP processing: existing service filters were not designed with the new async lifecycle, so they executed repeatedly.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Disabling async request processing returned the integrated path to reported baseline parity for the measured services; opting into async remained possible.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption",
+          "quote": "Disabling async request processing returned the integrated path to reported baseline parity for the measured services; opting into async remained possible.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The repeated execution of non-async-aware filters under implicit asynchronous HTTP handling was identified as a lifecycle-correctness insight, not just a JVM hotspot.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+          "quote": "The identification of repeated non-async-aware filters under implicit asynchronous HTTP handling was a lifecycle correctness insight, not just a JVM hotspot.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Reported parity is scoped to the tested services; the full traffic mix, per-service confidence interval and long-run defect rates are not published.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+          "quote": "The full traffic mix, per-service confidence interval and long-run defect rates are not published; reported parity is scoped to the tested services.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The documented implication of the new dgs-starter and removal of older web MVC/WebFlux/autoconfiguration starters is to check the dependency graph, bootstrapping, web-stack selection and packaging before deleting compatibility adapters.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+          "quote": "New preferred starter is **dgs-starter**, aliasing the Spring GraphQL integration starter; older web MVC/WebFlux/autoconfiguration starters removed | Check dependency graph, bootstrapping, web-stack selection and packaging before deleting compatibility adapters",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "DgsAutoConfiguration was removed; official guidance favors EnableDgsTest for tests that named the deleted configuration class, and test suites using an explicit old class need a change despite the “mostly no code changes” adoption report.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+          "quote": "**DgsAutoConfiguration** removed; official guidance favors **EnableDgsTest** for tests that named the deleted configuration class | Test suites using an explicit old class need a change despite the “mostly no code changes” adoption report",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The legacy DefaultGraphQLClient was removed in favor of newer client choices; the documented implication is to audit direct use, not just annotation-based server endpoints.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+          "quote": "Legacy **DefaultGraphQLClient** removed in favor of newer client choices | Audit direct use, not just annotation-based server endpoints",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Spring GraphQL uses a newer SSE protocol and the /graphql endpoint instead of older DGS subscription behavior/path; the documented implication is to verify subscriptions, reconnect/resume semantics and endpoint routing across old clients, because compatibility is not established by a query-only test.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+          "quote": "Spring GraphQL uses a newer SSE protocol and the **/graphql** endpoint, versus older DGS subscription behavior/path | Verify subscriptions, reconnect/resume semantics and endpoint routing across old clients; compatibility is not established by a query-only test",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Concrete legacy executor classes were removed while supported interfaces remain; the documented implication is to test custom adapters and reflection/code-generated references that depend on implementation classes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+          "quote": "Concrete legacy executor classes removed while supported interfaces remain | Test custom adapters and reflection/code-generated references that depend on implementation classes",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The 10.0.0 table lists selected documented migration hazards, not a claim that every application used each feature; runtime behavioral parity in a measured canary must be distinguished from API/source compatibility of every optional integration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+          "quote": "the table lists selected **documented migration hazards**, not a claim that every Netflix application used each of those features. The official notice says Netflix services were migrated and most application code did not need changing; it does not prove that no application or downstream client needed any adjustment. Distinguish **runtime behavioral parity** in a measured canary from **API/source compatibility** of every optional integration.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The recommended sequence is to inventory public programming APIs, data-loader/context behavior, HTTP and subscription transports, auth/observability filters and test harnesses; implement a shared engine behind compatibility APIs; canary equal traffic across old and new builds; inspect CPU per request, p95/p99, errors, auth context, filter invocation count, memory and subscription paths; and deprecate modules only after each adopted feature has compatibility tests and a rollback artifact.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform",
+          "quote": "first inventory public programming APIs, data-loader/context behavior, HTTP and subscription transports, auth/observability filters and test harnesses; next implement a shared engine behind compatibility APIs; then canary equal traffic across old and new builds; inspect CPU per request, p95/p99, errors, auth context, filter invocation count, memory and subscription paths; finally deprecate modules **only after** each adopted feature has compatibility tests and a rollback artifact.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The negative test set includes a custom servlet filter executing twice, a GraphQL subscription client reconnecting to the wrong route, a test depending on a deleted auto-configuration class, a data loader losing request identity, and changed async error/cancellation semantics while single-query happy-path checks pass; rollout should stop on any auth-context regression or unexplained CPU/latency penalty.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform",
+          "quote": "**Negative test set:** a custom servlet filter executes twice; a GraphQL subscription client reconnects to the wrong route; a test depends on a deleted auto-configuration class; a data loader loses request identity; async error/cancellation semantics change while single-query happy-path checks pass. Stop rollout on any auth-context regression or unexplained CPU/latency penalty.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "An adopter that cannot test old clients or compare production-representative workloads must return insufficient evidence rather than infer drop-in compatibility from the project's release headline.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform",
+          "quote": "An adopter without the ability to test old clients or compare production-representative workloads must return **insufficient evidence** rather than infer drop-in compatibility from the project's release headline.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The transfer guidance is to build an adapter layer that preserves application entrypoints, compare old and new builds side by side under equivalent real traffic on CPU, latency, error rates, data-fetcher behavior, distributed traces and auth, and check request-lifecycle subtleties such as async filter reentry rather than benchmarking only the GraphQL query executor.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#transfer-choose-compatibility-as-a-first-class-architecture-artifact",
+          "quote": "Build an adapter layer that preserves application entrypoints; use old and new builds side by side under equivalent real traffic; compare CPU, latency, error rates, data-fetcher behavior, distributed traces, and auth. Check request lifecycle subtleties such as async filter reentry rather than benchmarking only the GraphQL query executor.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Opt-in adoption, the performance canary and removal of legacy modules are separate gates; a rollback before legacy retirement can restore the old starter, but the exact rollback implementation, threshold and percentage of adopting services are not established.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#operational-gates-unknowns-and-temporal-discipline",
+          "quote": "Treat opt-in adoption, performance canary and removal of legacy modules as separate gates. A proposed rollback before legacy retirement can restore the old starter, but this document does not establish Netflix's exact rollback implementation, threshold or percentage of adopting services.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The official 10.0.0 announcement states that legacy DGS transport modules were removed and Netflix migrated its services, but this is a maintainer-reported outcome, not an independently counted 100%-service migration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions",
+          "quote": "the official **10.0.0** announcement states legacy DGS transport modules were removed and Netflix had migrated its services, mostly without application changes. This is a **maintainer-reported outcome**, not an independently counted 100%-service migration.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The Spring GraphQL integration starter in DGS 8.5.0 was opt-in, not evidence of immediate global cutover.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions",
+          "quote": "The new starter was opt-in, not evidence of immediate global cutover.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Application-facing DGS programming constructs were preserved while HTTP transport and execution internals shifted to Spring GraphQL.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#three-temporal-architecture-states",
+          "quote": "application-facing DGS programming constructs are preserved while HTTP transport/execution internals shift to Spring GraphQL.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The modernization problem was compatibility-preserving consolidation, not replacing GraphQL itself.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#architecture-question",
+          "quote": "The modernization problem was **compatibility-preserving consolidation**, not replacing GraphQL itself.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The case is an evidence-backed draft with human review pending.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#overview",
+          "quote": "**Status:** evidence-backed draft; human review pending",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "A versioned schema is necessary for safe evolution but not sufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+          "quote": "A versioned schema is necessary for safe evolution, but not sufficient.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Compatibility analysis must distinguish wire-parse compatibility, semantic compatibility and operational coexistence over the real deployment and rollback window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+          "quote": "For either protocol, distinguish **wire-parse compatibility**, **semantic compatibility**, and **operational coexistence** over the real deployment and rollback window.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The book's good-fit conditions for a canary are a measurable signal, splittable traffic, defined abort/rollback, a representative canary, explicit shared-state compatibility and mirrored traffic that is idempotent or can be processed twice.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06d61faf8a9f48ebb03eb43d7e3dcda6#overview",
+          "quote": "A measurable signal exists; traffic can be split; abort/rollback\nis defined; the canary is representative; shared-state compatibility is explicit; any\nmirrored traffic is idempotent or can be processed twice.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "Tycho guidance states that low-traffic blindness, metric leakage and sample-size limits make a small cohort pass while a rare failure hides.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.06d61faf8a9f48ebb03eb43d7e3dcda6#overview",
+          "quote": "Tycho guidance, not a source claim: low-traffic blindness,\nmetric leakage and sample-size limits make a small cohort pass while a rare failure hides.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "A separate book lens on this case states that a staged 2024 DGS/Spring GraphQL journey does not guarantee API parity for arbitrary GraphQL implementations or later release versions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#applied-m9-evidence-what-transfers-and-what-does-not",
+          "quote": "A staged 2024 DGS/Spring journey does not guarantee API parity for arbitrary GraphQL implementations or later release versions.",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "The recommended sequence is a Tycho synthetic recommendation, not Netflix's recorded exact runbook.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform",
+          "quote": "A team consolidating two frameworks can use an explicit sequence (Tycho **synthetic recommendation**, not Netflix's recorded exact runbook)",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "The April 2024 engineering post described intended broad adoption, a later default switch and legacy removal before year end as plans, not observed results for those dates.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions",
+          "quote": "the engineering post describes intended broad adoption through Q2, a later default switch in Q3, and legacy removal before end of year (**plans**, not observed results for those dates).",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C32",
+      "text": "After December 2024, the cited release notes do not validate 2025/2026 deployment characteristics, request mixes or framework performance across every consumer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions",
+          "quote": "the cited release notes do not validate 2025/2026 deployment characteristics, request mixes or framework performance across every consumer.",
+          "supports": "C32",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#decision-criteria-and-reversible-tests-for-a-different-platform",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#transfer-choose-compatibility-as-a-first-class-architecture-artifact",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#operational-gates-unknowns-and-temporal-discipline",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#historical-chronology-and-unverified-transitions",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#three-temporal-architecture-states",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#architecture-question",
+    "tycho.page.5a4108bc167f4e2387dbf019eac7881e#overview",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+    "tycho.page.06d61faf8a9f48ebb03eb43d7e3dcda6#overview",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#applied-m9-evidence-what-transfers-and-what-does-not"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
