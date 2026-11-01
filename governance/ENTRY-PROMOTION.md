@@ -140,7 +140,8 @@ full report and index its SHA-256.
 - use only the promoted entry name as a chart label; no rebind suffixes;
 - date chart filenames by the current update date;
 - update STATE, HANDOFF and PROMOTION-TIMING;
-- update the README `Promoted` badge to the current count;
+- update the README `Promoted`, `Sources` and `Pattern Atlas` badges to the current
+  counts;
 - open a bookkeeping PR/MR and merge it.
 
 Charts are produced only after promotion. Intermediate reports contain no chart
