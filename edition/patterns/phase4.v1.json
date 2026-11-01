@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "generated_from": {
-    "registry_sha256": "0d37c65cf18193c7da87f7d84a71afb4c72d5dd59760dcd2ac3bd9ea0722484d",
-    "ledger_sha256": "7cd376e6295cbcd18b6daa6d7e939cd90c5e5565d75e97af08422e2210a1777c",
-    "card_batches_sha256": "b9439628ab8ccbf1d221db371a479fb82dc491e0300fce0b9e8cae21c38c92db",
-    "route_index_sha256": "aa007c34f0e24162085abaebe36793823faf75a37d74c039775d0b91c570bd9b",
-    "coverage_sha256": "b93e5709a043ecdc6fc704bec015d80aacd65f53152615bec32b1a39587dfadc"
+    "registry_sha256": "aae63a58700fc3c098bdda40725dbb71b2d876974fa40c3cfb954148cf14ee15",
+    "ledger_sha256": "b77d245e8c288422378a32f73ba6ddeaf774b3d4b1b0717ecf28dffc58b6047c",
+    "card_batches_sha256": "c4618c4de16ac8806e02e47dc5a8f7e375e9b5810c9e0958d559e0c2ddfe009b",
+    "route_index_sha256": "6f432fe6c9a940c77122e76d240782272f7061eec377f7cd032195cb1b5ea70c",
+    "coverage_sha256": "ace205f203ce4e4f1c64a64ffcd9c7ee215b3624527fac57ef0677c50695704a"
   },
   "dimensions": [
     "identity",
@@ -24,10 +24,10 @@
     "decision_coverage"
   ],
   "summary": {
-    "pages": 524,
+    "pages": 525,
     "entries": 145,
     "cards": 145,
-    "routes": 536,
+    "routes": 538,
     "related_labels": 45,
     "non_routes": 45,
     "unresolved_related": 0,
@@ -3140,6 +3140,13 @@
       "document_id": "tycho.chapter.a4b31346a691566550633efe0cf2693e",
       "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/README.md",
       "kind": "chapter",
+      "disposition": "atlas-decision",
+      "reason": "V11 decision layer"
+    },
+    {
+      "document_id": "tycho.page.086b4b635be345b7a23ae9a6b86639f5",
+      "path": "book/volumes/v11-pattern-atlas/c03-messaging-integration/aggregator.md",
+      "kind": "page",
       "disposition": "atlas-decision",
       "reason": "V11 decision layer"
     },
@@ -9380,7 +9387,17 @@
   "routes": [
     {
       "from": "tycho.pattern.aggregator",
+      "to": "tycho.pattern.api-composition",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.aggregator",
       "to": "tycho.pattern.correlation-identifier",
+      "basis": "card-related-entry"
+    },
+    {
+      "from": "tycho.pattern.aggregator",
+      "to": "tycho.pattern.gateway-aggregation",
       "basis": "card-related-entry"
     },
     {

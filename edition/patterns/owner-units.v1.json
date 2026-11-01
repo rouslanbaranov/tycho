@@ -3465,7 +3465,7 @@
           "fans in related results",
           "per-participant timeout",
           "partial-failure policy",
-          "Scatter-gather is the alternative"
+          "API composition is the alternative"
         ]
       },
       "technical_evidence": {
@@ -3475,10 +3475,10 @@
           "reason": "Defines fan-in of participant results into one composed result.",
           "binding": {
             "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-aggregator.2026-10-21",
+            "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
             "section": "Aggregator",
             "quote": "Once a complete set of messages has been received (more on how to decide when a set is 'complete' below), the Aggregator collects information from each correlated message and publishes a single, aggregated message to the output channel for further processing.",
-            "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
+            "revision": "e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494"
           }
         },
         "invariant": {
@@ -3487,55 +3487,94 @@
           "reason": "The source names correlation, the completeness condition and the aggregation algorithm as the design items; timeout and duplicate/late handling are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-aggregator.2026-10-21",
+            "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
             "section": "Aggregator",
             "quote": "When designing an Aggregator, we need to specify the following items: Correlation - which incoming messages belong together? Completeness Condition - when are we ready to publish the result message? Aggregation Algorithm - how do we combine the received messages into a single result message?",
-            "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
+            "revision": "e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494"
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The source states that a missing or delayed message can prevent further processing and that an incomplete set should raise an error after a timeout. Tycho guidance, not a source claim: an implementation should also return a declared partial result, cancel remaining work or fail as a whole.",
-          "reason": "Whole-set timeout failure is source-stated; partial-result and cancellation are Tycho guidance, not bound to the cited passage.",
+          "state": "supported",
+          "quote": "The source states: \"A single missing or delayed message will prevent further processing of the whole aggregate.\"",
+          "reason": "Enterprise Integration Patterns supports the missing or delayed message failure, the Wait-for-All timeout error and the re-request and retry/exception recovery paths; the partial-result and cancellation rules are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
-            "ledger_record": "read.batch2-aggregator.2026-10-21",
+            "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
             "section": "Aggregator",
-            "quote": "An incomplete order may not be meaningful. So if not all items are received within a certain time-out period an error condition should be raised by the Aggregator.",
-            "revision": "15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58"
-          }
+            "quote": "A single missing or delayed message will prevent further processing of the whole aggregate.",
+            "revision": "e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.enterprise-integration",
+              "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
+              "section": "Aggregator",
+              "quote": "An incomplete order may not be meaningful. So if not all items are received within a certain time-out period an error condition should be raised by the Aggregator.",
+              "revision": "e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494"
+            },
+            {
+              "source_id": "src.enterprise-integration",
+              "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
+              "section": "Aggregator",
+              "quote": "One way to deal with missing messages is to re-request the message.",
+              "revision": "e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494"
+            },
+            {
+              "source_id": "src.enterprise-integration",
+              "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
+              "section": "Aggregator",
+              "quote": "If no responses are received, the system may report an exception or retry.",
+              "revision": "e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494"
+            }
+          ]
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Tycho synthesis: scatter-gather is the alternative when one request must reach several recipients; it broadcasts similar or related requests and aggregates their responses through an aggregator.",
-          "reason": "The source defines scatter-gather broadcasting and its aggregator component; the alternative decision framing is Tycho synthesis, not a source statement.",
+          "state": "supported",
+          "quote": "Tycho synthesis: API composition is the alternative when the caller can invoke the data-owning services and join their responses at query time.",
+          "reason": "microservices.io defines API Composition and notes the large-join cost, but does not compare it with Aggregator; the comparison and reversal are Tycho synthesis.",
           "binding": {
-            "source_id": "src.aws-scatter-gather",
-            "ledger_record": "read.aws-scatter-gather.2026-10-28",
-            "section": "Intent",
-            "quote": "The scatter-gather pattern is a message routing pattern that involves broadcasting similar or related requests to multiple recipients, and aggregating their responses back into a single message by using a component called an aggregator.",
-            "revision": "4b5c777b08c089f6753dc3f5743627d17a35720b7bc1e5fecaae69c31f64fda3"
-          }
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-composition.2026-11-01",
+            "section": "Solution",
+            "quote": "Implement a query by defining an API Composer, which invoking the services that own the data and performs an in-memory join of the results.",
+            "revision": "75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microservices-patterns",
+              "ledger_record": "read.microservices-api-composition.2026-11-01",
+              "section": "Resulting context",
+              "quote": "Some queries would result in inefficient, in-memory joins of large datasets.",
+              "revision": "75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7"
+            }
+          ]
         }
       },
       "decision_evidence": {
         "atlas_section": "aggregator",
         "question": "Should related messages be combined using completion and timeout rules?",
-        "competing_alternative": "Tycho synthesis: scatter-gather broadcasts one request to several recipients and aggregates their responses through an aggregator. Reverse the choice when the request must reach several recipients rather than fan in already-correlated messages.",
+        "competing_alternative": "Tycho synthesis: API composition is the alternative when the caller can invoke the data-owning services and join their responses at query time. The microservices.io page defines the API Composer and in-memory join but does not compare it with aggregator; reverse the choice when related results already arrive as messages and completion must trigger the combined result. Scatter-gather is a related composite, not this alternative.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.batch2-aggregator.2026-10-21",
+        "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-composition.2026-11-01",
+            "revision": "75fae4c75e4c6d5cc8084bd4a4ecec5fed6aaf9a1816437cecf4950e0d82b4b7"
+          }
+        ]
       },
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Mechanism and invariant are source-bound; failure recovery is partial because partial-result and cancellation are Tycho guidance; alternative is Tycho synthesis; coverage remains partial-bounded; no promotion."
+      "notes": "Failure/recovery bound 2026-11-01 to EIP missing/delayed aggregate, timeout error, re-request and retry/exception statements; alternative bound to the microservices.io API Composition definition, with the comparison and reversal labelled Tycho synthesis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.scatter-gather",
@@ -3547,7 +3586,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 144,
+        "line": 169,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -18569,8 +18608,8 @@
     "embedded_units": 0,
     "mechanism_supported": 124,
     "invariant_supported": 99,
-    "failure_recovery_supported": 97,
-    "alternative_supported": 98,
+    "failure_recovery_supported": 98,
+    "alternative_supported": 99,
     "technical_partial_bounded": 11,
     "technical_partial": 48,
     "technical_name_only": 0,
