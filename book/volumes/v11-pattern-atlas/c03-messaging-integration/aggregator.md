@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "aggregator"
@@ -57,7 +57,7 @@ messages are handled, and a per-participant timeout is available.
 **Hard contraindications.** Tycho guidance, not a source claim: reject when responses are
 unrelated, when one participant is authoritative, when atomicity across participants is
 required, when one slow participant would consume the caller's budget, when no bounded
-completion rule exists, or when aggregation state has no durable owner.
+completion rule exists.
 
 **Competing alternative.** Tycho synthesis: API composition is the alternative when the
 caller can invoke the data-owning services and join their responses at query time. The
@@ -67,16 +67,16 @@ completion must trigger the combined result. Scatter-gather is a related composi
 this alternative.
 
 **Failure and recovery.** A single missing or delayed message can block the whole
-aggregate; the owner section quotes the source's Wait-for-All timeout error, re-request
-path and Time Out retry/exception choice. Tycho guidance, not a source claim: return a
-declared partial result or fail as a whole, and cancel remaining work.
+aggregate. The source supports re-request and a timeout retry/exception choice. Tycho
+guidance, not a source claim: return a declared partial result or fail as a whole, and
+cancel remaining work.
 
 **Technical owner.** [Aggregator](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/messaging-families-and-durable-workflows.md#aggregator) — aggregation key and timeout are bounded; partial-result policy is Tycho guidance.
 
 **Sources.**
 [src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.enterprise-integration-aggregator.2026-11-01: sections "Aggregator"
-and both loan-broker examples; canonical text SHA-256
+read record read.enterprise-integration-aggregator.2026-11-01: section "Aggregator";
+canonical text SHA-256
 `e1c4a2c4cef8a220390b9bab78851e35d9d473bee3dd0c3e0e2f7f84e925c494` (raw HTML
 `15d8640d5ad149a0e54a23c4cfe4a84c0abdcec421de2f9eb301daf21d708f58`). The page is
 publisher-abridged, not a benchmark.

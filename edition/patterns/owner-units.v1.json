@@ -3496,7 +3496,7 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "The source states: \"A single missing or delayed message will prevent further processing of the whole aggregate.\"",
-          "reason": "Enterprise Integration Patterns supports the missing or delayed message failure, the Wait-for-All timeout error and the re-request and retry/exception recovery paths; the partial-result and cancellation rules are Tycho guidance.",
+          "reason": "Enterprise Integration Patterns supports the missing or delayed message failure, the timeout error and the re-request and retry/exception recovery paths; the partial-result and cancellation rules are Tycho guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.enterprise-integration-aggregator.2026-11-01",
@@ -3572,9 +3572,9 @@
         ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Failure/recovery bound 2026-11-01 to EIP missing/delayed aggregate, timeout error, re-request and retry/exception statements; alternative bound to the microservices.io API Composition definition, with the comparison and reversal labelled Tycho synthesis. Coverage partial-bounded; no promotion."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Technical and decision coverage sufficient: mechanism/invariant bind EIP Aggregator; failure/recovery binds missing/delayed messages, timeout and re-request; alternative binds microservices.io API Composition. Partial-result, cancellation and comparison/reversal remain Tycho synthesis."
     },
     {
       "pattern_id": "tycho.pattern.scatter-gather",
@@ -3586,7 +3586,7 @@
         "heading": "Scatter-Gather",
         "anchor": "scatter-gather",
         "level": 3,
-        "line": 169,
+        "line": 167,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Scatter-gather sends one request",
@@ -3692,7 +3692,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Failure/recovery bound 2026-10-30 to AWS recipient-timeout, incomplete-response, timeout-ignore and partial-response return statements; alternative bound to the AWS aggregator-as-another-pattern comparison, with the standalone aggregator alternative and reversal labelled Tycho synthesis. Coverage partial-bounded; no promotion."
+      "notes": "Promoted and frozen: all four dimensions supported, technical and decision coverage sufficient. The dedicated card excludes line is historical; no backlink is added."
     },
     {
       "pattern_id": "tycho.pattern.dead-letter-channel-dlq",
@@ -18291,7 +18291,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "keep",
       "rationale": "Aggregator and Scatter-Gather retain two dedicated bounded notes after Splitter moved to a dedicated owner page on 2026-10-29."
     },
@@ -18610,14 +18610,14 @@
     "invariant_supported": 99,
     "failure_recovery_supported": 98,
     "alternative_supported": 99,
-    "technical_partial_bounded": 11,
+    "technical_partial_bounded": 10,
     "technical_partial": 48,
     "technical_name_only": 0,
-    "technical_sufficient": 86,
-    "decision_partial_bounded": 59,
+    "technical_sufficient": 87,
+    "decision_partial_bounded": 58,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 86,
+    "decision_sufficient": 87,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

@@ -128,11 +128,10 @@ it when one participant is authoritative, when atomicity across participants is 
 or when one slow participant would consume the caller's complete budget.
 
 **Failure and recovery.** The source states: "A single missing or delayed message will
-prevent further processing of the whole aggregate." Its Wait-for-All strategy raises an
-error condition if not all items arrive within a time-out period, and it warns that
-detecting a missing message is hard in loosely coupled asynchronous flows. Recovery is
-bounded: "One way to deal with missing messages is to re-request the message." and, under
-Time Out, "If no responses are received, the system may report an exception or retry."
+prevent further processing of the whole aggregate." Recovery is bounded: "One way to deal with
+missing messages is to re-request the message."
+and, for a timeout strategy, "If no responses are received, the system may report an
+exception or retry."
 Tycho guidance, not a source claim: return a declared partial result, cancel remaining
 work or fail as a whole.
 
@@ -143,8 +142,7 @@ results." The source does not compare API composition with aggregator; the compa
 reversal are Tycho synthesis. Reverse the choice when the related results already arrive
 as messages and completion must trigger the combined result. Scatter-gather is a related
 composite, not this alternative: it broadcasts a request and uses an aggregator as its
-gather step. Azure's Gateway Aggregation is related naming for gateway-side response
-aggregation, not evidence for this decision.
+gather step.
 
 **Limits.** Per-participant state, duplicate responses and cancellation are costs; a
 partial result needs a versioned schema and a caller-visible completeness marker.
