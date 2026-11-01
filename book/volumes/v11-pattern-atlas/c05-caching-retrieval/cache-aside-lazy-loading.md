@@ -73,9 +73,9 @@ stale window after a write is tolerable; the origin can absorb a fallback read.
 races cannot be controlled, when invalidation has no owner, or when the data is "sensitive
 or security related" and must be retrieved "from the primary source".
 
-**Competing alternative.** A shorter TTL with retried invalidation, or serving the read from
-the source when its latency budget allows. Reverse when fill and invalidation logic becomes
-duplicated and inconsistent.
+**Competing alternative.** A read-through or write-through cache, or no cache when the source
+latency budget allows. A shorter TTL is tuning, not a different pattern. Reverse when fill
+and invalidation logic becomes duplicated and inconsistent.
 
 **Failure and recovery.** A miss-only fill leaves "no updates to the cache when data is
 changed in the database", so "data in the cache can become stale"; between a write and the

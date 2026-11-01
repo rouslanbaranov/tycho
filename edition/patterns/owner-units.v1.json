@@ -6241,17 +6241,17 @@
         "line": 71,
         "unit_kind": "dedicated",
         "unit_terms": [
-          "Cache-aside is a sequence, not a consistency theorem",
-          "reads the cache first",
-          "writes a TTL-bound value",
-          "a read can reuse a local value"
+          "fetches the origin on a miss",
+          "fills the cache",
+          "invalidate on writes",
+          "TTL is an optional policy"
         ]
       },
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a TTL-bound value and invalidates on writes.",
-          "reason": "Azure and AWS state the read-miss-fill-invalidate sequence, and Redis states the read fallback and write invalidation; the bounded reading is Tycho.",
+          "quote": "A cache-aside sequence reads the cache first, fetches the origin on a miss and fills the cache. Azure and Redis also invalidate on writes; a TTL is an optional policy, not part of the core sequence.",
+          "reason": "Azure, AWS and Redis describe the read-miss-fill core; Azure and Redis add write invalidation, and TTL is optional.",
           "binding": {
             "source_id": "src.aws-caching-strategies",
             "ledger_record": "read.batch3-aws-caching.2026-10-21",
@@ -6376,8 +6376,8 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "A write can commit while its delete fails; the invalidation intent must be durable at commit time and retried.",
-          "reason": "Azure states the cache-malfunction fallback; AWS states node-failure continuity and the miss penalty; Redis states atomic stampede mitigation. No selected unit states an outbox, fencing rule or version gate; those are Tycho guidance.",
+          "quote": "**Tycho synthesis:** a write can commit while its delete fails; the invalidation intent must be durable at commit time and retried.",
+          "reason": "Azure states the cache-malfunction fallback; AWS states node-failure continuity and the miss penalty; Redis states atomic stampede mitigation. The failed-delete and durable-intent rule is Tycho synthesis.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
@@ -6432,8 +6432,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "When the read budget allows, serving from the source or a shorter TTL with retried invalidation is the alternative",
-          "reason": "Azure recommends write-through for read-after-write freshness, AWS names write-through and TTL, and Redis bounds staleness with a TTL; the reversal rule is Tycho guidance.",
+          "quote": "Read-through or write-through caches move the fill or write path into the cache layer; disabling the cache is simpler when the latency budget allows a direct source read.",
+          "reason": "Azure recommends write-through for read-after-write freshness; AWS names a write-through strategy. The reversal rule is Tycho guidance.",
           "binding": {
             "source_id": "src.microsoft-cloud-patterns",
             "ledger_record": "read.azure-cache-aside-pattern.2026-11-01",
@@ -6490,7 +6490,7 @@
       "decision_evidence": {
         "atlas_section": "cache-aside-lazy-loading",
         "question": "Should the application populate the cache after a miss instead of routing every read through the cache layer?",
-        "competing_alternative": "A shorter TTL with retried invalidation, or serving the read from the source when its latency budget allows. Reverse when fill and invalidation logic becomes duplicated and inconsistent.",
+        "competing_alternative": "A read-through or write-through cache, or no cache when the source latency budget allows. A shorter TTL is tuning, not a different pattern. Reverse when fill and invalidation logic becomes duplicated and inconsistent.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -6524,8 +6524,8 @@
         ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
       "notes": "Two partial dimensions bound 2026-11-01 to Azure Cache-Aside, AWS ElastiCache best practices and caching strategies, and Redis cache-aside. The stale-fill algorithm, version gate, tombstone rule and durable invalidation are Tycho synthesis; no cache, node failure, stampede or revocation path was exercised; coverage self-checked, not independently reviewed."
     },
     {
@@ -6864,7 +6864,7 @@
         "heading": "TTL-Based Expiration",
         "anchor": "ttl-based-expiration",
         "level": 3,
-        "line": 170,
+        "line": 172,
         "unit_kind": "dedicated",
         "unit_terms": [
           "TTL-based expiration",
@@ -6949,7 +6949,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Dedicated TTL-Based Expiration owner section; the reciprocal atlas card link is on the page. Promotion suspended 2026-11-01 because the shared owner page changed when the Cache-Aside section was expanded; coverage partial-bounded and review-ready; a fresh external review must pass before restoration."
+      "notes": "Dedicated TTL-Based Expiration owner section; sufficient coverage and promotion remain in force. The owner page hash changes only because adjacent Cache-Aside sections were added; a rebind proof accompanies the change."
     },
     {
       "pattern_id": "tycho.pattern.negative-caching",
@@ -18179,7 +18179,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 2,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Cache-aside and TTL expiration now have separate dedicated units."
     },
@@ -18434,11 +18434,11 @@
     "technical_partial_bounded": 11,
     "technical_partial": 50,
     "technical_name_only": 0,
-    "technical_sufficient": 83,
-    "decision_partial_bounded": 62,
+    "technical_sufficient": 84,
+    "decision_partial_bounded": 61,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 83,
+    "decision_sufficient": 84,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

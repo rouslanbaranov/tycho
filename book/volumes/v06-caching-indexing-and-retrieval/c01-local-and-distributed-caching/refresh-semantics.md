@@ -70,8 +70,9 @@ The installed Caffeine version and precise loader/executor policy must be checke
 <!-- tycho-question-source:tycho.page.33742c54f667446cbf57cb9f3696a533:4 -->
 ## 4. Cache-aside is a sequence, not a consistency theorem
 
-A cache-aside sequence reads the cache first, fetches the origin on a miss, writes a
-TTL-bound value and invalidates on writes. The Azure Cache-Aside pattern states the same
+A cache-aside sequence reads the cache first, fetches the origin on a miss and fills the
+cache. Azure and Redis also invalidate on writes; a TTL is an optional policy, not part of
+the core sequence. The Azure Cache-Aside pattern states the same
 order: the application "writes the change to the data store and then invalidates the
 corresponding item in the cache"
 ([Cache-Aside pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)).
@@ -130,9 +131,9 @@ becomes temporarily unavailable." AWS calls node failure survivable: "Node failu
 aren't fatal for your application"; a replacement empty node continues to serve, "though
 with increased latency", and each miss costs "three trips". Redis recommends an atomic
 mutex or probabilistic early refresh so an expiring popular key does not stampede the
-primary. Those rules bound the read path; they do not preserve the write path. A write
-can commit while its delete fails; the invalidation intent must be durable at commit time
-and retried. An outbox row in the same local transaction is one way to record it; recording
+primary. Those rules bound the read path; they do not preserve the write path. **Tycho synthesis:** a
+write can commit while its delete fails; the invalidation intent must be durable at commit
+time and retried. An outbox row in the same local transaction is one way to record it; recording
 only after a failed delete can lose the intent in a crash. Without a TTL, a lost
 invalidation is unbounded. Alert on repeated failures, keep a fallback authoritative read
 bounded, and use single-flight or a lease for concurrent misses.
@@ -146,11 +147,12 @@ boundary; a copied permission bit is not its own authority. Fill and invalidatio
 share a version authority; a cache that cannot identify the source revision cannot prove
 which value is newer.
 
-**Alternative (Tycho comparison).** When the read budget allows, serving from the source
-or a shorter TTL with retried invalidation is the alternative. Azure recommends
-write-through when "read-heavy paths need read-after-write freshness"; AWS names
-"Write-through and Adding TTL strategies" for the stale miss-only fill. Reverse when fill
-and invalidation logic duplicates; this selection rule is Tycho guidance.
+**Alternative (Tycho comparison).** Read-through or write-through caches move the fill or
+write path into the cache layer; disabling the cache is simpler when the latency budget
+allows a direct source read. Azure recommends write-through when "read-heavy paths need
+read-after-write freshness"; AWS names a write-through strategy for the stale miss-only
+fill. A shorter TTL is a tuning parameter, not a different pattern. Reverse when fill and
+invalidation logic duplicates; this selection rule is Tycho guidance.
 
 <!-- /tycho-question-source -->
 
