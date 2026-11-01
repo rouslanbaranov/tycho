@@ -2,7 +2,7 @@
 
 Generated from `register.json`; do not edit this catalogue manually.
 
-Inventory date: 2026-11-01. Entries: 356.
+Inventory date: 2026-11-01. Entries: 357.
 
 Entry-page/abstract inspection is not full reading. Commercial books are bibliography-only. Pending records are not content evidence. Core/supporting is an editorial priority, not a world ranking.
 
@@ -145,6 +145,7 @@ Entry-page/abstract inspection is not full reading. Commercial books are bibliog
 | src.aws-api-gateway / core | [Amazon API Gateway Developer Guide](https://docs.aws.amazon.com/apigateway/latest/developerguide/welcome.html) — Amazon Web Services | Bounded public REST API Gateway pages for throttling behavior and stage deployment snapshots. | admitted-for-research / public-web-or-author-download |
 | src.aws-bff / supporting | [Backends for Frontends Pattern](https://aws.amazon.com/blogs/mobile/backends-for-frontends-pattern/) — Amazon Web Services | Explicit AWS vendor account of one backend per user experience and same-team BFF maintenance for the BFF mechanism and ownership binding. | admitted-for-research / public-web-or-author-download |
 | src.azure-api-management / core | [Azure API Management documentation](https://learn.microsoft.com/en-us/azure/api-management/) — Microsoft Learn | Bounded public API Management pages for authorization delegation, self-hosted gateway connectivity, rate limiting and quota behavior. | admitted-for-research / public-web-or-author-download |
+| src.microsoft-api-design / supporting | [Web API design best practices](https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design) — Microsoft Learn | Bounded Microsoft API-design guidance for composition endpoint versioning and trace context. | admitted-for-research / public-web-or-author-download |
 
 ## Databases
 

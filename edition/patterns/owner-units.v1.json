@@ -2022,14 +2022,51 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "The composed response must declare per-source freshness and what partial failure means, rather than presenting one aggregate result as uniformly current.",
-          "reason": "Source describes an in-memory join but not per-source freshness or a partial-failure contract."
+          "reason": "Azure supports the explicit partial-response-or-failure choice that the invariant requires clients to see; the per-source freshness format remains Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+            "section": "Example",
+            "quote": "Make this decision explicit in the policy design so that clients experience predictable behavior.",
+            "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+          }
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "One slow or failed participant must not silently disappear from the result; apply per-call deadlines, mark missing parts or fail the composition explicitly.",
-          "reason": "Source does not address slow or failed participants, deadlines, missing parts or explicit failure."
+          "reason": "The Azure page supports per-request timeouts, an explicit partial-or-fail choice, unresponsive-back-end handling and failure visibility; the per-call deadline contract and missing-part schema remain Tycho synthesis.",
+          "binding": {
+            "source_id": "src.microsoft-cloud-patterns",
+            "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+            "section": "Problems and considerations",
+            "quote": "If one or more service calls take too long, it might be acceptable to time out and return a partial set of data. Consider how your application will handle this scenario.",
+            "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+              "section": "Problems and considerations",
+              "quote": "This layer becomes responsible for handling unresponsive back-end services gracefully and preventing failures from cascading across the aggregated response.",
+              "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+            },
+            {
+              "source_id": "src.microsoft-cloud-patterns",
+              "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+              "section": "Example",
+              "quote": "If one of the back-end calls times out or returns an error, API Management can apply the behavior that best fits the operation. For example, it might return a partial response when missing data is acceptable, or it might fail the entire request when complete and consistent order data is required.",
+              "revision": "b29c820c64a8ea1394113b5afe2152e4ff5e16551ca83fd4498d6c52f14a5f49"
+            },
+            {
+              "source_id": "src.microsoft-api-design",
+              "ledger_record": "read.microsoft-api-design.2026-11-01",
+              "section": "Enable distributed tracing and trace context in APIs",
+              "quote": "APIs that support the inclusion of trace and context information enhance their observability level and debugging capabilities.",
+              "revision": "2891e38400bb5898d6905fed7c324f903ef76c5774da5439646fb7e0fa6face0"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
@@ -2052,16 +2089,28 @@
         "card_components": 10
       },
       "source_support": {
-        "ledger_record": "read.microservices-api-composition.2026-10-21",
-        "source_id": "src.microservices-patterns",
+        "ledger_record": "read.microsoft-gateway-aggregation.2026-11-01",
+        "source_id": "src.microsoft-cloud-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.microservices-patterns",
+            "ledger_record": "read.microservices-api-composition.2026-10-21",
+            "revision": "7ec014c171b2421f216c3a82ddb60af0104a2f38e6bb3af93e93c8065f04750b"
+          },
+          {
+            "source_id": "src.microsoft-api-design",
+            "ledger_record": "read.microsoft-api-design.2026-11-01",
+            "revision": "2891e38400bb5898d6905fed7c324f903ef76c5774da5439646fb7e0fa6face0"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
+      "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Section-level owner unit audited against the page text; coverage remains partial."
+      "notes": "Invariant and failure/recovery bound 2026-11-01 to Azure Gateway Aggregation and, for trace context, Microsoft API design; all four technical dimensions are supported, but coverage stays partial-bounded without a promotion record. Freshness, per-call deadlines, versioned adapters, query shape and transaction boundaries remain Tycho synthesis; decision coverage stays partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.reverse-proxy",
@@ -18519,11 +18568,11 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 98,
-    "failure_recovery_supported": 96,
+    "invariant_supported": 99,
+    "failure_recovery_supported": 97,
     "alternative_supported": 98,
-    "technical_partial_bounded": 11,
-    "technical_partial": 49,
+    "technical_partial_bounded": 12,
+    "technical_partial": 48,
     "technical_name_only": 0,
     "technical_sufficient": 85,
     "decision_partial_bounded": 60,
