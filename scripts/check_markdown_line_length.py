@@ -11,10 +11,22 @@ MARKER = "**Technical owner.**"
 def check_text(text, origin="<text>"):
     violations = []
     exceptions = 0
-    for number, line in enumerate(text.splitlines(), 1):
+    lines = text.splitlines()
+    in_frontmatter = bool(lines and lines[0].strip() == "---")
+    owner_block = False
+    for number, line in enumerate(lines, 1):
+        if in_frontmatter:
+            if number > 1 and line.strip() == "---":
+                in_frontmatter = False
+            continue
+        if not line.strip():
+            owner_block = False
+            continue
+        if line.startswith(MARKER):
+            owner_block = True
         if len(line) <= 100:
             continue
-        if line.startswith(MARKER) and line.count("](") == 1:
+        if owner_block and "](" in line:
             exceptions += 1
             continue
         violations.append((origin, number, len(line)))

@@ -28,6 +28,18 @@ class MarkdownLineLengthTests(unittest.TestCase):
         self.assertEqual(exceptions, 1)
         self.assertEqual(violations, [])
 
+    def test_multiline_owner_link_is_exempt(self):
+        text = "**Technical owner.**\n [Owner\nlabel](" + "a" * 120 + ")"
+        violations, exceptions = check_text(text)
+        self.assertEqual(exceptions, 1)
+        self.assertEqual(violations, [])
+
+    def test_frontmatter_is_not_prose(self):
+        text = "---\ncanonical_path: " + "a" * 120 + "\n---\nshort"
+        violations, exceptions = check_text(text)
+        self.assertEqual(exceptions, 0)
+        self.assertEqual(violations, [])
+
 
 if __name__ == "__main__":
     unittest.main()
