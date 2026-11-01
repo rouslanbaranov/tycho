@@ -6,7 +6,7 @@ and the official SDK, tested here with mcp==2.3.0. It starts the local server
 over stdio, runs a bounded modern or legacy roundtrip and prints a JSON summary.
 
 Example (SDK environment separate from the server environment):
-  python3.15 mcp/mcp_sdk_smoke.py --server-python .venv/bin/python
+  python3.15 mcp/tests/smoke/mcp_sdk_smoke.py --server-python .venv/bin/python
 """
 import argparse
 import asyncio
@@ -14,7 +14,7 @@ import json
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def parse_args(argv=None):

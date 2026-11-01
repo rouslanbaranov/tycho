@@ -33,7 +33,7 @@ protocol errors remain JSON-RPC errors.
 
 ## Tests
 
-tests/test_tycho_diagram_pagination.py covers:
+mcp/tests/test_tycho_diagram_pagination.py covers:
 
 - ranges and budget overrun;
 - manual offset inside a diagram;

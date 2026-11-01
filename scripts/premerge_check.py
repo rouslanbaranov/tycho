@@ -49,6 +49,8 @@ def main():
          "--scope", "v12"],
         [sys.executable, "-m", "unittest", "discover", "-s", "tests",
          "-p", "test_tycho*.py", "-v"],
+        [sys.executable, "-m", "unittest", "discover", "-s", "mcp/tests",
+         "-p", "test_*.py", "-v"],
     ]
     if (ROOT / 'edition/directory-migration.json').is_file():
         commands.insert(-1, [sys.executable, 'scripts/validate_directory_migration.py'])

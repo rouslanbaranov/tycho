@@ -13,7 +13,8 @@ tool contract, launchable client CLI and MCP-specific smokes/benchmarks.
 - `INSTRUCTIONS.md` - detailed external-client onboarding, loaded by discover.
 - `mcp_http_server.py` - authenticated HTTP MCP and book/search wrapper.
 - `agent_session_cli.py` - small read-only CLI drill-down entry point.
-- `*_smoke.py` - stdlib and optional official-SDK transport smokes.
+- `tests/` - MCP unit tests, CLI tests and page/diagram tests.
+- `tests/smoke/` - stdlib and optional official-SDK transport smokes.
 - `mcp_multi_process_benchmark.py` - MCP process benchmark.
 - `benchmark_mcp_default.py`, `evaluate_mcp_default*.py` - MCP-specific
   retrieval diagnostics.

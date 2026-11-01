@@ -93,7 +93,7 @@ Standard-library client, no SDK required:
 
 ~~~sh
 TYCHO_MCP_TOKEN="$TYCHO_MCP_TOKEN" .venv/bin/python \
-  mcp/mcp_http_client_smoke.py --url http://<container-host>:8000 \
+  mcp/tests/smoke/mcp_http_client_smoke.py --url http://<container-host>:8000 \
   --query "retry budget"
 ~~~
 
@@ -101,7 +101,7 @@ Official SDK client, Python 3.11+ and `mcp==2.3.0` in a separate environment:
 
 ~~~sh
 TYCHO_MCP_TOKEN="$TYCHO_MCP_TOKEN" \
-  /tmp/tycho-mcp-sdk-2.3.0/bin/python mcp/mcp_http_sdk_smoke.py \
+  /tmp/tycho-mcp-sdk-2.3.0/bin/python mcp/tests/smoke/mcp_http_sdk_smoke.py \
   --url http://<container-host>:8000
 ~~~
 
