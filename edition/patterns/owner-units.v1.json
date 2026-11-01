@@ -336,7 +336,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Failure/recovery bound 2026-10-29 to the Design for failure section of the admitted microservices article; all four dimensions supported, coverage partial-bounded, no promotion; timeout, retry-identity, observability and recovery-time specifics remain Tycho guidance."
+      "notes": "Promoted and frozen: all four dimensions supported, technical and decision coverage sufficient. The dedicated card excludes line is historical; no backlink is added."
     },
     {
       "pattern_id": "tycho.pattern.service-oriented-architecture-soa",
@@ -371,19 +371,93 @@
           }
         },
         "invariant": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A service contract must declare its capability, message semantics, version and consumer obligations.",
-          "reason": "Source discusses contracts but not the declared capability/message/version/consumer obligations invariant."
+          "reason": "Binds the OASIS two-party contract definition, the description content a consumer needs, and Microsoft and Microservices claims about independent versioning and shared contracts. The mandatory four-field contract metadata and maintained consumer inventory are Tycho synthesis.",
+          "binding": {
+            "source_id": "src.soa-model",
+            "ledger_record": "read.soa-rm.2026-11-01",
+            "section": "3.3.2.2 Service Contract",
+            "quote": "a service contract is a measurable assertion that governs the requirements and expectations of two or more parties",
+            "revision": "69a28ce6d4337c11c4ecebd45219adefa1fd9915d07c476b2662440a7cbd2924"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.soa-model",
+              "ledger_record": "read.soa-rm.2026-11-01",
+              "section": "3.3.1 Service description",
+              "quote": "That the service performs a certain function or set of functions",
+              "revision": "69a28ce6d4337c11c4ecebd45219adefa1fd9915d07c476b2662440a7cbd2924"
+            },
+            {
+              "source_id": "src.soa-model",
+              "ledger_record": "read.soa-rm.2026-11-01",
+              "section": "3.3.1 Service description",
+              "quote": "the format and content of information exchanged between the service and the consumer and the sequences of information exchange that may be expected",
+              "revision": "69a28ce6d4337c11c4ecebd45219adefa1fd9915d07c476b2662440a7cbd2924"
+            },
+            {
+              "source_id": "src.microsoft-service-orientation",
+              "ledger_record": "read.microsoft-service-orientation.2026-11-01",
+              "section": "Service-Oriented Architectural Style",
+              "quote": "Each service is maintained, developed, deployed, and versioned independently",
+              "revision": "f84461f8c3b6c14a9e9404eff4bfcf8b4c58ff2a265f936f3e530c552a08f320"
+            },
+            {
+              "source_id": "src.microsoft-service-orientation",
+              "ledger_record": "read.microsoft-service-orientation.2026-11-01",
+              "section": "Service-Oriented Architectural Style",
+              "quote": "Services share contracts and schemas when they communicate, not internal classes",
+              "revision": "f84461f8c3b6c14a9e9404eff4bfcf8b4c58ff2a265f936f3e530c552a08f320"
+            },
+            {
+              "source_id": "src.microservices",
+              "ledger_record": "read.microservices-article.2026-10-21",
+              "section": "Componentization via Services",
+              "quote": "cohesive service boundaries and evolution mechanisms in the service contracts",
+              "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+            },
+            {
+              "source_id": "src.microservices",
+              "ledger_record": "read.microservices-article.2026-10-21",
+              "section": "Many languages, many options",
+              "quote": "aid service contracts in evolving independently",
+              "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+            }
+          ]
         },
         "failure_recovery": {
-          "state": "partial",
+          "state": "supported",
           "quote": "a centralized bus is a shared bottleneck and single point that must be sized and failed over.",
-          "reason": "Source criticizes ESB-mediated SOA but does not state bus bottleneck or failover."
+          "reason": "Binds the Microsoft .NET guidance that large central brokers, central orchestrators and the ESB are typical SOA features and often anti-patterns, with the Fowler and Lewis ESB facility list. Bottleneck/single-point framing, sizing, observability and the fallback path are Tycho synthesis; the sources state no failover procedure or recovery-time bound.",
+          "binding": {
+            "source_id": "src.microsoft-dotnet-soa",
+            "ledger_record": "read.microsoft-dotnet-soa.2026-11-01",
+            "section": "Service-oriented architecture",
+            "quote": "large central brokers, central orchestrators at the organization level, and the Enterprise Service Bus (ESB)",
+            "revision": "f54a1ae99d25994eb2e48af4f0fe56bd49f00bb4894c0326c4bff8dd8966d7af"
+          },
+          "supporting_bindings": [
+            {
+              "source_id": "src.microsoft-dotnet-soa",
+              "ledger_record": "read.microsoft-dotnet-soa.2026-11-01",
+              "section": "Service-oriented architecture",
+              "quote": "in most cases, these are anti-patterns in the microservice community",
+              "revision": "f54a1ae99d25994eb2e48af4f0fe56bd49f00bb4894c0326c4bff8dd8966d7af"
+            },
+            {
+              "source_id": "src.microservices",
+              "ledger_record": "read.microservices-article.2026-10-21",
+              "section": "Smart endpoints and dumb pipes",
+              "quote": "often include sophisticated facilities for message routing, choreography, transformation, and applying business rules",
+              "revision": "a29812554151c3ca90c22a81aef80ea271ae1ee80bf6ca90fb8d9d78281338f8"
+            }
+          ]
         },
         "alternative": {
           "state": "supported",
-          "quote": "Microservices may be preferable when capabilities map to independent product teams; a modular monolith when one ownership boundary suffices.",
-          "reason": "Names the alternative and reversal.",
+          "quote": "while others see microservices as one form of SOA",
+          "reason": "Fowler and Lewis record that some advocates reject the SOA label while others see microservices as one form of SOA; the product-team and modular-monolith conditions and reversal are Tycho guidance.",
           "binding": {
             "source_id": "src.microservices",
             "ledger_record": "read.microservices-article.2026-10-21",
@@ -405,12 +479,29 @@
         "source_id": "src.microservices",
         "unit_type": "article",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.soa-model",
+            "ledger_record": "read.soa-rm.2026-11-01",
+            "revision": "69a28ce6d4337c11c4ecebd45219adefa1fd9915d07c476b2662440a7cbd2924"
+          },
+          {
+            "source_id": "src.microsoft-service-orientation",
+            "ledger_record": "read.microsoft-service-orientation.2026-11-01",
+            "revision": "f84461f8c3b6c14a9e9404eff4bfcf8b4c58ff2a265f936f3e530c552a08f320"
+          },
+          {
+            "source_id": "src.microsoft-dotnet-soa",
+            "ledger_record": "read.microsoft-dotnet-soa.2026-11-01",
+            "revision": "f54a1ae99d25994eb2e48af4f0fe56bd49f00bb4894c0326c4bff8dd8966d7af"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial",
-      "decision_coverage": "partial-bounded",
-      "notes": "Shares Purpose and mission with microservices; composition/governance mechanics are not developed."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Invariant and failure/recovery bound 2026-11-01 to OASIS SOA-RM, Microsoft service-orientation and .NET SOA; mechanism uses Fowler ESB; alternative uses Fowler label debate. Contract metadata, consumer inventory, bottleneck framing, sizing, fallback and selection conditions remain Tycho; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.hexagonal-architecture-ports-and-adapters",
@@ -17992,7 +18083,7 @@
       "dedicated_units": 2,
       "bounded_entries": 0,
       "decision": "deepen",
-      "rationale": "Microservices and SOA now have distinct dedicated units with separate contract and ownership emphasis."
+      "rationale": "Microservices and SOA now have distinct dedicated units with separate contract and ownership emphasis; the SOA unit is bounded on four source units."
     },
     {
       "document_id": "tycho.page.b7913b53d5ea439697bc5236f902d76e",
@@ -18428,17 +18519,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 97,
-    "failure_recovery_supported": 95,
+    "invariant_supported": 98,
+    "failure_recovery_supported": 96,
     "alternative_supported": 98,
     "technical_partial_bounded": 11,
-    "technical_partial": 50,
+    "technical_partial": 49,
     "technical_name_only": 0,
-    "technical_sufficient": 84,
-    "decision_partial_bounded": 61,
+    "technical_sufficient": 85,
+    "decision_partial_bounded": 60,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 84,
+    "decision_sufficient": 85,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

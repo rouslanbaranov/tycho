@@ -38,6 +38,9 @@ evidence_scope:
     - "src.microsoft-cloud-patterns"
     - "src.fowler-layering"
     - "src.microservices"
+    - "src.soa-model"
+    - "src.microsoft-service-orientation"
+    - "src.microsoft-dotnet-soa"
     - "src.clean-architecture"
     - "src.microservices-patterns"
   claim_ids: []
@@ -129,40 +132,7 @@ See the [dedicated Microservices Architecture card](microservices-architecture.m
 
 ### Service-Oriented Architecture (SOA)
 
-**Identity.** Service-Oriented Architecture; alias SOA; family Application architecture
-and boundaries; kind architecture-style; priority core.
-
-**Decision question.** Should independently governed services and contracts be composed
-across organizational boundaries, rather than designed as one application or one
-microservice estate?
-
-**Good-fit conditions.** Heterogeneous systems have separate governance; contracts and
-mediation are explicit; integration spans ownership boundaries; service lifecycle and
-versioning can be governed; the organization accepts integration overhead.
-
-**Hard contraindications.** Reject the claim for one team and one deployable, when no
-service governance exists, when SOA is used as a synonym for an enterprise bus, or when
-contracts cannot be versioned and owned.
-
-**Competing alternative.** Microservices for independent product capabilities, or a
-modular monolith for one ownership boundary. Reverse the choice when governance and
-mediation overhead exceeds the integration benefit.
-
-**Failure and recovery.** Contract drift, a centralized bus bottleneck and semantic
-mismatch are common. Recovery requires contract ownership and mediation observability;
-the linked owner section states the remaining limits.
-
-**Technical owner.** [Service-Oriented Architecture (SOA)](../../v02-application-boundaries-and-contracts/c04-soa-microservices-and-distributed-boundaries/service-orientation-microservices-and-distribution.md#service-oriented-architecture-soa) — The section explicitly owns SOA and microservice boundary choices.
-
-**Sources.** [src.microservices](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microservices-article.2026-10-21: Microservices, all twenty-four
-headings read; SOA is a sidebar and trade-offs are a card link. This is a bounded
-comparison, not an OASIS SOA reference.
-
-**Decision state.** `applicable-under-conditions`.
-
-**Related entries.** Microservices Architecture; Modular Monolith; Anti-Corruption
-Layer; Canonical Data Model.
+See the [dedicated Service-Oriented Architecture (SOA) card](service-oriented-architecture.md).
 
 ### Hexagonal Architecture / Ports and Adapters
 
