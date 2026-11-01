@@ -11,7 +11,7 @@ topic_ids:
 perspectives:
   - "architecture"
   - "evaluation"
-summary: "Decision card for Saga Orchestration with bounded owner evidence."
+summary: "Decision card for Saga Orchestration with sufficient owner evidence."
 route_hints:
   questions:
     - "Should a central coordinator drive saga steps and compensations?"
@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.e9c650012060143639af44b0cfdc4236"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "saga orchestration"
@@ -52,17 +52,17 @@ sourcing; kind transaction-pattern; priority core.
 
 **Good-fit conditions.** The workflow is complex; central visibility and recovery are
 required; the orchestrator can own durable history, timers, idempotent activities and
-versioned workflow code.
+versioned state persistence.
 
 **Hard contraindications.** Reject when the orchestrator becomes a hidden monolith, when
 participants must remain autonomous, or when no team can own workflow state.
 
-**Competing alternative.** Choreography or one local transaction. Reverse the choice when
-central coordination becomes a bottleneck or single point of failure.
+**Competing alternative.** Choreography or one local transaction. **Tycho guidance:** reverse
+the choice when central coordination becomes a bottleneck or single point of failure.
 
-**Failure and recovery.** Coordinator loss, stuck histories, duplicate activities and
-upgrade conflicts are possible; replay from durable history and hold unknown external
-effects for repair.
+**Failure and recovery.** Tycho analysis: coordinator loss, stuck histories, duplicate
+activities and upgrade-path conflicts are possible; replay from durable history and hold
+unknown external effects for repair.
 
 **Technical owner.** [Saga Orchestration](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/saga-workflows.md#saga-orchestration) — workflow selection is bounded, not a dedicated Temporal or orchestration manual.
 
@@ -74,8 +74,9 @@ read record read.batch2-saga.2026-10-21: all eleven served headings read.
 [src.temporal](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.temporal-saga-pattern.2026-11-01: sections "Overview", "Solution",
 "Comparison with alternatives" and "Best practices". The records support durable orchestration
-and the choreography/orchestration distinction; saga compensation semantics remain Tycho
-guidance. The sources are public pattern/specification and documentation units, not benchmarks.
+and the choreography/orchestration distinction; compensation ordering and the broader
+compensation design remain Tycho guidance. The sources are public pattern/specification and
+documentation units, not benchmarks.
 
 **Decision state.** applicable-under-conditions.
 
@@ -96,5 +97,8 @@ orchestration uses an orchestrator that tells participants what to execute.
 
 Tycho guidance, not a source claim: prefer one transaction when every effect shares an owner and
 a database. Orchestration earns its cost only when the operation spans independently owned
-effects whose failures and repairs differ. The owner section remains bounded; this page does not
-claim sufficient coverage or independent review.
+effects whose failures and repairs differ. The Temporal workflow record supplies durable-history
+background; the principal bindings are the Microservices.io Saga and Temporal Saga Pattern
+records. The invariant factors, the preference and reversal rule and the failure taxonomy are Tycho
+guidance. The owner section remains bounded; this page does not claim
+owner acceptance or independent review.
