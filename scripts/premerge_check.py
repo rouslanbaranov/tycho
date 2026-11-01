@@ -30,6 +30,7 @@ def main():
         [sys.executable, "scripts/validate_pattern_sources.py"],
         [sys.executable, "scripts/validate_pattern_cards.py"],
         [sys.executable, "scripts/validate_pattern_owner_units.py"],
+        [sys.executable, "scripts/check_atlas_integrity.py"],
         [sys.executable, "scripts/validate_sufficient_promotions.py"],
         [sys.executable, "scripts/validate_sufficient_pilot.py"],
         [sys.executable, "scripts/validate_sufficient_owner_acceptance.py"],
