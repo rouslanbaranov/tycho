@@ -34,6 +34,7 @@ evidence_scope:
   - src.fowler-cqrs
   - src.microservices-patterns
   - src.postgresql
+  - src.fowler-event-sourcing
   claim_ids: []
   status: source-linked
   notes: Read source-plan units; page-level, not claim-mapped.
@@ -104,18 +105,6 @@ flowchart LR
 
 Text alternative: validate a command under the aggregate's version/invariant contract. A valid command appends an event; replay derives current state and an independent projector may build a query view. Rejected commands do not mutate the authoritative event stream in this example.
 
-### A small original replay example
-
-Start with no confirmed bookings. Apply, in the intended aggregate order:
-
-| Sequence | Immutable business fact | Derived confirmed count |
-|---:|---|---:|
-| 1 | Booking A confirmed | 1 |
-| 2 | Booking B confirmed | 2 |
-| 3 | Booking A cancelled | 1 |
-
-The projection `confirmed_count` is calculated as `+1, +1, -1`, yielding **1**. This is **synthetic arithmetic**, not a tested business database. Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.
-
 **Invariant.** A command appends only when its expected stream version matches the current
 version; a racing command is rejected and the caller re-reads before deciding. Retrying an
 already-appended command needs the same operation identity, or a write-side retry can
@@ -127,6 +116,20 @@ A snapshot can accelerate replay by recording a state at a known stream offset/v
 be preferable when full replay is unnecessary, event-schema ownership is absent or external
 side effects cannot be isolated. Reverse the event-sourcing choice when audit/replay value
 exceeds schema-evolution and rebuild cost.
+
+**Failure and recovery.** Replaying events can resend external updates; versioned handlers and an effect boundary must keep replay from repeating external side effects.
+
+### A small original replay example
+
+Start with no confirmed bookings. Apply, in the intended aggregate order:
+
+| Sequence | Immutable business fact | Derived confirmed count |
+|---:|---|---:|
+| 1 | Booking A confirmed | 1 |
+| 2 | Booking B confirmed | 2 |
+| 3 | Booking A cancelled | 1 |
+
+The projection `confirmed_count` is calculated as `+1, +1, -1`, yielding **1**. This is **synthetic arithmetic**, not a tested business database. Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.
 
 ## 3. CQRS and asynchronous projection freshness
 

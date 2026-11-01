@@ -28,6 +28,7 @@ route_hints:
 evidence_scope:
   source_ids:
   - src.microservices-patterns
+  - src.fowler-event-sourcing
   claim_ids: []
   status: source-linked
   notes: Source-level bindings remain in the owner unit.
