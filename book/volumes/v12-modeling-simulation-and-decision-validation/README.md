@@ -29,7 +29,7 @@ route_hints:
     - "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23"
     - "tycho.chapter.77831d9a57067de6faa1da630a83f49b"
   excludes:
-    - "No production measurement, review or pattern promotion is asserted."
+    - "No production measurement, independent review or pattern promotion is asserted."
   keywords:
     - "simulation"
     - "system dynamics"
@@ -43,9 +43,12 @@ evidence_scope:
     - "src.owen-monte-carlo"
     - "src.sargent-vv"
     - "src.jcgm-100"
+    - "src.madr"
+    - "src.nygard-adr"
+    - "src.little-law"
   claim_ids: []
   status: "source-linked"
-  notes: "Volume-level navigation only; page-local ledgers carry exact limits."
+  notes: "Volume navigation only; page-local ledgers are authoritative for limits."
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-29"

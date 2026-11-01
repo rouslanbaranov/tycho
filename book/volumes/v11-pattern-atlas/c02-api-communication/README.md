@@ -35,6 +35,7 @@ evidence_scope:
     - "src.microsoft-api-design"
     - "src.aws-bff"
     - "src.envoy"
+    - "src.kubernetes"
     - "src.aws-api-gateway"
     - "src.azure-api-management"
   claim_ids: []
@@ -46,7 +47,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-30"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
@@ -81,39 +82,7 @@ See the [dedicated API Gateway card](api-gateway.md).
 
 ### Gateway Routing
 
-**Identity.** Gateway Routing; family API and service communication; kind integration
-pattern; priority core.
-
-**Decision question.** Should a gateway route requests to the responsible backend using
-an explicit contract rather than exposing every backend address to clients?
-
-**Good-fit conditions.** Multiple backends or versions exist; routing rules are stable
-enough to own; discovery and health signals are available; the gateway can resolve
-version and tenant routing without guessing.
-
-**Hard contraindications.** Reject the claim when clients can resolve one stable
-backend; when routes are ad hoc and unversioned; when routing depends on unchecked
-client-supplied identifiers; when a route change cannot be rolled back.
-
-**Competing alternative.** Direct client-to-backend calls or a simpler reverse proxy.
-Reverse the choice when routing logic becomes domain logic or the gateway cannot observe
-backend health.
-
-**Failure and recovery.** Stale routes, ambiguous matches, wrong-version selection, no-match
-behavior and bypass around the gateway are common. Recovery requires route versioning,
-precedence tests and observability.
-
-**Technical owner.** [Gateway Routing](../../v08-delivery-deployment-and-recovery/c08-network-request-paths-routing-and-edge-delivery/routing-and-health.md#gateway-routing) — routing and backend selection; not a dedicated gateway routing product guide.
-
-**Sources.**
-[src.microsoft-cloud-patterns](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.microsoft-gateway-routing.2026-10-21: all eleven served headings read. Vendor
-pattern page, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** API Gateway; Service Discovery; Reverse Proxy; Gateway
-Aggregation.
+See the [dedicated Gateway Routing card](gateway-routing.md).
 
 ### Gateway Aggregation
 

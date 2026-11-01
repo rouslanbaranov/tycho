@@ -168,21 +168,47 @@ load. Keep liveness/readiness cheap and internal; protect detailed diagnostics s
 
 ### Gateway Routing
 
-Gateway routing is an edge contract over a versioned route table: a gateway matches request
-attributes to a route and applies policy, each route binds match predicates to a backend and a
+**Tycho design model:** gateway routing is an edge contract over a versioned route table:
+a gateway matches request attributes to a route and applies policy, each route binds match predicates to a backend and a
 policy version, and the table changes independently of the backends.
 The route is a contract about host, path, headers, method and backend identity, not a wildcard that
 silently absorbs every new path.
 
-Describe separately the externally resolved name, the service membership view, the connection
-destination and the backend selected for each request. Version routes, test precedence and no-match
-behavior, and recover wrong-version selection explicitly. Stale routes, ambiguous matches and
-bypass around the gateway are common. Test the bypass path and the ambiguous-match rejection, and
-emit the selected route plus backend in the request trace.
+**Invariant and route decomposition (Tycho synthesis).** Describe separately the externally
+resolved name, the service membership view, the connection destination and the backend selected
+for each request. Azure's Gateway Routing pattern says "The complexity of registering and
+unregistering service instances is encapsulated in the gateway" and uses Layer 7 routing to
+"route the request to the appropriate instances"; Kubernetes says an Ingress "exposes HTTP and
+HTTPS routes from outside the cluster to services within the cluster" and a Service "identifies a
+set of Pods", while Gateway API's request flow starts with the DNS resolver learning "a mapping to
+one or more IP addresses associated with the Gateway" and then matching the Host header to a route;
+Gateway API also notes that a Service backend may be represented "as a Service IP or the backing
+EndpointSlices of the Service". Envoy's router "matches it to an upstream cluster, acquires a
+connection pool to a host in the upstream cluster, and forwards the request." The four-layer
+separation is Tycho's framing. **Tycho guidance:** version routes, test precedence and
+no-match behavior, and recover wrong-version selection explicitly. Stale routes, ambiguous matches and gateway bypass are
+possible; test the bypass path and ambiguous-match rejection, and emit the selected route plus
+backend in the request trace.
 
-A reverse proxy, client-side discovery or a BFF may be preferable when routing policy is simple or
-the gateway would become a hidden shared dependency. Gateway routing is a fit when one edge policy
-must apply across many backends and the bypass surface is closed.
+**Alternative (Tycho comparison).** A reverse proxy, client-side discovery or a BFF may be
+preferable when routing policy is simple or the gateway would become a hidden shared dependency.
+Azure's pattern says it "might not be suitable when you have a simple application that uses only
+one or two services" and warns that the gateway "can introduce a single point of failure" and
+"a bottleneck". Kubernetes lists Service.Type=LoadBalancer and Service.Type=NodePort as ways to
+expose a Service "that don't directly involve the Ingress resource", and Envoy describes its
+router for "handling edge traffic (traditional reverse proxy request handling)" and a
+service-to-service mesh. The preference rule and the client-side discovery and BFF alternatives
+are Tycho guidance. Gateway routing is a fit when one edge policy must apply across many backends
+and the bypass surface is closed.
+
+**Sources and limits.** The bindings use Azure "Gateway Routing"
+(`read.microsoft-gateway-routing.2026-10-21`), Kubernetes "Ingress"
+(`read.k8s-ingress.2026-11-01`) and "Gateway API" (`read.k8s-gateway-api.2026-11-01`), and Envoy
+"HTTP routing" (`read.envoy-http-routing.2026-11-01`). The Kubernetes and Envoy units were read on
+2026-11-01. The pages describe route decomposition, service membership and simpler exposure forms;
+none measures this page's route table, proves that a given alternative is preferable, or defines
+one no-match behavior across products. Exact matching, precedence and default behavior belong to
+the chosen gateway and version.
 
 ## Navigation
 

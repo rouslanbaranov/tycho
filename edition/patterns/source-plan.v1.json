@@ -2,8 +2,8 @@
   "schema_version": 1,
   "updated": "2026-11-01",
   "registry_version": "0.2.0",
-  "registry_sha256": "5329980907ce239e159e82df4cdb3e6ed799eaeb5b87dd3b8159bfde32bec074",
-  "route_index_snapshot": "024ce31564ffe2a403c0252c04e0adb8846f01f00bc99239af9411794a338e35",
+  "registry_sha256": "45243683216ed3e1050de54274f6f51d136d9d19a25dda5c6a8717200cb67dea",
+  "route_index_snapshot": "33e018ea0efc89b93305f3f31fb797d33513624b2cd85321cc7fac2cff964adf",
   "policy": {
     "unit_rule": "A catalog index is not a substitute for its linked pattern pages; a site landing page is not a substitute for a documentation tree.",
     "read_rule": "A unit is read only when the ledger records exact sections, access date, licence and limits.",
@@ -704,9 +704,52 @@
           "status": "read",
           "read_record_id": "read.microsoft-gateway-routing.2026-10-21",
           "blocked_reason": null
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Ingress — Kubernetes documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/ingress/",
+          "sections": [
+            "Terminology",
+            "What is Ingress?",
+            "Ingress rules",
+            "DefaultBackend",
+            "Alternatives"
+          ],
+          "status": "read",
+          "read_record_id": "read.k8s-ingress.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.kubernetes",
+          "unit": "Gateway API — Kubernetes documentation",
+          "unit_type": "documentation-page",
+          "url": "https://kubernetes.io/docs/concepts/services-networking/gateway/",
+          "sections": [
+            "Resource model",
+            "HTTPRoute",
+            "Request flow"
+          ],
+          "status": "read",
+          "read_record_id": "read.k8s-gateway-api.2026-11-01",
+          "blocked_reason": null
+        },
+        {
+          "source_id": "src.envoy",
+          "unit": "HTTP routing — Envoy documentation",
+          "unit_type": "documentation-page",
+          "url": "https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_routing",
+          "sections": [
+            "HTTP routing",
+            "Route table"
+          ],
+          "status": "read",
+          "read_record_id": "read.envoy-http-routing.2026-11-01",
+          "blocked_reason": null
         }
       ],
-      "notes": "Batch 1 public page read; claims limited to the ledger record."
+      "notes": "Invariant and alternative bound 2026-11-01 to the Azure Gateway Routing page, Kubernetes Ingress and Gateway API pages, and Envoy HTTP routing; the four-layer route decomposition and the alternative-choice rule remain Tycho synthesis. Coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.gateway-aggregation",
@@ -8112,11 +8155,11 @@
   ],
   "summary": {
     "entries": 145,
-    "required_units": 391,
-    "read_units": 390,
+    "required_units": 394,
+    "read_units": 393,
     "planned_units": 0,
     "blocked_units": 1,
-    "ledger_records": 356
+    "ledger_records": 359
   },
   "scope": "Source-unit planning and a foundation reading batch; not full catalog reading, card authoring or technical acceptance.",
   "foundation_records": [

@@ -81,7 +81,10 @@ The contract contains:
   schema `evidence.simulation` carries the decision status by convention; it describes the
   decision, not whether the simulation executed;
 - outcome: recommendation, rationale and non-quantitative constraints;
-- reversal triggers, limitations and pattern links.
+- constraint evaluation, reversal triggers, limitations and pattern links. Each
+  `constraint_evaluation.status` applies to the recommended candidate; other candidates
+  are described in the rationale. When `outcome.recommendation` is `none`, the status
+  applies to the candidate evaluated in the rationale.
 
 The status is one of proposed, decision-supported, insufficient-evidence or rejected. A
 record with recommendation none can still be insufficient-evidence; it is not an invalid
@@ -94,12 +97,13 @@ cost ceiling, C is eliminated even if it has the highest success rate. A soft co
 preference that can be traded. A non-quantitative constraint is a condition the model cannot
 measure, such as operability by the existing team or a regulatory approval.
 
-The V12 checkout record declares two hard quantitative constraints (cost and p95 latency) and
-one non-quantitative constraint (operability). C is eliminated by the cost and latency
-constraints. B and A both pass the declared constraints. B wins on success rate and cost per
-successful request; A wins on p95 latency, which is a tradeoff rather than a failed
-constraint. No undeclared success threshold is applied. The record states that the
-operability constraint remains unverified, so the recommendation is conditional.
+The V12 checkout record declares two hard model invariants (conservation and no silent
+drop), two hard quantitative limits (cost and p95 latency) and one non-quantitative
+constraint (operability). C is eliminated by the cost and latency limits. B and A pass
+C1/C2/C4/C5; C3 operability is not-tested. B wins on success rate and cost per successful
+request; A wins on p95 latency, which is a tradeoff rather than a failed constraint. No
+undeclared success threshold is applied. The record states that the operability constraint
+remains unverified, so the recommendation is conditional.
 
 ## Pattern links without write-back
 
@@ -131,9 +135,10 @@ metrics, evidence, limitations, reversal triggers and pattern owner pages.
 ## Insufficient evidence is a result
 
 A decision record can conclude that the evidence is insufficient. The modernization record
-does exactly that: the staged candidate has a large synthetic divergence, rollback completes
-within the horizon in only 10% of replications (it fails in 90%), and the dual-write inputs
-are assumed. The correct outcome is
+does exactly that: the staged candidate has a large synthetic divergence, rollback does not complete
+within the 2,400-second horizon in 90% of replications; those durations are censored, and
+the dual-write inputs are assumed. M2 is marked fail because completion inside the window
+is required. The correct outcome is
 insufficient evidence, not a recommendation to cut over and not a claim that modernization
 is impossible.
 

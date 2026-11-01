@@ -198,3 +198,7 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | #540 Aggregator + Scatter-Gather | pass | `2026-11-01-aggregator-deepseek.md` | `dcd5e1afd7d1a9bd50ff9e3dd5c135d8339a01f6b3382b3a338425ecf8b444eb` |
 | 2026-11-01 | DeepSeek Reviewer | V12 semantic consistency | pass | `2026-11-01-v12-semantic-deepseek.md` | `93d0478776cccb9e9bf07a16cb9a41b7816ea6d98ff2465d28dde0a2db4a02d6` |
 | 2026-11-01 | DeepSeek Reviewer | V12 semantic minors | pass | `2026-11-01-v12-semantic-minors-deepseek.md` | `fb49cf637ad4a5b9cb30624951eb0203cabc4cc346752e3ddc2dd3a5966bf985` |
+| 2026-11-01 | DeepSeek Reviewer | Gateway Routing + Health | pass | `2026-11-01-gateway-routing-deepseek.md` | `8983e59ec4a406f81cf6cff08b8138a71ceaad0db074328b7d03b1c7666481c0` |
+| 2026-11-01 | DeepSeek Reviewer | Health owner-page rebind | pass | `2026-11-01-health-owner-page-rebind.md` | `d5316920db7b062c3fc48fbd75ef8f60abfd617cd36a6c8b673ea1c78a952f50` |
+| 2026-11-01 | DeepSeek Reviewer | V12 semantic after promotion 88 | pass | `2026-11-01-v12-semantic-88-deepseek.md` | `e15e72323f8647976e0a971a4895702062838bc4133632c2288a1aedb519347a` |
+| 2026-11-01 | DeepSeek Reviewer | V12 semantic 88 minors delta | pass | `2026-11-01-v12-semantic-88-delta-deepseek.md` | `d3df911af8e1ab497ce013c9d41d88e1f9fefa32040c134289e867ec123979c2` |
