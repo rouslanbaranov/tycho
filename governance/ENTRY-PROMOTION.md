@@ -160,9 +160,39 @@ The green-main change must:
 - rebuild the section FTS index and the route index;
 - update the V12 qrels snapshot and source-plan route snapshot;
 - scan V12 links to book pages and fix broken links;
-- record the full-suite result in the PR/MR.
+- record the full-suite result in the PR/MR;
+- complete the mandatory V12 semantic review (section 4.7.2).
 
 A promotion is not complete while the suite is red.
+
+### 4.7.2 Mandatory V12 semantic review
+
+Every promotion requires a V12 semantic review before the next entry starts. A
+mechanical link scan, V12 schema test or protected-baseline refresh is not a
+semantic review and cannot substitute for it.
+
+The review is independent and read-only. Its packet must contain:
+
+- the current V12 volume documents that discuss patterns or decision records;
+- `edition/v12/decisions/*.json`;
+- the changed owner sections and cards from the promotion;
+- current counts: entries, sufficient, owner-accepted;
+- the V12 protected baseline and link-scan result.
+
+The reviewer must check:
+
+- claims about pattern coverage, evidence, promotion and review;
+- the one-way link rule and every linked pattern identifier;
+- whether linked patterns are still described correctly;
+- decision-record semantics and unresolved-evidence wording;
+- stale counts, examples or references caused by the promotion;
+- contradictions between V12 and the changed V1-V11 sections.
+
+A pass may record minors. A fail blocks the next entry and requires a V12 fix and
+delta review. Save the report and index its SHA-256 like any other review.
+
+A reviewer may conclude that the promotion has no semantic V12 impact, but that
+conclusion must be explicit in the report. Absence of a finding is not a skip.
 
 ## 5. Rebind rules
 
