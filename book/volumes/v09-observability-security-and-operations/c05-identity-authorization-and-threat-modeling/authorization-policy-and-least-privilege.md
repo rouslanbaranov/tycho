@@ -77,14 +77,18 @@ boundary using principal identity, workload/device posture, policy and least pri
 Network location is not trust; a valid token is not object permission. Continuous
 verification applies to service-to-service and user-to-service paths alike.
 
-**Failure and recovery.** Policy gaps, legacy bypass paths and identity-provider outages are
-common. Deny by default, test indirect and confused-deputy paths, keep a bounded break-glass
-path with audit, and fail closed when authority cannot be established.
+**Failure and recovery (Tycho analysis).** Policy gaps, legacy bypass paths and identity-provider
+outages are common. NIST warns that "If one vital component is disrupted or unreachable, there
+could be a cascade of failures that impact one or multiple business processes." Deny by default,
+test indirect and confused-deputy paths, keep a bounded break-glass path with audit, and fail
+closed when authority cannot be established; these responses are Tycho guidance.
 
-**Alternative.** Network segmentation, a VPN or mTLS-only service identity may be preferable
-when legacy components cannot enforce per-request identity or when policy-evaluation cost
-exceeds the threat reduction. Reverse the zero-trust choice when the remaining perimeter
-control is the only enforceable boundary.
+**Alternative (Tycho comparison).** NIST expects that "Most enterprise infrastructures will
+operate in a hybrid zero trust/perimeter-based mode." Network segmentation, a VPN or mTLS-only
+service identity may therefore be preferable when legacy components cannot enforce per-request
+identity or when policy-evaluation cost exceeds the threat reduction. Reverse the zero-trust
+choice when the remaining perimeter control is the only enforceable boundary; the preference
+rule is Tycho guidance.
 
 **Limits.** Policy-decision latency and telemetry coverage are costs; a zero-trust label does
 not prove enforcement.

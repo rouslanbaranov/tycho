@@ -18,7 +18,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.419769c372ccaa569796954878e3bef9"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "least-privilege"
@@ -31,8 +31,9 @@ evidence_scope:
 content_review:
   status: "self-checked"
   reviewed_at: "2026-10-29"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "authoring/ai-reviews/2026-10-29-least-privilege-deepseek.md"
+  content_verified_at: "2026-10-29"
 authored_at: "2026-10-27"
 updated_at: "2026-10-29"
 source_inspection_date: "2026-10-29"
@@ -60,7 +61,7 @@ narrower entitlements is a Tycho decision inference, not an ASVS comparison. Rev
 choice when approval latency or approver availability would block a time-critical or
 automated action, or when approvals become routine.
 
-**Failure and recovery.** Permission creep and orphaned grants are common; verify review
+**Failure and recovery.** Permission creep and stale grants are common; verify review
 in the owner section.
 
 **Technical owner.** [Authorization policy and least privilege](../../v09-observability-security-and-operations/c05-identity-authorization-and-threat-modeling/authorization-policy-and-least-privilege.md#least-privilege) — permission scope and review cadence are bounded; entitlement catalogue is platform-specific.
