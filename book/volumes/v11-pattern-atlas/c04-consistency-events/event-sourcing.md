@@ -52,28 +52,34 @@ kind data-pattern; priority core.
 rather than stored as current rows?
 
 **Good-fit conditions.** The event history is the business record; replay and audit are
-required; schema evolution and snapshots are owned; external effects are separated.
+required; schema ownership and, if snapshots are used, snapshot ownership are defined; external
+effects are separated.
 
-**Hard contraindications.** Reject when current-state queries dominate, when event schema
-cannot evolve, or when replay side effects cannot be controlled.
+**Hard contraindications.** Reject when full replay or audit is unnecessary, when event-schema
+ownership
+is absent, or when replay side effects cannot be isolated.
 
 **Competing alternative.** Current-state store plus audit log/outbox or event notification.
-Reverse when full replay is unnecessary, schema ownership is absent or external side effects
-cannot be isolated.
+Choose event sourcing when replay/audit value exceeds schema and rebuild cost; reverse when
+full replay is unnecessary, schema ownership is absent or external side effects cannot be
+isolated.
 
-**Failure and recovery.** A stale expected version rejects the append; re-read and retry with
+**Failure and recovery.** **Tycho guidance:** a stale expected version rejects the append; re-read
+and retry with
 the same operation identity. Replay needs versioned handlers and a rebuild plan; external
 effects and duplicate delivery need an explicit boundary, not an assumed idempotent projector.
 
 **Technical owner.**
  [Event sourcing: what becomes
-authoritative?](../../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#2-event-sourcing-what-becomes-authoritative)
+authoritative?](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#2-event-sourcing-what-becomes-authoritative)
 — event authority is the bounded owner, not a complete event-store design.
 
 **Sources.**
 [src.microservices-patterns](../../../../edition/patterns/reading-ledger.v1.json)
 read record read.batch2-event-sourcing.2026-10-21: all nine served headings
-read. The source is a public
+read; read record read.fowler-event-sourcing.2026-11-01, sections External Updates
+and Snapshots, revision 3e13fbecdd148ec6d8fdcc1626e716fd1ea74f46a56740df538518d56913766f.
+The sources are public
 pattern/specification
 unit, not a benchmark.
 
