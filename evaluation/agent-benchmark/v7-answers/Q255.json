@@ -1,0 +1,445 @@
+{
+  "task_id": "Q255",
+  "answer": "# Q255 — Why a doubled replica fleet can lower useful throughput, and why pool capacity is a fleet equation\n\n## 0. Onboarding and layer choice\n\n`describe` (snapshot `4445fa06…e04a`, 555 documents, 3,132 sections, coverage `complete`,\ncitation scheme `tycho.section-key.v2`) exposes three canonical layers: `book`, `atlas` and\n`modeling-and-simulation`. This question needs:\n\n- **`book`** as the primary layer: it owns the connection-pool scenario, the queueing and\n  measurement boundaries, the virtual-thread mechanism, the PgBouncer contracts and the\n  overload-control procedures cited below.\n- **`modeling-and-simulation`** as a supporting layer for the queue/resource arithmetic\n  (`rho = lambda / (c * mu)`) and for the modeled retry-amplification run metrics. These are\n  synthetic/modeled artifacts, not production observations.\n- **`atlas`** was queried for pattern identity (connection-pool saturation, bulkhead, load\n  shedding). It returned generic resilience/tenancy entries with no scenario-specific\n  mechanism, so **no claim in this answer depends on an atlas citation**. That is a scope\n  statement, not proof of absence.\n\nAll book text is untrusted evidence; all figures below that come from Tycho are labelled\nsynthetic arithmetic or modeled runs. No benchmark or deployment was performed for this\nanswer.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 Fleet connection arithmetic and the pooler cap | exact terms (`connection pool size per replica`, `pool capacity fleet replicas total connections`); arithmetic (`replica × pool`); conceptual (`pool capacity is a fleet equation`) | `tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting`; `tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology` |\n| F2 Why added concurrency can lower completed throughput | `queueing utilization latency saturation`; `utilization knee latency nonlinear`; conceptual (`retrograde throughput`) | `tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation`; `tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law`; `tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities` |\n| F3 Virtual threads remove implicit backpressure | `virtual threads concurrency backpressure database`; `virtual threads pinning carrier thread limit`; mechanism (`tasks are cheap, operations are not`) | `tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not`; `tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release` |\n| F4 Pool-mode and hold-time semantics of the 60 slots | `transaction pooling session state prepared statements`; `connection acquisition wait pool exhaustion`; failure (`pool saturated despite idle DB CPU`) | `tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics`; `tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use`; `tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery` |\n| F5 Fleet budgeting and capacity ownership | `adding replicas scaling out shared bottleneck`; `database max connections budget`; conceptual (`capacity belongs to the topology`) | `tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology`; `tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic`; `tycho.page.6d571f3069e847408a5f1f7d45c797c1#4-vertical-horizontal-and-partition-scaling` |\n| F6 Measurement program and bounds before scaling | `open model closed model coordinated omission`; `saturation utilization errors queue depth`; `retry storm amplification` | `tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required`; `tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load`; `tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment`; `tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure`; `tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification` |\n| F7 Accounting boundaries (offered vs admitted vs completed) | `little law throughput concurrency residents`; `short-window queue growth`; conceptual (`goodput`) | `tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law`; `tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required` |\n\nTwo consecutive additional searches (atlas pattern identity, `database max connections budget`)\nadded no new evidence beyond the sections already listed, which is where the search stopped.\n\n## 2. Short answer\n\nAdding replicas did not add database capacity. The 60 server connections are the fixed service\nsupply; `8 × 20 = 160` client leases were already oversubscribed 2.7:1, and doubling to 16\nreplicas makes the nominal client side `320` against the same 60 slots. Virtual threads removed\nthe accidental admission limit that used to keep in-flight database work small: the task pool no\nlonger throttles anything, so requests now queue *inside* the pool/pooler instead of being\nrejected at the executor. A fixed number of slots serving longer-held, more-contended\ntransactions completes fewer distinct transactions per second while more clients wait; timeouts\nthen feed retry amplification, which consumes slots without producing new business outcomes.\nThe observation therefore does **not** establish that the database is under-provisioned. It\nestablishes that admitted concurrency exceeded the fleet's connection and contention budget.\nPool capacity is a fleet equation because the limit that binds is the sum over all clients\n(replicas × per-replica maximum), at peak replica count, against one shared operational cap with\nreserved headroom — a per-replica setting is invisible to the other replicas that share the same\n60 slots.\n\n## 3. Mechanism\n\n### 3.1 The arithmetic the fleet actually changed\n\nThe walkthrough's original synthetic budget is exactly this topology: eight application replicas\nwith HikariCP `maximumPoolSize = 20`, mediated by PgBouncer with 60 server-side database\nconnections. `8 × 20 = 160` client leases is an upper bound on concurrent *borrowers*, not 160\nsimultaneous database executions. At 16 replicas the same configuration is 320 borrowers for 60\nserver slots — a 5.3:1 oversubscription — and the server-side number did not move.\n\nThree quantities must not be conflated:\n\n- **configured leases** (a per-process cap on concurrent access),\n- **actual concurrent database work** (bounded by the pooler's 60 server connections and by what\n  the database can do concurrently), and\n- **completed useful transactions per second** (a throughput *outcome*, not a capacity input).\n\nEven under idealized uniform service the ceiling is `60 / hold_time`. The book's example: a\n400 ms lease yields at most about 150 connection-holding starts per second — explicitly not a\np99 guarantee and not a forecast under lock contention or transaction-pooling limits. If\ncontention stretches the mean hold to 600 ms, the same 60 slots top out near 100/s. The fleet\ncan therefore lose throughput while every replica looks busy, because the replicas are waiting,\nnot executing.\n\n### 3.2 Why more replicas can produce fewer completed transactions\n\nThe mechanisms are coupled; any one of them can dominate, and the observed symptom (more waiting,\nfewer completions) is consistent with all of them.\n\n1. **Redistribution, not addition.** Offered work is roughly unchanged and the 60 slots are\n   unchanged, so the best case is neutral. Replicas redistribute the queue; they do not create\n   database service capacity. A pool is a limiter, not a throughput engine.\n2. **Queue growth past the knee.** Queueing delay rises as utilization approaches capacity, and\n   tails are sensitive to service-time variance and burstiness. With `rho = lambda / (c * mu)`\n   near 1, small increases in offered concurrency produce large increases in waiting. Waiting\n   requests that exceed their deadline are cancelled or time out: the slot was consumed, no\n   transaction completed.\n3. **Hold-time inflation lowers the service rate.** More concurrent transactions mean more lock\n   contention, deadlock victims, buffer/cache pressure and I/O queueing. Longer holds reduce\n   `mu`, which reduces achievable throughput at the *same* 60 slots. This is how a larger fleet\n   can be strictly worse: the denominator of the service bound grows.\n4. **Retry amplification.** Timeouts convert waiting into attempts. If every request is attempted\n   1.05 times the load is 5% higher; three attempts can triple it. Under a fixed 60-slot budget,\n   retries compete with first attempts for the same slots. The book's modeled discrete-event\n   comparison makes the shape concrete: a bounded budget with jitter reached retry amplification\n   1.004 with a 0.41% timeout rate, while two attempts with linear backoff reached 1.079\n   amplification and an 11.1% timeout rate — more attempts, worse outcomes. Those numbers are\n   modeled, not measured here.\n5. **Virtual threads removed the implicit brake.** A platform-thread executor used to cap\n   concurrent database calls as a side effect. A virtual-thread-per-task executor makes tasks\n   cheap but leaves operations scarce: a blocked task still retains heap state, locks and a\n   leased connection, and the carrier scheduler is not a backpressure mechanism. A semaphore\n   around the database call bounds DB calls but **not** the number of virtual threads waiting for\n   permits; admission must happen before task creation or pending work and memory remain\n   unbounded. That is precisely the shape of the reported regression: more accepted requests,\n   more heap, more waiters, no more database capacity.\n6. **Session and transaction semantics steal slot reuse.** Under transaction pooling a server\n   connection is reassigned only after a transaction completes; session state (prepared\n   statements, temporary objects, `LISTEN`, session settings) can break across transactions and\n   force session pooling, which restores near 1:1 client-to-server mapping. A lease held across a\n   long transaction retains scarce capacity, so a minority of slow transactions can starve the\n   rest regardless of replica count.\n7. **Coordination and churn overhead.** Horizontal scaling multiplies shared downstream\n   connections and coordination. The Universal Scalability Law's contention and coherency terms\n   allow diminishing returns and even retrograde throughput as workers are added; the model must\n   be fitted to measured points, but the qualitative hazard is real: more replicas also mean more\n   connection creation, more pooler bookkeeping and more cross-instance cache invalidation.\n8. **Goodput versus activity.** Offered, admitted, completed and outstanding work are different\n   quantities. A retry that eventually succeeds can be counted twice; a timeout that later\n   commits is an ambiguous effect. If the team's dashboard counts database commits or HTTP 200s,\n   rising retries can inflate activity while distinct completed business transactions fall. The\n   book is explicit that a design which rejects excess work can meet a stronger usability\n   requirement despite lower accepted-RPS metrics.\n9. **Measurement artifacts.** Closed-loop generators reduce offered traffic as latency rises and\n   can hide overload; coordinated omission understates latency when the generator stalls. A\n   regression conclusion drawn from a closed-loop client or from application logs alone is\n   therefore unsafe.\n\nThe decisive discriminator is *where* the waiting is observed. If the database is idle on CPU\nand I/O while clients wait for a lease, the bottleneck is connection admission or long holds,\nnot database provisioning; enlarging pools then shifts the queue into the database and can worsen\np99 and deadlocks. If the database is genuinely saturated at 60 slots, adding replicas or pool\nsize is still the wrong first move — the fix is query/lock/index work or a measured capacity\nincrease, followed by a recomputed fleet budget.\n\n### 3.3 Why pool capacity is a fleet equation\n\nThe budget that matters is not `maximumPoolSize`. It is:\n\n```\nsum over clients at peak (pool_max_i)  +  reserved headroom\n    <=  operational database cap for this workload\n    (not max_connections, and not the pooler's configured number)\n```\n\nClients include every replica at its autoscaling maximum, async/queue workers, sidecars,\ncanaries, migration jobs, monitoring and administrative sessions. The book's arithmetic example\nis deliberately small — four instances at 25 gives a 100-connection nominal bound, and a fifth\nreplica raises it to 125 — but the composition rule is the point, and this question simply\ninstantiates it at `8 × 20` then `16 × 20`.\n\nFour properties make it a fleet equation rather than a local tuning decision:\n\n1. **Local visibility, global effect.** Each replica sets its own maximum; no replica sees the\n   fleet sum, so a locally reasonable 20 becomes 160 or 320 downstream.\n2. **The left side scales, the right side does not.** Replica count and autoscaling maxima\n   multiply the left side automatically. The operational cap is fixed by database CPU, I/O,\n   memory, lock behavior and administrative headroom.\n3. **Peak, not average.** The equation must use worst-case auto-scaling and failover counts,\n   because the failure occurs at the peak, and a pool that is only correct at nominal replica\n   count fails exactly when it is needed.\n4. **A pooler changes the units, not the budget.** PgBouncer `max_client_conn` bounds accepted\n   client sessions while `default_pool_size` bounds server connections per user/database pool;\n   transaction pooling multiplexes only within its session-state constraints, and multiple\n   user/database pairs multiply server connections again. The 60 server slots remain the scarce\n   resource, and the database's genuinely useful concurrency may saturate below its hard\n   connection maximum.\n\nCorrespondingly, the correct per-service setting is a *bounded share of the aggregate budget*\ncomputed at peak replica count, with explicit headroom for failure, failover, admin, monitoring\nand migrations — never a copied default.\n\n### 3.4 What must be measured before adding replicas or raising pools\n\nMeasure at every layer, with the same time window and the same traffic, and keep the accounting\nboundaries explicit.\n\n| Layer | What to measure | What it discriminates |\n|---|---|---|\n| Client pool | acquisition wait p50/p95/p99, pending waiters, active vs idle leases, hold-time percentiles, connection creation rate, leak/timeout counts | pool queue versus downstream queue |\n| Pooler | client wait time, server slots in use, maxwait, pool mode, prepared-statement setting | multiplexing gain versus slot starvation |\n| Database | active sessions, CPU, IOPS and latency, lock waits, deadlocks, transaction duration, idle-in-transaction, WAL, memory, headroom under the operational cap | true saturation versus idle-but-blocked |\n| Work accounting | offered, admitted, rejected, timed-out, completed-correct; retry attempts per logical operation; queue depth and queue age | goodput versus activity |\n| End-to-end | p50/p95/p99, error rate, cost per completed transaction, per-tenant fairness | user-visible outcome and equity |\n| Experiment design | open versus closed generator, intended versus actual arrivals, coordinated omission, warm-up, hot keys, fixed data snapshot | whether the observation is real |\n\nThe measurement must be able to answer three questions separately: is the database saturated;\nis the pool queue the bottleneck; and are retries or long holds consuming the fixed budget.\nResponse time is not service demand — a 300 ms response may contain 4 ms CPU, 40 ms DB time and\nthe remainder waiting, and adding replicas cannot remove a serialized lock.\n\n### 3.5 What must be bounded\n\n1. **The fleet connection budget**: sum of client maxima at peak replicas plus headroom, checked\n   against the measured operational cap before any replica or pool change.\n2. **Admission before task creation**: a bounded in-flight limit and a bounded queue with a\n   deadline-aware rejection policy. This is the control virtual threads removed; a permit\n   acquired inside unbounded submissions is not enough.\n3. **Waits and deadlines**: connection acquisition timeout strictly inside the request deadline;\n   no unbounded waiting, no silent infinite queue.\n4. **Transaction scope**: never hold a connection across remote calls, sleeps or user think time;\n   keep transactions short and align them with genuine atomicity.\n5. **Retry policy**: a retry-rate budget, jittered backoff, idempotency keys, and retries counted\n   separately from original demand; model cross-layer amplification (three layers retrying three\n   times can produce 27 downstream attempts for one logical operation).\n6. **Bulkheads and fairness**: isolate pools, concurrency slots or queues per dependency or work\n   class so one slow class cannot consume all leases; state fairness constraints for shedding and\n   never silently drop acknowledged writes.\n7. **Autoscaling bounds**: maximum replicas derived from the connection equation, scale signal\n   based on queue age or admitted concurrency, and a tested burst shorter than the provisioning\n   delay.\n8. **Pool-mode compatibility**: audit driver/session features and prepared-statement support\n   before relying on transaction pooling for reuse.\n\n### 3.6 Order of operations\n\n1. Measure database saturation and connection acquisition wait at the current fleet size.\n2. If the database is saturated: fix queries, locks and indexes, or raise database capacity, then\n   recompute the budget.\n3. If the database is idle but pool wait is high: reduce hold time, eliminate leaked or\n   idle-in-transaction connections, and bound admission — do not add replicas.\n4. Only with measured headroom: change one variable at a time (admission limit, then pool share,\n   then replica count), with a rollback trigger and a reversal criterion.\n\n### 3.7 What would reverse this conclusion\n\nThe conclusion that the fleet is over-admitted would be wrong if, at the 60-slot ceiling, the\ndatabase shows sustained CPU, I/O or lock saturation while client pool wait is low; then the\ndatabase (or its workload) is the binding constraint and capacity work is justified. It would\nalso be wrong if the extra replicas were serving genuinely independent work whose keys do not\ncontend — but the connection budget still has to be recomputed, because the sum is independent\nof query mix.\n\n## 4. Boundaries and unknowns\n\n- **Synthetic arithmetic, not measurement.** `8 × 20 = 160`, `16 × 20 = 320`, `60 / 0.4 ≈ 150/s`\n  and the 400 ms example are idealized computations under uniform service assumptions. They are\n  not p99 predictions and not a benchmark.\n- **Modeled run metrics.** The retry-amplification comparison (1.004 versus 1.079) comes from\n  modeled discrete-event runs, not production telemetry.\n- **Unstated in the scenario:** hold-time distribution, lock/contention profile, pool mode\n  (session vs transaction), autoscaling peak, JDK build, and the definition of completed\n  transactions per second. Each changes the diagnosis.\n- **Virtual-thread pinning is release-dependent.** JDK 21–23 monitor pinning differs from JDK 24\n  behaviour, but no JDK change expands a fixed connection budget.\n- **Not verified:** whether the database is actually under-provisioned. The reported symptoms are\n  consistent with over-admission but do not prove it; only database-side saturation measurements\n  can decide.\n\n## 5. Evidence map\n\nEach claim below is backed by a verbatim fragment read through the CLI; the full ledger is in the\n`claims` array of this answer.\n\n| Claim | Section |\n|---|---|\n| C1 pool is not a throughput engine | `tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission` |\n| C2 160 leases versus 60 slots; doubling raises waiters | `tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting` |\n| C3 service bound depends on hold time | `tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting` |\n| C4 per-replica maxima sum into a fleet bound | `tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology` |\n| C5 a lease is a concurrency cap, not a hold-time control | `tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology` |\n| C6 thread count does not change the connection limit | `tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic` |\n| C7 virtual threads make tasks cheap, not operations | `tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not` |\n| C8 admission must precede task creation | `tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not` |\n| C9 a JDK fix cannot expand a fixed connection budget | `tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release` |\n| C10 failure signatures and mitigations | `tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery` |\n| C11 larger pools shift the queue into the database | `tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use` |\n| C12 PgBouncer modes and pool accounting | `tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics` |\n| C13 Little's Law accounting boundaries | `tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law` |\n| C14 separate response time from service demand | `tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation` |\n| C15 contention and coherency can reverse scaling | `tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law` |\n| C16 horizontal scaling multiplies shared connections | `tycho.page.6d571f3069e847408a5f1f7d45c797c1#4-vertical-horizontal-and-partition-scaling` |\n| C17 measure correct completions and retry amplification | `tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required` |\n| C18 admission, retry budget and bulkhead controls | `tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment` |\n| C19 closed-loop load hides overload | `tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load` |\n| C20 retry amplification arithmetic and modeled runs | `tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification` |\n| C21 retries need a bounded budget | `tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview` |\n| C22 utilization and saturation quantities | `tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities` |\n| C23 design-choice procedure | `tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure` |\n| C24 one shared pool starves core work | `tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation` |\n| C25 autoscaling is delayed feedback | `tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment` |",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A connection pool protects finite resources and amortizes setup, but it does not increase the database's useful query capacity; more request concurrency only increases time waiting for a fixed connection budget.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission",
+          "quote": "A connection pool protects finite resources and amortizes connection setup. It is **not** an engine that increases the database's useful query capacity.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission",
+          "quote": "Larger application request concurrency, virtual threads or reactive task count can increase time waiting for a smaller and fixed connection budget.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The eight-replica, twenty-connection, sixty-server-slot topology yields 160 client leases that are not 160 simultaneous database executions; doubling replicas can raise waiting clients and retry amplification while server connections stay fixed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "quote": "A simplistic calculation of 8×20 = 160 client leases is **not 160 simultaneous database executions**.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "quote": "Doubling application replicas could increase waiting clients and retry amplification while leaving server DB connections fixed.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The idealised completion ceiling is a function of connection hold time: 60 leased slots at 400 ms permit at most about 150 starts per second under uniform service assumptions, which is not a p99 guarantee and not a forecast under lock contention or pooling constraints.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "quote": "If a request holds a leased connection for 400 ms, the idealized service bound at 60 independent leases is at most 150 starts/s under uniform service-time assumptions—**not** a safe p99 guarantee, nor a forecast under lock contention or transaction pooling limitations.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "quote": "Transaction-pooling behavior can reuse physical server connections between transactions but has session-state compatibility constraints; a lease held across a long transaction retains scarce capacity.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Per-replica pool maxima sum into a fleet-level upper bound on backend connections, and adding one replica raises that bound unless orchestration or budgets change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+          "quote": "Suppose an entirely fictional deployment has **4 application instances**, each configured with `maximumPoolSize=25`. The combined nominal pool upper bound is **100** open backend connections **if** each pool directly opens to PostgreSQL and is fully populated. Adding a fifth replica increases that bound to 125 unless orchestration/budgets change.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A pool limit bounds concurrent access only; it says nothing about hold time, so rising query time or lock waits make connections occupy longer and request queues grow, and pooling should bound overload rather than hide it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+          "quote": "The number of connections allowed by a pool is a **limit on concurrent access**; it says nothing about how long each transaction holds a connection. If query time or locks increase, each connection is occupied longer and request queues can grow. Pooling should bound overload rather than hide it.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Service-rate arithmetic depends on hold time: with 20 connections and 0.10 s holds the upper bound is 200 operations/s, but at 0.25 s it falls to 80/s, and adding platform or virtual threads does not change the connection limit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+          "quote": "If hold time rises to 0.25s due to lock or network contention, the same arithmetic upper bound becomes **80/s**. Adding platform or virtual threads does not alter the 20-connections limit.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Virtual threads make tasks cheap but not operations: a blocked virtual thread can still retain heap, locks and a leased connection, and the carrier scheduler is not a backpressure mechanism.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not",
+          "quote": "A virtual thread blocked on supported I/O normally unmounts, but it can still retain heap state, locks and a leased DB connection. The carrier scheduler is not a backpressure mechanism.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A semaphore around the database call bounds database calls but not the number of virtual threads waiting for permits; admission must occur before task creation when pending work and memory must also be bounded.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not",
+          "quote": "**Important:** a semaphore inside unlimited submissions bounds DB calls but not the number of virtual threads waiting for permits. Use admission before task creation when pending work and memory must also be bounded.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A worked counterexample places 1,000 virtual tasks against twelve database connections; changing JDK pinning behaviour cannot expand that connection resource, and unbounded admission shows up as more accepted requests plus heap growth.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release",
+          "quote": "**Original synthetic scenario:** 1,000 accepted virtual tasks contend for twelve database connections.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release",
+          "quote": "Moving to a JDK with changed monitor-pinning behavior could reduce one scheduler hazard, but cannot expand the twelve-connection resource, undo a previously committed request or make the counter authoritative across replicas.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release",
+          "quote": "| More accepted requests, heap growth | Unbounded pending task admission | Live task count, heap and rejection rate |",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Documented pool failure signatures match the reported regression: too many replicas with large independent pools exhaust PostgreSQL connections; a pool can be saturated while database CPU is idle; and when the database is already CPU- or lock-saturated, larger pools worsen queueing, p99 and deadlocks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "| Too many replicas with large independent pools | PostgreSQL connection exhaustion after scaling | Bound total replica×pool count with operating headroom |",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "| Pool saturated despite idle DB CPU | Waiting clients and timeouts; perhaps long-held sessions | Trace connection hold time, transaction boundaries and pool wait |",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "| DB already CPU/lock saturated | Larger pools worsen queue, p99 or deadlocks | Stop scaling concurrency; optimize query and admission |",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Increasing pool size shifts the queue into the database, often increasing lock contention and memory instead of improving useful throughput.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+          "quote": "Increasing pool size shifts the queue into the database, often increasing lock contention and memory instead of improving useful throughput.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "PgBouncer bounds accepted client sessions separately from server connections per user/database pool, and transaction pooling can only reassign a server connection after a transaction completes, with session-state compatibility constraints.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+          "quote": "PgBouncer `max_client_conn` limits accepted client sessions; `default_pool_size` is a default maximum **server connections per user/database pool**.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+          "quote": "| **transaction** | Each transaction completes | Session-specific state across transactions can break; review prepared statements, temporary objects, LISTEN/NOTIFY, session settings and driver behavior |",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Throughput accounting must separate offered intents and retry attempts at ingress from admitted, completed and outstanding work; transient backlog growth cannot be converted into a steady-state Little's Law average, and explicit admission may meet a stronger usability requirement despite lower accepted-RPS metrics.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+          "quote": "| Offered | Distinct intents and retry attempts separately at ingress |",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+          "quote": "It is **invalid** to infer that `L = λW` gives a stable average W by substituting 120 offered requests/s and a transient L of 800: arrival and departure boundaries differ and the finite window is not stationary.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+          "quote": "A design that avoids an infinite queue through explicit admission may meet a stronger usability requirement despite lower accepted-RPS metrics.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Response time must be separated from resource service demand: a 300 ms response may contain 4 ms CPU and 40 ms DB time with the remainder waiting, and adding replicas cannot remove a serialized database lock, so pool acquisition, queue depth, lock waits and timeouts must be captured.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+          "quote": "Differentiate **response time** from **resource service demand**. A 300 ms response may include only 4 ms CPU, 40 ms DB time and the remainder waiting. Adding CPU replicas will not resolve a serialized database lock. Capture CPU saturation, query plans, lock waits, pool acquisition, queue depth, timeouts and downstream rate limits.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A scalability model fitted to measured points allows diminishing returns and retrograde throughput when contention and coordination costs grow, so adding workers or replicas can reduce net capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+          "quote": "Positive contention can cause diminishing returns; coordination can produce retrograde throughput. The equation is not proof of a particular bottleneck and does not predict capacity from registered-user counts alone.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Horizontal scaling adds independently serving instances but multiplies shared downstream connections and coordination, so replica count is not a free capacity multiplier.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#4-vertical-horizontal-and-partition-scaling",
+          "quote": "**Horizontal scaling** adds independently serving instances, but multiplies shared downstream connections and coordination.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Capacity evidence must sweep offered arrival rate and concurrency independently and compare completed correct transactions plus operational cost, while recording retry amplification, queue depth, resource saturation and generator limits.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required",
+          "quote": "Sweep offered arrival rate and concurrency independently with fixed data snapshot and representative request mix. Record warm-up, p50/p95/p99, errors, retry amplification, queue depth, resource saturation, hardware, software revisions and generator limits.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required",
+          "quote": "Compare completed **correct** transactions and operational cost, not throughput alone.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Admission control must apply before expensive work with a bounded in-flight limit, bounded queue and deadline-aware rejection, reporting offered, accepted, rejected, timed-out and completed logical operations separately; cross-layer retries can amplify one logical operation into many downstream attempts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+          "quote": "**Admission control** must be applied before expensive work. Define a bounded in-flight limit and queue, a deadline-aware rejection policy, and distinct metrics for offered, accepted, rejected, timed-out and completed logical operations.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+          "quote": "Model amplification across layers: if each of three layers retries an operation up to three times, a pathological path may trigger up to 27 downstream attempts for one logical operation (assuming all layers independently make three attempts).",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Closed-loop load generators reduce offered traffic as response times rise, hiding overload, and coordinated omission can understate observed latency, so the experiment's arrival model must be recorded.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+          "quote": "Closed models can reduce offered traffic as response times rise, hiding overload.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Retry amplification is total attempts divided by offered requests; in the modeled comparison a bounded, jittered budget stayed at 1.004 amplification with a 0.41% timeout rate, while two attempts with linear backoff reached 1.079 amplification and an 11.1% timeout rate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "The retry amplification metric is total attempts divided by offered requests.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "B has three attempts with exponential backoff and full jitter: retry amplification 1.004,\n  timeout rate 0.0041, success 0.9996.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "C has two attempts with linear backoff: retry amplification 1.079, timeout rate 0.111,\n  success 0.9679.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Retries only help when failure is transient and the retry budget is bounded; without a budget, backoff and jitter, retries add load to an already saturated system, and backpressure, queue capacity and bulkheads decide whether the system rejects explicitly or collapses.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview",
+          "quote": "**Short answer.** A retry helps only when the failure is transient and the retry budget is\nbounded. Without a budget, backoff and jitter, retries add load to an already saturated\nsystem. Backpressure, queue capacity and a bulkhead decide whether the system rejects work\nexplicitly or collapses under it.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Queueing quantities express utilization as offered load divided by capacity (lambda / (c * mu) for c identical servers); once utilization reaches 1.0, throughput equals capacity, backlog persists and rejections appear only if admission is capped.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "- Utilization (rho): offered load divided by capacity, rho = lambda / mu for one server\n  class, or lambda / (c * mu) for c identical servers.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "The saturation stock-flow scenario offers 30 requests per second against 24 requests per\nsecond of service capacity. Utilization is 1.0 after the backlog fills, throughput is 24\nrequests per second and the rejection rate is 0.2 because admission is capped at 80 requests.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The design-choice procedure requires measuring connection acquisition wait, active/idle counts, hold-time percentiles, transaction duration, lock waits and utilization, then choosing a per-service maximum as a bounded share of the aggregate budget at peak replica count rather than normal count.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+          "quote": "4. Measure connection acquisition wait, active/idle counts, hold time percentiles, transaction duration, lock waits and resource utilization.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+          "quote": "5. Choose per-service `maximumPoolSize` as a bounded share of the aggregate budget; account for peak replica count, not normal replica count.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+          "quote": "2. Define how many backends the actual PostgreSQL configuration safely supports **for this workload** (not merely its hard max).",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+          "quote": "3. Reserve failure, failover, admin, monitoring and migration headroom.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "A single shared outbound pool can be consumed by one work class and delay core work even while the database is healthy, so an edge quota alone does not protect the specific scarce pool.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "A single shared outbound pool of twenty slots is consumed by recommendations, delaying bookings even though the database remains healthy. An API-edge quota alone does not protect the specific scarce pool.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Autoscaling is a delayed feedback loop rather than an instantaneous capacity guarantee, and scaling application replicas can exhaust a fixed downstream connection or rate-limit budget.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+          "quote": "**Autoscaling** is a delayed feedback loop, not an instantaneous capacity guarantee.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+          "quote": "Scaling application replicas may also exhaust a fixed downstream connection or rate-limit budget.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+    "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#overview",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#3-universal-scalability-law",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#4-vertical-horizontal-and-partition-scaling",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#5-reproducible-evidence-required",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#3-hikaricp-bounds-per-process-jdbc-connection-use",
+    "tycho.page.ac83eb7361a94d3fb27101cf7666346c#4-pgbouncer-s-pool-modes-change-semantics",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+    "tycho.page.c880ba1a0a594ad38d6713d198e46436#pinning-depends-on-the-jdk-release",
+    "tycho.page.c880ba1a0a594ad38d6713d198e46436#virtual-threads-tasks-are-cheap-operations-are-not",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+    "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+    "tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
