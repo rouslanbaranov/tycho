@@ -266,3 +266,10 @@ tool invocation that retrieves sources, or change.
     status reports; report only when the goal is complete or when a real blocker
     requires owner input. If a goal is already active, continue under it. This rule
     never overrides an explicit owner instruction to stop or pause.
+
+39. **Entry promotion workflow.** Every sufficient promotion follows
+    [governance/ENTRY-PROMOTION.md](governance/ENTRY-PROMOTION.md): one entry at a
+    time, lane content, integrator metadata, independent review, promotion, merge and
+    bookkeeping before the next entry. Use the report templates in that file. Charts
+    are generated and shown only after promotion, embedded as images, never as links
+    in intermediate reports.
