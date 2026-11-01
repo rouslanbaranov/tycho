@@ -1,0 +1,249 @@
+{
+  "task_id": "Q223",
+  "answer": "# Direct answer\n\nA rebuild is a re-derivation, not a new execution of the business workflow. The projector must suppress outbound effects while it replays because it is reading events that have already occurred: a confirmation email sent per applied event would be sent again for the same facts, and no view-level idempotency can take back an email that has already left the building. The view and the cursor must commit together because together they are one claim - that the view reflects the log through position P. If the cursor commits ahead of the view, a crash silently drops an event forever; if the view commits ahead of the cursor, a retry applies the event twice. Two independent commits have no shared transaction, so the pair has to be made one local atomic act (same store and transaction, or an idempotent apply that records the applied event/stream version with the row). Any gap, backwards move or unresolvable position is a failure state, not a freshness detail.\n\nThe rebuilt view may serve queries as current only after all of these hold:\n\n1. Replay has applied the log under one declared mapping version, from the declared start (the beginning, or a snapshot validated for that mapping) to a recorded position P, with no unresolved cursor gap.\n2. P is at least the position the read requires; a query that needs a newer position waits, reroutes or fails, and an older row must never pass as current.\n3. Validation passed: completeness and reconciliation checks, sampled critical fields, golden fixtures for the changed semantics, integrity and retrieval smoke checks.\n4. Promotion is an atomic switch of the read alias or generation; queries pin one generation; the old generation is retired safely or kept for rollback.\n5. The view publishes the position it has applied and a freshness contract, so current means current as of P within the declared bound; high-integrity reads use the authority path.\n\nBefore that the view is explicitly lagging, partial or unavailable - never silently current. After a mapping change the old view is not merely stale: it is derived under a retired interpretation, so presenting it as current is a correctness error, not only a freshness lag (inference from the replay-differs rule and the recovery sequence below).\n\nLayer note: the question needs the book layer for the projection, event-sourcing and atomicity mechanism, and the atlas layer for pattern identity, ownership and contraindications. The modeling-and-simulation layer was searched and returned only a run-provenance page that does not bear on read projections, so the answer does not rely on it.\n\n# Mechanism and justification\n\nThe six facets below are the decision-relevant decomposition: why the mapping change forces re-derivation, why effects are suppressed and where that gate ends, why view and cursor are one fact, what makes serving as current legitimate, what the rebuild and serving contract must record, and which limits and alternatives bound the recommendation.\n\n## Facet 1 - A mapping change is a change of function, so only replay can re-derive the view\n\nA projection is derived data: its rows are a function of the events plus the mapping code. A mapping change replaces that function. Replaying a historical sequence under different event semantics may not produce the same result, which is why the book pairs redefined semantics with versioned interpretation, golden fixtures and a migration policy (CQRS section 2, section 5). Existing rows were computed by the old function, so applying only new events forward would leave a view in which earlier rows mean one thing and later rows another. That mix can look internally plausible while never being consistent at a single mapping version (inference). The Tycho rule is that a rebuild reads the authority, not the projection, and records the position it applied (multi-store notes). A snapshot is only an accelerator and a derivative cache unless declared and validated as the authority, and rebuilds must check offset continuity and event schema compatibility (CQRS section 2). A snapshot produced under the old mapping therefore cannot seed the new view without that validation, which is why reading from the beginning is the safe default after a genuine change of meaning (inference).\n\n## Facet 2 - Suppress the confirmation email, but bound the suppression\n\nThe projector's contract is to derive state, not to repeat business effects. A confirmation email is an irreversible, user-visible action; the same event re-read during replay would send it again, and the book is explicit that replaying old authoritative events must not resend real money, email or notifications unless that is an explicitly isolated new business workflow (CQRS section 4). A consumer must not treat receipt of an event as authorization to repeat the effect (same section). During a rebuild the projector is deliberately re-reading history, so the only correct default is to disable outbound effects for the replay (CQRS section 3 and notes; atlas CQRS card). This is not a special case of idempotency: an email provider may accept a duplicate, and an ambiguous send (provider accepted, acknowledgement lost) is exactly the case the outbox page says needs a reconciliation contract rather than an assumption (outbox section 4).\n\nTwo design consequences follow, both inferences from that evidence:\n\n- Suppression must cover the whole effect path, not just the send call. If the projector writes the email into an outbox table inside the view store, a relay can publish the replayed rows after promotion; the rebuilt generation must exclude or neutralize that queue, or the effect must be owned by a separate consumer outside the rebuild (outbox section 2 shows the relay publishing committed outbox rows).\n- Suppression must be bounded by a position. History up to the cutover position B is replayed with effects off; events first seen after B are new business occurrences and must still produce their email, or the rebuild silently swallows the legitimate effects it was meant to preserve. The corpus supports the halves separately: the rebuild protocol uses an explicit change boundary, applies retained subsequent changes and only then switches the read alias (offsets/effects), while a live rebuild that permanently misses updates during the scan does not satisfy the invariant (incident evidence). The replay-mode gate plus explicit external-effect reconciliation in the failure table closes the ambiguous cases (CQRS section 5).\n\n## Facet 3 - View and cursor are one fact, so they commit together\n\nThe cursor (offset, stream version, applied position) is the statement that the view contains everything through here. The row and that statement must be true at the same time. The failure is easy to state: a projector crashes after applying an event but before recording its cursor, so it consumes the same event again; the read-side update must therefore be idempotent or use an atomic record of event/stream version with the state change (CQRS section 4). Ordering two independent commits does not remove the window: committing the position before the effect can silently lose it, committing after can duplicate it, and no perfect ordering of two independent commits creates an automatic global transaction (offsets/effects section 4). That is why the rule is to commit view and cursor atomically (CQRS section 3; atlas CQRS card), with the deduplication marker and the derived write committing together (multi-store notes), and to reject a position that would move the projection backwards (CQRS notes).\n\nThere is a second, less obvious reason. The published applied position is the only evidence a caller has for judging freshness. If the position can be ahead of the rows, the freshness contract is false; if it can lag behind, the view is needlessly withheld. At the same time, an offset is a replay position, not proof that a user-visible effect succeeded (offsets/effects section 4), so cursor atomicity protects the view, not the email; effects still need their own identity and reconciliation.\n\n## Facet 4 - When the rebuilt view may serve queries as current\n\nThe governing rule is positional, not temporal. A view may be called current only relative to a recorded position and a declared freshness contract: it must record its source version or offset, refresh trigger and freshness contract, and a stale view is a derived read, not authority (CQRS section 3). The projection owner publishes the event schema it accepts, the position it has applied and the staleness callers should expect; a query that needs a newer position waits, reroutes or fails, and an older row must never pass as current (CQRS notes). Unknown or lagging views must be represented explicitly rather than served as current (CQRS section 3), and a half-migrated projection is unavailable, not merely stale (multi-store notes).\n\nThe promotion gate therefore has four operational parts:\n\n1. Completeness: replay from the declared start to a recorded P, no unresolved gap, one mapping version; the rebuild protocol compares completeness before switching the read alias (offsets/effects rebalance section).\n2. Validation: counts and sampled critical fields reconciled, golden fixtures for the changed semantics (CQRS section 5), integrity and retrieval smoke checks (task recovery).\n3. Atomic promotion: rebuild into a separate generation, validate the candidate before promotion, pin queries to one generation, retire old generations safely (snapshot access); switch readers atomically under a freshness gate (incident evidence); atomically publish the updated search generation (index lifecycle).\n4. Contract: the applied position and the staleness bound are visible, and reads that need authority use the authority path (CQRS section 3; atlas CQRS card).\n\nOnly after 1-4 may it serve as current. While they are incomplete the options are: keep the previous generation serving as explicitly stale or partial if the contract allows it, route reads to the authority, or return unavailable. What is not allowed is presenting the old or partial view as current - and after a mapping change the old view is not just late, it is interpreted under retired semantics, so its rows can be wrong rather than merely stale (inference).\n\n## Facet 5 - What the rebuild and serving contract must contain\n\nA rebuild needs an owner, a recorded position and a freshness contract (CQRS notes limits). It should be a named procedure that preserves log offsets and blocks outbound effects (CQRS Read Projections note), with the four-part invariant - freshness, rebuild, deduplication, schema migration - written down before the projection serves traffic (multi-store notes). Concretely the record should carry: the mapping or version identifier applied, start and end positions, the side-effect gate and its release boundary, the separate generation, the validation set, the atomic alias switch, query pinning, the retirement and rollback rule, and lag, offset-gap and duration signals. The failure table already names the minimum evidence per condition: versioned interpretation and golden fixtures for redefined semantics; a snapshot/replay plan, lag SLI and fallback for a rebuilt query view; a replay-mode gate and external-effect reconciliation for side effects fired on replay; atomic cursor/effect plus a dedup test for a crash after effect (CQRS section 5). Schema compatibility is a separate axis: projection, event and authority schemas each have a compatibility window, and an unknown version is rejected rather than silently coerced (multi-store notes), while compatibility remains an additional axis that needs a full matrix (DDL events section 4).\n\n## Facet 6 - Boundaries, trade-offs and failure modes\n\n- At-least-once plus consumer idempotency is the practical contract. A broker's producer idempotence or transactions cannot make an unrelated database row or an email provider globally exactly once (outbox section 4; offsets/effects section 4). Atomic view plus cursor is the local substitute for a distributed transaction, and it does not extend to external effects.\n- Suppression alone is not a fix. Without a release boundary you lose legitimate effects; without effect-owner deduplication and reconciliation you still duplicate ambiguous sends. The atlas warning is exact: external effects and duplicate delivery need an explicit boundary, not an assumed idempotent projector (atlas event-sourcing card).\n- A full replay is not always required. An additive mapping change with a declared compatibility window may be handled by a forward migration or backfill plus end-state equality checks; the corpus supports compatibility windows and a migration policy but does not say which changes qualify (inference). If the change alters historical meaning, replay is the safe path.\n- Cost and contention are real: a second generation typically doubles storage and I/O, a plain materialized-view refresh can block reads and even a concurrent refresh consumes I/O (atlas materialized-view card), and a rebuild whose duration outweighs the read benefit is a reason to revisit the separation (atlas CQRS card).\n- Alternatives: synchronous authority read, cache-aside, or a single model with indexes and views. CQRS and event sourcing are not defaults and should be chosen deliberately (CQRS sections 1 and 6); reverse the projection when freshness or rebuild cost outweighs the read-latency gain (CQRS section 3; atlas CQRS card). If every read requires immediate consistency with no version-wait or authority-read path, the pattern is contraindicated (atlas CQRS card).\n- The sources do not establish a numeric freshness threshold, tested projector crash behavior, or a guarantee that any particular broker or change-capture pipeline closes the snapshot/change gap; the rebuild protocol is an original unexecuted design and needs a source/CDC contract (offsets/effects; CQRS overview says the page is not a tested projector).\n\n# Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1 Rebuild necessity | mapping change projection rebuild; event schema version mapping replay historical state; replay historical events regenerate view | CQRS 2, 5; multi-store notes |\n| F2 Side-effect suppression | projection rebuild side effects email notifications; confirmation email duplicate replay; replay side effects | CQRS 4, 3, notes; outbox 4; atlas ES card |\n| F3 View plus cursor atomicity | projection cursor atomic commit; cursor offset checkpoint; consumer offset checkpoint | CQRS 3, 4, notes; offsets/effects 4; multi-store notes |\n| F4 Serve as current | materialized view stale derived read authority; read model promotion alias; rebuild read alias atomically; freshness contract | CQRS 3, notes; snapshot access 4; incident 4; index lifecycle 4 |\n| F5 Rebuild and serving contract | projection rebuild; derived view rebuild; cutover new index serving | CQRS notes; multi-store notes; offsets/effects rebuild protocol; task recovery 7 |\n| F6 Boundaries and alternatives | exactly once delivery; schema registry compatibility; CQRS read projections (atlas) | outbox 4; offsets/effects 4; CQRS 6; atlas CQRS and materialized-view cards |\n\n# Evidence map\n\n| Claim | Section key | Observed or inference |\n|---|---|---|\n| Replaying under changed event semantics may derive a different historical state; the control is versioned interpretation, golden fixtures and a migration policy | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table | Observed (failure table row) |\n| Replaying old authoritative events must not resend real money, email or notifications unless explicitly isolated; a consumer must not treat receipt as authorization to repeat the effect | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects | Observed |\n| Rebuild must run with external side effects disabled and an explicit checkpoint; a crash between apply and cursor causes re-consumption | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects | Observed (prose and state diagram text alternative) |\n| Projector failure recovery is: resume from recorded cursor, rebuild with side effects disabled, and never serve an unknown or lagging view as current | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness | Observed |\n| Apply must be idempotent and view plus cursor committed atomically; a stale view is a derived read and a current-state query must use an authority path | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness | Observed |\n| A materialized view must record source version or offset, refresh trigger and freshness contract; it must be rebuildable from the authority | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness | Observed |\n| Committing a position before an external effect can lose it; committing after can duplicate it; no ordering of two independent commits creates an automatic global transaction | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points | Observed |\n| A consumer offset is a replay position, not proof that a user-visible effect succeeded | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points | Observed |\n| Rebuild protocol: source snapshot with explicit change boundary, reconstruct the projection, apply retained changes with stable identities, compare completeness, then switch the read alias | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions | Observed |\n| Projection owner publishes accepted event schema, applied position and expected staleness; a query needing a newer position waits, reroutes or fails and an older row never passes as current | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes | Observed |\n| Rebuild authorization is a named procedure that preserves log offsets and blocks outbound effects; apply idempotently and reject a backwards position | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes | Observed (CQRS Read Projections note) |\n| A rebuild needs an owner, a recorded position and a freshness contract; a stale view is a derived read rather than authority | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes | Observed (Limits note) |\n| Rebuild reads the authority, not the projection, and records the position applied; dedup key survives redelivery and the marker commits with the derived write | tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes | Observed (Polyglot Persistence note) |\n| The four-part invariant is freshness, rebuild, deduplication and schema migration, and the serving rule is written before the projection serves traffic; a half-migrated projection is unavailable, not merely stale | tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes | Observed |\n| Projection, event and authority schemas each have a compatibility window and an unknown version is rejected rather than coerced | tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes | Observed |\n| Event schema compatibility is a separate axis and needs a full compatibility matrix across API, record, event schema, business status, authorization and replay history | tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis | Observed |\n| Rebuild consistency requires validating a candidate generation before promotion, pinning queries to one generation and retiring old generations safely | tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness | Observed |\n| Rebuild in a separate generation with snapshot/offset semantics, reconcile counts and sampled critical fields, then atomically switch readers under a freshness gate; a stale result must not be presented as verified current truth | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth | Observed |\n| Publish a valid new index generation only after integrity and retrieval smoke checks; retain the known-good generation on mid-build crash | tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery | Observed |\n| Atomically publish the updated search generation; source changes make entries stale until a validated update is published | tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem | Observed |\n| External side effect fired on replay creates a duplicate real-world action; the control is a replay-mode gate and explicit external-effect reconciliation | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table | Observed (failure table row) |\n| A registry card states Tycho guidance: commit the derived row and its cursor atomically, disable outbound side effects during rebuild, treat cursor gaps and schema drift as failure states | tycho.page.5c7d91711de3463eba59be2b16c607e4#overview | Observed |\n| Replay needs versioned handlers and a rebuild plan; external effects and duplicate delivery need an explicit boundary, not an assumed idempotent projector | tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory | Observed (Event Sourcing card) |\n| The event-sourcing card accepts replay only when external effects are separated and rejects it when replay side effects cannot be controlled | tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory | Observed |\n| Ambiguous external sends (provider accepted, acknowledgement lost) need a separate dedup, retry and reconciliation contract | tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix | Observed (failure matrix row) |\n| Outbox commits business state and publication intent together in one local transaction; there is no global transaction across relay, broker and consumer | tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary | Observed |\n| After a mapping change the existing view is not merely stale because its rows were derived under the retired interpretation, so serving it as current is a correctness error | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table | Inference from the replay-differs rule and the recovery sequence; no section states it in these words |\n| Suppression scoped only to the send call is insufficient if the email is queued in a store-local outbox that a relay later publishes | tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary | Inference from the outbox relay design and rebuild-blocking rule |\n| Suppression must end at a declared cutover position or effects for events arriving during the rebuild are lost | tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions | Inference joining the explicit change boundary with the live-rebuild-misses-updates invariant |\n| Reading from the beginning is the safe default after a semantic mapping change; a pre-change snapshot cannot seed the new view unless validated for that mapping | tycho.page.7beb6ba382a1458dbfba5800ff1b53af#2-event-sourcing-what-becomes-authoritative | Inference from snapshot-as-derivative-cache and replay-differs statements |\n\n# Unknowns and confidence\n\n- No section I found addresses mapping changes as such. The reading above is built from the adjacent, explicit statements about redefined event semantics, read-model changes, schema compatibility windows and the replay-differs failure row. A different wording of the change (for example, a pure presentation change with identical business meaning) would weaken the full-rebuild claim and could permit a forward migration with equality evidence.\n- No executed rebuild, projector crash test or projection engine is reported; the CQRS page states it is not an implemented event store or tested projector, the rebuild protocol is an original unexecuted design, and the incident drill is fictional. Mechanisms are documented design guidance, not measurements.\n- The sources I found establish no numeric freshness bound; the book explicitly refuses a numeric threshold without an approved requirement and representative tests. Whether a given read may be served from the rebuilt view depends on a contract the operator must write, not on a number the sources supply.\n- Whether the confirmation email can instead be deduplicated by a durable provider-side key tied to event identity is not settled by the corpus. If such a key exists and is proven, a deduplicated send could be a documented alternative to suppression; suppression remains the safer default because the replay would still be re-executing a business workflow it does not own.\n- The atlas layer is explicitly a draft registry with bounded cards and heading-anchor owner citations, not independent review or proof of coverage. Its statements are used here as pattern-identity and contraindication evidence, consistent with the owner page.\n\nConfidence is high on the mechanism: independent passages on the owner page, the atlas cards, the offset/effect page and the rebuild protocol all agree on suppression, atomic view plus cursor, and positional freshness. Confidence is medium on the exact serving gate, because the sources state the rule (position, freshness contract, explicit stale state) but do not define a single test or threshold that promotes a rebuilt view to current.",
+  "citations": [
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+    "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+    "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis",
+    "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+    "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+    "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+    "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+    "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#2-event-sourcing-what-becomes-authoritative",
+    "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#6-sufficient-evidence-and-pattern-contraindications"
+  ],
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Why a mapping change forces re-derivation from the log rather than forward patching",
+      "evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#2-event-sourcing-what-becomes-authoritative",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Why the rebuild must suppress confirmation-email side effects, and where the suppression boundary lies",
+      "evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Why the view and cursor must commit as one atomic fact, and what failure each ordering causes",
+      "evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "When the rebuilt view may serve queries as current, and what must be true before that",
+      "evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+        "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+        "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "What the rebuild and serving contract must record: owner, positions, validation, promotion, retirement",
+      "evidence": [
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+        "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+        "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table",
+        "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "Boundaries, failure modes, alternatives and what the sources do not establish",
+      "evidence": [
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#6-sufficient-evidence-and-pattern-contraindications",
+        "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "claim": "Replaying under redefined event semantics may derive a different historical state; the control is versioned interpretation, golden fixtures and a migration policy.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table",
+      "note": "Observed: failure table row 'Event semantics redefined in code -> Replay may derive a different historical state -> Versioned interpretation, golden fixtures and migration policy'."
+    },
+    {
+      "claim": "Replaying old authoritative events must not resend real money, email or notifications unless that is an explicitly isolated new workflow; receipt of an event is not authorization to repeat the effect.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+      "note": "Observed: 'replaying old authoritative events must not resend real money, email or notifications unless that is an explicitly isolated new business workflow'; 'a consumer must not treat receipt as authorization to repeat the effect'."
+    },
+    {
+      "claim": "A crash after applying an event but before recording the cursor causes re-consumption; the read-side update must be idempotent or record the event/stream version atomically with the state change.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects",
+      "note": "Observed: opening paragraph of section 4 and the state diagram text alternative ('Projection + cursor committed atomically')."
+    },
+    {
+      "claim": "Failure recovery is: resume from a recorded cursor, rebuild with external side effects disabled, and represent an unknown or lagging view explicitly rather than serving it as current.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+      "note": "Observed: 'Resume from a recorded cursor, rebuild with external side effects disabled, and represent an unknown or lagging view explicitly rather than serving it as current.'"
+    },
+    {
+      "claim": "Apply must be idempotent and view plus cursor committed atomically.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+      "note": "Observed: 'make the apply idempotent, commit view and cursor atomically' in the CQRS failure and alternative paragraph."
+    },
+    {
+      "claim": "A materialized view must record source version or offset, refresh trigger and freshness contract, be rebuildable from the authority, and is a derived read rather than authority.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+      "note": "Observed: 'A stale view is a derived read, not authority; a query that requires current state must use an authority path.'"
+    },
+    {
+      "claim": "Committing a position before an external effect can silently lose it; committing after can duplicate it; no ordering of two independent commits creates an automatic global transaction.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+      "note": "Observed: 'Committing offset before the external effect can cause that effect to be silently lost after a crash. Committing it after the effect can cause duplicates. No perfect ordering of two independent commits creates an automatic global transaction.'"
+    },
+    {
+      "claim": "A consumer offset is a replay position, not proof that every user-visible effect succeeded.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+      "note": "Observed: 'A consumer group offset is a replay position, not proof that every user-visible effect succeeded.'"
+    },
+    {
+      "claim": "The rebuild protocol takes a source snapshot with an explicit change boundary, reconstructs a new projection, applies retained subsequent changes with stable identities, compares completeness and then switches the read alias.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+      "note": "Observed: 'An original rebuild protocol creates a source snapshot with an explicit change boundary... compares completeness and then switches the read alias. It requires a source/CDC contract that actually closes the snapshot/change gap.'"
+    },
+    {
+      "claim": "The projection owner publishes the accepted event schema, the applied position and the expected staleness; a query needing a newer position waits, reroutes or fails, and an older row must never pass as current.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+      "note": "Observed: 'A query needing a newer position waits, reroutes or fails; an older row must never pass as current.'"
+    },
+    {
+      "claim": "Rebuilds are authorized through a named procedure that preserves log offsets and blocks outbound effects; events apply idempotently and a position that would move the projection backwards is rejected.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+      "note": "Observed: CQRS Read Projections note."
+    },
+    {
+      "claim": "A rebuild needs an owner, a recorded position and a freshness contract; a stale view is a derived read rather than authority.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+      "note": "Observed: Limits paragraph of the bounded pattern ownership notes."
+    },
+    {
+      "claim": "Rebuild reads the authority, not the projection, and records the position it applied; the deduplication key survives redelivery and its marker commits with the derived write.",
+      "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+      "note": "Observed: four-part invariant bullets (Rebuild, Deduplication)."
+    },
+    {
+      "claim": "The four-part invariant is freshness, rebuild, deduplication and schema migration, written before the projection serves traffic; a half-migrated projection is unavailable, not merely stale.",
+      "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+      "note": "Observed: 'A projection that is half migrated fails the freshness contract and is unavailable, not merely stale.'"
+    },
+    {
+      "claim": "Projection, event and authority schemas each have a compatibility window, and an unknown version is rejected rather than silently coerced.",
+      "section_key": "tycho.page.06363f8c9c8244aaa2bbc12abee16fa4#bounded-pattern-ownership-notes",
+      "note": "Observed: Schema migration bullet of the four-part invariant."
+    },
+    {
+      "claim": "Event schema compatibility is an additional axis needing a matrix across API, record, event schema, business status, authorization and replay history; wire-level compatibility does not preserve meaning.",
+      "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis",
+      "note": "Observed: section 4 of the DDL/event compatibility page."
+    },
+    {
+      "claim": "Rebuild consistency requires deciding what happens when the source changes mid-build, validating a candidate generation before promotion, pinning queries to one generation and retiring old generations safely.",
+      "section_key": "tycho.page.990dac261357498fa433cf98e87817d3#4-snapshot-and-index-identity-prevent-silent-staleness",
+      "note": "Observed: section 4 on snapshot and index identity."
+    },
+    {
+      "claim": "Rebuild in a separate generation with snapshot/offset semantics, reconcile counts and sampled critical fields, then atomically switch readers under a freshness gate; a stale result must not be represented as verified current truth.",
+      "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#4-original-fictional-incident-search-index-diverges-from-stored-truth",
+      "note": "Observed: fictional incident drill, Recover and Detect paragraphs."
+    },
+    {
+      "claim": "Publish a valid new index generation only after integrity and retrieval smoke checks, and retain the known-good generation on a mid-build crash.",
+      "section_key": "tycho.page.5f1fe7b87ce443889dd4662fe845794a#7-failure-and-recovery",
+      "note": "Observed: failure and recovery table."
+    },
+    {
+      "claim": "An updated search generation is published atomically; source changes make entries stale until a validated update is published.",
+      "section_key": "tycho.page.0ea71c3228744d0c99a3e4826b9167ad#4-incremental-indexing-and-the-stale-citation-problem",
+      "note": "Observed: index maintenance contract and state diagram text alternative."
+    },
+    {
+      "claim": "An external side effect fired on replay creates a duplicate real-world action; the minimum control is a replay-mode gate plus explicit external-effect reconciliation.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table",
+      "note": "Observed: failure table row 'External side effect fired on replay'."
+    },
+    {
+      "claim": "Atlas guidance for CQRS: commit the derived row and its cursor atomically, disable outbound side effects during rebuild, treat cursor gaps and schema drift as explicit failure states; reject the pattern when every read needs immediate consistency with no version-wait or authority-read path.",
+      "section_key": "tycho.page.5c7d91711de3463eba59be2b16c607e4#overview",
+      "note": "Observed: decision card, Failure and recovery plus Hard contraindications."
+    },
+    {
+      "claim": "Replay needs versioned handlers and a rebuild plan; external effects and duplicate delivery need an explicit boundary, not an assumed idempotent projector.",
+      "section_key": "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+      "note": "Observed: Event Sourcing card in the atlas chapter entry inventory."
+    },
+    {
+      "claim": "The event-sourcing card accepts replay only when external effects are separated and rejects event sourcing when replay side effects cannot be controlled.",
+      "section_key": "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+      "note": "Observed: Good-fit conditions and Hard contraindications of the Event Sourcing card."
+    },
+    {
+      "claim": "An ambiguous external send (provider accepted, acknowledgement lost) needs a separate dedup, retry and reconciliation contract rather than an exactly-once assumption.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+      "note": "Observed: failure and recovery matrix row for a consumer that commits a side effect then loses acknowledgement."
+    },
+    {
+      "claim": "The outbox commits business state and publication intent in one local transaction; there is no global transaction across relay, broker and consumer.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+      "note": "Observed: section 2 and its text alternative."
+    },
+    {
+      "claim": "After a mapping change the existing view is not merely stale, because its rows were derived under the retired interpretation, so serving it as current is a correctness error.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#5-version-changes-and-failure-table",
+      "note": "Inference, not a quoted claim: joins the replay-differs rule with the recovery sequence 'stop serving the affected projection as current'."
+    },
+    {
+      "claim": "Suppressing only the send call is insufficient when the email is queued in a store-local outbox that a relay publishes later; the rebuilt generation must exclude or neutralize that queue.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#2-local-transaction-plus-outbox-the-changed-atomic-boundary",
+      "note": "Inference from the relay design and the requirement to block outbound effects during rebuild."
+    },
+    {
+      "claim": "Suppression must end at a declared cutover position, or effects for events that arrive during the rebuild are lost.",
+      "section_key": "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+      "note": "Inference joining the explicit change boundary with the live-rebuild-misses-updates invariant."
+    },
+    {
+      "claim": "Reading from the beginning is the safe default after a semantic mapping change; a pre-change snapshot cannot seed the new view unless validated for that mapping.",
+      "section_key": "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#2-event-sourcing-what-becomes-authoritative",
+      "note": "Inference from 'a snapshot is a derivative cache unless declared and validated as the authority' and the replay-differs rule."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

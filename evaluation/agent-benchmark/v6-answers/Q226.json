@@ -1,0 +1,265 @@
+{
+  "task_id": "Q226",
+  "answer": "## 0. Layers, method and scope\n\nLayers used: **atlas first**, then **book** owner pages. The atlas layer supplied the pattern\nidentity, decision conditions and contraindications (Pipes and Filters, Idempotent Receiver,\nTransactional Inbox, Transactional Outbox, Idempotency Key, Resequencer, Distributed Workflow\nOrchestration). The book layer supplied the commit-boundary reasoning on the pages each card\nnames as its technical owner. Atlas queries were run with `--volume atlas`; owner pages were\nreached through the card's technical-owner path. The snapshot is\n4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a.\n\nSix facets were fixed before searching because the question has two independent halves (why the\nfilter fails; what three records must contain) and the second half splits into three records with\ndifferent scopes. The matrix is in section 2; the evidence map is in section 7.\n\n## 1. Direct answer\n\nThe filter fails because it commits stage **effects** but never commits the fact that a stage\n**completed inside this pipeline instance**. \"Non-transactional\" is the pattern's own phrase: the\nsimple filter receives, processes and forwards, and if it fails before the outbound channel the\nmessage is treated as lost - nothing binds the input message's disposal and the stage's effect\ninto one durable decision. In the scenario, the audit row is committed as an orphan: the row\nexists, but no durable record says \"order X: stages 1-2 completed, stage 3 not published\". When\nthe broker redelivers the original message a day later, the only identity still attached to it is\nthe message identity, and that is the wrong scope for deciding what to skip.\n\nThe result is a two-way failure, not one:\n\n- If the filter deduplicates on the message (or the redelivery carries an id it has seen), it\n  suppresses the whole pipeline and the confirmation is never published: the completed stage is\n  preserved, the failed stage is lost.\n- If the filter has no durable marker (in-memory set, restarted process, marker committed\n  separately from the effect, or a retention window shorter than a day), it re-runs from stage 1\n  and inserts a second audit record: the failed stage is recovered, the completed stage is\n  duplicated.\n\nSo the non-transactional filter does not lose the audit data; it loses the **completion record**\nthat would let the audit row be reused. To answer the redelivery correctly the pipeline needs\nthree records, one per pipeline instance:\n\n1. **Stage identity** - a composite, per-stage effect identity: pipeline instance (order id),\n   stage ordinal and name, input message identity, effect identity, and the consumer/pipeline\n   identity - written in the same local transaction as the stage effect and arbitrated by a\n   uniqueness constraint. The audit stage and the confirmation stage have different identities;\n   the message identity alone is neither.\n2. **Ordering scope** - a declared population over which the sequence 1->2->3 is enforced (here\n   one order id, with a single in-order consumer or a partition key), plus a sequence or version\n   that makes a late or out-of-order delivery recognizable, the duplicate rule (which is not the\n   order rule), and the disposition for late deliveries.\n3. **Recovery checkpoint** - a durable per-instance record of the last completed stage ordinal\n   (2), the stage in progress (3, in-progress rather than committed), the committed effect\n   references (audit record id), a durable publish intent for the confirmation, the broker\n   position last acknowledged, and a retention deadline that exceeds the redelivery horizon.\n\nWith these, the day-later redelivery resolves to: same instance; next expected ordinal is 3;\nstages 1-2 are committed and therefore no-ops; stage 3 has an intent and is re-driven with the\nsame publication identity; the acknowledgement follows the checkpoint commit. Without them, no\nordering of checks can both avoid the second audit row and publish the confirmation.\n\n## 2. Facet matrix\n\n| # | Facet | Query formulations used | Primary evidence |\n|---|---|---|---|\n| F1 | Why a non-transactional filter fails to preserve the completed stage | \"non-transactional filter\"; \"simple filter not transactional\"; \"message lost before output channel\"; \"partial completion and recovery\" | tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview; tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview |\n| F2 | Stage identity and deduplication scope | \"stage identity\"; \"effect identity\"; \"dedup key consumer identity\"; \"event id vs command id vs effect id\" | tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects |\n| F3 | Ordering scope and late or out-of-order delivery | \"ordering scope\"; \"per-key versus global order\"; \"resequencer sequence domain\"; \"queue contract ordering scope\" | tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global; tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview |\n| F4 | Recovery checkpoint contents | \"declared checkpoint\"; \"last completed stage\"; \"operator state and source position\"; \"in-progress and completed record\" | tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview; tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints |\n| F5 | The day-later redelivery resolution | \"redelivery after audit commit\"; \"crash after effect before ack\"; \"retention exceeds redelivery\"; \"reconcile stale in-progress\" | tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary |\n| F6 | External publish boundaries and alternatives | \"external effect cannot join transaction\"; \"outbox publication intent\"; \"exactly-once limits\"; \"pipeline contraindications\" | tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback |\n\n## 3. Why the non-transactional filter fails\n\n### 3.1 What the filter does and does not commit\n\nThe pattern's contract is narrow: a filter receives on an inbound pipe, processes the message and\npublishes the result to the outbound pipe, with one inbound and one outbound port in the basic\nform. The style is justified only when the pipeline itself owns **ordering, partial completion and\nrecovery**. The book is explicit about the basic form: \"This simple filter example is not\ntransactional. If an error occurs while processing the message (before it is sent to the output\nchannel), the message is lost\", and the source's remedy is a Transactional Client. The book's\nfailure-and-recovery note adds what a production pipeline must supply beyond the source: a failed\nmiddle stage leaves earlier effects applied, so the pipeline must record stage identity and\nrecover through a transactional client or a declared checkpoint, and the operator needs the failed\nstage, its input identity and the last completed stage.\n\nTwo things follow. First, the filter's only durable output is whatever its processing writes -\nhere, the audit row. Second, the filter never writes that the row belongs to a completed stage of\na specific pipeline instance. \"Completed\" is a fact the pipeline asserts, and the non-transactional\nfilter asserts it nowhere that survives the crash.\n\n### 3.2 The commit schedule that breaks\n\nThe failure is a schedule, not a single crash. The inbox material identifies four windows, and all\nfour apply to a three-stage pipeline whose effects commit independently:\n\n| Window | What is durable | What a redelivery does if nothing else is recorded |\n|---|---|---|\n| Crash before the stage effect commits | Nothing for that stage | Retry can safely make the first commit |\n| Effect commits, marker does not | Audit row, no identity record | Re-applies the effect: duplicate audit |\n| Marker commits, effect does not | \"Processed\" record, no audit row | Falsely skips: missing audit, missing confirmation |\n| Both commit, acknowledgement lost | Effect and identity | Must find the committed result and skip, or duplicate |\n\nThe scenario lands in the fourth window for stage 2 (audit committed, acknowledgement not reached\nbecause stage 3 failed first) and the second window for stage 3 (no publish, no completion\nrecord). A non-transactional filter has no marker at all, so it cannot distinguish these windows;\nit can only restart the pipeline or trust an in-memory note. The book states the same rule\nindependently: deduplication is only as strong as its authority boundary, and an in-memory set\nfails across replicas, restarts and retained events.\n\n### 3.3 Why message-level deduplication flips loss into duplication\n\nIf the filter does add a marker, the natural but wrong key is the message identity. The dedup\nauthority material is direct: the identity must include the correct subscriber and event/effect\nscope, because two different consumers legitimately process the same event into different local\nstates; and the event id is not necessarily the business command id, nor the\nnotification-delivery effect id - equating all three is legitimate only when their semantic scopes\nreally coincide. A three-stage pipeline is exactly where they do not coincide: one order message\nproduces one validation decision, one audit record and one confirmation publication. Keying\ndeduplication on the message collapses three effects into one identity, so the redelivery of the\nmessage is read as \"this pipeline already ran\" and stage 3 is skipped. The confirmation is lost by\nthe very record that was meant to prevent the duplicate.\n\nThe opposite choice - no marker, or a marker outside the effect's transaction - produces the\nduplicate audit. The card's guidance points the same way: good-fit conditions require each stage\nto carry an effect identity for deduplication, an explicit ordering scope, and a completion or\ncheckpoint rule with an owner; a pipeline where no one can recover a failed middle stage from a\ndeclared checkpoint is a hard contraindication.\n\n## 4. The three records and what they must contain\n\n### 4.1 Stage identity\n\nPurpose: make one stage's effect recognizable on redelivery, independently of the other stages.\n\nRequired fields:\n\n- **pipeline_instance_id** - the order id, stable across redeliveries and restarts. This is the\n  unit against which a redelivery is interpreted; without it a message id cannot be tied to the\n  run that already audited it.\n- **stage_ordinal and stage_name** (plus a stage contract version) - for example (1, validate),\n  (2, audit), (3, confirm). Three stages produce three identities; a single pipeline-level key\n  cannot answer \"was stage 2 committed\".\n- **input_message_id** - the broker message or event identity, the only thing the redelivery is\n  guaranteed to carry.\n- **effect_id** - the identity of what the stage produced: the audit record id for stage 2, the\n  confirmation publication id for stage 3. This is the value the uniqueness constraint protects.\n- **consumer/pipeline identity** - required when the dedup store is shared, because the source\n  scopes the key to a composite of consumer identity and message identity.\n- **parameter or payload fingerprint** - so a same-key delivery with different intent is a\n  conflict, not a silent success; a reused key with changed intent is a conflict, not idempotency.\n- **state** - new, in-progress, committed, rejected or incompatible duplicate, decided inside one\n  durable authority boundary.\n- **retention deadline** - the marker must outlive the redelivery horizon; the source requires\n  retaining each record at least as long as the broker can still redeliver the original message\n  and setting a TTL that exceeds that window.\n\nCommit rule: the identity record and the stage effect commit in one local transaction, and the\nstore, not application logic, arbitrates concurrent claims through a uniqueness constraint. For\nstage 2 the audit insert and the audit identity row are one commit, so there is no window in which\nthe row exists without the identity.\n\nWhat it must not be: the message id alone, an in-memory set, a marker written by a separate\ntransaction, or a key whose TTL is shorter than the observed redelivery delay. Each of these\nreproduces one of the failure windows above.\n\n### 4.2 Ordering scope\n\nPurpose: state over which population the stage sequence is a contract, and what a late delivery\nmeans inside it.\n\nRequired fields:\n\n- **scope key** - here the order id (pipeline instance). Ordering is per instance, not per topic:\n  the book defines ordering by where it is enforced (a transaction log's commit order, a\n  partition's append order, one actor's mailbox, a linearizable key-value access are different\n  contracts), and per-key order is distinct from global order.\n- **stage sequence** - the ordinal domain 1, 2, 3 and the checkpoint's last-completed ordinal as\n  the resume point. The sequence domain must be reliable and scoped to the ordering domain.\n- **enforcement locus** - one in-order consumer per instance, a partition key equal to the order\n  id, or a resequencer with a bounded buffer and a declared gap timeout. The book's invariant: a\n  parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering\n  scope and a resequencer; the source allows only one instance of each component when sequence\n  matters.\n- **version or sequence value** - carried on the message or the stage record so that a redelivery\n  arriving a day late is recognized as stale relative to the instance's progress and rejected,\n  not applied as a fresh stage. Deduplication removes duplicates but does not guarantee order, so\n  this cannot be inferred from the dedup marker.\n- **duplicate rule and late/out-of-order disposition** - declared separately: reject, buffer and\n  resequence, or route to reconciliation. The queue contract must state its ordering scope and\n  terminal path for poison messages.\n- **the reason the day matters** - the one-day delay is inside the instance's history, not a new\n  instance. The ordering record is what lets recovery say \"resume at ordinal 3\" instead of \"start\n  at ordinal 1\".\n\n### 4.3 Recovery checkpoint\n\nPurpose: make progress a durable, readable fact a redelivery can resume from, and make the\nincomplete confirmation an explicit pending item rather than an absence.\n\nRequired fields, one record per pipeline instance, updated at each stage boundary:\n\n- **pipeline_instance_id**.\n- **last_completed_stage_ordinal** - 2 after the audit commits; this is the field the operator\n  needs, together with the failed stage and its input identity.\n- **current stage** - ordinal 3, state in-progress, attempt count, timestamps and an owner or\n  lease. The in-progress state is what prevents a redelivery from either skipping the missing\n  confirmation or republishing blindly.\n- **committed effect references** - the audit record id, the validation result reference, and the\n  stage identities already committed, so recovery can prove what exists rather than infer it.\n- **publish intent** - the confirmation id, destination and payload reference, written durably in\n  the same local transaction as the checkpoint (an outbox row). This is the difference between\n  \"the publish failed\" and \"the publish never existed\": the intent survives the crash and gives\n  the replay something to re-drive. The outbox exists precisely because publication intent and\n  state change must share a commit, and its failure matrix shows both crash directions - after\n  commit before publish, retry; after publish before completion, duplicate publication that the\n  consumer must deduplicate.\n- **acknowledgement position** - the broker message id or offset last acknowledged. The\n  acknowledgement is a separate uncertain step and must follow the checkpoint commit, not precede\n  it; if the ack is again lost, the next redelivery must find a completed record and no-op.\n- **consistency statement** - what the checkpoint covers: operator state and source position are\n  restored consistently, but an external sink effect committed outside the checkpoint protocol is\n  not covered. Here the checkpoint covers the audit store and the publish intent; it does not by\n  itself make the broker publication atomic.\n- **retention and post-expiry policy** - a deadline at least as long as the broker's redelivery,\n  dead-letter replay and historical replay horizon (the question's one day is a floor, not the\n  bound), with a named cleanup owner and an explicit post-expiry behaviour: reconcile or reject,\n  never silently treat the expired identity as a new message.\n\nWhat it must not be: a counter updated only when the whole pipeline succeeds (a mid-pipeline crash\nwould then look like \"nothing done\"); a volatile scheduler field; or a \"completed\" flag without\nevidence that the effect committed. The workflow-orchestration card's caution is the same: a\ncompleted flag is not proof that the effect committed, so replay from durable history with\nidempotent activities and a repair state for unknown external effects.\n\n## 5. The day-later redelivery, step by step\n\n1. Receive the original message; read pipeline_instance_id from the order, not from a fresh run\n   id. The instance already exists; this is a re-entry, not a new pipeline.\n2. Check the ordering scope: the instance's next expected ordinal is 3 (last completed 2). A\n   stage-2 delivery at this point is stale by construction; the version or sequence check rejects\n   it instead of re-running the audit.\n3. Look up the stage identities for ordinals 1 and 2. Both are committed, so both are no-ops that\n   return the recorded outcome; no second audit row is inserted, because the uniqueness constraint\n   on the stage-2 effect identity rejects a second commit.\n4. Look up ordinal 3. The checkpoint says in-progress or not committed, and the publish intent\n   exists, so the stage is re-driven with the same confirmation identity. If the failed attempt\n   partially published, the downstream contract (idempotent publish, dedupe on the publication id,\n   or readback and reconciliation) is what makes the second attempt safe; the local checkpoint\n   alone cannot prove the broker state.\n5. Commit ordinal 3 completed together with the publication reference, then acknowledge. If the\n   acknowledgement is lost, the next redelivery finds a completed ordinal 3 and stops.\n6. If ordinal 3 is genuinely unknown (in-progress, no proof that the publish failed), reconcile\n   before acknowledging rather than marking the instance complete or republishing blindly. The\n   in-progress record signals that an earlier attempt might be partially completed or still\n   running elsewhere.\n\nNet effect: the audit record is preserved because its identity is durable and unique; the\nconfirmation is not lost because the incomplete stage is a durable, actionable record with an\nintent attached; and the redelivery is idempotent per stage because each stage's identity, not\nthe message's, is the dedup unit.\n\n## 6. Boundaries and trade-offs\n\n- **Exactly-once is not end-to-end here.** Atomicity covers what shares the local transaction. The\n  broker publication is an external effect: a separately committed send remains outside the local\n  commit boundary, and a local database cannot make a remote effect atomic. The confirmation needs\n  the outbox/intent plus a downstream idempotency or reconciliation contract; otherwise the best\n  available outcome is at-most-once plus a repair state, or at-least-once plus duplicate\n  suppression at the consumer.\n- **The transactional-client remedy is bounded.** The source's solution makes the filter\n  transactional with respect to a resource that can enlist in the transaction (for example the\n  audit store). It does not by itself make a broker publish atomic with that commit; that needs a\n  transactional broker resource, an outbox, or the two-phase in-progress/completed route.\n- **Per-stage identity costs a durable write and a retention store per stage.** If the work must\n  be atomic, or per-stage latency and coordination exceed the value of isolation, the pattern's\n  contraindication applies: keep one cohesive consumer with internal functions.\n- **Retention is a correctness parameter, not housekeeping.** A TTL shorter than the redelivery\n  horizon silently converts an expired identity into a new message. A one-day redelivery is\n  exactly the case that breaks a 24-hour-or-shorter marker.\n- **In-memory deduplication cannot satisfy this.** It fails across restarts and replicas, and the\n  pipeline has just restarted.\n- **Ordering is a separate decision from deduplication.** Deduplication removes duplicates but\n  does not order deliveries; a per-key scope plus a version check, a single in-order consumer, or\n  a bounded resequencer is required. A global resequencer can become a throughput bottleneck and\n  needs a gap timeout and a late-message disposition.\n- **Scope confusion is also a safety issue.** Deduplication must not bypass authorization or cross\n  tenant state; the book lists wrong tenant or owner scope as a failure row that needs explicit\n  evidence of safety.\n- **When identity cannot be held, change the pattern.** If identity is unstable, cannot be\n  retained, or the effect spans multiple authorities, the inbox approach is contraindicated; a\n  unique constraint, conditional write, naturally idempotent operation or repair state may be\n  preferable.\n- **Provenance of the guidance.** The book labels checkpoint, idempotency and backpressure\n  guidance as Tycho synthesis, not a source claim; the source supports the mechanism, the\n  non-transactional loss statement and the ordering constraint.\n\n## 7. Evidence map\n\n| Claim | Section key | Basis |\n|---|---|---|\n| A simple filter is not transactional; an error before the outbound pipe loses the message; the pattern's remedy is a transactional client | tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview | Source claim (quoted) |\n| A failed middle stage leaves earlier effects applied; record stage identity; recover via transactional client or declared checkpoint; operator needs failed stage, input identity, last completed stage | tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview | Tycho guidance |\n| Pipes and filters needs explicit ordering scope, per-stage effect identity and a checkpoint owner; no recoverable checkpoint is a contraindication | tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview | Mixed: source loss claim, Tycho idempotency |\n| Dedup identity must include consumer identity and event/effect scope; an in-memory set is not restart-safe | tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity | Source claim plus Tycho |\n| Marker and effect commit in one local transaction; retention covers broker redelivery, DLQ and replay; an expired identity becomes a new message | tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity | Source claim plus Tycho |\n| Four crash windows: effect-before-marker duplicates or suppresses; both committed plus lost ack requires recognising the recorded result | tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace | Inference (labelled original reasoning, not executed) |\n| Event id, business command id and delivery effect id are different scopes; equality is justified only when the scopes coincide | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects | Source-derived |\n| Deduplication is only as strong as its authority boundary; decide new/in-progress/committed/rejected/incompatible in one durable authority; define retention and post-expiry | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary | Mixed |\n| Retain each record at least as long as the broker can redeliver; TTL above that window; deduplication does not guarantee order | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes | Source claim (quoted) |\n| Idempotent receiver fits when identity is stable, identity and effect are atomic, retention covers redelivery, and concurrent duplicates are handled | tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview | Mixed |\n| Inbox atomicity is consumer-local; a separately committed send is outside it; acknowledgement is a separate uncertain step | tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview | Mixed |\n| A checkpoint is consistent operator state plus source position; an external sink effect committed outside the checkpoint protocol is not covered | tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints | Source claim plus Tycho |\n| Checkpoint boundary row: runtime-defined consistent state and offset; external sink outside it; late correction still needs a declared policy | tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore | Source-derived |\n| Ordering must be defined by where it is enforced; per-key order is distinct from global order and implies nothing between streams | tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global | Tycho synthesis |\n| The queue contract must state ordering scope and terminal path; a consumer needs an effect key, dedup rule and ack policy; effect-then-ack loss causes redelivery | tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes | Source claim plus Tycho |\n| Resequencer needs a declared required order, a reliable sequence domain scoped to the ordering domain, a bounded buffer, gap timeout and late-message disposition | tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview | Source claim plus Tycho |\n| Outbox: publication intent commits with the state change; crash after publish duplicates, after commit before publish retries; consumer deduplicates | tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview | Source claim |\n| Failure matrix: commit before relay publish leaves pending evidence; broker acceptance with lost progress permits replay; consumer effect plus lost ack needs one-transaction marker | tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix | Source claim plus Tycho |\n| Saga step table: confirm needs the evidence the user contract requires; notify needs a separate delivery effect identity; partial success is not completion | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback | Tycho synthesis |\n| Relay crash before its publication checkpoint causes republication; recover from durable history, keep activities idempotent, hold an ambiguous external effect | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional | Source claim plus Tycho |\n| A completed flag is not proof the effect committed; replay from durable history and use a repair state for unknown external effects | tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview | Source claim plus Tycho |\n| Idempotency key contract: key scope, fingerprint inputs, retention, outcome record and effect commit together; reused key with changed intent is a conflict | tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview | Mixed |\n\n## 8. Unknowns and confidence\n\n- **High confidence** on the failure mechanism and on the three record categories. Independent\n  pages converge: the pipes-and-filters card and owner page, idempotent receiver, transactional\n  inbox, inbox atomicity, dedup authority, outbox, the saga step table and the ordering-scope\n  section.\n- **Medium confidence** on the exact field list for \"stage identity\". No source defines a pipeline\n  stage-identity schema. The components are derived from the source's composite\n  consumer-and-message scoping, the effect-scope rule, and Tycho's per-stage effect-identity\n  guidance. Treat the field names as a design, not a standard.\n- **Unknown:** the broker's actual redelivery, dead-letter and replay horizon; whether redelivery\n  preserves the original message id or only the payload; whether the confirmation target supports\n  idempotency keys or readback; whether the audit and confirmation stages share a store. Each\n  changes the implementation, not the required records.\n- **Unknown:** whether the validation stage has any durable effect. If it does, it needs its own\n  identity and checkpoint entry.\n- **Not established:** any executed test. The four-window schedule and the state machine are\n  reasoning over documented behaviour; no broker, pipeline or reconciliation drill was run for\n  this answer, and the book labels comparable exercises as proposed rather than executed.\n- **What would change the answer:** a broker or confirmation API with a proven exactly-once\n  contract and readback would shrink the recovery record to an acknowledgement position; a single\n  local transaction spanning all three effects would remove the need for a checkpoint and make the\n  pipeline the wrong pattern.",
+  "citations": [
+    "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview",
+    "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+    "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+    "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+    "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace",
+    "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+    "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+    "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global",
+    "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+    "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+    "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+    "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+    "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+    "tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview"
+  ],
+  "evidence": [
+    {
+      "claim": "A simple filter is not transactional; a failure before the outbound pipe loses the message, and the source's remedy is a transactional client.",
+      "section_key": "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+      "note": "Quoted: 'This simple filter example is not transactional. If an error occurs while processing the message (before it is sent to the output channel), the message is lost.' Source claim, from EIP Chapter 3 pp.70-77 as reported.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "A failed middle stage leaves earlier effects applied; the pipeline must record stage identity and recover through a transactional client or a declared checkpoint; the operator needs the failed stage, its input identity and the last completed stage.",
+      "section_key": "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+      "note": "Tycho guidance added to the source's loss statement. This is the closest the book comes to naming the three records.",
+      "basis": "tycho-guidance"
+    },
+    {
+      "claim": "Pipes and filters is justified only when the pipeline owns ordering, partial completion and recovery; each stage needs an effect identity for deduplication; no recoverable checkpoint is a hard contraindication.",
+      "section_key": "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview",
+      "note": "Card good-fit conditions and hard contraindications; idempotency and checkpoint wording is explicitly Tycho guidance.",
+      "basis": "mixed"
+    },
+    {
+      "claim": "Deduplication identity must include the correct subscriber and event/effect scope; an in-memory set is not sufficient when the contract requires restart-safe deduplication.",
+      "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+      "note": "Owner section for the Transactional Inbox card; consumer-scoped identity plus the in-memory caveat.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "The marker and the business effect must commit in one local transaction; retention must cover broker redelivery, DLQ replay and historical replay; an expired identity becomes a new message.",
+      "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+      "note": "Retention horizon and post-expiry policy; the one-day redelivery is inside the horizon the page requires to be declared.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Four crash windows: effect-before-marker can suppress a missing effect; marker-before-effect can duplicate; both committed with a lost acknowledgement requires recognising the recorded result.",
+      "section_key": "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace",
+      "note": "Labelled original synthetic reasoning, not executed; used here as the schedule the three records must close.",
+      "basis": "inference"
+    },
+    {
+      "claim": "The event id is not necessarily the business command id, nor the notification-delivery effect id; making all three equal is legitimate only if their intended semantic scopes coincide.",
+      "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+      "note": "Direct support for per-stage effect identity rather than message identity.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Deduplication is only as strong as its authority boundary; decide new, in-progress, committed, rejected or incompatible inside one durable authority; define retention and post-expiry behaviour.",
+      "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+      "note": "Seven-part minimal contract; steps 3-4 are the commit rule, step 7 is the retention rule.",
+      "basis": "mixed"
+    },
+    {
+      "claim": "Retain each record at least as long as the broker can still redeliver the original message; set a TTL that exceeds that window; deduplication removes duplicates but does not guarantee order.",
+      "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#bounded-pattern-ownership-notes",
+      "note": "Verbatim source sentences about retention, TTL and the order caveat.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Idempotent receiver fits when messages carry stable identity, identity and effect are recorded atomically, retention covers the redelivery window, and concurrent duplicates are handled.",
+      "section_key": "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview",
+      "note": "Card good-fit conditions; contraindicated when identity is unstable or dedup state cannot be retained.",
+      "basis": "mixed"
+    },
+    {
+      "claim": "Inbox atomicity is consumer-local; a separately committed external send remains outside it; the broker acknowledgement is a separate uncertain step that follows the durable outcome.",
+      "section_key": "tycho.page.c934153c2f6c4adc9d73a32c997be89a#overview",
+      "note": "Card: external send needs an in-progress/completed record and reconciliation before acknowledgement.",
+      "basis": "mixed"
+    },
+    {
+      "claim": "A checkpoint records consistent operator state and source position; an external sink effect committed outside the checkpoint protocol is not covered by it.",
+      "section_key": "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+      "note": "Checkpoint definition and the external-sink caveat; the confirmation publish is such an external effect.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Checkpoint boundary row: runtime-defined consistent state and offset; an external sink side effect committed outside the checkpoint protocol is a detectable failure; a late correction still needs a declared policy.",
+      "section_key": "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore",
+      "note": "Late-arriving correction after checkpoint and restore; the one-day redelivery is the same shape without stream state.",
+      "basis": "source-derived"
+    },
+    {
+      "claim": "Ordering must be defined by where it is enforced; a transaction log's commit order, a partition's append order, one actor's mailbox and a linearizable key-value access are different contracts; per-key order implies nothing between streams.",
+      "section_key": "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global",
+      "note": "Definition used for the ordering-scope record: declare the scope and its enforcement locus.",
+      "basis": "tycho-guidance"
+    },
+    {
+      "claim": "The queue contract must state its ordering scope and terminal path for poison messages; a consumer needs an effect key, a deduplication rule and an acknowledgement policy; an effect that commits before its acknowledgement causes redelivery.",
+      "section_key": "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+      "note": "Point-to-point note; the redelivery description matches the question's audit-then-fail schedule.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "A resequencer needs a declared required order, a reliable sequence domain scoped to the ordering domain, a bounded buffer, a gap timeout and a late-message disposition; partition by key when global order is unnecessary.",
+      "section_key": "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview",
+      "note": "The enforcement mechanism if per-instance order must be repaired by buffering.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Outbox: publication intent commits with the state change; a crash after publish before completion duplicates, and after commit before publish retries; the consumer side still deduplicates.",
+      "section_key": "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+      "note": "Decision question is publication intent in the same local transaction as the state change.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Failure matrix: commit before relay publication leaves pending evidence; broker acceptance with lost progress permits replay; a consumer effect plus a lost acknowledgement needs the marker coupled in one consumer-side transaction.",
+      "section_key": "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+      "note": "Rows 3-5 are exactly the audit/publish windows in the question.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "Saga step table: confirm needs the evidence the user contract requires; notify needs a separate delivery effect identity; earlier partial success is not final completion.",
+      "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+      "note": "Durable state needed per step; the table is Tycho synthesis over the saga pattern.",
+      "basis": "tycho-guidance"
+    },
+    {
+      "claim": "A relay that crashes before marking its publication checkpoint republishes; recovery is from durable history with idempotent activities, and an ambiguous external effect is held or repaired rather than marked complete.",
+      "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+      "note": "Worked outbox-relay recovery; the checkpoint is the publication position, not the business fact.",
+      "basis": "source-claim"
+    },
+    {
+      "claim": "A completed flag is not proof that the effect committed; replay from durable history, keep activities idempotent, and use a repair state for unknown external effects.",
+      "section_key": "tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview",
+      "note": "Card runbook; the caution applies to any checkpoint that stores only a boolean completion.",
+      "basis": "mixed"
+    },
+    {
+      "claim": "Idempotency key contract: the operation owner publishes key scope, fingerprint inputs and retention; the outcome record and effect commit together; a reused key with changed intent is a conflict, not idempotency.",
+      "section_key": "tycho.page.d9c13bc73d3060017a13776ac9dec4b9#overview",
+      "note": "Supports the fingerprint and conflict-state fields of the stage identity record.",
+      "basis": "mixed"
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "facets": [
+    {
+      "id": "F1",
+      "facet": "Why the non-transactional filter does not preserve the completed stage",
+      "query_formulations": [
+        "non-transactional filter",
+        "simple filter not transactional message lost",
+        "error before output channel",
+        "pipeline partial completion and recovery"
+      ],
+      "evidence": [
+        "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+        "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview"
+      ]
+    },
+    {
+      "id": "F2",
+      "facet": "Stage identity and deduplication scope",
+      "query_formulations": [
+        "stage identity",
+        "effect identity per stage",
+        "dedup key consumer identity",
+        "event id vs command id vs delivery effect id"
+      ],
+      "evidence": [
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+        "tycho.page.8d1dbd92ef5042739736443d1f5a3d81#overview"
+      ]
+    },
+    {
+      "id": "F3",
+      "facet": "Ordering scope and late or out-of-order delivery",
+      "query_formulations": [
+        "ordering scope",
+        "per-key versus global order",
+        "resequencer sequence domain",
+        "queue contract ordering scope"
+      ],
+      "evidence": [
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#3-ordering-scopes-per-key-versus-global",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+        "tycho.page.19c9061504c7b1d7458d9697d8d55b3f#overview"
+      ]
+    },
+    {
+      "id": "F4",
+      "facet": "Recovery checkpoint contents and consistency boundary",
+      "query_formulations": [
+        "declared checkpoint",
+        "last completed stage",
+        "operator state and source position",
+        "in-progress and completed record",
+        "stale record reconciliation"
+      ],
+      "evidence": [
+        "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+        "tycho.page.205058a4a2da4523842395cc7864c8f0#3-flink-checkpoints-versus-deployment-savepoints",
+        "tycho.page.a2c47a0850154eaa95e1eb97e23f9c71#engineering-walkthrough-late-correction-after-checkpoint-and-restore"
+      ]
+    },
+    {
+      "id": "F5",
+      "facet": "The day-later redelivery resolution",
+      "query_formulations": [
+        "redelivery after audit commit",
+        "crash after effect before ack",
+        "retention exceeds redelivery window",
+        "reconcile stale in-progress before ack"
+      ],
+      "evidence": [
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#a-four-window-consumer-recovery-trace",
+        "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+        "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix"
+      ]
+    },
+    {
+      "id": "F6",
+      "facet": "External publish boundaries, alternatives and contraindications",
+      "query_formulations": [
+        "external effect cannot join local transaction",
+        "outbox publication intent",
+        "exactly-once limits",
+        "pipeline contraindications",
+        "durable workflow repair state"
+      ],
+      "evidence": [
+        "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+        "tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview"
+      ]
+    }
+  ],
+  "layers_used": [
+    "atlas",
+    "book"
+  ],
+  "snapshot": "4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a",
+  "notes": "Atlas first for pattern identity and contraindications; book owner pages for mechanism. Atlas queries used --volume atlas. No corpus, qrels, other answers or v6-answers were read; no repository edits or commits."
+}
