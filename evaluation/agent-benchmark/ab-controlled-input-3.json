@@ -1,0 +1,185 @@
+{
+  "pairs": [
+    {
+      "task_id": "Q006",
+      "question": "In Netflix\u2019s cloud migration retrospective, what failure helped motivate reconstruction instead of lifting the existing application unchanged?",
+      "core_claims": [
+        "The retrospective traces the migration motivation to a major database corruption event that interrupted DVD shipping for three days in 2008.",
+        "The event exposed concentration of failure and scaling dependencies in the company's specific vertically scaled datacenter environment, not a defect inherent in DVDs, relational databases or centralized architecture.",
+        "The engineering response was to rebuild for elastic, fault-contained services instead of transferring the unchanged monolithic application to rented machines, so lift-and-shift was rejected.",
+        "The target operating model was multiple independently operated cloud services with domain data boundaries, supported by a shared delivery platform, rather than the vertically scaled shared backend with central database dependencies."
+      ],
+      "optional_claims": [
+        "Customer-facing capabilities were largely in the cloud before the last remaining datacenter streaming components were switched off in early January 2016, so the change took years rather than a weekend conversion.",
+        "The case diagram is labelled a simplified, original educational view, not a literal inventory of services.",
+        "Architecture descriptions must state their evidence state: a drawing that shows only a desired topology is called proposed and is never presented as the observed running implementation."
+      ],
+      "answer_1": "The **August 2008 database-corruption event**, a major database corruption failure that interrupted DVD shipping for three days, is the failure the retrospective places at the start of the cloud migration and the one that helped motivate rebuilding rather than lifting the existing application unchanged.\n\nThe book records that Netflix rejected the \"simpler lift-and-shift option\" (running unchanged datacenter systems on rented cloud machines) and rebuilt for elastic, fault-contained services. The event exposed concentration of failure and scaling dependencies in the company's vertically scaled datacenter environment, not a defect inherent in DVDs, relational databases or centralized architecture. The target model was multiple independently operated cloud services with domain data boundaries on a shared delivery platform, not the vertically scaled shared backend with central database dependencies.\n\nBoundaries: the event is a triggering operational failure, not controlled evidence that all monoliths are unavailable, and the retrospective is a first-party account, not independent measurement; it does not make the event the sole cause. A cloud migration is not automatically a microservices migration, so the book rejects direct transfer for one stable team, low release frequency, a reliable transactional model and no measured scaling need; a modular monolith may address coupling without adding network failure modes. Distributed-service costs are inferred risks, not measured outcomes.",
+      "answer_2": "The failure was a major database corruption event in August 2008 that interrupted DVD shipping for three days. It exposed the concentration of failure and scaling dependencies in the vertically scaled datacenter environment, and the retrospective places it at the start of the migration project. That operational failure helped motivate a multi-year reconstruction into elastic, fault-contained services rather than lifting and shifting the unchanged monolithic application onto rented cloud machines.",
+      "citations_1": [
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#transition-sequence-and-evidence",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#trade-offs-missing-facts",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy"
+      ],
+      "citations_2": [
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes",
+        "tycho.page.db99bd9dbe5c4058a286afaeb129f156#transition-sequence-and-evidence"
+      ]
+    },
+    {
+      "task_id": "Q014",
+      "question": "What artifacts are needed for a physical point-in-time restore using PostgreSQL WAL?",
+      "core_claims": [
+        "A physical point-in-time restore requires a consistent physical base backup of the cluster, not a set of periodic SQL dumps.",
+        "The restore also needs the complete archived WAL chain covering the interval from the base backup to the chosen recovery point, together with the matching timeline.",
+        "Recovery must run on a compatible PostgreSQL runtime with the required configuration and storage; access to the right encryption keys is a recovery prerequisite, while a missing WAL segment, wrong key or inaccessible archive blocks the restore.",
+        "A proposed, not executed, safer response is to restore the base backup and WAL into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover; a running database alone does not prove recovery.",
+        "A streaming replica is not a substitute for these artifacts: it may already have replayed the deletion or corruption, so it cannot serve as a historical recovery source."
+      ],
+      "optional_claims": [
+        "PostgreSQL 17 continuous-archiving documentation supports base backup plus WAL recovery, timelines and backup-chain constraints, but the Tycho chapter executed no restore and measured no RPO/RTO.",
+        "Archive lag increases data-loss risk, so the intended recovery point must fall inside the WAL coverage actually retained.",
+        "Logical replication is not a physical whole-cluster backup and cannot stand in for base backup plus WAL replay."
+      ],
+      "answer_1": "Physical point-in-time restore needs a consistent physical base backup of the cluster, not periodic SQL dumps, plus the complete archived WAL chain covering the interval from that backup to the chosen recovery point on the matching timeline. The backup reconstructs the data files; replay advances them. A missing or corrupt segment, archive lag, wrong encryption key or inaccessible archive blocks the restore, and archive lag raises data-loss risk. Restore needs a compatible PostgreSQL runtime, configuration, storage and key access. Configuration, secrets, tablespaces and cluster identity are not covered by WAL replay, so they are artifacts too; incremental base backups add their ancestors and WAL summaries, and retention must keep them. A streaming replica is no substitute, since it may already have replayed the deletion or corruption, and logical replication is not a physical whole-cluster backup. A proposed, not executed, safer response is to restore the base backup and WAL into an isolated target and pass database integrity plus application/business-effect reconciliation before cutover; a running database alone does not prove recovery. PostgreSQL 17 continuous-archiving documentation supports base backup plus WAL recovery, timelines and chain constraints, but no restore was executed and no RPO/RTO measured. A target earlier than the base backup's completion is unavailable from that backup, and control-file names, segment-boundary rules and replay timings are not established.",
+      "answer_2": "A physical point-in-time restore needs a complete, verified chain, not a single backup file.\n\nCore artifacts:\n1. A valid physical base backup of the cluster (a consistent storage snapshot; a logical SQL dump is not a physical base backup usable for WAL replay). It must include the base-backup manifest and hash or other verification evidence, be correct for ownership and tablespaces, and match the source database major version and supported tooling/backup formats.\n2. A continuous WAL archive covering the interval from that base backup to the chosen recovery point. The WAL sequence/archive must be complete and uncorrupted, and any recent unarchived WAL needed for the target must also be accessible. Missing or corrupt segments, or archive lag, make the target unreachable.\n3. The timeline history and the selected recovery stop point, so replay follows the correct timeline and stops where intended. A target before the selected base backup completed is not available from that backup.\n\nSupporting artifacts and metadata:\n4. Configuration files, secrets, external files, tablespaces and network/identity requirements. Configuration is not automatically protected by WAL replay, so it must be preserved and supplied separately.\n5. If incremental base backups are used, their ancestor chain and WAL summaries; earlier backups cannot be deleted while a later incremental depends on them.\n6. Restore-environment information: target location, target disk capacity, network/archive throughput and access permissions, plus expected replay duration.\n7. A rehearsed restore procedure/runbook on an isolated target. The evidence stresses that only a tested restore of an admitted backup set shows recoverability; verify integrity and the recovery target against application consistency requirements after replay.\n\nIn short: a physical base backup + a continuous WAL archive + timeline/recovery target, plus the configuration and verification metadata around them.",
+      "citations_1": [
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#4-a-synthetic-failure-and-recovery-timeline",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#5-backup-integrity-and-recovery-are-independently-testable",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#purpose-and-mission",
+        "tycho.page.82feb39b805a4fbfa80c1b00034b13f6#1-why-write-ahead-logging-exists",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#7-decision-and-evidence-limits",
+        "tycho.chapter.388c48be24414421a63481b37d05fdce#8-public-evidence-ledger-and-unverified-scope"
+      ],
+      "citations_2": [
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#2-logical-backup-physical-backup-and-wal-replay-differ",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#3-wal-gaps-timelines-and-version-dependencies",
+        "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#3-physical-streaming-replication-versus-logical-replication",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#4-original-synthetic-example-public-equipment-reservations",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q052",
+      "question": "What alternative can reduce comparison overhead when running two implementations in parallel is too costly?",
+      "core_claims": [
+        "The stated alternative is branch by abstraction with a smaller, monitored rollout, which replaces full dual execution and its comparison harness with an incremental rollout behind an abstraction seam.",
+        "Parallel run costs doubled compute plus comparison storage and harness work, and it produces false confidence when the comparison ignores nondeterminism or side effects.",
+        "Parallel run must not execute both implementations for side-effecting operations such as sending an email or charging a card; the old path stays authoritative until cutover and a candidate failure must never affect the response.",
+        "Matching row counts or checksums do not prove semantic equality: differing time windows, lossy null or value canonicalisation, or a fingerprint that omits business-critical fields can hide divergence.",
+        "Each comparison must be modelled as source snapshot, schema version, partition identity, job revision, equality rule and freshness window, and a comparison whose tuple differs without owner-approved normalisation should be rejected."
+      ],
+      "optional_claims": [
+        "Dark launching or shadow traffic is a related bounded option: mirrored requests are discarded, the old path remains authoritative, fractional mirroring limits the load, and the impact can be switched off with a feature flag.",
+        "Controlled cutover is not the low-cost substitute: it needs a downtime window, paused writes, drained replication and verified zero freshness, and is rejected when writes cannot be paused.",
+        "The source boundary is narrow: the cited MinimumCD record supports dual execution, incumbent-only return, background comparison, the side-effect boundary and harness removal, but gives no mismatch threshold, sample size or cost measurement, which remain synthetic."
+      ],
+      "answer_1": "Use **branch by abstraction with a smaller, monitored rollout**: put an internal interface between callers and the old/new implementations in one deployable, shift traffic gradually through the runtime or configuration switch, and monitor a limited exposure slice instead of executing and diffing both on all work. The Parallel Run card names this as its competing alternative; the owner note repeats it for side-effecting operations.\n\nParallel run's costs are doubled compute, comparison storage and harness work, plus false confidence when the comparison ignores nondeterminism or side effects. It must not execute both for side-effecting operations such as sending an email or charging a card: the old path stays authoritative until cutover, and a candidate failure must never affect the response. Matching row counts or checksums do not prove semantic equality, since differing time windows, lossy null or value canonicalisation, or a fingerprint omitting business-critical fields can hide divergence; each comparison must be modelled as source snapshot, schema version, partition identity, job revision, equality rule and freshness window; reject any tuple differing without owner-approved normalisation.\n\nBoundaries: exhaustive comparison is better when cheap and meaningful; branch by abstraction needs an owned, removable seam and should be reversed when abstraction cost exceeds incremental benefit; a monitored rollout is not equivalence proof; no mismatch threshold, sample size or cost measurement is established.",
+      "answer_2": "Use branch by abstraction with a smaller, monitored rollout. Rather than executing and comparing both implementations for every request, put an internal interface between callers and the old/new implementations so both can run in one deployable while traffic moves gradually; the switch stays reversible until the old path is removed. This avoids doubled compute and comparison storage, but the two implementations must still preserve the same contract and observable effects, and untested side effects or a bypass around the abstraction can break that contract.",
+      "citations_1": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+        "tycho.page.b938ff1a06264492a425f2eff555ae7d#purpose-and-mission",
+        "tycho.chapter.dabaea8f5ab426edc08683ceec89c2c0#entry-inventory",
+        "tycho.page.8158481f0f2443e6bfaf00d85f0a6999#overview",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover"
+      ],
+      "citations_2": [
+        "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes"
+      ]
+    },
+    {
+      "task_id": "Q076",
+      "question": "How should a stock-flow model account for offered work at every integration step?",
+      "core_claims": [
+        "The model must satisfy the identity offered = completed + rejected + backlog after every integration step, not only at the end of the run.",
+        "Each state variable carries a stock unit, each flow carries that unit per unit of time, and every parameter that multiplies a flow carries a reciprocal unit or is dimensionless.",
+        "The integration step must be small enough that one step cannot admit a whole interval of arrivals or serve more than the available backlog, because that produces a negative stock; the V12 model uses a fixed 0.1-second step and asserts non-negativity after every update.",
+        "A persistent conservation gap is a modelling defect rather than floating-point noise, so the V12 model reports a conservation flag and aborts the run instead of writing a partial record.",
+        "Conservation is necessary but not sufficient: a model can conserve offered work while assigning it to the wrong outcome, so timeout and retry outcome paths are checked separately."
+      ],
+      "optional_claims": [
+        "In the saturation scenario 30 requests per second are offered against 24 per second of capacity, utilization reaches 1.0, throughput is 24 per second, rejection is 0.2 and the backlog stays at 77.6 requests.",
+        "The discrete-event variant of the identity adds failed and in_system: offered = completed + rejected + failed + in_system.",
+        "The conservation check is exercised on a below-capacity case, a saturation case and a zero-arrival or retry-heavy case, and a failure aborts the run."
+      ],
+      "answer_1": "Treat offered work as a flow that is integrated into stock units at each step: the offered amount over a step is the arrival rate multiplied by the step size dt, plus whatever backlog is already carried. Every integration step must then allocate that amount across completed, rejected and backlogged work under the identity offered = completed + rejected + backlog, with completed capped by capacity times dt; unserved work goes to backlog or rejection according to the admission policy and must never be silently discarded. Verify the identity and non-negativity after every update, not only at the end (a small floating-point tolerance is acceptable, but a persistent gap is a modeling defect); the migration model makes rejected the residual, offered minus target-served minus legacy-served. Step size is part of the model contract: a step large enough to admit a whole interval of arrivals can serve more than the available backlog and produce a negative stock, so a fixed small step with a non-negativity assertion keeps the fluid approximation stable. Also distinguish offered load from throughput: utilization is offered rate divided by capacity (rho = lambda / (c*mu)); at saturation throughput is capped at capacity, and the excess must appear as backlog or rejection rather than vanish.",
+      "answer_2": "At every integration step, a stock-flow model should integrate the offered-work rate over the step into an amount, classify each unit at the declared ingress boundary as completed, rejected or backlog, then assert offered = completed + rejected + backlog after every update, not only at the end of the run. Each state variable carries a stock unit, each flow that unit per unit of time, and every parameter that multiplies a flow is reciprocal or dimensionless. Capacity binds per step: admitting a whole interval of arrivals at once, or serving more backlog than exists, produces negative stock. The V12 model uses a fixed 0.1-second step, asserts non-negativity after each update, and treats a persistent conservation gap as a modelling defect: it reports a conservation flag and aborts instead of writing a partial record. The discrete-event variant adds failed and in_system. Conservation is necessary but not sufficient, because a model can conserve offered work while assigning it to the wrong outcome, so timeout and retry paths are checked separately. Boundaries: the update-order convention (arrival crediting at step start or end, same-step service) is not fixed; an initial backlog generalizes the window identity; retries are attempts, not new logical demand; and V12 parameters are synthetic and uncalibrated, so conservation shows internal consistency, not real workload validity.",
+      "citations_1": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities"
+      ],
+      "citations_2": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+        "tycho.page.870e64da1f925c52109a602440048603#where-the-model-fails",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-1-conservation",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#example-the-order-intake-model",
+        "tycho.page.2a3a20bc92314c7597b1792b8607c9d5#1-workload-nouns-that-must-not-be-interchanged",
+        "tycho.page.bfa3a283746b42998825234aca63b101#2-open-versus-closed-arrivals-the-generator-can-hide-degradation",
+        "tycho.page.bfa3a283746b42998825234aca63b101#3-define-denominators-and-avoid-coordinated-omission",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#workload-generators-closed-feedback-versus-independent-arrivals",
+        "tycho.page.252426e0630c495d9cad7cb2c518fc69#evidence-based-counterexample-a-short-finite-window",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+        "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+        "tycho.chapter.a55ddaaa45a647e29b51d6b5c0adbe05#decision-and-worked-result",
+        "tycho.page.fdb4ef7f69154f8c8c433591f71494f9#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q084",
+      "question": "What evidence must a V12 model contract attach to an input labeled measured?",
+      "core_claims": [
+        "A measured input must name its source and carry the measurement method, sample size and period; a value without a source and a measurement record is not measured.",
+        "Measured is one of four statuses (measured, assumed, derived, unknown), and a parameter can change status only with new evidence - repeating an assumed value in a decision record does not make it measured.",
+        "Measurement vocabulary requires a value together with an uncertainty and, where stated, a coverage interval with its coverage probability; V12 uses that vocabulary but does not perform a metrological uncertainty budget.",
+        "A derived input inherits the weakest status of its inputs unless the derivation itself is validated, and an unknown input must not be filled with an invented value.",
+        "The V12 input table marks arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity and divergence threshold as assumed, each with the measurement that is missing."
+      ],
+      "optional_claims": [
+        "Every V12 model is uncalibrated and makes no production claim; the model contract lists each parameter's status and its missing measurement, and decision records repeat that status.",
+        "A matching replay proves only that stored inputs, engine version and seed reproduce the stored metrics on the same platform family; it does not prove the model is valid, the inputs measured or the decision correct.",
+        "The contracts are strict and machine-readable: a missing required field is a validation failure, not a note."
+      ],
+      "answer_1": "A `measured` input must carry a **named source** and a **measurement record** stating the method, sample size and period. Without both it is not measured by V12's definition, even with a precise number. The parameter block carries evidence status and source identifiers; the validator requires a source and measurement record for every `measured` parameter.\n\n`Measured` is one of four statuses: measured, assumed, derived, unknown. Status changes only with new evidence, and repeating an assumed value in a decision record does not make it measured. A derived input inherits the weakest status of its inputs unless the derivation is validated, and an unknown input must not be filled with an invented value. V12 uses measurement vocabulary (a value with uncertainty and, where stated, a coverage interval with its coverage probability) but does not perform a metrological uncertainty budget.\n\nThe check is structural, not semantic: the validator cannot confirm the source supports the parameter or that method, sample size and period are adequate; calibration laundering remains a listed failure mode. Every V12 model is uncalibrated and makes no production claim; the input table marks arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity and divergence threshold as assumed, each with its missing measurement. The exact JSON keys of the measurement record are not established.",
+      "answer_2": "A V12 model contract must attach a measurement record to any input labeled measured: a named source, a measurement method, the sample size, and the period. The parameter block carries the evidence status, source identifiers and note, and the validator checks that every measured parameter has a source and a measurement record. Status may change only with new evidence; an assumed value copied into a measured field does not become measured, and a derived value inherits the weakest status of its inputs.",
+      "citations_1": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration"
+      ],
+      "citations_2": [
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses"
+      ]
+    }
+  ]
+}

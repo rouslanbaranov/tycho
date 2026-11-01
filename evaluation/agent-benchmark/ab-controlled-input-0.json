@@ -1,0 +1,204 @@
+{
+  "pairs": [
+    {
+      "task_id": "Q000",
+      "question": "Why is an authenticated tenant identifier insufficient to authorize a particular object?",
+      "core_claims": [
+        "Authentication establishes a claimed subject and credentials; it does not decide whether that subject may perform a specific action on a specific object, which authorization must evaluate separately for subject, action, object and tenant membership.",
+        "A tenant identifier supplied in a URL is untrusted input, and even a tenant identifier derived from a signed session does not by itself establish access to an arbitrary object.",
+        "Object identifiers can be unique only within a tenant, so an item or reservation reference cannot be resolved safely without its tenant context; the policy decision must cover the actual tenant and that specific object.",
+        "Tenant membership does not authorize every object, property or action inside the tenant: a public read permitted across tenants does not imply authority to cancel a tenant-specific reservation.",
+        "A tenant-aware query filter protects only the path that executes it; caches, search indexes, background jobs, event consumers and bulk exports can reach the same state with broader credentials, so each sensitive authority must enforce object policy across the complete effect path."
+      ],
+      "optional_claims": [
+        "A certificate verified at the TLS endpoint identifies the endpoint the client contacted, not the final application process, and it does not authorize a particular business object.",
+        "A separate database per tenant would not by itself prevent identity confusion, guessable object identifiers, an unscoped shared read projection or noisy-neighbour resource exhaustion, because those failures belong to different isolation dimensions."
+      ],
+      "answer_1": "An authenticated tenant identifier reports the caller's tenant context, not whether this principal may act on this particular object now. Authentication establishes a subject and credentials; authorization separately decides over principal, action, object, context and policy version, and must establish the tenant binding, ownership and permitted properties of the exact object named.\n\nA URL-supplied tenant identifier is untrusted input; even one from a signed session does not establish access to an arbitrary object. Object identifiers are unique only within a tenant, so a reservation reference cannot be resolved safely without its tenant context.\n\nTenant membership is coarser than object authority: a cross-tenant public read does not imply authority to cancel a tenant-specific reservation. A tenant-aware query filter protects only the path executing it; caches, search indexes, background jobs, event consumers and bulk exports reach the same state with broader credentials, so every sensitive authority must enforce object policy across the complete effect path.\n\nThis is not an argument for per-tenant databases: shared tables work when scoping covers every query, join, index, cache and job. Object authorization is not tenant isolation, which also covers quotas and restore. Writes may fail closed on policy-service timeout; a read-only recovery may use a pre-authorized emergency policy with audit, expiry and documented risk acceptance. The sources certify no deployed security.",
+      "answer_2": "Authentication establishes who the caller is and, at most, which tenant the session is associated with; it does not establish that the caller may read or change a particular object. A tenant identifier is one request attribute, not an authorization decision. If a service authenticates user U and then fetches registration R by an arbitrary registration ID, U's authenticated tenant claim says nothing about whether R belongs to that tenant or whether U may see or change it; trusting the caller's claim that R belongs to their tenant is the broken object-level authorization (BOLA/IDOR) failure. Even a tenant ID derived from a signed session rather than a URL is insufficient: it may be trustworthy as a claim, but it still does not bind the referenced object to that tenant or to the requested action. Authorization must evaluate subject, action, object, and tenant/ownership under current policy at every sensitive authority: the route/controller and every alternative path (exports, search, batch jobs, admin APIs), repository/data-layer queries, event handlers, caches, object stores, tenant indexes, background jobs, and delegated administration. Isolation controls do not substitute for this check: a separate database reduces blast radius but does not replace permission checks, and row/object permissions are only as sound as the caller identity and current policy supplied to them. Caches and asynchronous consumers must also stop serving data once authorization is revoked. An authenticated tenant identifier is therefore a precondition for object authorization, not a substitute for deciding whether this subject may perform this action on this specific object.",
+      "citations_1": [
+        "tycho.page.e9524931fbcc4b4e833f6b0465a27698#2-authentication-is-not-authorization",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation",
+        "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+        "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+        "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route",
+        "tycho.page.b2c3d4e5f60718293a4b5c6d7e8f9012#overview"
+      ],
+      "citations_2": [
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+        "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#5-boundaries-of-network-and-service-isolation",
+        "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route"
+      ]
+    },
+    {
+      "task_id": "Q008",
+      "question": "After the modeled rollback trigger, where does the V12 modernization model send new traffic?",
+      "core_claims": [
+        "The V12 modernization model's rollback trigger sets the target traffic share to zero, so after the trigger all newly offered traffic is sent to the legacy path rather than the target.",
+        "The legacy path must absorb that offered traffic while the target drains its dual-write backlog and accumulated divergence; the model's state diagram returns from Rollback to Legacy only after the drain completes.",
+        "The staged experiment triggers rollback at t=1,200 seconds of a 2,400-second, 10-requests-per-second run, after target share reaches 1.0 at t=600, so the target receives no new traffic for the final 1,200 seconds.",
+        "The model records whether rollback completed within the horizon, the time from trigger to drain (or a value censored at the horizon), and the maximum divergence seen before the trigger; a non-completing rollback is a finding that declared reconciliation capacity is insufficient, not a model failure.",
+        "The reported staged run gives a rollback-completed value of 0.1 and a mean rollback duration of 1,080 seconds, with non-completions censored at 1,200 seconds after the trigger, so most modeled drains did not finish within the observation window."
+      ],
+      "optional_claims": [
+        "The model represents coexistence as a stage schedule plus stocks: dual_write_backlog, divergence, legacy_share/target_share and a rollback timer.",
+        "The model is a fluid approximation and does not represent individual records, schema compatibility or deployment orchestration, which are part of its validity limit.",
+        "The no-cutover baseline keeps target share at zero and never triggers rollback; it reports zero divergence and zero backlog, while the staged path adds divergence risk and a rollback requirement without adding modeled throughput."
+      ],
+      "answer_1": "After the modeled rollback trigger, new traffic is sent to the legacy path. The trigger sets the target share to zero, so the legacy path absorbs the offered traffic while the target receives no new work and only drains its existing dual-write backlog and divergence; the model returns to legacy-only after the drain completes.",
+      "answer_2": "After the modeled rollback trigger the V12 modernization model sends new traffic to the **legacy path**: the trigger sets target share to zero, so every newly offered request or write is allocated to legacy while the target only drains its dual-write backlog and accumulated divergence; the state diagram returns Rollback to Legacy only on drain complete. Surplus beyond legacy capacity would be rejected, not re-routed.\n\nThe staged experiment triggers rollback at t=1,200 of a 2,400-second, 10-requests-per-second run, after target share reaches 1.0 at t=600, so the target receives no new traffic for the final 1,200 seconds. It records whether rollback completed within the horizon, trigger-to-drain time (censored at the horizon), and pre-trigger maximum divergence; a non-completing rollback means declared reconciliation capacity is insufficient, not a model failure. The reported run gives rollback-completed 0.1 and mean duration 1,080 seconds, non-completions censored at 1,200 seconds after trigger, so most drains did not finish.\n\nBoundaries: a share-level statement, not a routing policy; the fluid model represents no records, schema, orchestration or continuity ownership, so it cannot show legacy absorbs real load. Legacy capacity is unexercised (success rate 1.0) and drain is not repair: divergence peaked at 8,925.5 records (95% CI 5,561.6-12,289.3). The trigger is ambiguous (chapter says divergence trigger; the run schedules t=1,200) and the decision record returns insufficient evidence.",
+      "citations_1": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date"
+      ],
+      "citations_2": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#a-state-diagram",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+        "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence"
+      ]
+    },
+    {
+      "task_id": "Q016",
+      "question": "What evidence should gate an irreversible migration of authoritative state?",
+      "core_claims": [
+        "The gate is a bidirectional comparison of the old and new representations - expected records, ordering and duplicate handling in both directions - because bounded sample checks, row counts or full-backup metadata alone cannot prove business equivalence.",
+        "Read authority may be switched only when measured replication lag, completeness and read semantics meet owner-agreed thresholds; write authority only when rollback behavior and consistency across old and new clients are documented.",
+        "Every intermediate configuration must have exactly one declared authoritative owner, and mixed-version compatibility must be demonstrated in both directions before authority moves.",
+        "An irreversible destructive migration needs explicit approval beyond successful code pull requests, plus a rehearsed recovery path: old binaries must interpret new persisted state, consumers must still accept the old contract and new-only durable effects must be reconcilable before cleanup removes the old schema.",
+        "The cutover itself is gated on operational evidence - verified replication health, a cleared dead-letter queue, data freshness at zero and an active reverse-replication fallback - before writes are switched."
+      ],
+      "optional_claims": [
+        "When evidence is insufficient, the documented decision route is to measure or preserve the current state rather than adopt a pattern, and to prefer the smallest reversible change validated by shadow or canary comparison.",
+        "A target architecture and its transition states are different artifacts: even a sound target still requires coexistence of old and new code, data and consumers, and no transition arrow guarantees automatic data rollback."
+      ],
+      "answer_1": "The gate is a bidirectional comparison of old and new representations: expected records, ordering and duplicate handling in both directions. Bounded sample checks, row counts or full-backup metadata cannot prove business equivalence.\n\nRead authority may switch only when measured replication lag, completeness and read semantics meet owner-agreed thresholds; write authority only when rollback behavior and consistency across old and new clients are documented. Every intermediate configuration must have exactly one declared authoritative owner, and mixed-version compatibility must be demonstrated in both directions before authority moves.\n\nAn irreversible destructive migration needs explicit approval beyond successful code pull requests, plus a rehearsed recovery path: old binaries must interpret new persisted state, consumers must still accept the old contract, and new-only durable effects must be reconcilable before cleanup removes the old schema. Cutover is gated on operational evidence: verified replication health, a cleared dead-letter queue, data freshness at zero and an active reverse-replication fallback.\n\nEquality is not correctness when both implementations share the same wrong semantics; a named business oracle is required, and happy-path-only comparisons are a refusal condition. Undefined identity mapping, unrecoverable writes or changed audit context are correct stops. A smaller reversible change or an additive mapping layer may be preferable. The sources establish no thresholds and record no executed cutover or restore.",
+      "answer_2": "Gate the change on an observed go/no-go contract, not on a calendar milestone or a single green shadow result. Before authority switches, require: (1) a named change owner and approved versions/assets; (2) a complete old/new client x API x data compatibility matrix, including asynchronous readers; (3) proof that no uncoordinated writers overlap; (4) tested retry identity and late-acknowledgment handling; (5) representative user-level integrity and authorization tests; (6) source-to-target reconciliation plus recorded residual unknowns; (7) a recovery point with actually restored data validity, maximum permissible loss and time; (8) an explicit stop/hold mechanism; and (9) decommissioning evidence for every old caller/subscription.\n\nFor the authoritative-state cutover itself, require the controlled-cutover preconditions: target schema deployed and backfill complete, CDC replication healthy with DLQ errors resolved and no permanent errors, writes paused with no events passing, data freshness at zero, and a reverse-replication fallback active before the switch. State which invariant the gate proves - identity, value equality, operation order, referential consistency, exactly-once side effects, or bounded freshness - and test both shadow directions under real mutation classes; row counts or backup metadata alone do not prove business equivalence. Keep a timestamped authority ledger for old/new reads and writes and name the exact mismatch that triggers rollback. A green index or shadow state is insufficient evidence: replay and revocation paths (for example, a stale query after restarting from an older offset) must also pass.\n\nMake rollback real: identify the last safe phase, a reverse-write adapter or approved forward-repair path, and measured recovery time. Test irreversible cleanup only if backups and reverse transformations can restore newly accepted writes; otherwise refuse cleanup. Refuse the migration when identity mapping is undefined, authoritative writes cannot be recovered after rollback, snapshots differ in unmeasured ways, audit/authorization context changes, or the oracle covers only happy-path counts. If this evidence cannot be obtained, stay on current authority and use a reversible canary, blue/green, or incremental alternative.",
+      "citations_1": [
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+        "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#5-data-movement-is-not-a-row-count-exercise",
+        "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+        "tycho.page.cf0ce38c73e44950aec5a9c2869bee63#engineering-walkthrough-new-only-persisted-effects-turn-image-rollback-into-forward-repair",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#3-expand-migrate-contract-as-gated-lifecycle",
+        "tycho.page.7e927696162f48beaa33fc834b36ee76#4-data-retirement-has-a-no-return-point",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+        "tycho.page.81efb7e6d72349768b6f202845cbe35e#bounded-pattern-ownership-notes",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#failure-analysis-and-evidence-provenance",
+        "tycho.decision.73ab83b8148a4061a1effab218d47b0b#explicit-invariants-and-failure-semantics-for-the-synthetic-program",
+        "tycho.decision.73ab83b8148a4061a1effab218d47b0b#reversible-two-stage-experiment-and-falsification"
+      ],
+      "citations_2": [
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+        "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+        "tycho.page.5187d0a69bc343f388225f9be0ee2ffa#overview",
+        "tycho.page.4a302aa608d645288756076e9fcdd6b0#overview",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-record-and-rejection-criteria-for-the-two-synthetic-workflows",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+        "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified"
+      ]
+    },
+    {
+      "task_id": "Q054",
+      "question": "What dependency makes write-triggered cache invalidation unsuitable when changes cannot be reliably signaled?",
+      "core_claims": [
+        "Write-triggered cache invalidation depends on the authoritative write path emitting an invalidation signal that reaches each affected cache, so that a superseded entry is removed before a later read reuses it.",
+        "The pattern is contraindicated when no reliable invalidation path exists, because changes that cannot be reliably signaled cannot guarantee removal of superseded copies and stale reads may persist.",
+        "The dependency is broad because invalidation couples every writer to every cache and region; fan-out, multi-cache coherence and partial purge are architectural costs, so one unsignaled writer can leave some cache copies stale.",
+        "When no reliable purge path exists, TTL-based expiration bounds staleness by elapsed time instead of by a write signal, and it is itself rejected where a hard read-after-write contract exists.",
+        "Even with a working signal, writing the store and then removing the affected entry leaves a window in which a reader can see a cache miss or briefly stale data immediately after a write."
+      ],
+      "optional_claims": [
+        "Cache-aside likewise depends on the application owning both cache fill and invalidation, and its hard contraindication includes invalidation with no owner.",
+        "Static content hosting shows the same gap at the edge: changing, deleting or restricting access to origin content does not invalidate cached copies, and a CDN purge does not clear browser caches."
+      ],
+      "answer_1": "Write-triggered cache invalidation depends on the authoritative write path emitting a reliable invalidation/change signal that the cache can observe (a defined owning writer and change event/version). When changes cannot be reliably signaled, no reliable invalidation path exists: write-triggered invalidation is contraindicated because readers can miss the signal or briefly see stale data after a write, and expiration after a configured period (TTL-based expiration) is the bounded-staleness alternative.",
+      "answer_2": "Write-triggered cache invalidation depends on the authoritative write path emitting an invalidation signal reaching each affected cache, so a superseded entry is removed before a later read reuses it. It is contraindicated when no reliable invalidation path exists: changes that cannot be reliably signaled cannot guarantee removal of superseded copies; stale reads may persist.\n\nThe dependency is broad: invalidation couples every writer to every cache and region; fan-out, multi-cache coherence and partial purge are architectural costs, so one unsignaled writer can leave copies stale. Where no reliable purge path exists, TTL expiration bounds staleness by elapsed time rather than write signal, though TTL is rejected under a hard read-after-write contract. Even with a working signal, store-write then entry-removal leaves a window where a reader sees a cache miss or briefly stale data after a write.\n\nIt holds when the producer set is closed and instrumented, the signal durable and retried, purge propagation observable, and bounded staleness tolerated. It fails when writers bypass instrumentation, signals are lost or partitioned, or purge completion is unevidenced; a purge request without completion evidence is not a proven revocation bound. A signal is necessary but not sufficient: a slower in-flight read can refill the older value, so version-fenced fills, compare-and-set and tombstones are separate requirements. Alternatives: bounded TTL, versioned keys, direct authoritative reads.",
+      "citations_1": [
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview"
+      ],
+      "citations_2": [
+        "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+        "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices",
+        "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+        "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+        "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes",
+        "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example"
+      ]
+    },
+    {
+      "task_id": "Q078",
+      "question": "Why is a confidence interval across synthetic replications not a calibrated input uncertainty budget?",
+      "core_claims": [
+        "The confidence interval mean plus or minus 1.96 times s over the square root of n quantifies sampling error of the model's mean output across replications; it says nothing about whether the input distributions are measured or correct.",
+        "Its nominal coverage holds only under the model's assumptions of independent replications and, for the normal approximation, well-behaved tails; correlation, heavy tails, peeking or a biased model invalidate the stated 95%.",
+        "V12 represents input uncertainty separately through the recorded method, draws and correlated-input flag and through measured, assumed, derived and unknown calibration statuses; every model in the volume is uncalibrated.",
+        "V12 borrows measurement vocabulary but does not perform a metrological uncertainty budget, and it does not test confidence-interval coverage over many synthetic samples.",
+        "Repeating an assumed input in a decision record does not make it measured, and a derived input inherits the weakest status of its inputs, so a narrow interval cannot certify input calibration."
+      ],
+      "optional_claims": [
+        "A confidence interval does not cover a single future request, nor the true production value when the model is biased or mis-specified.",
+        "A bounded success rate near 1.0 yields a narrow interval while hiding failures that the model does not represent.",
+        "The sensitivity screen is not a full Sobol' estimator, so it ranks inputs rather than producing a complete variance decomposition or a causal claim."
+      ],
+      "answer_1": "A confidence interval across synthetic replications is a sampling-error interval for a simulated metric under fixed, declared inputs, not a calibrated input uncertainty budget.\n\nThe interval, mean plus or minus 1.96 times s over the square root of n, quantifies sampling error of the model's mean output across replications; it says nothing about whether the input distributions are measured or correct. Nominal coverage holds only under the model's assumptions of independent replications and, for the normal approximation, well-behaved tails; correlation, heavy tails, peeking or a biased model invalidate the stated 95 percent.\n\nV12 represents input uncertainty separately, through the recorded method, draws and correlated-input flag, and through measured, assumed, derived and unknown calibration statuses. Every model in the volume is uncalibrated. V12 borrows measurement vocabulary but performs no metrological uncertainty budget and does not test confidence-interval coverage over many synthetic samples. Repeating an assumed input in a decision record does not make it measured; a derived input inherits the weakest status of its inputs, so a narrow interval cannot certify input calibration.\n\nThe interval stays legitimate for convergence checks, reproducibility, comparing candidates on an identical workload and prioritization, but it is not a production claim. A measured-input simulation could approach a budget only with measured distributions including tails, declared correlations, a validated model and a coverage statement.",
+      "answer_2": "A confidence interval across synthetic replications measures only Monte Carlo sampling error under a fixed set of declared inputs, not the uncertainty of those inputs. The interval is computed from the replication spread (se = s/sqrt(n), mean +/- 1.96*se), so it narrows as replications increase while parameter values stay at their assumed levels. Replications address sampling error; parameter draws address input uncertainty; more replications cannot reduce input uncertainty, and more input draws cannot remove sampling error. Metrologically, JCGM 100 combines Type A and Type B components into a coverage interval at a stated coverage probability; a uniform input range in a scenario is an assumed input range, not a Type A or Type B component, and a confidence interval across replications is a sampling interval, not a metrological coverage interval. Its nominal 95% coverage applies to the model's repeated-sample mean under the model's assumptions, and it does not cover the true production value when the model is biased or the inputs are misspecified. Convergence does not establish that inputs are measured or that the model is valid; every V12 input remains assumed. Presenting that narrow synthetic interval as an input uncertainty budget is the 'uncertainty theater' failure mode and risks 'assumed as measured', asserting precision the evidence does not support.",
+      "citations_1": [
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+      ],
+      "citations_2": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+        "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "Q002",
+  "answer": "An in-place runtime upgrade can address a modernization problem without moving data ownership only when the driver is lifecycle or security support - a documented unsupported runtime or dependency - and the existing public API and persisted state need not move. Declared costs: runtime/library compatibility, old data encoding and mixed-version release.\n\nBy default it keeps the externally visible state owner unchanged, using branch-by-abstraction or a compatible migration step where internal changes cannot be made atomically, rather than reassigning data ownership. The upgrade is proven in stages: the old version unaffected under additive interfaces/schema (T1); cross-version reads/writes, idempotency and rejection in the mixed T2 phase; promotion only after measured SLO and data-integrity gates (T3); cleanup only when no historic replay requires the old encoding (T4).\n\nThe alternative is falsified when the required dependency/runtime combination cannot run or externally required behavior cannot be preserved. A new database alone does not make a replacement authoritative while two writers accept edits without a conflict-resolution rule; dual write without a coordinated correctness protocol is not atomic commit.\n\nA precondition is that the modernization outcome is defined independently of technology, for example removing a documented unsupported dependency without invalidating persisted data or external contracts, because age alone does not explain failure and an unknown issue requires investigation, not a design imperative.",
+  "citations": [
+    "tycho.page.2eb290f6307f4797a5981510f1248d70#1-four-valid-starting-points",
+    "tycho.page.2eb290f6307f4797a5981510f1248d70#3-second-example-runtime-modernization-without-data-loss",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#1-four-distinct-deployment-modes",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#6-compatibility-and-deployment-strategy-jointly-constrain-choice",
+    "tycho.page.47ffb5c160bd4b10aff27101414c2133#2-three-credible-modernization-options",
+    "tycho.page.47ffb5c160bd4b10aff27101414c2133#4-candidate-transition-states-not-just-a-target-diagram",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#bounded-pattern-ownership-notes",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#decision-tree-and-chosen-adr",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

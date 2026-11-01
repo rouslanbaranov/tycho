@@ -1,0 +1,33 @@
+{
+  "task_id": "Q058",
+  "answer": "A poison row is not transient: an outbox row that cannot be published holds up the rows behind it, so an unhandled poison row stops the outbox draining rather than affecting only itself. Operators should plan a terminal exit, a governed quarantine and replay-safe repair, not more retries.\n\nBounded attempts and age give the row that exit: when the bound is reached, move it out of the relay's way into a terminal quarantine. Retain the row, its payload digest and attempt history for a declared retention window, so a repair operator can diagnose, correct and republish it. Alert on publisher health: oldest eligible entry age, relay/CDC lag, retries, dead-letter backlog.\n\nRecovery must be replay-safe. A crash after publish but before completion duplicates; a crash after commit but before publish retries. Consumers therefore deduplicate by message ID or effect identity, so a re-published quarantined row still applies once, and quarantine retention must match the deduplication horizon.\n\nSchema or producer upgrade overlapping older consumers is a known way to produce poison messages and lag: plan version-compatibility tests, stop/go checks and a safe replay path, and treat poisoned and retried messages as normal operating conditions. Quarantine is not the only terminal state, skipping a row opens an ordering gap, and no attempt counts, retention windows or per-relay blocking scope are established.",
+  "citations": [
+    "tycho.page.5eda4c047acb44699a8e444b66ea5ec2#overview",
+    "tycho.page.61636057f11b418a9478066a8034ff56#overview",
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#2-publication-schema-and-ordering-boundaries",
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#6-observability-and-validation-design",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#5-options-and-when-the-extra-components-are-unwarranted",
+    "tycho.page.ace968ab1de8409383c6a9b22a00d006#4-failure-and-recovery-matrix",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+    "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#3-response-actions-are-architecture-choices",
+    "tycho.page.62e3dca94bf647b98da7394d98232f88#2-functional-roles-and-a-single-source-of-operational-truth",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.2c928286b62944769a4b0cab9fad6139#overview",
+    "tycho.page.1810c1f1f11648bdba66aafa5da60d33#7-practice-response-before-production-failure",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

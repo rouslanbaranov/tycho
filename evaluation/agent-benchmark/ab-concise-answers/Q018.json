@@ -1,0 +1,26 @@
+{
+  "task_id": "Q018",
+  "answer": "A bounded queue or admission discipline placed before the bottleneck absorbs a transient surge by converting concurrent execution into waiting or explicit rejection, stabilizing resource use only where deferral or rejection is permitted by the user contract. It is a buffer, not a processor: it decouples when work arrives from when it is served, but does not create sustainable processing capacity. When attempts on one authoritative key arrive faster than that key's safe serialization capacity, queue age and rejections grow while accepted completions stay capped by the invariant, however many application workers exist.\n\nIt only moves the work in time, so sustained offered demand above the scarce resource's service rate grows backlog, retry amplification and time-to-drain; a system sustaining high RPS with unbounded queue age can still fail its latency SLO. A larger buffer converts a rate deficit into waiting time and stored items, not additional completions.\n\nThe queue adds obligations of its own: fairness, capacity and retry behavior must be measured, deferral can violate a synchronous-confirmation contract, and a queue does not replace the transaction correctness of the seat-allocation invariant. Capacity must be added at the verified scarce resource, because the bottleneck moves after optimization and more workers or deeper queues can worsen useful throughput when coordination cost or a downstream limit dominates.",
+  "citations": [
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#partial-failure-saturation-and-recovery",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.c33e9e4b605a4aa3b073a9f91437fc26#original-decision-model-a-finite-worker-and-waiting-budget",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#3-autoscaling-can-lose-the-race-against-a-burst",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#3-a-model-for-contention-and-coordination-overhead",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#1-write-a-capacity-envelope-not-a-magic-instance-count",
+    "tycho.page.a648fc495dab474489d17d01e2c5dd92#alternatives-and-applicability-boundaries",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

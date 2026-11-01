@@ -1,0 +1,31 @@
+{
+  "task_id": "Q082",
+  "answer": "Hold every scenario input except the candidate configuration identical. Candidates must run at the same offered arrival rate; the worked checkout comparison holds lambda at 20 requests per second for candidates A, B and C. They must share the same serving capacity and queueing boundary: capacity 24 with the declared admission, bounded queue, server pool, per-attempt deadlines and bounded retries, otherwise success, p95 and timeout differences measure different systems. Model and scenario identity must be pinned by hash: the run stores the SHA-256 of the model file and of its scenario file, and replay fails before producing a new number if either changes. Engine and sampling context must be recorded and held constant: engine name and version, deterministic flag, seed base, replication count and input hash are required provenance. Metric and candidate binding must be identical: each metric records identifier, unit, direction and a business-comparable flag, and each candidate entry names its scenario, run set and owner pages within one decision record. Boundaries: alignment is necessary, not sufficient - inputs are synthetic and the model uncalibrated, so narrow intervals are sampling precision, not measured inputs. A different workload is allowed only as a declared workload family. Equal replication counts are not stated as a hard rule, and no mechanical cross-candidate equality gate is demonstrated.",
+  "citations": [
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

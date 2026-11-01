@@ -1,0 +1,23 @@
+{
+  "task_id": "Q008",
+  "answer": "After the modeled rollback trigger the V12 modernization model sends new traffic to the **legacy path**: the trigger sets target share to zero, so every newly offered request or write is allocated to legacy while the target only drains its dual-write backlog and accumulated divergence; the state diagram returns Rollback to Legacy only on drain complete. Surplus beyond legacy capacity would be rejected, not re-routed.\n\nThe staged experiment triggers rollback at t=1,200 of a 2,400-second, 10-requests-per-second run, after target share reaches 1.0 at t=600, so the target receives no new traffic for the final 1,200 seconds. It records whether rollback completed within the horizon, trigger-to-drain time (censored at the horizon), and pre-trigger maximum divergence; a non-completing rollback means declared reconciliation capacity is insufficient, not a model failure. The reported run gives rollback-completed 0.1 and mean duration 1,080 seconds, non-completions censored at 1,200 seconds after trigger, so most drains did not finish.\n\nBoundaries: a share-level statement, not a routing policy; the fluid model represents no records, schema, orchestration or continuity ownership, so it cannot show legacy absorbs real load. Legacy capacity is unexercised (success rate 1.0) and drain is not repair: divergence peaked at 8,925.5 records (95% CI 5,561.6-12,289.3). The trigger is ambiguous (chapter says divergence trigger; the run schedules t=1,200) and the decision record returns insufficient evidence.",
+  "citations": [
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#a-state-diagram",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+    "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

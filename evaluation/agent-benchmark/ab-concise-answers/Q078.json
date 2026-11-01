@@ -1,0 +1,29 @@
+{
+  "task_id": "Q078",
+  "answer": "A confidence interval across synthetic replications is a sampling-error interval for a simulated metric under fixed, declared inputs, not a calibrated input uncertainty budget.\n\nThe interval, mean plus or minus 1.96 times s over the square root of n, quantifies sampling error of the model's mean output across replications; it says nothing about whether the input distributions are measured or correct. Nominal coverage holds only under the model's assumptions of independent replications and, for the normal approximation, well-behaved tails; correlation, heavy tails, peeking or a biased model invalidate the stated 95 percent.\n\nV12 represents input uncertainty separately, through the recorded method, draws and correlated-input flag, and through measured, assumed, derived and unknown calibration statuses. Every model in the volume is uncalibrated. V12 borrows measurement vocabulary but performs no metrological uncertainty budget and does not test confidence-interval coverage over many synthetic samples. Repeating an assumed input in a decision record does not make it measured; a derived input inherits the weakest status of its inputs, so a narrow interval cannot certify input calibration.\n\nThe interval stays legitimate for convergence checks, reproducibility, comparing candidates on an identical workload and prioritization, but it is not a production claim. A measured-input simulation could approach a budget only with measured distributions including tails, declared correlations, a validated model and a coverage statement.",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

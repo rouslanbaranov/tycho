@@ -1,0 +1,28 @@
+{
+  "task_id": "Q000",
+  "answer": "An authenticated tenant identifier reports the caller's tenant context, not whether this principal may act on this particular object now. Authentication establishes a subject and credentials; authorization separately decides over principal, action, object, context and policy version, and must establish the tenant binding, ownership and permitted properties of the exact object named.\n\nA URL-supplied tenant identifier is untrusted input; even one from a signed session does not establish access to an arbitrary object. Object identifiers are unique only within a tenant, so a reservation reference cannot be resolved safely without its tenant context.\n\nTenant membership is coarser than object authority: a cross-tenant public read does not imply authority to cancel a tenant-specific reservation. A tenant-aware query filter protects only the path executing it; caches, search indexes, background jobs, event consumers and bulk exports reach the same state with broader credentials, so every sensitive authority must enforce object policy across the complete effect path.\n\nThis is not an argument for per-tenant databases: shared tables work when scoping covers every query, join, index, cache and job. Object authorization is not tenant isolation, which also covers quotas and restore. Writes may fail closed on policy-service timeout; a read-only recovery may use a pre-authorized emergency policy with audit, expiry and documented risk acceptance. The sources certify no deployed security.",
+  "citations": [
+    "tycho.page.e9524931fbcc4b4e833f6b0465a27698#2-authentication-is-not-authorization",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#3-object-level-authorization-and-multitenancy",
+    "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+    "tycho.page.31cda61d174248eaa326559d256ce352#engineering-walkthrough-tenant-isolation-across-four-non-equivalent-layers",
+    "tycho.page.1db0a6e1679448e392ee8422eb5a3beb#multitenant-isolation",
+    "tycho.page.bc30179a9cda4c12b9deb383e8751d47#5-context-async-messages-and-retries",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#2-trust-boundaries-policy-decisions-and-enforcement",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+    "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#5-isolation-is-multidimensional",
+    "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#1-separate-four-isolation-dimensions",
+    "tycho.page.6bbeb9533a324758a1b970471c5b04e1#3-common-storage-and-placement-designs",
+    "tycho.page.dde63373c50f4f4a80e727b6e160def5#integrated-decision-and-reading-route",
+    "tycho.page.b2c3d4e5f60718293a4b5c6d7e8f9012#overview"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

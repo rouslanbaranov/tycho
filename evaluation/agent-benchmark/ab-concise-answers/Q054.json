@@ -1,0 +1,25 @@
+{
+  "task_id": "Q054",
+  "answer": "Write-triggered cache invalidation depends on the authoritative write path emitting an invalidation signal reaching each affected cache, so a superseded entry is removed before a later read reuses it. It is contraindicated when no reliable invalidation path exists: changes that cannot be reliably signaled cannot guarantee removal of superseded copies; stale reads may persist.\n\nThe dependency is broad: invalidation couples every writer to every cache and region; fan-out, multi-cache coherence and partial purge are architectural costs, so one unsignaled writer can leave copies stale. Where no reliable purge path exists, TTL expiration bounds staleness by elapsed time rather than write signal, though TTL is rejected under a hard read-after-write contract. Even with a working signal, store-write then entry-removal leaves a window where a reader sees a cache miss or briefly stale data after a write.\n\nIt holds when the producer set is closed and instrumented, the signal durable and retried, purge propagation observable, and bounded staleness tolerated. It fails when writers bypass instrumentation, signals are lost or partitioned, or purge completion is unevidenced; a purge request without completion evidence is not a proven revocation bound. A signal is necessary but not sufficient: a slower in-flight read can refill the older value, so version-fenced fills, compare-and-set and tombstones are separate requirements. Alternatives: bounded TTL, versioned keys, direct authoritative reads.",
+  "citations": [
+    "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+    "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+    "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+    "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

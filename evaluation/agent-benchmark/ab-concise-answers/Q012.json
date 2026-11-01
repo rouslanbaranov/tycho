@@ -1,0 +1,34 @@
+{
+  "task_id": "Q012",
+  "answer": "A parallel run executes the same work in old and candidate implementations but grants production authority only to the old side, so the preserved old result stays authoritative: the comparison baseline, the response consumers receive, and the recovery point if the candidate fails. Overwrite it, let the candidate mutate it, or retire it before equivalence, and the comparison loses its reference, a defect can reach production, and rollback and reconciliation lose their state.\n\nComparison is meaningful only against that result: once the candidate can write the old store, a real bug, a timing difference and a snapshot mismatch become indistinguishable. It fits only side-effect-free, comparable outputs; running both sides for an email or card charge duplicates business effects.\n\nThe old authority is also the rollback route until cutover; retirement requires explicit acceptance gates: matching row counts and checksums, no landing-latency regression, comparable resource use. Meta's ingestion migration used a per-job lifecycle: isolated shadow table, then reverse shadow, the new job writing production while the old writes shadow, keeping a runnable rollback path and comparisons. Reverting routing is not valid recovery after an incompatible mutation; that needs forward repair or tested recovery.\n\nGreen means agreement under the observed boundary, not truth: identical outputs can share a semantic bug. No mismatch threshold, sample size or cost is established.",
+  "citations": [
+    "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+    "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}

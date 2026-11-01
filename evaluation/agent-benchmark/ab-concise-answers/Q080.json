@@ -1,0 +1,22 @@
+{
+  "task_id": "Q080",
+  "answer": "V12 breaks a same-time tie with a heap ordered by scheduled time, then by priority, then by insertion sequence, so events at the same simulated time are separated first by priority. Among same-time events the lower numeric priority runs first: 0 for service completion and timeout, 1 for arrival, 2 for retry. If time and priority are both equal, the smaller insertion sequence runs first. The insertion sequence is a monotonically increasing integer, which makes the order total and deterministic and excludes dependence on dictionary iteration order or an unstable sort. Because priority is compared before insertion sequence, a priority difference overrides the order in which same-time events were scheduled.\n\nVerification case test_ties_use_priority_then_insertion schedules three same-time events with different priorities, checks the processing order, and the test matrix records it as passing. Passing that case proves only that the implemented order is deterministic and self-consistent, not that the chosen priority order matches a production scheduler.\n\n\"Same time\" is defined by rounding: V12 rounds scheduled times to 12 decimal places and compares event times as floats, which the model declares sufficient for its synthetic scenarios; very small time units would need a declared tolerance. Determinism is not cross-platform bit reproducibility, and event priority is not resource priority - the resource queue is FIFO without preemption.",
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#overview",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#evidence-ledger",
+    "tycho.page.687d2196433c3b076d00c73144dad431#components",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics"
+  ],
+  "evidence": [],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  },
+  "compressed_from": "v3"
+}
