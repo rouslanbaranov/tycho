@@ -66,7 +66,7 @@ refresh trigger, monitor duration and locks, and rebuild from the base tables ra
 treating the view as an authority.
 
 **Technical owner.**
- [Materialized View](../../../distributed/cqrs-event-sourcing-and-projections.md#materialized-view)
+ [Materialized View](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#materialized-view)
 — stored-query freshness is bounded, not a full PostgreSQL materialized-view manual.
 
 **Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)

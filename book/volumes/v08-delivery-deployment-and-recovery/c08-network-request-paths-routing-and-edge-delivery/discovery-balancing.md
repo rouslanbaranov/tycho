@@ -76,7 +76,7 @@
 
 
 > **Pattern atlas:**
-> [Load Balancing](../../v11-pattern-atlas/c09-scalability/load-balancing.md) — decision conditions and contraindications.
+> [Load Balancing](../../v11-pattern-atlas/c09-scalability/load-balancing.md#load-balancing) — decision conditions and contraindications.
 
 ## DNS and discovery have different update boundaries
 

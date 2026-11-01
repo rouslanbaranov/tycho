@@ -63,7 +63,7 @@ the owner section.
 
 **Technical owner.**
  [CQRS Read
-Projections](../../../distributed/cqrs-event-sourcing-and-projections.md#cqrs-read-projections) —
+Projections](../../v04-distributed-coordination-and-events/c05-outbox-inbox-sagas-and-durable-workflows/cqrs-event-sourcing-and-read-projections.md#cqrs-read-projections) —
 projection freshness is bounded, not a complete read-model design.
 
 **Sources.**

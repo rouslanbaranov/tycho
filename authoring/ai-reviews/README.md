@@ -220,3 +220,6 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | CQRS relocation | pass | `2026-11-01-cqrs-relocation-deepseek.md` | `b1c98fcb43b1143e7993bece9704f5b8d3d36dda71aa56f0652529ff41d953d6` |
 | 2026-11-01 | DeepSeek Reviewer | Promoted-note reconciliation | pass | `2026-11-01-note-cleanup-deepseek.md` | `b63379cd049cfe8fd81d586fa812bec693734e440bbc7559099d71bfd9eb7f17` |
 | 2026-11-01 | DeepSeek Reviewer | Event Sourcing | pass | `2026-11-01-event-sourcing-deepseek.md` | `9b85a96c17e9666e8b97d104a557d9be870b64039252192feb7361fcaf6d4127` |
+| 2026-11-01 | DeepSeek Reviewer | Hexagonal Architecture | pass | `2026-11-01-hexagonal-deepseek.md` | `cd4649da07f91ad1854c3e46e4cb18ff9a980cfa98d1e94296be9a844232a6a0` |
+| 2026-11-01 | DeepSeek Reviewer | Load Balancing | pass | `2026-11-01-load-balancing-deepseek.md` | `317d8e4bc6a768d9216b47b3c956d49cc524526126bf934872e2bbf6cd137c6d` |
+| 2026-11-01 | DeepSeek Reviewer | Reconciliation delta | pass | `2026-11-01-reconciliation-delta-deepseek.md` | `b0ec6936bfb856fb723f92e53e435d5c172789f83bd55e2ce19fb95a0249715c` |

@@ -586,7 +586,7 @@
         "status": "read",
         "card_citation": true
       },
-      "review_state": "independent-reviewed",
+      "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
       "notes": "Promoted and frozen: technical and decision coverage sufficient. AWS binds adapter maintenance/latency; error translation and contract-test recovery are Tycho guidance."
@@ -681,7 +681,7 @@
           }
         ]
       },
-      "review_state": "independent-reviewed",
+      "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
       "notes": "Promoted and frozen: technical and decision coverage sufficient. Decision body unchanged; metadata/excludes updated; section-scoped page rebind."
@@ -2381,12 +2381,11 @@
         "heading": "Client-Side Discovery",
         "anchor": "client-side-discovery",
         "level": 3,
-        "line": 216,
+        "line": 218,
         "unit_kind": "dedicated",
         "unit_terms": [
           "caller obtains",
           "caches",
-          "stale membership",
           "Client-side"
         ]
       },
@@ -2455,12 +2454,11 @@
         "heading": "Server-Side Discovery",
         "anchor": "server-side-discovery",
         "level": 3,
-        "line": 231,
+        "line": 233,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy, gateway",
           "stable virtual name",
-          "stale membership",
           "Server-side"
         ]
       },
@@ -2535,7 +2533,7 @@
           }
         ]
       },
-      "review_state": "independent-reviewed",
+      "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
       "notes": "Promoted and frozen: technical and decision coverage sufficient. Section-scoped page rebind; invariant reason corrected to distinguish unhealthy hosts from removed healthy hosts."
@@ -3219,7 +3217,7 @@
           }
         ]
       },
-      "review_state": "independent-reviewed",
+      "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
       "notes": "Promoted and frozen: technical and decision coverage sufficient. EIP binds request/reply matching; Azure binds MessageId duplicate detection; generation, retention and collision handling are Tycho guidance."
@@ -4003,7 +4001,7 @@
           }
         ]
       },
-      "review_state": "independent-reviewed",
+      "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
       "notes": "Promoted and frozen: technical and decision coverage sufficient. Card excludes updated during the 2026-11-01 rebind."
@@ -4630,7 +4628,7 @@
         "heading": "Command Query Responsibility Segregation (CQRS)",
         "anchor": "command-query-responsibility-segregation-cqrs",
         "level": 3,
-        "line": 308,
+        "line": 319,
         "unit_kind": "dedicated",
         "unit_terms": [
           "CQRS begins with a",
@@ -4797,7 +4795,7 @@
         "heading": "2. Event sourcing: what becomes authoritative?",
         "anchor": "2-event-sourcing-what-becomes-authoritative",
         "level": 2,
-        "line": 83,
+        "line": 87,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Event sourcing",
@@ -4859,7 +4857,7 @@
       "decision_evidence": {
         "atlas_section": "event-sourcing",
         "question": "Should authoritative state be derived from an ordered event history rather than stored as current rows?",
-        "competing_alternative": "Current-state store plus audit log/outbox or event notification. Reverse when full replay is unnecessary, schema ownership is absent or external side effects cannot be isolated.",
+        "competing_alternative": "Current-state store plus audit log/outbox or event notification. Choose event sourcing when replay/audit value exceeds schema and rebuild cost; reverse when full replay is unnecessary, schema ownership is absent or external side effects cannot be isolated.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -4892,7 +4890,7 @@
         "heading": "Domain Events",
         "anchor": "domain-events",
         "level": 3,
-        "line": 278,
+        "line": 289,
         "unit_kind": "dedicated",
         "unit_terms": [
           "committed business fact",
@@ -6173,7 +6171,7 @@
         "heading": "Materialized View",
         "anchor": "materialized-view",
         "level": 3,
-        "line": 292,
+        "line": 303,
         "unit_kind": "dedicated",
         "unit_terms": [
           "materialized view stores",
@@ -6240,7 +6238,7 @@
         "heading": "Command-Side Replica",
         "anchor": "command-side-replica",
         "level": 3,
-        "line": 255,
+        "line": 266,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Command-Side Replica"
@@ -9530,7 +9528,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 369,
+        "line": 380,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The projection owner publishes",
@@ -13409,7 +13407,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 258,
+        "line": 260,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",
@@ -13471,7 +13469,7 @@
       "decision_evidence": {
         "atlas_section": "load-balancing",
         "question": "Should requests be distributed across equivalent backends by a resolver or proxy?",
-        "competing_alternative": "Client-side selection or a single backend. Reverse the choice when balancing complexity and stale membership exceed availability benefit.",
+        "competing_alternative": "Client-side selection or a single backend. Reverse the choice when balancing complexity and stale membership exceed availability benefit. Among policies, round-robin, random choice, least-active requests and affinity compete; affinity is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -13489,7 +13487,7 @@
           }
         ]
       },
-      "review_state": "independent-reviewed",
+      "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
       "notes": "Technical and decision coverage sufficient. Frontend SRE binds DNS capacity; datacenter SRE binds sinkholing and policy alternatives; consistent hashing, affinity and lame-duck draining are Tycho guidance."
@@ -16644,7 +16642,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Network location is not trust; a valid token is not object permission.",
+          "quote": "network location is not trust and a valid token is not object permission.",
           "reason": "ASVS binds administrative-interface and network-location controls; object-permission enforcement is Tycho synthesis.",
           "binding": {
             "source_id": "src.owasp-asvs",
@@ -16682,7 +16680,7 @@
       "decision_evidence": {
         "atlas_section": "zero-trust-architecture",
         "question": "Should every access be authenticated and authorized at the resource, rather than trusted because it is inside a network?",
-        "competing_alternative": "Perimeter security with explicit compensating controls. Reverse the choice when zero-trust policy complexity exceeds the trust-boundary risk.",
+        "competing_alternative": "Hybrid zero-trust/perimeter operation, network segmentation, VPN or mTLS-only service identity when legacy enforcement is impossible. Reverse the choice when policy complexity exceeds the trust-boundary risk; the preference rule is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -16748,7 +16746,7 @@
         },
         "failure_recovery": {
           "state": "supported",
-          "quote": "Permission creep and long-lived credentials widen the blast radius without any visible incident; review grants on a schedule and prefer short-lived scoped credentials.",
+          "quote": "permission creep and long-lived credentials widen the blast radius",
           "reason": "ASVS binds short-lived and revocable tokens; permission creep and scheduled review are Tycho guidance.",
           "binding": {
             "source_id": "src.owasp-asvs",
@@ -18381,7 +18379,7 @@
       ],
       "unit_count": 3,
       "dedicated_units": 3,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Layered, hexagonal and clean/onion styles now have three distinct dedicated units with separate dependency mechanisms."
     },
@@ -18503,7 +18501,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Correlation and dead-letter policy retain two dedicated units after Claim Check and Request-Reply Messaging moved to dedicated owner pages on 2026-10-29."
     },
@@ -18552,7 +18550,7 @@
       ],
       "unit_count": 6,
       "dedicated_units": 6,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "deepen",
       "rationale": "Event sourcing, command replica, CQRS, domain events, materialized views and read projections now have six dedicated units."
     },
@@ -18806,7 +18804,7 @@
       ],
       "unit_count": 2,
       "dedicated_units": 2,
-      "bounded_entries": 1,
+      "bounded_entries": 0,
       "decision": "keep",
       "rationale": "Zero trust, least privilege and RBAC/ABAC have dedicated bounded units on the authorization page."
     },
@@ -18833,17 +18831,17 @@
     "dedicated_units": 145,
     "embedded_units": 0,
     "mechanism_supported": 124,
-    "invariant_supported": 100,
-    "failure_recovery_supported": 98,
-    "alternative_supported": 102,
-    "technical_partial_bounded": 5,
-    "technical_partial": 47,
+    "invariant_supported": 101,
+    "failure_recovery_supported": 102,
+    "alternative_supported": 105,
+    "technical_partial_bounded": 4,
+    "technical_partial": 46,
     "technical_name_only": 0,
-    "technical_sufficient": 93,
-    "decision_partial_bounded": 52,
+    "technical_sufficient": 95,
+    "decision_partial_bounded": 50,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 93,
+    "decision_sufficient": 95,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

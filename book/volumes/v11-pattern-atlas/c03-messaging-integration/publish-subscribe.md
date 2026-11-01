@@ -42,7 +42,7 @@ source_inspection_date: '2026-10-21'
 content_verified_at: null
 ---
 
-# Publish/Subscribe
+# Publish-Subscribe
 
 **Identity.** Publish/Subscribe; family Messaging and event-driven integration; kind
 messaging-pattern; priority core.
