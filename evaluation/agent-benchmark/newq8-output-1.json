@@ -1,0 +1,141 @@
+{
+ "status": "ai-generated-not-human",
+ "layer": "book",
+ "items": [
+  {
+   "question": "a team replaces an internal order-status api with managed functions because the provider promises scale-to-demand. each invocation opens its own database connection, keeps a multi-step export in a local temp file, and consumes an event source that retries delivery. at peak the database refuses connections, a resumed export finds no file, and a retried event charges the customer twice; the team calls the incident a provider regional failure. why is a function runtime not a failure domain, which boundaries must be recorded separately, and what would a same-outcome comparison against the container deployment have to hold equal?",
+   "required_evidence": [
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#overview",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs"
+   ],
+   "core_claims": [
+    "A managed function is a provider-managed execution boundary with invocation, event and timeout limits; it is not its own kernel or availability zone, and runtime quotas, concurrency, start delay, and vendor control-plane and region dependencies belong to its availability contract.",
+    "Serverless shifts state externalization: a local temp file or instance memory cannot be the boundary between steps, so a resumed export must rebuild its state from durable storage.",
+    "Per-invocation database clients create connection spikes against a shared dependency, and event-source retry and delivery semantics can repeat an effect unless that effect carries its own identity.",
+    "The deployment unit alone cannot answer an availability question: state writer, ingress, runtime instance, scheduler or control service, deployment mechanism, network path, secrets and identity service, zone, host, region and operator responsibility must be recorded separately.",
+    "Comparing a function deployment with a container deployment requires the same observable outcome, admitted and offered load, logical data correctness and named outage, plus staffing, steady-state cost and a restore test, and package type does not imply a number of safe replicas."
+   ],
+   "optional_claims": [
+    "A container on a shared host is also not its own kernel or zone; image registry, cluster control plane, network overlay, storage and secret fetch, and autoscaler delay can block recovery.",
+    "A migration to containers may be contraindicated by a hard device-driver or kernel dependency, unsupported legacy licensing, or an immutable on-disk contract.",
+    "A managed platform service's actual failover and consistency semantics require exact provider, region and version evidence rather than a universal RPO or RTO guarantee."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  },
+  {
+   "question": "a consumer group processes payment-capture records: for each record it calls the payment provider, updates an order row, then commits its kafka position. a deploy triggers a rebalance while a capture request is in flight; the revoked instance finishes the capture but never polls again, the successor replays the record, and the team enables a kafka transaction with read_committed and declares captures exactly-once. why is that claim unsupported, what identity must the capture and the consumer receipt share, and what changes once the group's position falls outside retention?",
+   "required_evidence": [
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#4-consumer-offset-effect-and-crash-points",
+    "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#5-failure-and-recovery-matrix"
+   ],
+   "core_claims": [
+    "A consumer position is a replay position, not proof that an external effect succeeded: committing before the effect can lose it, committing after the effect can duplicate it, and no ordering of the two independent commits creates a global transaction.",
+    "A rebalance or revocation does not cancel an in-flight SQL or HTTP request; stopping polling or running a rebalance callback cannot retract a remote capture, so in-flight work must be drained or classified and positions committed only for resolved effects.",
+    "Kafka transactions and read_committed coordinate records and offsets within Kafka; they do not enclose an unrelated database commit or payment-provider effect, and an idempotent producer is not a business operation key across restarts and input sources.",
+    "A durable receipt committed atomically with the external effect lets a successor resolve the duplicate, but only under the receipt's scope, retention and SQL isolation assumptions.",
+    "If the requested offset no longer exists, auto.offset.reset cannot recreate deleted records: earliest means the earliest retained history, latest may skip missing history, and a silent reset can turn a recovery failure into apparently healthy but incomplete output."
+   ],
+   "optional_claims": [
+    "max.poll.interval.ms behavior depends on group management and static-membership and protocol caveats, so a missed poll must not be described as always moving every partition.",
+    "A rebuild protocol needs a source snapshot with an explicit change boundary and a CDC contract that closes the snapshot and change gap; absent that boundary the correct output is insufficient evidence.",
+    "The failure matrix requires checking in-flight work, offset commits and business effect identity when a consumer group rebalances, and transaction-abort visibility depends on the isolation mode."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  },
+  {
+   "question": "a checkout service calls an authoritative booking database and an optional recommendation service through one shared outbound pool of 20 slots. during a recommendation slowdown, recommendation calls hold 18 slots, booking calls queue, and the team's first fix doubles the pool to 40; booking p99 worsens while the edge quota still reports headroom and the database stays healthy. why does enlarging the shared pool not restore core work, what must be isolated and observed, and when are admission control or a circuit breaker the better control?",
+   "required_evidence": [
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation"
+   ],
+   "core_claims": [
+    "A bulkhead reserves bounded workers or pools for independent classes or dependencies; it contains starvation but does not create capacity.",
+    "In one shared pool a slow optional dependency can consume most slots and make required work miss deadlines even while the authoritative database and an edge quota are healthy.",
+    "Enlarging the shared pool can increase calls to the failing dependency and resource use without restoring the core outcome; required work needs a separate budget and deadline, and the optional result must be reported as explicitly absent.",
+    "Bulkhead isolation is defeated by bypass, undersized partitions or a shared hidden queue, so per-pool queue age, utilization and rejected work must be observed and the isolated class failed explicitly.",
+    "The bulkhead is conditional: when one global resource can be bounded directly, admission or rate limiting may be preferable, and when the failure is dependency-specific a circuit breaker may be preferable.",
+    "A valid comparison holds the offered arrival schedule and resource ceiling equal; a result that looks faster only because it drops unknown user attempts is invalid."
+   ],
+   "optional_claims": [
+    "An open circuit breaker is not permanent recovery and is not a substitute for backpressure; recovery needs bounded trial probes and a flow increase only after stable correct responses.",
+    "Rejection codes and retry hints must keep clients from retrying in lockstep during the slowdown.",
+    "A shared admission policy can starve low-traffic tenants unless fairness and per-principal limits are declared."
+   ],
+   "abstention_expected": false,
+   "difficulty": "medium"
+  },
+  {
+   "question": "a team ships three statements in one migration window: add a nullable column with a default expression, backfill 400 million rows in batches, and create a unique index. a 40-minute analytics transaction holds an old snapshot and the migration waits before the column exists; the team calls the change metadata-only because the column is nullable, and plans to roll back the application image if latency degrades. why is the metadata-only claim unsupported, what must the preflight establish about locks, rewrites and partial recovery, and why is an image rollback not a migration rollback?",
+   "required_evidence": [
+    "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary"
+   ],
+   "core_claims": [
+    "PostgreSQL ALTER TABLE acquires ACCESS EXCLUSIVE unless a weaker lock is documented for that exact subcommand, and a syntactically simple migration can block concurrent work or rewrite the table depending on its exact form.",
+    "DDL consumes CPU, I/O, lock time, WAL and replica replay capacity, so safety depends on the PostgreSQL version, table size and workload, and a lock estimate is not a measurement.",
+    "A safe preflight asks the lock mode and blocking duration, whether the subcommand rewrites the table or blocks writes, rows and bytes plus estimated WAL and replica lag, whether long transactions and connection queues exist, how a partially finished job resumes or cleans up, what failure does to old and new readers, and how to stop before the no-return point.",
+    "Expand-migrate-contract requires an additive expansion with a verified lock budget, a tested mixed-version read and write phase, a bounded backfill and an old-consumer inventory before contract.",
+    "Image rollback is safe only if old N can correctly read and mutate every persisted state written by N+1; once new-only state is committed, reverting containers can violate invariants, and a revert command is not recovery of acknowledged reservations or external effects."
+   ],
+   "optional_claims": [
+    "An incompatible persisted write should hold the rollout and may require forward repair rather than redeploying N.",
+    "A delayed old event consumer is a separate history version boundary, and no old codec may silently discard or misinterpret the event.",
+    "DDL should be separable from the application rollout so the stop point before the no-return gate can be enforced."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  },
+  {
+   "question": "two clients read workshop revision 12. client a changes the title; client b, using the full object it read, changes capacity and sends if-match with the revision-12 etag. the server evaluates the etag in application code and then writes the full object; b's write lands after a's and erases the title. b's response is lost, so the client retries with the newest etag and a merged body. why does the if-match header not by itself prevent the lost update, what must the validator and the check be bound to, and why is retrying with a fresh validator unsafe?",
+   "required_evidence": [
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric",
+    "tycho.page.de9c5bc478ba44718fcb731e69109dce#6-testable-acceptance-and-negative-evidence"
+   ],
+   "core_claims": [
+    "An ETag is a representation validator, not automatically a database row revision or a content checksum.",
+    "If-Match uses strong comparison and a failed condition normally produces 412, but evaluating the condition in application code followed by an unguarded write is a read-then-write, not an atomic compare-and-mutate.",
+    "The precondition must be tied to the state the caller actually read and checked atomically with the mutation at the authoritative owner.",
+    "On a mismatch the caller should reread and decide whether to merge or abandon; blindly retrying a stale replacement with the latest validator is unsafe.",
+    "After a lost response to a successful mutation, operation identity or a safe state-resolution protocol is required, because a precondition failure on retry alone does not prove which attempt succeeded.",
+    "Wire-parse compatibility does not establish semantic compatibility: old and new clients, required business values, unknown enum values and rollback state must each be tested."
+   ],
+   "optional_claims": [
+    "A cursor is a continuation hint, not authorization, so permission must be rechecked even when a snapshot retains previously visible rows.",
+    "Webhook delivery is another asynchronous API: a sender retry does not establish ordering across different events, and a receiver restart after the effect but before the response can cause redelivery.",
+    "A passing OpenAPI checker, protobuf compilation or isolated happy-path unit test cannot establish acknowledgment loss, duplicate handling, deadline, overload and forward-recovery behavior."
+   ],
+   "abstention_expected": false,
+   "difficulty": "medium"
+  },
+  {
+   "question": "a reservations service writes business state and an outbox row in one transaction, keys events by aggregate id, and runs two relay workers plus a nightly backfill that republishes recent aggregates. a projector applies events with last-writer-wins. after a relay retry and the backfill overlap, older version e6 arrives after newer version e7, the projector reverts a confirmed reservation to pending, and the team cites the aggregate key and the local outbox commit as proof of ordering. why do neither establish the order the projector needs, what must the event and projection contracts define, and what must a publisher prove before it writes the backfill?",
+   "required_evidence": [
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#1-two-unsafe-dual-write-orders",
+    "tycho.page.9daa9ce90a5047fa849c637f24b063f7#2-publication-schema-and-ordering-boundaries",
+    "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#5-publication-correctness-lease-task-identity-and-unique-outputs"
+   ],
+   "core_claims": [
+    "The outbox's atomic local transaction removes the database-then-broker failure window for publication intent, but it does not create a global order across relay retries, backfills or independent producers, and the relay may still send a message more than once.",
+    "Transaction commit order, an aggregate's version or domain sequence, connector relay time, broker partition offset, consumer time and business-effect completion are distinct facts.",
+    "Using the aggregate ID as the Kafka message key can help preserve per-partition order; that is product configuration semantics, not a guarantee of global ordering or arbitrary exactly-once effects.",
+    "If E6 reaches a consumer after E7, a blind last-writer-wins projection may revert correct state, so the contract needs a version rule plus a permitted out-of-order merge, replay repair or quarantine.",
+    "An event timestamp alone does not grant a total order across independent producers.",
+    "A publisher must prove a valid lease, immutable task and configuration identity, a unique output name and a validated coordinator identity before committing, and a paused worker can still write its own output after lease expiry and must fail at the commit boundary."
+   ],
+   "optional_claims": [
+    "The outbox truth table's row for an event arriving after newer entity state requires a defined version or order conflict rule and quarantine rather than blind application.",
+    "Exactly-once publication of an intended output does not make every external side effect exactly once; a payment or notification still needs its own effect identity and reconciliation.",
+    "The outbox guarantee is conditional on the publication-intent row actually being inserted in the same local transaction as the business state."
+   ],
+   "abstention_expected": false,
+   "difficulty": "hard"
+  }
+ ]
+}

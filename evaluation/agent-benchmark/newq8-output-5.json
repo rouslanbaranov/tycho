@@ -1,0 +1,143 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "A reservations service owns its own database and answers a synchronous confirm-booking request by calling inventory, pricing and notification in sequence. When notification is slow it returns 503, and the caller retries with a new request id. To reduce the calls the team adds an in-process inventory cache that is filled on read and never reconciled, and it now calls the service self-contained. Why do a separate database and a cached collaborator not satisfy the pattern, what must the local read model and its reconciliation own before the response is independent, and when is a synchronous call or a retry still the better choice?",
+      "required_evidence": [
+        "tycho.page.08f5561565b24db2a8dbc7dbdc63a1e6#overview",
+        "tycho.page.4e0e4db7547b45469f36915886473750#bounded-pattern-ownership-notes",
+        "tycho.page.4e0e4db7547b45469f36915886473750#2-independence-is-not-proved-by-a-separate-container",
+        "tycho.page.4e0e4db7547b45469f36915886473750#4-the-costs-created-by-a-remote-boundary"
+      ],
+      "core_claims": [
+        "The pattern rule is to respond to a synchronous request without waiting for any other service; the card's fit conditions require material runtime availability coupling, a local read model the service can own and acceptable asynchronous reconciliation.",
+        "The recovery design is a local read model plus asynchronous reconciliation, which lets the service answer while a collaborator is unavailable at the cost of duplication, reconciliation and staleness; the owner note assigns asynchronous consistency to a saga and the replica to CQRS.",
+        "A synchronous call to an unavailable collaborator cannot complete and must return an error, and retrying raises response time while synchronous request/response reduces availability, so neither restores response independence.",
+        "A self-contained service still exposes a synchronous contract to its caller and reduces runtime coupling, not the service boundary; mandatory strong consistency or non-replicable data is the card's hard contraindication.",
+        "A cache filled on read and never reconciled is not the pattern's local read model because it has no reconciliation path, owner or staleness bound, so the duplication and staleness costs are unowned.",
+        "A separate database or container does not prove independence: the owner page counts writing tables owned by other components, importing their internal structures, or relying on one synchronous downstream critical path among the reasons a separately deployed component can still require lockstep releases."
+      ],
+      "optional_claims": [
+        "The owner note's saga and CQRS assignments are the stated designs for asynchronous consistency and a local replica, not a requirement that every self-contained service adopt both.",
+        "Direct synchronous request/response or retry remains the card's competing alternative when the collaborator is reliable enough and the required freshness rules out a replica."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A logistics platform bridges its internal broker to a partner's broker: the bridge consumes an internal event, translates the payload and headers, publishes to the partner topic, and acknowledges the internal message as soon as the partner publish returns. After a partner outage it resumes from an in-memory offset, so some events duplicate and some are skipped; the partner has no dead-letter path, and its message id is mapped only when present. The team says at-least-once delivery makes the bridge safe. Why is a bridge a delivery contract with its own failure domain, what must it preserve across the translation, and when are a direct call, fan-out or a shared log the better choice?",
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "A bridge sits between broker contracts and translates protocols or formats, adding a hop, a retention policy and a failure domain, so its contract must preserve identity, ordering and delivery semantics across the translation.",
+        "A publisher confirmation is not a consumer commit, and crossing two brokers can duplicate or delay at either boundary, so the bridge needs its own identity mapping, dead-letter path and delivery contract.",
+        "A faithful contract on one side does not imply the same contract on the other; the broker half still needs an owner for outage, retention and delivery observability, and a bridge cannot compensate for an unavailable broker.",
+        "Acknowledging the internal event as soon as the partner publish returns does not prove that the partner committed the effect; retiring the source before the destination's declared state, or resuming from an in-memory offset, can lose or duplicate events.",
+        "The card rejects a bridge when one direct call suffices, when the broker becomes an unowned single point, or when protocol bridging hides semantic loss; otherwise a direct call, fan-out or a shared log avoids an extra failure domain that must have an owner.",
+        "Message ordering is scoped to a queue, subscription, stream or partition and to concrete producer and consumer behavior, and no broker column implies global total order, so a bridge cannot claim an order that neither side enforces."
+      ],
+      "optional_claims": [
+        "The card's good-fit conditions require multiple producers or consumers that need decoupling, owned routing and delivery policy, explicit bridge semantics and an observable broker.",
+        "The card's competing alternative is direct messaging or a simpler queue, and it reverses when broker complexity and operational cost exceed the decoupling benefit."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team splits document enrichment into six filters connected by queues: extract, normalize, classify, translate, redact and index. Each filter deploys and scales independently; classify is stateful and runs four instances, translate adds about 400 ms per document, every filter re-serializes the whole document, and a redaction step that needs the whole document is split across two filters. No stage identity, ordering scope, checkpoint or completion rule is recorded. The team calls the filters independent because each has its own queue. Why does separate deployment not make the stages independent, what must each filter and the pipeline own, and when is one cohesive consumer the better choice?",
+      "required_evidence": [
+        "tycho.page.7082c6b84e0f4d04bec339b06fe600fc#overview",
+        "tycho.page.5f7a647e94fb4e7cbce5dab08b1d3414#overview",
+        "tycho.page.2c928286b62944769a4b0cab9fad6139#overview"
+      ],
+      "core_claims": [
+        "Pipes and filters divides a larger processing task into ordered, replaceable steps connected by message channels; each filter receives on an inbound pipe, processes the message and publishes to an outbound pipe, and the basic form gives each stage one inbound and one outbound port.",
+        "The card allows ordered stages only when each stage has an independent contract and the pipeline owns ordering, partial completion and recovery, so separate deployment supplies neither the contract nor those pipeline responsibilities.",
+        "A parallel or multi-instance stage can reorder messages unless the pipeline declares an ordering scope and a resequencer; the owner page records the source rule to run only one instance of each component or use a resequencer when sequence is critical.",
+        "The simple filter is not transactional, so an error before the output channel loses the message; Tycho guidance adds per-stage effect identity for deduplication, per-stage lag or queue-depth visibility, backpressure and a declared checkpoint or replay boundary.",
+        "A failed middle stage leaves earlier effects applied, and the operator needs the failed stage, its input identity and the last completed stage; retries and replays must be idempotent per stage.",
+        "Stage isolation has costs: channels consume memory and CPU for buffering, repeated message conversion lowers throughput, the slowest stage bounds pipeline throughput, stateful filters are poor parallel candidates, and a stage that needs the whole transaction is a hard contraindication; one cohesive consumer with internal functions is the alternative when the stages are small and cannot be operated independently."
+      ],
+      "optional_claims": [
+        "The card names an unowned distributed workflow and a failed middle stage with no declared checkpoint as contraindications, and each stage should carry an effect identity so the chain stays bounded (Tycho guidance).",
+        "An in-memory queue is a lighter pipe when all components share one machine, and the source calls one comprehensive message-massaging module inflexible and difficult to test."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A payments orchestrator sends charge requests to a partner and receives replies on one shared queue. It matches a reply to a request by arrival order and by the partner's free-text subject, generates a new request id on every retry, and drops an expired identifier silently. A late reply from a timed-out attempt is matched to the next request, and the same identifier is also accepted as the callback's authorization token. The team says the shared queue plus a request id is enough. Why is a correlation identifier not a queue position or an authorization claim, what must its generation, propagation and retention own, and when is a transport-native message identity the better choice?",
+      "required_evidence": [
+        "tycho.page.523433bb7da14cc48558302d7dc322f9#overview",
+        "tycho.page.b21078a397214496a24305a2f016b021#overview",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#bounded-pattern-ownership-notes",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#4-failure-and-applicability-gates"
+      ],
+      "core_claims": [
+        "A correlation identifier ties together messages that belong to one request or reply; the design model lets it group a broader workflow, so it needs a generation rule, propagation across asynchronous boundaries, a retention window and a collision check, with uniqueness scoped to the operation rather than globally.",
+        "The invariant is that a reply carries a correlation identifier matching the request id of the request it answers, and a read or reply must state the correlation scope it requires and propagate it across every asynchronous boundary.",
+        "Matching by arrival order or free-text subject is not correlation because replies can arrive out of order or repeat, and the card rejects identifiers reused across operations or receivers that cannot retain correlation state.",
+        "Correlation is not deduplication: it groups messages but does not prove one effect, identifier retention and trust boundaries need an owner, and a valid correlation value is not an authorization token.",
+        "Azure duplicate detection removes repeated message-id submissions, but a correlation-id collision is not broker-detected and remains application-side; unmatched messages should be quarantined, resolved by a secondary key or reissued, and an expired identifier should map to a dead-letter or audit record with an owner (Tycho guidance).",
+        "A transport-native message identity is the alternative when the broker guarantees the needed scope and lifetime and duplicate detection already enforces the required identity, while the card reverses a correlation scheme whose state or retention cost exceeds the routing benefit."
+      ],
+      "optional_claims": [
+        "The card's fit conditions are flows spanning multiple messages or services, an identifier stable per logical operation, and a defined retention and collision policy, with one synchronous call carrying the whole exchange as a contraindication.",
+        "The choice rule between a correlation identifier and a transport-native message identity is Tycho guidance, not a source comparison."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A platform runs an ingest job, a report generator and an admin console under one shared service identity. The identity holds one storage role over every bucket and one database role over every schema; its key sits in a shared config map, rotation every 180 days breaks the jobs, revoking a departed contractor means rotating the key for all three, and a misconfigured run lets the report job read another tenant's bucket. The team says the workloads are least privilege because each has its own process and code review. Why is a shared broad identity not least privilege, what must each credential bind before the workloads are separable, and when is dual control the better choice?",
+      "required_evidence": [
+        "tycho.page.6023770f1256fc30b9784e10d312a3da#overview",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#overview",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#least-privilege",
+        "tycho.page.99e04ece579d426ba5e48bbb1f6f3695#zero-trust-architecture"
+      ],
+      "core_claims": [
+        "Least privilege grants each principal only the permissions its task needs, limited in resource scope, action and time; every credential must have a bounded scope, an owner and a revocation path that does not depend on the compromised principal.",
+        "The card's fit conditions are enumerable permissions, time- or task-bound scope, possible revocation and an audit trail, while its hard contraindications are unavoidable broad permissions for a bounded migration, no owner able to review scope, or least privilege blocking recovery.",
+        "One identity shared by three workloads makes its permission set the union of their needs, so each workload can exercise the others' rights; permission creep and long-lived credentials widen the blast radius without a visible incident.",
+        "A revocation path tied to a shared key means revoking one principal requires breaking the others, and the owner section requires revocation that does not depend on the compromised principal while preferring short-lived scoped credentials.",
+        "Separate processes and code review do not scope a credential: the decision is about the principal's permissions, resource scope, action and time, not the shape of the deployable.",
+        "Dual control is the alternative when no narrow role can express the task: keep a task-capable identity and require independent approval by more than one principal before a high-value action instead of splitting the entitlement, and reverse it when approval latency or approver availability blocks a time-critical or automated action, or when approvals become routine."
+      ],
+      "optional_claims": [
+        "ASVS 5.0.0 requirement 2.3.5 is a Level 3 high-assurance control that names multi-user approval for high-value flows; it does not define approver independence or approval evidence, and it does not compare approval with entitlement minimization.",
+        "Emergency access needs a time-boxed, audited path with revocation tests and logging rather than a permanent broad role."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "An inventory service acknowledges a reserve-item write after placing it in a shared cache and returns 200; a background job flushes pending writes to the database every five seconds. The cache used for the pending buffer has no persistence or replication, a node restart loses the buffer, two writes to one key can flush out of order after a retry, the flush backlog has no bound, and shutdown does not drain it. The team points to AOF enabled for a different workload and calls the acknowledged writes durable. Why is write-behind not a durability mechanism, what must the buffer, flush and recovery path declare, and when are write-through or direct store writes the better choice?",
+      "required_evidence": [
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness"
+      ],
+      "core_claims": [
+        "Write-behind acknowledges a write after placing it in a pending buffer and flushes it to durable storage asynchronously; if that buffer is the cache itself, cache loss can discard acknowledged writes, which is the card's hard contraindication.",
+        "If the buffer has its own durable or replicated record separate from the cache, cache loss is recoverable and the acknowledged write survives, so the design must state which case applies and must never include durable acknowledged writes in a permitted loss window.",
+        "Flush ordering, retry and shutdown drain are part of the durability contract; an unbounded backlog silently breaks the declared loss window, batch flushes must preserve per-key order, and a restart must replay the pending buffer before accepting new writes.",
+        "The card rejects write-behind when cache loss would lose accepted writes, ordering is mandatory, or no reconciliation path exists, and write-behind fits only when the cache can durably buffer writes, loss tolerance is explicit, ordering and retry are owned, and the store can catch up.",
+        "Write-through acknowledges only after both sides reach the declared state or an explicit reconciliation repairs a partial write, so it is preferable when read-after-write freshness outweighs the extra write cost; direct store writes are the alternative when durability and replay complexity exceed the latency benefit.",
+        "A cache copy is a derived read, not authority: cached tenant permissions or exclusive availability must not be treated as harmlessly stale without the security or domain owner's approval, and a write path that returns 200 before the durable state is declared is not made durable by another workload's persistence setting."
+      ],
+      "optional_claims": [
+        "The card's source record covers caching write consistency generally, not write-behind buffering or durability; the buffering and durability mechanism is synthetic owner guidance.",
+        "An owner must reconcile the backlog after a prolonged outage, and a bounded loss window applies to at-risk writes, not to writes the business treats as accepted."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

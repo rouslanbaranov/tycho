@@ -1,0 +1,405 @@
+{
+ "task_id": "Q325",
+ "answer": "# Q325 — read-through cache: authorization, error mapping, fill version, stampede control\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence (section keys) |\n|---|---|---|\n| F1. Per-read authorization under one shared loader identity | \"read-through cache authorization\", \"cache miss authorization\", \"confused deputy service identity\", \"per-request authorization decision point\" | tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory; tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes; tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident |\n| F2. Error mapping: 500 and permission denial mapped to \"miss\" | \"cache hides failure from callers\", \"negative caching\", \"error masking\", \"fail closed\" | tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization; tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes |\n| F3. Fill version and a two-second-behind read replica | \"stale fill version\", \"replica lag stale read\", \"read-your-writes\" | tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy; tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race; tycho.page.253d5a98933c4cee947545acb8eaa72a#overview |\n| F4. Concurrent misses and stampede control | \"cache stampede\", \"request coalescing single flight\", \"stampede single flight\" | tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview; tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission; tycho.page.f39fa61013ca41abbfba82ef48250f8f#5-failure-operation-cost-model |\n| F5. The \"transparent cache\" claim and the declared read contract | \"transparent cache\", \"hit ratio is not proof\", \"cache acceptance\" | tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract; tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem |\n| F6. Cache-aside, blocking authoritative read, or no cache | \"cache-aside pattern\", \"read-through cache\", \"blocking read stale bound\" | tycho.page.f1aadca8dc3848c1a0aafa83f0e13f83#overview; tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes; tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy |\n\n## 2. Short answer\n\nA read-through cache cannot decide per-read authorization because the load is no longer a\nrequest: it is a cache operation executed by the cache's own service identity for whichever\ncaller happened to miss. The value that is stored is keyed by resource, not by subject,\ntenant, action and policy revision, and the store it returns to is shared. The cache\ntherefore can see \"the catalogue row\", but it cannot see the shopper's entitlement. Any\ndesign that makes it see one must either thread the caller's security context into the\nloader (at which point the application is making the decision and the cache is just a\ntransport) or key by principal and re-check policy per read (at which point it is no\nlonger the shared read-through cache the team described). The authoritative book and\natlas positions agree: a read-through cache's hard contraindication is exactly\n\"application-specific authorization is needed for each read\", and \"a read-through cache\ncannot make per-read application authorization decisions\" is stated as a property, not a\nbug.\n\nThe loader must therefore carry an explicit, reviewable contract with three declarations.\nFirst, an error-mapping table: what a miss, a not-found, a permission denial, an upstream\n500, a timeout and a stale entry each mean to the caller and what is stored. A 500 and a\ndenial must never become an ordinary miss, because a miss asserts absence and licenses a\nnew fill, so folding failures into misses both hides degradation and repeats it as load.\nSecond, a fill-version rule: every fill carries the authority's revision and is admitted\nonly if it does not regress the cached high-water version; deletion alone does not fence an\nin-flight fill, and a TTL is not a version guarantee. A fill from a replica that is two\nseconds behind is a stale snapshot by construction even when replication is healthy, so\nthe contract must also say which source is authoritative for price-like fields. Third, a\nstampede contract: concurrent misses for the same key are coalesced into one fenced\nauthoritative load, or explicitly admitted, queued, rejected or answered with approved\nstale data; one coalesced load cannot serve waiters with differing authorization and its\nerror is shared by every waiter. And a successful hit can still be wrong: \"cache\navailability is not authoritative correctness\".\n\nCache-aside is the better choice when the application must own fill policy: it keeps the\ncaller's authorization context, error translation and version rule in one visible place,\nand it is the documented alternative when fill failures must not be hidden. A blocking\nauthoritative read is the better choice at the declared stale bound, for revocation- or\nauthorization-sensitive values, and whenever read-after-write freshness is required; for\nan authoritative grant a stale value may be forbidden, so rejecting with an explanation is\nbetter than serving it. Read-through remains defensible for public, slowly changing,\nuniformly loadable data with bounded staleness, coalesced fills and version-gated stores.\n\n## 3. Why the read-through cache cannot decide per-read authorization\n\n**3.1 The load has no caller.** A read-through cache \"loads a miss from the source on\nbehalf of the caller and stores the result, so the application never performs the fill\nitself.\" The actor calling the source is the cache's loader, under one service identity.\nThe caller's subject, tenant and policy input are not in the call unless the application\nexplicitly propagates them, and once it does, the application is deciding authorization\nand the cache is only carrying the decision. A single shared identity also means the\nsource sees the loader rather than the shopper; the book's synthetic incident names the\nsame failure class: a background job using \"service-level read authority beyond the user's\noriginal delegation\", and a gateway authentication check that \"cannot replace\nresource-level authorization\".\n\n**3.2 The value is keyed by resource, not by entitlement.** A shared cache entry is one\nvalue per catalogue row. Authorization is bound to \"the authenticated subject, action,\nresource, tenant, and relevant context\", and a reused decision is valid only \"for the same\nsubject, action, resource scope, tenant, and relevant policy/input state, within the\napproved freshness limit\". A resource-keyed entry satisfies none of the subject or policy\nconditions. Making the key per-principal is possible but is a different design: it\nmultiplies entries, destroys cross-caller reuse, and still leaves the cache holding a\npermit that can outlive a revocation.\n\n**3.3 A denial is not a miss.** If a permission denial is mapped to a miss, the cache\nperforms a source read with its elevated identity — the classic confused-deputy shape — and\nthen has three bad options: serve the row (escalation), store a negative that is now\nvisible to other principals (a \"universal statement that an object does not exist for all\nauthorized principals\"), or re-derive the denial locally without the policy engine. None\nof these is an authorization decision the cache is entitled to make. The same section is\nexplicit that a cached negative for an authorization-sensitive lookup must include tenant,\nprincipal or scope, the checked operation and the policy revision, and that a key missing\nany of these \"is not shared\".\n\n**3.4 Revocation is a deadline, not a TTL.** The restricted item stays visible because the\nentry's TTL and the revocation deadline are independent clocks. \"A cached permit must not\noutlive a required revocation deadline\"; the bound is the shorter of the TTL and that\ndeadline, with delete or version on create, grant, revoke and delete. A cache hit is not a\npolicy evaluation, and an unavailable policy evaluator needs an explicit fail-closed or\nseparately approved safe-degradation rule — \"defaulting to allow in the name of\navailability violates the protected outcome\". This is also why \"the cache is transparent\"\nis a call-path statement only: the caller does not see the cache, but the caller's\nauthorization outcome has been silently replaced by a cache lookup.\n\n## 4. What the loader must declare\n\nThe book's data-contract table requires, for each cacheable value: authority, key and\nscope (resource, variant and tenant/permission scope), freshness, cache-miss behaviour,\ncache-loss behaviour, error behaviour, data class (sensitivity, retention, revocation)\nand validation that hit and miss paths yield correct user effects. Applied to this\nservice, the three declarations the question asks about are these.\n\n### 4.1 Error mapping\n\n| Loader outcome | Must mean | Must not mean |\n|---|---|---|\n| Not found at the authority | Absence for this scoped key; may be cached only with a scoped key, a short TTL and a create/delete consistency rule | \"The database is fine and the row is gone\" when the read actually failed |\n| Permission denial | A policy outcome returned to the caller, evaluated at the enforcement boundary | A miss; a loader read under the service identity; a cached universal absence |\n| Upstream 500 / timeout / connection failure | An explicit error (or an explicitly approved degraded response) with the failure surfaced to metrics and the caller | An ordinary miss, an \"absent\" negative entry, or a silent stale fill |\n| Stale entry beyond its declared window | Reject, block on the authority, or return an approved degraded result | An unbounded stale serve |\n\nThe rule is stated twice in the corpus: \"A fill failure must be returned or mapped\nexplicitly, never hidden as an ordinary cache miss\", and \"Slow fills and error masking make\nthe cache appear healthy while the source degrades.\" The negative-cache owner adds that\nunknown data-source errors must not be cached as absence at all. Mapping a 500 to a miss\nalso converts a source slowdown into extra source load: every request that should have been\nan error becomes a fill, which is precisely the observed \"requests look like normal misses\nand load rises\" behaviour.\n\n### 4.2 Fill version\n\nThe loader must declare: (a) which system or state revision is authoritative for the field\n(leader, replica, projection, event log); (b) the revision carried by every fill; (c) the\nadmission rule — a fill may be stored only if its revision is not older than the cached\nhigh-water version, with an atomic compare at the shared key where the check/write gap\nmatters; (d) how a never-cached absence is distinguished from a post-delete tombstone; and\n(e) who owns invalidation and how a failed invalidation is retried. \"Deletion alone does\nnot fence an in-flight fill\", and \"A TTL expresses a cache lifetime condition; it does not\nguarantee that a stale value cannot be reinserted after invalidation by an in-flight\nload.\" Without a version rule a slow fill can republish v17 after v18 commits — the\ndocumented stale-fill race — and a two-second replica read is exactly such a slow fill,\nbecause the replica's v17 is what the loader sees while the seller's v18 is already\ncommitted.\n\nReplica lag deserves its own declaration rather than a version check alone: a read replica\nis expected to be behind and \"a failover to a stale replica can violate read-your-writes\neven when replication is healthy\". Version-gating detects a regression after the fact; it\ncannot make the replica current. If the price is a committed commercial value, the loader\nmust either read the leader/quorum for post-write reads, or declare a bounded staleness\nwindow the business accepts, or not cache that field.\n\n### 4.3 Stampede control\n\nThe loader must declare the coordination scope (per process, per key, per source), the\nwaiting contract (wait, bounded wait then reject, or approved stale), the lease and fencing\nrule if a distributed lock is used, the admission cap that protects the source when the\ncache is cold or lost, and what happens to waiters when the leader fails. The corpus is\ndirect: \"Single-flight/coalescing: within one instance, combine concurrent cache misses\nfor the same key into one source load\"; a distributed lease needs expiry, fencing and safe\nrecovery; \"Rate limiting/bounded fallback: protect source DB/pool when cache disappears\";\nand \"Cache loss is a load event, not only a latency event.\"\n\nTwo boundaries are easy to miss. First, coalescing and authorization conflict: one\ncoalesced load serves every waiter, so it must not be used \"when waiters need independent\ncancellation or differing authorization\", and \"a leader error is shared by every waiter\".\nA protected read therefore either bypasses the shared fill or is keyed and authorized per\ncaller. Second, the cache must be classified as a latency cache or a capacity cache: if the\norigin cannot sustain the offered load without hits, then a miss storm is an overload\nevent, not just a slow request, and the fallback must be admission, queueing or explicit\nrejection. The chapter's mission states the same load risk: \"A cache outage can turn every\nmiss into origin load\", so the loader must \"Bound concurrent fallback and define an\noverload response\" and make key scope, TTL/invalidation, stampede control and\nauthorization explicit.\n\n## 5. When cache-aside or a blocking read is the better choice\n\n| Situation | Better choice | Why |\n|---|---|---|\n| Loader must see caller identity, tenant or policy input | Cache-aside in the application, or no cache | The application keeps the authorization context and the fill policy in one visible place; a read-through loader cannot decide it |\n| Fill errors must be visible and mapped per caller | Cache-aside | The application owns error translation; the cache does not hide a 500 as a miss |\n| Source contract is not uniform (different auth, protocols, backpressure) | Cache-aside | \"The cache must implement the source protocol, authentication and backpressure; a bypass with different client semantics defeats the uniformity claim\" |\n| Price or grant must be read-after-write fresh | Blocking authoritative read (leader or quorum), bypass the cache | Replica lag and the stale-fill race can serve an older committed value; a version gate detects but does not repair lag |\n| Revocation-sensitive value (restricted item) | Blocking check at the enforcement boundary; cache only public metadata, if anything | A cached permit must not outlive the revocation deadline, and a cache hit is not a policy evaluation |\n| Stale bound reached or refresh inconclusive | Blocking read | The stale window is bounded; after the bound \"the next request blocks and is handled normally\" and the design should \"fall back to a blocking read when it is reached\" |\n| Public, noncritical, slowly changing catalogue text with bounded staleness | Read-through is acceptable | Uniform load contract, no per-read authorization, coalesced fills, version-gated store, declared stale window |\n| Origin can serve the latency budget directly | No cache | \"Prefer no cache when origin read cost is below the target or correctness/authorization changes require current state\" |\n\nThe decision rule is not \"read-through versus cache-aside\" in the abstract. It is whether\nthe read path needs a per-caller decision (then it must stay in the application), whether\nit needs a freshness guarantee stronger than the source can supply through the cache (then\nblock on the authority), and whether the source can survive the empty-cache state (then\nadmission and capacity planning are part of the pattern).\n\n## 6. The three reported symptoms, traced\n\n1. **Shoppers see the old price after a seller changes it.** The seller's write commits\n   v18; the loader's fill reads a replica that is two seconds behind and sees v17; the\n   unversioned fill stores v17 with a fresh TTL. This is the stale-fill race combined with\n   replica lag. Fix: version every fill and refuse to regress the high-water version; for\n   the price field, read the leader until the read-your-writes window closes, or declare\n   the stale window and surface it. A shorter TTL narrows the window but, per the corpus,\n   is tuning, not a consistency theorem.\n\n2. **When the database degrades, requests look like normal misses and load rises.** The\n   loader maps 500 and timeout to miss, so a failing source is indistinguishable from an\n   absent row: every failure becomes a fill, and concurrent failures become a stampede.\n   Fix: an explicit error-mapping table that never stores or returns \"absent\" for an\n   unknown backend error, plus admission and coalescing so a degraded source is protected\n   rather than multiplied; separate miss, denial and backend-error metrics.\n\n3. **A restricted item stays visible after access is revoked.** The entry was stored from\n   a read the caller was once allowed to make, under the shared loader identity, and the\n   TTL is not tied to the revocation deadline. Fix: keep authorization at the enforcement\n   boundary for protected reads, bypass the cache or use per-principal keys with a TTL\n   bounded by the revocation deadline, delete or version on revoke, and fail closed when\n   the policy evaluator is unavailable.\n\n## 7. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 | tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory; tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes; tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident |\n| C2 | tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem; tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization; tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident |\n| C3 | tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization; tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract |\n| C4 | tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization; tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident; tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes |\n| C5 | tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization; tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident; tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission |\n| C6 | tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes; tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization |\n| C7 | tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy; tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race |\n| C8 | tycho.page.253d5a98933c4cee947545acb8eaa72a#overview; tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract |\n| C9 | tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission; tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy; tycho.page.f39fa61013ca41abbfba82ef48250f8f#5-failure-operation-cost-model; tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission |\n| C10 | tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview; tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission |\n| C11 | tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract; tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem; tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident; tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission; tycho.page.33742c54f667446cbf57cb9f3696a533#integrated-decision-and-reading-route |\n| C12 | tycho.page.f1aadca8dc3848c1a0aafa83f0e13f83#overview; tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes |\n| C13 | tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes; tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy; tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem |\n| C14 | tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment; tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview |\n\n## 8. Boundaries and limits of this answer\n\n- The evidence is the Tycho book and the draft pattern atlas (coverage self-checked,\n  entries applicable-under-conditions). It is design guidance, not a benchmark, a review\n  of this service, or a production observation. No fill, revocation, lag or stampede path\n  was exercised here.\n- The atlas entry inventory states that none of its entries claims sufficient technical\n  or decision coverage; the owner page notes are explicitly \"bounded pattern ownership\n  notes\", with loader failure semantics described as page-specific.\n- Version-gated fills require a coherent version source and an atomic comparison under\n  concurrency; a local counter cannot order cross-replica writes. A refresh lock limits\n  duplicate work but \"is not automatically a correctness lock\".\n- The \"two seconds\" figure is the service's own described lag. This answer treats it as an\n  example of bounded-but-real staleness, not as a measured guarantee; whether that window\n  is acceptable is a business and contract decision.\n- Cache-aside is not a cure for authorization by itself: it only keeps the decision where\n  the caller's context exists. If the application also caches per-resource values, the\n  identical revocation and version rules apply.\n\n## 9. Unknowns\n\n- Whether the price is a legally binding offer or display-only data, and the maximum\n  staleness the business will accept.\n- The revocation deadline for restricted items and whether the policy evaluator is in the\n  read path today.\n- Whether the loader propagates any caller context to the database, and whether the\n  database enforces row-level policy for the service identity.\n- Whether the cache is a latency cache or a capacity cache for the catalogue database, and\n  whether the source can absorb a cold-cache burst.\n- The cache key cardinality if per-principal keys were introduced, and the hit-rate loss\n  that would follow.\n- Whether the read replica is used for post-write reads by design or by accident.",
+ "claims": [
+  {
+   "claim_id": "C1",
+   "text": "A read-through cache loads on behalf of every caller and stores one value per key, so the load executes with the cache's own service identity rather than the caller's; the caller's subject, tenant and policy context are not part of the load unless something explicitly threads them through, which is exactly the authorization decision the cache cannot make.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+     "quote": "a read-through cache cannot make per-read application authorization decisions",
+     "supports": "C1",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+     "quote": "a gateway-level authentication check and an internal network address cannot replace resource-level authorization",
+     "supports": "C1",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+     "quote": "Reject when the cache cannot safely call the source, when application-specific authorization is needed for each read, or when fill failures are hidden.",
+     "supports": "C1",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C2",
+   "text": "Authorization is a decision about a subject, an action, a resource, a tenant and a policy/input state, evaluated at the enforcement boundary; a cached body, a copied permission bit or a cached decision is not its own authority, so a cache hit can never substitute for the per-request check.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+     "quote": "Data authorization must be performed at an enforced boundary; a copied permission bit is not its own authority.",
+     "supports": "C2",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "Cache only for the same subject, action, resource scope, tenant, and relevant policy/input state, within the approved freshness limit",
+     "supports": "C2",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+     "quote": "Apply object ACLs to cached bodies, summaries, result IDs and linked records",
+     "supports": "C2",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C3",
+   "text": "A shared read-through cache keyed by resource cannot be made per-principal without abandoning the property that made it a read-through cache: per-principal keys, bypass or a much shorter TTL are re-keyings of the read path, and the cache layer still is not the audited policy enforcement point.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "Per-principal keying, a short TTL and bypass are the three bounded alternatives.",
+     "supports": "C3",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "a negative key for an authorization-sensitive lookup includes the tenant, principal or scope, the checked operation and the policy revision; a key that omits one of these is not shared",
+     "supports": "C3",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+     "quote": "Key and scope",
+     "supports": "C3",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C4",
+   "text": "Mapping a permission denial to an ordinary miss is the worst error mapping: it turns a deny into a loader read executed with the service identity (a confused deputy), and whatever the loader returns can then be stored and served to other callers or cached as a negative that hides a later grant.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "A cached negative must never become a universal statement that an object does not exist for all authorized principals",
+     "supports": "C4",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+     "quote": "A background export job uses service-level read authority beyond the user's original delegation.",
+     "supports": "C4",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+     "quote": "A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss",
+     "supports": "C4",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C5",
+   "text": "Revocation breaks cached permits because the cache TTL is not tied to the revocation deadline; a restricted item stays visible until the entry is deleted or versioned on revoke, and a failure or unavailable policy evaluator needs an explicit fail-closed rule rather than a cache hit.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "a cached permit must not outlive a required revocation deadline",
+     "supports": "C5",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "bound a denial by the shorter of its TTL and the revocation deadline; delete or version the key on create, grant, revoke and delete",
+     "supports": "C5",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+     "quote": "A failure or unavailable policy evaluator must have an explicit fail-closed or separately approved safe-degradation rule; defaulting to allow in the name of availability violates the protected outcome.",
+     "supports": "C5",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+     "quote": "stale tenant permissions or exclusive availability must not be served as harmless",
+     "supports": "C5",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C6",
+   "text": "Error mapping is part of the loader contract: a fill failure must be returned or translated explicitly, and an unknown backend error must never be stored or presented as absence, because a miss is an assertion that the source has no value and it authorizes a new fill.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+     "quote": "Slow fills and error masking make the cache appear healthy while the source degrades",
+     "supports": "C6",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+     "quote": "whether unknown data-source errors may be cached at all",
+     "supports": "C6",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+     "quote": "A fill that hides source errors is a correctness defect, not a performance choice.",
+     "supports": "C6",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C7",
+   "text": "Fill version: every fill must carry the source revision and be admitted only if it does not regress the cached high-water version; deletion alone does not fence an in-flight fill, and a TTL is not a version guarantee, so an unversioned two-second-old replica read can republish the old price after the seller's write.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+     "quote": "One design is to attach an authority-issued version or generation to each value and admit a replacement only if it is not older than the cached high-water generation.",
+     "supports": "C7",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+     "quote": "deletion alone does not fence an in-flight fill",
+     "supports": "C7",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+     "quote": "attach monotonic source versions and only allow cache writes that do not regress version",
+     "supports": "C7",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C8",
+   "text": "A fill sourced from a lagging read replica is a stale snapshot by construction: replication lag is expected, can violate read-your-writes, and a version gate can detect a regression but cannot repair the lag, so the loader must declare which source is authoritative for price-like fields and route freshness-critical reads to the leader or a quorum read.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.253d5a98933c4cee947545acb8eaa72a#overview",
+     "quote": "a failover to a stale replica can violate read-your-writes even when replication is healthy.",
+     "supports": "C8",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.253d5a98933c4cee947545acb8eaa72a#overview",
+     "quote": "Reject when every read requires linearizable freshness, when lag is unbounded, or when replicas add no capacity benefit",
+     "supports": "C8",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+     "quote": "A TTL expresses a cache lifetime condition; it does not guarantee that a stale value cannot be reinserted after invalidation by an in-flight load.",
+     "supports": "C8",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C9",
+   "text": "Stampede control is a declared contract, not background tuning: concurrent misses for the same key must be coalesced into one authoritative load (single-flight or a fenced lease) or admitted/rate-limited, because otherwise one expiry or a source slowdown is multiplied into many origin reads and cache loss becomes an overload event.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+     "quote": "within one instance, combine concurrent cache misses for the same key into one source load.",
+     "supports": "C9",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+     "quote": "Cache loss is a load event, not only a latency event.",
+     "supports": "C9",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.f39fa61013ca41abbfba82ef48250f8f#5-failure-operation-cost-model",
+     "quote": "Protect the source with admission and coalescing before the first fill.",
+     "supports": "C9",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+     "quote": "A cache outage can turn every miss into origin load",
+     "supports": "C9",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+     "quote": "Bound concurrent fallback and define an overload response.",
+     "supports": "C9",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C10",
+   "text": "One coalesced load serves every waiter, so it cannot respect waiters with differing authorization or independent cancellation, and the leader's error is shared by all of them; protected reads therefore must bypass the shared fill or be keyed and authorized per caller, which is the same conclusion as the per-read authorization problem.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview",
+     "quote": "when waiters need independent cancellation or differing authorization",
+     "supports": "C10",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview",
+     "quote": "a leader error is shared by every waiter",
+     "supports": "C10",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+     "quote": "protect source DB/pool when cache disappears; report degraded quality or reject low-priority work instead of making every request miss simultaneously.",
+     "supports": "C10",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C11",
+   "text": "The transparency claim is a call-path property, not a semantics claim: callers do not see the cache, but the cache changes the read's authority, key scope, freshness, error class and load, so the declared contract must name all of them for every cacheable value.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+     "quote": "Which system/state revision determines the correct value?",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+     "quote": "Evidence that hit/miss paths yield correct user effects",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+     "quote": "A cache-aside read is a freshness claim bounded by the fill revision, the invalidation path and the TTL, not a consistency theorem.",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+     "quote": "A green API health check and a valid login conceal both authorization and audit failures.",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#integrated-decision-and-reading-route",
+     "quote": "A successful cache hit can return an inadmissibly stale value; cache availability is not authoritative correctness.",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#integrated-decision-and-reading-route",
+     "quote": "Distinguish authoritative state from cached copies and define freshness, eviction and invalidation behavior.",
+     "supports": "C11",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+     "quote": "Key scope, partitioning, TTL/invalidation, stampede control and authorization must be explicit.",
+     "supports": "C11",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C12",
+   "text": "Cache-aside is the better default when the application must own fill policy, because the loader then sees the caller's authorization context, maps errors explicitly and applies the fill version rule in one visible place; read-through is defensible only for stable, uniform, non-authorization-sensitive sources with coalesced and version-gated fills.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.f1aadca8dc3848c1a0aafa83f0e13f83#overview",
+     "quote": "The application can own fill and invalidation; misses are acceptable; duplicate fills are controlled; the source remains authoritative",
+     "supports": "C12",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+     "quote": "Cache-aside with application-owned fill keeps loading policy visible; prefer read-through when the cache can call the source and the loading contract is uniform.",
+     "supports": "C12",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+     "quote": "The cache must implement the source protocol, authentication and backpressure; a bypass with different client semantics defeats the uniformity claim.",
+     "supports": "C12",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C13",
+   "text": "A blocking authoritative read is the better choice at the declared stale bound, for revocation- or authorization-sensitive data, and when read-after-write freshness is required; serving a labeled stale value is acceptable only for noncritical public data, and an authoritative grant should be rejected with an explanation rather than served stale.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes",
+     "quote": "Cap the stale age at the declared bound, and fall back to a blocking read when it is reached.",
+     "supports": "C13",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+     "quote": "For an authoritative reservation or access grant, a stale cache value may be forbidden; reject and explain lack of current state instead.",
+     "supports": "C13",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+     "quote": "Even a cache with TTL may expose stale authorization or deleted content.",
+     "supports": "C13",
+     "status": "observed"
+    }
+   ]
+  },
+  {
+   "claim_id": "C14",
+   "text": "The failure must be observable: misses, denials and backend errors must be counted separately and origin QPS, queue age and error rate measured, because a performance win based on unreported errors or stale authorization is not valid.",
+   "evidence": [
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment",
+     "quote": "A performance win based on unreported errors or stale authorization is not valid.",
+     "supports": "C14",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview",
+     "quote": "measure origin QPS, coalesce refreshes and cap source admission",
+     "supports": "C14",
+     "status": "observed"
+    },
+    {
+     "section_key": "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment",
+     "quote": "Backend read error returning no result; ensure it is not negatively cached",
+     "supports": "C14",
+     "status": "observed"
+    }
+   ]
+  }
+ ],
+ "citations": [
+  "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+  "tycho.page.96c78f4525504257baf5861e2397dab8#6-synthetic-architecture-and-incident",
+  "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+  "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+  "tycho.page.f077c7f124b54e2a8137cec267d9170a#4-negative-caching-and-evicted-authorization",
+  "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+  "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+  "tycho.page.edc267f2fa954e66891e006ddfbfb15f#5-cache-loss-and-source-protection-policy",
+  "tycho.page.028aab692b414bcdba7713500ab6f735#1-the-stale-fill-after-invalidation-race",
+  "tycho.page.253d5a98933c4cee947545acb8eaa72a#overview",
+  "tycho.page.ded52d8d012347b79d70e608488cf6a4#4-stampede-hot-keys-and-failure-admission",
+  "tycho.page.f39fa61013ca41abbfba82ef48250f8f#5-failure-operation-cost-model",
+  "tycho.page.c0fca8b9b51a3b1080e177f58741e9f9#overview",
+  "tycho.page.33742c54f667446cbf57cb9f3696a533#integrated-decision-and-reading-route",
+  "tycho.page.f1aadca8dc3848c1a0aafa83f0e13f83#overview",
+  "tycho.page.028aab692b414bcdba7713500ab6f735#bounded-pattern-ownership-notes",
+  "tycho.page.f077c7f124b54e2a8137cec267d9170a#6-a-discriminating-failure-experiment"
+ ],
+ "missing_required_anchors": [],
+ "abstain": false
+}

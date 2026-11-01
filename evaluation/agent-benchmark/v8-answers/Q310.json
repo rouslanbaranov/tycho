@@ -1,0 +1,534 @@
+{
+  "task_id": "Q310",
+  "answer": "# Q310 — The metadata-only claim, the lock/rewrite preflight, and why an image rollback is not a migration rollback\n\n## 0. Layers, scope and what this answer is built on\n\n**Layers needed.** `book` is primary: V08/C05 (backward-compatible database change), V05/C02 (workload cost of durable state: long snapshots and concurrent index work), the retained `book/delivery/progressive-delivery-and-schema-evolution.md` and `book/delivery/safe-rollout-and-recovery.md` studies, V05/C06 (schema evolution) and V03/C05 (pool failure modes). `atlas` is secondary but required: it carries the pattern identity and the failure/recovery conditions for Expand-and-Contract and Online Data Migration. `modeling-and-simulation` is **not** needed: the question is about DDL lock/rewrite mechanics and deployment semantics, and that layer holds models, scenarios, runs and decision records. I searched it with \"migration lock backfill schema change\" (`--volume modeling-and-simulation`); it returned one navigation page and **zero** artifacts, so I cite nothing from it. That is a zero-result observation, not proof of absence.\n\n**What the evidence can and cannot support.** The relevant pages are explicitly non-executed synthesis. The chapter states that \"no SQL, client/consumer, restore or load test was run\", and the DDL page says \"A lock estimate is not a measurement; test with a realistic fixture before promising a zero-downtime change.\" So nothing below claims a measured 40-minute wait, a measured 400-million-row cost or an observed production incident. The scenario numbers are the question's; the mechanisms and the required preflight are the book's. Two of the three anchors carry `evidence_status: unknown` in their frontmatter (`source_ids: []`), while the reader/writer page is `source-linked` (PostgreSQL, MySQL, AWS). I treat the numeric cost claims as inference and the mechanism/checklist claims as observed prose.\n\n## 1. Facet matrix\n\n| Facet | Query formulations actually used | Evidence |\n|---|---|---|\n| F1 — Why \"metadata-only\" does not follow from nullability | \"metadata-only migration nullable column default\"; \"metadata only change catalog rewrite table\"; \"metadata only migration claim nullable does not prove\" | `tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget`; `tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window` |\n| F2 — What a 40-minute analytics snapshot does to the DDL and to the table's queue | \"long-running transaction blocks migration lock queue\"; \"ACCESS EXCLUSIVE lock request queues ahead of reads\"; \"blocked sessions waiting lock queue pile up\"; \"analytics reporting transaction long running blocks migration\" | ddl-events#3; `tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work`; `tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery` |\n| F3 — Rewrite versus catalog change, and the cost of a rewrite | \"table rewrite volatile default ADD COLUMN\"; \"rewrite ACCESS EXCLUSIVE whole table\"; \"lock_timeout retry DDL migration safety\" | ddl-events#3; `tycho.page.301477f3c7324fe8932d3a2608516a20#overview` (atlas Expand-and-Contract card); `tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention` |\n| F4 — Unique index: build lock, concurrency, invalid index, enforcement timing | \"CREATE INDEX CONCURRENTLY invalid index rebuild\"; \"unique constraint duplicate validation before index\"; \"online schema change lock rewrite pattern\" | `tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work`; progressive#5 |\n| F5 — Partial recovery of a three-statement change | \"backfill batches resumable idempotent restart\"; \"backfill checkpoint batches verify coverage\"; \"partial backfill down migration reverse schema change\" | progressive#5; `tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates`; `tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures`; `tycho.page.480477bf68a84b33b01440df8a0ccc96#overview` |\n| F6 — Image rollback versus migration rollback | \"forward repair roll forward migration\"; \"image rollback business state incompatible\"; \"no-return point\" | `tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary`; progressive#3; `tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary`; `tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety`; `tycho.chapter.7d434d1a41e142d38bb729ee124ac548#decision-and-worked-result` |\n\nSaturation: after the fourth round, two consecutive search rounds (\"metadata only change catalog rewrite table\", \"metadata only migration claim nullable does not prove\") added no new section that survived reading, and every facet has at least one fully read section. Facets F1-F3 converge on the same three sections, which I read in full rather than citing snippets.\n\n## 2. Direct answer\n\n**(a) The metadata-only claim is unsupported because it is three different claims wearing one word.** \"Metadata-only\" is being used to mean, simultaneously: (P1) *the ALTER rewrites no table pages*; (P2) *the ALTER blocks no concurrent work*; and (P3) *old binaries remain correct against the new schema*. Nullability supports none of these by itself. It is a constraint property of the target column, not a statement about lock mode, rewrite, WAL, duration or semantic compatibility. P1 is a function of engine version, column type and the default expression; P2 is contradicted by the observed fact that the migration is *waiting*; P3 is explicitly rejected in the source (\"Add a nullable column is not sufficient evidence of compatibility\"). And even if P1-P3 all held for statement 1, the window contains two further statements — a 400-million-row backfill and a unique index build — that are data and index work by definition, so no property of the column can be inherited by the change as a whole.\n\n**(b) The preflight must establish, per exact statement and by measurement, the lock mode and its conflict set, whether the statement rewrites or blocks writes, the row/byte/WAL/replica-lag budget, the identity of blocking transactions, the resume/cleanup path for a partially finished job, the effect of each partial state on old and new readers, and the stop point before the no-return boundary.** The scenario already answers one of those questions in the worst way: yes, there is a long transaction holding an old snapshot, and yes, the DDL is queued behind it. That answer converts \"metadata-only\" from an unproven claim into a *known blocking event*, and it makes queue wait — not DDL duration — the metric that matters.\n\n**(c) An image rollback is not a migration rollback because the image is stateless and the migration is state.** Reverting containers reverts no catalog change, drops no index, and un-writes no backfilled row. The book's condition is strict: \"Code image rollback is safe only when old N can correctly read and mutate every persisted state written by N+1 during exposure\" — and here N+1 wrote a column, up to 400 million values and an index. The book states the conclusion directly: \"image rollback is not business rollback\", and \"The ability to run an earlier image is not proof that it can interpret newer records.\" A migration rollback is a data operation with its own lock budget, its own tests and its own no-return point; a deployment rollback is a traffic operation. They fail differently, they are gated differently, and after the contract step one of them stops being possible at all.\n\n## 3. Why \"metadata-only\" is unsupported, in detail\n\n### 3.1 Category error: a column property is being used as a statement property\n\nThe book draws the distinction precisely. In the expand stage: \"An additive DDL statement may still take substantial locks or trigger rewriting depending on engine/version/type.\" In the DDL page: \"A syntactically simple migration can block concurrent work or require a table rewrite depending on its exact form.\" Nullability fixes neither the lock level nor the physical work. What decides them is the version, the type, the exact subcommand and the default expression.\n\nThis matters because the team's sentence is a *universal* claim (\"the change is metadata-only\") supported by a *local* observation (\"the column is nullable\"). A single counterexample in the window defeats it, and there are two candidates on the face of the scenario: the backfill and the unique index.\n\n### 3.2 The default expression is the specific hazard, and it is version- and volatility-dependent\n\nAdding a column with a default is exactly the form where \"catalog change\" and \"table rewrite\" diverge, and the divergence is not visible from the DDL text. The book refuses to collapse it: \"Their safety requires knowing the PostgreSQL version, table size and workload.\" It also lists the rewrite question as a mandatory preflight item rather than a derivable fact: \"does the subcommand rewrite a table or block writes?\". So the honest statement is conditional — *on engine X, version Y, type T, with an expression of volatility V, this ALTER is catalog-only* — and that conditional has not been established anywhere in the scenario. Nothing in the question names the version, the type or the expression, which means the claim as written is unfalsifiable rather than verified.\n\nA rewrite, if it happens, is not a longer version of a metadata operation; it is a different operation with a different failure surface. The atlas card records that \"rewrites are not MVCC-safe\", so there is no row-level undo for an interrupted copy: the practical recovery is abort, discard, retry, with the WAL and the copied pages already paid for, and with writes blocked for the whole duration.\n\n### 3.3 Even the best case still takes an exclusive lock, so the claim fails on concurrency\n\nThe DDL page is unambiguous about the default: \"absent a weaker stated lock, ACCESS EXCLUSIVE is acquired\", and the expand stage repeats \"ACCESS EXCLUSIVE is the default unless otherwise specified.\" ACCESS EXCLUSIVE conflicts with the ACCESS SHARE lock a plain `SELECT` holds. So even in the catalog-only case, the statement is not concurrent with readers; it is a brief moment of total exclusion — brief only if it is acquired immediately, which in this scenario it is not.\n\nThat is the part of the scenario the team has already observed and mis-read: \"the migration waits before the column exists\". The migration is not slow; it is *blocked*. While a request for ACCESS EXCLUSIVE is pending, that request is ahead of later requests on the same table, so the wait propagates into the queue behind it. The DDL page asks for exactly this as a preflight input — \"are long transactions and connection queues present?\" — and the acceptance list makes queue wait the instrument: \"Abort a migration after a long lock; measure queue wait and replica lag.\" (The precise head-of-line mechanism is a PostgreSQL lock-queue property; I mark it as inference in C4, and note that the book's own acceptance test presumes the queue effect without describing its internals.)\n\n### 3.4 The two remaining statements are not metadata by any definition\n\n\"Operations like index creation, adding constraints, validating existing records, backfill and large DDL statements consume CPU, I/O, lock time, WAL and replica replay capacity.\" And at the level of the whole change: \"Schema migration is itself a workload. It may need metadata locks, row/table rewrites, index creation and transaction log space.\" A 400-million-row backfill is 400 million row versions written, WAL generated, dead tuples created, replicas asked to replay. A unique index build is a full index construction. Neither becomes metadata because the column it serves is nullable.\n\nThere is also a schedule consequence: because the column must exist before the backfill can write to it, and the backfill state must be settled before a unique index on the result is meaningful, the \"one migration window\" is three serialized windows with three different lock profiles. The first is blocked by an unrelated analytics query, so the window's start time is owned by the analytics workload, not by the migration.\n\n### 3.5 \"Metadata-only\" is also being used as a compatibility claim, and that is rejected outright\n\nThe sentence in the scenario — \"the change is metadata-only because the column is nullable\" — is doing double duty as \"old binaries are unaffected\". The source separates these and refuses the inference: \"'Add a nullable column' is **not sufficient evidence** of compatibility if old application code uses brittle mapping, triggers or schema-dependent assumptions\"; \"Adding a new nullable column alone cannot prove a safe upgrade if old mapping code assumes a fixed projection, old clients require a removed field or triggers modify semantics\"; \"An additive SQL column does **not** by itself establish semantic compatibility.\" The compatibility matrix gives the old-API cell its own obligation: old code must \"tolerate new nullable columns/defaults while preserving old semantics\" — a tested property, not a schema-shape property.\n\nNullability does have a real role, and it is the one the team should have claimed: it makes the migration *tolerant* — old rows can carry NULL during the window and the new reader has a defined fallback (\"If an old row has no valid mapping, the new reader must say unknown, not invent an ID\"). That is a compatibility-window property. It is not a cost property, and it is not a safety proof.\n\n## 4. What the 40-minute snapshot actually does\n\n**It is invisible to the metric the team is probably watching.** \"A long-lived transaction may retain an old visibility horizon while the application appears idle. Inspect transaction age and blockers, not just active query duration.\" A 40-minute analytics transaction can spend most of those minutes idle between statements while still pinning an old snapshot. Monitoring active query duration will show nothing; transaction age and blocker identity will show everything. The preflight is therefore not \"is a long query running\" but \"which backend holds the oldest xmin, and is it a reader we are allowed to cancel\".\n\n**It blocks the ALTER.** ACCESS EXCLUSIVE cannot be granted while the analytics backend holds ACCESS SHARE, so the DDL queues.\n\n**It also blocks the concurrently built unique index.** The concurrent build is not an escape from long transactions: \"a concurrent build performs additional phases/scans and waits for relevant transactions or snapshots.\" So the plan of \"just use CONCURRENTLY\" buys write availability during the build but still cannot start, or cannot finish, while the analytics snapshot exists — and it must wait for snapshots more than once because it runs multiple phases. The same section prescribes the operational response: \"establish a measured maintenance budget; identify old transactions; limit concurrent background work; monitor progress and user latency; and stop under declared conditions.\"\n\n**It holds the table's cleanup hostage while it exists.** MVCC cleanup depends on which row versions can still be observed; the old snapshot keeps dead tuples that the backfill is about to create in large numbers. The pool page adds the amplification path: when the database is already lock-saturated, \"Larger pools worsen queue, p99 or deadlocks\", and the symptom to trace is \"Waiting clients and timeouts; perhaps long-held sessions\". So the failure mode is not \"migration is slow\"; it is \"table queue age grows, client pools fill, p99 degrades, retries pile on\" — which is precisely the latency degradation the team says it will answer with an image rollback.\n\n**Two different retry semantics follow, and they must be chosen in advance.** If the DDL waits indefinitely, the outage lasts as long as the analytics session (and the next one). If a `lock_timeout` is set, the DDL fails cleanly and must be retried in a loop — in which case the observed \"waiting\" is a retry loop, not a slow statement. The book's preflight question \"how can we stop the migration before the no-return point?\" is the gate for this decision; the answer has to be a configured, tested stop condition, not an operator's judgement at 03:00.\n\n## 5. Rewrites: what has to be established\n\n1. **Per statement, not per change.** The column add, the backfill and the index build each have their own answer to \"does the subcommand rewrite a table or block writes?\".\n2. **Version and expression first.** The rewrite answer for ADD COLUMN with a default is a function of engine version, column type and the default's evaluation semantics. The book refuses to generalise: \"Do not generalize a syntax from one database to all engines\" (progressive#5) and \"requires knowing the PostgreSQL version, table size and workload\" (ddl-events#3).\n3. **Cost in the same units as the budget.** \"how many rows/bytes and what estimated WAL/replica lag?\" — for 400 million rows this is the number that decides whether the window is minutes or hours, and whether replicas can replay it without lagging out of the read path.\n4. **The physical consequence.** If it is a rewrite, it is not MVCC-safe (atlas card), it holds the exclusive lock for the whole copy, and its recovery story is abort-and-retry.\n5. **The alternative.** Engine-native online mechanisms exist, but they have their own constraints and their own failure residue — the card's contrasting options (instant/in-place/copy-copy, online DDL) are options with different failure modes, not free passes.\n\n## 6. The unique index is three hazards, not one statement\n\n1. **Build lock.** A non-concurrent unique build blocks writes for its whole duration. On a table this size that is the outage, not a precaution.\n2. **Concurrent build has a longer, failure-prone lifecycle.** \"A failed build can leave an invalid index with update overhead.\" So the retry path must *detect* invalidity and drop/rebuild, not simply re-run; \"Check index validity and query behavior before relying on the new access path.\" An invalid index is worse than no index: it costs writes and serves nothing.\n3. **Enforcement timing.** \"A unique concurrent build has additional enforcement timing caveats; inspect actual validity and constraint behavior rather than treating command failure as complete rollback of every consequence.\" \"The index exists\" is not \"the constraint is enforced for every row\"; the state has to be read from the catalog (validity/readiness) and the duplicates have to be found before the build, not discovered by it. The preflight already names this as a stop condition: \"unexpected uniqueness conflicts\".\n\nThere is a data prerequisite too. If the backfill's mapping is not injective, the unique build is the place where that surfaces, and a partially built index is a bad place to learn it. The reader/writer page's rule for the missing case is a design constraint on the backfill: \"If an old row has no valid mapping, the new reader must say unknown, not invent an ID.\"\n\n## 7. Partial recovery: three statements, three failure boundaries, no single atomic unit\n\nNothing in the scenario is one transaction. The column add commits on its own; the backfill commits in batches; the index build commits in phases. Recovery therefore has to be specified per boundary:\n\n| Boundary | Partial state it can leave | What must have been decided in advance |\n|---|---|---|\n| ALTER blocked or failed | Column absent (or present with NULLs everywhere); N+1 code that reads it is unusable | Retry policy, lock timeout, whether the rollout waits or aborts |\n| Backfill interrupted | Prefix of rows filled, checkpoint possibly behind the last committed batch | Batch key/range, checkpoint durability, idempotent replay, duplicate tolerance, reconciliation by business key |\n| Index build failed | Invalid index present with write overhead; uniqueness not enforced as intended | Validity detection, drop-and-rebuild, pre-build duplicate validation |\n\nThe book supplies the contract for each. For the backfill: \"Choose **bounded batches** and idempotent checkpoints rather than one unbounded transaction. Treat a checkpoint as evidence of the last durable completed range, not proof that all records reconcile.\" For crash safety: \"Test a process crash between backfill commit and checkpoint persist; retry must be safe and produce one authoritative logical result.\" For acceptance: \"Crash during backfill, then resume without mapping divergence.\" For online migration generally: \"record the mapping revision, checkpoint, replay window and reconciliation rule\" and \"a resume still needs a replay window and duplicate-tolerant apply\".\n\nThree points follow that the team's plan does not contain:\n\n- **Resume is a designed property, not a hope.** A checkpoint is a claim about durable completed range, not about correctness; the reconciliation step is separate and must run by business key.\n- **The partial state is a fourth state.** It is neither N's schema nor the target: the column exists but is sparse, the index may be invalid, and writes may be flowing that neither version was tested against. The state machine names this branch explicitly — \"ForwardRepair: Incompatible writes or partial migration\" — and routes it away from image rollback.\n- **The fallback is not free.** The honest last resort is a tested restore, and a restore rewinds the database, not the migration: it discards every write since the restore point. The preflight has to carry restore-point freshness as a budget item (\"restore-point freshness\", \"restore coverage\"), because \"we can restore\" and \"we can restore to a point that loses nothing we care about\" are different statements.\n\n## 8. Why an image rollback is not a migration rollback\n\n**Different object.** The image is code; the migration is data plus catalog. A revert changes which binary serves traffic. It does not drop the column, does not remove a single backfilled value, does not drop or invalidate a unique index, and does not stop the backfill job if that job runs outside the request path.\n\n**Different safety condition.** \"Code image rollback is safe only when old N can correctly read and mutate every persisted state written by N+1 during exposure.\" In this scenario, N+1 has written an additive column, up to 400 million values, and an index. N can probably read an extra nullable column — but \"probably\" is exactly what the capability inventory is for: \"A schema rollout requires an actual **capability inventory**, not a belief that all deployed pods have a new image\", and old code with a fixed projection or a trigger is explicitly not covered by the column being nullable.\n\n**Different failure it addresses.** The observed symptom is a lock wait plus backfill contention. Rolling back the image removes neither the waiting DDL nor the running backfill. The database-side condition is unchanged; if anything, the redeploy adds churn to a saturated table. The book's illustrative canary is the same shape at smaller scale: \"the rollout controller returns traffic to N; from its perspective, replica rollback succeeds\" — and the user-visible failure survives the rollback.\n\n**Different recoverability.** \"A revert command is not recovery of acknowledged reservations or external effects.\" Once a genuinely new-only state is committed, \"restoring N containers may reproduce errors or violate business invariants.\" The correct branch is stated flatly: \"At any state with data incompatible with N, the recovery choice must be **forward repair or tested data restore**, not a blind reversion of the application image.\" And at the chapter level: \"Reverting binaries cannot restore a removed column or reinterpret a new-only persisted value; the no-return point needs forward repair.\"\n\n**Different gate.** A migration rollback would itself be a migration: it needs a written down-path, its own lock and rewrite budget, its own test, and its own decision to run — and after the contract step it is gone: \"The contract step is often the riskiest: removing old data destroys the easiest rollback path.\" The state machine marks the rollback edge as conditional, not automatic: \"The branch `Observe -> OldStable` is **conditionally valid**, not an assertion that all writes are reversible.\"\n\nThe practical consequence: the team's stated response plan (\"roll back the image if latency degrades\") is not a recovery plan for this change. The plan they need has three named exits — hold and drain the migration, repair forward, or restore to a verified point — chosen by the failure boundary that was actually crossed, not by the deployment controller's view.\n\n## 9. The preflight, as a gate list\n\n| # | Question the preflight must answer | Per what | Evidence |\n|---|---|---|---|\n| 1 | Exact statement text, engine and version; is the lock/rewrite behavior documented for that version? | statement | ddl-events#3; progressive#3 |\n| 2 | Lock mode acquired, and which concurrent lock modes it conflicts with (does it exclude readers as well as writers?) | statement | ddl-events#3 |\n| 3 | Expected hold time and, separately, expected *queue* time; is a pending request going to sit ahead of other waiters? | statement | ddl-events#3; no-return#6 |\n| 4 | Does it rewrite the table or block writes? If rewrite: rows/bytes, WAL, replica replay, and the abort path | statement | ddl-events#3; atlas card |\n| 5 | Which backends block it, by transaction age and xmin — not by query duration — and what is the cancel/kill policy? | table | storage-workload |\n| 6 | What is the measured baseline: held locks, long transactions, queued message age, lock waits, p95/p99, restore-point freshness? | window | progressive#3 (S0); progressive#5 |\n| 7 | Unique index: concurrent or not, expected invalid-index residue, duplicate pre-validation, how enforcement is verified | index | storage-workload |\n| 8 | Backfill: batch key, checkpoint persistence, idempotency, duplicate tolerance, reconciliation, and what \"done\" means | backfill | progressive#5; progressive#3; ODM card |\n| 9 | For each partial state: what old N and new N+1 see, and what each does when the column is present but NULL | state | ddl-events#3; no-return#5 |\n| 10 | Stop conditions and the no-return point, declared and armed before the run | change | ddl-events#3; progressive#5; reader-writer#2 |\n| 11 | Recovery: forward repair or restore — which one, tested, and to which point | change | progressive#3; ddl-events#3 |\n\nTwo meta-requirements close the gate. First, none of this may be estimated: \"A lock estimate is not a measurement; test with a realistic fixture before promising a zero-downtime change.\" Second, success is not the migration succeeding: \"Acceptance includes correct user effects, database invariants, bounded downtime and actual recovery. Green migration SQL alone cannot close the gate.\"\n\nApplied to this window, the verdict is that the preflight has not been run at all in the sense the book requires. One of its questions is answered and answered badly (long transactions and connection queues are present, and the DDL is queued behind them); the rewrite question is answered by an inference from nullability; the partial-recovery question has no answer per boundary; and the stop question is answered with a deployment action that touches none of the state involved.\n\n## 10. Boundaries, contradictions and unknowns\n\n- **Not measured.** Tycho contains no executed migration, no load test, no lock measurement. Every duration and cost statement here is mechanism reasoning, not observation; the 40-minute and 400-million-row figures come from the question, not from evidence.\n- **Version-dependent and undecidable as posed.** Whether this specific ADD COLUMN with this specific default is catalog-only cannot be decided from the question: it needs the engine version, the column type and the default expression's evaluation semantics. I therefore do not assert a rewrite; I assert that the claim is unsupported and that the *wait* is independently disqualifying.\n- **Evidence-status asymmetry.** The two V08/C05 pages I lean on most (`ddl-events.md`, `no-return-recovery.md`) carry `evidence_status: unknown` with empty `source_ids`; the reader/writer page and the storage-workload page are source-linked. The mechanism claims are consistent across pages, but the weakest anchor is doing real work in the argument. That is a reason to read the underlying PostgreSQL documentation before acting, not a reason to discount the conclusion.\n- **The atlas layer is draft.** The registry is version 0.2.0 and `registry_status: draft`; coverage states are not independent review. I use the cards for pattern identity and failure conditions only.\n- **The lock-queue mechanism is inference.** The book asks about connection queues and measures queue wait; it does not describe PostgreSQL's wait-queue ordering. The step from \"a pending ACCESS EXCLUSIVE request delays later requests\" to \"the wait itself is the incident\" is documented PostgreSQL behavior, labelled inference in C4, not a Tycho observation.\n- **Zero-result caution.** The `modeling-and-simulation` layer returned no relevant artifact. That is not evidence that no model exists.\n- **No production claim.** Nothing here says this team's incident happened as described, or that any specific engine will behave this way at this scale.\n\n## 11. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1, C2, C3 | ddl-events#3; progressive#3 |\n| C4, C5 | ddl-events#3; no-return#6; pool-recovery#5 |\n| C6 | ddl-events#3; storage-workload |\n| C7 | reader/writer#2; state-machine#3 |\n| C8 | ddl-events#3; progressive#5 |\n| C9, C10 | storage-workload; progressive#5 |\n| C11, C12 | progressive#5; progressive#3 |\n| C13 | ddl-events#3; progressive#5; progressive#3 |\n| C14 | progressive#5; acceptance#6 |\n| C15 | progressive#5; progressive#3; state-machine#3; no-return#5 |\n| C16 | no-return#5; progressive#3; progressive#4; state-machine#3 |\n| C17 | no-return#5; state-machine#3; progressive#3 |\n| C18, C19 | reader/writer#2; atlas expand-and-contract; progressive#3 |\n| C20 | progressive#5; ODM card; acceptance#6 |\n\nShort names in the table above expand to: `ddl-events#3` = tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget; `reader/writer#2` = tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window; `no-return#5` = tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary; `acceptance#6` = tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures; `storage-workload` = tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work; `progressive#3/#4/#5` = tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates, #4-illustrative-failed-canary, #5-online-ddl-and-resource-contention; `state-machine#3` = tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety; `atlas expand-and-contract` = tycho.page.301477f3c7324fe8932d3a2608516a20#overview; `ODM card` = tycho.page.480477bf68a84b33b01440df8a0ccc96#overview; `pool-recovery#5` = tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery.\n\nOne-line answer: the change is not metadata-only because nullability speaks to compatibility tolerance, not to lock mode, rewrite cost or the two data-volume statements in the same window; the preflight must measure the lock conflict and queue behind the 40-minute snapshot, decide rewrite-versus-catalog for each exact statement with its WAL and replica budget, and fix resume/cleanup and stop points for each partial state; and an image rollback reverts code while the column, the 400 million values and the index remain, so recovery from a partial migration is forward repair or a tested restore, never a redeploy of N.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The metadata-only claim is unsupported as stated: additive DDL lock level and rewrite cost depend on the exact statement, engine version and type, not on whether the new column is nullable.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "A syntactically simple migration can block concurrent work or require a table rewrite depending on its exact form.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+          "quote": "An additive DDL statement may still take substantial locks or trigger rewriting depending on engine/version/type.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Adding the column still acquires ACCESS EXCLUSIVE by default, which conflicts with concurrent readers, so the statement is not concurrent even in the catalog-only case.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "absent a weaker stated lock, ACCESS EXCLUSIVE is acquired",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+          "quote": "ACCESS EXCLUSIVE is the default unless otherwise specified.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Safety of the exact statement requires knowing the engine version, table size and workload, so a version-free, type-free, expression-free claim cannot be verified.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "Their safety requires knowing the PostgreSQL version, table size and workload.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Because the DDL waits behind the analytics snapshot and a pending exclusive request precedes later requests on the table, the wait propagates into the table's queue; the preflight asks about exactly this and acceptance measures queue wait, so queue age rather than DDL duration is the metric. The queue-ordering step is PostgreSQL mechanism inference.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "are long transactions and connection queues present?",
+          "supports": "C4",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+          "quote": "Abort a migration after a long lock; measure queue wait and replica lag.",
+          "supports": "C4",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "A syntactically simple migration can block concurrent work",
+          "supports": "C4",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "Waiting clients and timeouts; perhaps long-held sessions",
+          "supports": "C4",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A long-lived transaction can retain an old visibility horizon while appearing idle, so blockers must be found by transaction age and xmin, not by active query duration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "A long-lived transaction may retain an old visibility horizon while the application appears idle.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "Inspect transaction age and blockers, not just active query duration.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The concurrent unique index build also waits for relevant transactions and snapshots, so CONCURRENTLY does not escape the 40-minute analytics transaction.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "a concurrent build performs additional phases/scans and waits for relevant transactions or snapshots",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Nullability does not establish semantic compatibility: old code with brittle mapping, fixed projections, schema-dependent assumptions or triggers can still break, and that must be tested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+          "quote": "\"Add a nullable column\" is **not sufficient evidence** of compatibility if old application code uses brittle mapping, triggers or schema-dependent assumptions.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Adding a new nullable column alone cannot prove a safe upgrade if old mapping code assumes a fixed projection, old clients require a removed field or triggers modify semantics.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "An additive SQL column does **not** by itself establish semantic compatibility.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The claim cannot cover the whole change anyway: backfill and index creation consume CPU, I/O, lock time, WAL and replica replay capacity, and schema migration is itself a workload.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "Operations like index creation, adding constraints, validating existing records, backfill and large DDL statements consume CPU, I/O, lock time, WAL and replica replay capacity.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Schema migration is itself a workload. It may need metadata locks, row/table rewrites, index creation and transaction log space.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The preflight must ask, per exact statement, about lock mode and blocking duration, rewrite versus write-blocking, row/byte and WAL/replica-lag cost, present long transactions and connection queues, resume or cleanup of a partially finished job, the failure effect on old and new readers, and how to stop before the no-return point.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "A safe preflight for an exact proposed statement asks:",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "how will a partially finished job resume or clean up?",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "what does failure do to old and new readers?",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "how can we stop the migration before the no-return point?",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "does the subcommand rewrite a table or block writes?",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "how many rows/bytes and what estimated WAL/replica lag?",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A lock estimate is not a measurement, and the measured baseline (held locks, long transactions, queued message age, lock waits, restore-point freshness) is a prerequisite rather than a nice-to-have.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+          "quote": "A lock estimate is not a measurement; test with a realistic fixture before promising a zero-downtime change.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+          "quote": "Record N's API/event/database schema, writer list, read paths, held locks, queued message age, recovery points and exact owner of truth.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Capture offered business load, affected tenants/keys, p95/p99 waits and long-running transactions, WAL/binlog/CDC lag, replica state, lock waits, backfill age and restore-point freshness.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Backfill partial recovery requires bounded batches with durable idempotent checkpoints, and a checkpoint proves durable completed range rather than reconciliation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Choose **bounded batches** and idempotent checkpoints rather than one unbounded transaction.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Treat a checkpoint as evidence of the last durable completed range, not proof that all records reconcile.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+          "quote": "Backfill in small, replay-safe ranges, track checkpoint and version, and reconcile by business key and semantic state.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Crash between backfill commit and checkpoint persist is a required test, retry must produce one authoritative logical result, and a crash during backfill must resume without mapping divergence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Test a process crash between backfill commit and checkpoint persist; retry must be safe and produce one authoritative logical result.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+          "quote": "Crash during backfill, then resume without mapping divergence.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A failed concurrent unique build can leave an invalid index that still costs writes, and a unique concurrent build has enforcement-timing caveats, so command failure is not a complete rollback and validity must be checked before the index is relied on.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "A failed build can leave an invalid index with update overhead.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "A unique concurrent build has additional enforcement timing caveats",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "Check index validity and query behavior before relying on the new access path.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Stop conditions and recovery must be declared before the run, including max queue age, failed validations, lag budgets and unexpected uniqueness conflicts, plus a measured maintenance budget and named old transactions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Set stop conditions and recovery before the run: max queue age, failed validations, lag budgets, unexpected uniqueness conflicts and restore coverage.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+          "quote": "establish a measured maintenance budget; identify old transactions; limit concurrent background work; monitor progress and user latency; and stop under declared conditions",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Code image rollback is safe only if old N can read and mutate every persisted state written by N+1; image rollback is not business rollback, and a revert command recovers neither acknowledged work nor external effects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "Code image rollback is safe only when old N can correctly read and mutate every persisted state written by N+1 during exposure.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "image rollback is not business rollback",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "A revert command is not recovery of acknowledged reservations or external effects.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+          "quote": "Once N+1 commits a genuinely new-only state, restoring N containers may reproduce errors or violate business invariants.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "At any state with data incompatible with N the recovery choice is forward repair or a tested data restore, not a blind reversion of the application image, and the rollback edge is conditional rather than automatic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+          "quote": "At any state with data incompatible with N, the recovery choice must be **forward repair or tested data restore**, not a blind reversion of the application image.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+          "quote": "The branch `Observe -> OldStable` is **conditionally valid**, not an assertion that all writes are reversible.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+          "quote": "If new data cannot be read by N, traffic rollback is unsafe; use a verified forward repair or restoration plan before re-evaluating.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A deployment controller can report a successful replica rollback while the persisted state remains unreadable, so controller success is not recovery evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+          "quote": "The rollout controller returns traffic to N; from its perspective, replica rollback succeeds.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+          "quote": "The correct response is **stop accepting risky writes**",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Partial migration is its own state requiring forward repair, and reverting binaries cannot restore a removed column or reinterpret a new-only persisted value.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+          "quote": "ForwardRepair: Incompatible writes or partial migration",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.7d434d1a41e142d38bb729ee124ac548#decision-and-worked-result",
+          "quote": "Reverting binaries cannot restore a removed column or reinterpret a new-only persisted value; the no-return point needs forward repair.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#decision-and-worked-result",
+          "quote": "Treat data evolution as a semantic compatibility and authority transition, not just a successful DDL command.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The staged change needs a compatibility window with a verified lock budget, an owned reader inventory, and a forward-repair path; incompatible writes hold the rollout rather than being fixed by redeploying N.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "quote": "additive DDL with verified lock budget",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "quote": "Incompatible writes hold the rollout and may require forward repair rather than redeploying N.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+          "quote": "Applying that to database schemas requires versioned DB-specific locks and data invariants, not just a column rename.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "a rollback or forward-repair path is defined.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The contract step destroys the easiest rollback path, so the ability to run an earlier image is not proof that it can interpret newer records.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+          "quote": "The contract step is often the riskiest: removing old data destroys the easiest rollback path. The ability to run an earlier image is not proof that it can interpret newer records.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "hold the window, repair forward, and contract only after reader absence.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A rewrite is not MVCC-safe, so an interrupted rewrite has no row-level undo and recovery is abort-and-retry with the WAL and copied pages already spent (mechanism inference from the atlas statement).",
+      "evidence": [
+        {
+          "section_key": "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+          "quote": "rewrites are not MVCC-safe",
+          "supports": "C21",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+          "quote": "Set stop conditions and recovery before the run: max queue age, failed validations, lag budgets, unexpected uniqueness conflicts and restore coverage.",
+          "supports": "C21",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Online migration depends on a recorded mapping revision, checkpoint, replay window and reconciliation rule, and a resumed task still needs duplicate-tolerant apply.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "record the mapping revision, checkpoint, replay window and reconciliation rule.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview",
+          "quote": "a resume still needs a replay window and duplicate-tolerant apply",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Success is not the migration succeeding: acceptance covers user effects, invariants, bounded downtime and actual recovery, and green migration SQL alone does not close the gate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+          "quote": "Acceptance includes correct user effects, database invariants, bounded downtime and actual recovery.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+          "quote": "Green migration SQL alone cannot close the gate.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Saturating a database that is already lock-bound makes the queue and p99 worse, so adding capacity or redeploying during the lock wait amplifies rather than resolves the incident.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "Larger pools worsen queue, p99 or deadlocks",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#3-ddl-is-part-of-the-runtime-resource-budget",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#3-expand-migrate-contract-with-explicit-gates",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#6-acceptance-tests-must-include-failures",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+    "tycho.page.89cd7853a0d04d78a02a772de59dbf38#long-transactions-deadlocks-and-online-index-work",
+    "tycho.page.1e89567050974052b13ba62b3b44484f#3-explicit-state-machine-for-transitional-safety",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#5-online-ddl-and-resource-contention",
+    "tycho.page.d1fa0462922e4a37922cea279975a3bd#5-rollback-has-a-no-return-boundary",
+    "tycho.page.81add4a0d86b4053ae77f9301fd2281d#4-illustrative-failed-canary",
+    "tycho.chapter.7d434d1a41e142d38bb729ee124ac548#decision-and-worked-result",
+    "tycho.chapter.3d0f6dd1e8e94cd397326e129b5c287f#decision-and-worked-result",
+    "tycho.page.96a702434b714ed4906b1301bc6e0248#2-expand-migrate-contract-includes-a-compatibility-window",
+    "tycho.page.301477f3c7324fe8932d3a2608516a20#overview",
+    "tycho.page.480477bf68a84b33b01440df8a0ccc96#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

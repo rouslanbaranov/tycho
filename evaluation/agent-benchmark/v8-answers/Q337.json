@@ -1,0 +1,407 @@
+{
+  "task_id": "Q337",
+  "answer": "# Why the modernization quadrature interval is not calibration\n\n## Short answer\n\nThe team has converted a modelling assumption into a number and then read the number back as evidence about the world. In V12, calibration is an evidence property of the inputs: measured means a named source with a method, sample size and period; assumed means a value chosen for the model with no measurement claim. Dual-write lag and reconciliation capacity are both assumed, their missing measurements are named in the input table, and the model contract records every model as uncalibrated. A parameter can change status only with new evidence, so no amount of interval arithmetic can make the model calibrated.\n\nThe 0.5-2.5 second lag range and the 2-8 records-per-second capacity range are assumed input ranges, not Type A or Type B uncertainty components. Type A is a statistical evaluation from a series of observations of the quantity; Type B is an evaluation from other information about the quantity expressed as a probability distribution. Neither exists here: there are no observations of the target environment's lag or throughput, and no calibration, specification or prior measurement from which a distribution could be derived. The 20 replications resample the model under the declared ranges; V12 classifies that as sampling error, not as measurement of the inputs.\n\nThe combined interval is therefore not a metrological coverage interval. A coverage interval is an interval about a measurement result for a defined measurand, built from evaluated uncertainty components (including covariance) with a coverage factor justified by the output distribution and backed by traceability. Here there is no measurement result, the components are standard deviations of design bounds, the scenario declares a -0.4 correlation that an independent quadrature omits, no effective degrees of freedom or output distribution is evaluated, and the divergence is a synthetic proxy rather than a measured quantity. The run's stored 95% interval (5,561.6-12,289.3 records) is a confidence interval across 20 replications, a sampling interval for the modeled mean, not a coverage interval for the real divergence.\n\nUntil a measurement exists, the record may claim only the conditional statement that under the declared inputs the model produces the reported result, with the ranges, correlation, seed and validity limits stated; it may report the replication interval as a sampling statement and rank what to measure first. It must keep calibration uncalibrated and the decision conditional or insufficient evidence. It may not claim that the model is calibrated, that the interval has a 95% probability of containing the true divergence, or that the real divergence lies inside the modeled range. This is the V12 failure mode called uncertainty theater.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 Calibration status semantics | \"uncalibrated model contract\", \"assumed vs measured parameter\", \"status change new evidence\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration |\n| F2 Type A / Type B applicability | \"Type A Type B uncertainty component\", \"uniform range assumed input\", \"repeated observations standard uncertainty\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes; tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty |\n| F3 Combination law and correlation | \"combined in quadrature\", \"negative correlation too narrow\", \"Gaussian copula\" | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language |\n| F4 Coverage interval versus sampling interval | \"95% confidence interval replications\", \"sampling interval not coverage\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language; tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions; tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error |\n| F5 What the record may claim | \"conditional result declared inputs\", \"what measurement would change\", \"validity limits no production claim\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits; tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records |\n| F6 Why the decision stays insufficient | \"insufficient evidence modernization\", \"hard input range decision boundary\", \"rollback completed 0.1\" | tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example; tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence; tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result; tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design |\n\n## Mechanism\n\n### 1. Calibration is a claim about parameters, not about interval arithmetic\n\nV12 separates five layers: source and claim evidence, model verification, calibration, simulation evidence and decision evidence. Calibration asks \"do the parameters match measured reality?\", and the four input statuses are measured, assumed, derived and unknown. Measured requires a named source and a measurement method, sample size and period; assumed is a value chosen for the model with no measurement claim. The contract and the decision record repeat the status rather than upgrade it: a parameter can change status only with new evidence, and repeating an assumed value in a decision record does not make it measured.\n\nThe V12 input table is explicit for this scenario. Dual-write lag is assumed, and what is missing is a measured lag distribution; reconciliation capacity is assumed, and what is missing is a measured throughput under target load. The model contract records the model as uncalibrated and lists the parameters' evidence status and the missing measurement. The decision record repeats the calibration status and returns insufficient evidence, and the book states that every model is uncalibrated and no production claim is made.\n\nThe team's premise therefore inverts the direction of support. The quadrature consumes the assumption and emits a number; it never compares a parameter with measured reality. Calibration is not a property of the output interval's form, width or arithmetic. It is a property of the evidence linking each parameter to a measurement of the real system, and that evidence is absent.\n\n### 2. Why the scenario range is neither Type A nor Type B\n\nType A and Type B are modes of evaluating the standard uncertainty of an input quantity in a measurement model. Type A is evaluated by the statistical analysis of a series of observations of the quantity: the experimental standard deviation of the mean, or a fitted statistic, computed from repeated measurements. Type B is evaluated by other means from all available information about the quantity - a calibration certificate, a manufacturer's specification, prior measurement data, a documented physical bound - expressed as a probability distribution. Both produce u(xi) for an estimate xi of an input quantity, and both refer to the actual quantity in the actual measurement.\n\nThis scenario supplies neither:\n\n- No Type A series: the target environment's dual-write lag and reconciliation throughput were never observed. The 20 replications are model runs that draw from the scenario's uniform distributions; they are not repeated measurements of the lag or the throughput. V12 itself separates the two: replications address sampling error, parameter draws address input uncertainty, and increasing replications does not reduce input uncertainty. A standard error across model replications is not an experimental standard deviation of measured lags.\n- No Type B information: the input table's \"what is missing\" column names a measured lag distribution and a measured throughput under target load, so no specification, calibration or prior measurement is recorded. The 0.5-2.5 and 2-8 bounds were selected so the model explores a plausible envelope; they are not derived from knowledge of the target environment's quantity. A uniform probability density over them says the model will sample that box, not that the true value is equally likely inside it.\n\nThe book states the conclusion directly: \"A uniform range in a scenario is not a Type A or Type B component. It is an assumed input range.\" Its failure-mode list names the error: \"Assumed as measured. A uniform range is treated as if it came from a measured distribution.\"\n\nThere is a genuine nuance. A rectangular distribution can be a legitimate Type B evaluation when its bounds come from real information about the quantity, such as a manufacturer's tolerance, a quantisation step or a documented physical limit. The defect here is not the shape of the distribution; it is the absence of an information basis. If the team had a vendor specification or an operational log bounding the lag, it could argue a Type B evaluation and would have to record that source. It does not have one: the record's missing measurement is exactly the information a Type B evaluation would need.\n\n### 3. Why the combined interval is not a metrological coverage interval\n\nA metrological coverage interval is constructed for a measurement result y of a measurand Y:\n\n- a measurement model Y = f(X1, ..., Xn);\n- estimates and standard uncertainties for the input quantities, from Type A and Type B evaluations, including covariances where inputs are correlated;\n- a combined standard uncertainty uc(y) from the propagation law;\n- an expanded uncertainty U = k uc, with k chosen for the stated coverage probability under the distribution of Y (k = 2 gives about 95% only for an approximately normal output; otherwise a t-factor with effective degrees of freedom or a GUM Supplement 1 distribution is needed);\n- metrological traceability of the measured value and its components.\n\nThe team's interval fails each element:\n\n1. **No measurement result or measurand.** The output is the model's maximum divergence, a fluid-model proxy. The book says divergence \"is a synthetic proxy, not a measured data-quality metric\", and the experiment \"does not establish ... that the real divergence is inside the modeled range\". A coverage interval must be an interval about a measured value of the real quantity.\n2. **No evaluated components.** The \"standard uncertainties\" are standard deviations of design bounds (for a uniform range, half-width divided by the square root of three), not standard uncertainties of estimates of the real parameters. V12 uses the measurement vocabulary but \"does not perform a metrological uncertainty budget\"; the vocabulary does not transfer the method.\n3. **The combination is wrong for the declared dependence.** Root-sum-square quadrature is the independence case of the propagation law. The scenario declares a -0.4 correlation. Divergence rises with lag and falls with capacity, so the two contributions reinforce: the covariance term is positive and an independent quadrature understates the modeled spread. (That sign argument is an inference from the model's accounting and the declared -0.4 correlation, not a sentence in the book.) V12 states that a model which ignores a known correlation \"produces an output distribution that is too narrow and a decision that looks more certain than it is\", and the engine samples the declared correlation through a Gaussian copula. An independent quadrature is therefore not even the model's own uncertainty propagation.\n4. **The coverage factor is unjustified.** k = 2 is a normal-distribution convention. The output here is nonlinear and bounded (minimum functions, backlog accumulation, a maximum over a finite horizon, censored rollback durations), the input ranges are wide, and the run itself relies on a normal approximation across 20 replications. No effective degrees of freedom, output distribution or coverage-factor justification is evaluated, so even a probability statement about the model output is an unverified approximation.\n5. **No traceability chain.** No measurement was performed and the model has no operational validation against a real system; a coverage interval presupposes a traceable measurement chain that does not exist here.\n\nThe stored 95% interval 5,561.6-12,289.3 is a separate object again: it is the mean plus or minus 1.96 standard errors across 20 replications, a confidence interval for the modeled mean. The book says \"A confidence interval across replications is a sampling interval, not a metrological coverage interval.\" It covers the true mean in repeated sampling only under the model's assumptions and \"does not cover the true production value if the model is biased or the inputs are mis-specified.\"\n\nThe most the team's calculation can be is a propagated assumption band: a conditional interval for the model output given the declared input ranges. That is a legitimate simulation statement if it is labelled as such. It is not a metrological coverage interval, and the label \"95% coverage interval\" attaches a probability to the real divergence that nothing in the record supports. V12 names this failure mode \"uncertainty theater\": a confidence interval across replications presented as an uncertainty budget for the input parameters.\n\n### 4. Why the contract stays uncalibrated and the decision stays insufficient\n\nThe contract cannot move because calibration is an evidence question. No measurement of lag or capacity exists, so both parameters remain assumed and the model remains uncalibrated. Only a new measurement can change the status; a computation over the same assumed values changes nothing. If the team's arithmetic produced a narrower interval, that would be precision without accuracy, not calibration.\n\nThe decision record cannot move for a related but distinct reason. Its hard constraints require measured inputs: a cutover record could be decision-supported only with a measured dual-write lag and a measured reconciliation capacity in the target environment, and that evidence is absent. The insufficient-evidence checklist returns insufficient evidence when \"a hard input is assumed and its range spans the decision boundary\". The model cannot tell whether a real migration would diverge by ten records or ten thousand, and rollback completes in only 10% of replications. The record therefore returns insufficient evidence, recommendation none, and lists the measurements that would change it.\n\nModel verification and convergence do not help, because they are different layers. A model can be verified and converged and still fail to support a decision; the missing evidence is about the world, not the code. Convergence does not mean the inputs are measured, and a model-verified label does not imply calibration. A verified, converged, precisely computed interval over assumed inputs is still an interval over assumed inputs.\n\n### 5. What the record may claim about uncertainty until a measurement exists\n\nThe record may claim:\n\n- **Status.** That the model is uncalibrated, that each input is assumed, and what measurement is missing.\n- **A conditional result.** \"Under the declared inputs, the model produces the reported result\" - with the ranges, the -0.4 correlation, the seed, the 20 replications and the validity limits stated. This is the strongest permitted claim.\n- **A sampling statement.** That the mean modeled divergence is 8,925.5 records with a replication interval of 5,561.6-12,289.3 under the normal approximation, labelled as a confidence interval for the modeled mean, not for the true value.\n- **Non-quantification.** That input uncertainty is not quantified: the declared range is an assumption about plausible values, not an estimated distribution of the real parameter.\n- **An assumption envelope.** That, conditional on inputs inside the declared ranges, the model output falls in a stated propagated range; explicitly labelled as a modeled interval, not a coverage interval, and not evidence that the real divergence lies inside it.\n- **A measurement agenda.** The sensitivity ranking of which input to measure first, the measurement that would support or reject the decision, the range that would do so, the owner and the next review trigger.\n- **Validity limits.** Synthetic workload only, no record-level reconciliation, no schema compatibility, no production claim without measurement.\n\nThe record may not claim:\n\n- that the model is calibrated, or that an interval computation calibrates it;\n- that the interval is a 95% coverage interval for the real divergence, that it is an uncertainty budget, or that there is a 95% probability that the true divergence lies inside it;\n- that the real divergence is inside the modeled range, or that production behaviour follows from the model;\n- that repeating the assumed values in the decision record makes them measured;\n- that the interval can clear a hard constraint defined on measured inputs.\n\nOnce a measurement exists, the parameter can become measured only with a named source, method, sample size and period. Then a Type A evaluation from the measurement series, or a Type B evaluation from documented information, becomes possible, and a GUM uncertainty budget with covariance and a justified coverage factor can be attempted. Until then the honest claim is conditional, and the honest status is uncalibrated.\n\n## Boundaries and edge cases\n\n- This is not an argument that simulation intervals are useless. The replication interval is a valid sampling statement about the modeled mean, and the sensitivity ranking is useful for prioritising measurement. The error is the layer crossing: a simulation statement is presented as a calibration and metrological claim.\n- This is not a model failure. The model is verified, the run is converged, and the decision record correctly returns insufficient evidence. \"Insufficient evidence is not a model failure\" because the missing evidence is about the world, not the code.\n- This is not a blanket ban on uniform distributions in Type B evaluations. With a documented information basis, a rectangular distribution can be a Type B component. Without one, it is an assumption.\n- The scope is this modernization scenario and its declared ranges. A scenario with measured inputs would be evaluated differently, with its own traceability and coverage argument.\n- No claim is made about production validity, safety, compliance or migration safety; the model's validity limits exclude those claims.\n\n## Evidence map\n\nShort forms in the table abbreviate the full section keys; the claims ledger below carries the exact section_key and quote for every claim.\n\n| Claim | What it establishes | Section (short form) | Status |\n|---|---|---|---|\n| C1 | Calibration is an evidence property; status changes only with new evidence | calibration#the-four-statuses; vocabulary#calibration-statuses | observed |\n| C2 | The contract records uncalibrated and both inputs assumed | validation-gates#v12-d-calibration; calibration#the-v12-input-table | observed |\n| C3 | The declared ranges, correlation and reported interval | coexistence#the-staged-result; experiment#experiment-design | observed |\n| C4 | A scenario uniform range is not a Type A/B component | calibration#jcgm-100-and-uncertainty-language; uncertainty#failure-modes | observed |\n| C5 | Replications are sampling error, not input measurement | uncertainty#two-kinds-of-uncertainty; experiment#experiment-design | observed |\n| C6 | The missing measurements are named | calibration#the-v12-input-table | observed |\n| C7 | Type B needs an information basis (metrological inference) | calibration#jcgm-100-and-uncertainty-language; uncertainty#failure-modes | inference |\n| C8 | The run interval is a sampling interval, not coverage | calibration#jcgm-100-and-uncertainty-language; convergence#coverage-and-its-assumptions | observed |\n| C9 | Ignoring the declared correlation narrows the distribution | uncertainty#correlated-inputs | observed |\n| C10 | Coverage is about a measurement; divergence is a proxy | calibration#jcgm-100-and-uncertainty-language; coexistence#the-accounting; experiment#what-the-experiment-establishes | observed |\n| C11 | V12 uses the vocabulary without the metrological budget | vocabulary#calibration-statuses; calibration#failure-modes | observed |\n| C12 | The permitted claim is conditional | calibration#overview; vocabulary#evidence-statuses-used-in-decision-records | observed |\n| C13 | The model can rank measurement but not replace it | calibration#what-measurement-would-change; coexistence#what-would-support-a-cutover | observed |\n| C14 | The decision is insufficient evidence | insufficient-evidence#the-modernization-example; #a-checklist-for-insufficient-evidence | observed |\n| C15 | Verification and convergence do not imply calibration | insufficient-evidence#insufficient-evidence-is-not-a-model-failure; convergence#what-convergence-does-not-mean; volume#five-evidence-layers | observed |\n| C16 | Validity limits are conditions on use | calibration#validity-limits | observed |\n| C17 | k = 2 normality is unestablished (metrological inference) | convergence#standard-error; #coverage-and-its-assumptions | inference |\n| C18 | Covariance is required by the combination law (metrological inference) | uncertainty#correlated-inputs; calibration#jcgm-100-and-uncertainty-language | inference |\n\n## Unknowns and limits\n\n- No measured dual-write lag or reconciliation throughput exists in the record; that is the central missing evidence, not an oversight of this answer.\n- No GUM uncertainty budget, effective degrees of freedom, output distribution or coverage-factor justification is recorded for the modernization run. The book states V12 does not perform a metrological uncertainty budget.\n- The presenting team's exact quadrature arithmetic is not stored in a V12 artifact; the book's statement is that V12 does not perform such a budget, and the stored run propagates the ranges by joint Monte Carlo (Gaussian copula, 20 draws). If the team's 95% interval is a separate calculation, it is not part of the verified record.\n- The formal definitions of Type A and Type B and of the coverage factor are metrological background summarised by the book's JCGM 100 section; the book does not reproduce the full method, and this answer does not claim that V12 implemented it.\n- The uniform shape of both ranges is recorded in the scenario artifact edition/v12/scenarios/modernization-staged.json, which is not a citable section key in this corpus; the book states the ranges and the uniform-range failure mode, and the question states that both ranges are uniform.\n- The model contract's calibration status and the decision record's insufficient-evidence status were checked directly in edition/v12/models/modernization-path.json and edition/v12/decisions/modernization-cutover.json; the book sections cited here state the same statuses.\n- Whether the model's structural omissions (record-level reconciliation, schema compatibility, deployment failures) could be bounded by any current evidence is unknown; the model declares them outside its domain.\n- No production observation, measurement or acceptance is claimed anywhere in this answer.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "Calibration is an evidence property of each model input, not a product of interval arithmetic: a measured value requires a named source, measurement method, sample size and period, while an assumed value is chosen for the model with no measurement claim, and a parameter can change status only with new evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+          "quote": "**Measured:** a named source and a measurement method, sample size and period.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+          "quote": "A parameter can change status only with new evidence.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+          "quote": "An assumed input repeated in a decision record does not become measured.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The modernization model contract records every model as uncalibrated and lists dual-write lag and reconciliation capacity as assumed, each with the measurement that is missing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated. The model contracts list each parameter's evidence status and the missing measurement.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Dual-write lag | assumed | A measured lag distribution |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Reconciliation capacity | assumed | A measured throughput under target load |",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The scenario declares a uniform 0.5-2.5 second lag range and a uniform 2-8 records-per-second reconciliation-capacity range with a -0.4 correlation, and the run reports a maximum divergence of 8,925.5 records with a 95% interval of 5,561.6-12,289.3.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+          "quote": "The input ranges are 0.5-2.5 seconds for lag and 2-8 records per second for reconciliation, with a -0.4 correlation.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+          "quote": "maximum divergence 8,925.5 records (95% CI 5,561.6-12,289.3)",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+          "quote": "draws lag from 0.5-2.5 seconds and reconciliation capacity from 2-8 records per second, with a -0.4 correlation",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A uniform range declared in a scenario is an assumed input range, not a Type A or Type B uncertainty component.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+          "quote": "A uniform range in a scenario is not a Type A or Type B component. It is an assumed input range.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+          "quote": "A uniform range is treated as if it came from a measured distribution.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "V12 treats the replications as sampling error and the parameter draws as input uncertainty, states that increasing replications does not reduce input uncertainty, and the modernization run uses 20 replications.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+          "quote": "Replications address sampling error. Parameter draws address input uncertainty. Increasing replications does not reduce input uncertainty.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+          "quote": "uses 20 replications and the seed base 20261029.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "No measured lag distribution or measured reconciliation throughput is recorded; the input table names exactly those two measurements as what is missing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Dual-write lag | assumed | A measured lag distribution |",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+          "quote": "| Reconciliation capacity | assumed | A measured throughput under target load |",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A Type B evaluation needs documented information about the quantity, such as a specification, calibration or prior measurement; a designer-chosen scenario bound has no such information basis, which is why the book calls the range an assumed input range rather than a component.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+          "quote": "It distinguishes Type A and Type B uncertainty components and shows how to combine them.",
+          "supports": "C7",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+          "quote": "A uniform range is treated as if it came from a measured distribution.",
+          "supports": "C7",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The run's 95% interval is a confidence interval across replications, which is a sampling interval for the modeled mean, not a metrological coverage interval; it does not cover the true production value when the model is biased or the inputs are mis-specified.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+          "quote": "A confidence interval across replications is a sampling interval, not a metrological coverage interval.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "A 95% confidence interval covers the true mean in repeated sampling about 95% of the time under the model's assumptions. It does not cover the true production value if the model is biased or the inputs are mis-specified.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The scenario declares a -0.4 correlation between the two inputs, and V12 states that a model which ignores a known correlation produces an output distribution that is too narrow and a decision that looks more certain than it is.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "V12 declares a negative correlation of -0.4 between those inputs and labels the uncertainty method as a Gaussian copula.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "A model that ignores a known correlation produces an output distribution that is too narrow and a decision that looks more certain than it is.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A metrological coverage interval is an interval about a measurement result with a stated coverage probability; the modeled divergence is a synthetic proxy, and the experiment does not establish that the real divergence is inside the modeled range.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+          "quote": "JCGM 100 describes a measurement result as a measured value plus an uncertainty, with a coverage interval at a stated coverage probability.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+          "quote": "Divergence accumulates when the backlog exceeds the drain capacity. It is a synthetic proxy, not a measured data-quality metric.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes",
+          "quote": "It does not establish that the target path is correct, that records reconcile, that the rollback is operationally executable or that the real divergence is inside the modeled range.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "V12 uses the coverage vocabulary but does not perform a metrological uncertainty budget, and it lists presenting a replication interval as an input uncertainty budget as the failure mode uncertainty theater.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+          "quote": "V12 uses that vocabulary to describe uncertainty, but it does not perform a metrological uncertainty budget.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+          "quote": "A confidence interval across replications is presented as an uncertainty budget for the input parameters.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Until measurements exist, the permitted claim is conditional - under the declared inputs the model produces the reported result - and the invalid claim is that the result describes a real system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+          "quote": "The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is that the result describes a real system.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result. It says the decision follows from the declared assumptions and constraints. It does not say the assumptions are true.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "The record may still rank what to measure first and must keep the decision conditional or insufficient evidence; the model cannot substitute for the measurement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+          "quote": "Until those exist, the decisions remain conditional or insufficient evidence. The model can still rank what to measure first; it cannot substitute for the measurement.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "Those are measurements and operational evidence, not model parameters. The model can show what to measure and how the decision depends on it; it cannot create the measurement.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The modernization decision returns insufficient evidence, recommendation none, because a hard input is assumed over a range that spans the decision boundary and the model cannot tell whether a real migration would diverge by ten records or ten thousand.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "quote": "The decision record returns insufficient evidence, recommendation none.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+          "quote": "The model cannot tell whether a real migration would diverge by ten records or ten thousand.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+          "quote": "a hard input is assumed and its range spans the decision boundary;",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Verification and convergence cannot substitute for calibration: a model can be verified and converged and still fail to support a decision, and convergence does not mean the inputs are measured or that the interval contains the production value.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+          "quote": "and still fail to support a decision. The missing evidence is about the world, not the code.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "the inputs are measured;",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "the confidence interval contains the production value;",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "A `model-verified` label does not imply calibration.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A validity limit is a condition on the result's use rather than a disclaimer, and the model records no production claim without measurement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "A validity limit is not a disclaimer appended to a result. It is a condition on the result's use.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "no production claim without measurement.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Even if the ranges were accepted as distributions, a coverage factor of two gives about 95% only under an approximately normal output distribution; the run relies on a normal approximation across replications and records no effective degrees of freedom or output distribution.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "A 95% confidence interval under a normal approximation is:",
+          "supports": "C17",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+          "quote": "V12 uses the normal approximation across replications.",
+          "supports": "C17",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "A 95% confidence interval covers the true mean in repeated sampling about 95% of the time under the model's assumptions.",
+          "supports": "C17",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "A quadrature that omits the covariance term is not the metrological combination law for these inputs; the law includes covariance, or the joint distribution can be sampled as the engine already does.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+          "quote": "The engine's sampling applies the declared correlation to the input draws.",
+          "supports": "C18",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+          "quote": "It distinguishes Type A and Type B uncertainty components and shows how to combine them.",
+          "supports": "C18",
+          "status": "inference"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#a-checklist-for-insufficient-evidence",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#insufficient-evidence-is-not-a-model-failure",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

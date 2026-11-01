@@ -1,0 +1,859 @@
+{
+  "status": "ai-judge-not-human",
+  "rubric": "v2.1",
+  "items": [
+    {
+      "task_id": "Q303",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E2",
+          "reason": "E2 states that classification, implementation and full migration are separate denominators; E1 fixes the 2,200-service/70-domain figure as a classification result."
+        },
+        {
+          "claim_id": "C2",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "E1 gives one accountable model owner and one accepted vocabulary, and E2 gives a single decision authority for each invariant."
+        },
+        {
+          "claim_id": "C3",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "E1 requires the module that owns writes to each logical aggregate or table; E2 says separate databases do not prove exclusive authority and E4 covers cache/projection staleness."
+        },
+        {
+          "claim_id": "C4",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "E1 defines the five boundaries separately and E2 says they are not the same, so grouping alone does not establish ownership."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E3",
+          "reason": "E3 states one domain can contain a single service or many; E1 allows multiple organizational teams, E2 warns that reporting structure can split a capability, and E4 names a stable ownership level."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E2",
+          "reason": "E2 states the owner can replace, split or consolidate services behind a gateway while maintaining caller-visible semantics; E1 defines the stable entry interface hiding internal services, tables and pipelines."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "E1 names gateway bypass, over-broad shared DTOs and non-versioned response semantics as recreating direct consumer coupling; E3 adds preservation of the old source-of-truth coupling."
+        },
+        {
+          "claim_id": "C8",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C8-E1",
+          "reason": "E1 defines gateway aggregation as composing several owner responses, which supports the contrast with internal tables, but no supplied quote states that the result has no single semantic owner; that element is missing."
+        },
+        {
+          "claim_id": "C9",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "E1 states a gateway cannot certify object ownership or replace backend authorization; E2 and E3 place object-level authorization at the resource-owning authority."
+        },
+        {
+          "claim_id": "C10",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "E1 gives per-dependency deadline and authorization; E2 caps retries and exposes the failing dependency; E3 requires a versioned partial shape; E4 treats gateway outage as its own failure domain."
+        },
+        {
+          "claim_id": "C11",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C11-E3",
+          "reason": "E3 makes versioning and rollback part of the change; E1 preserves the authoritative store, E2 says a call-graph swap is not a functional contract, and E4 preserves caller-visible semantics."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C12-E2",
+          "reason": "E2 requires a compatible period, observed consumers and proof of cutover; E1 inventories dependent clients and E3 retires direct dependencies only after measured usage has ceased."
+        },
+        {
+          "claim_id": "C13",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C13-E3",
+          "reason": "E3 says deploying the new producer is not evidence the old contract disappeared; E1 rejects decreeing universal gateways and E2 rejects a call-graph picture as a functional contract."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E2",
+          "reason": "E2 states unbounded plugins can change latency, fault isolation and safety behavior despite a stable API; E1 requires a typed provider/plugin interface at a documented extension point."
+        },
+        {
+          "claim_id": "C15",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C15-E1",
+          "reason": "E1 supports serving explicit integrations without every team editing the same microservices, but E2 attaches the documented exception mechanism to the gateway owner, not to extensions; the extension-specific exception contract is missing."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E1",
+          "reason": "E1 states serialized payloads still require schema/version, authentication, size, privacy and retention controls."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "E1 limits the figure to historical cataloguing scope at the observation date and E2 is the excluded 'already migrated or uniform size' reading listed in the same limits table."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "E1 supports partial rollout with other domains still planned and E2 is the excluded 100% organization-wide transition reading in the same limits table."
+        },
+        {
+          "claim_id": "C19",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C19-E1",
+          "reason": "E1 identifies company-reported improvements for the context, E2 a named experience rather than a randomized comparison, and E3 a source-reported fleet-churn estimate."
+        },
+        {
+          "claim_id": "C20",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C20-E2",
+          "reason": "E2 requires the observation window, population and confidence caveats with any percentage; E1 lists the absent control cohorts, independent p99 and velocity model in the limits section."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C21-E1",
+          "reason": "E1 says company-reported and not independently reproduced; E2 forbids extrapolating the dated deployment and E3 records technical review as pending."
+        },
+        {
+          "claim_id": "C22",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "The five rows E1-E5 answer the five contract questions: functional ownership, state authority, API/event semantics, security/operations, and failure/recovery."
+        },
+        {
+          "claim_id": "C23",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C23-E1",
+          "reason": "E1 states hidden coupling produced networked-monolith behavior despite independent deployability; E2 frames the aim as ownership, blast radius and allowed dependencies."
+        },
+        {
+          "claim_id": "C24",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C24-E1",
+          "reason": "E1 favors domains for a preexisting large fleet with coordination cost; E2 requires a baseline and measurable gates; E3 says not a universal preferred architecture."
+        },
+        {
+          "claim_id": "C25",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C25-E1",
+          "reason": "E1 says additional gateways can become central points of change; E3 adds error budgets, runbooks, incident ownership and cost; E2 treats the gateway outage as a failure domain."
+        },
+        {
+          "claim_id": "C26",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C26-E2",
+          "reason": "E2 states a boundary is weak if none of its business rules can be stated separately; E1 says a shared word should not force a shared schema."
+        },
+        {
+          "claim_id": "C27",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C27-E1",
+          "reason": "E1 restricts offloading to shared, cross-cutting, edge-enforceable functions and names domain-state and blocking-edge contraindications; E2 requires an owner, versioned policy and failure mode."
+        },
+        {
+          "claim_id": "C28",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C28-E1",
+          "reason": "E1 supports the claim that a stable API does not bound latency, fault isolation or safety, but the specific resource, time, concurrency, isolation, failure and kill-switch controls are not stated in the supplied quotes."
+        },
+        {
+          "claim_id": "C29",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C29-E1",
+          "reason": "E1 covers staleness and reconciliation, but per-field ownership, a publication contract and a version are not stated in the supplied quotes."
+        },
+        {
+          "claim_id": "C30",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C30-E1",
+          "reason": "E1 states the risk column is an original Tycho analysis, which entails that it is not a source-reported incident record."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "Thirty claim rows judged; core rows are directly supported by the gateway, limits and completion sections; partial rows name a missing semantic-owner, control-set or scope element."
+    },
+    {
+      "task_id": "Q307",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "E1 says placing workers in different zones while keeping one unreplicated database does not satisfy a whole-journey failure objective; E2 denies that nominal placement diversity proves surviving journeys."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E2",
+          "reason": "E2 states a container is not an availability zone, a managed service is not a business-state correctness proof and serverless autoscaling cannot create authoritative consistency; E1 says the deployment unit alone cannot answer the question."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E2",
+          "reason": "E1 makes scale-to-demand conditional on the workload execution model; E2 lists runtime quotas/concurrency, start delay, state externalization, connection spikes, event retry/delivery and vendor control-plane/region dependencies."
+        },
+        {
+          "claim_id": "C4",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "E1 says capacity arriving after a short burst cannot prevent its initial overload; E2 says a new Pod can be running while its downstream database budget is exhausted."
+        },
+        {
+          "claim_id": "C5",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C5-E1",
+          "reason": "E1 covers the finite-resource pool and the absence of added query capacity, and E2 covers platform threads, but 'or replicas' is not in this claim's quotes; the replica multiplication is carried by C6-E1."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "E1 states increasing replicas can multiply backend connections beyond the database budget and turn local pool tuning into a shared failure."
+        },
+        {
+          "claim_id": "C7",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "E1 requires headroom for worst-case auto-scaling and failover; E2 requires accounting for peak replica count, not normal replica count."
+        },
+        {
+          "claim_id": "C8",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "E1 gives the ten-replica, 30-connection pool example requesting 300 connections and says a CPU-only scale-out can exhaust a fixed ceiling."
+        },
+        {
+          "claim_id": "C9",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C9-E1",
+          "reason": "E1 is a general statement that correlated dependencies and measured time-to-recovery determine contract compliance; no supplied quote states that the incident refusal is application-owned connection multiplication or that it excludes a regional fault."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "E1 defines a durable workflow as a persistent state machine whose steps, timers, retries, versions and compensation survive process loss; E2 requires explicit persistent state and failure contracts."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E1",
+          "reason": "E1 says a reconnecting client must know which identity remains authoritative; E2 says the large-payload lifecycle must be designed independently of the database row."
+        },
+        {
+          "claim_id": "C12",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C12-E1",
+          "reason": "E1 names at-least-once as a delivery contract and lists failures and late acknowledgments as duplicate causes, so duplicate delivery is expected rather than per se a provider failure."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E2",
+          "reason": "E2 binds one logical intent, caller/payload scope and retention window to an authoritative outcome record; E1 makes idempotence a property of the intended effect."
+        },
+        {
+          "claim_id": "C14",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C14-E1",
+          "reason": "E1 says an in-memory set deduplicates only in one live process and fails across replicas, restarts and retained events."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E2",
+          "reason": "E2 requires external idempotency or durable reconciliation because a local database cannot make a remote effect atomic; E1 gives the loss/duplicate windows from marking before or after the external call."
+        },
+        {
+          "claim_id": "C16",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C16-E1",
+          "reason": "E1 distinguishes event, business-command and effect identities, but no supplied quote establishes that the double charge is an effect-identity defect rather than a regional failure."
+        },
+        {
+          "claim_id": "C17",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C17-E1",
+          "reason": "E1 gives the canonical boundary inventory to record separately: state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility."
+        },
+        {
+          "claim_id": "C18",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C18-E1",
+          "reason": "E1 says naming stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher; E2 requires tracing every dependency and E3 names shared network/identity as a common failure mode."
+        },
+        {
+          "claim_id": "C19",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C19-E1",
+          "reason": "E1 makes a regional exercise meaningful only with an explicit fault boundary; E2 limits a passing result to traffic and dependencies actually redirected; E3 states the disruption questions."
+        },
+        {
+          "claim_id": "C20",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C20-E1",
+          "reason": "E1 supports multiple contributing causes in an after-action record, but 'attribution needs evidence rather than a convenient label' is not stated in the quote."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C21-E1",
+          "reason": "E1 requires the same observable outcome, admitted/offered load, logical data correctness and named outage, plus staffing, steady-state cost and a restore test."
+        },
+        {
+          "claim_id": "C22",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "E1 pins artifact/container, dependencies, data snapshot, tool version and test script; E2 requires equal offered-demand traces or disclosure and E3 equal arrival, skew, warm-up, pool, retries and cancellation."
+        },
+        {
+          "claim_id": "C23",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C23-E1",
+          "reason": "E1 requires a comparable resource budget as well as a comparable offered workload; E2 says lower latency from twice the instances may be a capacity purchase."
+        },
+        {
+          "claim_id": "C24",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C24-E1",
+          "reason": "E1 says different failure classes require distinct tests; E2 requires a safe abort condition."
+        },
+        {
+          "claim_id": "C25",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C25-E1",
+          "reason": "E1 measures client-level correct outcomes, explicit rejections, timeouts, reconciliation, routed traffic, dependency recovery and total cost; E2 rejects green instance status as the metric."
+        },
+        {
+          "claim_id": "C26",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C26-E1",
+          "reason": "E1 accepts the cheaper option only if it satisfies the same failure, cold-start and user-journey gates."
+        },
+        {
+          "claim_id": "C27",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C27-E1",
+          "reason": "E1 returns insufficient evidence when the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown."
+        },
+        {
+          "claim_id": "C28",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C28-E1",
+          "reason": "E1 says a container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state; E2 compares topologies on the same outcome, failure model, resource needs and operating capability."
+        },
+        {
+          "claim_id": "C29",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C29-E1",
+          "reason": "E1 says all stateless frontends can become ineffective during a state-owner failure; E2 requires warmed capacity, routing, persisted state and duplicate-safe replay."
+        },
+        {
+          "claim_id": "C30",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C30-E1",
+          "reason": "E1 frames the owning question as which workload, isolation and operating constraints make a runtime topology viable, not the compute-model label."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "Thirty claim rows judged; core rows on failure domains, state externalization, connection multiplication and effect identity are directly supported; the incident-attribution rows are partial because their quotes are general."
+    },
+    {
+      "task_id": "Q311",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "E1 describes B's unconditional full-object replacement erasing A's title change; E2 says a last-writer timestamp can discard independent edits."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "E1 states If-Match uses strong comparison, a failed condition normally produces 412, and its evaluation must not be an application-side read followed by an unguarded write."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E1",
+          "reason": "E1 says two simultaneous first attempts cannot both pass a naive read-then-insert check; E2 says concurrent transactions can see the same capacity and E3 requires the check to be atomic with the mutation at the owner."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "E1 states an ETag is a representation validator, not automatically a database row revision or content checksum; E2 requires a precondition tied to the state actually read."
+        },
+        {
+          "claim_id": "C5",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "E1 says conditional writes protect the scoped object operation and do not commit a separate database row; E2 states the scope of authoritative operations."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E3",
+          "reason": "E3 says the data store, not application logic, must arbitrate a concurrent claim; E1 lists transaction/compare-and-set and E2 a durable uniqueness constraint or conditional write."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "E1 says not to blindly retry a stale replacement with the latest validator; E2 explains a last-writer timestamp can discard independent edits."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "E1 requires operation identity or a safe state-resolution protocol after a lost response and says a precondition failure on retry alone does not prove which attempt succeeded."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "E1 says a precondition failure on retry alone does not prove which attempt succeeded; E2 distinguishes a receipt of stored edits from the observed frontier."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E1",
+          "reason": "E1 says on a mismatch to reread and decide whether to merge or abandon; E2 gives the return-representation, submit-with-validator, atomically compare-and-mutate protocol."
+        },
+        {
+          "claim_id": "C11",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C11-E2",
+          "reason": "E2 separates mergeable text from authoritative transitions; E1 says a union still violates the capacity invariant and E4 requires a transaction to enforce it."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C12-E1",
+          "reason": "E1 covers lost-response identity and E2 the receipt/frontier distinction, but no supplied quote states that the newest validator describes the already-damaged state or that a fresh validator cannot reveal or restore the lost edit."
+        },
+        {
+          "claim_id": "C13",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "E1 says a versioned schema is necessary but not sufficient; E2 lists the required acceptance cases and E3 requires untested guarantees to be stated as unresolved."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "Thirteen claim rows judged; core rows on preconditions, atomic compare-and-mutate, mismatch handling and lost responses are directly supported."
+    },
+    {
+      "task_id": "Q328",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E2",
+          "reason": "E2 states pool parallelism removes per-key order unless partition assignment is explicit; E1 says several consumers read one queue and each message goes to one of them, processing in parallel."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "E1 requires a stable key so an aggregate's events land in one partition and keep that partition's append sequence; E2 says partitioned consumers own a stable key range and preserve per-key order."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E2",
+          "reason": "E2 rejects competing consumers when global order is mandatory or consumers mutate shared state without coordination; E1 also rejects strict global ordering without a partition key."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E1",
+          "reason": "E1 says a group with more instances than assignable partitions cannot increase per-partition concurrent ownership."
+        },
+        {
+          "claim_id": "C5",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C5-E1",
+          "reason": "E1 says a single hot key can concentrate traffic and limit parallel processing, and increasing partition count may not split that key."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "E1 says a per-key worker pool preserves order only when partition assignment is stable; E2 requires a transition contract when key encoding or partition count changes."
+        },
+        {
+          "claim_id": "C7",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "E1 says stopping polling or a rebalance callback does not retract the remote request; E2 requires draining or classifying in-flight work and committing only resolved effects."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "E1 states acknowledgment must follow the durable business effect and redelivery must not duplicate it; E2 says acknowledging before the effect can lose work."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "E1 says committing before the external effect can lose it after a crash and committing after can duplicate it; E2 says no ordering of two independent commits creates a global transaction."
+        },
+        {
+          "claim_id": "C10",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C10-E2",
+          "reason": "E2 says a crash after the effect but before acknowledgement can cause redelivery, requiring consumer-side deduplication and stable effect identity; E3 says redelivery resolves the previously recorded outcome."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E2",
+          "reason": "E2 writes the deduplication marker and business side effects in the same transaction; E1 requires stable identity and atomic recording, and E3 requires a uniqueness constraint."
+        },
+        {
+          "claim_id": "C12",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C12-E2",
+          "reason": "E2 requires the marker lifetime to cover maximum broker redelivery, DLQ replay and historical replay, and says a shorter window can duplicate the effect."
+        },
+        {
+          "claim_id": "C13",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C13-E1",
+          "reason": "E1 says the handler must own effect identity, deduplication and acknowledgement ordering; E2 puts ordering in the subscription contract, not the framework default, and E3 commits only resolved positions."
+        },
+        {
+          "claim_id": "C14",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C14-E2",
+          "reason": "E2 requires bounded attempts and a declared terminal path; E1 says an invalid schema or permanently rejected target is not repaired by retrying forever."
+        },
+        {
+          "claim_id": "C15",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C15-E1",
+          "reason": "E1 classifies transient, permanent and unknown outcomes and preserves quarantine evidence; E2 says a dead-letter queue is a holding mechanism, not successful delivery or a safe replayer; E3 requires an owner, replay policy, bounded retention and alerting."
+        },
+        {
+          "claim_id": "C16",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C16-E3",
+          "reason": "E3 requires an owner and replay policy, bounded retention and access, observable failure and alerting; E1 adds monitoring for silent abandonment and E2 retention longer than the source queue."
+        },
+        {
+          "claim_id": "C17",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C17-E1",
+          "reason": "E1 says a poison record may stop the partition or skip data and requires a DLQ/quarantine contract, but 'reconcile before resuming' is not stated in the quote."
+        },
+        {
+          "claim_id": "C18",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C18-E2",
+          "reason": "E2 says each current subscriber gets its own cursor; E1 supports independent reactions and E3 says fan-out cost grows with subscriber count."
+        },
+        {
+          "claim_id": "C19",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C19-E1",
+          "reason": "E1 gives one ordered consumer per partition or a partitioned work queue and reverses the choice when ordering dominates throughput; E2 fits fan-out to independent subscribers needing a copy."
+        },
+        {
+          "claim_id": "C20",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C20-E1",
+          "reason": "E1 allows buffering only with a reliable sequence domain, a bounded buffer, a gap timeout and a late-message disposition, and says to partition by key when global order is unnecessary."
+        },
+        {
+          "claim_id": "C21",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C21-E2",
+          "reason": "E2 says a worker pool needs a visible in-flight count and a redelivery limit, not only higher prefetch; E1 says concurrency increases duplicate and reorder exposure."
+        },
+        {
+          "claim_id": "C22",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C22-E1",
+          "reason": "E1 says a Kafka transaction does not automatically enclose an unrelated SQL commit, payment provider or email delivery; E2 says an offset is a replay position, not proof every effect succeeded."
+        },
+        {
+          "claim_id": "C23",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C23-E1",
+          "reason": "E1 says a consumer acknowledgement retires the message after the redelivery policy; E2 says a publisher confirm means the broker accepted responsibility, not that the consumer completed the business effect."
+        },
+        {
+          "claim_id": "C24",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C24-E1",
+          "reason": "E1 says message ordering is scoped to queue/subscription/stream/partition and concrete producer/consumer behavior, and no column implies global total order."
+        },
+        {
+          "claim_id": "C25",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C25-E1",
+          "reason": "E1 says a crash after the local effect but before acknowledgement can cause redelivery and consumer-side deduplication is necessary for nonrepeatable effects; E2 says durable storage does not make the effect idempotent."
+        },
+        {
+          "claim_id": "C26",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C26-E1",
+          "reason": "E1 requires the subscription to declare a prefetch or in-flight bound and an acknowledgement window, and to pause delivery or add capacity at the bound."
+        },
+        {
+          "claim_id": "C27",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C27-E1",
+          "reason": "E1 says a queue dispatches each message to one eligible consumer and competing consumers share the work; E2 says a topic fans each publication out to every current matching subscriber."
+        },
+        {
+          "claim_id": "C28",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C28-E1",
+          "reason": "E1 requires the queue contract to state its ordering scope and terminal path for poison messages; E2 requires a visible in-flight count and redelivery limit, not only prefetch."
+        },
+        {
+          "claim_id": "C29",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C29-E1",
+          "reason": "E1 repeats with the same scoped idempotency identity and reconciles to the durable outcome; E2 surfaces an unknown outcome with bounded reconciliation or redesign, and E3 says blind retries cannot be guaranteed safe."
+        },
+        {
+          "claim_id": "C30",
+          "core": false,
+          "verdict": "supported",
+          "quote_id": "C30-E1",
+          "reason": "E1 describes the per-key transfer lock recognizing already-processed work; E3 says these defenses address duplicate work, not a magic end-to-end atomic transfer."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "Thirty claim rows judged; core rows on partitioning, acknowledgement order, duplicate identity and the terminal path are directly supported."
+    },
+    {
+      "task_id": "Q340",
+      "citation_resolution": true,
+      "required_anchor_coverage": 1,
+      "claim_verdicts": [
+        {
+          "claim_id": "C1",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C1-E1",
+          "reason": "E1 states in the current schema evidence.simulation carries the decision status by convention and describes the decision, not whether the simulation executed."
+        },
+        {
+          "claim_id": "C2",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C2-E1",
+          "reason": "E1 says V12 keeps five layers separate, each answers a different question, results can be strong or weak per layer, the labels are not a ladder and a later layer never upgrades an earlier one; E2 says a model-verified label does not imply calibration."
+        },
+        {
+          "claim_id": "C3",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C3-E5",
+          "reason": "E5 answers the model-verification question with units, conservation, boundary cases, event ordering and deterministic tests; E3 says a verified engine is not a validated system and E4 says tests do not prove operational validity."
+        },
+        {
+          "claim_id": "C4",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C4-E3",
+          "reason": "E3 says every V12 model is uncalibrated, the inputs are assumed and the valid claim is conditional on the declared inputs; E1 gives the calibration question."
+        },
+        {
+          "claim_id": "C5",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C5-E2",
+          "reason": "E2 says a decision-supported outcome with an uncalibrated model is conditional, follows from the declared assumptions and constraints, and does not say the assumptions are true; E4 gives the decision-layer question and reversal triggers."
+        },
+        {
+          "claim_id": "C6",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C6-E1",
+          "reason": "E1 lists the record status as proposed, decision-supported, insufficient-evidence or rejected; E2 limits the decision status to decision-supported or insufficient-evidence, so the reviewer's imported decision-grade label is not a record value."
+        },
+        {
+          "claim_id": "C7",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C7-E1",
+          "reason": "E1 says the simulation slot carries the decision status by convention; E2 gives the record status vocabulary, so agreement between the slot and the status it is specified to hold is identity, not independent corroboration."
+        },
+        {
+          "claim_id": "C8",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C8-E1",
+          "reason": "E1 says V12 has no operational validation against a real system and every model records that limit; E4 says the models do not establish a match to a real system and E5 lists evidence inflation."
+        },
+        {
+          "claim_id": "C9",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C9-E1",
+          "reason": "E1 says the operability constraint remains unverified and the recommendation is conditional; E2 forbids the safe-to-deploy inference, E3 denies owner acceptance, E4 denies pattern promotion and E5 states the limit."
+        },
+        {
+          "claim_id": "C10",
+          "core": false,
+          "verdict": "partial",
+          "quote_id": "C10-E2",
+          "reason": "E2 gives the model limits such as no dependency calls or storage, E3 the quadratic sensitivity screen, E4 the gate-order rule and E1 the untested operability constraint, but 'no operational validation' is not stated in this claim's quotes; it is carried by C8-E1."
+        },
+        {
+          "claim_id": "C11",
+          "core": true,
+          "verdict": "supported",
+          "quote_id": "C11-E2",
+          "reason": "E2 says more replications make the synthetic estimate more precise, not more representative; E1 says narrow intervals do not make inputs measured and E4 assigns convergence and replication to scenario and run records."
+        }
+      ],
+      "semantic_support": 2,
+      "core_coverage": 2,
+      "pass": true,
+      "notes": "Eleven claim rows judged; core rows on the slot map, the five separate layers and the narrow scope of decision-supported are directly supported."
+    }
+  ]
+}

@@ -1,0 +1,452 @@
+{
+  "task_id": "Q302",
+  "answer": "# Q302 — Netty event loops: conditional gains, reliability, and the evidence a migration claim needs\n\n## 0. Scope, layers and method\n\nThis is a book-layer architecture question. I used three layers:\n\n- **book (required):** the mechanism, the Netflix Zuul 2 case, the reactive execution pages, the decision playbook, workload/queueing material and measurement boundaries.\n- **atlas (supporting only):** the API Gateway card for the operability condition and gateway failure vocabulary. It is not runtime evidence.\n- **modeling-and-simulation (supporting only):** queue/resource and migration models for the quantities that must be measured, and for the rule that a model cannot substitute for operational evidence.\n\nThe cited sources describe mechanisms, one historical case and supporting models; statements about the gateway in the question are mechanistic inferences, not production measurements. The outline tool returned a snapshot-mismatch error in this session, so structural navigation used search, page section maps and direct section reads. The four required sections on the Zuul 2 page were read directly.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence read |\n|---|---|---|\n| F1. Workload shape and conditional benefit | event loop non-blocking I/O thread-per-request; thread per request versus event loop concurrency model; persistent connections; traffic mix low-work I/O high CPU distributions | Zuul 2 before/after; Zuul 2 alternatives; workload shape section 2 |\n| F2. CPU economics of computation-heavy routes | event loop; virtual threads; CPU per request class p99 saturation; throughput capacity | Zuul 2 what reported; decision matrix; decision four bottlenecks |\n| F3. Synchronous filter and cross-route interference | event loop stall head-of-line blocking unrelated routes; blocking call detector event loop thread affinity tracing; bounded offload executor blocking detector | Nonblocking execution section 1; Zuul 2 before/after; Zuul 2 operating guards; tails critical path section 2 |\n| F4. Asynchronous reliability failure modes | asynchronous execution does not improve reliability failure modes; async failure modes; callback lifecycle manual resource cleanup; async reliability | Zuul 2 why reliability; asynchronous APIs; scheduler/context; deadlines/retries |\n| F5. Capacity versus throughput and reliability | throughput capacity; offered load; connection scalability; traffic mix low-work I/O high CPU distributions | Zuul 2 what reported; Zuul 2 alternatives; workload shape section 2; tail measurement section 5 |\n| F6. Operate, measure and support the claim | blocking detector; observability async context; canary; rollback; goodput | Zuul 2 operating guards; decision dimensions; reactive decision procedure; decision canary; queue model; coexistence/rollback |\n\nLayer check: atlas queries (API Gateway; bulkhead and bounded-queue isolation) returned the API Gateway card and the resilience entry inventory. Modeling-and-simulation queries (gateway queueing latency utilization model; backpressure) returned the queue/resource model and the migration/rollback model. Neither layer supplied production evidence; they were used for operability and measurement vocabulary.\n\nSearch convergence: every facet was probed with at least three formulations. The last two variants for F1, F2, F4 and F6 returned the same required sections, so I treated the facet as saturated when another variant added no new section. That is search saturation, not proof of complete coverage.\n\n## 2. Short answer\n\nThe migration report merges three claims that need three different kinds of evidence:\n\n1. **Connection scalability.** The gateway can hold more persistent connections. This is a capacity/occupancy result.\n2. **CPU efficiency.** The migration cuts CPU cost. That is false as a general claim and is expected to be false for computation-heavy routes.\n3. **Reliability.** The gateway is more reliable. Connection capacity does not establish this, and asynchronous execution does not produce it automatically.\n\nThe benefit is conditional because an event loop only amortizes waiting. If the workload is dominated by CPU work, there is little waiting to amortize and the loop cannot execute fewer instructions. If the workload is dominated by many long-lived, mostly idle connections, the event loop can reduce the per-connection thread cost and improve connection scale. The Netflix Zuul 2 case shows exactly this split: connection-scale benefit, no material CPU-efficiency gain on the computation-heavier API cluster, and about 25% throughput improvement on a lower-work logging cluster.\n\nThe synchronous filter shows that the condition is also about implementation discipline. A blocking JDBC, mutex or HTTP call on an event loop occupies a thread that serves many connections, so unrelated routes assigned to that loop stall. The event loop is a shared resource; nonblocking is an end-to-end contract, not a library label.\n\nAsynchronous execution does not automatically improve reliability because it changes when and where work runs, not whether the work is correct, durable, isolated, observable or recoverable. It removes one failure mode (thread exhaustion while waiting) and adds others: callback lifecycle, context loss, manual cleanup, buffer and file-descriptor leaks, dropped responses, unbounded queues, cancellation that does not stop work, and retries that amplify load. The net reliability effect is an empirical question.\n\nBefore the claim is supportable, the gateway must operate the new execution model and measure the workload and outcomes per class at matched offered load. Connection count alone is not enough.\n\n## 3. Why the benefit is conditional on workload shape\n\n### 3.1 The event loop removes waiting cost, not work\n\nA thread-per-request front end attaches a thread to a request for its lifetime. When the request waits on a socket, database or downstream service, the thread is occupied but not doing useful CPU work. A Netty event loop multiplexes many channels over a small number of loop threads; a channel that is not ready yields, and a callback resumes later. The saving is the cost of the waiting thread: stack memory, context switches, scheduler pressure, and the number of connections a process can hold.\n\nThat saving is proportional to the share of request time spent waiting and to the number of connections that are waiting. If a request spends most of its time computing, there is little waiting cost to remove. The loop still has to execute the same cryptography, serialization, authorization and business logic. In that regime the event loop can add overhead (callback dispatch, allocation, cache pressure, scheduling) without adding compute capacity. A bounded platform-thread pool sized to the useful parallelism can be simpler and no slower.\n\n### 3.2 The conditions that decide the benefit\n\nThe source is explicit that the benefit is conditional: it depends on the share of time spent waiting, the number of long-held connections, listener and upstream behavior, scheduling, and how thoroughly filters are nonblocking. A gateway with moderate connection counts, short requests and CPU-heavy work may satisfy its latency objectives with a tuned blocking design. A gateway with very many persistent, mostly idle connections and asynchronous downstream waits is the favorable case.\n\nThe request mix matters because an aggregate can hide two different workloads. A mix that is mostly low-work I/O with a minority of high-CPU routes can show a good aggregate while the CPU-heavy routes are unchanged or worse. The source's synthetic suggestion is to test the 90% low-work / 10% high-CPU distributions separately rather than assume the aggregate represents both. The Netflix API and logging clusters illustrate that separation; they are not a controlled A/B experiment.\n\n### 3.3 Connection capacity is not throughput\n\nPersistent connection capacity is an occupancy/concurrency budget. The source's decision rule treats connection waiting capacity, CPU per request class and p99 under saturation as separate measurements. Throughput is completed correct work per unit time at a declared latency and error objective. The two are related by Little's law, but not identically: for a stable system, mean work in system equals arrival rate times mean time in system. At a fixed service capacity, admitting more in-flight connections does not create more completions; it can increase the time each request spends in the system. If arrival exceeds completion, queues grow and the steady-state interpretation fails.\n\nThis is why a rising connection count is not a throughput win by itself. It may be a genuine capacity improvement: the gateway can hold more clients without exhausting threads. But the useful question is whether completed goodput at the SLO rose for the routes that were waiting-bound, and whether p99, errors, timeouts, retries and resource pressure stayed inside bounds. A quiet cluster with many idle connections can look better on an aggregate dashboard while a latency-critical route worsens.\n\nThe CPU denominator has the same problem. CPU per connection can fall sharply because the thread-per-connection cost disappeared, while CPU per completed request on a computation-heavy route stays flat or rises. The team must state which denominator it is using. The relevant metric for the CPU claim is CPU per completed operation by route class, not host CPU alone and not CPU per open connection.\n\n### 3.4 Why the computation-heavy routes show no CPU gain\n\nThis is the expected outcome, not an anomaly. The event loop does not reduce the instruction count of cryptography, serialization or business logic. It reduces the cost of threads that are waiting. For a CPU-bound route, useful concurrency is bounded by cores; a small event-loop thread set may even serialize CPU work that a bounded pool could run in parallel. The source's decision rule keeps CPU-intensive work on bounded platform threads unless workload-specific measurements justify another model, and warns against putting CPU-intensive crypto or JDBC on Netty's event loop.\n\nThe separate gRPC virtual-thread case is a different scheduling experiment and should not be collapsed into this 2016 gateway result. The mechanisms are adjacent, not identical, and neither is a universal benchmark.\n\n## 4. Why one synchronous filter stalls unrelated routes\n\nAn event loop is shared. Many connections are assigned to a small number of loop threads. If a filter performs a synchronous JDBC query, a blocking HTTP call, a mutex wait or a slow native operation on the loop, that loop thread cannot process other ready channels. The unrelated request does not need to use the same route or the same filter; it only needs to be assigned to the same loop. That is cross-route interference, not a local performance problem.\n\nThe reactive chapter states the mechanism directly: blocking an event loop while waiting for JDBC, a mutex or an HTTP response prevents unrelated operations assigned to that loop from progressing. A nonblocking network stack does not make blocking JDBC nonblocking. An asynchronous API can still contain a blocking call underneath; the label does not enforce the contract.\n\nThe tail-latency chapter adds a second warning: asynchronous code is not automatically parallel. A shared connection pool, global lock, fan-in serialization or constrained executor can reintroduce an effectively serial bottleneck. In this gateway, the event loop itself is such a shared resource. Adding more connections to a loop that can be blocked increases the number of requests exposed to the same stall.\n\nThe observable signature is rising event-loop delay or runnable lag, p99 spikes on routes that share the loop, timeouts and retries, and sometimes a queue that grows while CPU looks idle. A thread dump or wall-clock profile may show the blocking stack; a CPU profile may not, because the loop is waiting rather than running. That is why the gateway needs a blocking detector and wall-clock evidence, not only CPU utilization.\n\nThe remedy is not to make every method asynchronous or to add threads blindly. The remedy is to keep the loop nonblocking, offload unavoidable blocking dependencies to a bounded executor with an explicit queue and admission limit, isolate classes/dependencies with bulkheads, propagate deadlines and cancellation, and give each isolated class an explicit budget. Bulkhead bypass, undersized partitions and a shared hidden queue can defeat isolation, so per-pool queue age, utilization and rejected work must be monitored and the isolated class failed explicitly.\n\n## 5. Why asynchronous execution did not automatically improve reliability\n\n### 5.1 Reliability is a system property\n\nFor this answer, reliability means the probability that the gateway delivers correct, timely outcomes within its SLOs over the observation window, including behavior under dependency slowness, overload, cancellation, partial failure and recovery. That property depends on redundancy, isolation, deadlines, idempotency, admission control, resource cleanup, observability and rollback. An I/O model is one input to it.\n\nAsynchronous execution changes the scheduling and ownership of work. It does not by itself add a replica, a timeout, a retry identity, a durable record, a circuit breaker, a runbook or a correct error path. An asynchronous interface can separate sender and receiver in time, but it does not make the receiver infinitely fast; backpressure, cancellation, retry identity and durable replay remain distinct guarantees. A timeout signal alone does not prove that the underlying blocking operation was interrupted, and a ThreadLocal correlation ID may disappear or leak across interleaved requests.\n\n### 5.2 The new failure modes are real\n\nThe conversion trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup. The source names ByteBuf leaks, file-descriptor leaks and dropped responses as possible failures of incomplete async error paths. These are not cosmetic: they can exhaust native memory or file descriptors, lose responses after the client has waited, or leave work running after cancellation.\n\nOther failure modes follow from the same shift:\n\n- Unbounded queues or buffers when a producer is faster than the consumer. A nonblocking pipeline can hide backpressure failure until memory or latency collapses.\n- Cancellation that stops the callback but not the database query, HTTP request or committed effect. The client sees a timeout; the work continues.\n- Context loss or leakage across scheduler switches: trace IDs, principals, tenant identity, authorization decisions and logging context may be missing or attached to the wrong request.\n- Retry amplification: a downstream latency spike plus retries at several layers can increase open connections, threads, memory and scheduler pressure even after the gateway stops blocking threads.\n- Partial migration: old blocking and new asynchronous paths coexist, with different error semantics, thread-locals and cleanup behavior. The old path may be needed for rollback, but it may not be exercised.\n\n### 5.3 What async can improve, and why that is not a general win\n\nAsynchronous I/O can improve one important reliability failure mode: a blocking gateway can exhaust its thread pool when many requests wait on a slow downstream, and an event loop can hold those waiting connections at lower thread cost. The source reports some retry-storm resilience benefit, but qualifies it as requiring tuning and not a zero-failure guarantee. That is a conditional improvement in one dimension, not a general reliability property.\n\nThe net effect can be negative if the loop is blocked, if queues are unbounded, if context is lost, if leaks accumulate, or if the team cannot debug the callback lifecycle. The correct conclusion is not that async is unreliable or that blocking is reliable; it is that the reliability claim must be demonstrated for the actual failure modes and operating discipline.\n\n### 5.4 More connection capacity can increase exposure\n\nA gateway that holds more persistent connections has more state to manage: buffers, file descriptors, TLS sessions, timers, per-connection context and queued work. If one event loop serves a large share of those connections, a single blocking filter or a single leak has a larger blast radius. The migration can therefore increase capacity and increase the consequences of a defect at the same time. That is another reason connection count is not a reliability metric.\n\n## 6. What the gateway must operate\n\nThe gateway must operate the execution model, not just deploy it. The source's operating guards are a baseline; the table expands them into operable controls.\n\n| Control | What must be operated | Failure if absent |\n|---|---|---|\n| Event-loop discipline | An event-loop blocking detector (static analysis and runtime), code rules that forbid JDBC, blocking HTTP, mutex waits, DNS and expensive native calls on loop threads, and a reviewed exception path | One filter stalls unrelated routes; event-loop delay and p99 spike |\n| Bounded offload | A separate executor or bulkhead for each unavoidable blocking dependency, with a finite queue, admission limit and deadline; no shared hidden queue | Queue growth, thread exhaustion, cross-class interference |\n| Context propagation | Request context and principal propagation: explicit trace, principal, tenant, authorization and logging context across callbacks and scheduler switches; tests through flatMap, scheduler switches and client adapters | Lost or wrong identity, broken traces, authorization gaps |\n| Deadline and cancellation cleanup | End-to-end deadlines that shrink per hop; cancellation propagation; release of connections, buffers and upstream work; outcome lookup for ambiguous effects | Orphaned work, leaked resources, duplicate or missing business effects |\n| Resource lifecycle | Reference-counted buffer and file-descriptor leak detection; pool caps; native/direct memory accounting; close paths for clients and channels | Native memory or file-descriptor exhaustion; dropped responses |\n| Admission and retry limits | Rate/queue admission, load shedding where permitted, retry budgets with jitter and idempotency, retry ownership at one layer | Retry storms, overload, non-idempotent duplicates |\n| Observability and SLOs | Per-route and per-connection-cohort p99, event-loop lag, queue age, error/timeout/cancel/retry counts, trace and context checks; dashboards, alerts, on-call ownership | Regressions hidden by aggregate throughput; no diagnosis path |\n| Rollout and rollback | Canary by route class and connection cohort; dual-stack or selectable old execution; known rollback version; failure injection; runbook and rehearsal | Unsafe cutover; no recovery when the new path fails |\n\nThe gateway also has to be operated as a critical component in its own right: it can be a single point of failure, and bypass, configuration drift, stale routes, quota failure and total backend-blocking outages are known failure modes. That is an operability condition, not evidence that the migration succeeded.\n\n## 7. What the gateway must measure\n\nThe measurement set must make the three claims separable. The table gives the minimum; thresholds should be declared before the run.\n\n| Domain | Minimum measurements | Why it is needed |\n|---|---|---|\n| Workload | Offered, admitted and completed requests per second; request mix; CPU vs wait time per route class; active vs idle connections; concurrent in-flight; downstream RTT and fan-out; payload size and skew | Establishes whether the workload is waiting-dominated or CPU-dominated; defines the denominator for every other metric |\n| CPU | CPU per completed operation by route class; host/process CPU; scheduling and callback overhead; CPU per connection as a secondary capacity metric | Tests the CPU claim on the routes where it matters, not on an aggregate |\n| Latency | p50/p95/p99 by route and connection cohort; queue wait; event-loop runnable delay/lag; saturation point | Tests the unrelated-route stall and whether the tail improved or regressed |\n| Reliability | Error, timeout, cancellation and retry rates; retries per logical operation; duplicate or missing effects; dropped responses; context/trace failures; leak counts; recovery time | Tests the reliability claim against the failure modes that async introduces |\n| Resources | Heap, GC pauses, native/direct memory, socket buffers, thread stacks, file descriptors; pool utilization, queue age and rejections | Detects leaks and pressure that connection counts hide |\n| Capacity | Connection capacity; active/waiting time per connection; downstream pool and DB connection budgets; admission/rejection counts | Separates connection scalability from useful throughput |\n| Comparison | Baseline vs treatment at matched offered load, resource ceilings, versions, hardware and workload; open-loop arrivals; warm-up and sustained window; confidence/variance; failure injection; canary by class; rollback time | Makes the claim causal rather than a before/after anecdote |\n\nTwo measurement traps deserve emphasis. First, a closed workload generator that waits for a response before issuing the next request reduces offered load when the system stalls; it can hide the backlog that external arrivals would create. Second, a completed-response histogram omits requests that were rejected, timed out or never admitted. The gateway must count offered, admitted and completed work separately and include failed or timed-out intended operations in the SLO. CPU profiles and wall-clock profiles also answer different questions: CPU sampling misses waiting states, while wall-clock sampling can show blocked stacks with its own overhead and grouping limits.\n\n## 8. What would make the claim supportable\n\nA supportable claim should be a bounded, falsifiable statement, not a slogan. For example:\n\n> For workload W and route classes R, at matched offered load and resource ceilings, treatment T compared with baseline B shows: (a) CPU per completed operation on computation-heavy routes is no worse than B within a pre-declared equivalence margin; (b) p99 on unrelated routes is no worse under normal load and under an injected blocking filter; (c) completed goodput at the SLO improves for waiting-dominated routes; (d) error, timeout, cancellation, retry, duplicate-effect, context-propagation and leak metrics are not worse; (e) event-loop lag and queue age remain within declared bounds; (f) rollback completes within the declared observation window; and (g) the result replicates across runs with reported variance.\n\nIf (a) through (g) are not measured, the correct result is insufficient evidence, not a win. If (a) fails, the CPU claim is false for those routes. If (b) fails, the reliability claim is false for the affected routes even if connection capacity rose. If (c) is flat while connection count rises, the result is a capacity observation, not a throughput gain. If (d) or (e) worsens, the migration traded one failure mode for another. If (f) fails, the migration is not operationally reversible.\n\nThe comparison should include a failure-injection matrix: a stalled downstream, a saturated tracing reporter, a slow queue consumer, duplicate messages, cancelled requests, forced client disconnects and a blocking filter deliberately left on the loop. The point is to observe whether the gateway preserves correctness, context, cleanup and recovery, not just whether it stays up.\n\nA canary by class is necessary because the aggregate can move in the wrong direction. The canary should compare CPU per operation, completed goodput, p95/p99, failed and cancelled requests, starvation and memory at matched traffic, not a single aggregate throughput number. The old execution path should remain selectable until security, context, error semantics and recovery equivalence are demonstrated under the same load.\n\n## 9. Evidence map\n\n| Claim | Proposition | Evidence section keys |\n|---|---|---|\n| C1 | Conditional benefit; no speedup of computation; CPU filter hurts unrelated routes | tycho.page.8982b044f7ee4305a2330a6ff989bb77#before-and-after-execution-ownership |\n| C2 | Non-uniform production outcome: API no CPU gain; logging about 25% | tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported |\n| C3 | Async conversion lifecycle and leak/dropped-response failure classes | tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved |\n| C4 | Moving off blocking threads is not automatic reliability; downstream pressure remains | tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved; tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission |\n| C5 | Tuned blocking gateway is defensible; decision rule compares capacity, CPU/class and p99 | tycho.page.8982b044f7ee4305a2330a6ff989bb77#alternatives-and-contraindications |\n| C6 | Operating guards and rollback version | tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved |\n| C7 | Blocking loop prevents unrelated operations; nonblocking stack does not make JDBC nonblocking | tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#1-nonblocking-i-o-is-an-end-to-end-contract; tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix |\n| C8 | Async is not automatically parallel | tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial |\n| C9 | Backpressure, cancellation, retry identity, durable replay; timeout/ThreadLocal limits | tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission; tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context |\n| C10 | Connection capacity is not throughput; separate response time and service demand | tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported; tycho.page.8982b044f7ee4305a2330a6ff989bb77#migration-safety-as-a-decision-framework; tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation |\n| C11 | Measurement dimensions | tycho.decision.cb09e574f2a64060a6f46120394e398d#applicability-and-counterindications |\n| C12 | Comparison design and canary by class | tycho.page.577d52b851c3478eb73e301ace1bcfea#6-decision-procedure; tycho.decision.cb09e574f2a64060a6f46120394e398d#synthetic-migration-sequence-and-fault-injection-oracles |\n| C13 | Closed generator hides backlog; separate offered/admitted/completed | tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low |\n| C14 | Reject or insufficient evidence if unmeasured/unverified/unrecoverable | tycho.decision.cb09e574f2a64060a6f46120394e398d#contradictions-stop-conditions-and-what-to-refuse |\n| C15 | Gateway operability and failure modes | tycho.page.a24f9c4b9fb94addaae978843412ffac#overview |\n| C16 | Queue model: rejection/timeout distinctions | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection |\n| C17 | Cutover needs measured capacity and rehearsed rollback | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover |\n| C18 | Developer/operational cost not measured; retry-storm benefit conditional | tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported |\n| C19 | Socket timeout is not end-to-end deadline; cancellation is not rollback | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets |\n| C20 | CPU sampling misses waiting; wall-clock sampling has different limits | tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove |\n| C21 | CPU-heavy work keeps a bounded pool; no crypto/JDBC on the loop | tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix; tycho.decision.cb09e574f2a64060a6f46120394e398d#applicability-and-counterindications |\n| C22 | Bulkhead isolation; shared hidden queue can defeat it | tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities |\n\n## 10. Unknowns, contradictions and limits\n\n- **No telemetry from the described gateway.** The question gives an outcome, not a measured workload. The actual CPU/wait split, connection idle ratio, request mix, p99, error/timeout/retry/cancel counts, leak counts, context-propagation failures and rollback time are unknown. This answer cannot invent them.\n- **Netflix results are company-reported, 2016, and gateway-specific.** They are not a controlled A/B test and do not give exact benchmark conditions, revision or p99. The 25% logging-cluster improvement is not transferable 1:1, and the API-cluster result is not a universal law.\n- **The Tycho decision playbook is an original analytical draft.** Its migration sequence and operating guards are Tycho synthesis, not a claim that Netflix ran this checklist. Independent review is pending; the page says so.\n- **Adjacent cases are different mechanisms.** The gRPC virtual-thread worker-pool regression and the JDK 21 monitor-pinning risk are separate scheduling mechanisms. Neither is evidence for Netty event loops, and neither should be collapsed into the 2016 Zuul 2 result.\n- **Reliability is undefined in the team's claim.** Without an SLO, error budget, observation window and definition of correct outcome, a reliability win is not evaluable. Connection count is not a substitute.\n- **Apparent contradiction: retry-storm resilience vs no automatic reliability gain.** The source reports some retry-storm resilience benefit, but qualifies it as requiring tuning and not a zero-failure guarantee. The resolution is that async can improve one failure mode conditionally while adding others; the net effect must be measured.\n- **Apparent contradiction: lower CPU cost vs no CPU gain on computation-heavy routes.** These can both be true under different denominators. CPU per connection or per host can fall because threads are cheaper, while CPU per completed operation on a CPU-bound route stays flat or rises. The claim must name its denominator.\n- **Method limit.** The outline tool returned snapshot-mismatch; navigation relied on search and section maps. Search saturation is not proof that no other relevant page exists.\n\n## 11. Bottom line\n\nThe migration can be a real connection-scale improvement and still fail the claimed CPU and reliability wins. The event loop pays off where requests wait; it does not pay off where they compute. A synchronous filter on the loop turns the shared event loop into a cross-route failure domain. Asynchronous execution changes the failure surface rather than removing it: callback lifecycle, context, cleanup, leaks, queues, cancellation and retries all become operational responsibilities. Connection capacity is an input metric, not completed goodput or reliability.\n\nA supportable claim requires a defined workload and SLO, a baseline/treatment comparison at matched offered load, CPU per completed operation by route class, p99 by route and connection cohort under normal and injected-blocking conditions, completed goodput, error/timeout/cancel/retry/leak/context metrics, event-loop lag and queue age, a canary by class, and a rehearsed rollback. Until those exist, the honest verdict is insufficient evidence, not a throughput and reliability win.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The event-loop benefit is conditional: it depends on the share of time spent waiting, the number and duration of held connections, listener/upstream behavior, scheduling, and filter nonblocking-ness; the loop lowers waiting-connection cost but cannot speed cryptography, serialization or business logic, and a CPU-intensive filter on the loop hurts unrelated requests.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#before-and-after-execution-ownership",
+          "quote": "The benefit is conditional. It depends on the share of time spent waiting, the number of long-held connections, listener and upstream behavior, scheduling and how thoroughly filters are nonblocking.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#before-and-after-execution-ownership",
+          "quote": "If a CPU-intensive filter is kept on the event loop, it can hurt latency for unrelated requests; merely swapping a network library cannot speed up cryptography, serialization or business logic.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "quote": "A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The production outcome was not uniform: the API-facing, computation-heavier cluster showed no material CPU-efficiency gain, while a lower-work logging cluster showed about 25% throughput improvement with associated CPU reduction.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+          "quote": "For the API-facing, computation-heavier cluster, CPU efficiency did **not** materially improve.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+          "quote": "For a logging cluster doing less work per request, the company reported about **25% throughput improvement with associated CPU-use reduction**.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Asynchronous conversion trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup; ByteBuf leaks, file-descriptor leaks and dropped responses are named failure classes of incomplete async error paths.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "quote": "A Netty event loop lowers the cost of *waiting connections*, but this trades straightforward per-request stacks for callback lifecycle state, context propagation and manual resource cleanup.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "quote": "Netflix describes difficult-to-debug **ByteBuf leaks, file-descriptor leaks and dropped responses** as possible failures of incomplete async error paths.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Moving off blocking threads does not by itself improve reliability: downstream latency and repeated retries can still amplify open connections, threads, memory and scheduler pressure, and an asynchronous interface does not make the receiver infinitely fast.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "quote": "A downstream latency spike and repeated device retries can amplify open connections, threads, memory and scheduler pressure.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission",
+          "quote": "An asynchronous interface can separate the sender and receiver in time, but does not make the receiver infinitely fast.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A tuned blocking gateway remains defensible when connection counts are moderate, all work is CPU-heavy, latency objectives are already met and simplicity matters; a mixed design can keep blocking libraries in worker pools with explicit budgets, and the decision rule compares connection-waiting capacity, CPU per request class and p99 under saturation separately.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#alternatives-and-contraindications",
+          "quote": "A tuned blocking gateway may be appropriate when connection counts are moderate, all work is CPU-heavy, latency objectives are already met and simplicity matters.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#alternatives-and-contraindications",
+          "quote": "A mixed design can preserve blocking libraries in worker pools with explicit budgets, at the cost of crossings and backpressure.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#alternatives-and-contraindications",
+          "quote": "**Decision rule:** compare *connection waiting capacity*, *CPU per request class*, and *p99 under saturation* separately.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The gateway must operate explicit guards: an event-loop blocking detector; a bounded offload executor for unavoidable synchronous dependencies; request context and principal propagation; deadline and cancellation cleanup; leak detection; retry/hedging and admission limits; p99 by route and connection cohort; and a known rollback version.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "quote": "**Operating guards for a different gateway (Tycho synthesis):** explicit event-loop blocking detector; bounded offload executor for unavoidable synchronous dependencies; request context and principal propagation across callbacks; cancellation/deadline cleanup; leak detection for reference-counted buffers; retry/hedging and upstream admission limits; p99 measured by route and connection cohort rather than aggregated at cluster level.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+          "quote": "A partially converted framework must support a known rollback version while downstream contract and security behavior are stable.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A blocking JDBC, mutex or HTTP call on an event loop prevents unrelated operations assigned to that loop from progressing, so one filter can stall routes that share the loop.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#1-nonblocking-i-o-is-an-end-to-end-contract",
+          "quote": "If an application blocks an event loop while waiting for JDBC, a mutex or an HTTP response, it prevents unrelated operations assigned to that loop from progressing.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix",
+          "quote": "A nonblocking network stack does not make blocking JDBC operations nonblocking.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Asynchronous code is not automatically parallel: a shared connection pool, global lock, fan-in serialization or constrained executor can reintroduce an effectively serial bottleneck.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+          "quote": "Avoid claiming an architecture is \"parallel\" just because it launches asynchronous code: a shared connection pool, global lock, fan-in serialization or constrained executor can reintroduce an effectively serial bottleneck.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Backpressure, cancellation, retry identity and durable replay are distinct guarantees; a timeout signal alone does not prove the underlying blocking operation was interrupted, and a ThreadLocal correlation ID may disappear or leak across interleaved asynchronous requests.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission",
+          "quote": "Backpressure, cancellation, retry identity and durable replay are distinct guarantees.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context",
+          "quote": "A `timeout` signal alone is not proof that the underlying blocking operation was interrupted.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context",
+          "quote": "A correlation ID stored only in `ThreadLocal` may disappear or leak across interleaved requests.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A rising persistent-connection count is a capacity/occupancy result, not completed goodput or reliability; response time must be separated from resource service demand, because a 300 ms response may contain only 4 ms CPU, 40 ms DB time and the remainder waiting, so response time alone cannot identify the limiting resource.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+          "quote": "The Netflix gateway write-up describes significant persistent-connection scalability benefits with Zuul 2. But the production outcome was not a uniform CPU-efficiency win.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+          "quote": "Differentiate **response time** from **resource service demand**.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+          "quote": "A 300 ms response may include only 4 ms CPU, 40 ms DB time and the remainder waiting.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#migration-safety-as-a-decision-framework",
+          "quote": "A rollback criterion must not be based solely on aggregate throughput: a quiet cluster could look better while a latency-critical cluster worsens.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The gateway should measure active connections/threads, event-loop stalls, canceled and retried requests, CPU per operation, p99 by class, queue age and dead-letter counts, not one aggregate throughput number.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#applicability-and-counterindications",
+          "quote": "**Independent decision dimensions to measure:** Active connections/thread, carrier pinning/queue, event-loop stalls, canceled and retried requests, CPU per operation, p99 by class, queue age and dead-letter counts.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A supportable comparison uses equivalent open-loop offered load and bounded concurrency, injects slow DB, slow consumer, disconnect, timeouts and retries, records completed/rejection/CPU/heap/queue wait/event-loop stalls/DB connections/p95/p99/correctness, and canaries by class at matched traffic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.577d52b851c3478eb73e301ace1bcfea#6-decision-procedure",
+          "quote": "Run **equivalent open-loop offered-load** and bounded concurrency tests; include slow DB, slow consumer, disconnect, timeouts and retries. Record completed requests, rejection, CPU, heap, queue wait, event-loop stalls, DB connections, p95/p99 and correctness.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#synthetic-migration-sequence-and-fault-injection-oracles",
+          "quote": "**Canary by class:** compare CPU/operation, completed goodput, p95/p99, failed/cancelled requests, carrier/thread starvation and memory at matched traffic, not a single aggregate throughput number.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A closed workload generator can hide backlog, and measurement must separate offered, admitted and completed rates rather than only completed-response histograms.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "A closed workload generator that waits for a response before issuing the next request reduces offered load when the system stalls.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "Observe the demand schedule and **offered/admitted/completed rates separately**, not only completed-response histograms.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "A test can therefore hide the backlog users would create under externally timed arrivals.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The redesign should be rejected or returned as insufficient evidence if the dominant bottleneck is unmeasured, the target stack is not verified under blocking conditions, security/tracing context cannot cross execution boundaries, or error cleanup and rollback have not been tested.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#contradictions-stop-conditions-and-what-to-refuse",
+          "quote": "Reject the redesign if the dominant bottleneck has not been measured, the target library stack is not verified under blocking conditions, security/tracing context cannot cross execution boundaries, or error cleanup/rollback has not been tested. Return **insufficient evidence** instead of guessing a universal scheduler ranking.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A gateway is a good fit only when it can be operated and observed as a critical component; bypass, configuration drift, stale routes, quota failure and a total backend-blocking outage are known failure modes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+          "quote": "observed as a critical component",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+          "quote": "Gateway bypass, configuration drift, a stale route",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+          "quote": "or quota failure and an outage that blocks every backend are common.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A queue model that hides rejection can report a high success rate while refusing work at the front door, and the timeout rate can be the dominant failure mode rather than the visible rejection rate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+          "quote": "that hides rejection can report a high success rate while refusing work at the front door.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+          "quote": "The timeout rate, not the rejection rate, is the dominant failure mode.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A cutover or migration claim needs measurements and operational evidence, including a rehearsed rollback that completes inside the observation window; model parameters cannot create that evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "Those are measurements and operational evidence, not model parameters.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "a rehearsed rollback that completes inside the observation window;",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+          "quote": "it cannot create the measurement.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The source reports developer/operational cost from more complex thread locals, blocking boundaries, testability and debugging, but does not measure engineering hours; retry-storm resilience is reported as some benefit requiring tuning, not a zero-failure guarantee.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+          "quote": "| Developer/operational cost | More complex thread locals, blocking boundaries, testability and debugging | Narrative trade-off, not measured engineering hours |",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+          "quote": "| Retry-storm resilience | Some benefit, requiring tuning | Not a zero-failure guarantee |",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A socket timeout is not an end-to-end request deadline, and cancellation is not proof that a previously committed effect was undone.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A timeout on one socket is not a complete request deadline.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "**Cancellation is not proof that a previously committed effect was undone.**",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "CPU sampling and wall-clock sampling answer different questions: CPU profiles miss waiting states and low-frequency events, while wall-clock samples show blocked stacks with their own overhead and grouping limits.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+          "quote": "| CPU sampling profile | Code executing on CPU across sampled stacks | Missing waiting states or low-frequency intermittent events |",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+          "quote": "| Wall-clock stack sampling | Running and blocked stacks in a time window | Sampling overhead, thread grouping and signal/runtime limits |",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "For CPU-heavy work, a bounded platform-thread pool is a defensible baseline unless workload-specific measurements justify another model; CPU-intensive crypto or JDBC should not be placed on Netty's event loop.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix",
+          "quote": "For a **CPU-heavy gRPC worker pool**, retaining bounded platform threads is a defensible initial decision when useful CPU work saturates cores.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.cb09e574f2a64060a6f46120394e398d#applicability-and-counterindications",
+          "quote": "Do not put CPU-intensive crypto or JDBC on Netty's event loop.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "A bulkhead reserves bounded workers or pools for independent classes/dependencies; bypass, undersized partitions and a shared hidden queue can defeat isolation, so per-pool queue age, utilization and rejected work must be detected and the isolated class failed explicitly.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "quote": "Bulkhead bypass, undersized partitions and a shared\nhidden queue can defeat isolation; detect per-pool queue age, utilization and rejected\nwork, and rebalance or fail the isolated class explicitly.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.8982b044f7ee4305a2330a6ff989bb77#before-and-after-execution-ownership",
+    "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+    "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+    "tycho.page.da7cd1ad59584b8a8ece7aab0f8f35b5#purpose-and-mission",
+    "tycho.page.8982b044f7ee4305a2330a6ff989bb77#alternatives-and-contraindications",
+    "tycho.page.83e414ec3d1b4b07a443de2c96ce2c4e#1-nonblocking-i-o-is-an-end-to-end-contract",
+    "tycho.decision.cb09e574f2a64060a6f46120394e398d#a-capacity-and-correctness-decision-matrix",
+    "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+    "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context",
+    "tycho.page.6d571f3069e847408a5f1f7d45c797c1#2-little-s-law-and-saturation",
+    "tycho.page.8982b044f7ee4305a2330a6ff989bb77#migration-safety-as-a-decision-framework",
+    "tycho.decision.cb09e574f2a64060a6f46120394e398d#applicability-and-counterindications",
+    "tycho.page.577d52b851c3478eb73e301ace1bcfea#6-decision-procedure",
+    "tycho.decision.cb09e574f2a64060a6f46120394e398d#synthetic-migration-sequence-and-fault-injection-oracles",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+    "tycho.decision.cb09e574f2a64060a6f46120394e398d#contradictions-stop-conditions-and-what-to-refuse",
+    "tycho.page.a24f9c4b9fb94addaae978843412ffac#overview",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#what-would-support-a-cutover",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.e5f63598da754ee181804df0ce297b95#4-what-the-actual-diagnostic-tools-prove",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

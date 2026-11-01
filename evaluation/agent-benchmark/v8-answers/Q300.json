@@ -1,0 +1,481 @@
+{
+  "task_id": "Q300",
+  "answer": "# Q300 — Why a better pause histogram does not justify a fleet-wide collector default\n\n## Scope and method\n\nLayers used: **book only**. The question is a decision-and-mechanism question whose canonical\nexplanations live in the book's GC case, GC decision playbook, JVM diagnostics pages, tail-latency\nand deadline pages, and observability pages. The atlas layer would add pattern identities but not\nthe collector-specific comparisons; the modeling layer has no model or run for this decision.\n`describe` reported snapshot\n`3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a`, 562 documents and 3,141\nsections, citation scheme `tycho.section-key.v2`, ranker `tycho-sections-fts5-bm25-v5`, coverage\ncomplete. Searches used `--volume book` with two to four formulations per facet; every cited\nsection was read with `read`, and the ledger quotes are verbatim substrings of those reads.\n`outline` returned `snapshot-mismatch` (\"Route metadata and index differ\"), so navigation used\n`page` section maps and `next_actions`. The CLI's default strict mode suppresses below-floor\nmatches; I treated that as a retrieval limitation, not as evidence of absence.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. Outcome versus mechanism metric: is a pause histogram an SLI? | \"pause histogram\"; \"tail latency p99 stop-the-world\"; \"green CPU dashboard user outcome\"; \"proxy metric user-visible\" | tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice; tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission; tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix |\n| F2. Collector identity, generation and comparators | \"garbage collector throughput pause tradeoff\"; \"JVM collector choice JDK version\"; \"hip generation collector region size\"; \"ergonomics default collector JDK\" | tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements; tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us; tycho.decision.054f312b9e744575ac80632f4acf72fa#applicability-and-counterindications |\n| F3. Measurement separation: pause versus tail, offered versus completed, raw versus corrected | \"open-loop closed-loop coordinated omission load generator\"; \"aggregation loses information percentiles\"; \"record the boundary before the number\"; \"retry amplification load generator timeout cancel\" | tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low; tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load; tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number; tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design |\n| F4. When a throughput-oriented collector remains better | \"batch job throughput SLO\"; \"throughput versus latency objective tradeoff\"; \"throughput-oriented batch objective differs from latency\"; \"batch window completion deadline relaxed\" | tycho.decision.054f312b9e744575ac80632f4acf72fa#synthetic-workload-specific-selection-matrix; tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch; tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment |\n| F5. Transfer of a company default to another fleet and to later years | \"case study transfer another system scope\"; \"first-party company report evidence scoped\"; \"default configuration portability vendor\"; \"canary per workload class rollout\" | tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer; tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook; tycho.page.a486e061c9564587b1e39a4e83024fca#overview |\n| F6. Decision boundaries, confounders and rollback | \"reproducible confounder-resistant decision experiment\"; \"fail-fast contraindications\"; \"insufficient evidence\" | tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment; tycho.page.a486e061c9564587b1e39a4e83024fca#tycho-decision-procedure; tycho.decision.054f312b9e744575ac80632f4acf72fa#interpret-historical-metrics-without-imaginary-precision |\n\n## Direct answer\n\nA better pause histogram is not evidence for the fleet-wide choice because it is a single mechanism\nmeasurement in a single workload window, while the choice is a population-level policy over several\nworkload classes that have different objectives and budgets. The published latency story is a\nretry-amplification loop: a pause can trip a client deadline, and cancellation, retries, hedging and\nfallbacks then add load. Pause duration is therefore the trigger being measured, not the user\noutcome being promised. The same source also names the counterexamples: a batch precompute where\nParallel beat G1 on throughput, and volatile allocation with long-lived objects where G1 did better.\nThe needed separations are (a) **across collectors**: identity and generation, comparison and\ndenominator, workload class and objective, environment and native-memory budget, observed rollout\nversus proposed runbook; and (b) **across measurements**: pause versus end-to-end p99/cancellation,\nlatency versus throughput and completed work, per class versus fleet aggregate, offered versus\nadmitted versus completed versus rejected, attempts and retries versus logical operations, raw\nversus coordinated-omission-corrected data, and resource cost versus latency. A throughput-oriented\ncollector remains the better fit when the work is batch- or throughput-bounded with a relaxed pause\nSLO, when allocation is spiky or objects are long-lived, when CPU/native headroom is the binding\nconstraint, and when GC is not the dominant cause of the user-visible tail at all.\n\n## 1. Why an improved pause histogram is not evidence for the fleet-wide decision\n\n**1.1 It measures a mechanism, not the promised outcome.** The case states that a collector rollout\nshould look at application and downstream response tails, cancellations, retry traffic and non-GC\nbottlenecks, and not declare success because pause duration improved while customer outcomes stayed\nunknown; it also reports that quieter GC behavior exposed other latency causes that pauses had\nmasked [C4]. An infrastructure dashboard cannot show user completion: a green CPU dashboard cannot\nshow that an authorized user completed the intended operation or that a business effect was not\nduplicated [C14]. The symptom matrix lists \"Change garbage collector based only on a p99 graph\" as\nan unsafe shortcut and asks for JFR/GC pause times aligned to latency spikes instead [C24]. A pause\nhistogram is therefore an explanatory signal for a hypothesis, not a success metric for a fleet\npolicy.\n\n**1.2 The causal loop runs through cancellations and retries, which a pause histogram does not\ncontain.** The primary article describes an amplification mechanism, not simply a local pause\nhistogram: GC stalls on a request can trip client-side deadlines, and cancellation, retries, hedging\nand fallbacks then increase the offered work [C3]. If the service still shows cancelled and retried\nrequests during bursts, the loop is not closed by shorter pauses alone; the dependent variables are\nthe retry multiplier, the cancellation rate, queue age and completed useful work. Measuring only the\ntrigger makes a failing loop look like progress.\n\n**1.3 A fleet-wide histogram is an aggregate over incompatible groups.** The metrics page states\nthat averaging percentiles across groups is generally invalid, and that a daily series average can\nhide a ten-minute queue crisis [C13]. A fleet histogram merges latency-critical request services,\na nightly precompute, a spiky-allocation service and memory-constrained containers, with different\nJDK builds, heaps and objectives. The merged distribution can improve while a subgroup gets worse:\nexactly the two regressions the premise reports. That is not a paradox; it is what aggregation does\nby design.\n\n**1.4 The measurement itself can be invalid under bursts.** A closed workload generator waits for a\nresponse before issuing the next request and therefore reduces offered load when the system stalls,\nhiding overload; offered, admitted and completed rates must be observed separately, not only\ncompleted-response histograms [C10]. When a blocked generator stops scheduling, recorded latency\nexcludes waits that would have occurred under the intended arrival schedule (coordinated omission),\nand corrected histograms must be disclosed rather than treated as observed requests [C11]. The burst\narithmetic is elementary and brutal: 120 offered versus 80 completions per second for twenty seconds\nimplies roughly 800 queued requests, and once some requests have timed out or committed ambiguously,\nqueue depth and request counts no longer express remaining business effects; mean identities cannot\npredict tail latency or success under bursts [C15]. A test that never sustained the burst, or that\ndrops cancelled operations from its completion distribution, can report a beautiful pause histogram\nwhile user-visible failures persist.\n\n**1.5 The transfer from the publisher's setting is unproven.** The adoption figure is scoped: the\ncompany reported Generational ZGC on JDK 21+ services and more than half of its critical streaming\nvideo services by March 2024, which is not the entire Java fleet and does not describe every\napplication [C1]. The article is a first-party March 2024 JDK 21 report whose status is drafted with\ntechnical review pending [C23], and it does not provide change-ticket history, a rollback cutoff, a\nrandomly assigned G1 control group, long-horizon failure rate or an all-service inventory [C19].\nPublished outcomes across companies describe different organizations, periods, versions, traffic\nmixes and constraints, and lack the sample sizes, baselines, p99 values and variance needed for an\nindependent cost-benefit distribution; without the target's JDK, pause-to-timeout causality, load,\nrequest class, retry policy and CPU/native budget, the correct result is \"insufficient evidence with\na proposed canary\" [C20]. A company name is not a transfer function.\n\n**1.6 The objective is multidimensional and class-specific.** The company optimized tail latency and\noperational simplicity together, not peak allocation throughput alone [C22]; the batch class is\noptimized on completed jobs per hour and end-to-end duration [C6]. Pause-time goals are probabilistic\nrather than hard guarantees, and reducing pause can consume more concurrent CPU or memory headroom\nwhile maximizing throughput can worsen individual pauses, so the objective is set by the journey,\noffered workload, allocation rate, live set and latency distribution, not by a universal GC flag\n[C9]. A default chosen to improve one dimension on one class cannot be validated by that dimension\nalone on every class.\n\n## 2. What must be separated across collectors\n\n**2.1 Collector identity and generation.** G1, non-generational ZGC, Generational ZGC and Parallel\nare different collectors with different mechanisms and costs. The \"36% more CPU\" result belongs to\nolder non-generational ZGC versus G1 on a worst evaluated case, and explicitly discouraged that\nolder collector, not the generational one [C2]. A conclusion about \"ZGC\" that does not say which ZGC\nis not a comparison of the collector now being enabled.\n\n**2.2 Comparison, source and denominator.** The source separates three distinct experiments — G1\nversus Generational ZGC, G1 versus Parallel for batch candidates, and historically non-generational\nversus generational ZGC — and forbids collapsing their denominators into one \"ZGC gain\" [C2]. The\nsame table shows why: roughly 10% better CPU for Generational ZGC versus G1 on the described\nworkload, 6-8% more throughput and about one hour shorter batch for Parallel versus G1 in one\nprecompute, and an adoption share. These answer different questions. The batch result is explicitly\n\"not ZGC-versus-G1\" [C2]. Attributing any of these numbers to \"the new default\" is a category error,\nand treating a collector default as universal repeats the error on a second axis [C2].\n\n**2.3 Workload class and objective.** Latency-critical requests, batch data-processing workers and\nmemory-constrained containers are separate contexts [C5]. Each class needs its own objective and its\nown candidate set: an interactive service with strict p99 and retry storms is compared G1 versus\nGenerational ZGC on the same JDK and request mix [C7], while a large nightly batch with a relaxed\npause SLO is compared G1 versus Parallel on completed jobs per hour, duration, RSS and CPU at equal\ninputs [C6]. A fleet default collapses these into one population and then reports the average.\n\n**2.4 Environment, tuning and native-memory budget.** Collector behavior is version-specific, and\nthe comparisons transfer only with their co-variates: JDK patch, flags, heap size, allocation rate,\nlive set, transparent huge pages, compressed references and direct buffers, and container limits\n[C9]. In the reported configuration ZGC required a fixed additional native-memory overhead of about\n3% of heap size, so heap plus off-heap plus collector native memory must be budgeted against the\ncontainer [C21]. A heap-only or pause-only comparison cannot see that cost.\n\n**2.5 Observed rollout versus adoption runbook.** The scoped adoption statistic and a proposed test\ncontract are different objects. The original article does not supply a rollout history, control\ngroup or inventory [C19], and the book's step-by-step procedure is explicitly an original\nhypothetical test contract rather than an inferred company runbook [C19]. Turning \"they made it the\ndefault\" into \"we should make it the default\" skips the experiment.\n\n## 3. What must be separated across measurements\n\n**M1. Pause distribution versus end-to-end outcome.** Keep GC pause and end-to-end p99/cancellation\nmetrics together; equal pause percentiles can mask memory or queueing changes [C8]. Pause is a\ncomponent signal; the SLO is measured on the user operation.\n\n**M2. Latency versus throughput and completed work.** Reducing pause can consume more concurrent CPU\nor memory headroom, and maximizing throughput can worsen individual pauses [C9]. These are different\nobjectives measured by different quantities: p99 for the request service, jobs per hour and\nend-to-end duration for the batch [C6].\n\n**M3. Per class versus fleet aggregate.** Percentile latency and error rate belong per operation\nclass, not only in aggregate averages [C12], and averaging percentiles across groups is generally\ninvalid [C13]. Fleet-level reporting hides exactly the class-level regressions that matter.\n\n**M4. Offered, admitted, completed and rejected/cancelled.** Observe the demand schedule and the\noffered/admitted/completed rates separately [C10], and distinguish attempts from logical operations\nand admitted from offered demand [C12]. A cancellation is an outcome, not a missing data point.\n\n**M5. Attempts and retries versus original demand.** Count retries separately from original demand\n[C12]. Otherwise a retry storm looks like growth in useful throughput while the retry multiplier\nsilently consumes capacity.\n\n**M6. Raw versus corrected histograms.** Coordinated omission corrections must be disclosed and must\nnot be treated as observed requests [C11]. A corrected histogram is an estimate under a model, not a\nrecord of what users experienced.\n\n**M7. Resource cost versus latency.** Report resource cost and load on the underlying infrastructure,\nnot solely a smaller parent percentile [C8], and include CPU, RSS and native/off-heap against limits\n[C21]. A pause reduction purchased with CPU or native headroom is a trade, not a free win.\n\n**M8. Hypothesis space.** Sudden synchronous pauses are one hypothesis among several causes of a\nslow request, to be discriminated with pause times aligned to latency traces [C24]; there is no\nautomatic threshold for selecting a different collector, and fast median service times can still\nmiss a user-visible tail objective [C16]. GC pause must be correlated with user traces, allocation\nand live-set before a collector change is justified.\n\n**M9. Window and comparability.** Run paired canaries at comparable CPU utilization and response\nmix [C8], and do not move JDK version, collector, compression and data access together or attribution\nbecomes impossible [C17]. A single short benchmark can guide hypotheses but cannot prove operational\nsuperiority [C17].\n\n## 4. When a throughput-oriented collector remains the better fit\n\n**4.1 Batch and precompute work with a relaxed pause SLO.** For a large nightly batch with a\ndeadline but a relaxed pause SLO, the candidates are G1 and Parallel and the decision measurements\nare completed jobs per hour, end-to-end duration, RSS and CPU at equal inputs; a lowest-max-pause\ncontest can be meaningless while completed batch work falls [C6]. The source's published precompute\ncomparison is Parallel versus G1 at 6-8% more throughput and about an hour shorter batch [C2]. In\nthis class the pause histogram is not the objective function; completion time and throughput at\nequal inputs are.\n\n**4.2 Volatile allocation, long-lived objects and unpredictable task duration.** The source\nexplicitly identifies workloads with volatile allocation, long-lived objects and unpredictable task\nduration where G1 performed better [C5]. A spiky-allocation service is precisely the case where a\nconcurrent low-pause collector's assumptions about allocation and object lifetime stop holding, and\n\"spikes in allocation lead to unacceptable stalls\" is a listed fail-fast contraindication [C18]. The\npremise's spiky-allocation regression is the expected direction of that counterexample, not an\nanomaly to be averaged away.\n\n**4.3 CPU- or native-memory-constrained contexts.** Reducing pause can consume more concurrent CPU\nor memory headroom [C9], and the reported native overhead of about 3% of heap must fit inside the\ncontainer along with off-heap and direct buffers [C21]. When native headroom is insufficient, that\nalone is a contraindication [C18]. A throughput-oriented collector that leaves more CPU for\napplication work and needs less concurrent headroom can be the better engineering choice even if\nits worst pause is longer.\n\n**4.4 Work that is throughput-bounded rather than tail-latency-bounded.** \"Work is large batch\nthroughput rather than tail-latency bounded\" is an explicit fail-fast contraindication for adopting\nthe latency-oriented collector by default [C18]. If pauses do not threaten a deadline or a\nuser-visible operation, paying concurrent-collector overhead to shrink them is cost without a\nuser-visible benefit.\n\n**4.5 When GC is not the dominant cause.** There is no automatic threshold for selecting a different\ngarbage collector; the measured critical resource and failure semantics decide [C16]. If wall-clock\nlatency is dominated by queueing, dependency waits or retry amplification, a collector change may\nimprove its own histogram while leaving the user-visible tail untouched, and quieter GC can expose\nthe real bottleneck that pauses had masked [C4].\n\n**Boundary on the batch claim.** The book's published batch comparison is Parallel versus G1; it\ndoes not report a ZGC-versus-Parallel result. The precompute regression is therefore consistent with\nthe counterexample mechanism, but the specific cause must be attributed by measuring allocation\nchurn, GC cycle pressure, CPU at equal completed work, RSS/native and end-to-end duration [C6, C8,\nC17]. That is exactly why a fleet-wide claim fails: the regression is a class-level result that the\nfleet average cannot see and the original comparison never covered.\n\n## 5. What the team should have done instead\n\n1. Pin one application revision, JDK patch, runtime image, request/record mix and observability\n   contract; do not change JDK version, collector, compression and data access in one step [C17].\n2. Split the fleet into workload classes with an explicit objective each: user-visible p99/max and\n   cancellations for request services; completed jobs per hour and duration for the precompute;\n   allocation/spike behavior and native limits for the spiky service [C6, C7, C5].\n3. Run three separate experiments with separate denominators — G1 versus Generational ZGC, G1\n   versus Parallel for batch candidates, and historically non-generational versus generational ZGC —\n   and never merge them into one gain [C2].\n4. Use open or recorded arrivals and count offered, admitted, completed, rejected and cancelled\n   separately; keep retries separate from original demand and report per operation class [C10, C12].\n5. Keep GC pause and end-to-end p99/cancellation together in paired canaries at comparable CPU\n   utilization and response mix, and report CPU/native/RSS cost alongside latency [C8].\n6. Canary a representative long-lived service and the spiky-allocation service separately, with a\n   predeclared rollback trigger: worse tail SLO or cancellation despite shorter pauses [C18].\n7. If native headroom, allocation-spike behavior, batch objective, tooling compatibility or an\n   independent baseline is missing, record insufficient evidence and run the canary; do not promote\n   a fleet default [C18, C20].\n8. Preserve per-class exceptions rather than a mandatory policy for every application, and define a\n   winner only for the tested workload and versions [C17].\n\n## 6. Boundaries, what would change the answer, and unknowns\n\n**What would support adoption for a class.** Its own canary shows better end-to-end p99/max and fewer\ncancellations/retries at equal offered demand and equal CPU/native budget, with no loss of completed\nwork, on the same JDK and request mix [C7, C8, C17]. The support is then for that class and those\nversions, not for the fleet.\n\n**What would change the batch conclusion.** Evidence that pauses, not throughput, threaten the batch\ndeadline would move the batch objective toward latency; that is a measurement of that class, not an\ninference from the request-service result [C6].\n\n**What would change the spiky-allocation conclusion.** If the regression is traced to a changed\nallocation profile, live set or a co-variate rather than collector fit, the result is workload- and\nchange-specific; the guard is one variable at a time and attribution with allocation/live-set/GC\nevidence [C17, C24].\n\n**What remains unknown.**\n- The published figures (36%, about 10%, 6-8%, about one hour, about 3% native overhead, more than\n  half of critical services) are first-party, time-scoped examples without sample sizes, cloud\n  pricing, production baselines, p99 values or variance, and Tycho has not independently reproduced\n  them; they cannot be synthesized into a fleet-wide cost-benefit distribution [C20, C2, C23].\n- The article does not give a control group, rollback cutoff, long-horizon failure rate or\n  all-service inventory [C19], so which classes would regress in another fleet is unpublished.\n- The book's two-service ADR and its test procedure are explicitly synthetic; they are not the\n  company's documented playbook [C19, C20].\n- The case itself is drafted with technical review pending [C23]; the surrounding pages are drafts,\n  and the book is evidence, not production proof.\n- For this team specifically, its allocation rates, live-set lifetimes, native headroom, retry\n  budgets, per-class SLOs, and whether the burst tail is GC-generated or queueing/retry-generated are\n  not established by the premise; they must be measured before any fleet policy is defensible.\n- Tooling limits: `outline` failed with a route/index snapshot mismatch; strict-mode search returned\n  few matches; zero results would not prove absence in the book.\n\n## 7. Evidence map\n\n| Claim | Section key(s) | What it establishes |\n|---|---|---|\n| C1 | tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer; tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements | The adoption figure is scoped, not the entire fleet. |\n| C2 | tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us; tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements; tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook; tycho.decision.054f312b9e744575ac80632f4acf72fa#applicability-and-counterindications | Different collectors, experiments and denominators; do not treat a default as universal. |\n| C3 | tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice | The latency mechanism is retry amplification, not a local pause histogram. |\n| C4 | tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice | Judge outcomes, not pause duration; quieter GC exposes other causes. |\n| C5 | tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch | Counterexamples: spiky allocation favors G1; Parallel favors the batch precompute. |\n| C6 | tycho.decision.054f312b9e744575ac80632f4acf72fa#synthetic-workload-specific-selection-matrix | Batch objective and the meaningless-lowest-pause failure mode. |\n| C7 | tycho.decision.054f312b9e744575ac80632f4acf72fa#synthetic-workload-specific-selection-matrix | Interactive comparison and its wrong-metric failure test. |\n| C8 | tycho.page.a486e061c9564587b1e39a4e83024fca#tycho-decision-procedure; tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low | Keep pause and end-to-end outcomes together; paired canaries; report resource cost. |\n| C9 | tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain | Probabilistic pause goals and the pause-versus-throughput resource trade. |\n| C10 | tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low | Closed generators hide overload; observe offered/admitted/completed. |\n| C11 | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load | Coordinated omission and the status of corrected histograms. |\n| C12 | tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number; tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment | Counting discipline: attempts, operations, classes, retries. |\n| C13 | tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design | Percentile averaging and short crises hidden by aggregates. |\n| C14 | tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission | Infrastructure dashboards do not show user outcomes. |\n| C15 | tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law; tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#purpose-and-mission | Burst surplus and business effects; means cannot predict burst tails. |\n| C16 | tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment; tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission | No automatic collector threshold; fast medians miss tail objectives. |\n| C17 | tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment | Confounder-resistant experiment, per-class exceptions, winner scope. |\n| C18 | tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment; tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook | Rollback triggers, fail-fast contraindications, insufficient evidence. |\n| C19 | tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook | Scoped statistic versus missing rollout history. |\n| C20 | tycho.decision.054f312b9e744575ac80632f4acf72fa#failure-analysis-and-evidence-provenance; tycho.decision.054f312b9e744575ac80632f4acf72fa#interpret-historical-metrics-without-imaginary-precision; tycho.page.a486e061c9564587b1e39a4e83024fca#historical-claim-ledger-avoid-fake-precision | Cross-company differences, missing denominators, insufficient evidence. |\n| C21 | tycho.page.a486e061c9564587b1e39a4e83024fca#what-the-operational-evidence-actually-distinguishes | Reported native overhead and container budgeting. |\n| C22 | tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer | The objective was tail latency plus operational simplicity. |\n| C23 | tycho.page.a486e061c9564587b1e39a4e83024fca#overview | First-party March 2024 JDK 21 report, review pending. |\n| C24 | tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix | Changing a collector from a p99 graph alone is an unsafe shortcut. |",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The publisher's default is scoped evidence: Generational ZGC on JDK 21+ services, with more than half of its critical streaming video services on that combination by the article's 2024 date (March 2024); the figure is not the entire Java fleet and does not describe every application.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+          "quote": "It reported adopting **Generational ZGC** as its default for JDK 21+ services and having more than half of its critical streaming video services on this combination by the article's 2024 date.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements",
+          "quote": "| More than half critical streaming services using JDK 21 + Generational ZGC | Company-reported 2024 adoption | Not the entire Java fleet |",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The source's comparative results are different measurements of different questions: non-generational ZGC versus G1 (36% more CPU on a worst evaluated case), Generational ZGC versus G1 (about 10% better CPU on the described workload), Parallel versus G1 in one precompute (6-8% more throughput, about one hour shorter), and an adoption share; the batch result is explicitly not ZGC-versus-G1, and collapsing these denominators produces a false architectural conclusion, while a collector default must not be treated as universal.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us",
+          "quote": "Mixing them would produce a false architectural conclusion: older ZGC was about **36% more CPU-intensive** than G1 in one comparison, **generational** ZGC was around **10% better** than G1 on the described workload, and **Parallel** outperformed G1 by **6–8% throughput** in a particular precompute batch. These are **different experiments and denominators**.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements",
+          "quote": "| Parallel collector versus G1 in one large precompute | **6–8% more throughput**, about **one hour** shorter batch | **Not** ZGC-versus-G1: distinct comparison for a batch workload |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements",
+          "quote": "| G1 versus earlier **non-generational ZGC** on a worst evaluated case | Older ZGC consumed **36% more CPU** | That finding discouraged older ZGC, not generational ZGC |",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook",
+          "quote": "Test **G1 versus Generational ZGC**, **G1 versus Parallel** for batch candidates, and where historically relevant **non-generational versus generational ZGC** as *three separate experiments*.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#applicability-and-counterindications",
+          "quote": "Do not treat a collector default as universal; never compare G1 to older non-generational ZGC and attribute the result to current generational ZGC",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The published latency mechanism is a retry-amplification loop, not a local pause histogram: a GC stall can trip client deadlines, and cancellation, retries, hedging and fallbacks then increase offered work, so pause duration measures the trigger rather than the user outcome.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice",
+          "quote": "describes an **amplification mechanism**, not simply a local pause histogram: GC stalls on a request can trip client-side deadlines; cancellation, retries, hedging and fallbacks then increase the offered work.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A collector rollout must be judged on application and downstream response tails, cancellations, retry traffic and non-GC bottlenecks, and must not declare success because pause duration improved while customer outcomes stayed unknown; quieter GC can also expose previously masked latency causes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice",
+          "quote": "a collector rollout should look at application and downstream response tails, cancellations, retry traffic and non-GC bottlenecks, **not** declare success because pause duration improved while customer outcomes stayed unknown.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice",
+          "quote": "The article reports unusually low ZGC pauses in its example and says that quieter GC behavior exposed other latency causes that pauses had masked.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The same source names the counterexamples that matter here: workloads with volatile allocation, long-lived objects and unpredictable task duration where G1 performed better, and a throughput-oriented precompute where Parallel helped more than G1; latency-critical requests, batch workers and memory-constrained containers are separate contexts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
+          "quote": "The article explicitly identifies workloads with volatile allocation, long-lived objects and unpredictable task duration where G1 performed better. The *Parallel collector* helped a particular throughput-oriented precompute job more than G1.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
+          "quote": "Latency-critical requests, batch data-processing workers and memory-constrained containers are separate contexts.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "For a large nightly batch with a deadline but a relaxed pause SLO, the candidates are G1 and Parallel and the decision measurements are completed jobs per hour, end-to-end duration, RSS and CPU at equal inputs; a lowest-max-pause contest can be meaningless while completed batch work falls.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#synthetic-workload-specific-selection-matrix",
+          "quote": "| Large nightly batch with deadline but relaxed pause SLO | G1 vs Parallel, possibly other candidates if measured | Lowest max pause wins a meaningless contest while completed batch work falls | Compare completed jobs/hour, end-to-end duration, RSS and CPU at equal inputs |",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "For an interactive service with a strict p99 and retry storms, the comparison must be G1 versus Generational ZGC on the same JDK and request mix, and the wrong-metric risk is a better pause percentile with the same end-to-end p99 or a worse CPU/native footprint; the failure test injects allocation spikes plus downstream timeout and retry feedback.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#synthetic-workload-specific-selection-matrix",
+          "quote": "| Interactive service with strict p99 and retry storms | Measure G1 vs Generational ZGC on the **same JDK and request mix** | Better GC pause percentile but worse CPU/native footprint or same end-to-end p99 | Inject allocation spikes, downstream timeout and retry feedback |",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Pause and outcome metrics must be kept together in paired canaries: GC pause and end-to-end p99/cancellation are both required because equal pause percentiles can mask memory or queueing changes; canaries run at comparable CPU utilization and response mix, batch throughput jobs use a different objective, and resource cost is reported rather than only a smaller parent percentile.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#tycho-decision-procedure",
+          "quote": "Keep GC pause *and* end-to-end p99/cancellation metrics; equal pause percentiles can mask memory or queueing changes.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#tycho-decision-procedure",
+          "quote": "Run paired canaries at comparable CPU utilization and response mix.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#tycho-decision-procedure",
+          "quote": "batch throughput jobs need a different objective.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "Report resource cost and load on the underlying infrastructure, not solely a smaller parent percentile.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Pause-time goals are probabilistic rather than hard guarantees, reducing pause can consume more concurrent CPU or memory headroom while maximizing throughput can worsen individual pauses, and the objective is set by the user journey, offered workload, allocation rate, live set and latency distribution rather than by a universal GC flag.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain",
+          "quote": "describes mostly concurrent G1 collection and its probabilistic pause-time goal, rather than hard pause guarantees",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain",
+          "quote": "**Trade-off:** reducing GC pause duration can use more concurrent CPU or memory headroom; maximizing throughput can worsen individual response pauses.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain",
+          "quote": "determine what to optimize—not a universal GC flag.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Closed workload generators reduce offered load exactly when the system stalls and therefore hide overload; the demand schedule and offered, admitted and completed rates must be observed separately, not only completed-response histograms.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "A closed workload generator that waits for a response before issuing the next request reduces offered load when the system stalls.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "Observe the demand schedule and **offered/admitted/completed rates separately**, not only completed-response histograms.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Coordinated omission means recorded latency excludes waits that would have occurred under the intended arrival schedule when a blocked generator stops scheduling; corrected histograms must be disclosed and cannot be treated as observed requests, so a closed-loop pause test does not establish burst behavior.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+          "quote": "**Coordinated omission:** when a blocked load generator stops scheduling requests, recorded latency excludes waits that would have occurred under the intended arrival schedule.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Counting must separate attempts from logical operations and admitted from offered demand, report percentile latency and error rate per operation class, and count retries separately from original demand.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+          "quote": "Distinguish attempts from logical operations and admitted from offered demand. Record percentile latency and error rate **per operation class**, not only aggregate averages.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+          "quote": "Apply deadlines, jittered backoff, and an overall retry-rate budget; count retries separately from original demand.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A fleet-wide pause histogram is an invalid aggregate across heterogeneous groups: averaging percentiles across groups is generally invalid, and a daily series average can hide a ten-minute queue crisis.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+          "quote": "averaging percentiles across groups is generally invalid; deleting buckets removes resolution for later quantile estimation; aggregating tenants can hide fairness and authorization failures.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+          "quote": "a daily series average can hide a 10-minute queue crisis",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A pause histogram is an infrastructure and mechanism signal; a green infrastructure dashboard cannot show that an authorized user completed the intended operation or that a business effect was not duplicated, so user-visible success needs its own indicator.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission",
+          "quote": "a green CPU dashboard cannot show that an authorized user completed the intended operation or that a booking was not duplicated.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Burst arithmetic plus business effects shows why the histogram is not enough: 120 offered versus 80 completions per second for twenty seconds implies about 800 queued requests, and once requests have timed out or committed ambiguously, queue depth and request counts do not express the remaining business effects; mean identities cannot predict tail latency or success under bursts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+          "quote": "If 300 already timed out and 100 actually committed without acknowledgment, neither queue depth nor request count directly expresses 800 remaining distinct *business effects*.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#purpose-and-mission",
+          "quote": "why can the resulting equality neither choose a thread pool size nor predict tail latency or success under bursts?",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+          "quote": "With no initial backlog, the queued/in-flight surplus grows at roughly `(120−80)×20 = 800` requests, before considering cancellations or finite buffers.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "There is no automatic threshold for selecting a different garbage collector; the measured critical resource and failure semantics decide whether redesign is justified, and fast median service times can still miss a user-visible tail objective.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment",
+          "quote": "There is no automatic threshold for selecting a different garbage collector or executor.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission",
+          "quote": "A system can have fast median service times and still miss a user-visible latency objective.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A confounder-resistant comparison must not move JDK version, collector, compression and data access together; a single short benchmark without a confidence interval can guide hypotheses but cannot prove operational superiority; a winner is defined only for the tested workload and versions, and per-class exceptions are preserved instead of promoting one collector as a mandatory policy for every application.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment",
+          "quote": "Do not simultaneously move to Java 21, switch collector, change compression and tune data access or it becomes impossible to attribute results.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment",
+          "quote": "Define an explicit winner only for the **tested workload and versions**. Preserve per-class exceptions rather than promote one collector as a mandatory policy for every application.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment",
+          "quote": "A single short benchmark without a confidence interval can guide hypotheses but not prove operational superiority.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Rollback and fail-fast thresholds must be predefined: worse tail SLO or cancellation despite shorter pauses is a rollback trigger, and insufficient native headroom, allocation spikes that cause unacceptable stalls, batch throughput work that is not tail-latency bounded, incompatible tooling or a missing independent baseline are contraindications; without those facts the defensible recommendation is insufficient evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment",
+          "quote": "worse tail SLO/cancellation despite shorter pauses",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook",
+          "quote": "With none of these facts available, the defensible recommendation is **insufficient evidence**.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook",
+          "quote": "**Fail-fast contraindications:** container native headroom is insufficient; spikes in allocation lead to unacceptable stalls; work is large batch throughput rather than tail-latency bounded; diagnostic tooling is not compatible with the candidate collector; or an independent baseline has not yet been measured.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The adoption statistic is scoped to a precise time and population; the article does not provide change-ticket history, a rollback cutoff, a randomly assigned G1 control group, long-horizon failure rate or an all-service inventory, so an observed rollout cannot be converted into a fleet runbook.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook",
+          "quote": "That is a scoped adoption statistic with a precise time and population.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook",
+          "quote": "The original article does **not** give a change ticket history, a rollback cutoff, a randomly assigned G1 control group, long-horizon failure rate or all-service inventory.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints, and the historical metrics lack the sample sizes, baselines, p99 values and variance needed for an independent cost-benefit distribution; without the target's JDK, pause-to-timeout causality, load, request class, retry policy and CPU/native budget, the correct result is insufficient evidence with a proposed canary.",
+      "evidence": [
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#failure-analysis-and-evidence-provenance",
+          "quote": "Published outcomes describe different organizations, production periods, release versions, traffic mixes and operating constraints.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.decision.054f312b9e744575ac80632f4acf72fa#interpret-historical-metrics-without-imaginary-precision",
+          "quote": "Without those, the correct result is **insufficient evidence** with a proposed canary.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#historical-claim-ledger-avoid-fake-precision",
+          "quote": "These are different workload classes and comparisons. The blog does not supply all sample sizes, cloud pricing, production baselines, p99 numerical values or variance needed to synthesize an independent cost-benefit distribution. A downstream agent must cite src.m9-n05 at the specific section and refuse to infer any missing denominator.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Memory-constrained containers are a separate context because the reported ZGC configuration required a fixed additional native-memory overhead of about 3% of heap size, so heap, off-heap and collector native memory must be budgeted against container limits.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#what-the-operational-evidence-actually-distinguishes",
+          "quote": "ZGC required a **fixed additional native-memory overhead of about 3% of heap size** in the reported configuration",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The company optimized tail latency and operational simplicity together, not peak allocation throughput alone; copying the default without copying the objective function is not a transfer of the decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+          "quote": "The company therefore optimized *tail-latency and operational simplicity* together, not peak allocation throughput alone.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The case is a first-party March 2024 JDK 21 report whose status is drafted with technical review pending, so its figures are time-scoped evidence rather than independently reproduced benchmark results.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#overview",
+          "quote": "**Period:** Netflix article **2024-03-06**, JDK 21 | **Status:** drafted, technical review pending",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.a486e061c9564587b1e39a4e83024fca#what-the-operational-evidence-actually-distinguishes",
+          "quote": "These are first-party reported observations and explanations, not measurements independently reproduced by Tycho.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The symptom matrix treats sudden synchronous pauses as a hypothesis whose discriminating evidence is JFR/GC pause times aligned to latency spikes, and explicitly lists changing the garbage collector based only on a p99 graph as an unsafe shortcut.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix",
+          "quote": "| Sudden synchronous pauses | GC stop-the-world phase or safepoint delay | JFR/GC pause times aligned to latency spikes | Change garbage collector based only on a p99 graph |",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements",
+    "tycho.decision.054f312b9e744575ac80632f4acf72fa#workload-before-collector-what-the-source-can-actually-tell-us",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-observed-rollout-from-an-adoption-runbook",
+    "tycho.decision.054f312b9e744575ac80632f4acf72fa#applicability-and-counterindications",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
+    "tycho.decision.054f312b9e744575ac80632f4acf72fa#synthetic-workload-specific-selection-matrix",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#tycho-decision-procedure",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+    "tycho.page.e5f63598da754ee181804df0ce297b95#3-java-heap-is-only-one-memory-domain",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#open-versus-closed-load",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#record-the-boundary-before-the-number",
+    "tycho.page.f784d6ef723c4c0e8836ff9085bf7dcc#overload-controls-and-failure-containment",
+    "tycho.page.03bdffc1632345f390c2e845b52a3eb0#5-aggregation-loses-information-by-design",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#purpose-and-mission",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#purpose-and-mission",
+    "tycho.page.0d095fa3993a48f0b70ae375cb60c493#6-how-to-choose-the-next-experiment",
+    "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission",
+    "tycho.decision.054f312b9e744575ac80632f4acf72fa#a-reproducible-confounder-resistant-decision-experiment",
+    "tycho.decision.054f312b9e744575ac80632f4acf72fa#failure-analysis-and-evidence-provenance",
+    "tycho.decision.054f312b9e744575ac80632f4acf72fa#interpret-historical-metrics-without-imaginary-precision",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#historical-claim-ledger-avoid-fake-precision",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#what-the-operational-evidence-actually-distinguishes",
+    "tycho.page.a486e061c9564587b1e39a4e83024fca#overview",
+    "tycho.page.5567c6c6ca5148a2b117c858d305e0f3#2-working-symptom-matrix"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

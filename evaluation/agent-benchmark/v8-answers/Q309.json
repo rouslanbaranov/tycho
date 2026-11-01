@@ -1,0 +1,374 @@
+{
+  "task_id": "Q309",
+  "answer": "# Q309 - Shared outbound pool starvation by an optional dependency\n\n## Verdict\n\nThe pool did not run out of capacity; it ran out of a boundary. Twenty slots shared by a\nrequired dependency and an optional one is one shared waiting room with no class policy, so the slow optional class\nsets the waiting time for the required class. Doubling the room to forty leaves the same\nscheduling rule in place: the optional class, which has a standing backlog precisely because\nit is slow, can occupy the added seats, the added concurrency pushes more calls at the\nalready-slow service, and booking still queues behind one-second holds. Booking p99 rose\nbecause p99 is a waiting-time property of the queue, not a function of how many permits exist.\nThe edge quota reports headroom because it counts arrivals per unit time at a different\nboundary, while the pool is consumed by resident calls multiplied by their hold time. The\ndatabase is healthy because the database was never the contended resource.\n\nThe fix is to isolate the optional class's slot budget, wait queue, deadline and failure\npolicy, and to observe the pool per class rather than in aggregate. Admission control\n(concurrency cap plus reserved core share) is the better primary control when the scarce\nresource is local and the dependency is merely slow; a circuit breaker becomes the better\ncontrol when calls to that dependency are failing, or so persistently slow that each attempt\nis a wasted hold, and when fail-fast plus a declared fallback are acceptable.\n\n## Layers used\n\n- **book** (primary): V07/C05 overload protection and dependency isolation, V07/C01 queueing\n  and Little's law boundaries, V07/C02 contention and scaling, V07/C04 tails, V03/C05 thread\n  and connection pools, V09 observability, V02/C05 deadlines.\n- **atlas** (pattern conditions): V11/C07 resilience entries - Bulkhead, Circuit Breaker,\n  Graceful Degradation, Load Shedding, Rate Limiting.\n- **modeling-and-simulation** (accounting rules): V12/C03 queue and resource model semantics,\n  which fix how utilization, occupancy, rejection and timeout must be reported.\n\nSnapshot 3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a.\nSession note: the outline tool returned a snapshot-mismatch in this checkout (route metadata\nand index differ), so navigation used page section maps and search instead; no reading was\nsubstituted.\n\n## Facet matrix\n\n| Facet | Query formulations actually used | Evidence (section_key) |\n|---|---|---|\n| F1 Why a larger shared pool does not restore core work | \"connection pool exhaustion slow dependency\"; \"head-of-line blocking shared thread pool\"; \"queueing delay utilization latency nonlinear\"; \"bulkhead isolation failure containment\" | tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology; tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation; tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work |\n| F2 What must be isolated | \"bulkhead failure isolation\"; \"separate pool reserved capacity\"; \"bulkhead bypass hidden queue\"; \"capacity reservation admitting scheduler\" | tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities; tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory |\n| F3 What must be observed | \"saturation signal queue age utilization metric\"; \"utilization signal local to task aggregate misleading\"; \"pool wait acquisition hold time\"; \"trace connection hold time pool wait\" | tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery; tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure; tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome |\n| F4 When admission control or a circuit breaker is the better control | \"circuit breaker slow calls dependency\"; \"load shedding overload protection\"; \"admission control vs circuit breaker\"; \"graceful degradation optional dependency\" | tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview; tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation |\n| F5 Acceptance test, recovery and evidence limits | \"dependency slowdown healthy class continues\"; \"same attempted arrivals resource limits\"; \"no deployed protection executed\"; \"fictional stated requirement\" | tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs; tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#overview |\n\nTwo consecutive search rounds on F1 and F3 returned no new section keys after the pages above\nwere found, so search stopped there.\n\n## 1. Mechanism - why 20 slots became the wrong unit and 40 does not fix it\n\n**1.1 A pool is a permit budget, not a capacity knob.** A pool limit bounds concurrent holders.\nIt says nothing about how long each holder keeps its permit, and therefore nothing about\ncompleted rate. The book makes the arithmetic explicit: a pool of twenty with a 0.10 s hold has\nan idealized upper bound of 20 / 0.10 = 200 starts per second, and the same pool at a 0.25 s\nhold falls to 80 per second; adding threads does not change the permit count. The booking pool\nis in the second regime: with one-second recommendation holds, twenty slots can start at most\nabout twenty calls per second in total, and the split between classes is not set by the pool.\n\n**1.2 Occupancy is arrival rate times residence time, so a slowdown inflates the optional\nclass without bound.** This is the decisive asymmetry, and it is arithmetic rather than\nmeasurement: occupied slots equal arrival rate multiplied by hold time. Booking calls are\nshort and arrive at checkout rate; recommendation calls are one second or longer during the\nslowdown and are also driven by the same checkouts. When hold time rises by an order of\nmagnitude, the optional class's slot demand rises by roughly the same factor while its arrival\nrate is unchanged. A shared pool therefore always tends to be dominated by whichever class is\nslowest, because that class converts the same demand into more resident work. Enlarging the\npool raises the ceiling that the slow class can occupy; it does not change the ratio.\n\n**1.3 The added seats are not reserved to core work.** The book's synthetic failure is this\nexact structure - an optional dependency in a shared pool - and its candidate A is\n\"enlarge the shared pool\", with the warning that this \"might only increase calls to the failing\nphoto dependency and thread/buffer use\". The corresponding rule is that a bulkhead boundary\n\"contains one class's saturation so it cannot consume every worker, but it does not create\ncapacity\". A shared pool with no class boundary therefore has no mechanism by which a booking\ncall can outrank a recommendation call: the pool admits by arrival, and the optional class has a\nstanding backlog. Growing the pool grows the backlog the optional class can keep in flight.\n\n**1.4 Enlargement raises concurrency at the party that is already slow.** More slots mean more\nsimultaneous calls to the recommendation service, more connections and buffers held, and more\nretry attempts from calls that time out. The book records that increasing a pool \"may reduce\nacquisition delay for a brief period and worsen DB locking under sustained load\" - the same\nshape applies when the constrained party is a remote service: the caller's acquisition delay can\nimprove for a moment while the dependency's queue and the caller's own tail get worse. That is\nhow a first fix can show lower pool wait and worse booking p99 at the same time.\n\n**1.5 p99 is a waiting-time property, not a mean.** The dominant term for booking is time spent\nwaiting for a permit, and that wait is governed by the hold times of the calls ahead of it and by\nthe queue discipline, not by the number of permits. Under FIFO, a booking request queued behind\nseveral one-second recommendation calls waits roughly the sum of those holds. The book is\nexplicit that adding workers \"does not guarantee ... larger useful completion rate\", that a\nshared connection pool \"can reintroduce an effectively serial bottleneck\", and that the\nconservation identity behind Little's law supports \"mean conservation under its assumptions, not\ntransient percentile predictions\". A pool-size change is therefore not even the right instrument\nfor a p99 claim; the instrument is the wait distribution and the queue discipline.\n\n**1.6 The two reassuring signals are measuring other things.** \"The edge quota still reports\nheadroom\" is a statement about arrivals per unit time at the edge. A token bucket \"constrains\narrival over time\", while a semaphore \"limits simultaneous resident work\"; these \"solve related\nbut different problems\". With checkout rate roughly constant and recommendation hold time\nmultiplied, resident work rises while admitted requests per second stay inside the quota - so\nheadroom and pool exhaustion are entirely compatible. The book also records that operations with\nunequal costs \"cannot be controlled solely by requests per second\", that a limiter on one\ninstance \"is not a global quota unless the shared state makes it global\", and that shedding needs\n\"one named bottleneck and an admission point close to it\" - otherwise the queue is merely\nrelocated. \"The database stays healthy\" is consistent for the same reason: the database is not\nthe contended authority here. The pooled slots are. A pool can be saturated \"despite idle DB CPU\",\nand the diagnostic recorded for that row is to \"trace connection hold time, transaction\nboundaries and pool wait\" - not to check DB capacity.\n\n**1.7 Illustrative arithmetic (my inference, not a book measurement).** With 20 slots, one-second\noptional holds and 18 slots held by recommendations, booking has about two permits, so it can\nstart roughly two calls per second when its own service time is short; its p99 includes the wait\nfor one of those two permits. After doubling, the optional class is not capped at 18: it has\nqueued demand, so it can occupy most of the 36 additional seats, leaving booking a share set by\narrival order rather than by policy. Even in the favorable case where booking's absolute permit\ncount doubles, the wait distribution is still shaped by a one-second hold time, by retries and by\na larger in-flight population on the same service instance (threads, buffers, CPU). None of these\nnumbers are measurements or recommendations; the pool size and caps must come from observed hold\ntimes and the booking concurrency the core journey needs.\n\n## 2. What must be isolated\n\nIsolation here means five things, and none of them is \"a bigger pool\":\n\n1. **The slot budget per class.** A reserved core share for booking (enough permits for\n   arrivals times hold time plus headroom) and a hard cap on optional recommendation\n   concurrency. The reservation must be \"enforced by the admitting scheduler\"; \"a label on a\n   shared pool is not a boundary\".\n2. **The wait queue.** A separate bounded queue per class, because \"a bulkhead bypass,\n   undersized partition or shared hidden queue can defeat isolation\". If both classes still\n   enter one executor or one semaphore, the isolation is cosmetic and the metrics will show it.\n3. **The deadline and timeout.** Each optional attempt must carry a budget shorter than the\n   caller's remaining time, so a permit is returned rather than held for the full stall. This is\n   the prerequisite for every other control: the book's rule is to \"bound the timeout first,\n   because a breaker cannot shorten a call that never returns\".\n4. **The failure policy per dependency.** Breaker or retry budget scoped to the optional\n   dependency, with rejected calls counted separately from dependency failures.\n5. **The admission point and the class's identity.** The class must be known where admission\n   happens; a class \"visible only at the edge cannot protect a downstream dependency\". If the\n   pool cannot see which caller is core, no policy below can prefer it.\n\nTwo contraindications bound this advice. Isolation is rejected when it would \"strand capacity\",\nwhen the dependency is \"essential to all work\", or when \"pool sizing cannot be observed\" - so\nthe pool must be instrumented before partitions are sized. And isolation does not repeal the\nproduct question: if bookings genuinely require the recommendation data, then the honest\noutcome is an explicit failure or slower success, not a silently incomplete booking.\n\n## 3. What must be observed\n\nObserve the partition actually enforced, per class and per dependency:\n\n| Signal | Why it is the discriminating one |\n|---|---|\n| Slots held / free, in-flight per dependency | Distinguishes \"pool is full\" from \"pool is full of one class\" |\n| Pool acquisition wait and queue age, p50 and p99 | The booking p99 term that a pool-size change does not fix |\n| Hold-time distribution per dependency | Turns the slowdown into a number; sets caps and timeouts |\n| Waiting vs admitted vs rejected vs timed-out counts, per class | Prevents \"success\" from being computed on a shrunken population |\n| Timeouts and retry attempts per dependency | Separates a capacity problem from a retry-amplification problem |\n| Breaker state, cooldown, probe outcomes | Distinguishes a hypothesis (open) from recovery |\n| Core journey success and p99, plus the degraded label | The actual protected outcome |\n| Per-instance vs aggregate limiter accounting | A local limiter is not a global quota |\n\nThe book's own alarm example for this situation is a \"saturated pool with queue-age growth\",\nalongside \"rising high-percentile latency at stable offered demand\"; both are stated at the\nlevel of an eligible population and an evaluation window. It also requires that offered,\nadmitted, rejected, completed and failed populations be tracked \"separately\", because otherwise\na service can look healthier as it refuses more work. The \"connection pool\" row of the\nbottleneck table gives the same triad - \"acquisition time, active/idle/pending\" - and warns that\n\"thread count alone\" is the misleading signal.\n\nA practical reading order follows from the same evidence: measure pool wait separately from\nservice time; if wait dominates, the scheduling boundary is the problem; if service time\ndominates, the dependency is; then check hold time by dependency, retry attempts, and whether the\noptional class is actually respecting its cap (bypass). Aggregate pool utilization, edge RPS,\nDB CPU and mean latency are each insufficient, and each can be green while booking fails.\n\n## 4. Admission control or a circuit breaker?\n\nThey answer different questions, and the book states the split directly: \"a circuit breaker\nmonitors a declared failure signal, while admission protects a chosen scarce resource\".\nAdmission decides who gets a permit and how long they may wait; the breaker decides whether to\nattempt the call at all.\n\n| Situation | Better control | Reason |\n|---|---|---|\n| Dependency is slow but working; core work is starved of permits | Admission/concurrency cap plus a reserved core share (bulkhead) | The scarce resource is local and boundable \"directly\"; a cap frees capacity immediately and preserves a share |\n| Dependency is failing (errors) or persistently slow enough that most attempts are wasted holds | Circuit breaker, with a slow-call signal where the platform supports one | Avoids paying the timeout per call, protects the dependency from retry storms, probes recovery with a bounded budget |\n| The exhaustion is caused by local saturation or caller-specific behaviour | Neither breaker nor shed; fix admission, queue bounds and timeouts | \"An open caused by local resource exhaustion hides the real bottleneck\" and local failures are a contraindication for a breaker |\n| Work is deferrable and capacity can genuinely be added | Queue or provisioning before shedding | Rejection is only preferred when \"rejection is cheaper than queueing\" |\n| All work is equally critical | No isolation/degradation; explicit error or more capacity | Shedding is contraindicated \"when all work is equally critical\" |\n\nFor this incident the order matters:\n\n1. **Bound the call first** - a per-attempt deadline shorter than the booking budget. Without it,\n   no other control can stop a stalled call from holding a slot.\n2. **Admit by class** - a hard cap on concurrent recommendation calls plus a reserved booking\n   share, enforced in the admitting scheduler, with a separate bounded queue. This is the control\n   that restores booking, because it changes the ratio rather than the ceiling.\n3. **Break on failure** - add a breaker on the optional dependency so that when calls start\n   failing, or the slow-call rate stays above a declared threshold, the cap is not consumed by\n   doomed attempts. Fit conditions are dependency-local observable failures, a bounded timeout,\n   a defined fallback or fail-fast, and separately measured rejections; contraindications are a\n   fallback that hides the outage, a caller that cannot bound the call, or probing that would\n   overload the dependency.\n4. **Retry with a budget and jitter, never blindly** - retries multiply load during the outage\n   and can re-flood the pool.\n5. **Recover with probes and hysteresis** - \"prematurely reopening traffic can cause a second\n   collapse\"; permit bounded trial probes and raise flow only after stable correct responses.\n\nThe one-line rule: **admission control is better when the resource is the problem; a circuit\nbreaker is better when the dependency is the problem.** Here the resource was the problem, so\nisolation and admission come first; the breaker is the right second control for the case where\nthe slow dependency also starts failing.\n\n## 5. How to know the fix worked, and what would change the answer\n\nThe test must compare baseline and treatment \"under the same attempted arrivals, key skew,\nlogical outcomes and total resource limits\", inject the recommendation slowdown, and require\nthat the \"healthy unrelated class continues within agreed limits\"; the declared failure\ncondition is \"shared pool exhausted despite bulkhead\". The same matrix should record pool wait,\nqueue age, retry amplification, the labelled absence of recommendations, and stabilization time\nafter the fault is removed. A result that improves booking only by dropping or hiding optional\nor unknown outcomes is invalid; the model-side rule is that a system which hides rejection \"can\nreport a high success rate while refusing work at the front door\".\n\nWhat would reverse or qualify this answer:\n\n- **Recommendations are not actually optional.** If a booking is unsafe without them, the\n  correct outcome is an explicit error or a slower success, not a degraded booking.\n- **The dependency is essential to all work.** Then isolation only moves the queue and the\n  bulkhead is contraindicated.\n- **The pool cannot be observed per class.** Sizing a partition blind is a contraindication;\n  instrument first.\n- **The real bottleneck is downstream of booking** (DB saturation rather than a healthy DB).\n  Then larger pools worsen queue and p99, and the response is to stop scaling concurrency and\n  optimize or admit, not to partition.\n- **Capacity of the optional service can be added faster than isolation can be made safe.**\n  Then provisioning is the competing response, and degradation may be unnecessary.\n- **A multi-tenant or per-principal fairness requirement dominates.** Then per-tenant caps and\n  fair admission are needed in addition to the class split, or one tenant can still fill the\n  core share.\n\n## 6. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 permits and hold time | tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology; tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic |\n| C2 the scenario | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation |\n| C3 enlargement cannot restore core work | tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work; tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes |\n| C4 concurrency is not completion | tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ; tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial |\n| C5 means do not predict tails | tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law |\n| C6 larger pools can worsen the constrained party | tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization |\n| C7 rate vs concurrency; unequal costs | tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation |\n| C8 admission point near the bottleneck; limiter scope | tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes |\n| C9 isolation is an enforced reservation | tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation |\n| C10 bulkhead contraindications | tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory |\n| C11 observe per-pool signals | tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure; tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization |\n| C12 saturation with a healthy DB; populations; alarm | tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery; tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety; tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome |\n| C13 breaker fit and contraindications | tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview |\n| C14 breaker limits | tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes; tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview |\n| C15 admission vs breaker | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation; tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities |\n| C16 remedy sequence and recovery | tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation; tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate |\n| C17 test matrix; hidden rejection | tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection |\n| C18 evidence limits | tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work; tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#overview |\n\n## 7. Unknowns and limits\n\n- **No production evidence.** The scenario is synthetic, the book's tests are proposed and not\n  executed, and no threshold, cap or pool size in this answer is measured or recommended.\n- **Hold-time distribution is unknown.** The occupancy argument needs the recommendation hold\n  time and the booking hold time; only the question's qualitative slowdown is given.\n- **The pool's scope is unknown.** Whether the twenty slots are per instance or aggregated, and\n  whether the edge quota counts requests per second per key or per instance, changes the\n  accounting; a single-instance limiter is not a global quota.\n- **Whether calls are synchronous per checkout is unknown.** If recommendation calls are issued\n  asynchronously or not on the booking critical path, the isolation is still right but the\n  expected gain is smaller.\n- **Shared resources beyond the pool are unknown.** Threads, TLS connections, CPU and buffers may\n  also couple the two classes; a cap alone would then be insufficient.\n- **The business criticality of recommendations is a product decision**, and the acceptable\n  degraded contract is not stated in the question.\n- **The breaker's slow-call threshold is deployment-specific** per the book's own note, so it must\n  be set from observed hold times.\n- **The p99 decomposition is unknown.** The claim that waiting dominates is an inference from\n  the pool mechanics, not a measurement of this service.\n\nNo claim above depends on a section that was not read through the session CLI.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A shared outbound pool is a permit budget, not a capacity multiplier: its size bounds how many calls may hold a slot at once, while the completed rate is bounded by slots divided by hold time, so the same pool does strictly less useful work once calls become slow.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+          "quote": "The number of connections allowed by a pool is a **limit on concurrent access**; it says nothing about how long each transaction holds a connection. If query time or locks increase, each connection is occupied longer and request queues can grow. Pooling should bound overload rather than hide it.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+          "quote": "If hold time rises to 0.25s due to lock or network contention, the same arithmetic upper bound becomes **80/s**. Adding platform or virtual threads does not alter the 20-connections limit.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The question's incident is the book's own worked scenario: one shared outbound pool of twenty slots is consumed by optional recommendation calls, bookings are delayed while the authoritative database remains healthy, and an edge quota alone does not protect that specific scarce pool.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "A single shared outbound pool of twenty slots is consumed by recommendations, delaying bookings even though the database remains healthy. An API-edge quota alone does not protect the specific scarce pool.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Enlarging the shared pool cannot restore core work because what is missing is a class boundary, not slots: any added slot is available to the queued optional class, so enlargement can only raise concurrent calls to the slow dependency and raise thread and buffer use, while a pool boundary by itself creates no capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work",
+          "quote": "**Candidate A:** enlarge the shared pool. It might only increase calls to the failing photo dependency and thread/buffer use.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "A bulkhead reserves bounded workers or pools for independent classes or dependencies. The boundary contains one class's saturation so it cannot consume every worker, but it does not create capacity.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Booking p99 is a waiting-time and scheduling property, not a completion-rate property: adding workers or slots increases potential concurrency without guaranteeing more useful completions, and a shared pool can reintroduce an effectively serial bottleneck on a nominally parallel path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+          "quote": "Adding application workers increases potential concurrency but does not guarantee processor time, DB write throughput, network quota, exclusive-key authority or larger useful completion rate.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+          "quote": "Avoid claiming an architecture is \"parallel\" just because it launches asynchronous code: a shared connection pool, global lock, fan-in serialization or constrained executor can reintroduce an effectively serial bottleneck.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Means and slot counts cannot predict the tail: the conservation identity supports mean behaviour under its assumptions, not transient percentile predictions, so a claim that 40 slots will fix booking p99 has no support from pool arithmetic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+          "quote": "The published Little's Law proof supports mean conservation under its assumptions, not transient percentile predictions.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Enlargement can be actively counterproductive: increasing a pool may briefly reduce acquisition delay and then worsen contention under sustained load, so a larger pool can push the constrained dependency into a worse regime rather than relieve the caller.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+          "quote": "Increasing a connection pool may reduce acquisition delay for a brief period and worsen DB locking under sustained load.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Edge-quota headroom measures a different quantity from pool occupancy: a token bucket bounds arrivals over time while a semaphore bounds resident work, and operations with unequal costs cannot be controlled solely by requests per second.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts",
+          "quote": "A token bucket rate limiter constrains arrival over time according to configured tokens and burst capacity; a concurrency semaphore limits simultaneous resident work. These solve related but different problems.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+          "quote": "explains why operations with unequal costs cannot be controlled solely by requests per second",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A limiter at the edge or on one instance cannot protect the downstream pool: shedding needs one named bottleneck and an admission point close to it, otherwise the queue is merely relocated, and a single-instance limiter is not a global quota without shared state.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "Shedding requires one named bottleneck and an admission point close to it. A load balancer rejecting traffic without that link merely relocates the queue.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "A limiter on one instance is not a global quota unless the shared state makes it global.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "What must be isolated is the optional class's capacity reservation and its wait queue, enforced by the scheduler that admits into the pool rather than declared on a shared pool, because bypass, an undersized partition or a hidden shared queue defeats the boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "Capacity reservation must be enforced by the admitting scheduler; a label on a shared pool is not a boundary.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "| Normal | Reserve core dependency budget; optional calls use a separate small bulkhead | One pool handles all classes without priority or cap |",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "A bulkhead bypass, undersized partition or shared hidden queue can defeat isolation",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Bulkhead isolation is conditional: it is contraindicated when isolation would strand capacity, when the dependency is essential to all work, or when pool sizing cannot be observed, so instrumentation must precede partition sizing.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+          "quote": "Reject when isolation would strand capacity, when the dependency is essential to all work, or when pool sizing cannot be observed.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+          "quote": "One dependency can exhaust shared pools; isolation limits blast radius; per-pool queue age/utilization are observable; rejection behavior is defined.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "What must be observed are per-pool signals on the partition actually enforced - queue age, utilization, rejected work, acquisition wait and hold time - not the pool name, the aggregate replica count or DB CPU.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "detect per-pool queue age, utilization and rejected work, and rebalance or fail the isolated class explicitly. Measure the partition you actually enforce, not the pool name.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+          "quote": "Measure connection acquisition wait, active/idle counts, hold time percentiles, transaction duration, lock waits and resource utilization.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+          "quote": "| Connection pool | Acquisition time, active/idle/pending, DB limits | Thread count alone |",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A pool can be saturated while the database is healthy, and that condition is diagnosed by pool wait and hold time rather than by DB CPU; a saturated pool with queue-age growth is a named operational alarm, and outcomes must be counted by population so rejected or timed-out work cannot masquerade as health.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "| Pool saturated despite idle DB CPU | Waiting clients and timeouts; perhaps long-held sessions | Trace connection hold time, transaction boundaries and pool wait |",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+          "quote": "sustained eligible success-rate decline, rising high-percentile latency at stable offered demand, saturated pool with queue-age growth",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+          "quote": "Track offered, admitted, rejected, completed and failed populations separately.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A circuit breaker fits when failures are dependency-local and observable, when a slow call is an admissible symptom, when a bounded timeout and deadline exist, and when a fallback or fail-fast contract and separately measured rejections exist; it is contraindicated when a fallback would hide the outage, when the caller cannot bound the call duration, or when recovery probing would overload the dependency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+          "quote": "Failures are dependency-local and observable; the symptom may be an error or a slow call",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+          "quote": "Reject when a fallback would hide the outage, when the caller cannot bound the call duration, or when recovery probing would overload it.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "A breaker is not a substitute for bounding the call and does not release the slots already held: it cannot shorten a call that never returns, an open caused by local resource exhaustion hides the real bottleneck, and open is a hypothesis rather than recovery.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "Tycho's rule: bound the timeout first, because a breaker cannot shorten a call that never returns.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+          "quote": "Tycho's warning: an open caused by local resource exhaustion hides the real bottleneck.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+          "quote": "Open is a hypothesis, not recovery; local saturation can masquerade as a dependency failure, and a fallback can hide the outage.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Admission and the breaker answer different questions: a breaker monitors a declared failure signal, while admission protects a chosen scarce resource; admission or a rate limit is preferable when one global resource can be bounded directly, and a breaker is preferable when the failure is dependency-specific rather than capacity-specific.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "A circuit breaker monitors a declared *failure signal*, while admission protects a chosen scarce resource.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+          "quote": "Admission/rate limiting may be preferable when one global resource can be bounded directly; a circuit breaker may be preferable when the failure is dependency-specific rather than capacity-specific.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The remedy sequence for optional work is a reserved core budget, a capped optional class with a deadline, explicit absence of the optional result on core success, bounded trial probes on recovery and hysteresis against premature reopening.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "| Optional service timeout | Stop admitting optional work, return core success with explicit absent recommendations | Retry stalled optional call before completing critical booking |",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+          "quote": "| Dependency recovers | Permit bounded trial probes; increase flow only after stable correct responses | Flood the recovering service as soon as first probe succeeds |",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+          "quote": "prematurely reopening traffic can cause a second collapse",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The fix must be judged on population-complete outcomes under identical arrivals and total resource limits, with 'shared pool exhausted despite bulkhead' declared as a failure condition; a model that hides rejection can otherwise report high success while refusing work at the front door.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+          "quote": "| Dependency slowdown | Healthy unrelated class continues within agreed limits | Shared pool exhausted despite bulkhead |",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+          "quote": "A valid test matrix compares baseline and treatment under **the same attempted arrivals, key skew, logical outcomes and total resource limits**",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+          "quote": "a model that hides rejection can report a high success rate while refusing work at the front door.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The evidence is conditional and synthetic: the optionality of the second dependency is a stated fictional requirement, no deployed protection or load test was executed, and no specific threshold, cap or pool size follows from the text.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work",
+          "quote": "The optional nature of photos is a **fictional stated requirement**.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#overview",
+          "quote": "No deployed protection, incident, load generator, performance comparison or independent expert review has been executed.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.69085752a11c69305aa2a369b8ec9d29#entry-inventory",
+    "tycho.page.1c7350e3bc17483ba18f201d02727aea#6-alert-design-and-overload-safety",
+    "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+    "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+    "tycho.page.35c975574fa3b7088402ce5dd037c4f5#overview",
+    "tycho.page.45935212b3b7476d8a163520f065b825#2-draw-the-critical-path-and-distinguish-parallel-from-serial",
+    "tycho.page.61c621bfa9a04a738e937416cec15e78#5-resource-bottlenecks-can-move-after-optimization",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#6-recovery-and-hysteresis-must-be-deliberate",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#4-bulkheads-circuit-breakers-and-retries-have-different-responsibilities",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#5-original-synthetic-failure-one-optional-dependency-poisons-core-work",
+    "tycho.page.80ab784dafed47a7baf31722fce5eabc#bounded-pattern-ownership-notes",
+    "tycho.page.a9a28aaa4d1e4e9cb0accd2fc2c5ba9b#engineering-walkthrough-short-window-queue-growth-is-not-steady-state-little-s-law",
+    "tycho.page.af6ce1d0b08a46bf908f851f77f7bb12#1-concurrency-parallel-execution-and-completed-throughput-differ",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#backpressure-and-rejection",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#engineering-walkthrough-optional-dependency-failure-creates-core-work-starvation",
+    "tycho.page.c5d20ae7ef6445e5b23dd5fbac625060#overview",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#1-define-the-scarce-resource-and-the-acceptance-outcome",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#2-admission-must-precede-the-expensive-operation",
+    "tycho.page.d9abd43bb7394c04a6bf77d4014f870d#3-queues-limits-and-priority-create-new-contracts"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

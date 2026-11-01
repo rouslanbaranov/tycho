@@ -1,0 +1,415 @@
+{
+  "task_id": "Q326",
+  "answer": "# Q326 — Order fulfillment: conditional ownership, not a winner\n\n## 0. Onboarding\n`agent_session_cli.py describe` was run first. Collection `tycho`; index snapshot `3db217e9075d...`; citation scheme `tycho.section-key.v2`; pattern registry snapshot `db7f7f31...`, version 0.2.0, registry status **draft** (145 entries: 91 sufficient, 47 partial, 7 partial-bounded).\n\nLayers needed: **atlas** for entry identity, good-fit conditions, hard contraindications and the cross-entry comparison; **book** because every atlas entry's owner citation points at a book section, and the atlas boundary states that cards do not replace owner pages. **modeling-and-simulation** is not needed: the question asks for design conditions, not for a model, run, scenario or accepted decision record, and none was used.\n\nThe atlas boundary is decisive for the first sub-question. `describe` documents the layer as draft registry, coverage that is not independent review, owner citations that are heading anchors, and `compare` as an \"extractive cited option matrix without a winner\"; \"answer generation or verdicts\" appears under `not_implemented`. A ranking of orchestration over choreography is not something this layer produces at all — not because the evidence is thin, but because the entries are conditional alternatives.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence read |\n|---|---|---|\n| F1 — Is there a ranking rule between the two styles? | \"orchestration choreography saga workflow\"; \"saga orchestration coordination pattern entry\"; \"durable workflow engine orchestration\" | tycho.page.3624cafbc3e448d1b218861cd06d059b#overview; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional |\n| F2 — What must choreography own for progress? | \"choreography\"; \"choreography events coordination without coordinator\"; \"correlation identifier dead letter duplicate event\" | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory |\n| F3 — Choreography failure modes and contraindications | \"saga compensation business protocol\"; \"compensating transaction irreversible effect\" | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n| F4 — What must orchestration own for durable progress? | \"durable workflow engine orchestration\"; \"workflow state machine versioned persistence\" | tycho.page.3624cafbc3e448d1b218861cd06d059b#overview; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview |\n| F5 — Compensation semantics and irreversible effects | \"compensating transaction irreversible effect\"; \"saga compensation business protocol\"; \"process manager routing slip state\" | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview |\n| F6 — Local transaction or 2PC instead of a saga | \"two-phase commit versus saga local transaction\" | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview; tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview |\n| F7 — How to diagnose the three incidents | convergence re-reads of F2/F4/F5 sections; \"saga orchestration coordination pattern entry\" and \"workflow state machine versioned persistence\" added no new section | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path |\n\nSix facets are decision-relevant; the seventh is the application step and produced no new anchor on its last two formulations. Atlas searches were run with the atlas volume, and the three owner sections that the atlas cites were read in full (the saga page is 17,285 characters and was read end to end).\n\n## 2. Why the atlas does not rank orchestration above choreography\n\nThe atlas is an inventory of **conditional** entries, not a scoreboard. Every entry carries the same fields: identity, decision question, good-fit conditions, hard contraindications, competing alternative, failure and recovery, technical owner and decision state. Saga Orchestration, Saga Choreography, Saga, Compensating Transaction and Two-Phase Commit are all marked `applicable-under-conditions`; none is marked preferred.\n\nCrucially, each entry names the other as its competing alternative and then names the case for reversal:\n\n- The Saga Orchestration card asks \"Should a central coordinator drive saga steps and compensations?\" and lists \"Choreography or one local transaction\" as the competing alternative, with guidance to reverse \"when central coordination becomes a bottleneck or single point of failure\" (tycho.page.3624cafbc3e448d1b218861cd06d059b#overview).\n- The Saga Choreography entry lists \"Orchestrated saga or one local transaction\" as its competing alternative and reverses \"when event chains become hard to trace and recover\" (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory).\n- The owner page states the rule the cards imply: \"Neither is universally superior. Measure the number of participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional)\n\nSo the honest atlas answer to \"which variant is correct\" is: neither, unconditionally. The two entries differ in **what they must own**, and the decision procedure is a set of ownership and failure-shape tests (section 7), not a preference order.\n\n## 3. What choreography must own for progress\n\nChoreography puts the progress record into the event contracts rather than into a coordinator (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback). That placement creates a concrete ownership list:\n\n1. **Workflow and effect identity in the contract.** The event must carry the workflow identity and a compatibility window, not only a local message identity; each participant needs its own idempotent effect identity (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n2. **Correlation and deduplication** at each consumer's durability boundary (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory, tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback).\n3. **Dead-letter handling and versioned event contracts**, so an unprocessable or evolved message has an owner and a place (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n4. **A per-step timeout policy** that advances, retries or flags the chain instead of waiting forever (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n5. **An observable terminal-state query** for the overall protocol — the thing that answers \"where is order 123?\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback, tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n6. **An owner for a stuck chain** and an explicit statement that a trace proves correlation, not durable business truth (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback).\n\nThe atlas also states the contraindications plainly: reject choreography \"when no one can see global progress, when cyclic reactions are likely, or when compensation ordering must be centrally enforced\" (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory). Its failure modes — \"Unbounded chains, hidden coupling and conflicting compensations are common\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) — are exactly the failure modes the first design produced.\n\n## 4. What orchestration must own for progress\n\nOrchestration moves the progress record into a coordinator that persists a state machine and sends commands. The atlas is careful about what that buys: \"its actual guarantees depend on versioned workflow state persistence, activity semantics, timer reliability and recovery configuration\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional), and again \"only as strong as versioned state persistence, activity semantics, timer reliability and recovery\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n\nThe ownership list is therefore:\n\n1. **Durable, versioned workflow state and history**, written with the step dispatch rather than after it. The bounded notes make the invariant explicit: \"The invariant is a recorded dispatch intent, not merely a progress row: update state and enqueue the next command in one local transaction, or the same outbox\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n2. **Idempotent activities**, so a retried activity cannot double-apply an effect (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes, tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview).\n3. **Reliable timers and retry configuration** (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional).\n4. **A repair path for unknown external effects**: \"Replay durable history, keep activities idempotent and park an uncertain external effect for repair\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes), and never mark the workflow complete to hide it (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional). A completed flag \"is not proof that the effect committed\" (tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview).\n5. **An owner for the coordinator itself** — \"itself needs an owner, backup, upgrade path and drills\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes) — plus the accepted cost that central compensation ordering \"improves visibility but adds a bottleneck\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n\nRead against the replacement design, the consequence is blunt: a coordinator that keeps critical progress **only in an in-memory scheduler** does not meet the good-fit condition, because the atlas lists exactly that as an orchestration risk — \"storing critical progress only in a volatile scheduler\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional) — and the saga page's durable-state table lists \"In-memory queue acceptance is durable\" as a *false assumption* (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback). Such a design is choreography-with-a-middleman until state is persisted; if the team cannot own durable history, timers and idempotent activities, the atlas's own contraindication applies (\"when workflow state has no owner\" — tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview), and the correct move is not to adopt orchestration at all.\n\n## 5. What each variant must own for compensation\n\nA saga is a business protocol, not automatic rollback: \"Each step is a local commit\" with no global lock, so other readers observe partially completed outcomes (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes); the Domain Events entry adds that an unknown/repair state is required when publication is not atomic with the state change (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory).\n\nA compensating action is a **new business action**: \"it is not rollback and it can fail\" and it \"needs idempotent effect identity, retry/repair ownership and a user-visible unknown state when the counter-effect cannot be proven\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback); it \"can fail or be applied twice\", so it needs \"idempotent effect identity, bounded retries and a repair state for unknown counter-effects\" (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory); it needs \"its own authorization, evidence and failure mode\" and ordering \"declared rather than assumed to be the reverse of the forward path\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n\n- **Under choreography**, the participant that owns the original effect owns its compensation, with its own idempotent effect identity and terminal-state check (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes). The chain-level problem — who may compensate what, in which order, and what prevents two compensations for one order — has to be owned too: the atlas names \"conflicting compensations\" as a choreography failure mode (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback) and lists central enforcement of compensation ordering as a reason choreography does not fit (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory). Without a designated ordering owner and a one-compensation-per-effect rule, choreography is being asked to do a job it explicitly does not do.\n- **Under orchestration**, the coordinator owns ordering, visibility and the unknown state (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes), but never the effect itself: the participant still executes the compensation with its own authorization and evidence, and the coordinator must park rather than loop when the counter-effect is uncertain (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional).\n\nOrdering nuance worth stating honestly: the atlas says ordering \"follows the reverse dependency order\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes) and also that it is \"declared rather than assumed to be the reverse of the forward path\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes). These are compatible if read as: the declared order is derived from the dependency graph and verified per step, rather than mechanically reversing the happy path. The atlas gives no algorithm for that derivation (see unknowns).\n\nThe carrier case is the sharpest one. \"Local cancellation cannot unsend physical shipment\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional); \"a delivered message cannot be un-delivered\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback); \"the domain must determine which actions are reversible and which require manual reconciliation\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes). So a compensation that calls a carrier which cannot un-ship is not a compensation at all: it is either a new business commitment (return, intercept, refund-as-cost) with its own authorization and evidence (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes), or an explicit unresolved/manual state — \"an explicit business compensation and an unresolved/manual state if reversal is impossible\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional). It must never be recorded as an undone step, and it is not a reason to prefer orchestration; it is a reason to keep that effect out of the compensation path (section 6).\n\nTwo further rules constrain what \"compensate\" may mean: compensate \"only when the counter-effect cost is lower than the risk of leaving the failed step unresolved\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes), and do not model compensation as an undo button — model it as \"a second business decision\" with \"its own failure semantics\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes).\n\n## 6. When to keep one local transaction, or avoid a saga altogether\n\nThe atlas is explicit and ordered:\n\n1. **One service, one database transaction, one owner** — \"One service and one database transaction are often simpler than a saga\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional); \"Use one local transaction when all effects fit one owner\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes); \"Prefer one transaction when every effect shares an owner and a database\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes). The Saga card hard-rejects a saga \"when one local transaction can preserve the invariant\" (tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview).\n2. **Two-phase commit is the other escape hatch**, but only under its own conditions: \"two-phase commit may be preferable when participants can hold prepared state and atomic visibility\" is mandatory (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes); the 2PC card requires a prepare phase and a highly available coordinator, and rejects the protocol \"when compensation-based saga is sufficient\" (tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview).\n3. **Avoid the saga entirely** when compensation is unsafe or impossible: reject \"when no compensation is possible, or when intermediate visibility is unacceptable\" (tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview); prefer orchestration or a local transaction \"when compensations cannot be made safe\" (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback); and treat an effect that cannot be undone and cannot be isolated as a decomposition problem, not a compensation problem.\n\nApplied to order fulfillment: the saga boundary should fall where ownership and failure modes actually differ. If order and inventory are one owner and one database, keep the reserve-and-confirm invariant local; do not buy a workflow engine to coordinate two tables. If payment authorization can be voided but the parcel cannot be recalled, the shipping step is the irreversible boundary — isolate it behind a durable commitment (dispatch record, carrier acknowledgment, intercept-or-return process) and leave it outside the compensating path.\n\n## 7. Applying the atlas to the incidents (inference, not an atlas claim)\n\nThese three failure reports are ownership gaps, and each one maps to a named requirement rather than to a verdict about the style:\n\n| Incident | Which ownership was missing | Atlas anchor |\n|---|---|---|\n| A shipping event was read by inventory as a new reservation request | Event carried no workflow/effect identity and the consumer had no dedup at its own durability boundary | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes, tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback |\n| Two compensations targeted the same order | No declared compensation ordering and no conflict rule; the atlas names \"conflicting compensations\" and requires central enforcement when ordering matters | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback, tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory |\n| Nobody could answer where order 123 is | No observable terminal-state query and no owner for a stuck chain; a trace shows correlation only | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback |\n\nThose three are the atlas's **choreography contraindications** firing together (tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory), and that is the strongest evidence in this corpus for moving this workflow to a coordinator. But the replacement design fails two different conditions: an in-memory scheduler is the \"critical progress only in a volatile scheduler\" risk (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional) and therefore cannot provide the durable history that makes orchestration worth its cost (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes); and the carrier compensation is an irreversible effect that must be held as unknown/repair (tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional) or moved out of the compensating path.\n\nSo the answer to the team is not \"orchestration\". It is: the incidents justify the **orchestration conditions** — central visibility, enforced compensation ordering, timers, long waits — and the replacement design does not yet satisfy them. Adopt orchestration only with durable, versioned state written together with each dispatch, idempotent activities, timer/retry configuration, an owner with backup and drills, and the carrier step modeled as an irreversible commitment with an unresolved/repair state. If the team cannot own that, the alternative is a repaired choreography: workflow identity and dedup in every event contract, one compensation per effect with a declared ordering owner, and a terminal-state query — which is precisely the set of things the first design lacked.\n\n## 8. Decision procedure (synthesis of the atlas conditions)\n\n1. Do all effects share one owner and one database? If yes: one local transaction. Stop.\n2. Can all participants hold prepared state and is atomic visibility mandatory? If yes: 2PC, with a highly available coordinator and in-doubt recovery.\n3. Is any required counter-effect impossible or unsafe (un-shippable parcel, un-deliverable message), with no way to isolate it? If yes: do not use a saga as designed — decompose, or model an explicit manual/repair outcome.\n4. Can the participating owners evolve independently, are the emitted events the real business protocol, and can someone own correlation, deduplication, dead-letter, timeouts and a terminal-state query? If yes: choreography.\n5. Is central visibility, enforced compensation ordering, timers or long-wait recovery required, and can the team own durable versioned state, idempotent activities, timer reliability, recovery drills and an upgrade path? If yes: orchestration.\n6. If neither 4 nor 5 holds, the workflow has an ownership problem, not a topology problem; fix the missing owner before choosing a style.\n\n## 9. Evidence map\n\n| Claim | Anchor(s) |\n|---|---|\n| C1 conditional entries, no universal superiority | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.3624cafbc3e448d1b218861cd06d059b#overview |\n| C2 choreography progress ownership | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory |\n| C3 choreography failure modes and contraindications | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n| C4 orchestration guarantees are conditional | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.3624cafbc3e448d1b218861cd06d059b#overview; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n| C5 orchestration recovery and coordinator ownership | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview |\n| C6 saga is a business protocol, compensation is a new action | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory |\n| C7 ordering and cost/risk test for compensation | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n| C8 irreversible effects become unknown/repair states | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n| C9 local transaction, 2PC, when to avoid a saga | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview; tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview |\n| C10 ownership-shaped trade-off | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional |\n| C11 process manager vs routing slip progress record | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n| C12 verification expected of either variant | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path |\n| C13 incident-to-gap application (inference) | tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional; tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes |\n\n## 10. Unknowns and limits\n\n- **Coverage is draft, not reviewed.** Registry status is `draft`; several entries are `partial` or `partial-bounded`. The Saga Orchestration card's own summary calls its owner evidence sufficient, while the durable-workflow card states partial-bounded and self-checked coverage. None of this is independent review, promotion or owner acceptance.\n- **The atlas does not decide.** It has no decision method (\"decision-method lookup\" is not implemented), no verdict generation, and it explicitly provides an extractive comparison without a winner. The choice in section 8 is my synthesis, and section 7 is labeled inference.\n- **Missing facts about the described system.** The corpus text does not state whether order and inventory share a database, whether the carrier exposes intercept or return APIs, the team's operational capacity for a durable engine, or the regulatory constraints on compensation. Without them, step 1 of section 8 cannot be settled from evidence; it must be asked.\n- **No production or modeled evidence.** Nothing here is a benchmark, run, outage drill, cost measurement or repair-state test; the atlas pages say so themselves (for example, \"no engine, worker, activity, timer, retry, outage or repair state was exercised\"). The verification list in C12 describes what a bounded design check must inject; it does not record one.\n- **Ordering derivation is underspecified.** The atlas states that ordering is declared and that it follows reverse dependency order, but gives no algorithm for deriving it per step and no rule for conflicts between two compensations with different dependency graphs.\n- **Two searches returned no new anchors** (\"saga orchestration coordination pattern entry\" and \"workflow state machine versioned persistence\" re-surfaced the same cards), which is where searching stopped; absence of further anchors is not proof that the corpus has nothing else on this topic.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The atlas catalogues choreography and orchestration as separate entries with their own good-fit conditions and hard contraindications, all marked applicable-under-conditions; it states that neither is universally superior and that the choice is measured by participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "Neither is universally superior. Measure the number of participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3624cafbc3e448d1b218861cd06d059b#overview",
+          "quote": "Choreography or one local transaction.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3624cafbc3e448d1b218861cd06d059b#overview",
+          "quote": "Should a central coordinator drive saga steps and compensations?",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Choreography keeps its progress record in the event contracts, so it must own correlation identity, deduplication, dead-letter handling, versioned event contracts, a per-step timeout policy and an observable terminal-state query; each participant needs an idempotent effect identity and there must be an owner for a stuck chain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "correlation identity, deduplication, dead-letter handling and an observable workflow",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "dead-letter handling, versioned event contracts and a per-step timeout policy; a timeout must",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "identity, a terminal-state query and an owner for a stuck chain.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+          "quote": "correlation, deduplication, dead-letter and timeout policy exist; the overall protocol is",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The atlas names choreography's failure modes as unbounded chains, hidden coupling and conflicting compensations, warns that a trace can show correlation without proving durable business truth, and hard-rejects choreography when no one can see global progress, cyclic reactions are likely, or compensation ordering must be centrally enforced.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "Unbounded chains, hidden coupling and conflicting compensations are common; a",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "trace can show correlation without proving durable business truth.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+          "quote": "Reject when no one can see global progress",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "when compensation ordering must be centrally enforced, or when compensations cannot be",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "Event choreography removes the central coordinator but hides the overall protocol.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Orchestration's guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration; the atlas lists storing critical progress only in a volatile scheduler as an orchestration risk and lists in-memory queue acceptance as a false durability assumption.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "but its actual guarantees depend on versioned workflow state persistence, activity semantics,",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "storing critical progress only in a volatile scheduler",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "In-memory queue acceptance is durable",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3624cafbc3e448d1b218861cd06d059b#overview",
+          "quote": "the orchestrator can own durable history, timers, idempotent activities and",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "only as strong as versioned state persistence, activity semantics, timer reliability and recovery",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "An orchestration must recover coordinator loss, stuck histories, duplicate activities and incompatible upgrades by replaying durable history, keeping activities idempotent and parking an uncertain external effect for repair instead of marking the workflow complete; a completed flag is not proof that the effect committed, and the coordinator itself needs an owner, backup, upgrade path and drills.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "Coordinator loss, stuck histories, duplicate activities and",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "Replay durable history, keep activities idempotent and park an uncertain external",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+          "quote": "lost external acknowledgment after irreversible effect",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview",
+          "quote": "is not proof that the effect committed.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "itself needs an owner, backup, upgrade path and drills.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A saga is a business protocol, not automatic rollback: each step is a local commit with no global lock and visible intermediate state, and a compensation is a new business action that can fail and needs idempotent effect identity, retry/repair ownership, its own authorization and evidence, a terminal-state check and a user-visible unknown state.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "Each step is a local commit;",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "acceptable counter-effect; it is not rollback and it can fail. It needs idempotent effect",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+          "quote": "twice; use idempotent effect identity, bounded retries and a repair state for unknown",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "authorization, evidence and failure mode, and its ordering is declared rather than assumed to be the",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Compensation ordering is declared rather than assumed to be the reverse of the forward path and in practice follows reverse dependency order; a compensation is only justified when the counter-effect cost is lower than the risk of leaving the failed step unresolved, and it must carry its own failure semantics rather than acting as an undo button.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "Compensation ordering follows the reverse dependency order",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "compensate only when the counter-effect cost is lower than the risk of leaving the failed step",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "reverse of the forward path.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "its own failure semantics.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A step whose counter-effect cannot be produced, such as a parcel that cannot be un-shipped or a message that cannot be un-delivered, must be held as an unresolved or manual-repair state rather than presented as undone; the domain decides which actions are reversible, and compensation that cannot be made safe is a reason to choose orchestration with central visibility or a single local transaction instead.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "Local cancellation cannot unsend physical shipment",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "a delivered message cannot be un-delivered",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "The domain must determine which actions are reversible and which require manual",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "need central visibility or when compensations cannot be made safe.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The atlas prefers one local transaction when every effect shares one owner and database, allows two-phase commit when participants can hold prepared state and atomic visibility is mandatory, and says to avoid a saga when one local transaction can preserve the invariant, when no compensation is possible, when intermediate visibility is unacceptable, or when compensation-based coordination is sufficient.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "One service and one database transaction are often simpler than a saga.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "Use one local transaction when all effects fit one owner",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "two-phase commit may be preferable when participants can hold prepared state and atomic visibility",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview",
+          "quote": "Reject when one local transaction can preserve the invariant,",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+          "quote": "when compensation-based saga is sufficient",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The trade-off is shaped by ownership rather than by rank: central compensation ordering improves visibility but adds a bottleneck and a single point of failure, choreography fits when owners can evolve independently and the emitted events are the real business protocol, and orchestration earns its cost only when independently owned effects fail and recover differently.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "Central compensation ordering improves visibility but adds a bottleneck",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "cost only when the operation spans independently owned effects whose failures and repairs differ.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "A central coordinator is another operational dependency, but it gives one place to inspect",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "when steps need explicit compensation, timers or visibility.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Where the progress record sits is itself a design choice: a process manager keeps a central state machine while a routing slip carries the itinerary, and in both cases the invariant is a recorded dispatch intent written with the state change, not merely a progress row.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "two variants place the progress record differently and must not be conflated.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "The invariant is a recorded dispatch intent, not merely a progress row: update state and enqueue the",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "A process manager keeps a central workflow state machine and decides the next step; a routing slip",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Verification of either variant must inject mid-step restarts, duplicate and out-of-order events, definitive failure together with compensation failure, and a lost acknowledgment after an irreversible effect; acceptance requires the same authoritative business result plus bounded unknown or repair states.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+          "quote": "restart of an orchestration instance mid-step",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+          "quote": "definitive failure and compensation failure",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+          "quote": "lost external acknowledgment after irreversible effect",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Inference, applying the atlas: each incident in the scenario is a named ownership gap rather than proof that the other variant wins; an event lacking workflow or effect identity becomes a second reservation, compensations without a declared ordering collide, an absent terminal-state query leaves order 123 unanswerable, and the replacement plan repeats the durability gap while adding an irreversible compensation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "correlation identity, deduplication, dead-letter handling and an observable workflow",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "storing critical progress only in a volatile scheduler",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "Local cancellation cannot unsend physical shipment",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+          "quote": "The invariant is a recorded dispatch intent, not merely a progress row: update state and enqueue the",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+    "tycho.page.3624cafbc3e448d1b218861cd06d059b#overview",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#6-test-failures-rather-than-just-the-happy-path",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes",
+    "tycho.page.93c4ffc9488f4e23904cb23ff519f516#overview",
+    "tycho.page.d6c23f6a944a40ba83af85dffdd63642#overview",
+    "tycho.page.ee435fc3b8bf4b6ba35d9e6b1ee4b69c#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

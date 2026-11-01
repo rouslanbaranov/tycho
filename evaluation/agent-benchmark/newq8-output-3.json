@@ -1,0 +1,150 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "a team writes its acceptance criteria as 'the booking service must be scalable, highly available and fast', then runs one load test at the average rate and reports the observed p95 as both the proposed target and the achieved result. a reviewer asks whether that criterion can be tested at all, and how two candidates could be compared with it. why is the statement not a verification criterion, which parts must a testable quality scenario define, and why can one candidate improve one quality while weakening another?",
+      "required_evidence": [
+        "tycho.page.3c865baa588744ecbaac307c81c4b25c#overview",
+        "tycho.page.3c865baa588744ecbaac307c81c4b25c#1-name-the-decision-before-selecting-a-style",
+        "tycho.page.3c865baa588744ecbaac307c81c4b25c#2-quality-attribute-scenarios-must-be-testable"
+      ],
+      "core_claims": [
+        "A statement such as 'the service must be scalable and highly available' is not a verification criterion; a useful quality scenario defines a source or stimulus, an environment, an affected boundary, an intended system response and a quantitative measure, including exclusions, an observation window and ownership.",
+        "A scenario must state whether its number is a requirement, an estimate or an observed fact, and must not mix a proposed reliability target with an achieved result.",
+        "Hard gates, quality scenarios, preferences and uncertainties are distinct inputs: a hard gate rejects a demonstrably unsuitable candidate, a preference compares only viable candidates, and an unknown without an attached experiment or inspection remains unresolved.",
+        "Each candidate must be exercised under the same declared generator and route mix before its scenario result is compared with another candidate's.",
+        "Separating a capability can improve independent release while adding network failure modes and cross-domain consistency cost, so both effects are assessed against the declared user quality scenarios and invariants."
+      ],
+      "optional_claims": [
+        "The Q-INTEGRITY case is an invariant hard gate rather than a percentage SLO, because capacity-confirmed exclusivity cannot be traded against a success-rate target.",
+        "The Q-COST case rejects a design above an approved hard cost cap, whereas a toy estimate is not such a gate.",
+        "A public architecture framework asks for quality goals concretized as scenarios rather than vague adjectives, but it does not prescribe whether those goals require one process or many."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a webflux service wraps a blocking client in mono.fromcallable(...).subscribeon(boundedelastic()), keeps each request's correlation id in a threadlocal for logging, and adds a two-second timeout. under load, log lines from unrelated requests carry the wrong correlation id, a timeout returns to the caller while the blocking read continues, and the team says the reactive migration made the database path nonblocking. why do the threadlocal and the timeout both fail to carry their intended guarantee, what does reactor context bind to instead, and what must be verified at the reactive-to-database boundary?",
+      "required_evidence": [
+        "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#overview",
+        "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#3-reactor-3-7-0-scheduler-choice-and-context",
+        "tycho.page.0c7b8f00661648f3b50e448471f5cc7e#4-r2dbc-1-0-a-reactive-sql-spi-not-a-database-guarantee"
+      ],
+      "core_claims": [
+        "Creating a Mono or Flux does not start a thread or perform the work; subscription starts the chain, and by default most operators execute on the thread that delivers their signal.",
+        "publishOn changes execution of subsequent operators while subscribeOn changes the subscription path upstream, and neither makes a synchronous driver nonblocking.",
+        "boundedElastic bounds backing resources but still has a queue, so queue saturation and expired deadlines must be measured, and its virtual-thread-backed variant does not turn a blocking library into an asynchronous driver or replace downstream admission.",
+        "Reactor Context is an immutable per-subscriber context propagated with subscription semantics rather than a thread local; contextWrite placement matters and asynchronous inner sequences have their own context boundaries, so a correlation id stored only in a ThreadLocal may disappear or leak across interleaved requests.",
+        "A timeout signal alone is not proof that the underlying blocking operation was interrupted, and tracing, authentication and logging context must be tested through flatMap, scheduler switches and client adapters.",
+        "R2DBC is a nonblocking SQL SPI, but it does not erase transaction isolation, SQL locks, network round trips, pool wait or database CPU cost, and the concrete driver rather than the reactive return type determines whether the network path is nonblocking."
+      ],
+      "optional_claims": [
+        "Reactor forbids certain blocking APIs on its default single and parallel nonblocking schedulers.",
+        "R2DBC compliance requires a nonblocking I/O layer and transaction support, while optional driver capabilities differ by implementation.",
+        "JDBC with virtual threads and R2DBC with a reactive pipeline share database-controlled isolation, lock behavior and a required connection budget even though their waiting execution differs."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a reservation handler runs at serializable isolation, catches a serialization failure, and retries only the final insert using the values it read before the abort. it also sends the confirmation email inside the same transaction block before commit. after a burst of conflicting bookings, some requests are reported failed even though their reservations exist, and some customers receive two confirmations. why must a retry re-run the complete read and decision rather than the insert alone, what must the retry preserve, and how does a failed transaction differ from a committed transaction whose acknowledgment was lost?",
+      "required_evidence": [
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#overview",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#3-a-synthetic-two-transaction-anomaly",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#4-serializable-still-needs-a-retry-protocol",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#5-correctness-and-query-performance-must-be-evaluated-together",
+        "tycho.page.7749abee206c490f97f3ea4ce4dbad8a#6-architecture-alternatives-and-limits"
+      ],
+      "core_claims": [
+        "PostgreSQL Serializable can abort a transaction with a serialization failure to prevent a non-serializable committed outcome, and a correct application recognizes that outcome and retries the complete transaction from the beginning with its stable logical operation identity.",
+        "Blindly replaying external notifications or non-idempotent side effects during transaction retries can multiply effects.",
+        "A failed transaction is not an accepted business reservation, whereas a committed transaction whose network acknowledgment was lost is a different condition that requires a durable operation id and a status query.",
+        "Acceptance checks must cover races from independent callers, client retries after a lost response, schema and state-transition constraints, the actual query plan and lock waits under representative load, deadlocks and serialization retries, and stale replicas or search projections that are not authoritative write guards.",
+        "A unique or exclusion constraint may add write and index cost while protecting a mandatory invariant, so removing it to improve throughput is not equivalent to a valid optimization, and an index that speeds a predicate does not by itself enforce uniqueness or overlap.",
+        "For a limited self-contained application with an authoritative PostgreSQL store, in-database constraints and local transactions may be simpler and stronger than moving the reservation decision across services, but only after comparing which invariants each implementation demonstrably enforces and how it recovers."
+      ],
+      "optional_claims": [
+        "A CHECK constraint is not a substitute for a cross-row overlap invariant, and neither an application-level SELECT nor a standalone non-unique index automatically enforces the full restriction.",
+        "A mutex inside one application instance does not protect a deployment with multiple replicas.",
+        "The page's exclusion-constraint SQL is an original teaching sketch rather than a statement executed and checked in a database."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a platform team changes a parser flag and two operating limits by editing values in a shared configuration service. one cohort begins writing a new record format while a stale worker still reads the old format, one request observes the new batch size but the old memory ceiling, and the rollback is published with a lower revision that some clients reject. why is a configuration change a distributed transition rather than a switch, what must each snapshot and reader guarantee, and what must the promotion and recovery record before the change is called complete?",
+      "required_evidence": [
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#overview",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#a-configuration-change-is-a-distributed-transition",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#publish-observe-promote",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#worked-example-changing-a-catalogue-parser",
+        "tycho.page.9681d7dd04749125f5749d0c83f96d9b#failure-and-recovery-contract"
+      ],
+      "core_claims": [
+        "A configuration change is not simultaneous merely because the value sits outside a binary: processes fetch at different times, disconnected workers retain old snapshots, and a rollback can encounter writes produced by the new behavior, so the scope of consistency must be defined before choosing a configuration service.",
+        "Every snapshot carries a monotonically increasing revision, a payload digest, an activation policy and a minimum compatible binary version, and a reader installs a complete snapshot atomically rather than assembling a request's limits from several revisions.",
+        "Optional interface behavior may use eventual refresh with a last-known-good default, a concurrency or resource limit needs bounded staleness with a conservative ceiling, and a permission or irreversible action needs an authoritative decision or explicit short-lived capability that is rejected when authority cannot be established.",
+        "A publisher validates schema and cross-field constraints, checks compatibility, records an immutable revision and selects a stable cohort; exposure percentage measures eligibility rather than traffic or risk, and a small cohort can contain the most expensive tenant.",
+        "A request pins its snapshot until completion and a long workflow explicitly chooses whether each step pins the original behavior or re-evaluates current policy, and that choice must survive retries; the revision actually used is recorded in metrics, logs and asynchronous work.",
+        "In the worked example readers deploy support for both record formats before writes are enabled, every produced record carries its format version independent of the flag revision, and a recovery revision deliberately has a higher revision than the failed one so clients that reject older revisions accept the recovery while existing new-format records still require a compatible reader."
+      ],
+      "optional_claims": [
+        "A boolean that switches both writers and readers at once can leave a stale reader unable to parse a new record even when the percentage rollout looks healthy at the publisher.",
+        "If publication succeeds but the publisher loses its response, the retry uses the publication identifier and compares the digest, and a process that cannot refresh reports its observed revision and snapshot age rather than treating an old value as convergence.",
+        "Absent telemetry should pause promotion instead of being read as success, and a failed publisher may leave the ordinary cached request path but cannot justify indefinite use of an expired security capability."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a booking platform has moderate aggregate traffic but one hot exclusive item, one database writer, strict immediate confirmation and a small on-call team. a reviewer proposes sharding and service decomposition because both are 'scalable patterns', and cites a published company account as proof that decomposition works. why does naming a pattern not establish fit, what must the applicability analysis establish before either proposal is accepted, and what evidence would reverse the decision later?",
+      "required_evidence": [
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#overview",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#purpose-and-mission",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#engineering-walkthrough-two-attractive-patterns-fail-the-same-hot-key-workload",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#applied-m9-evidence-what-transfers-and-what-does-not",
+        "tycho.page.35d5be6a4e074758afff95bf3ec68bc5#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "An architecture pattern is a conditional intervention into an existing set of constraints: microservices can create independent deployments but add remote failure and data-ownership questions, caching can avoid repeated work but weaken freshness, and sharding can distribute independent keys but does not solve contention on a single logical record.",
+        "In the hot-key walkthrough, sharding fits only when load spreads across independent keys because one hot key remains single-owner serialized work, and service decomposition adds remote failure and authority migration without removing that serialized key.",
+        "The walkthrough retains a single booking authority and tests bounded admission and query or lock optimization first, rejecting sharding and service decomposition as unsupported current cures for the single hot-key invariant.",
+        "A later team-autonomy or isolation requirement may reverse that choice without invalidating the present analysis, so applicability is time- and requirement-scoped rather than a permanent verdict.",
+        "Before transferring a lesson from a published account, the analysis identifies the exact workload, source date, relevant runtime and protocol versions, state authority, failure and recovery gate, and the new observation that would reverse the choice.",
+        "A historical company report is first-party, time-scoped evidence rather than a controlled benchmark, and the synthetic playbook's monolith-first choice is a fictional decision that the cited companies never jointly evaluated."
+      ],
+      "optional_claims": [
+        "The walkthrough also rejects a distributed cache for exclusive booking because a cache cannot confirm the exclusive booking independently, and it rejects a queue when the client requires an immediate confirmed result.",
+        "The proposed tests are offered-demand runs with representative key skew, lock and pool wait, correct confirmed completions and change lead time, and they were not run for this page.",
+        "The chapter is neither a broad taxonomy nor a ranked list of favorite technologies, and public trade-off and quality-attribute methods support conditional selection rather than universal adoption."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "an architecture review lists three options and asks each owner to score 'flexibility' from one to five so the highest total can be chosen. the incumbent option is omitted as 'not a real alternative', the exclusivity requirement is recorded as unknown, and scoring starts before any test is run. why is that ranking not a discriminating decision, what must precede the alternatives and the scoring, and what would make one option preferable or reverse the choice?",
+      "required_evidence": [
+        "tycho.page.7079edf1ceeb4b1594083edf7a2c680e#overview",
+        "tycho.page.7079edf1ceeb4b1594083edf7a2c680e#1-a-precise-problem-statement-comes-before-alternatives",
+        "tycho.page.7079edf1ceeb4b1594083edf7a2c680e#2-enumerate-a-genuine-retained-simple-option",
+        "tycho.page.7079edf1ceeb4b1594083edf7a2c680e#3-hypothesis-discriminator-possible-reversal"
+      ],
+      "core_claims": [
+        "A valid decision question is not 'how do we adopt microservices' but which bounded architectural change most reliably preserves the exclusivity invariant while meeting an agreed user-visible deadline under the specified arrival and contention pattern.",
+        "A decision frame separates a correctness invariant, a quality scenario, a constraint and a preference, and when a hard requirement is unknown, measuring first is a legitimate decision rather than pretending an unspecified objective or operational budget passed.",
+        "The alternatives must include a genuine retained or simple option such as instrumenting the current deployable, and the hard-gate matrix is completed before any weighted preference scoring.",
+        "In the matrix, fail means exclude unless the requirements legitimately change, unknown means withhold unconditional acceptance, and a low cost score cannot rescue an option that fails booking exclusivity.",
+        "For each candidate the record specifies a causal benefit that another source of evidence could disprove, pairing a hypothesis with a discriminating experiment and a falsifying observation, and varies one decision-relevant mechanism at a time where possible.",
+        "A negative result is evidence rather than a failed research task, and the baseline is retained when it satisfies the hard constraints while the new complexity has no demonstrated incremental benefit."
+      ],
+      "optional_claims": [
+        "The asynchronous option is useful only if the user can receive a pending outcome or an explicit rejection under the signed contract.",
+        "The extracted-service option is potentially worthwhile only if independently managed capabilities, release cadence or isolated capacity are real requirements and transactional authority can move safely.",
+        "Equivalent test inputs are offered logical operations rather than completed requests, and a result at different data cardinality or resource budgets may not distinguish the architecture from an accidental test setup."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,551 @@
+{
+  "task_id": "Q307",
+  "answer": "# Q307 — Why a function runtime is not a failure domain, which boundaries to record, and what a same-outcome comparison must hold equal\n\n**Verdict.** A managed function runtime is an execution placement and an admission boundary, not a failure domain. A failure domain is the set of dependencies that can fail together. The invocation sandbox is only one small dependency set inside a larger graph that still includes the database, the event source, the object or checkpoint store, the network and identity path, and the provider's own region and control plane. The three incident symptoms belong to three different boundaries: connection refusal is a shared database-capacity contract; the missing file is a state-lifetime and durability contract; the double charge is an effect-identity contract. All three are application-owned contracts, although provider behavior can amplify the first and trigger the third. \"Provider regional failure\" asserts a fault boundary that the scenario does not establish and that is not needed to explain any of the three outcomes.\n\n## 0. Onboarding, layers and scope\n\nI ran the mandated describe first. It reported a book collection with 562 documents and 3,141 sections, snapshot 3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a, ranker tycho-section-fts5-bm25-v5, citation scheme tycho.section-key.v2.\n\nLayers needed: **book**. The question asks for mechanism, failure-boundary and comparison reasoning from canonical prose. The atlas layer would only add pattern identity (Idempotency Key, Transactional Outbox, Cell-Based Architecture), which does not change the mechanism, and the modeling-and-simulation layer has no model, run or decision artifact for this scenario. I therefore searched and read only with --volume book, as instructed.\n\nOne tool limitation is recorded honestly: the outline command returned status snapshot-mismatch with \"Route metadata and index differ\" for both topics I tried. I did not treat empty outline output as evidence of absence; I used search, page section maps and read instead. This is a session tooling limitation, not a claim about the book.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence section keys |\n|---|---|---|\n| F1. Runtime versus failure domain | \"function runtime failure domain serverless\"; \"fault isolation correlated failure independence\"; \"function is not a failure domain deployment unit\" | tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels; tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope; tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work |\n| F2. Scale-to-demand and delay | \"managed functions scale to zero concurrency\"; \"scale to demand autoscaling provider admission\"; \"cold start warm capacity start delay function\" | tycho.chapter.1d8d87e683bc428e8dbed087106f37fd#decision-and-worked-result; tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time |\n| F3. Database connection budget | \"database connection per invocation pool exhaustion\"; \"connection pool sizing total connections\"; \"pool size replica total database connections bound\" | tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission; tycho.page.dc2470904e004a4aa733abcdb25517ed#integrated-decision-and-reading-route; tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology; tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery; tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap |\n| F4. Durable state for a multi-step export | \"durable execution checkpoint long running workflow\"; \"resumable export checkpoint object storage state externalization\"; \"resumable transfer multipart checkpoint metadata\" | tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question; tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities; tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#a-worked-cross-store-problem |\n| F5. Retry and duplicate effect | \"at-least-once delivery idempotency duplicate effect\"; \"effectively once exactly once side effect\"; \"idempotency key retry duplicate charge\" | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission; tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary; tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects; tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses |\n| F6. Fault attribution | \"failure attribution incident causal provider\"; \"regional failure provider region outage\"; \"post-incident review causal contributing factors\" | tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage; tycho.page.b256d263efff488c8cf549e116be9683#historical-result-versus-experiment-design; tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause |\n| F7. Same-outcome comparison controls | \"same outcome comparison benchmark control variables\"; \"like-for-like comparison equivalent load same workload\"; \"offered load closed loop measurement boundary\" | tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs; tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior; tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested; tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together; tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison |\n\nI ran repeated formulations per facet and followed next leads until the remaining matches were already-read or not decision-relevant; the final search round added no section that changed the answer. The evidence below is the set of sections actually read through the CLI; snippets were not used as sections.\n\n## 2. Why a function runtime is not a failure domain\n\n### 2.1 A failure domain is a dependency set, not a deployment unit or a geography\n\nThe book's definition is explicit: failure domains are dependency sets, not just geographical labels, and the shared elements include host, disk, node pool, hypervisor or availability zone; network routes, ingress gateways and certificate or secret services; the orchestration control plane, scheduler and artifact registry; the database primary, storage quorum, coordination service or failover policy; common service identity, DNS, external API and global rate quota; and regional power, connectivity and operator access. An availability design has to state which faults it intends to survive without violating state authority.\n\nThe decisive test is not where the code runs but which shared element can remove the whole journey. The book's own example: \"Placing web workers in different zones while retaining one unreplicated database does not satisfy a whole-journey zonal failure objective.\" The chapter summary says the same at the placement level: \"Two zones can still depend on one datastore or control path; nominal placement diversity does not demonstrate surviving user journeys.\"\n\nApplying that test to the incident: putting the order-status code into a function creates a new execution placement. It does not create a new database, a new event source, a new durable store, a new network path or a new identity service. The database remains a shared dependency of every invocation. The event source remains a shared dependency. The provider region and control plane remain shared dependencies of every invocation in that region. In that dependency graph, the function runtime is a node, not the graph.\n\n### 2.2 The invocation sandbox is a real boundary, but a narrow one\n\nAn invocation can die without killing another invocation; that is genuine isolation of a crash. But the boundary contains the blast radius of one execution, not correlated failure through shared dependencies. The book states the general point directly: \"A container is not by itself an availability zone, a managed service is not a business-state correctness proof, and serverless autoscaling cannot create authoritative consistency.\" And: \"The deployment unit alone—bare metal, VM, container or function—cannot answer that question.\"\n\nThe boundary table in the cells page is the useful discipline here. It separates compute, durable state, asynchronous work, rollout and routing boundaries, and demands an isolation argument for each. \"Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher.\" Independence is only independence against specified failures, and \"A shared regional network or identity dependency remains a common failure mode and needs its own declared behavior.\"\n\nA function runtime is thus a failure boundary for a crashing invocation and a control boundary for provider-managed scaling. It is not a failure domain for the order-status journey, because the journey crosses boundaries the invocation does not enclose.\n\n### 2.3 Scale-to-demand is an admission promise, not a correctness promise\n\nThe book's managed-function row gives the advantage as \"Scale-to-demand and reduced direct host operations when workload execution model matches\", and then lists the constraints: \"Runtime quotas/concurrency, start delay, state externalization, connection spikes, event retry/delivery and vendor control-plane/region dependencies\". That list is the answer in miniature. Scale-to-demand scales the provider's execution admission. It does not scale the database's connection budget, make local disk durable, or deduplicate an at-least-once event.\n\nAutoscaling is also late by construction. \"Capacity that arrives after a short burst cannot prevent its initial overload; reserved headroom or admission control may still be needed.\" A new instance can be reported ready while the shared downstream is not: \"A new Pod may be marked running while its downstream DB budget remains exhausted.\" So the provider's scale-to-demand promise is a statement about the provider's capacity to admit executions. It is not a statement that the workload's execution model, state model, connection model and effect model match the platform.\n\n### 2.4 \"Provider regional failure\" is a fault-boundary claim, not an observation\n\nA regional claim has to name a boundary. \"A regional exercise is meaningful only if its **fault boundary is explicit**.\" And: \"Thus a passing result concerns **traffic and dependencies that were actually redirected or suppressed**, not hypothetical failures of globally shared identity, cross-region control planes or every durable datastore.\" For another system, the decision should state exactly what is disrupted: \"which clients lose which region? which reads are allowed to become stale? which region owns writes? which shared services remain healthy?\"\n\nThe incident scenario gives none of that. It gives three outcomes and one label. A single label is also epistemically unsafe: \"A correct after-action record may show multiple contributing causes: one bad config, an untested schema interaction, monitoring blind spots and inadequate failover verification.\"\n\nThe provider does own a real part of the dependency graph: its region, its control plane, its scale admission and its quota. The defensible statement is therefore narrower: a provider-owned dependency may have contributed to the incident, and that contribution has to be evidenced at the provider boundary. It is not defensible to say the runtime is the failure domain, or that the region failed, merely because the platform is managed.\n\n## 3. The three symptoms are three different boundaries\n\n### 3.1 Database refuses connections at peak: a capacity boundary\n\nMechanism. Function concurrency is admitted by the provider. Each invocation that opens its own database connection adds a client to the database's backend budget. The database has a fixed ceiling. The book treats pool capacity as a fleet equation:\n\n- \"Increasing replicas can multiply backend connections beyond the database budget, turning local pool tuning into a shared failure.\"\n- \"Doubling application replicas could increase waiting clients and retry amplification while leaving server DB connections fixed.\"\n- \"A ten-replica deployment that opens a 30-connection pool per instance can request 300 backend connections. A scale-out decision based only on CPU can exhaust a fixed database connection ceiling and make the service less reliable.\"\n- \"Bound total replica×pool count with operating headroom\" and \"Compute headroom for worst-case auto-scaling and failover, *then* verify measured active/idle/pending and service limits.\"\n\nA pool is not extra database capacity: \"A connection pool protects finite resources and amortizes connection setup. It is **not** an engine that increases the database's useful query capacity.\" Nor does more concurrency change the limit: \"Adding platform or virtual threads does not alter the 20-connections limit.\"\n\nInference for the incident. With per-invocation connections, the multiplier is concurrent invocations, not a configured replica count the team can see and cap. The provider can raise concurrency faster than the database budget changes. The refusal is therefore a shared-dependency saturation at the capacity boundary. It is not explained by the region label, and a region outage is not necessary to produce it. What would support a provider-regional attribution is different evidence: the database healthy and reachable, the network healthy, only provider-owned components impaired, and other clients in the same region affected at the same time. None of that is in the scenario.\n\n### 3.2 A resumed export finds no file: a state-lifetime boundary\n\nMechanism. A local temporary file lives inside an invocation or instance lifecycle. The compute-model constraint names the problem: state externalization. A multi-step export is a durable workflow: \"A durable workflow is a persistent state machine: steps, timers, retries, versions, compensation and human tasks survive process loss.\" A long-running workflow crossing independent owners \"needs explicit persistent state, publication and failure contracts.\"\n\nResume is an identity problem as much as a storage problem. For a large transfer, \"A client reconnecting after an interruption must know which of those identities remains authoritative.\" The chapter's design rule is to \"Design the lifecycle of large payloads independently from the database row that refers to them\", and its acceptance boundary includes injecting interruption during a part and a lost completion response.\n\nInference for the incident. A resumed invocation is normally a different process, often on a different instance. The absence of the local file is the expected consequence of invocation-scoped storage, not evidence of a regional event. The correct fix is a durable checkpoint plus an externally stored identity and progress record. If the platform happened to reuse the same instance and the file happened to survive, that would be luck, not a contract; a comparison that depends on that luck is not a same-outcome comparison.\n\n### 3.3 A retried event charges the customer twice: an effect-identity boundary\n\nMechanism. At-least-once delivery means redelivery is part of the contract. The Cloudflare case names the delivery contract itself as a duplicate cause: \"the delivery contract of Queues (**at least once**) and failures/late acknowledgments ... after an object was already transferred.\" So a retry is not automatically an anomaly.\n\nIdempotence is a property of the intended effect, not of the transport: \"**Idempotence is a property of the intended effect**, not a promise that HTTP status codes, logs or network attempts will look identical.\" The key must bind \"one logical intent, caller/payload scope and retention window to an authoritative outcome record\", and it has to be checked atomically with the effect.\n\nProcess-local deduplication is not enough: \"An in-memory set can deduplicate within one live process but fails across replicas, restarts and retained events.\" For a remote charge the local database is not enough either: \"marking an event processed **before** making a separate external effect can lose the effect if the process crashes; marking it processed **after** can duplicate that external effect.\" The required capability is \"External idempotency or durable reconciliation; local DB cannot make remote effect atomic\". A timeout is not proof of no effect: \"Returning the connection to the pool or throwing a timeout does **not** prove the business operation was undone.\"\n\nInference for the incident. A provider outage may have triggered the redelivery, but the second charge is caused by the missing effect identity at the payment boundary. If the operation carried a stable intent key, a durable outcome record and either an external idempotency key or a reconciliation read, a redelivery would return the recorded outcome rather than charge again. The regional label may describe a trigger, but it cannot explain the duplicate; the duplicate is evidence about the application's idempotency contract.\n\n## 4. Which boundaries must be recorded separately\n\nThe book's canonical inventory is: \"Record separately: state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility.\" That list separates ownership and failure scope. For this incident it must be extended with the three correctness boundaries the symptoms expose, because a dependency inventory that omits capacity, delivery and effect identity cannot explain what happened.\n\n| Boundary | What exactly to record | Who owns it | Symptom it explains |\n|---|---|---|---|\n| B1. Invocation or sandbox | Lifetime, timeout, memory and disk limits, whether local disk survives between invocations, whether an instance is reused, maximum concurrency | Provider for lifecycle and admission; team for what the invocation does | Missing export file if progress is kept locally |\n| B2. Node, host and availability zone | Placement, capacity remaining after loss, replacement time, whether the runtime is zonal or regional | Provider placement; team for degraded behavior | Local capacity loss, cold-start gaps |\n| B3. Provider region and control plane | Region scope, control-plane dependencies, quota and scale admission, what continues when the control plane is impaired | Provider, with team-visible evidence | Possible regional contribution; not proven by the three symptoms |\n| B4. Durable state and state writer | Database primary/quorum, object store, checkpoint store; which component is the authoritative state writer; retention and restore | Team and data-platform owner | Connection refusal at the state owner; missing file when state is not externalized |\n| B5. Capacity and connection budget | Database maximum connections, per-client and per-invocation connections, peak concurrency, other clients, reserved headroom and admission policy | Team plus database operator; the provider only caps concurrency, it does not size the database | Connection refusal at peak |\n| B6. Delivery contract | At-least-once or stronger, acknowledgement and visibility timeout, retry and backoff, dead-letter handling, ordering | Event-source owner plus consumer team | Repeated event delivery |\n| B7. Effect identity | Logical intent key, caller and payload scope, deduplication store, retention, external provider idempotency or reconciliation, ambiguous-outcome handling | Team plus payment provider | Double charge |\n| B8. Ingress, network, DNS, identity and secrets | Shared network paths, gateway, certificate and identity dependencies, global rate quota | Split by component; must name the owner | Correlated failure across all invocations |\n| B9. Operator responsibility | On-call ownership, runbooks, restore test, vendor escalation, decision owner for prevention actions | Team, with named reviewer and acceptance test | Slow or wrong attribution; unrepaired prevention actions |\n\nTwo disciplines apply to every row. First, naming a boundary is not an isolation proof: the cells page insists that compute, durable state, asynchronous work, rollout and routing each need their own isolation argument, and that \"Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher.\" Second, independence is only independence against a specified failure: \"A shared regional network or identity dependency remains a common failure mode and needs its own declared behavior.\"\n\nThe practical record for this incident should therefore state, per boundary: the owner, the specified failures it is expected to survive, the measured or assumed capacity, the state that must survive process loss, the delivery and effect contract, and the evidence that would attribute a fault to it. Without that, \"provider regional failure\" is a label applied after the fact to three separate contract failures.\n\n## 5. What a same-outcome comparison against the container deployment must hold equal\n\n### 5.1 The comparison target\n\nThe container deployment is not the control condition by virtue of being a container. A container is also not a failure domain: \"A container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state.\" The comparison has to compare two designs that deliver the same observable outcome, not two packaging formats.\n\nThe book's required equalities are explicit: \"Comparisons require the **same observable outcome, admitted/offered load, logical data correctness and named outage**, plus staffing, steady-state cost and restore test.\" The comparison must also be at \"a **comparable resource budget** as well as at a comparable offered workload\", and a cheaper option is acceptable \"only if it satisfies the same failure, cold-start and user-journey gates\".\n\n### 5.2 The equalities that must hold\n\n**E1. Observable outcome and correctness invariant.** Same user journey: the same order-status reads and writes, the same export content, the same charge semantics. Correctness includes one charge per order, a complete and verifiable export, and a correct status after retries. Green instances, replica counts or a low p99 are not the outcome.\n\n**E2. Offered and admitted load.** Same arrival trace, burst shape, duration, payload and key skew, event rate and retry rate. The generator must be shown to have delivered the offered load; a closed-loop generator that slows down with the system can hide the backlog an external arrival stream would create.\n\n**E3. Data snapshot and dependencies.** Same database size, indexes, lock profile and connection ceiling; same object-store and event-source quotas; same backlog. The benchmark controls say to \"Pin artifact/container, dependencies, data snapshot, tool version and test script.\" Otherwise the two arms do not face the same data or the same dependency graph.\n\n**E4. Named outage and fault boundary.** Same failure class, same scope, same timing, one fault class per test, and a safe abort condition. \"Different failure classes require distinct tests.\" A container restart does not establish regional recovery any more than a function timeout does. If the claim is regional, the exercise must actually disrupt the region boundary; otherwise the claim is about a simulated envelope only.\n\n**E5. Runtime treatment declared, not hidden.** For the function arm: cold-start and start delay, minimum and peak concurrency, timeout, instance reuse versus per-invocation lifecycle, local-disk lifetime, connection reuse. For the container arm: warm replicas, per-instance pool, process lifetime, local-disk lifetime, orchestrator and control-plane dependence. These are treatment variables. They must be declared and equalized where the claim requires it, not left as uncontrolled differences. In particular, both arms must be forced through instance replacement or restart if the claim is about surviving process loss; otherwise the container arm can appear to fix the missing-file symptom merely because its temp file survived.\n\n**E6. Connection budget.** Equal total database client population and equal headroom. In the function arm the relevant product is peak concurrency times connections per invocation, plus other clients. In the container arm it is replicas times pool size, plus other clients. If the function arm is allowed 300 potential clients and the container arm 60, the comparison measures two different database pressure regimes. The book's fleet-budget rule applies to both: account for peak replica count, not normal replica count, and reserve failure and failover headroom.\n\n**E7. Retry and idempotency configuration.** Same retry policy, same deduplication store and retention, same external idempotency behavior. If the function arm retries more because of cold starts or timeouts, but the container arm retries less because it holds a warm process, the duplicate rate differs for a reason that is part of the runtime treatment. Both arms must implement the same effect-identity contract; otherwise the comparison tests two different correctness designs.\n\n**E8. Durability contract.** Same external checkpoint cadence and storage. The local temporary file must not be the only copy in either arm. If the container arm keeps the export file on a mounted volume, that volume's durability and recovery must be declared and included in the named outage; otherwise the comparison silently gives the container arm a durable store the function arm does not have.\n\n**E9. Resource budget and cost boundary.** Comparable minimum and peak capacity, resource-seconds, startup delay, staffing, steady-state cost and restore test. The benchmark report should include \"minimum/peak replicas, startup delay and total resource-seconds\". If the function arm adds a connection proxy, an external checkpoint store or an idempotency table, those are part of its resource budget. If the container arm runs twice the replicas, that is a capacity purchase, not an efficiency gain.\n\n**E10. Measurement window and reporting.** Declare warmed, cold and recovery phases rather than discarding inconvenient transients. Report correctness and authorized-user outcome distributions; offered, transmitted, admitted, completed, rejected and unsent rates; median and tail outcomes by operation class; CPU, heap, network, database concurrency, queue age and error budget; trial variability and parameter sensitivity. A single p99 or RPS headline is not a same-outcome comparison.\n\n### 5.3 What may legitimately differ, and what must be disclosed\n\nThe provider's control plane, quota admission, billing granularity, patching and incident handling are genuinely different and cannot be equalized. They are part of the treatment, not nuisance variables. The comparison should record them as declared differences and state which claims depend on them. If a difference cannot be equalized, the correct result is that the comparison is inconclusive for that claim, not that one topology won.\n\nThe comparison is also not a mechanism-equality test. The function arm may legitimately use a connection proxy, an external checkpoint store and an idempotency table. The container arm may legitimately use a warm pool and a mounted volume. What must be equal is the outcome, the load, the correctness invariant, the named outage and the resource boundary. The mechanisms can differ; the contracts cannot.\n\n### 5.4 What would count as evidence for the provider-regional attribution\n\nThe attribution needs its own fault boundary and its own evidence: which clients lost which region, which reads were allowed to become stale, which region owned writes, which shared services remained healthy, and a provider-side timeline that is independent of the application's own symptoms. It also needs the negative controls: the database reachable and healthy, the network path healthy, and unrelated clients in the same region affected or unaffected in the way the regional hypothesis predicts. Without that, the honest conclusion is insufficient evidence for the regional label. The architecture-selection outcome says to \"Return **insufficient evidence** if the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown.\"\n\n## 6. Evidence map\n\n| Claim | Claim text | Evidence section keys | Status |\n|---|---|---|---|\n| C1 | A failure domain is a dependency set that can fail together, not a geographical label or a deployment unit; nominal placement diversity does not demonstrate that a whole user journey survives. | tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels; tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result | observed |\n| C2 | The deployment unit alone cannot establish which runtime boundary preserves the required behavior; a container is not an availability zone, a managed service is not a business-state correctness proof, and serverless autoscaling cannot create authoritative consistency. | tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope; tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work | observed |\n| C3 | Scale-to-demand for managed functions is conditional on the workload execution model; the same model carries runtime quotas and concurrency, start delay, state externalization, connection spikes, event retry/delivery, and vendor control-plane/region dependencies. | tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs | observed |\n| C4 | Scale-out capacity arrives after detection, provisioning and warm-up, so it cannot prevent the initial overload of a short burst, and a new instance can be running while its downstream database budget remains exhausted. | tycho.chapter.1d8d87e683bc428e8dbed087106f37fd#decision-and-worked-result; tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time | observed |\n| C5 | A connection pool protects a finite resource and bounds concurrent access; it does not increase the database's useful query capacity, and more platform threads or replicas do not change the connection limit. | tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission; tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic | observed |\n| C6 | Backend connection demand is a fleet equation: increasing replicas can multiply backend connections beyond the database budget and turn local pool tuning into a shared failure. | tycho.page.dc2470904e004a4aa733abcdb25517ed#integrated-decision-and-reading-route; tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting | observed |\n| C7 | A safe connection budget must be computed for worst-case auto-scaling, peak replica count and failover, with operating headroom left in the aggregate database allowance. | tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology; tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure | observed |\n| C8 | A concrete scale-out can request far more backend connections than the database ceiling: a ten-replica deployment with a 30-connection pool per instance requests 300, so a scale-out decision based only on CPU can exhaust a fixed database ceiling. | tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap; tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery | observed |\n| C9 | In the described incident, database refusal at peak is consistent with application-owned connection multiplication against a fixed shared database, and does not by itself identify a provider regional fault. | tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation | inference |\n| C10 | A multi-step export needs a persistent state machine whose steps, timers, retries and compensation survive process loss; a local temporary file inside one invocation or instance does not satisfy that requirement. | tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question | observed |\n| C11 | Resuming an interrupted transfer or export requires durable, externally recorded identities and progress; a reconnecting client must know which identity remains authoritative, and the lifecycle of the large payload must be designed independently of the database row. | tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities; tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#a-worked-cross-store-problem | observed |\n| C12 | At-least-once is a normal delivery contract, and redelivery is a named cause of duplicate work; duplicate delivery is therefore expected behavior, not by itself a provider failure. | tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses | observed |\n| C13 | Idempotence is a property of the intended effect; the key binds one logical intent, caller and payload scope and a retention window to an authoritative outcome record that is checked atomically with the effect. | tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission; tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route | observed |\n| C14 | Process-local deduplication fails across replicas, restarts and retained events; safe deduplication needs a durable authority boundary, such as a database uniqueness constraint or a state-machine conditional write. | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary | observed |\n| C15 | When the charge is an external effect, a local database cannot make the remote effect atomic; the consumer needs external idempotency or durable reconciliation, and marking the event processed either before or after the external call creates a loss or duplicate window. | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects; tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery | observed |\n| C16 | The double charge is an effect-identity defect exposed by retry, not a regional failure: an outage may trigger redelivery, but a second charge requires a missing or non-atomic idempotency contract at the payment effect boundary. | tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects | inference |\n| C17 | The canonical boundary inventory to record separately is: state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility. | tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope | observed |\n| C18 | Containment must be argued separately for compute, durable state, asynchronous work, rollout and routing; naming or grouping stateless workers does not isolate a shared database, queue, cache or configuration publisher, and independence only holds against specified failures. | tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph | observed |\n| C19 | A regional-failure claim is meaningful only with an explicit fault boundary: which clients lose which region, which reads may be stale, which region owns writes and which shared services stay healthy; a passing exercise covers only the traffic and dependencies actually disrupted. | tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage | observed |\n| C20 | A single invented root cause is unsafe; a correct after-action record can show multiple contributing causes, and attribution needs evidence rather than a convenient label. | tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause | observed |\n| C21 | A same-outcome comparison must hold equal the observable outcome, admitted/offered load, logical data correctness and the named outage, plus staffing, steady-state cost and a restore test. | tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs | observed |\n| C22 | A controlled comparison pins the artifact or container, dependencies, data snapshot, tool version and test script; it uses equal offered-demand traces or discloses intentional differences, and applies equal arrival distribution, payload and key skew, warm-up, endpoint configuration, pool limits, retries and cancellation to both candidates. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior | observed |\n| C23 | Candidates must be compared at a comparable resource budget as well as a comparable offered workload; otherwise lower latency may be a capacity purchase rather than an efficiency gain. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together | observed |\n| C24 | Different failure classes require distinct tests, and a failure experiment must define a safe abort condition; one class of passing test cannot establish tolerance of another class. | tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested | observed |\n| C25 | For each failure, the comparison must measure client-level correct outcomes, explicit rejections, timeouts, state reconciliation, routed traffic, dependency recovery and total operating cost, not only replica counts or green instance status. | tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments; tycho.page.b256d263efff488c8cf549e116be9683#historical-result-versus-experiment-design | observed |\n| C26 | A cheaper or more elastic option is acceptable only if it satisfies the same failure, cold-start and user-journey gates as the alternative. | tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison | observed |\n| C27 | If the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown, the architecture decision must return insufficient evidence rather than assert a topology. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome | observed |\n| C28 | A container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state; runtime topologies must be compared against the same outcome, failure model, resource needs and operating capability. | tycho.page.ea94649bfd8c4be183f9114618d7ccaa#integrated-decision-and-reading-route | observed |\n| C29 | During a state-owner failure all stateless frontends can become ineffective; recovery gates must confirm warmed capacity, correct routing, persisted state and duplicate-safe replay. | tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility | observed |\n| C30 | Whether a runtime topology is viable is a question about workload, isolation and operating constraints, not about the compute-model label; the page frames the mechanism as conditional on those constraints. | tycho.page.5d5dd1d008b848a39dfae29a147da6d0#overview | observed |\n\n## 7. Unknowns, contradictions and limits\n\n1. **Platform specifics are unknown.** The scenario does not name the function platform, its concurrency ceiling, whether instances are reused across invocations, how long local disk survives, the timeout policy, or the event source's retry and visibility semantics. The book gives the general constraint list, not a vendor guarantee. The mechanism argument is therefore conditional.\n2. **The incident has no timeline or telemetry.** There is no database health record, no connection count, no provider status timeline, no evidence that a region was impaired, and no evidence that other tenants were affected. The regional label is not established. This is a finding, not a gap to fill by assertion.\n3. **Database capacity is unknown.** The database's operational connection ceiling, the team's headroom, the number of other clients and the per-invocation connection count are not given. The arithmetic in the book is illustrative, not a measurement for this system.\n4. **The export checkpoint design is unknown.** It is not stated whether the file was the only copy, whether a durable checkpoint existed, or whether the resumed run used the same export identity. The missing-file outcome is consistent with local-only state, but the exact cause needs the checkpoint design and the invocation history.\n5. **The payment provider's capability is unknown.** Whether it supports idempotency keys, readback or reconciliation is not stated. The book's rule is to state unknown rather than promise exactly-once through a wrapper.\n6. **The provider's responsibility split is unknown.** The provider owns region, control plane, quota admission and the execution sandbox. The team owns data model, connection budget, export durability, event handling and effect identity. The exact split for this platform needs its contract and documentation.\n7. **No measurement was made.** The book's scenarios are synthetic teaching material, not production observations. No benchmark, failover exercise or restore test was executed for this answer. A mechanical validator PASS would prove only that the citation contract is coherent, not that the answer is semantically correct or that the incident's cause is known.\n8. **Tool limitation.** The outline command returned snapshot-mismatch (\"Route metadata and index differ\") in this session. Search, page and read worked. No conclusion in this answer depends on outline output.\n\nThe contradiction to keep visible is this: the team's label says \"provider regional failure\", while the observed outcomes are three different local contract failures. A regional event could have triggered retries or failover, but it is neither necessary nor sufficient to explain connection exhaustion, local-file loss and a duplicate charge. The label therefore has to be demoted from cause to hypothesis until a fault-boundary-specific test supports it.\n\n## 8. Reading route used\n\nPrimary route: V08/C03 compute models and control-plane page; V08/C06 failure domains and authority page; V03/C05 connection pools, fleet budgets and pool recovery; V07/C06 autoscaling delay; V04/C04 retries and deduplication; V04/C05 durable workflows; V05/C08 object storage; V09/C06 incident evidence; V07/C03 benchmark validity. The cases page on regional failure was used only for the fault-boundary discipline, not as evidence that any provider failed.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A failure domain is a dependency set that can fail together, not a geographical label or a deployment unit; nominal placement diversity does not demonstrate that a whole user journey survives.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+          "quote": "Placing web workers in different zones while retaining one unreplicated database does not satisfy a whole-journey zonal failure objective.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result",
+          "quote": "Two zones can still depend on one datastore or control path; nominal placement diversity does not demonstrate surviving user journeys.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The deployment unit alone cannot establish which runtime boundary preserves the required behavior; a container is not an availability zone, a managed service is not a business-state correctness proof, and serverless autoscaling cannot create authoritative consistency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope",
+          "quote": "The deployment unit alone—bare metal, VM, container or function—cannot answer that question.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+          "quote": "A container is not by itself an availability zone, a managed service is not a business-state correctness proof, and serverless autoscaling cannot create authoritative consistency.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Scale-to-demand for managed functions is conditional on the workload execution model; the same model carries runtime quotas and concurrency, start delay, state externalization, connection spikes, event retry/delivery, and vendor control-plane/region dependencies.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+          "quote": "Scale-to-demand and reduced direct host operations when workload execution model matches",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+          "quote": "Runtime quotas/concurrency, start delay, state externalization, connection spikes, event retry/delivery and vendor control-plane/region dependencies",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Scale-out capacity arrives after detection, provisioning and warm-up, so it cannot prevent the initial overload of a short burst, and a new instance can be running while its downstream database budget remains exhausted.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.1d8d87e683bc428e8dbed087106f37fd#decision-and-worked-result",
+          "quote": "Capacity that arrives after a short burst cannot prevent its initial overload; reserved headroom or admission control may still be needed.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+          "quote": "A new Pod may be marked running while its downstream DB budget remains exhausted.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A connection pool protects a finite resource and bounds concurrent access; it does not increase the database's useful query capacity, and more platform threads or replicas do not change the connection limit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission",
+          "quote": "A connection pool protects finite resources and amortizes connection setup. It is **not** an engine that increases the database's useful query capacity.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+          "quote": "Adding platform or virtual threads does not alter the 20-connections limit.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Backend connection demand is a fleet equation: increasing replicas can multiply backend connections beyond the database budget and turn local pool tuning into a shared failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#integrated-decision-and-reading-route",
+          "quote": "Increasing replicas can multiply backend connections beyond the database budget, turning local pool tuning into a shared failure.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+          "quote": "Doubling application replicas could increase waiting clients and retry amplification while leaving server DB connections fixed.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A safe connection budget must be computed for worst-case auto-scaling, peak replica count and failover, with operating headroom left in the aggregate database allowance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+          "quote": "Compute headroom for worst-case auto-scaling and failover, *then* verify measured active/idle/pending and service limits.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+          "quote": "Choose per-service `maximumPoolSize` as a bounded share of the aggregate budget; account for peak replica count, not normal replica count.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A concrete scale-out can request far more backend connections than the database ceiling: a ten-replica deployment with a 30-connection pool per instance requests 300, so a scale-out decision based only on CPU can exhaust a fixed database ceiling.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+          "quote": "A ten-replica deployment that opens a 30-connection pool per instance can request 300 backend connections. A scale-out decision based only on CPU can exhaust a fixed database connection ceiling and make the service less reliable.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "Bound total replica×pool count with operating headroom",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "In the described incident, database refusal at peak is consistent with application-owned connection multiplication against a fixed shared database, and does not by itself identify a provider regional fault.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation",
+          "quote": "Correlated dependencies and measured time-to-recovery determine whether a design meets the stated user contract.",
+          "supports": "C9",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A multi-step export needs a persistent state machine whose steps, timers, retries and compensation survive process loss; a local temporary file inside one invocation or instance does not satisfy that requirement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+          "quote": "A durable workflow is a persistent state machine: steps, timers, retries, versions, compensation and human tasks survive process loss.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+          "quote": "A long-running workflow crossing several independent owners therefore needs explicit persistent state, publication and failure contracts.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Resuming an interrupted transfer or export requires durable, externally recorded identities and progress; a reconnecting client must know which identity remains authoritative, and the lifecycle of the large payload must be designed independently of the database row.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+          "quote": "A client reconnecting after an interruption must know which of those identities remains authoritative.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#a-worked-cross-store-problem",
+          "quote": "Design the lifecycle of large payloads independently from the database row that refers to them.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "At-least-once is a normal delivery contract, and redelivery is a named cause of duplicate work; duplicate delivery is therefore expected behavior, not by itself a provider failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+          "quote": "Cloudflare names *two* duplicate causes: the delivery contract of Queues (**at least once**) and failures/late acknowledgments to Durable Objects after an object was already transferred.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Idempotence is a property of the intended effect; the key binds one logical intent, caller and payload scope and a retention window to an authoritative outcome record that is checked atomically with the effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+          "quote": "**Idempotence is a property of the intended effect**, not a promise that HTTP status codes, logs or network attempts will look identical.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "The key binds one logical intent, caller/payload scope and retention window to an authoritative outcome record.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Process-local deduplication fails across replicas, restarts and retained events; safe deduplication needs a durable authority boundary, such as a database uniqueness constraint or a state-machine conditional write.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+          "quote": "An in-memory set can deduplicate within one live process but fails across replicas, restarts and retained events.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "When the charge is an external effect, a local database cannot make the remote effect atomic; the consumer needs external idempotency or durable reconciliation, and marking the event processed either before or after the external call creates a loss or duplicate window.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "marking an event processed **before** making a separate external effect can lose the effect if the process crashes; marking it processed **after** can duplicate that external effect.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "External idempotency or durable reconciliation; local DB cannot make remote effect atomic",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+          "quote": "Returning the connection to the pool or throwing a timeout does **not** prove the business operation was undone.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The double charge is an effect-identity defect exposed by retry, not a regional failure: an outage may trigger redelivery, but a second charge requires a missing or non-atomic idempotency contract at the payment effect boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+          "quote": "The event ID is not necessarily the business command ID, nor the notification-delivery effect ID. Choosing all three to be equal can be legitimate only if their intended semantic scopes really coincide.",
+          "supports": "C16",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The canonical boundary inventory to record separately is: state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope",
+          "quote": "Record separately: state writer, ingress, runtime instance, scheduler/control service, deployment mechanism, network path, secrets/identity service, availability zone/host/region and operator responsibility.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Containment must be argued separately for compute, durable state, asynchronous work, rollout and routing; naming or grouping stateless workers does not isolate a shared database, queue, cache or configuration publisher, and independence only holds against specified failures.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+          "quote": "Merely naming a group of stateless workers a cell does not isolate a shared database, queue, cache or configuration publisher.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+          "quote": "Trace every dependency that a tenant can exhaust, corrupt or stall, and state which failures cross the boundary.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+          "quote": "A shared regional network or identity dependency remains a common failure mode and needs its own declared behavior.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A regional-failure claim is meaningful only with an explicit fault boundary: which clients lose which region, which reads may be stale, which region owns writes and which shared services stay healthy; a passing exercise covers only the traffic and dependencies actually disrupted.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+          "quote": "A regional exercise is meaningful only if its **fault boundary is explicit**.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+          "quote": "Thus a passing result concerns **traffic and dependencies that were actually redirected or suppressed**, not hypothetical failures of globally shared identity, cross-region control planes or every durable datastore.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+          "quote": "For another system, the decision should be written as a statement of exactly what is disrupted: *which clients lose which region? which reads are allowed to become stale? which region owns writes? which shared services remain healthy?*",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A single invented root cause is unsafe; a correct after-action record can show multiple contributing causes, and attribution needs evidence rather than a convenient label.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+          "quote": "A correct after-action record may show multiple contributing causes: one bad config, an untested schema interaction, monitoring blind spots and inadequate failover verification.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A same-outcome comparison must hold equal the observable outcome, admitted/offered load, logical data correctness and the named outage, plus staffing, steady-state cost and a restore test.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+          "quote": "Comparisons require the **same observable outcome, admitted/offered load, logical data correctness and named outage**, plus staffing, steady-state cost and restore test.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "A controlled comparison pins the artifact or container, dependencies, data snapshot, tool version and test script; it uses equal offered-demand traces or discloses intentional differences, and applies equal arrival distribution, payload and key skew, warm-up, endpoint configuration, pool limits, retries and cancellation to both candidates.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+          "quote": "Pin artifact/container, dependencies, data snapshot, tool version and test script.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+          "quote": "Use equal offered demand traces, or disclose which differences are intentional.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+          "quote": "apply equal arrival distribution, payload/key skew, warm-up, endpoint configuration, pool limits, retries and cancellation to candidate systems.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Candidates must be compared at a comparable resource budget as well as a comparable offered workload; otherwise lower latency may be a capacity purchase rather than an efficiency gain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+          "quote": "An architecture should be compared at a **comparable resource budget** as well as at a comparable offered workload.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+          "quote": "If one candidate deploys twice as many instances, lower latency may be a capacity purchase rather than an efficiency gain",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Different failure classes require distinct tests, and a failure experiment must define a safe abort condition; one class of passing test cannot establish tolerance of another class.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+          "quote": "Different failure classes require distinct tests:",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+          "quote": "A failure experiment must define a safe abort condition.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "For each failure, the comparison must measure client-level correct outcomes, explicit rejections, timeouts, state reconciliation, routed traffic, dependency recovery and total operating cost, not only replica counts or green instance status.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+          "quote": "For each failure, measure client-level correct outcomes, explicit rejections, timeouts, state reconciliation, routed traffic, dependency recovery and total operating cost.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b256d263efff488c8cf549e116be9683#historical-result-versus-experiment-design",
+          "quote": "End-user resilience rather than only green EC2 status is the metric",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "A cheaper or more elastic option is acceptable only if it satisfies the same failure, cold-start and user-journey gates as the alternative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison",
+          "quote": "At this simplistic accounting boundary, B is 55 units cheaper, but only if it satisfies the same failure, cold-start and user-journey gates.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "If the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown, the architecture decision must return insufficient evidence rather than assert a topology.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome",
+          "quote": "Return **insufficient evidence** if the dominant failure class, transaction owner, placement domain, control-plane availability, workload shape or measured RPO/RTO is unknown.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "A container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state; runtime topologies must be compared against the same outcome, failure model, resource needs and operating capability.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#integrated-decision-and-reading-route",
+          "quote": "A container or orchestration label does not establish fault isolation, useful spare capacity or recoverable state.",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#integrated-decision-and-reading-route",
+          "quote": "Compare runtime topologies against the same outcome, failure model, resource needs and operating capability.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "During a state-owner failure all stateless frontends can become ineffective; recovery gates must confirm warmed capacity, correct routing, persisted state and duplicate-safe replay.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+          "quote": "All stateless frontends can become ineffective",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+          "quote": "Confirm enough warmed capacity, correct routing, persisted state and duplicate-safe replay",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "Whether a runtime topology is viable is a question about workload, isolation and operating constraints, not about the compute-model label; the page frames the mechanism as conditional on those constraints.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#overview",
+          "quote": "**Owning question:** Which workload, isolation and operating constraints make a runtime topology viable?",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.3e79e1a21bd944a5bddf9564daed5066#1-failure-domains-are-dependency-sets-not-just-geographical-labels",
+    "tycho.chapter.9e35eb7b056f428093e36a2faf644a23#decision-and-worked-result",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#decision-question-and-scope",
+    "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#engineering-walkthrough-control-plane-outage-and-continued-data-plane-work",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#compute-models-and-their-real-trade-offs",
+    "tycho.chapter.1d8d87e683bc428e8dbed087106f37fd#decision-and-worked-result",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#1-decompose-the-actual-scale-out-response-time",
+    "tycho.page.dc2470904e004a4aa733abcdb25517ed#purpose-and-mission",
+    "tycho.page.345b19b2f5c1498187048b755b74d876#2-connection-pooling-is-not-queuing-capacity-magic",
+    "tycho.page.dc2470904e004a4aa733abcdb25517ed#integrated-decision-and-reading-route",
+    "tycho.page.dc2470904e004a4aa733abcdb25517ed#engineering-walkthrough-pool-capacity-is-a-fleet-equation-not-a-per-replica-setting",
+    "tycho.page.345b19b2f5c1498187048b755b74d876#1-capacity-belongs-to-the-entire-dependency-topology",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#6-design-choice-procedure",
+    "tycho.page.2f589d07205e4ecaab2fda36e9ac1cac#2-feedback-signals-and-the-hot-key-trap",
+    "tycho.page.cbc0f664610b4f73bc0ddc10a22cb50b#5-failure-modes-and-recovery",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#5-trade-offs-in-fault-isolation",
+    "tycho.page.aa810dd152884b35a84f0f4cbe4369e9#purpose-and-decision-question",
+    "tycho.page.60ae29b6b2a422214c18be04cf012b6e#separate-the-identities",
+    "tycho.chapter.0bf6cdc27afdb2f2494b82013d92eb73#a-worked-cross-store-problem",
+    "tycho.page.9fba18919c6c44cdbd6ba07b4825f1e2#at-least-once-semantics-four-actual-duplicate-defenses",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#purpose-and-mission",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#4-deduplication-is-only-as-strong-as-its-authority-boundary",
+    "tycho.page.69fe87997d804b3f9ee0f7b9e1655c73#5-message-redelivery-and-consumer-effects",
+    "tycho.page.1849584c8a3fadc9e06c8d2edead5789#a-cell-is-a-boundary-in-the-dependency-graph",
+    "tycho.page.b256d263efff488c8cf549e116be9683#failure-injection-has-a-defined-envelope-not-unlimited-coverage",
+    "tycho.page.ddc98233f12643a287ccd6bd0b92b4d6#6-after-action-analysis-avoid-a-single-invented-root-cause",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#4-control-confounders-without-erasing-real-behavior",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#6-decide-from-distributions-invariants-and-cost-together",
+    "tycho.page.180a25e8e7504ef4aa52257f76dbd1a8#5-fault-injection-must-preserve-the-claim-being-tested",
+    "tycho.page.c579aa863be74f9ca5718e58f6f34c21#6-architecture-acceptance-and-negative-experiments",
+    "tycho.page.b256d263efff488c8cf549e116be9683#historical-result-versus-experiment-design",
+    "tycho.page.32a5de3daa2d4f74b879165a4119f63a#3-original-synthetic-comparison",
+    "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#architecture-selection-outcome",
+    "tycho.page.ea94649bfd8c4be183f9114618d7ccaa#integrated-decision-and-reading-route",
+    "tycho.page.b7913b53d5ea439697bc5236f902d76e#failure-matrix-and-reversibility",
+    "tycho.page.5d5dd1d008b848a39dfae29a147da6d0#overview"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

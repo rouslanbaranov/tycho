@@ -1,0 +1,731 @@
+{
+  "task_id": "Q303",
+  "answer": "# Q303 — Domain gateways, ownership transfer, and the limits of adoption percentages\n\n**Verdict.** The declaration is not supported by the published facts. Classification produced a catalogue, not an ownership assignment. Roughly half the domains were implemented, which is a statement about partial rollout, not about client migration or authority transfer. A gateway that returns a shared response object built from several teams' internal tables is republishing those teams' schemas under one endpoint; an unbounded plugin at a domain extension point is exactly the failure mode the case warns about. The published percentages support a much narrower claim: at one observation date, 2,200 critical services had been catalogued into 70 domains and about half of the domains had some implementation, with company-reported local improvements.\n\n## 0. Layers and facet matrix\n\nLayers needed: **book only**. The question is conceptual, case-based and architectural; it does not need pattern-registry identity (atlas) or model/run/decision artifacts (modeling-and-simulation). All searches were run with `--volume book`. Search converged: the final formulations returned sections already read or material outside this question.\n\n| Facet | Query formulations | Evidence (section_key) |\n|---|---|---|\n| F1. Classification versus ownership | \"domain classification is not ownership\"; \"classification implementation migration denominators\"; \"accountable model owner authoritative state\" | tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services; tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission; tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route |\n| F2. Gateway contract and encapsulation | \"gateway hides internal tables\"; \"shared response object\"; \"gateway aggregation coupling\" | tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions; tycho.page.7419e7903c5549a6a9c7944f4214f7e1#negative-evidence-costs-and-alternatives; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation |\n| F3. Gateway authority, security and failure | \"gateway authorization\"; \"per-dependency deadline\"; \"gateway outage failure domain\" | tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway; tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree; tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation |\n| F4. Extension governance | \"unbounded plugin\"; \"typed provider interface\"; \"extension data schema privacy retention\" | tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions; tycho.page.7419e7903c5549a6a9c7944f4214f7e1#migration-and-validation |\n| F5. Adoption percentages | \"2,200 services 70 domains\"; \"half implemented\"; \"adoption percentage migration complete\" | tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits; tycho.page.7419e7903c5549a6a9c7944f4214f7e1#observed-results-and-temporal-validity |\n| F6. Completion and transfer gates | \"retire direct dependencies measured usage\"; \"client inventory\"; \"five contracts transition\" | tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal; tycho.page.7419e7903c5549a6a9c7944f4214f7e1#migration-and-validation; tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts |\n\n## 1. Why classification is not domain ownership\n\n### 1.1 Classification answers a different question\n\nClassification asks: which category does this service belong to? Ownership asks: who may decide the model's meaning, authoritatively change its state, validate a transition, publish a contract, operate the failure domain, and accept or reject an exception? A catalogue can answer the first question without answering any part of the second.\n\nThe case itself draws that line. It reports that 2,200 critical microservices had been classified into 70 domains and that roughly half were implemented, then states that \"Classification, implementation and full migration are separate denominators\" (C1). Classification is a historical cataloguing scope at the observation date; it is not a statement that 70 accountable owners exist, that 70 authoritative stores have moved, or that clients have cut over (C17).\n\nThe chapter on domain boundaries makes the same distinction structurally: a domain boundary defines the meaning and scope of a model; a module boundary controls implementation dependencies; a data-ownership boundary decides who can authoritatively change state; an API/event contract communicates chosen facts; a deployment boundary decides what can be released or fail independently. \"These distinctions are related but are not the same\" (C4). A programme can label services by domain while leaving all five boundaries exactly where they were.\n\n### 1.2 Ownership is accountable authority, not a grouping\n\nOwnership requires one accountable model owner and one accepted vocabulary, and a single decision authority for each invariant (C2). It also requires explicit authority over writes and state transitions: which logical aggregate or table is written by which module, exactly which operation may create, mutate, cancel or delete authoritative state, and where validation and concurrency control happen (C3). A shared entity name is not evidence of a shared invariant; the source warns that a shared word should not force a shared schema, and that a boundary is weak if none of its business rules can be stated separately (C26).\n\nTwo further points defeat a classification-equals-ownership inference. First, one domain can contain a single service or many, and it can span multiple organizational teams; grouping by the present reporting structure can split a coherent business capability (C5). So \"70 domains\" says nothing about 70 teams, 70 budgets, 70 on-call rotations, or 70 state authorities. Second, the case describes organizational and API ownership above individual implementations, not a replacement of implementation ownership by a label (C5).\n\n### 1.3 Implementation is not migration, and migration is not authority transfer\n\nThe denominator gap has at least three steps:\n\n1. **Classification:** services are assigned to domains. No authority changes.\n2. **Implementation:** a domain gateway or extension point is built. A facade exists, but the authoritative store and the client dependencies may be unchanged.\n3. **Migration:** clients move to the published contract and direct implementation dependencies are retired only after measured usage has ceased.\n\nThe page's transfer guidance treats the boundary first as an ownership and dependency inventory, then introduces a gateway whose published API hides internal service churn (C12). That is a sequence, not a completion certificate. Its verification gate requires an inventory of dependent clients, schema/contract/API compatibility and an authorized owner before the interface is accepted. Migration is proven by a compatible period, observed consumers and versioned fixtures, not by a deployment announcement (C12).\n\nA declaration that every client must call a gateway is a routing decree. The page's Tycho transfer proposal explicitly recommends starting from one operationally costly cross-team capability \"rather than decree universal gateways,\" and says that \"swapping a call graph picture for a functional contract is not\" the change (C13). A new call path can preserve the old coupling if the gateway still reads the old internal tables; that is precisely how a shared response object betrays the migration.\n\n## 2. What each domain gateway must preserve\n\nA gateway is not valuable because it is a gateway. It is valuable because it preserves the domain's contract and authority while hiding implementation churn. The five contracts below are a compact test; every transition must state them explicitly: functional ownership, state authority, API/event semantics, security/operations, and failure/recovery (C22).\n\n### 2.1 Contract identity and encapsulation\n\nThe gateway must expose a stable entry interface for RPC, event or query contracts and hide internal services, tables and pipelines (C6). It must preserve caller-visible semantics while the domain replaces, splits or consolidates services behind it, and it must provide a documented exception mechanism rather than an undocumented side door (C6, C11). Responses need versioned semantics: a syntactically valid payload is not enough when field meaning, error behavior or state assumptions change (C11).\n\nThe shared response object is the opposite of encapsulation. It is acceptable only if it is a constrained aggregation of owner-published responses: a read-mostly view, a small and stable shape, at a gateway that is already the trust boundary (C8). It is not acceptable when it is assembled from several teams' internal tables. That is an over-broad shared DTO, and over-broad shared DTOs or non-versioned response semantics recreate direct consumer coupling (C7). It also preserves the old source-of-truth coupling under a new name: clients now depend on one object whose fields are owned by different teams, but no single team can safely change its own table without breaking the shared object (C7, C8).\n\n### 2.2 Authority and data ownership\n\nThe gateway may translate or route. It must not change the authoritative store as a side effect of being introduced (C11). Each logical aggregate or table still needs one writer; the gateway must not become a second writer, a distributed transaction coordinator, or a place where cross-domain joins become business decisions (C3). If the response contains fields from several domains, each field needs a semantic owner, a publication contract, a version, an allowed staleness and a reconciliation rule (C29). Without those, the gateway is a shared database view over HTTP, not a domain contract.\n\n### 2.3 Authorization\n\nThe gateway can authenticate the caller, verify a signed token and forward an integrity-protected principal, but object-level authorization must remain at the resource-owning boundary (C9). A gateway \"cannot certify object ownership or replace backend authorization\" (C9). If the gateway becomes the only authorization point, removing the backend check creates a privileged bypass path. The safe order is authenticate, apply quota, then authorize at the resource owner; if the policy plane is unavailable, fail closed unless a bounded, audited break-glass path exists.\n\n### 2.4 Failure, operations and change\n\nAggregation must preserve failure semantics. Each downstream call carries its own deadline and authorization; retries are capped per dependency and for the whole aggregate; the response exposes which dependency failed; a partial response is a versioned shape that marks missing parts rather than silently omitting them (C10). Do not aggregate when strong consistency across owners is required, one slow dependency exhausts the gateway, the composition is a hidden domain workflow, or partial results cannot be represented honestly (C8). A gateway outage is its own failure domain, not an invisible routing detail (C10).\n\nGateways can also become central points of change. Ownership therefore includes a named operator, versioned policy, tested bypass path, incident response, SLOs, cost and rollback. Only shared, cross-cutting, edge-enforceable functions belong in gateway offloading; a domain-state function or an edge that blocks every backend is a contraindication, and each offloaded function needs an owner, a versioned policy and a failure mode (C25, C27).\n\n### 2.5 The shared-response-object test\n\nAsk four questions of every field in the shared object:\n\n1. Which domain owns its meaning and authoritative value?\n2. Is it published through that domain's contract, with a version and an allowed staleness?\n3. Does the gateway have authority to join it with fields from another domain, or is that a hidden domain workflow?\n4. Can one owner change its table without forcing a coordinated release of the gateway and every client?\n\nIf the answers are no, the object is not a contract. It is a cross-domain schema with a single endpoint and multiple de facto owners. That is a new coupling mechanism, not an ownership migration.\n\n## 3. What each extension point must preserve\n\n### 3.1 Logic extensions: typed, documented and bounded\n\nA logic extension must be a typed provider/plugin interface attached at a documented domain extension point (C14). The word \"typed\" is necessary but not sufficient. An unbounded plugin can change latency, fault isolation and safety behavior even while the API remains stable (C14). The extension contract therefore needs resource and time bounds, concurrency limits, timeout and retry policy, circuit breaking, a sandbox or isolation boundary where feasible, a kill switch, and a failure mode that does not take down the domain for unrelated callers (C28).\n\nThe purpose of the extension mechanism is to serve explicit integrations without every external team editing the same microservices (C15). That purpose is defeated if a product team can attach arbitrary code at a domain extension point and change the domain's runtime behavior for everyone. The product team may own its plugin; it does not thereby own the domain's latency budget, fault isolation or safety case.\n\n### 3.2 Data extensions: schema, identity, privacy and retention\n\nA data extension is still data with an owner and a lifecycle. Serialized payloads require schema/version, authentication, size, privacy and retention controls (C16). A plugin that accepts arbitrary context must not become an unversioned side channel around the domain's contract, and it must not receive fields the domain is not authorized to publish.\n\n### 3.3 Governance of extensions\n\nEach extension needs a documented exception mechanism, an owner, a review path, a version and a deprecation route (C6, C15). The domain owner must be able to reject a plugin that violates an invariant even if the plugin's API is syntactically compatible. Tests should cover plugin timeout, plugin crash, plugin resource exhaustion, partial failure, unknown data and disable/rollback. Without those, \"extension point\" is just a name for unbounded code execution inside the domain.\n\n## 4. What the published adoption percentages actually support\n\n| Publisher statement (July 2020) | What it supports | What it does not support |\n|---|---|---|\n| 2,200 critical services classified into 70 domains | Historical cataloguing scope at the observation date | All 70 domains migrated, uniform domain size, or 70 ownership assignments |\n| Roughly 50% of domains implemented | Partial rollout, with other domains still planned | A 100% complete organization-wide transition, or ownership transfer for the implemented half |\n| 25–50% shorter onboarding | Company-reported improvement in the described domain-gateway context | A transferable labor-cost reduction independent of task size |\n| One platform integration from 3 days to 3 hours | A named experience with extensions | A randomized comparison, or \"every change became ten times faster\" |\n| Service half-life estimated at 1.5 years | A source-reported fleet-churn estimate used to justify stable gateway interfaces | Every service expiring exactly at 18 months, or every domain changing at the same rate |\n\n### 4.1 What the numbers do support\n\nThey support a narrow, time-scoped description: at the observation date, 2,200 critical services had been catalogued into 70 domains; about half of those domains had some implementation; the publisher reported local onboarding and integration improvements in that context. They do not provide a controlled cohort, an independently measured broad p99, or an invariant organizational velocity model (C20). Any quotation should carry the observation window, the population and the confidence caveats (C20).\n\n### 4.2 What they do not support\n\nThey do not support \"ownership migration complete.\" The source says roughly half the domains were implemented and other domains were still planned (C18). A completion claim would need, at minimum, the number of clients migrated, the number of direct implementation dependencies retired, the number of authoritative stores moved, and the number of extensions bounded and tested. None of those denominators appear in the published figures.\n\nThey also do not support a universal productivity claim. The 25–50% onboarding figure is company-reported context, not a transferable labor-cost reduction; the 3-days-to-3-hours figure is a named experience with extensions, not a randomized comparison; the 1.5-year half-life is a fleet-churn estimate, not an exact expiry date (C19). The case is a company-reported historical result, not an independently reproduced benchmark, its technical review is pending, and it should not be extrapolated to current practice (C21).\n\n### 4.3 Even 100% implementation would not prove ownership migration\n\nSuppose all 70 domains had gateways. That would still not prove ownership migration. A gateway can front the old services while reading their internal tables; a client can call the gateway while still depending on the old response shape; an extension point can exist while remaining unbounded. Ownership is a governance state over five contracts, not a deployment count (C22). The shared response object and the unbounded plugin are evidence that the organization has changed the call graph without changing the authority structure.\n\n## 5. What would make \"complete\" defensible\n\nA defensible completion claim would record, for each domain:\n\n1. **Functional ownership:** which capability accepts each user-visible operation (C22).\n2. **State authority:** where each authoritative entity is written and validated, and which source is current during any coexistence (C22).\n3. **API/event semantics:** public operation identity, schema, ordering, errors, supported versions and replay horizon (C22).\n4. **Security and operations:** trust boundaries, access control, dependency/service budget, named on-call and rollback authority (C22).\n5. **Failure and recovery:** RPO/RTO, availability model, cutover rollback window and forward-repair path (C22).\n\nOn the evidence side, it would need: a client inventory with owners; contract compatibility tests and versioned fixtures; measured traffic through the gateway; zero direct implementation-table dependencies; authorization tests at the resource owner; failure injection for gateway outage, stale route, plugin timeout and dependency failure; resource limits and a kill switch for every extension; and a rollback drill. Direct implementation dependencies should be retired only after measured usage has ceased (C12). Until then, the honest answer is \"partial implementation and incomplete evidence,\" not \"complete.\"\n\n## 6. Boundaries, contradictions and unknowns\n\n- **What \"implemented\" means is undefined.** It could mean a gateway exists, a domain model exists, or clients have moved. The source does not define implementation depth or client coverage. The completion claim inherits that ambiguity.\n- **The shared response object's status is ambiguous.** If it is a read-only projection of owner-published contracts with explicit owners, versions and staleness, it may be a constrained aggregation. If it is built from several teams' internal tables, as stated, it is a cross-domain shared schema. The distinction is not cosmetic; it determines whether the gateway is a contract or a database view.\n- **The plugin's capabilities are stipulated as unbounded.** If the plugin is actually sandboxed, resource-limited and reviewed, the conclusion changes. The word \"unbounded\" is the decisive fact.\n- **Client behaviour is unknown.** A mandate to call a gateway is not evidence that clients do, that old calls have stopped, or that direct table access has ceased.\n- **The case is dated and first-party.** It reports a July 2020 observation, not a controlled benchmark, and current topology, total effort, p99 and comparative cost are unknown (C21). The risk column in the case is Tycho analysis, not a record of every incident experienced by the publisher (C30).\n- **The organization's declaration may be a roadmap statement.** If \"complete\" means \"the domain model and target ownership are defined,\" it should be stated that way. The published evidence supports classification and partial implementation, not migration completion.\n\n## 7. Evidence map\n\n| Claim | Short form | Anchor(s) |\n|---|---|---|\n| C1 | Classification denominators | case: why-domain |\n| C2 | Ownership is accountable authority | V02: domain-authority notes; V02: integrated decision |\n| C3 | Authority per aggregate/table | V02: domain-authority section 2 |\n| C4 | Five distinct boundaries | V02: purpose; V02: integrated decision |\n| C5 | Domains span teams and service counts | case: contract; case: why-domain |\n| C6 | Gateway hides internals, preserves semantics | case: contract |\n| C7 | Leaked models/DTOs recreate coupling | case: contract; case: negative-evidence |\n| C8 | Shared internal-table object is not valid aggregation | V08: gateway-aggregation |\n| C9 | Authorization stays at resource owner | V08: api-gateway; V02: ownership-isolation |\n| C10 | Failure semantics of aggregation | V08: gateway-aggregation; V08: api-gateway |\n| C11 | Preserve authoritative store and contract identity | case: transfer; case: contract; V02: boundary-evolution |\n| C12 | Completion requires client inventory and measured retirement | case: migration; V02: boundary-evolution; case: transfer |\n| C13 | Decree/call graph is not evidence | case: transfer; V02: boundary-evolution |\n| C14 | Typed, bounded plugin interface | case: contract |\n| C15 | Extensions serve explicit integrations | case: migration; case: contract |\n| C16 | Data-extension controls | case: contract |\n| C17 | 2,200/70 is cataloguing scope | case: quantitative |\n| C18 | 50% is partial rollout | case: quantitative |\n| C19 | Other figures are contextual | case: quantitative |\n| C20 | No controls; caveats required | case: quantitative |\n| C21 | Company-reported, review pending, dated | case: observed; case: overview |\n| C22 | Five contracts | V10: five distinct contracts |\n| C23 | Hidden coupling is the starting problem | case: situation; case: chosen |\n| C24 | Conditional applicability | case: applicability |\n| C25 | Gateway is a central point of change | case: negative-evidence; case: migration; V08: api-gateway; V08: gateway-offloading |\n| C26 | Shared names do not imply shared invariants | V02: domain-authority section 1 |\n| C27 | Offloading limits and ownership | V08: gateway-offloading |\n| C28 | Plugin effects must be bounded | case: contract |\n| C29 | Shared response needs per-field ownership | V08: gateway-aggregation; V02: domain-authority section 2 |\n| C30 | Risk column is Tycho analysis | case: contract |\n\nThe full verbatim fragments are in the claims ledger of the answer JSON. No claim is supported by a snippet alone; each cited section was read through the session CLI.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The 2,200-service / 70-domain statement is a classification result only: the source treats classification, implementation and full migration as separate denominators.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services",
+          "quote": "2,200 critical microservices had been classified into 70 domains",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services",
+          "quote": "Classification, implementation and full migration are separate denominators.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Domain ownership is accountable decision authority, not a label: it requires one accountable model owner and one accepted vocabulary, plus a single decision authority for each invariant.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "A bounded context has one accountable model owner and one accepted vocabulary.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "What matters is a single decision authority for each invariant.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+          "quote": "Assign each invariant and authoritative state transition to an owner before dividing storage or deployment.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Authority over writes, validation, state transitions and published read models must be assigned per logical aggregate or table; shared storage or separate databases do not by themselves establish exclusive ownership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "it must still define which module owns writes to each logical aggregate or table",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "separate databases do not automatically prove exclusive authority",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "exactly which operation may create, mutate, cancel or delete authoritative state",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "who may cache/project state, allowed staleness and reconciliation",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Domain, module, data-ownership, API/event-contract and deployment boundaries are distinct, so grouping services cannot by itself establish ownership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+          "quote": "A **domain boundary** defines the meaning and scope of a model. A **module boundary** controls implementation dependencies. A **data ownership boundary** decides who can authoritatively change state. An **API/event contract** communicates chosen facts between boundaries. A **deployment boundary** decides what can be released or fail independently.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+          "quote": "These distinctions are related but are not the same.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+          "quote": "schema agreement alone does not resolve ownership",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A domain is a collection of related implementation services that may span organizational teams and may contain one service or many; grouping by current reporting structure can split a coherent capability.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Collection of related implementation services, sometimes within multiple organizational teams",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Grouping by present reporting structure alone may split a coherent business capability",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services",
+          "quote": "one domain can contain a single service or many",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services",
+          "quote": "a stable level of organizational and API ownership",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A domain gateway is a stable external contract that hides internal services, tables and pipelines and preserves caller-visible semantics while the domain replaces, splits or consolidates implementations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "A stable entry interface exposing RPC, event or query contracts and hiding internal services, tables and pipelines",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "The owner can replace, split or consolidate services behind a gateway while maintaining caller-visible semantics and a documented exception mechanism.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Over-broad shared DTOs, non-versioned responses or queries over implementation tables recreate direct consumer coupling and preserve the old source-of-truth coupling under a new name.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Gateway bypass, over-broad shared DTOs or non-versioned response semantics recreate direct consumer coupling",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#negative-evidence-costs-and-alternatives",
+          "quote": "Services are not magically independent when gateways leak internal data models.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "letting clients query implementation tables across domains would preserve the old source-of-truth coupling under a new name",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A gateway response object assembled from several teams' internal tables is therefore not valid gateway aggregation; it is a cross-domain shared read/schema view with no single semantic owner.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Gateway aggregation composes several owner responses into one client response at the edge.",
+          "supports": "C8",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "It fits a read-mostly view with a small, stable shape where the gateway is already the trust boundary.",
+          "supports": "C8",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Do not aggregate when strong consistency across owners is required, one slow dependency exhausts the gateway, the composition is a hidden domain workflow, or partial results cannot be represented honestly.",
+          "supports": "C8",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A gateway may authenticate and forward identity, but object-level authorization must remain at the resource-owning boundary; a gateway cannot certify object ownership or replace backend authorization.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "A gateway cannot certify object ownership or replace backend authorization.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "Keep resource authorization at the boundary owning the resource",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+          "quote": "Object-level authorization needs server-side enforcement at the resource authority, not only at an API gateway.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "Removing every backend check creates a privileged bypass path unless network and identity contracts actually exclude it.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "The order is authenticate, apply quota, then authorize at the resource-owning boundary.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "If the policy plane is unavailable, fail closed unless a bounded, audited break-glass path exists.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Gateways and aggregations must preserve failure semantics: per-dependency deadlines and authorization, capped retries, exposed failing dependency, versioned partial results, and the gateway outage as its own failure domain.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "Each downstream call carries its own deadline and authorization.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "cap retries per dependency and for the whole aggregate, and expose which dependency failed",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "A partial response needs a versioned shape that marks missing parts rather than silently omitting them.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "treat a gateway outage as its own failure domain rather than assuming every backend remains reachable",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Gateway migration must preserve the authoritative store, caller-visible contract identity, versioning and rollback; a call-graph change is not a functional contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+          "quote": "add translation or routing behind that seam without changing the authoritative store",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+          "quote": "swapping a call graph picture for a functional contract is not",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+          "quote": "Versioning and rollback of the gateway are part of the change",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "The owner can replace, split or consolidate services behind a gateway while maintaining caller-visible semantics and a documented exception mechanism.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+          "quote": "The interface needs **wire compatibility**, **semantic compatibility** and **state compatibility**, not just a syntactically valid payload.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Ownership migration is not complete until dependent clients are inventoried, a compatible period is observed, and direct implementation dependencies are retired only after measured usage has ceased.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#migration-and-validation",
+          "quote": "Inventory of dependent clients, schema/contract/API compatibility and authorized owner",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+          "quote": "Preserve a compatible period, observe actual consumers and prove cutover with versioned fixtures.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+          "quote": "(6) retire direct implementation dependencies only after measured usage has ceased",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Declaring completion and instructing every client to call a gateway is a decree and a call-graph change, not evidence that old contracts or direct dependencies disappeared.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+          "quote": "rather than decree universal gateways",
+          "supports": "C13",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+          "quote": "swapping a call graph picture for a functional contract is not",
+          "supports": "C13",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+          "quote": "“we deployed the new producer” is not evidence that the old contract has disappeared.",
+          "supports": "C13",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "An extension must be a typed provider/plugin interface at a documented extension point; unbounded plugins can change latency, fault isolation and safety despite a stable API.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Typed provider/plugin interface attached at a documented domain extension point",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Unbounded plugins can change latency, fault isolation and safety behavior despite a stable API",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Extensions exist to serve explicit integrations without every external team editing the same microservices, and they need a documented exception mechanism.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#migration-and-validation",
+          "quote": "An extension mechanism can then serve explicit integrations without every external team editing the same microservices.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "The owner can replace, split or consolidate services behind a gateway while maintaining caller-visible semantics and a documented exception mechanism.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Data extensions must preserve schema/version, authentication, size, privacy and retention controls; serialized payloads are not exempt.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Serialized payloads still require schema/version, authentication, size, privacy and retention controls",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The 2,200-to-70 figure supports only historical cataloguing scope at the observation date, not completed migration or uniform domain size.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "Historical cataloguing scope at the author's observation date",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "All 70 domains were already migrated or have uniform size",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The roughly 50% implemented figure supports partial rollout with other domains planned, not a 100% complete organization-wide transition.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "Partial rollout, with other domains still planned",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "A 100% complete organization-wide DOMA transition",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The onboarding, integration-time and service-half-life figures are company-reported context, a named experience and a fleet-churn estimate, not transferable causal benchmarks.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "Company-reported improvements for the described domain-gateway context",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "Named experience with extensions, not a randomized comparison",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "Source-reported fleet churn estimate used to justify stable gateway interfaces",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The report provides no reproducible control cohorts, independent broad p99 or invariant velocity model, so any quoted percentage needs its observation window, population and confidence caveats.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "provide reproducible control cohorts, an independently measured broad p99 or an invariant organizational velocity model",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+          "quote": "An agent should return the historical observation window, population and confidence caveats along with any quoted percentage.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The case is a company-reported historical result, not an independently reproduced benchmark; its technical review is pending and it should not be extrapolated to current practice.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#observed-results-and-temporal-validity",
+          "quote": "This is a company-reported historical result, not an independently reproduced benchmark.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#observed-results-and-temporal-validity",
+          "quote": "Do not extrapolate a dated deployment to October 2026 current practice.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#overview",
+          "quote": "evidence-bound original draft; technical review pending",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "A transition must keep five contracts explicit: functional ownership, state authority, API/event semantics, security/operations, and failure/recovery.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Which capability accepts each user-visible operation",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Where each authoritative entity is written and validated",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Public operation identity, schema, ordering and errors",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Trust boundaries, access control, dependency/service budget",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+          "quote": "Long-term RPO/RTO and availability model",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The starting problem was hidden coupling across independently deployable services, which domain labels alone do not remove.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#situation-the-legacy-architecture-and-constraint",
+          "quote": "Hidden coupling allowed networked-monolith behavior despite independent deployability.",
+          "supports": "C23",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#chosen-architectural-change",
+          "quote": "The aim was to reason about ownership, blast radius and who is allowed to depend on whom",
+          "supports": "C23",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The case's guidance is conditional: it favors domains and API ownership for a preexisting large distributed fleet, requires baseline data ownership and measurable gates, and is not a universal preferred architecture.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#applicability-to-legacy-modernization",
+          "quote": "Favor domains and API ownership when a *preexisting* large distributed fleet suffers escalating coordination cost.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#applicability-to-legacy-modernization",
+          "quote": "Before a roadmap is approved, require a baseline with data ownership and blast radius, a comparison to a smaller intervention, and measurable acceptance gates.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#applicability-to-legacy-modernization",
+          "quote": "not as a universal preferred architecture.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Gateways can become central points of change, so gateway ownership includes operations, incident response and failure-domain isolation, not only routing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#negative-evidence-costs-and-alternatives",
+          "quote": "Additional gateways can become central points of change",
+          "supports": "C25",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+          "quote": "treat a gateway outage as its own failure domain rather than assuming every backend remains reachable",
+          "supports": "C25",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#migration-and-validation",
+          "quote": "Error budgets, runbooks, trace continuity, incident ownership and cost",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Each offloaded function needs an owner, a versioned policy and a failure mode",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Shared entity names do not imply one invariant or owner; a boundary is weak if none of its business rules can be stated separately.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+          "quote": "A shared word \"item\" should not force a database schema shared by all four contexts.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+          "quote": "A boundary is weak if none of its business rules can be stated separately.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Only shared, cross-cutting, edge-enforceable functions belong in gateway offloading; domain-state functions and edges that block every backend are contraindications, and each offloaded function needs an owner, a versioned policy and a failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Only shared, cross-cutting and edge-enforceable functions belong here; a domain-state function or an edge that blocks every backend is a contraindication.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+          "quote": "Each offloaded function needs an owner, a versioned policy and a failure mode",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "Bounding an unbounded plugin requires explicit resource, time, concurrency, isolation, failure and kill-switch controls; a stable API does not bound latency, fault isolation or safety.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Unbounded plugins can change latency, fault isolation and safety behavior despite a stable API",
+          "supports": "C28",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "Typed provider/plugin interface attached at a documented domain extension point",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ],
+      "status": "inference"
+    },
+    {
+      "claim_id": "C29",
+      "text": "A shared response object built from several teams' internal tables needs per-field ownership, publication contract, version, staleness and reconciliation before it can be treated as a domain contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "who may cache/project state, allowed staleness and reconciliation",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+          "quote": "It fits a read-mostly view with a small, stable shape where the gateway is already the trust boundary.",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "A stable entry interface exposing RPC, event or query contracts and hiding internal services, tables and pipelines",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ],
+      "status": "inference"
+    },
+    {
+      "claim_id": "C30",
+      "text": "The case's risk column is original Tycho analysis, so it is not a source-reported incident record.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+          "quote": "The risk column is an original Tycho analysis",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ],
+      "status": "inference"
+    }
+  ],
+  "citations": [
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+    "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+    "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#negative-evidence-costs-and-alternatives",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-aggregation",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#api-gateway",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#transfer-staged-migration-and-reversal-gates-tycho-original-proposal",
+    "tycho.page.91c10dd544b441ddb940aaee24825638#5-evolving-a-boundary-without-an-atomic-fleet-wide-release",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#migration-and-validation",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#observed-results-and-temporal-validity",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#situation-the-legacy-architecture-and-constraint",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#chosen-architectural-change",
+    "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#applicability-to-legacy-modernization",
+    "tycho.page.99c509e133d9494fbb3080b6212b7ba7#gateway-offloading",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

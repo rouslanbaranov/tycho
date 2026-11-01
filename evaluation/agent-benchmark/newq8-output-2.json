@@ -1,0 +1,142 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A service computes an 800 ms request deadline from wall-clock timestamps at ingress, sends the same absolute instant to two downstream services, grants each a fresh 800 ms, and stores cache entries whose TTL starts when a 20-second computation finishes. After an NTP step on one host and a process pause during a lease, some requests arrive already expired and a cache serves a value whose information is older than its advertised freshness. Why do the wall-clock, elapsed-time and durable-schedule quantities need separate contracts, how should a remaining-duration budget be propagated, and what must expiry and restart record before a timer or TTL can be trusted?",
+      "required_evidence": [
+        "tycho.page.a0d3dfe1c8a245e98d9c9ae4813b8c85#clock-domains-deadlines-and-expiry",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#leases-stale-owners-and-fencing-at-the-destination",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock"
+      ],
+      "core_claims": [
+        "A wall clock labels a human or civil instant and supports expiry only under defined skew rules; it cannot measure exact elapsed duration across a clock adjustment.",
+        "A local elapsed-time clock measures a timeout within one process without requiring agreement with another machine, but its origin is local, so a raw monotonic reading cannot be sent to another host as a deadline.",
+        "A remaining-duration protocol must deduct validation, admission and queueing time and reserve response and cleanup time; an absolute deadline needs an explicit skew tolerance, and if neither protocol yields a positive safe budget the caller must reject or reconcile rather than grant a fresh full timeout.",
+        "Expiry is a state and authorization transition: a TTL written after a 20-second computation can leave an entry present while its underlying information is already older, so freshness must derive from the authoritative observation or version and the processing delay, not from cache residency.",
+        "A lease is a time-bounded grant: a holder can pause past expiry and a delayed write can arrive after a new holder is established, so mutual exclusion depends on bounded pauses and on the destination atomically rejecting stale epochs, not on the old holder's local belief.",
+        "A timer that must survive a pause or restart needs a durable time contract and re-established local budgets, with event time recorded separately from ingestion or observation time, rather than subtracting readings taken in incompatible clock domains."
+      ],
+      "optional_claims": [
+        "Clock tolerance on token expiry widens the acceptance interval: a five-minute token plus a two-minute allowance can be accepted for longer than its nominal five minutes, and the exact bound depends on issuer and verifier clocks and configured checks, so allowances must not be added casually.",
+        "RPO and RTO are requirements or observed drill results tied to a named failure and measurement basis, not inherent database settings; an RPO of zero must specify the failure class and the commit-acknowledgment boundary."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A nightly billing-report job is scheduled every ten minutes, but a run takes twenty-five minutes. A scheduler replica fails after sending a launch request but before recording its completion; the new leader resends under the same job name, and a paused worker later publishes its output after its lease expires. The team says the scheduler log is consistent, so the report was produced once. Why does consensus on the scheduler log not establish the external effect, what must each launch and output identity record, and how should the scheduler choose between a skipped and a duplicated launch?",
+      "required_evidence": [
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#1-a-periodic-job-is-a-sequence-of-launches",
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#3-scheduler-state-is-not-the-external-effect",
+        "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#5-publication-correctness-lease-task-identity-and-unique-outputs"
+      ],
+      "core_claims": [
+        "A cron-like scheduler launches jobs and does not necessarily track their effects; fire-and-forget makes an ambiguous launch indistinguishable from a missed one, and a tracked scheduler that retries must decide whether a retry duplicates work.",
+        "The first design question is which outcome is tolerable, a skipped launch or a duplicate one: an idempotent collection job may tolerate a duplicate, while a payroll or newsletter job may not because the duplicate can be irreversible and the skipped launch can be detected and repaired.",
+        "A timeout is not evidence that the external job did not start, so the scheduler must either make the external operation idempotent or be able to look up its authoritative state.",
+        "Every launch needs an identity that survives leader changes and is usable outside the scheduler: the job or workflow identity, the scheduled time or logical window, and the owner or tenant and configuration revision where relevant, with the external job name including the scheduled time or window so a later run is not mistaken for an earlier one.",
+        "The scheduler persists intent before attempting a launch and persists the observed completion outcome, and after a leader failure the next leader resolves the intent by looking up the stable external name rather than creating a new launch; without a stable effect key or outcome lookup it must expose an explicit unknown state and a manual reconciliation path.",
+        "Consensus on the scheduler log does not prove that an RPC was sent, a container started or a side effect committed; a scheduler snapshot plus a bounded log suffix reconstructs scheduler state only, a new leader must reconcile in-flight launches before opening new work, and membership changes or failover do not fence an external worker that is still running."
+      ],
+      "optional_claims": [
+        "Exactly-once publication of an intended output requires a valid lease, immutable task and configuration identity, a unique output name and a validated coordinator identity together, and even then it does not make every external side effect exactly once.",
+        "A lease is not a lock on the worker process: a paused worker can keep writing to its own unique output after expiry and must fail at the commit boundary, so the lease holder, task identity and output namespace are separate checks."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A gateway terminates TLS, logs the Authorization header, and forwards a bearer access token to three internal services. An attacker who obtains the token from a log replays it for the rest of its hour, and one service accepts it because the signature and scope are valid. The team adds a two-minute clock allowance and a one-hour cached key set to reduce errors. Why do TLS, scope and signature not establish that the presenter is the entitled principal, what must sender-constraining bind, and what must the token, key and revocation contracts record before replay is bounded?",
+      "required_evidence": [
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#4-oauth2-token-scope-proof-and-replay",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#4-token-and-credential-boundaries",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities",
+        "tycho.page.58c3c4e5e19d46bcb2da66255eb61068#3-object-level-function-level-and-property-level-authorization"
+      ],
+      "core_claims": [
+        "A bearer token can be replayed by any holder until it is invalidated or expires; TLS protects transit only, not storage, logging, token theft or a compromised endpoint.",
+        "Sender-constrained tokens, such as mutual-TLS-bound tokens or DPoP, bind token use to proof of possession of corresponding key material, but they add key lifecycle, proxy, replay-window and client-support requirements rather than removing them.",
+        "Audience restricts which resource servers may accept a token, so a token issued for service A should not automatically be accepted by unrelated service B, while scopes are coarse delegated authority that cannot authorize every object of the named type.",
+        "Revocation and key rotation need separate policies: a planned rollover must keep the old verification key for an overlap matched to the old token lifetime and verifier distribution, a compromised signing key may make normal overlap unsafe, and a key identifier must select inside a configured trust relationship rather than let untrusted token fields choose an arbitrary key URL or algorithm.",
+        "The credential contract must record issuer, intended audience and scope, the authenticated client and resource relationship, expiry, revocation, refresh and rotation, key distribution and trust-root recovery, clock skew, cache lifetime, disconnected-policy behavior, protection against exfiltration in URLs, logs and traces, and a negative test that cross-resource token reuse is rejected.",
+        "Clock tolerance widens the acceptance window, and a cryptographically valid token can still outlive a revoked session or object permission, which the resource must recheck rather than infer from the signature and scope."
+      ],
+      "optional_claims": [
+        "If a remote policy service times out, protected writes may need to fail closed, while a critical read-only recovery function may use a deliberately pre-authorized emergency policy with strong audit and expiration.",
+        "A single role string is often too coarse for ownership, delegated time windows and tenant boundaries; richer attribute or relationship-aware policy adds policy authoring, caching or invalidation and explainability costs."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A delivery service accepts a webhook subscription, writes a pending row, and returns 202 before any callback is attempted. It retries every callback until it receives a 2xx. A receiver applies the effect and crashes before responding, so the event is redelivered; a later event reaches the receiver before an earlier one; an operator edits the subscription URL to an address inside the private network; and a week-old event is replayed under a fresh message id. The team calls the integration at-least-once and otherwise fire-and-forget. Why does durable acceptance plus retry not establish one ordered effect, what must the event, callback and receiver identities record, and when should a permanently failing callback be quarantined instead of retried?",
+      "required_evidence": [
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#conditional-updates-pagination-and-callback-contracts",
+        "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+        "tycho.page.eba0d0f0151c4044a71589c4d216b4b9#3-inbox-and-consumer-local-atomicity",
+        "tycho.page.148a37ff87ca4e42a2fec625c65319b0#scheduled-runs-durable-timers-and-poison-work-recovery"
+      ],
+      "core_claims": [
+        "Durably accepting an event before acknowledging protects the sender's intent, but it does not establish that the receiver applied the effect, and a sender retry does not establish ordering across different events.",
+        "A receiver restart after applying an effect but before responding causes redelivery, so the receiver must process under an idempotent effect identity and may need a second durable send-intent record and reconciliation with the downstream provider; a local inbox does not guarantee exactly-once side effects outside its local authority.",
+        "The event contract must publish event identity, schema or version, creation context and signature metadata, protect against replay, and durably accept before acknowledging, while the receiver's deduplication identity is scoped by subscriber and event and its retention covers the maximum broker redelivery, dead-letter replay and historical replay horizon.",
+        "Replaying an event under a fresh message id bypasses deduplication and risks a duplicate external effect; repair should preserve the same logical effect identity, or create an explicitly new operation if intent changed, and should recheck current authorization before repair.",
+        "Callback destinations must be resolved under an explicit destination policy that examines redirects, identity, secret rotation and retry budgets, so that arbitrary subscription URLs do not turn the delivery service into unrestricted outbound access.",
+        "A permanently failing callback needs quarantine or repair and a user-visible status rather than infinite retries: transient, permanent and unknown outcomes are classified, attempts and total age are capped, enough evidence is preserved to diagnose without leaking payloads, and a dead-letter queue is a holding and triage mechanism rather than delivery."
+      ],
+      "optional_claims": [
+        "HTTP method semantics, application effect identity and outcome discovery are distinct notions: a POST has no general automatic-retry guarantee, and a stable operation key scoped to the principal and normalized arguments can return the recorded outcome while a reused key with materially different arguments is a conflict.",
+        "Callback signature metadata and secret rotation belong to the contract, and a valid signature is not proof of a fresh, already-authorized effect, so replay protection must remain explicit."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A five-voter Raft-style cluster elects a new leader after a partition heals. The new leader's health endpoint is green and it reports itself leader, so the load balancer sends linearizable reads and authoritative writes to it. One acknowledged entry is still unapplied on that node, a follower serves a stale read, and an operator restarts a replica from a backup to restore membership. Why does elected status not establish that the leader can serve correct reads, which log and quorum conditions must it confirm, and why are reconfiguration and restoration different actions?",
+      "required_evidence": [
+        "tycho.page.4961bb03a6534242a0977db265b68d95#4-leader-elections-logs-and-client-observations",
+        "tycho.page.4961bb03a6534242a0977db265b68d95#5-reconfiguration-and-restoration-are-different-actions",
+        "tycho.page.b93c892861fb4dd4afcfbdc2ced1af80#2-majority-quorum-arithmetic-and-the-failure-envelope"
+      ],
+      "core_claims": [
+        "A node can believe it is leader for a term while other nodes remain unaware because messages are delayed, and quorum, term and log rules govern which entries can be committed; a newly elected leader may also have to reconcile followers with divergent uncommitted suffixes.",
+        "An acknowledged committed entry has a protocol-specific durability and leader-completeness guarantee contingent on correct stable storage and membership behavior, so elected status alone does not show that the node's applied state reflects every acknowledged commit.",
+        "Reads need a separately defined policy: follower reads can be stale, while linearizable reads require valid confirmation, lease or read-index semantics as implemented, and a leader process's health endpoint or elected status is not the same as the cluster having quorum and serving correct reads.",
+        "A leader that cannot confirm quorum must stop serving authoritative writes and linearizable reads; elections can also fail to reach quorum, split votes or elect a leader whose log is behind, and client retries still need stable effect identity because an election does not resolve an unknown outcome.",
+        "Replacing an unhealthy voter changes cluster membership, while restoring lost business state from backup changes persisted data; a safe reconfiguration must account for current voters, reachable quorum, catch-up state, target network identity, eligible leader placement and whether the reconfiguration itself can commit.",
+        "A backup restore may have to be a separately authorized disaster-recovery procedure after irrevocable quorum loss, because restarting replicas from inconsistent snapshots without respecting implementation-specific cluster identity and membership can create divergence."
+      ],
+      "optional_claims": [
+        "A leaderless quorum design, static primary assignment or single-writer partitioning may be simpler when elections add latency without a real failover requirement.",
+        "A non-voting learner can receive state before safe promotion under implementation-specific rules, so membership changes need joint or overlapping quorum safeguards rather than a configuration count update."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A producer publishes order events with a new required field and a new status value. The schema registry reports the version BACKWARD compatible against the previous schema, so the team deploys and later replays three months of retained events into an older analytics consumer and a background worker. Parsing succeeds for most messages, but the worker classifies Approved as Pending, and a restore job rebuilds identities from historic records. Why does a passing BACKWARD check not prove that older readers can interpret the new events, what does that mode actually compare, and what must the compatibility matrix and replay tests cover?",
+      "required_evidence": [
+        "tycho.page.48d9c34e755c4f7ab912ecad14f5794f#4-event-schema-compatibility-is-an-additional-axis",
+        "tycho.page.81add4a0d86b4053ae77f9301fd2281d#2-compatibility-is-a-matrix-not-a-boolean",
+        "tycho.page.de9c5bc478ba44718fcb731e69109dce#4-version-compatibility-is-behavioral-and-asymmetric"
+      ],
+      "core_claims": [
+        "Schema registry modes distinguish BACKWARD, FORWARD, FULL and transitive variants with format-specific rules, and a simple BACKWARD check covers the previous schema version rather than every historical revision.",
+        "A successful registry check does not guarantee that a domain enum's meaning stays compatible: an older consumer can parse Approved while interpreting it as Pending, so wire parsing succeeds and the user effect fails.",
+        "Compatibility is behavioral and asymmetric: a new server reading an old client behaves differently from an old server reading a new client, and adding a field can be wire-safe while becoming a required business value that an old caller cannot supply.",
+        "A complete matrix tests every actually deployed combination, including old and new API, old and new storage or event schema, background workers that may outlive a rollout, external clients and replay or restore, not only a new client against a new server.",
+        "The matrix spans versioned API, database record, event schema, business status, authorization scope and retention or replay history; a service can satisfy one transport contract and fail another.",
+        "Protobuf wire compatibility still carries semantic or lossy behavior: removed field numbers must not be reused, and field presence, defaults, enums and JSON mapping must be assessed in the actual configured runtime, so wire-parse compatibility, semantic compatibility and operational coexistence are distinct."
+      ],
+      "optional_claims": [
+        "The BACKWARD label is format-specific and may be transitive or non-transitive depending on configuration, so the same label does not imply the same guarantee across Avro, Protobuf and JSON Schema.",
+        "In an additive transitional schema, old readers must tolerate new nullable columns or defaults while preserving old semantics, and background workers or queued messages may outlive the rollout."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

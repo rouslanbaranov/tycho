@@ -1,0 +1,334 @@
+{
+  "task_id": "Q340",
+  "answer": "# Q340 - the evidence block is a slot map, not a maturity ladder\n\n**Short answer.** The checkout decision's `evidence` object is a set of layer-named\nslots, not four rungs. The third member is called `simulation`, but the current schema\ndefines it to carry the decision status (`decision-supported` or\n`insufficient-evidence`): by convention it describes the decision, not whether the\nsimulation executed. The reviewer's three conclusions therefore fail independently. There is\nno ladder: V12 keeps five evidence layers separate, each answers a different question, and a\nlater label never upgrades an earlier one. Calibration is not the only gap: verification is\nnot validation, V12 has no operational validation against a real system, the non-quantitative\nconstraint is untested, and the result is conditional. And the field cannot confirm the\nrecord's status because, by convention, it is that status restated in a layer-named slot.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 slot versus payload | \"evidence block simulation field decision status\"; \"required structure evidence model verification calibration simulation\"; \"schema convention\" | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure |\n| F2 layers, not a ladder | \"five evidence layers\"; \"layers are not a ladder automatic upgrade\"; \"decision-supported uncalibrated\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#overview; tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers |\n| F3 what verification answers | \"model verification contract verified engine\"; \"verification versus validation\"; \"what is not verified\" | tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness |\n| F4 what calibration answers | \"calibration validity limits uncalibrated inputs\"; \"four statuses measured assumed derived unknown\"; \"V12-D calibration\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration |\n| F5 what the decision status answers | \"decision-supported conditional result operability not-tested\"; \"decision validity\"; \"checkout candidate B\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity |\n| F6 what decision-supported leaves open | \"what the gates do not establish\"; \"forbidden inferences\"; \"operability constraint unverified\" | tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish; tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences |\n| F7 confirmation is not independent | \"simulation field carries the decision status\"; \"status enum decision-supported\"; \"field confirms record status\" | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure |\n\nLayer note: the question is entirely about V12, so the primary layer was\n`modeling-and-simulation`, and every citation below is a V12 section. A book-layer\nquery for the same vocabulary returned the same V12 page (the V12 pages are book pages), and\none atlas-layer query was checked for pattern-promotion wording; it produced no additional\nevidence, so the atlas layer is not cited. No production, review or acceptance evidence is\nasserted anywhere in this answer.\n\n## 2. What the evidence block actually contains\n\nThe decision-record contract lists the evidence members as model verification, calibration,\nsimulation and source identifiers, and then states the exception explicitly: \"In the current\nschema `evidence.simulation` carries the decision status by convention; it describes the\ndecision, not whether the simulation executed.\n\nTwo things follow immediately. First, the object is heterogeneous: three members hold status\nstrings and one (`source_ids`) holds identifiers, so the block is keyed by evidence\nlayer, not by value type. Second, the `simulation` member is where the decision layer's\noutcome is recorded, even though its name points at the simulation layer.\n\nThe two vocabularies are different axes. The record-level status is one of proposed,\ndecision-supported, insufficient-evidence or rejected. The decision status carried in the\nsimulation slot is only decision-supported or insufficient-evidence - a two-value subset of\nthe four-value record vocabulary. \"Decision-grade\" appears in neither list. It is the\nreviewer's imported label, and no record value supplies it.\n\nThe status in that slot answers the decision-layer question. Simulation quality - seeds,\nreplications, standard errors, confidence intervals, convergence - lives in the scenario and\nrun records and is checked by V12-C statistical validity, a different gate and a different\ndocument.\n\n## 3. Why the field name does not determine what it holds\n\n1. A member name is an address, not a definition. In JSON the name only locates a value;\n   meaning comes from the schema's value domain plus the written contract. The schema\n   constrains `simulation` to two enum strings; only the prose says what they mean.\n2. The object is heterogeneous, so even the weak rule \"the member name names the layer whose\n   status it reports\" does not hold across the block: `source_ids` is a list of\n   identifiers, not a status.\n3. The mapping is conventional and versioned. The contract says \"In the current schema ...\n   by convention\". A convention has to be documented to be usable and can be changed without\n   renaming the field; a later schema could move the decision status out of that slot and the\n   name would then point at simulation evidence, or at nothing.\n4. Reading the name as a claim about the payload is the same layer-crossing error the volume\n   forbids. The vocabulary page lists invalid inferences of this shape (\"The model is\n   verified, so the design is correct\"; \"The simulation succeeded, so production will\n   succeed\"). Treating a slot name as its contents is that move one level earlier: it\n   substitutes the label for evidence.\n\n## 4. What each of the three statuses answers\n\n| Slot and value | Question it answers | What the value asserts | What it does not assert |\n|---|---|---|---|\n| `model_verification` = `model-verified` | Is the model implemented as specified? | The engine checks units and passes conservation, non-negativity, boundary, event-order, timeout, retry-conservation and deterministic-replay checks. | That the model is adequate for its purpose, matches a real system, or has measured inputs; a verified engine is not a validated system and the tests do not prove operational validity. |\n| `calibration` = `uncalibrated` | Do the parameters match measured reality? | No input has a measurement record: arrival rate, service time and CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity and the divergence threshold are assumed. The result is conditional on the declared inputs. | That the engine is wrong, that the run did not converge, or that the result cannot rank what to measure first. |\n| `simulation` = `decision-supported` | Does the decision follow from the model and the constraints? | Under the declared workload, constraints and metrics the recommendation follows; here B is preferred and C is eliminated by C4/C5. | That the assumptions are true, that the simulation executed or converged, that operability holds, that production will behave this way, or that the decision is accepted. |\n\nTwo details matter. The decision answer is conditional by construction: \"A decision-supported\noutcome with an uncalibrated model is a conditional result. It says the decision follows from\nthe declared assumptions and constraints. It does not say the assumptions are true.\" And the\nfive-layer table's simulation question (\"What happens under the declared assumptions?\") is\nanswered by the scenario and run records, not by the `evidence.simulation` member. The\nname matches the layer; the payload does not.\n\n## 5. What decision-supported still does not establish\n\n1. **Truth of the assumptions.** The result is conditional and the inputs are uncalibrated;\n   the numbers describe the declared model, not a measured workload.\n2. **Operational validity.** \"V12 has no operational validation against a real system. Every\n   model records that limit.\" Verification tests are engine checks, not validity checks, and\n   the gates state \"They do not establish that the models match a real system.\"\n3. **Production behaviour.** \"The simulation succeeded, so production will succeed\" is a\n   forbidden inference.\n4. **Non-quantitative constraints.** C3 operability is marked not-tested, and the contract\n   says \"The record states that the operability constraint remains unverified, so the\n   recommendation is conditional.\" The worked separation pairs the decision-supported\n   outcome with \"an explicit statement that the operability constraint and production\n   behavior are not established.\"\n5. **Deployment safety.** \"The decision record recommends B, so B is safe to deploy\" is also\n   forbidden; the worked separation still requires a measured pilot, a cost review and an\n   operational readiness check.\n6. **Acceptance and review.** The gates state \"They do not establish that the decisions are accepted by the\n   owner.\" A passing local check is not CI, independent review or owner acceptance.\n7. **Pattern promotion.** \"A simulation result never promotes a pattern to sufficient.\" The\n   pattern links are one-way reading routes with no write-back.\n8. **Whether the simulation executed or is statistically adequate.** The slot says nothing\n   about execution; the run records carry seeds, replications, intervals and convergence.\n9. **Business validity of the metrics.** The business-comparable flag means the candidates\n   share a metric definition; it does not mean the metric is measured or business-valid.\n10. **The judgment inside the recommendation.** The choice to prioritise success rate and\n    cost over the latency difference is \"a decision, not a fact produced by the simulation.\"\n\n## 6. The reviewer's three conclusions\n\n- **\"The simulation layer is decision-grade.\"** This reads the slot's name instead of its\n  contract. The stored value is the decision status, so it says nothing about the quality of\n  the simulation. Simulation quality is V12-C evidence (seeds, convergence, sensitivity), and\n  even a converged run is only a sampling statement: \"Narrow intervals do not make the inputs\n  measured\", and more replications make the estimate \"more precise, not more representative.\"\n  Decision-grade is not one of the record's statuses at all. Treating a model-verified\n  engine as a validated system is what the volume calls \"evidence inflation\".\n- **\"Calibration is the only gap.\"** Calibration is one axis of five. The record also carries\n  an untested non-quantitative constraint, declared validity limits (no dependency calls,\n  storage or network transport), a quadratic sensitivity screen rather than a Sobol analysis,\n  no operational validation and no owner acceptance. The gate flow is a check order, not a\n  ladder: \"A later gate cannot substitute for an earlier one.\"\n- **\"The simulation field confirms the record's status.\"** It does not confirm it; by\n  convention it carries it. The slot's two-value vocabulary is a subset of the record's\n  four-value status vocabulary, and in this record both read decision-supported. A field\n  defined to hold the status cannot be independent evidence for that status. Confirmation\n  would have to come from the run records, the constraint evaluation and measurements that\n  do not yet exist.\n\n## 7. Boundaries, unknowns and contradictions\n\n- Scope: modeling-and-simulation (V12), with one book-layer and one atlas-layer cross-check.\n  Nothing here is production evidence, independent review or owner acceptance.\n- I did not execute the V12 engine or validator and did not re-derive the run numbers; the\n  record's values are taken as declared. The decision status is therefore assessed as a\n  documentation claim, not re-computed.\n- I inspected the machine schema file outside the CLI citation path as background: it\n  constrains `evidence.simulation` to decision-supported or insufficient-evidence and\n  carries no description text. That inspection is not cited as evidence; it reinforces that\n  the convention lives in prose and the name alone is unreadable.\n- Unknown: whether validation requires `evidence.simulation` to equal the top-level\n  status. The prose says the slot carries the decision status and this record has both equal,\n  but I found no stated equality rule. If none exists, \"confirms\" is a restatement at best\n  and a coincidence at worst.\n- Unknown: whether a later schema version keeps the convention. The contract's \"In the\n  current schema\" makes the mapping version-scoped, so a renamed or repurposed field is\n  possible.\n- No contradiction was found among the vocabulary page, the decision-record contract, the\n  gate matrix and the worked example; they agree that the layers are separate and that the\n  checkout recommendation is conditional.\n\n## 8. Evidence map\n\n| Claim | Section keys |\n|---|---|\n| C1 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure |\n| C2 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#overview; tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers |\n| C3 | tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers; tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers; tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness |\n| C4 | tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview |\n| C5 | tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers; tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers; tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation; tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity |\n| C6 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure; tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records |\n| C7 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure |\n| C8 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here; tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish |\n| C9 | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences; tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences; tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back |\n| C10 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty; tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow |\n| C11 | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language |\n\nQuotes in the claim ledger are verbatim fragments of the cited sections with line wrapping\nnormalised to single spaces; the fragment order follows the source.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The checkout record's evidence object is a layer-keyed slot map, and in the current schema the slot named simulation is defined to carry the decision status, so its value reports a property of the decision rather than whether the simulation executed or how good it was.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "In the current schema `evidence.simulation` carries the decision status by convention; it describes the decision, not whether the simulation executed",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The evidence block is not a maturity ladder: V12 keeps five evidence layers separate, each layer answers a different question, a result can be strong in one layer and weak in another, and a later label never upgrades an earlier one automatically.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#overview",
+          "quote": "V12 keeps five layers separate: source and claim evidence, model verification, calibration, simulation evidence and decision evidence. Each layer answers a different question. A result can be strong in one layer and weak in another. The labels are not a ladder, and a later layer never upgrades an earlier one automatically.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "The layers are separate. A `model-verified` label does not imply calibration. A `decision-supported` record may coexist with an `uncalibrated` model when the decision is explicitly conditional.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The model-verified status answers whether the model is implemented as specified: it covers units, conservation, boundary cases, event ordering and deterministic replay, and it is verification of the engine rather than validation of the model, so a verified engine is not a validated system and the tests do not prove operational validity.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "| Verification | Is the model implemented as specified? | Model spec and tests |",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A model can be verified and still be invalid for a decision because its structure or data are wrong.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A verified engine is not a validated system.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+          "quote": "The tests do not prove operational validity.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "is the model implemented as specified? This is the layer of units, conservation, boundary cases, event ordering and deterministic tests.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The uncalibrated status answers whether the parameters match measured reality: every V12 model is uncalibrated, the arrival rate, service times, timeout, capacity and related inputs are assumed rather than measured, and the only valid claim is conditional on the declared inputs, not a description of a real system.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "| Calibration | Do parameters match measured reality? | Calibration record |",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+          "quote": "Every model is uncalibrated. The model contracts list each parameter's evidence status and the missing measurement. The decision records repeat the status.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+          "quote": "Every V12 model is uncalibrated. Arrival rates, service times, timeouts, dual-write lag and reconciliation capacity are assumed. The valid claim is conditional: under the declared inputs, the model produces the reported result. The invalid claim is that the result describes a real system.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The status stored in the simulation slot answers the decision-layer question, whether the decision follows from the model and the constraints; decision-supported means the recommendation follows under the declared assumptions and constraints, which is explicitly a conditional result and does not say the assumptions are true.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers",
+          "quote": "| Decision | Does it follow from model and constraints? | Decision record |",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result. It says the decision follows from the declared assumptions and constraints. It does not say the assumptions are true.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "quote": "The checkout record is decision-supported under its declared constraints. The modernization record is insufficient evidence. Both are valid outcomes.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "does the decision follow from the model and the constraints? This is the layer of candidates, hard constraints, non-quantitative limits and reversal triggers.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "quote": "a decision-supported outcome for candidate B under the declared constraints;",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Decision-grade is not a V12 status: the record status is one of proposed, decision-supported, insufficient-evidence or rejected, and the decision status carried in the simulation slot is only decision-supported or insufficient-evidence, so the reviewer's label is an imported term that no record value supplies.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "decision-supported or insufficient-evidence for the outcome",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision record separates three statuses:",
+          "supports": "C6",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Reading the simulation slot as confirmation of the record status is circular: the slot is defined to carry the decision status, and the record status uses the same vocabulary, so agreement between the slot and the status it is specified to hold is identity rather than independent corroboration.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "In the current schema `evidence.simulation` carries the decision status by convention; it describes the decision, not whether the simulation executed",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "The status is one of proposed, decision-supported, insufficient-evidence or rejected.",
+          "supports": "C7",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Decision-supported does not establish the truth of the assumptions, operational validity or production behaviour: V12 has no operational validation against a real system, every model records that limit, and the inferences from a verified model to a correct design and from simulation success to production success are forbidden.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+          "quote": "V12 has no operational validation against a real system. Every model records that limit.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The simulation succeeded, so production will succeed.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The model is verified, so the design is correct.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "They do not establish that the models match a real system.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "A model-verified engine is presented as a validated system.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Decision-supported also does not establish the non-quantitative operability constraint, deployment safety, owner acceptance or pattern promotion: the record leaves the operability constraint unverified and calls the recommendation conditional, the safe-to-deploy inference is forbidden, the gates do not establish owner acceptance, and a simulation result never promotes a pattern.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "The record states that the operability constraint remains unverified, so the recommendation is conditional.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "The decision record recommends B, so B is safe to deploy.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "They do not establish that the decisions are accepted by the owner.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+          "quote": "A simulation result never promotes a pattern to sufficient.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+          "quote": "an explicit statement that the operability constraint and production behavior are not established.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "Calibration is not the only gap: the record also carries an untested non-quantitative constraint, declared model limits such as omitted dependency calls and storage, a quadratic sensitivity screen rather than a Sobol analysis, and no operational validation, and the gate flow is a check order in which a later gate cannot substitute for an earlier one.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C3 is not tested. The record says the operability constraint remains unverified and requires an operational review. The recommendation is therefore conditional.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+          "quote": "no dependency calls or storage in the checkout model;",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "The screen is a quadratic approximation over 48 rows.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+          "quote": "A later gate cannot substitute for an earlier one.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The simulation layer's own quality is not what the slot reports: convergence and replication belong to the scenario and run records, and even a converged synthetic run is only precise, not representative, so narrow intervals do not make the inputs measured.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "Narrow intervals do not make the inputs measured.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "More replications would make the synthetic estimate more precise, not more representative.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+          "quote": "A confidence interval across replications is a sampling interval, not a metrological coverage interval.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "what happens under the declared assumptions? This is the layer of scenario, seed, replication and convergence records.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#overview",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#what-verification-and-validation-mean-here",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#a-gate-flow",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#pattern-links-without-write-back",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#five-evidence-layers"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}

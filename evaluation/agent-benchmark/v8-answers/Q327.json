@@ -1,0 +1,439 @@
+{
+  "task_id": "Q327",
+  "answer": "# Q327 - Why a green regional probe does not authorize serving\n\n## 0. Scope, layers and method\n\ndescribe was run first, with --volume atlas. It reported the canonical layers book, atlas\nand modeling-and-simulation, snapshot 3db217e9..., 562 documents, 3141 sections, coverage\ncomplete, and a draft pattern registry of 145 entries.\n\nLayers used: **book** (mechanism prose on DNS and discovery update boundaries, routing and\nhealth signals, replica lag, recovery state machines and SLI construction) and **atlas**\n(pattern cards: Geode, Health/Readiness/Liveness Checks, Health Endpoint Monitoring,\nFailover/Failback, Read Replicas, Session Consistency, Multi-Leader Replication).\n**modeling-and-simulation** was not needed: the question asks for a design judgment on a\ndescribed operational scenario, and no model, scenario, run or decision record was\nrequested or cited. Nothing below is a model run or a production measurement.\n\nTwo honest tool limits. The outline operation returned status snapshot-mismatch (\"Route\nmetadata and index differ\") for every topic attempted, so structure was recovered from\npage section maps instead. The search operation returned at most two results per query\ninside the response budget, so coverage was built from many narrow queries plus targeted\nreads rather than one broad sweep; an absent result is not evidence of absence.\n\n## 1. Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1 What a 200 proves | health check readiness liveness probe; health probe; synthetic monitoring | health-readiness-and-liveness-checks#overview; routing-and-health#health-endpoint-monitoring; synthetic-monitoring#overview |\n| F2 Reachability vs authority | write authority; failover routing dns health; split brain two writers | failover-failback#overview; discovery-balancing#dns-and-discovery-have-different-update-boundaries; authority-failback#3-original-synthetic-recovery-scenario |\n| F3 What the routing signal must carry | traffic steering; global routing region selection; DNS TTL global load balancer failover delay | routing-and-health#the-routing-contract; discovery-balancing#dns-...; geode#overview |\n| F4 What the freshness signal must carry | replication lag; replication lag monitoring; data freshness; read routing stale replica | replica-recovery#replica-lag-retained-wal-and-standby-feedback; read-replicas#overview; session-consistency#overview; cache-authority#1-begin-with-the-authority-and-the-data-contract |\n| F5 Client pinning and drain | connection draining; long-lived connections connection draining sticky sessions | discovery-balancing#dns-...; connections-draining#a-bounded-drain-procedure; discovery-balancing#original-worked-design-one-connection-is-not-one-unit-of-work |\n| F6 Why the fleet looks healthy | user-visible correctness monitoring; staleness budget | service-level-indicators-objectives-and-alerts#engineering-walkthrough-...; health-readiness-and-liveness-checks#overview; routing-and-health#health-endpoint-monitoring |\n| F7 When active-passive wins | active-passive standby region failover; leader follower replication; failover | geode#overview; multi-region-disaster-recovery-contracts#dr-strategies-...; multi-leader-replication#overview |\n| F8 Failover is not a DNS switch | fencing token; split brain two writers; failover routing dns health | failover-failback#overview; authority-failback#3-...; replica-recovery#replica-lag-... |\n\n## 2. The short answer\n\nA 200 from an HTTPS health endpoint is a statement about one process answering one\nrequest. It is not a statement about the region's data. The probe never reads the regional\ndatabase, so a twenty-minute replay backlog is invisible to it by construction. The router\nsteers on reachability while the user is governed by freshness, and those are different\ninvariants.\n\nAuthorization to serve needs two independent signals to agree for the unit of traffic being\nrouted. A **routing signal** says that this destination is eligible for new work right now,\nunder which authority, and with what age of evidence. A **data-freshness signal** says that\nthe state this request reads satisfies its declared visibility condition. The probe collapses\nboth into one boolean, and that boolean answers only the first predicate.\n\nA 300-second TTL does not make the cutover take 300 seconds. It bounds the resolver cache\nonly. Established connections and runtime address caches keep the cohort on the lagging\nregion until those connections end, so the cohort - not the DNS record - is the real routing\nunit.\n\nActive-passive is the better choice whenever one authoritative writer can meet the\navailability target: strict write-region requirements, state that cannot be replicated\nbidirectionally, an unresolved conflict policy, cost, or an accepted RTO. It is not free\neither - promotion still needs fencing and reconciliation - but it removes a class of\nfailure that this deployment currently cannot even detect.\n\n## 3. What the probe actually establishes\n\nHealth checks answer three different questions: has initialization finished, may this\ninstance receive new work, and must the process be restarted. The atlas states the condition\ndirectly: probes are good-fit only when \"Probes have different failure meanings;\ndependencies are not conflated; restart/traffic removal are separate.\" One endpoint that\nreturns 200 whenever the web tier is up conflates all three, and it silently answers a\nfourth question nobody asked: is the data current.\n\nThe book is explicit that the inference from green to correct service is invalid:\n\"External monitoring should also observe user-level success and dependency state, because a\ngreen liveness probe does not prove readiness, correct routing or a healthy dependency.\"\nThe atlas repeats it for the routing decision: treat the probe as authoritative for\n\"reachability, not freshness, and monitor replication lag.\"\n\nThe owner page for that pattern states the split even more directly: the multi-location\nprobe is the routing health signal, and it is \"authoritative for reachability, not a\ndata-freshness signal\"; \"a 200 response does not prove the region's writes are current\";\nthe design needs \"a reachability probe and a separate freshness gate\", and the old writer\nis fenced before failover.\n\nSo the first reason a successful probe does not authorize serving is a scope error. The\nprobe's observation set is the web process and the network path to it. The user's outcome\ndepends on the state that process reads. Nothing in the probe's observation set separates a\nregion 200 milliseconds behind from one twenty minutes behind, and nothing in it identifies\na region whose writes are still being accepted by an old primary.\n\n## 4. Reachability, authority and freshness are three different predicates\n\nThis is not a bug in the router's health logic. It is a category error about what health\nauthorizes. The failover card is blunt: \"Route 53's active-passive choice follows health\nstatus; health does not prove data authority.\" The discovery page makes the same point for\nmembership: \"If membership is stale, continued reachability still cannot establish write\nauthority.\"\n\nThe recovery chapter generalises it into the sentence that describes this incident exactly:\n\"A green health probe for each region is compatible with a broken global invariant.\" Every\nregion can be green, every probe can pass, and the global invariant can be violated at the\nsame moment.\n\nThree predicates therefore stay separate:\n\n1. **Reachability.** Can this endpoint answer? Cheap, local, fast-changing, safe to\n   over-approximate.\n2. **Authority.** Is this the region that may accept writes for these keys, under which\n   epoch or lease, and has the previous authority been fenced? A control-plane fact about a\n   designated writer, not a property of a TCP connection.\n3. **Freshness.** For this read, has the serving replica applied at least the version the\n   read requires? A per-read data fact that varies within a region and within a second.\n\nA 200 answers predicate 1 for one process. It says nothing about predicate 2, and it cannot\nanswer predicate 3 at all, because the database is not in its observation path.\n\n## 5. What the routing signal must establish\n\nThe routing signal answers: **which destination may receive this unit of new work, now, and\non what evidence?** The book frames a route as a decision about eligibility rather than a\ndirectory lookup: \"A caller needs a route to an eligible instance, not a timeless list of\nmachines.\" The signal therefore carries four things:\n\n- **Location and membership** - which region and which instance set is the candidate.\n- **Eligibility** - is it accepting new work, draining, or degraded.\n- **Authority class** - may this destination accept the write half of the traffic, or only\n  reads, and under which epoch? A healthy record is not a reconciled authority.\n- **Its own staleness bound** - when was this eligibility last verified, and what is the\n  worst-case age of the answer the router is acting on? A routing signal that cannot state\n  its age cannot be trusted during an incident.\n\nTwo documented properties make this harder than it looks. First, the routing layer's caching\ncontract is not a switching deadline: \"A DNS TTL governs a DNS record's caching contract; it\nis not an application transaction deadline or a guarantee that every client stops using an\nexisting connection at that instant.\" Second, and consequently, \"A DNS change alone is\nneither a drain procedure nor a database failover protocol.\"\n\nHere is where the 300-second TTL misleads the team. It bounds the recursive resolver's\ncache. It does not bound the resolved-address cache inside the application runtime, and it\ndoes not touch connections already established. The discovery page names both: the\napplication or runtime \"can also retain resolved addresses or established connections\".\nWith long-lived connections, a cohort that resolved the lagging region before the incident\nkeeps using it until those connections close - indefinitely, if the client never re-resolves.\nThe router can be perfectly correct and the cohort still pinned. Only a drain changes that,\nand a drain starts by marking the destination ineligible \"through the actual selector\", not\nby editing a DNS record.\n\nThe routing signal also has to survive the router's own failure behaviour. Documented\nrouters answer from cached state, return a geographic answer regardless of endpoint health -\n\"returns a response whether the endpoint is healthy or not\" - and fail open when every\ncandidate looks degraded. In that regime \"the fleet is healthy\" means the probes are\nhealthy, which is exactly what the team observed.\n\n## 6. What the data-freshness signal must establish\n\nThe freshness signal answers a different question: **for this read, is the state I am about\nto return new enough?** The book warns against the lazy version: \"avoid treating lag as one\nscalar or a healthy replica as evidence that it contains a named effect.\" A lag number in\nseconds is a byte-and-time interval under a particular workload, not a prediction that a\nspecific commit is visible. Generated, sent, received, flushed and replayed positions\ndiffer, and an idle stream makes time-based lag readings misleading.\n\nWhat the signal therefore carries:\n\n- **The required visibility condition**, as a version, position or session token the\n  caller's read depends on - not as \"replica is healthy\".\n- **The observed condition at the serving replica**, so the two can be compared at request\n  time instead of inferred from a region-level dashboard.\n- **A declared outcome when the condition fails**: read from the authority, wait a bounded\n  time, reroute to a region that satisfies it, or return an explicitly stale result.\n\nThe last point is not decoration. The rule for read-after-write is stated directly: if reads\ncan go to an asynchronous replica, \"the route must either meet an explicit\nreplication/application visibility condition, keep that read on the authoritative path, or\nreturn a declared pending/stale outcome. A successful SELECT on a reachable replica is not\nsufficient evidence.\" The Read Replicas card adds the failure that matters here: \"a failover\nto a stale replica can violate read-your-writes even when replication is healthy.\" And for\nsession-scoped guarantees the rule is stricter: \"a sticky route or a token that cannot\nsurvive failover is not a session guarantee.\"\n\nSo the second reason the probe does not authorize serving is that no freshness predicate was\never evaluated. The team measured the wrong side of the system. The region was reachable, so\ntraffic flowed; the data was twenty minutes behind, so users read stale data. Both\nobservations are true at once and neither refutes the other.\n\n## 7. How the two signals combine - and how they must not\n\nThe atlas makes the separation a good-fit condition for a global routing layer: it is\nappropriate when \"a health signal and a separate freshness gate exist\". Read replicas are\nappropriate when \"Reads tolerate bounded lag; routing can separate stale reads; replica\nhealth and lag are observable.\" Three conditions, three instruments.\n\nThe clean composition:\n\n1. The router keeps a per-destination **eligibility record**: reachable, accepting new work,\n   authority class, age of the record.\n2. The data plane exports a per-destination **freshness record**: applied position or lag\n   against the writer, and the guarantees currently satisfiable there.\n3. Admission at the edge, or at connection establishment, intersects the two for the\n   **request class**, not for the region as a whole. A catalogue read may proceed on a\n   bounded-stale replica; a reservation, balance or inventory read must go to the authority\n   or wait.\n\nThe separation must also hold in the negative direction, which is the most common mistake\nonce teams learn this lesson: do **not** simply make readiness depend on the database. The\nrouting page warns that a shared dependency failure should not become fleet-wide ejection -\n\"Do not turn one dependency fault into fleet-wide ejection\" - and the health card rejects\n\"when one probe is used for every failure, when a liveness probe restarts healthy processes\non a shared dependency\". A database check inside the probe converts one regional backlog\ninto a global removal of capacity, a worse outage than stale reads. Freshness belongs in the\nrouting decision and in alerting, not in the liveness probe.\n\n## 8. Why the fleet looked healthy and the users did not\n\nThree independent mechanisms produce the reported picture.\n\n**The measurement boundary.** The SLI chapter tabulates the substitution this team made: for\na recovery signal, \"Process liveness or dashboard green after data divergence\" is an\nunacceptable substitute for a correct journey restored and sustained; for the read itself,\n\"Durable domain result, not merely 2xx\" is the valid meaning of correct within deadline. A\nfleet dashboard built from process liveness and admitted-request 2xx is a statement about\nadmission, not about correctness. It cannot go red for staleness, because staleness is not\nin its numerator.\n\n**The observation path.** Even a well-built health check can lie through caching:\n\"a previously healthy answer can outlive the health change that should remove it\", and\n\"cached or missing health can keep routing to a draining instance\". When the router also\nfails open, a degraded region keeps receiving traffic precisely because it is degraded.\n\n**The connection topology.** A connection-oriented client population turns a routing\ndecision into a long-lived pin. The book's worked design is explicit that a selector\n\"could redistribute new eligible requests, but cannot move an already executing operation\nwithout a protocol for interruption\". With long-lived connections the affected unit is the\ncohort, and the cohort migrates only when its connections are drained and re-established\nagainst a destination that has been re-evaluated.\n\nPut together: the probe was green (true), the router kept the cohort in place (true), the\nreplica was twenty minutes behind (true), the response was stale (true). There is no\ncontradiction to explain - only a missing signal and a missing drain.\n\n## 9. When active-passive is the better choice\n\nActive-active is a claim about write ownership, not a deployment shape. The recovery\nchapter's active/active misconception is worth restating: active traffic in two regions is\nnot multiple write masters with a safely reconciled invariant; a fully active write topology\nmust specify partition behaviour and concurrency semantics, and a later conflict resolution\ncannot necessarily undo a user-visible double confirmation.\n\nActive-passive is the better choice when any of the following holds:\n\n- **One authoritative writer is required for the invariant.** \"Active-active operation\n  requires conflict-free data ownership and is not a safe default for one authoritative\n  invariant.\" If the business object is a seat, a balance or a reservation, this is usually\n  decisive.\n- **Conflict policy is unresolved.** Multi-leader replication is good-fit only when the\n  conflict policy is explicit and versioning and reconciliation are owned; reject it \"when\n  one leader meets availability, when conflicts cannot be resolved, when monotonic writes\n  are mandatory\".\n- **State is hard to replicate bidirectionally**, or the write workload incurs locking and\n  commit-delay costs that erase the locality benefit.\n- **Writes must stay in one region, or the passive path is cheap enough to keep.**\n  \"Active-passive recovery is the alternative when writes must stay in one region, state\n  cannot be replicated cheaply, cost prevents full active-active capacity, or RTO tolerance\n  allows activation time.\" The same source warns that the passive path can drift, so its\n  failover path still has to be tested.\n- **Cost and operational complexity dominate.** The atlas says to choose \"Active-passive\n  recovery when strict write-region requirements, hard-to-replicate state, cost constraints\n  or RTO tolerance make active-active routing unjustified\"; the recovery chapter adds that\n  \"Active/passive with one writer may be much simpler\".\n- **The RTO is achievable without sub-minute cutover.** Active-active buys continuity a warm\n  standby does not, and that continuity is only worth its complexity if the availability\n  target requires it.\n\nThe honest cost of active-passive is that it is not a DNS switch either. Promotion after\nambiguous leader loss \"still needs fencing, epoch/lease or other source-backed role-control\";\n\"During promotion, solve writer fencing and historical acknowledged state separately\"; and\n\"A failback that merely points DNS back can resurrect stale writes and split authority.\"\nActive-passive is simpler because it has one writer to reason about, not because it has fewer\ncorrectness obligations.\n\n## 10. What the team should change, in order\n\n1. **Stop treating the probe as an authorization.** Keep it as a reachability signal and\n   relabel the dashboard. It answers \"is the tier answering\", never \"may this region serve\".\n2. **Add an authority signal.** One designated writer per key range, with an epoch, and a\n   documented rule for when a region may accept writes. Health must not grant write\n   authority.\n3. **Add a freshness signal per destination**, exported as position or lag against the writer\n   with a stated measurement boundary. Treat it as a routing input and an alerting input,\n   not as a probe.\n4. **Make the admission rule explicit per request class**: authority-only, bounded-stale with\n   a declared age, or declared-stale response. Write it where the router and the read path\n   can both see it.\n5. **Drain before you move.** Mark the destination ineligible through the selector that\n   actually routes, bound connection lifetime, and only then change the record. A TTL is a\n   cache contract, not a switch.\n6. **Instrument the user journey, not the fleet.** \"A canary that reuses the same failing\n   dependency is not an external observer.\" Prefer a journey check that exercises\n   read-after-write and a known-stale comparison.\n7. **Decide active-active or active-passive on the invariant.** If the answer is\n   active-passive, invest the saved complexity in fencing, reconciliation and a rehearsed\n   failback rather than in a second live writer.\n\n## 11. Boundaries, counterexamples and unknowns\n\n**Where serving stale is correct.** For a display value with a bounded freshness contract -\n\"Maximum tolerated age/version gap for the user journey\" - serving a stale read and saying\nso is legitimate and cheaper than a synchronous cross-region read. The error in the scenario\nis not staleness by itself; it is undetected, unbounded staleness on a path that was never\nclassified.\n\n**Where active-active is justified.** When both regions can serve any request, locality or\nregional survival matters, replication and conflict handling are owned, and a health signal\nplus a separate freshness gate exist. Even then the design is a per-key single-writer\npartition or an application that deliberately tolerates merge conflicts - not a replicated\ndatabase plus hope.\n\n**What this answer does not claim.** No lag threshold, cohort size, TTL effect or drain\nduration was measured here; the twenty-minute backlog is the scenario's given, not an\nobservation. The router behaviours described are documented behaviours of the cited patterns\nand products, not a trace of this stack. The active-passive preference is a Tycho selection\nrule conditioned on the invariant, not a universal recommendation, and the cost of separating\nhealth from freshness in a specific router and client runtime is unverified here.\n\n**Open questions the team must answer before choosing.** What is the declared freshness\ncontract per request class? How long may a connection live, and who drains it? Which\ncomponent may grant write authority, and how is the old writer fenced? What is the measured\ncatch-up time from a twenty-minute backlog under the real replay bottleneck - remembering\nthat reducing network delay does not fix a CPU- or I/O-bound replay? Until those are\nanswered, the correct posture is to hold writes and serve reads with a declared bound, not to\ncall the fleet healthy.\n\n## 12. Claim-to-evidence map\n\n| Claim | What it establishes | Section keys |\n|---|---|---|\n| C1 | Probe classes answer different questions and must not be collapsed | health-readiness-and-liveness-checks#overview; routing-and-health#health-endpoint-monitoring |\n| C2 | A green probe is silent about data freshness and global invariants | geode#overview; authority-failback#3-... |\n| C3 | Health selects reachability, not write authority | failover-failback#overview; discovery-balancing#dns-... |\n| C4 | A route is an eligibility decision, not a timeless address list | routing-and-health#the-routing-contract |\n| C5 | TTL bounds caching only, not connections or transactions | discovery-balancing#dns-... |\n| C6 | Long-lived connections pin a cohort until drained | discovery-balancing#dns-...; connections-draining#a-bounded-drain-procedure; discovery-balancing#original-worked-design-... |\n| C7 | Freshness is a named visibility condition, not replica health or one lag scalar | replica-recovery#replica-lag-...; read-replicas#overview |\n| C8 | The read path must meet the condition, go to authority, or declare staleness | replica-recovery#replica-lag-... |\n| C9 | Failover to a stale replica can break read-your-writes and session tokens | read-replicas#overview; session-consistency#overview |\n| C10 | A health signal plus a separate freshness gate is the atlas good-fit condition | geode#overview |\n| C11 | Cached and fail-open health can keep traffic on ineligible targets | routing-and-health#health-endpoint-monitoring; health-endpoint-monitoring#overview |\n| C12 | Fleet-green dashboards measure admission, not correctness | service-level-indicators-...#engineering-walkthrough-...; routing-and-health#health-endpoint-monitoring |\n| C13 | Do not put the database in the liveness probe | routing-and-health#health-endpoint-monitoring; health-readiness-and-liveness-checks#overview |\n| C14 | Active-passive fits strict write-region, hard state, cost and RTO conditions | geode#overview; multi-region-disaster-recovery-contracts#dr-strategies-...; multi-leader-replication#overview |\n| C15 | Active-active needs conflict-free ownership and is not a safe default | authority-failback#3-... |\n| C16 | Active-passive still needs fencing, epoch control and planned failback | multi-region-disaster-recovery-contracts#dr-strategies-...; replica-recovery#replica-lag-...; authority-failback#3-... |\n| C17 | A value's freshness contract names its tolerated age or version gap | cache-authority#1-begin-with-the-authority-and-the-data-contract |\n| C18 | A canary sharing the failing dependency is not independent evidence | synthetic-monitoring#overview; routing-and-health#health-endpoint-monitoring |\n| C19 | The probe is a reachability signal and needs a separate freshness gate | recovery-objectives#bounded-pattern-ownership-notes |\n| C20 | Active-passive fits one-region writes, expensive replication, cost or RTO | recovery-objectives#bounded-pattern-ownership-notes |\n| C21 | Recovery means a correct user capability, not a recovered process | recovery-objectives#purpose-and-mission |\n| C22 | Fence, define acceptable loss and reconcile before routing to a new authority | recovery-objectives#integrated-decision-and-reading-route |\n\nUnknowns carried into the ledger: no measured lag, drain duration or failover time exists in\nthis answer; the router's fail-open behaviour is documented for the products cited, not\nobserved here; and the outline tool was unavailable, so the section map came from page\nreads.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A 200 from a regional HTTPS endpoint establishes only that the web tier answered one request; startup, readiness and liveness are different questions and must not be collapsed into one probe.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+          "quote": "Probes have different failure meanings; dependencies are not conflated; restart/traffic removal are separate.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "a green liveness probe does not prove readiness, correct routing or a healthy dependency",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Because the probe never reads the regional database, a replication backlog cannot change its result; a green probe is compatible with a broken global invariant.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+          "quote": "treat the probe as authoritative for reachability, not freshness, and monitor replication lag",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "A green health probe for each region is compatible with a broken global invariant.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Health-based routing selects a reachable record, not a reconciled write authority; stale membership plus continued reachability still cannot grant write authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.36bfc8635514db33025afd706a6b4c85#overview",
+          "quote": "Route 53's active-passive choice follows health status; health does not prove data authority.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "If membership is stale, continued reachability still cannot establish write authority.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A route is a decision about an eligible destination with an age, not a timeless list of machines.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#the-routing-contract",
+          "quote": "A caller needs a route to an eligible instance, not a timeless list of machines.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A DNS TTL bounds only the resolver caching contract; it is neither a switching deadline nor a guarantee that existing connections stop, and a DNS change is not a drain or failover protocol.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "A DNS TTL governs a DNS record's caching contract; it is not an application transaction deadline or a guarantee that every client stops using an existing connection at that instant.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "A DNS change alone is neither a drain procedure nor a database failover protocol.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Runtime address caches and long-lived connections keep a cohort pinned to the lagging region until the destination is marked ineligible and the connections are drained.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+          "quote": "can also retain resolved addresses or established connections",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+          "quote": "Mark the instance ineligible for new work through the actual selector.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+          "quote": "could redistribute new eligible requests, but cannot move an already executing operation without a protocol for interruption",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The data-freshness signal must express a per-read visibility condition; lag is not one scalar and a healthy replica is not evidence that it contains a named effect.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+          "quote": "avoid treating lag as one scalar or a healthy replica as evidence that it contains a named effect.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.253d5a98933c4cee947545acb8eaa72a#overview",
+          "quote": "Reads tolerate bounded lag; routing can separate stale reads; replica health and lag are observable.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A read against an asynchronous replica must meet an explicit visibility condition, go to the authoritative path, or return a declared stale outcome; a successful SELECT on a reachable replica is not evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+          "quote": "the route must either meet an explicit replication/application visibility condition, keep that read on the authoritative path, or return a declared pending/stale outcome.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+          "quote": "A successful SELECT on a reachable replica is not sufficient evidence.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Failover to a stale replica can violate read-your-writes even when replication is healthy, and a sticky route or token that cannot survive failover is not a session guarantee.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.253d5a98933c4cee947545acb8eaa72a#overview",
+          "quote": "a failover to a stale replica can violate read-your-writes even when replication is healthy.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+          "quote": "a sticky route or a token that cannot survive failover is not a session guarantee.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The atlas makes a health signal plus a separate freshness gate an explicit good-fit condition for a global routing layer, and documents that geographic routers answer regardless of endpoint health.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+          "quote": "a health signal and a separate freshness gate exist",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+          "quote": "returns a response whether the endpoint is healthy or not",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Cached healthy answers and fail-open behaviour can keep traffic on an ineligible or draining destination, so fleet health can be an artefact of the monitoring path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "a previously healthy answer can outlive the health change that should remove it",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4cd5af48018f47f7b30ace45acf4e220#overview",
+          "quote": "cached or missing health can keep routing to a draining instance",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A fleet dashboard built from process liveness and admitted 2xx measures admission, not correctness or recovery; a green dashboard after data divergence is an unacceptable substitute.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+          "quote": "Process liveness or dashboard green after data divergence",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+          "quote": "Durable domain result, not merely 2xx",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "External monitoring should also observe user-level success and dependency state",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Freshness must not be folded into liveness or readiness, because one shared dependency fault would then eject the whole fleet.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "Do not turn one dependency fault into fleet-wide ejection",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+          "quote": "Reject when one probe is used for every failure, when a liveness probe restarts healthy processes on a shared dependency, or when startup is ignored.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Active-passive is preferable under strict write-region requirements, hard-to-replicate state, cost constraints, RTO tolerance, or an unresolved conflict policy.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+          "quote": "Active-passive recovery when strict write-region requirements, hard-to-replicate state, cost constraints or RTO tolerance make active-active routing unjustified",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#dr-strategies-with-different-operational-dependencies",
+          "quote": "Active/passive with one writer may be much simpler",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1f0f0984036746779cc0bc96826db1e9#overview",
+          "quote": "Reject when one leader meets availability, when conflicts cannot be resolved, when monotonic writes are mandatory",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Active-active requires conflict-free data ownership and is not a safe default for one authoritative invariant.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "Active-active operation requires conflict-free data ownership and is not a safe default for one authoritative invariant.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Active-passive still needs fencing, epoch or lease role control, separate reconciliation of acknowledged state, and a planned failback that is not a DNS change.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2536d18422944e27abe4ea8549beb9ab#dr-strategies-with-different-operational-dependencies",
+          "quote": "but a promotion after ambiguous leader loss still needs fencing, epoch/lease or other source-backed role-control",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+          "quote": "During promotion, solve writer fencing and historical acknowledged state separately.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+          "quote": "A failback that merely points DNS back can resurrect stale writes and split authority.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Each value needs a declared freshness contract naming the maximum tolerated age or version gap for the user journey; stale-by-design is legitimate only inside it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+          "quote": "Maximum tolerated age/version gap for the user journey",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "A synthetic check that reuses the failing dependency is not an independent external observer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.77e5d6cab6c083335efb7fc74b423809#overview",
+          "quote": "prefer a synthetic probe only when no real traffic exercises the journey",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+          "quote": "A canary that reuses the same failing dependency is not an external observer.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The Geode owner page frames the multi-location probe as the routing health signal, authoritative for reachability but not for data freshness, and requires a separate freshness gate plus fencing before failover.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+          "quote": "it is authoritative for reachability, not a data-freshness signal",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+          "quote": "a 200 response does not prove the region's writes are current",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+          "quote": "use a reachability probe and a separate freshness gate, and fence the old writer before failover",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Active-passive is the alternative when writes must stay in one region, state cannot be replicated cheaply, cost prevents full active-active capacity, or RTO tolerance allows activation time; its passive path can drift.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+          "quote": "Active-passive recovery is the alternative when writes must stay in one region, state cannot be replicated cheaply, cost prevents full active-active capacity, or RTO tolerance allows activation time.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+          "quote": "warn that the passive path can drift",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Recovery's deliverable is a correct user-visible capability; a regional failover can recover a process while still failing its business obligations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission",
+          "quote": "A regional failover can recover a process and still fail its business obligations",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission",
+          "quote": "an asynchronous secondary may lack a recently accepted write",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The decision route is to fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route",
+          "quote": "Fence the former writer, define acceptable loss and reconcile state before directing recovered traffic to a new authority.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route",
+          "quote": "Promoting a second region without exclusive authority can create divergent accepted effects; failback is another transition to validate.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.43c706143e9208cbcb1770bcc62e9695#overview",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#health-endpoint-monitoring",
+    "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+    "tycho.page.aeedcc93ea554edc9059b8f9ddefa292#3-original-synthetic-recovery-scenario",
+    "tycho.page.36bfc8635514db33025afd706a6b4c85#overview",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries",
+    "tycho.page.07904f22ca8249069cedc8c2e1140630#the-routing-contract",
+    "tycho.page.1278bbadfc82b8cd481e94b6bd7f7633#a-bounded-drain-procedure",
+    "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+    "tycho.page.4b98ce4b82bf481b93f2bfce51e882b1#replica-lag-retained-wal-and-standby-feedback",
+    "tycho.page.253d5a98933c4cee947545acb8eaa72a#overview",
+    "tycho.page.8679c110343d4dfd862c15581b49c350#overview",
+    "tycho.page.4cd5af48018f47f7b30ace45acf4e220#overview",
+    "tycho.page.c987c475cc5340bcb967f4b6f963b295#engineering-walkthrough-what-does-a-green-slo-say-about-rejected-business-operations",
+    "tycho.page.2536d18422944e27abe4ea8549beb9ab#dr-strategies-with-different-operational-dependencies",
+    "tycho.page.1f0f0984036746779cc0bc96826db1e9#overview",
+    "tycho.page.765a54f5d9944577908b40b3fc6cb7ef#1-begin-with-the-authority-and-the-data-contract",
+    "tycho.page.77e5d6cab6c083335efb7fc74b423809#overview",
+    "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+    "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission",
+    "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
