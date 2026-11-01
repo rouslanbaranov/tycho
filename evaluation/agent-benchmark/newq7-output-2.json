@@ -1,0 +1,142 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A client-side load balancer selects backends by active-request count and gives each client a fixed subset of 64 backends. A backend with a failed disk answers 500s in about one millisecond, while another backend waits two seconds on a remote call and then succeeds. Why does the least-active policy send more work to the failing backend, which selection signal better protects the outcome, and what must the bounded subset and endpoint-change path preserve?",
+      "required_evidence": [
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#original-worked-design-one-connection-is-not-one-unit-of-work",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#failure-and-recovery",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#choice-acceptance-and-evidence",
+        "tycho.page.ad9c044731ff175a4d0bb6106fe2a0f7#dns-and-discovery-have-different-update-boundaries"
+      ],
+      "core_claims": [
+        "A selector that counts connections can send 90 multiplexed long requests over one connection while two other backends receive one request each, because connection count is not a measure of unfinished work.",
+        "A fast-failing backend looks idle: its active-request count falls within milliseconds, so a least-loaded or active-request selector sends it more new traffic and it becomes a sinkhole, while a slow dependency can look busy while making no progress.",
+        "Active-request counts are partial per client and misrank I/O-bound work; completed work and latency react after the fact, and utilization depends on comparable and timely reporting, so recent errors, health or success rate must be part of the load signal.",
+        "A bounded subset lowers connection, health-check and reconnect cost but concentrates a burst on fewer backends; its assignment must be uniform and deterministic enough to reproduce without leaving a failed backend in every client's set.",
+        "Endpoint change is not a new address alone: startup eligibility, readiness, draining and permanent removal are separate, and a last-known endpoint set may serve reads but cannot grant write authority.",
+        "Recovery probes must stay separate from the load signal so a recovered backend returns without a thundering herd, and the acceptance test must skew request costs, disconnect discovery and compare useful throughput, outstanding work and completion correctness."
+      ],
+      "optional_claims": [
+        "The source's Weighted Round Robin example combines backend-reported query, error and utilization signals into a contextual capability score rather than a universal weight.",
+        "A larger subset is preferable for bursty clients or widely varying request costs, while a small subset concentrates a burst on fewer backends."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team runs an RF=3 topic with acks=all and min.insync.replicas=1, treats RF=3 as a one-broker durability guarantee, and assumes a producer timeout means the record was not written. Why is that assumption wrong, what does the missing acknowledgment leave ambiguous, and what must be inspected before relying on leader election or replay?",
+      "required_evidence": [
+        "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#3-replicas-isr-and-acknowledgement-scope",
+        "tycho.page.1f2f7c346c2d492290d39f45f0ad2283#overview",
+        "tycho.page.8662ef4dfccd418f9c77cc2bc64a8c25#2-kafka-s-partition-is-an-ordering-and-load-unit",
+        "tycho.page.d97d84caed7e4d9a9a285996a2dde7d8#rebalance-external-effects-and-expired-replay-positions"
+      ],
+      "core_claims": [
+        "Replication factor 3 does not by itself guarantee that every record survives any one failure; durability depends on producer acks, ISR and min.insync.replicas, leader-election configuration, storage health, producer retries and how the commit is acknowledged.",
+        "The in-sync replica set tracks follower status relative to the leader; acks=all and min.insync.replicas define a durability/availability trade-off, and insufficient ISR interrupts accepted production instead of silently granting the same guarantee with fewer replicas.",
+        "A lost producer acknowledgment leaves the append outcome ambiguous: the producer must not assume the record was absent, and only an offset or status inspection can resolve whether it committed.",
+        "Eligible Leader Replicas are release- and upgrade-configuration-scoped: they were introduced in Kafka 4.0 and are enabled by default for new 4.1 clusters, but an upgraded cluster must be inspected for protocol or configuration and partition state before its election behavior is used as a durability assumption.",
+        "Kafka ordering is per partition, not total across a topic, and a Kafka record is a durable log entry under a retention and replication policy, not necessarily the authoritative business transaction.",
+        "A consumer can repeat an external effect after a crash even when broker-side producer retries are deduplicated; a durable receipt for the logical operation must commit with the effect, and stopping polling or revoking ownership does not retract an in-flight remote request."
+      ],
+      "optional_claims": [
+        "A Kafka transaction protects its declared Kafka topics and positions; it does not extend atomicity to an external SQL output.",
+        "read_committed is a precise Kafka visibility contract, not an isolation mode for the application database."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team declares RPO=0 and RTO=30 minutes for a regional failure and verifies them by restoring the latest base backup and WAL into a fresh database, seeing the process healthy after 25 minutes. Why does that restore not establish either objective, what can a latest-point restore lose or resurrect, and what must the drill measure and reconcile?",
+      "required_evidence": [
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#1-define-objectives-by-meaningful-clocks-and-outcomes",
+        "tycho.page.8ff8bad016ba4b92ba968c18a9210020#1-recovery-objectives-have-a-named-failure-and-clock",
+        "tycho.page.60ffc845d47c44cba4af2760474d68c7#5-rehearse-user-level-recovery-not-a-backup-command",
+        "tycho.page.4b654b81026f4d8b8909563bcffc01e4#4-strategy-alternatives-have-different-costs-and-risks"
+      ],
+      "core_claims": [
+        "RTO is the permitted interval from a named disruption or impact start marker until a specified user journey returns correct usable service, not until a database process starts; starting the clock after human detection hides part of the outage.",
+        "RPO is the maximum acceptable loss of acknowledged business state for a named failure class at a chosen acknowledgment boundary, so an intended RPO=0 is a requirement rather than evidence, especially when replication is asynchronous.",
+        "RPO and RTO are requirements or observed drill results, not inherent database settings, and a drill in one failure class cannot certify all disaster classes.",
+        "A complete backup is not a usable booking state: restoring to an earlier point can remove a later bad deletion and also erase valid post-point operations, so comparing row counts alone does not establish correct user outcomes.",
+        "The drill must reconcile operations accepted after the restore point through a business-approved replay or mapping, with one authoritative writer and idempotent and authorized effects; if valid operations cannot be reconciled, the workflow must stay paused and the bounded loss disclosed.",
+        "The evidence record must retain raw start and end timestamps, the selected recovery point, the actually restored version, errors, accepted and rejected checks and deviations, and measure impact-to-correct-service time rather than database health alone."
+      ],
+      "optional_claims": [
+        "An active/active design that independently allocates the same exclusive resource in two disconnected regions can violate correctness even while both regions serve requests.",
+        "Pilot-light and warm-standby strategies require proof of cold capacity, replica lag, cutover or fencing and sufficient warm capacity, not only a named strategy."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A gateway rotates its token-signing key overnight and removes the old key from every verifier as soon as the new key is live, while one region's key cache cannot reach the key authority. Some clients still hold unexpired tokens signed by the old key, and one verifier accepts a token whose key identifier points at an untrusted key URL. Why does routine rotation need overlap, when is overlap unsafe, and what must a verifier do when it cannot reach the authority?",
+      "required_evidence": [
+        "tycho.page.37a28a568f7e987941749e198c03439a#normal-rotation-and-compromise-differ",
+        "tycho.page.37a28a568f7e987941749e198c03439a#failure-recovery-and-acceptance",
+        "tycho.page.43bf5d29ec5b4327b0c4cf57391679da#key-rotation-revocation-and-unavailable-authorities"
+      ],
+      "core_claims": [
+        "Routine certificate or signing-key replacement needs overlap across producers, verifiers, caches and long-lived connections, and the new chain must be verified before it becomes the only accepted path.",
+        "Signing-key rotation is not encryption-key rotation: trusted verification material for the new key must reach verifiers before new-key-only tokens are issued, and old-key acceptance may continue only for the explicitly permitted overlap of existing tokens and policy.",
+        "During a private-key compromise, continued acceptance of the old key may violate the threat contract; emergency rejection and session re-establishment are an explicit incident decision, and the normal overlap may be unsafe.",
+        "A key identifier selects inside a configured trust relationship rather than creating that relationship, and untrusted token fields must not choose an arbitrary key URL or algorithm.",
+        "When the authority is unavailable, a verifier must not accept an unknown or unverifiable credential; a known unexpired credential may continue only within its configured offline-validation and current-permission contract.",
+        "A cryptographically valid token can outlive a revoked session or object permission, so object permission must be rechecked at the resource and cached allow decisions need a maximum stale interval, invalidation delivery and a defined policy-service outage behavior."
+      ],
+      "optional_claims": [
+        "Retiring a live encryption key before the oldest retained backup no longer needs it can make recovery unreadable without deleting any bytes, while restoring a compromised key merely for backup readability can violate the incident threat model.",
+        "A nominal five-minute token lifetime plus a two-minute clock allowance can expose a longer acceptance window, and the exact bound depends on issuer and verifier clocks and configured checks."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A retrieval team raises the title field boost from 2x to 10x on the queries it used for tuning, then compares the new index's BM25 scores with the old index's scores and concludes that relevance improved. Why is that comparison invalid, what does BM25 combine, and what must be frozen and judged before the boost is accepted?",
+      "required_evidence": [
+        "tycho.page.fa9fbde428884786b68dbfdf142cb1ad#1-why-inverted-indexes-work",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#engineering-walkthrough-analyzer-compatibility-and-a-stale-index-generation",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#purpose-and-mission",
+        "tycho.page.39a694d604d646a996bf90c3357c3b27#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "BM25-style ranking combines term evidence, document-length normalization and inverse-document-frequency weighting; it is a text relevance model, not a guarantee that a retrieved result is technically true.",
+        "Scores from different indexes, analyzers or corpora need not share a common calibration, so a higher raw BM25 score does not by itself establish better relevance.",
+        "An arbitrary field boost such as 10x title is a tuning hypothesis, and too much title boost can rank a shallow overview above an exact failure explanation; it must be evaluated on unseen queries and judgment labels.",
+        "Results must be bound to an index generation and source revision; a high BM25 rank is not evidence that an older citation remains authoritative, so stale snippets must be invalidated and an exact-source fallback offered when generation comparison fails.",
+        "Lexical relevance is not source validity, and applying authorization filters too late can expose forbidden records or distort the candidate set."
+      ],
+      "optional_claims": [
+        "Title and stable term IDs, technical paragraphs, version tags, source anchors and navigation breadcrumbs carry different retrieval importance, and their relative weights remain hypotheses rather than defaults.",
+        "A lexical index preserves exact-token evidence that paraphrase-only similarity can miss, but word overlap alone cannot guarantee that a page explains the requested architecture, version or failure behavior."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "An application writes 'reservation requested' to its log before the database transaction commits, and a log-collector outage hides a different request that did commit. Operators later use the presence or absence of those log lines to decide which reservations were accepted. Why can neither the log line nor its absence establish acceptance, what must an authoritative effect record contain, and how should the investigation reconcile the contradiction?",
+      "required_evidence": [
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#1-separate-semantics-before-selecting-storage",
+        "tycho.page.adde87c9a3a14c508ebd5ddb8fa676a1#2-an-original-fictional-reservation-audit",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#5-failure-chronology-and-negative-evidence",
+        "tycho.page.e50b14deb6de4204b9f405942ab0cee8#6-a-source-led-acceptance-test"
+      ],
+      "core_claims": [
+        "Operational logs, traces, business audit, dataset lineage and compliance retention answer different questions and have different essential properties; a log drop cannot be interpreted as no event.",
+        "A reservation-requested log may be emitted before the database transaction commits, so it is diagnostic context rather than evidence of accepted state, and a log sink can be unavailable while an authorized operation commits successfully.",
+        "An authoritative effect or audit record needs a stable effect identity, actor and role reference, tenant or resource scope, operation type, target state revision, commit time and an integrity mechanism under a defined consistency boundary.",
+        "The domain commit and the audit or effect record need a real atomicity or consistency implementation; a diagram does not guarantee a transactional outbox or an atomic audit write.",
+        "When telemetry and authoritative state disagree, the investigation must query effect identities and committed revisions under authorized access, reconcile observations to those records rather than redefining truth, identify dropped or duplicated windows, and report uncertain results as uncertain.",
+        "Proposed acceptance must force a rollback after a requested log and a commit during log-export failure, and verify that a retried committed operation is resolved by effect identity rather than duplicated; no such test was run."
+      ],
+      "optional_claims": [
+        "Redaction at a central collector may occur after sensitive bytes have already traversed insecure intermediate paths, so exposure should be limited at emission and the whole ingestion chain verified.",
+        "The OpenTelemetry log data model supplies structured telemetry fields, not a guarantee that every application log event was recorded atomically with its business transaction."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tycho.local/schemas/agent-answer-v2.json",
+  "title": "Tycho agent answer with evidence ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "answer", "claims", "citations",
+               "missing_required_anchors", "abstain"],
+  "properties": {
+    "task_id": {"type": "string", "pattern": "^Q[0-9]{3}$"},
+    "answer": {"type": "string", "minLength": 1},
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claim_id", "text", "evidence"],
+        "properties": {
+          "claim_id": {"type": "string", "pattern": "^C[0-9]+$"},
+          "text": {"type": "string", "minLength": 1},
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["section_key", "quote", "supports", "status"],
+              "properties": {
+                "section_key": {"type": "string", "minLength": 1},
+                "quote": {"type": "string", "minLength": 1},
+                "supports": {"type": "string", "pattern": "^C[0-9]+$"},
+                "status": {"enum": ["observed", "inference"]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "citations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "missing_required_anchors": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "abstain": {"type": "boolean"}
+  }
+}
