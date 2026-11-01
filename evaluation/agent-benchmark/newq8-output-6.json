@@ -1,0 +1,145 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "a team presenting the modernization result says the model is calibrated because the scenario's uniform dual-write-lag range of 0.5 to 2.5 seconds and reconciliation-capacity range of 2 to 8 records per second were turned into standard uncertainties, combined in quadrature and reported as a 95% coverage interval for the modeled divergence. the model contract still records uncalibrated and the decision returns insufficient evidence. why is an assumed range in a scenario neither a type a nor a type b component, why is the combined interval not a metrological coverage interval, and what may the record claim about uncertainty until a measurement exists?",
+      "required_evidence": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+        "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty"
+      ],
+      "core_claims": [
+        "JCGM 100 describes a measurement result as a measured value with an uncertainty and a coverage interval at a stated coverage probability, and it distinguishes Type A and Type B components that are combined into that result.",
+        "V12 uses that vocabulary but not the method: a uniform range declared in a scenario is an assumed input range, not a Type A or Type B component, and V12 performs no metrological uncertainty budget.",
+        "An interval computed across replications is a sampling interval, not a metrological coverage interval, so a synthetic interval cannot be read as a calibrated uncertainty for the input parameters.",
+        "Every V12 model is uncalibrated, and each input carries one of four statuses: measured with a named source, method, sample size and period; assumed with no measurement claim; derived from other inputs; or unknown and not to be invented.",
+        "A parameter changes status only with new evidence; repeating an assumed value in a decision record, or restating its range as a coverage interval, does not make it measured, and the valid claim is conditional on the declared inputs."
+      ],
+      "optional_claims": [
+        "A derived value inherits the weakest status of its inputs unless the derivation itself is validated.",
+        "Input uncertainty and sampling error are separate: more replications reduce sampling error but do not reduce uncertainty about an assumed input distribution."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "candidate c declares a 1.5-second timeout and two attempts with linear backoff, yet its run reports a p95 latency of 1.769 seconds; candidate b declares a 2-second timeout with three attempts and reports a p95 of 1.206 seconds. the team tells customers that the declared timeout is the end-to-end deadline and cites b's p95 as proof that a 1.5-second caller deadline will hold. why does the declared timeout bound an attempt rather than the request, what can a request accumulate across attempts, and what must a caller-deadline claim and a latency metric each record?",
+      "required_evidence": [
+        "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+      ],
+      "core_claims": [
+        "A request receives a timeout event when it enters the system, with the deadline at arrival plus the configured timeout; a completion before the deadline causes the later timeout to be ignored, while a timeout that fires first releases the server, counts the attempt as timed out and schedules a retry after backoff or fails the request terminally.",
+        "The deadline is per attempt, not per request lifetime: a retry schedules a new timeout at the retry time plus the timeout, so a request with three attempts can spend up to three timeouts plus two backoffs in the system.",
+        "The discrete-event model measures latency directly from completed requests, so a request that times out on an early attempt and succeeds after backoff contributes its full request lifetime; candidate c's 1.769-second p95 with a 1.5-second timeout is not a contradiction.",
+        "A timeout larger than the caller's deadline is a listed failure mode: the server continues work after the caller has given up and wastes capacity, and a retried attempt may duplicate an effect because the queue model does not represent business idempotency.",
+        "Candidate b's 2-second timeout with three attempts permits a request lifetime beyond 1.5 seconds even though its p95 is 1.206 seconds, so that p95 cannot certify an end-to-end caller deadline.",
+        "A caller-deadline claim must pair the end-to-end allowance with the attempt policy, and the latency metric must state which population it summarizes and which per-attempt deadline censors it."
+      ],
+      "optional_claims": [
+        "The lifecycle counts a first attempt as timed out even when the request later succeeds, so a timeout count is a count of attempts rather than of requests that ultimately failed.",
+        "Candidate b declares exponential backoff with full jitter and three attempts, so the request lifetime depends on the declared backoff policy and not on the service time alone."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "candidate c runs on 18 servers against 12 for a and b, so a reviewer calls it the most resilient candidate and reads its 1.769-second p95 as the price of running more parallel work. c's mean service time is 0.75 seconds, a and b use 0.5 seconds, and c is eliminated by the same 1.5-second p95 and 3.0 cost ceilings. why does server count not measure capacity, how is service capacity computed from servers and mean service time, and what must a capacity claim report before two server counts are compared?",
+      "required_evidence": [
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule"
+      ],
+      "core_claims": [
+        "Service capacity is the server count divided by the mean service time: the checkout baseline's 12 servers at 0.5 seconds give 24 requests per second, and utilization is offered load divided by that capacity, 20/24 = 0.833.",
+        "Candidate c's 18 servers at 0.75 seconds give the same 24 requests per second, so its extra six servers offset a slower mean service time rather than adding capacity, and the server count alone cannot rank the candidates.",
+        "Treating server count as capacity, or dividing the mean service time by servers in the wrong direction, is the listed service-time-confusion failure mode and yields a capacity that is too high or too low.",
+        "Capacity is not realized throughput: the saturation run reports utilization 1.0, throughput 24, rejection 0.2 and a 77.6-request backlog, while candidate c's 0.111 timeout rate and 3.63 cost per 1,000 successes eliminate it under the declared limits.",
+        "A capacity claim must state the server count, the mean service time and its distribution, the resulting service capacity, the utilization definition and the admission and timeout configuration, and the candidates must share workload, duration, warmup, metric definitions and seed scheme."
+      ],
+      "optional_claims": [
+        "The stock-flow baseline's measured server utilization of 0.833 confirms the arithmetic for this synthetic case, but that model still has no individual latency and no p95.",
+        "Candidate c's configuration is 18 servers with a 0.75-second mean service and a 14.0 relative cost per server-hour, while a and b use 12 servers at 0.5 seconds."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "a reviewer reads the checkout decision's evidence block as a maturity ladder: model_verification is model-verified, calibration is uncalibrated and simulation is decision-supported. the reviewer concludes that the simulation layer is decision-grade, that calibration is the only gap and that the simulation field confirms the record's status. the schema's simulation field carries the decision status by convention. why does the field name not determine what it holds, what question does each of the three statuses answer, and what does decision-supported still not establish?",
+      "required_evidence": [
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+        "tycho.page.1a3833c3b4431428b25fa9896bcdd072#a-worked-separation"
+      ],
+      "core_claims": [
+        "A decision record separates three statuses: model-verified, partially-verified or unverified for the engine and model; calibrated, partially-calibrated or uncalibrated for the inputs; and decision-supported or insufficient-evidence for the outcome.",
+        "In the current schema evidence.simulation carries the decision status by convention; it describes the decision, not whether the simulation executed, and it does not upgrade the calibration or model-verification fields beside it.",
+        "V12 keeps five evidence layers separate and says they are not a ladder: source support does not validate a model, verification does not calibrate inputs, and a calibrated model can still fail a decision if a hard constraint was omitted.",
+        "A decision-supported outcome with an uncalibrated model is conditional: it says the decision follows from the declared assumptions and constraints, not that they are true, and the record must state the condition and the measurements that would reverse it.",
+        "Evidence inflation, presenting a model-verified engine as a validated system, is a listed decision-record failure mode; the record's limitations keep production behavior, operability and calibration outside what it establishes."
+      ],
+      "optional_claims": [
+        "The record's status is one of proposed, decision-supported, insufficient-evidence or rejected, and a record with recommendation none can still be a complete outcome.",
+        "The checkout record states that the operability constraint remains unverified, so its recommendation is conditional even where the quantitative constraints pass."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "a team says its checkout model is calibrated because the deployment settings are exact: 12 servers, a 200-request queue and a lognormal service time with mean 0.5 seconds and coefficient of variation 0.6. the input table still marks servers, queue capacity, service mean and service CV assumed, and the calibration gate still records every model uncalibrated. why do configured values not become measurements of modeled behavior, what is missing for each, and what evidence would change a status?",
+      "required_evidence": [
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+        "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backpressure",
+        "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration"
+      ],
+      "core_claims": [
+        "The four statuses are measured, assumed, derived and unknown: measured needs a named source plus a measurement method, sample size and period; assumed is a chosen value with no measurement claim; derived inherits the weakest status of its inputs; unknown must not be invented.",
+        "The V12 input table names what is missing for each row: a measured arrival trace, a measured service-time sample and tail, a measured distribution rather than a chosen shape, a measured deployment capacity, a measured admission policy, and a measured client deadline and retry policy.",
+        "A configured server count states deployment intent; the checkout comparison's missing measurement is a measured deployment capacity and cost, so the capacity achieved under the target workload is not established by the setting.",
+        "A configured queue size is a buffer limit, not an admission policy: the model's three limits are queue capacity, bulkhead and timeout, and a request that reaches a limit is rejected and counted, so the policy that produces the production setting is still unmeasured.",
+        "A status changes only with new evidence; repeating an assumed value in a decision record does not make it measured, and the V12-D gate checks the statuses and missing measurements rather than making a production claim."
+      ],
+      "optional_claims": [
+        "A value computed from measured and assumed inputs is derived and inherits the weakest status of its inputs unless the derivation itself is validated.",
+        "The V12 input table also marks timeout and divergence threshold assumed, listing a measured client deadline and retry policy and a business-defined data-quality threshold as the missing items."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "after seeing that the recommended candidate b has a p95 latency of 1.206 seconds against candidate a's 0.870 seconds, a reviewer asks the decision record to report p99 instead, arguing that the tail is what a user-facing checkout actually experiences. the scenario declares p95 and the decision's hard ceiling is 1.5 seconds on p95. why is a post-hoc metric change not a stricter version of the same test, what must be declared before a comparison, and what would a legitimate p99-based decision require?",
+      "required_evidence": [
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints"
+      ],
+      "core_claims": [
+        "A scenario fixes the model, workload, candidate configuration, uncertainty inputs, replications, seed scheme, metrics and constraints, and every metric carries an identifier, unit, direction and business-comparable flag.",
+        "Metric substitution is a listed scenario failure mode: a decision that uses p99 while the scenario declares p95 is rejected by the validator, so an undeclared metric cannot be introduced after the result.",
+        "The experiment declares success rate, p95 latency, throughput, cost per 1,000 successes, rejection rate and retry amplification; candidate a's p95 is 0.870, b's is 1.206 and c's is 1.769 seconds.",
+        "The hard p95 ceiling of 1.5 seconds eliminates candidate c at 1.769 while a and b pass; a hard constraint is applied as declared, and replacing it after the result changes who passes without adding a measurement.",
+        "A legitimate p99-based decision would declare p99 as a metric with its own ceiling before the run, apply the same definition to every candidate and record the new constraint, rather than re-scoring the existing recommendation on an undeclared metric."
+      ],
+      "optional_claims": [
+        "A scenario with no constraints is still a valid scenario, but it cannot support a decision record that claims to respect hard constraints.",
+        "The record keeps the non-quantitative operability constraint separate and not tested, so the recommendation stays conditional even where the quantitative constraints pass."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

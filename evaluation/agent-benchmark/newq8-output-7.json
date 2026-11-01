@@ -1,0 +1,161 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "modeling-and-simulation",
+  "items": [
+    {
+      "question": "a staged modernization run reports success rate 1.0, rejection rate 0.000, mean_queue_length 4,242 and max_queue_length 7,270 with unit 'request', while its scenario declares a 100-request queue and a 1,000-request bulkhead; the book calls the same stock a dual-write backlog of records and says the model is a fluid approximation. a reviewer concludes the target violated its admission limits by more than seventy times. why is max_queue_length not a request queue, and what must the metric identity, unit and run record establish before the number can be compared with candidate B's queue length or a capacity threshold?",
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results"
+      ],
+      "core_claims": [
+        "The modernization model's stock is dual_write_backlog, records awaiting reconciliation between the legacy and target paths, not the request queue bounded by queue_capacity or bulkhead.",
+        "The run labels that stock mean_queue_length and max_queue_length with unit 'request', so the record asserts a different quantity and unit than the book's 4,242.0-record dual-write backlog.",
+        "Read literally, 7,270 requests exceeds both the 100-request queue and the 1,000-request bulkhead, while rejection is 0.000 and success is 1.0; the literal reading is internally inconsistent.",
+        "A metric's identity must include the stock it measures, its unit and the model family; reusing a discrete-event queue metric for a hybrid backlog makes cross-run comparison and capacity checks invalid.",
+        "The run record should use a distinct identifier and unit for the dual-write backlog or omit it, and the decision record must not use it as an admission or queue-capacity check."
+      ],
+      "optional_claims": [
+        "Candidate B's mean_queue_length of about 1.57 requests and the staged run's 4,242 records are different quantities, so their ratio has no meaning.",
+        "The scenario's queue_capacity and bulkhead are generic candidate fields; the modernization engine does not apply them to the dual-write backlog."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "the staged modernization scenario declares 20 servers, a 0.05-second mean service time and a 10-unit server-hour cost, yet its run reports server_utilization 0.0 and cost_per_1k_success 0.0 alongside success 1.0 and throughput 10 requests/second. a capacity review reads the zeros as an idle, free target. why are these zeros absence sentinels rather than measurements, and what must the model, scenario and run contract do when a declared field has no corresponding state, parameter or equation?",
+      "required_evidence": [
+        "tycho.page.d860bc57cdfe6c6163912819f7679d17#a-scope-statement-that-can-be-reviewed",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#what-the-experiment-establishes"
+      ],
+      "core_claims": [
+        "The modernization model's parameters are the arrival rate, target and legacy capacity, dual-write lag, reconciliation capacity, rollback timing and traffic shares; servers, service time and cost are not in its state or parameter set, and its scope excludes deployment and infrastructure.",
+        "The engine returns 0.0 for server_utilization and cost_per_1k_success for this model, so zero means not computed, not idle and not free.",
+        "The scenario's 20 servers, 0.05-second service time and cost are generic candidate fields; at the final stage the target capacity is explicitly 12 requests/second and offered target traffic is 10 requests/second, so the target is loaded rather than idle.",
+        "A model that omits a mechanism must not emit a numeric default for it; the run should omit the metric or mark it not-modeled, and the scenario should reject or explicitly mark fields the model does not consume.",
+        "A capacity or cost claim needs a model that represents servers, service and cost, plus a measured input; this run supports neither."
+      ],
+      "optional_claims": [
+        "If the 20 servers and 0.05-second service time were actually used, they would imply 400 requests/second of service capacity, far above the declared 12 requests/second target capacity, which shows the fields are inert rather than a capacity plan.",
+        "The generic scenario contract requires these configuration fields, which makes unused values easy to mistake for modeled inputs."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "the saturation stock-flow run's invariant detail reports backlog_end 776.0 against a scenario queue capacity of 80, while the worked example reports a 77.6-request average backlog and the run reports mean_queue_length 77.6. a reviewer treats 776 as a tenfold capacity violation. why is the detail's backlog_end a sum across ten replications rather than a per-system stock, and what must a cross-replication stock summary preserve?",
+      "required_evidence": [
+        "tycho.page.870e64da1f925c52109a602440048603#units-conservation-and-the-integration-step",
+        "tycho.page.870e64da1f925c52109a602440048603#a-worked-order-intake-example",
+        "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation"
+      ],
+      "core_claims": [
+        "backlog_end is a stock at the end of one replication, while offered, completed and rejected are cumulative flows over the horizon.",
+        "The recorded 776.0 is 10 times 77.6, the terminal backlog of each of ten replications, not a backlog that coexisted with the 80-request per-system admission cap.",
+        "The per-replication stock stayed at or below the cap, and 77.6 is the capacity-relevant value; a sum of stocks across independent systems is a fleet total and cannot be compared with a per-system limit.",
+        "A cross-replication stock summary must state its pooling rule, such as sum, mean, maximum or quantile, and keep per-system units; the run detail should label flows and stocks separately.",
+        "A reader who compares 776 with 80 infers a violation that did not occur, so the provenance record must make the aggregation explicit."
+      ],
+      "optional_claims": [
+        "The conservation identity holds per replication, and the aggregate detail also balances because every term is summed over the same ten replications.",
+        "An unlabeled sum of in_system or queue length would be equally misleading."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "the checkout model's verification case V12-B-DES-02 says zero queue capacity rejects every request that cannot start service immediately, but its expected result is success_rate == 0 with positive arrivals. the test passes with one server, a 0.1-second service time and a hidden default Poisson rate of 10 requests/second. why is success_rate == 0 a property of that saturating workload rather than of zero queue capacity, and what must the case record before its pass counts as a boundary verification?",
+      "required_evidence": [
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#boundary-cases",
+        "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-3-boundary-cases",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#resource-semantics"
+      ],
+      "core_claims": [
+        "Zero queue capacity rejects only requests that cannot start service immediately; a request that finds an idle server still starts and can succeed.",
+        "Therefore success_rate == 0 holds only when the arrival stream keeps the server pool busy or the pool has no servers; at a lower arrival rate a zero-queue run has positive success.",
+        "The test's default workload of 10 requests/second against one server with 0.1-second service is at the saturation boundary, so the expected value is true only there, and the case description does not state that condition.",
+        "A verification case must record the workload, server count, service time and the condition under which the expected value holds, plus a contrasting non-saturated zero-queue case with positive success.",
+        "A pass under one saturating workload does not establish that zero-queue admission and rejection are correctly ordered in general."
+      ],
+      "optional_claims": [
+        "A single arrival to an idle server with zero queue should succeed; an engine that rejects it would still pass the current case only if the workload is saturating.",
+        "The test helper hides the arrival rate, so the dependency on load is easy to miss."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "the checkout decision lists five constraints; C1 is request conservation and C2 is no silent drop. the worked example says both hold for all three candidates because the engine aborts on a conservation failure. a reviewer counts two hard passes per candidate as evidence that the candidates are safe. why can C1 and C2 not discriminate among candidates, what does conservation fail to prove, and what must a candidate-level hard constraint assert?",
+      "required_evidence": [
+        "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+        "tycho.page.621e495fcadc4849d2f21d55be4c52e4#conservation",
+        "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure"
+      ],
+      "core_claims": [
+        "C1 and C2 are engine-enforced preconditions: a run that violates them aborts, so every candidate that reaches comparison passes them by construction.",
+        "A hard constraint is a condition a candidate must satisfy; C1 and C2 cannot eliminate or rank candidates, unlike C4 cost and C5 p95 latency.",
+        "Conservation is necessary but not sufficient, because requests can be conserved while assigned the wrong outcome such as timeout, failure or success; C1 and C2 therefore do not establish candidate safety.",
+        "A candidate-level hard constraint must be a property candidates can independently fail and the run measures, such as a success floor, a p95 ceiling, a cost ceiling or a duplicate-effect bound.",
+        "The record should separate engine preconditions from decision constraints, or count C1 and C2 as preconditions rather than as two independent candidate constraints."
+      ],
+      "optional_claims": [
+        "C1 and C2 overlap heavily, so counting both inflates the apparent number of independent constraints."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "the staged modernization run reports max_divergence 8,925.5 records (95% CI 5,561.6-12,289.3), and the case narrative calls this far outside any plausible business threshold, although the model accumulates divergence as an excess-backlog term scaled by 0.001 per step and the decision record labels it a synthetic proxy. why can the absolute value not be compared with a business threshold, and what must the decision record say instead?",
+      "required_evidence": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+        "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+        "tycho.page.ea9adae8cf8a3196a3515d383b075f53#the-modernization-example"
+      ],
+      "core_claims": [
+        "Divergence is an accumulated proxy scaled by a model coefficient of 0.001 per step, not a count of observed inconsistent records; its unit label 'record' is nominal.",
+        "The coefficient sets the magnitude: changing it by an order of magnitude changes 8,925 by an order of magnitude without changing the backlog dynamics.",
+        "Therefore 8,925 cannot be read as far outside a data-quality threshold; only relative comparisons under the same model, coefficient and scenario are meaningful.",
+        "The insufficient-evidence outcome can still be correct because dual-write lag and reconciliation capacity are unmeasured and rollback is incomplete, but the rationale must rest on those gaps rather than on the proxy's absolute value.",
+        "To support a threshold the model needs record-level reconciliation or a calibration mapping from proxy to observed divergence; otherwise it must be labeled ordinal and must not carry a business threshold."
+      ],
+      "optional_claims": [
+        "The 95% interval around 8,925 is a sampling interval on an arbitrary proxy scale, not a data-quality confidence interval.",
+        "max_divergence and max_queue_length are different stocks, so their magnitudes are not directly comparable."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "the staged modernization scenario declares a 120-second rollback drain and the model lists rollback_drain as a parameter, but the run reports only whether the drain finished by the 2,400-second horizon: rollback_completed is 0.1 and rollback_seconds is 1,080, a mean of completed and horizon-censored durations. a reviewer reads the 120 seconds as the rollback objective. why is the declared drain allowance not evidence of a 120-second rollback, and what must the model and decision record state?",
+      "required_evidence": [
+        "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+        "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+        "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+        "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#insufficient-evidence-is-a-result"
+      ],
+      "core_claims": [
+        "The engine reads rollback_drain but never applies it; rollback completes only when the dual-write backlog and divergence reach zero, or is censored at the horizon.",
+        "The reported 1,080 seconds is a mean of completed and horizon-censored durations, not a measured drain duration and not a 120-second result.",
+        "Decision M2 checks completion within the 2,400-second observation window, not the 120-second allowance, so the 120-second objective is not tested by the run.",
+        "A declared parameter that no equation or check consumes is inert; it must be removed or wired into the completion rule, with a verification case that distinguishes 120 seconds from the horizon.",
+        "Until then, the scenario must not be read as claiming a bounded drain, and the decision must state that rollback duration is unbounded or censored."
+      ],
+      "optional_claims": [
+        "The model's default rollback_drain and the scenario value are both 120 seconds, so the numbers alone do not reveal that the field is unused.",
+        "The structural validator checks schema, identifiers, links and hashes; it cannot detect an unused parameter."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

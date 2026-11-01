@@ -1,0 +1,165 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "book",
+  "items": [
+    {
+      "question": "A streaming platform team reads that a large video company made a generational low-pause collector its default for latency-critical services, so it enables the same collector on every JVM in the fleet, including a nightly analytics precompute, and reports success when the pause histogram improves. During bursts the service still shows cancelled and retried requests, and the precompute and one spiky-allocation workload regress. Why is a better pause histogram not evidence for the fleet-wide choice, what must be separated across collectors and measurements, and when does a throughput-oriented collector remain the better fit?",
+      "required_evidence": [
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#workload-requirement-changes-the-answer",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#separate-three-collectors-and-four-measurements",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#genuine-counterexample-spiky-allocation-and-long-running-batch",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#observable-failure-and-recovery-mechanisms-behind-the-gc-choice",
+        "tycho.page.a486e061c9564587b1e39a4e83024fca#what-the-operational-evidence-actually-distinguishes"
+      ],
+      "core_claims": [
+        "The reported reason for the low-pause default was an amplification loop: a collection stall can trip a caller deadline, and the resulting cancellation, retry, hedging or fallback adds offered work even after the unlucky request has failed.",
+        "Pause duration is one symptom among several; the case says quieter collection exposed other latency causes, so a rollout must also read request and downstream response tails, cancellation and retry traffic, and non-GC bottlenecks.",
+        "Collector comparisons are workload-scoped: the reported figures contrast G1 with older non-generational ZGC, G1 with generational ZGC on a selected workload, and Parallel with G1 on a large batch job, so they cannot be combined into one fleet-wide ranking.",
+        "Spiky allocation, long-lived objects and unpredictable task duration are stated counterexamples where G1 did better, and a throughput-oriented precompute favored the Parallel collector, so one company's adoption is not a default for another workload.",
+        "The same account reports costs that a pause-only evaluation hides, including native memory overhead around 3% of heap and loss of compressed references or direct-byte-buffer processing."
+      ],
+      "optional_claims": [
+        "By the 2024 article more than half of critical streaming video services ran JDK 21 with generational ZGC, a company-reported adoption figure that does not describe every application.",
+        "The Parallel collector showed 6-8% more throughput and about one hour shorter batch in one precompute, a batch comparison rather than a generational-ZGC-versus-G1 result."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A team migrating a GraphQL service keeps its schema, annotations and data-fetcher wiring, runs the new framework on a canary, and concludes that annotation compatibility proves behavioral parity. The canary shows worse CPU and latency, the team blames the JVM, and a query-only smoke test is used to sign off subscriptions, removed test configuration and a direct client API. Why does preserving the programming model not establish execution parity, what did the failed canary reveal about the asynchronous lifecycle, and which compatibility seams must the release tests cover?",
+      "required_evidence": [
+        "tycho.page.5a4108bc167f4e2387dbf019eac7881e#the-migration-surface-preserve-semantics-not-merely-annotations",
+        "tycho.page.5a4108bc167f4e2387dbf019eac7881e#a-revealing-failed-performance-assumption",
+        "tycho.page.5a4108bc167f4e2387dbf019eac7881e#specific-module-and-protocol-consequences-after-the-10-0-release",
+        "tycho.page.5a4108bc167f4e2387dbf019eac7881e#three-temporal-architecture-states"
+      ],
+      "core_claims": [
+        "The compatibility seam preserved the schema provider, data-fetcher wiring and common annotations while delegating query execution and HTTP/WebSocket transport to the new framework, so the preserved surface is narrower than 'no application changes'.",
+        "The first canary against production traffic was worse, with more than 50% CPU degradation and about 20% slower request latency, and a 10-20% CPU degradation remained after framework fixes.",
+        "The residual cost came from existing filters running repeatedly because they were not written for the implicit asynchronous HTTP lifecycle; disabling asynchronous processing by default restored parity for the measured services while leaving it opt-in.",
+        "The 10.0.0 release removed legacy starters and auto-configuration, removed a direct client class, changed the subscription transport and endpoint behavior, and changed the recommended test configuration, so a query-only test does not cover the compatibility surface.",
+        "The 'little application code change' statement is a release-owner fleet claim, and measured parity is scoped to the tested services rather than an audited per-service success rate."
+      ],
+      "optional_claims": [
+        "Custom web filters, test configuration, direct use of deprecated classes and subscription clients are named as boundaries that may still require changes.",
+        "The earlier roadmap dates are not evidence that the fleet was migrated; the December 2024 release notice is later evidence and names the removed modules."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A gateway team replaces its thread-per-request front end with a Netty event-loop design to cut CPU cost and improve reliability. After the switch the computation-heavy API routes show no CPU gain, one filter performs a synchronous call on the event loop and stalls unrelated routes, and the team reports the migration as a throughput and reliability win because persistent connection capacity rose. Why is the benefit conditional on workload shape, why did asynchronous execution not automatically improve reliability, and what must the gateway operate and measure before the claim is supportable?",
+      "required_evidence": [
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#before-and-after-execution-ownership",
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#what-netflix-actually-reported",
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#why-reliability-was-not-automatically-improved",
+        "tycho.page.8982b044f7ee4305a2330a6ff989bb77#alternatives-and-contraindications"
+      ],
+      "core_claims": [
+        "A Netty event loop reduces the cost of connections that are merely waiting; it does not speed cryptography, serialization or business logic, and a CPU-intensive filter left on the loop delays unrelated requests.",
+        "The reported production outcome was not uniform: the API-facing, computation-heavier cluster showed no material CPU-efficiency gain, while a lower-work logging cluster showed about 25% throughput improvement with associated CPU reduction.",
+        "Asynchronous conversion trades straightforward per-request stacks for callback lifecycle state, context propagation and manual cleanup, with reference-counted buffer leaks, file-descriptor leaks and dropped responses named as failure classes of incomplete error paths.",
+        "Moving off blocking threads does not by itself improve reliability, because downstream latency and retries can still amplify open connections and pressure while the asynchronous path adds new failure modes.",
+        "A tuned blocking gateway remains defensible when connection counts are moderate, work is CPU-heavy and latency objectives are already met; the decision must compare connection-waiting capacity, CPU per request class and p99 under saturation separately.",
+        "Operating guards include an event-loop blocking detector, a bounded offload executor, request context and principal propagation, deadline and cancellation cleanup, leak detection, admission and retry limits, cohort-level p99 and a known rollback version."
+      ],
+      "optional_claims": [
+        "The source reports developer and operational cost from thread locals, blocking boundaries, testability and debugging, not measured engineering hours.",
+        "Some retry-storm resilience benefit is reported but requires tuning and is not a zero-failure guarantee."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "An organization with thousands of microservices draws domain gateways above its service fleet, reports that 2,200 critical services were classified into 70 domains with roughly half of the domains implemented, and then declares the ownership migration complete and tells every client to call a gateway. One gateway now returns a shared response object built from several teams' internal tables, and a product team adds an unbounded plugin at a domain extension point. Why is classification not domain ownership, what must each gateway and extension preserve, and what do the published adoption percentages actually support?",
+      "required_evidence": [
+        "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#why-domain-boundaries-were-introduced-after-independent-services",
+        "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#contract-boundaries-allowed-dependency-directions-and-extensions",
+        "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#quantitative-adoption-evidence-and-its-limits",
+        "tycho.page.7419e7903c5549a6a9c7944f4214f7e1#negative-evidence-costs-and-alternatives"
+      ],
+      "core_claims": [
+        "The reviewed architecture introduced a stable ownership and API level above individual services; a domain may contain one service or many, and consumers interact through a domain gateway rather than through every implementation's changing RPC surface.",
+        "The reported rollout catalogued 2,200 critical services into 70 domains with roughly half of the domains implemented, which is a classification and partial-implementation state, not a completed migration.",
+        "The five ordered layers run from infrastructure through general business, product and presentation to edge, and reversing the allowed dependency direction embeds product logic in shared platform services.",
+        "A domain gateway must preserve caller-visible contract identity while hiding internal services, tables and pipelines; gateway bypass, over-broad shared response objects or non-versioned response semantics recreate the direct coupling.",
+        "Logic and data extensions need bounded, versioned and authenticated contracts; an unbounded plugin or serialized payload without schema, size, privacy and retention rules can change latency, fault isolation and safety despite a stable API.",
+        "The reported 25-50% shorter onboarding, three days to three hours and 1.5-year service half-life are company-reported figures without control cohorts, and the source does not establish an organization-wide completed transition."
+      ],
+      "optional_claims": [
+        "The Maps organization's 80 microservices behind three gateways illustrate grouping; the source does not prescribe a gateway-to-service ratio.",
+        "Gateways that leak internal data models do not make services independent, and additional gateways can themselves become central points of change."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A Quarkus service moves blocking JDBC calls into a worker pool, annotates message handlers for virtual-thread dispatch to raise throughput, and replaces an Observable pipeline with Flowable to 'add backpressure'. Under load, messages for one key are processed out of order, the database connection pool saturates although the messaging default allows far more concurrency, and an event-loop handler waiting on a synchronous call stalls unrelated routes. Why do the runtime layers and annotations not make these changes equivalent, what ordering and capacity guarantees must be declared, and why does wrapping a producer in Flowable not slow it down?",
+      "required_evidence": [
+        "tycho.page.883194a820194482bc2508c8e4568d86#1-runtime-layers-are-not-equivalent-products",
+        "tycho.page.883194a820194482bc2508c8e4568d86#2-the-blocked-event-loop-is-a-shared-fate-failure",
+        "tycho.page.883194a820194482bc2508c8e4568d86#3-quarkus-3-27-choosing-worker-reactive-or-virtual-handler",
+        "tycho.page.883194a820194482bc2508c8e4568d86#5-rxjava-3-1-9-flowable-is-not-observable"
+      ],
+      "core_claims": [
+        "Netty supplies channels, pipelines and event loops, Vert.x dispatches handlers across multiple event loops, and Quarkus selects worker, event-loop or virtual-thread execution per handler; dispatch cannot be inferred from a Java return type alone without the version and extension.",
+        "A synchronous 600 ms call on an event loop delays every operation scheduled on that same loop, and adding workers elsewhere does not release it.",
+        "Moving blocking work with executeBlocking or a worker pool isolates the event loop but transfers the queue, timeout and capacity problem to a bounded executor; an unbounded worker queue can move the outage rather than solve it.",
+        "Quarkus virtual-thread messaging can process events concurrently and no longer preserves the default sequential per-channel behavior, so completion order need not match arrival order and per-key ordering must be configured or enforced in application state.",
+        "A virtual thread waiting on a permit is still pending work, so each downstream pool needs an explicit cap and the framework's messaging concurrency default is not a database capacity setting.",
+        "Flowable carries Reactive Streams demand while Observable does not; converting an unbounded source requires an overflow strategy such as buffering, dropping or keeping the latest, which changes business semantics, and a downstream Flowable does not retroactively slow an uncontrolled producer."
+      ],
+      "optional_claims": [
+        "RxJava's observeOn changes the execution context and flatMap may interleave independently scheduled inner streams, so operator-level execution and ordering must be verified in the selected library version."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A platform group closes a multi-year migration at 96% adoption, publishes the average, and disbands the migration team. The remaining consumers keep pinning the old library, a generated pull request is cited as completion evidence, and a dashboard showing version metadata is treated as proof that services now run the target. Why is average coverage not completion, what ownership and product mechanics must continue through the last few percent, and which reported figures are aspirations rather than audited outcomes?",
+      "required_evidence": [
+        "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance",
+        "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#treat-internal-migrations-as-products-with-accountable-owners",
+        "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+        "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#migration-mechanics-and-reliability"
+      ],
+      "core_claims": [
+        "In 2017 infrastructure teams independently sent deadlines and deprecations to around 300 squads, sometimes without usable upgrade instructions and with no shared view of why an upgrade mattered, so migrations that should have taken weeks sometimes stretched for months.",
+        "The governance change was a single company-wide migration map negotiated with the technical architecture group, where each candidate carried an estimated engineering cost, affected consumers and a deadline, and a developer portal surfaced current and next-quarter work.",
+        "Migrations were run as internal products with an accountable owner, pilot cohorts, training and tailored help, with automation added after prioritization rather than as a substitute for it.",
+        "Generated pull requests are not completion evidence: a pull request that is generated is not necessarily merged, deployed, tested or monitored, and version metadata does not prove the deployed binary or the business result.",
+        "Average adoption can hide the last few percent, and ownership must continue to cover the remaining non-upgraded consumers because those stragglers still determine the platform's upgrade burden.",
+        "The 99% hidden-migration figure was a 2020 aspiration rather than a delivered feature or outcome, and the source publishes no audited cross-fleet adoption curve, total time saved or defect-escape rate."
+      ],
+      "optional_claims": [
+        "Aligning 45 or more infrastructure product managers plus many engineers took significant negotiation, so the governance change was not free or universally welcomed.",
+        "The separate later data-consumer case records its own agentic practices, test gaps and numbers; combining it with the 2020 governance account as one continuity claim is unsupported."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "A subscriptions team shadows reads against a rewritten data path, sees matching aggregate counts and error rates, and schedules the write cutover. It then switches mutation sites in one release, makes access to the old subscription field throw immediately, and keeps a nightly reconciliation job outside the new code path. Why does matching counts not establish read equivalence, what normalization contract must the comparison define, and why are backfill, dual write, shadow read and write-authority change not interchangeable?",
+      "required_evidence": [
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#write-cutover-is-the-hard-part-changing-mutation-semantics",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+        "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#failed-assumptions-and-when-not-to-transfer-the-design"
+      ],
+      "core_claims": [
+        "The read comparison served the incumbent result and exposed the candidate only experimentally, so a broken candidate could not corrupt a healthy production request, and a negative-path test must show the experimental path failing without changing the served result.",
+        "Comparison needs a normalization contract covering identity, observable ordering, null and default semantics, trial and renewal state, old-client serialization, authorization and temporal freshness, because a numeric difference may be legitimate snapshot timing or genuine logic divergence.",
+        "Matching counts are insufficient: the two representations can diverge on retries, time windows and schema-dependent business logic, so read results must match under a defined subscription identity and temporal snapshot.",
+        "Backfill is an inventory operation, dual write is a coexistence mechanism, shadow read is a behavioral oracle and changing write authority is a semantic cutover; none substitutes for another.",
+        "The write cutover changed mutation sites incrementally and only later made obsolete field access throw to find straggling paths; that guard would have broken old consumers if introduced in the first release.",
+        "Before old data is removed, every live writer, asynchronous job and retry path must be accounted for in the new implementation, and without defined reconciliation and a reversible authority switch the design should be rejected."
+      ],
+      "optional_claims": [
+        "Offline Hadoop/MapReduce snapshots copied missing records instead of running full table scans against the live databases.",
+        "A two-table representation may diverge during retries or schema-dependent logic, so matching a success-path benchmark is not a readiness signal."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}

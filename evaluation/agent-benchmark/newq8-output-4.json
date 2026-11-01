@@ -1,0 +1,141 @@
+{
+  "status": "ai-generated-not-human",
+  "layer": "atlas",
+  "items": [
+    {
+      "question": "A product service puts a read-through cache in front of its catalogue database. The cache's loader runs under one shared service identity, maps an upstream 500 and a permission denial to an ordinary miss, fills an entry from a read replica that is two seconds behind, and lets concurrent misses launch independent fills. After a seller changes a price, some shoppers see the old price until expiry; when the database degrades, requests look like normal misses and load rises; a restricted item stays visible to a caller whose access was just revoked. The team says the cache is transparent because callers never see it. Why can a read-through cache not decide per-read authorization, what must the loader declare about error mapping, fill version and stampede control, and when is cache-aside or a blocking read the better choice?",
+      "required_evidence": [
+        "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#purpose-and-mission",
+        "tycho.page.33742c54f667446cbf57cb9f3696a533#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Read-through means the cache loads a miss from the source on behalf of the caller and stores the result; the card accepts it only when the cache can own loading and error mapping, the source contract is stable, and fill stampedes and stale data are handled. It rejects the design when the cache cannot safely call the source, when application-specific authorization is needed for each read, or when fill failures are hidden.",
+        "A fill failure must be returned or mapped explicitly, never hidden as an ordinary cache miss. Translating a 500 or a permission denial into a miss makes the cache appear healthy while the source degrades, turns an error into apparent absence, and invites a caller to retry against a cache that has no answer; bounded fill concurrency, timeouts and error translation belong to the loading contract.",
+        "A fill must carry the source version and must not overwrite a newer committed value; a fill from a lagging replica can install an older value after a newer commit, so version checks or invalidation are required. The loader's shared identity cannot stand in for per-read authorization: a read-through cache cannot make application authorization decisions for each caller.",
+        "A hit can return an inadmissibly stale value, and cache availability is not authoritative correctness; the page's route is to distinguish authoritative state from cached copies before claiming a freshness bound. Concurrent fills must not stampede the source, so bounded or coalesced fills and a declared stale bound are part of the design rather than an optimization.",
+        "Cache-aside with application-owned fill is the alternative when loading policy, per-caller authorization or opaque failures must stay visible; prefer read-through only when the cache can call the source and the loading contract is uniform. A blocking read or a direct authority read is preferable when the required freshness or authorization cannot be represented in the cache."
+      ],
+      "optional_claims": [
+        "The cache must implement the source protocol, authentication and backpressure; a bypass with different client semantics defeats the uniformity claim.",
+        "The entry is priority core with decision state applicable-under-conditions, so a high hit rate does not by itself establish that caching is safe."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "An order-fulfillment workflow spans order, inventory, payment and shipping owners. The first design lets each service subscribe to the others' events and emit the next step. After launch, a shipping event is read by inventory as a new reservation request, two compensations target the same order, and nobody can answer where order 123 is. The replacement design puts a coordinator in front, but it would keep critical progress only in an in-memory scheduler, and one compensation calls a carrier that cannot un-ship a parcel. The team asks the atlas which variant is correct. Why does the atlas not rank orchestration above choreography, what must each variant own for progress and compensation, and when should the team keep one local transaction or avoid a saga altogether?",
+      "required_evidence": [
+        "tycho.page.3624cafbc3e448d1b218861cd06d059b#overview",
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+        "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#bounded-pattern-ownership-notes"
+      ],
+      "core_claims": [
+        "The atlas holds choreography and orchestration as separate entries with different conditions, not as a ranking: choreography reacts to events without a central coordinator, while orchestration persists a workflow state machine and sends commands. Neither is universally superior; the choice depends on participating owners, duration, idempotency requirements, recoverability, operations burden and business acceptance conditions.",
+        "Choreography requires correlation identity, deduplication, dead-letter handling, versioned event contracts, per-step timeouts and an observable terminal-state query. Its failure modes are hidden coupling, unbounded chains and conflicting compensations, and a trace can show correlation without proving durable business truth; cyclic reactions and invisible global progress are explicit contraindications.",
+        "Orchestration's guarantees are only as strong as versioned state persistence, activity semantics, timer reliability and recovery configuration. A coordinator that keeps critical progress only in a volatile scheduler does not provide durable progress, and coordinator loss, stuck histories, duplicate activities and incompatible upgrades must be recovered from durable history with idempotent activities.",
+        "A saga is a business protocol, not automatic rollback: each step is a local commit, intermediate state is visible, and a compensating action is a new business action that can fail and needs its own authorization, evidence and failure mode. Compensation ordering is declared, not assumed to be the reverse of the forward path, and an irreversible external effect must be held as an unknown or repair state.",
+        "Prefer one local transaction when every effect shares one owner and database; two-phase commit may be preferable when participants can hold prepared state and atomic visibility is mandatory; do not adopt a saga when compensation is unsafe or an irreversible effect cannot be isolated.",
+        "Central compensation ordering improves visibility but adds a bottleneck and a single point of failure; choreography fits when owners can evolve independently and the emitted events are the real business protocol, while orchestration earns its cost only when independently owned effects fail and recover differently."
+      ],
+      "optional_claims": [
+        "The orchestration card also rejects the design when the orchestrator becomes a hidden monolith, when participants must remain autonomous, or when no team can own workflow state.",
+        "A process manager and a routing slip place the progress record differently; the invariant is a recorded dispatch intent written with the state change, not merely a progress row."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A SaaS runs a full regional stack in three geographies behind a global DNS router and calls it active-active. The router's probe calls an HTTPS endpoint that returns 200 whenever the web tier is up and never checks the regional database. During a replication backlog it keeps sending one cohort to a region whose writes are twenty minutes behind; clients hold long-lived connections and the DNS TTL is 300 seconds. The team reports a healthy fleet and asks why users still read stale data. Why does a successful regional probe not authorize serving traffic, what must the routing signal and the data-freshness signal establish separately, and when is active-passive the better choice?",
+      "required_evidence": [
+        "tycho.page.6f2a9c4e1b7d4a8f9e3c5b0d2a6f8e1c#overview",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#bounded-pattern-ownership-notes",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#purpose-and-mission",
+        "tycho.page.2f6602f8e20b4f80a22e0ef85a6d1765#integrated-decision-and-reading-route"
+      ],
+      "core_claims": [
+        "Geode places a self-contained regional node behind a global routing layer, but it needs a data replication and consistency contract, a regional health signal, a routing rule and explicit failover authority. The regional nodes do not exist in isolation and any of them may have to take over after a regional outage.",
+        "The routing probe is authoritative for reachability, not data freshness: geographic routing returns an endpoint whether it is healthy or not, and a successful HTTP response does not prove the region's writes are current. A separate freshness gate must check replication lag or database availability before traffic is treated as safe.",
+        "DNS routing cannot move established connections: a client keeps a cached endpoint until the DNS cache expires, so long-lived connections can keep using an old or isolated region even after the routing record changes. A stale route can defeat locality and keep serving a region that should have been removed from service.",
+        "Cross-region replication is asynchronous, so recovery must monitor lag and include it in the design; a promoted secondary can lack a recently accepted write, and two primaries can accept divergent state unless authority transfer and conflict handling are explicit.",
+        "Active-passive is preferable when writes must stay in one region, state cannot be replicated cheaply, cost prevents full active-active capacity, or RTO tolerance allows activation time. Active-active is justified only when both regions can serve any request, the lowest RTO is required, and bidirectional replication plus conflict resolution are affordable; reverse when consistency and routing complexity exceed the locality benefit.",
+        "When every eligible endpoint is degraded, the router makes a best-effort answer as if the endpoints were online, so degraded-mode behavior must be declared rather than inferred from a green dashboard."
+      ],
+      "optional_claims": [
+        "Fencing the old writer and the active-active selection rule are Tycho guidance; the sources require a consistency service and conflict handling but do not prescribe quorum delegation or fencing.",
+        "The global router is a critical dependency but not a proven regional single point of failure; the residual risks are stale DNS, long-lived connections and a health signal that does not reflect data freshness."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A payments processor runs twelve consumers against one queue. Events for the same account must be applied in order, but the consumers share the queue without a partition key. A poison event retries forever and holds up progress; a consumer acknowledges before writing the ledger, so a crash loses a payment; a retry after a lost acknowledgement applies a fee twice. The team adds more consumers to catch up and calls the pool scalable. Why does adding consumers to one queue not preserve per-account order, what must the pool declare about partition assignment, acknowledgement order and a terminal path, and when is one ordered consumer per partition or a fan-out the better choice?",
+      "required_evidence": [
+        "tycho.chapter.a4b31346a691566550633efe0cf2693e#entry-inventory",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#bounded-pattern-ownership-notes",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#1-first-identify-what-a-consumer-must-own",
+        "tycho.page.0eee61f261054af0ad728d791036c5f4#2-requirement-driven-comparison-not-a-ranking"
+      ],
+      "core_claims": [
+        "Competing consumers let several consumers share one queue, so each message is delivered to one of them and work is processed in parallel; the card accepts it when work is independent per message, consumers can run concurrently, ordering is partition-scoped, and duplicate effects are controlled. It rejects the design when global order is mandatory or consumers mutate shared state without coordination.",
+        "Acknowledgement must follow the durable business effect, and redelivery after a missing acknowledgement must not duplicate that effect; acknowledging before the ledger write can lose work, and a retry after a lost acknowledgement can apply the fee twice unless the effect has a stable identity and deduplication.",
+        "Pool parallelism removes per-key order unless partition assignment is explicit, and a per-key worker pool preserves order only when assignment is stable. Twelve consumers on one unpartitioned queue cannot preserve per-account order; adding consumers increases concurrency, not ordering, and message ordering is scoped to the queue, subscription, stream or partition rather than global.",
+        "A slow or poisoned message blocks progress through visibility timeouts and repeated redelivery; the pool needs a bounded attempt policy and a declared terminal path such as a dead-letter or repair state. Infinite visibility timeouts are not a recovery strategy, and more consumers do not repair a poison message.",
+        "One ordered consumer per partition is preferable when order dominates throughput, and publish/subscribe fan-out is preferable when independent subscribers need a copy rather than one shared work item. The queue contract must state its ordering scope and terminal path, and a worker pool needs a visible in-flight count and redelivery limit, not only higher prefetch."
+      ],
+      "optional_claims": [
+        "Partitioned consumers own a stable key range and preserve per-key order; prefer competing consumers when order is not required and pool parallelism is the goal.",
+        "A larger pool raises duplicate and reorder exposure, so concurrency is not a substitute for an effect identity and an acknowledgement rule."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    },
+    {
+      "question": "A travel API collects supplier quotes by publishing one request per supplier and receiving all replies on a shared channel. It waits for the first five of six replies, returns them after 800 milliseconds, silently drops anything later, and appends duplicate replies from a supplier that retried as extra quotes. When one supplier is down, the response looks complete. The team describes the design as scatter-gather. Which part is actually the aggregator, why must its completion and partial-result rule be declared, what must that rule state about the expected participant set, late or duplicate replies and cancellation, and when is API composition the better alternative?",
+      "required_evidence": [
+        "tycho.page.086b4b635be345b7a23ae9a6b86639f5#overview",
+        "tycho.page.98616bdc3c514ea997b2cfe30ad7c070#bounded-pattern-ownership-notes",
+        "tycho.page.ade9759a19a0402594773756d097c11c#overview",
+        "tycho.page.523433bb7da14cc48558302d7dc322f9#overview"
+      ],
+      "core_claims": [
+        "An aggregator fans in related results from multiple participants and returns one composed result; it needs stable correlation, an explicit completeness condition and an aggregation algorithm. Waiting for five of six replies is a declared completion rule only if the expected participant set and the rule are stated, not inferred from an 800-millisecond cut.",
+        "Tycho guidance requires a per-participant timeout, a partial-failure policy and a rule for late or duplicate responses, including eviction of late replies. A partial result needs a versioned schema and a caller-visible completeness marker rather than a payload that looks complete.",
+        "A single missing or delayed message can block the whole aggregate; recovery may re-request the missing reply, return a declared partial result, cancel remaining work or fail as a whole. Appending duplicate replies as extra quotes is a deduplication failure, because correlation groups messages but does not prove one effect.",
+        "Reject the aggregator when one participant is authoritative, when atomicity across participants is required, when one slow participant would consume the caller's complete budget, or when no bounded completion rule exists; per-participant state, duplicates and cancellation are real costs.",
+        "API composition is the alternative when the caller can invoke the data-owning services and join their responses at query time; reverse to the aggregator when related results already arrive as messages and completion must trigger the combined result. Scatter-gather is a related composite that broadcasts a request and uses an aggregator as its gather step, not the same pattern."
+      ],
+      "optional_claims": [
+        "The source supports re-request and a timeout retry/exception choice, but the partial-result and cancellation rules are Tycho guidance rather than source claims.",
+        "A declared partial or quorum result should disclose which participants answered, not only the combined payload."
+      ],
+      "abstention_expected": false,
+      "difficulty": "medium"
+    },
+    {
+      "question": "An inventory command service decides whether to accept a reservation by reading a local replica of stock counts owned by the warehouse service. The replica is refreshed by a weekly job and, after failover, points at an older snapshot. The service also writes corrections into the replica when a count looks wrong, while the read projection lags. A client is told its reservation is accepted, then a query against the projection does not show it, and the team calls the replica self-contained and the projection eventually consistent. Why is the local replica a cache of the warehouse's state rather than a second authority, what must the command service record about the position it observed, and when must it read the authority or block instead?",
+      "required_evidence": [
+        "tycho.chapter.e9c650012060143639af44b0cfdc4236#entry-inventory",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#bounded-pattern-ownership-notes",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#3-cqrs-and-asynchronous-projection-freshness",
+        "tycho.page.7beb6ba382a1458dbfba5800ff1b53af#4-replay-duplication-ordering-and-external-side-effects"
+      ],
+      "core_claims": [
+        "A command-side replica serves reads that must observe the latest accepted command state while read projections lag; the query is routed to a replica of the command-side store and the reply reports the applied position it observed.",
+        "The replica must apply a committed command before it answers a query that claims to include that command; otherwise the result is stale. Replication delay or failover can serve an older position, so the client must check the reported position or wait for the required one before treating a read as current.",
+        "The local replica is a cache of the owner's state, not a second authority: it needs an owner, a source version, refresh or invalidation, and reconciliation when the owner changes, and it must never become the decision-time writer. A service that writes corrections into the replica has created a second writer and must expect divergent state.",
+        "A replica may inform a decision only while its staleness bound is acceptable for that operation; if the decision needs linearizable remote state, read the authority or a lease-confirmed value. Enforce single-writer with fencing or a version check, and test the divergent-replica case: a stale copy must reject the command rather than overwrite the owner.",
+        "Serve the same read from the authoritative command store or block until the projection catches up; reverse when replica lag is bounded and read load would otherwise overload the authority. A lagging projection is not evidence that the command did not commit, and a stale replica is not evidence that stock is available."
+      ],
+      "optional_claims": [
+        "The card's hard contraindications reject command decisions that require linearizable remote state, reconciliation that cannot be tested, and a replica that becomes a second writer.",
+        "The command-side replica is not a read replica used for query scaling: its purpose is observing accepted command state, not serving arbitrary read traffic."
+      ],
+      "abstention_expected": false,
+      "difficulty": "hard"
+    }
+  ]
+}
