@@ -1,0 +1,1305 @@
+{
+  "summary": {
+    "n": 50,
+    "pass": 43,
+    "pass_rate": 0.86,
+    "agreement": 0.88,
+    "support2": 49,
+    "coverage2": 44,
+    "citation": 47,
+    "mean_calls": 62.26,
+    "mean_words": 3478.4,
+    "layers": {
+      "book": {
+        "n": 25,
+        "pass": 22,
+        "support2": 24,
+        "coverage2": 23,
+        "citation": 23
+      },
+      "atlas": {
+        "n": 12,
+        "pass": 10,
+        "support2": 12,
+        "coverage2": 10,
+        "citation": 11
+      },
+      "modeling-and-simulation": {
+        "n": 13,
+        "pass": 11,
+        "support2": 13,
+        "coverage2": 11,
+        "citation": 13
+      }
+    },
+    "disagreements": [
+      "Q204",
+      "Q206",
+      "Q215",
+      "Q234",
+      "Q235",
+      "Q247"
+    ],
+    "failed": [
+      "Q204",
+      "Q206",
+      "Q215",
+      "Q234",
+      "Q235",
+      "Q245",
+      "Q247"
+    ]
+  },
+  "rows": [
+    {
+      "id": "Q200",
+      "layer": "book",
+      "a": {
+        "task_id": "Q200",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: burn-rate semantics, the small-sample noise trap, slow-burn invisibility, the measurement contract, window sampling, and the hard correctness gate are all addressed with section-level citations."
+      },
+      "b": {
+        "task_id": "Q200",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: all six are covered, including the insufficient-sample trap, the invisible slow burn and the independent correctness gate."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q201",
+      "layer": "book",
+      "a": {
+        "task_id": "Q201",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: the answer covers percentile averaging, rollup/downsampling loss, retention tiers, bucket-boundary verification, and rejected/timed-out population inclusion."
+      },
+      "b": {
+        "task_id": "Q201",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All core claims are substantively covered; the only unstated detail is C6's retry-spanning operation identity and explicit unknown state."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q202",
+      "layer": "book",
+      "a": {
+        "task_id": "Q202",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: reset-versus-negative arithmetic, reset-aware rate windows, stateful temporality conversion, required series semantics, counter-versus-business-outcome limits, and lossy collection with gap-not-zero are all covered."
+      },
+      "b": {
+        "task_id": "Q202",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Answers both parts directly with reset, temporality and missingness mechanisms, and all four required sections are cited; the per-series-then-aggregate query rule is disclosed as inference rather than source-stated."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q203",
+      "layer": "book",
+      "a": {
+        "task_id": "Q203",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains the membership-versus-connection distinction, the GOAWAY last-stream boundary, the ordered drain sequence with unresolved-ID recording, and the same-identity resolution of the ambiguous publish."
+      },
+      "b": {
+        "task_id": "Q203",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Answers why discovery removal is not a drain and supplies the required ordered sequence and per-instance/per-operation records, grounding the GOAWAY boundary and outcome resolution in the cited sections."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q204",
+      "layer": "book",
+      "a": {
+        "task_id": "Q204",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Thorough and well-supported on replica-scope versus tenant-scope limits, quota-store failure and rate-versus-concurrency, though the acceptance-boundary core claim is only partly addressed (rejection and admission-versus-completion semantics, no stable-identity reconciliation)."
+      },
+      "b": {
+        "task_id": "Q204",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Scope, routing, outage accounting and rate-versus-concurrency are strong, but the acceptance-boundary claim (rejected versus accepted-pending versus unknown-after-commit reconciliation by stable identity) is not addressed, so core coverage is partial."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q205",
+      "layer": "book",
+      "a": {
+        "task_id": "Q205",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers all six core claims, from the reuse boundary and backend-local session state to scoped prepared-statement support, pinning, and negative tests, with inferences labeled and required evidence cited."
+      },
+      "b": {
+        "task_id": "Q205",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers all six core claims, including reuse-boundary semantics, backend-local state, the 1.21.0 prepared-statement scope, pinning, testing and capacity arithmetic, with section-level citations and explicit observed/inference labels."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q206",
+      "layer": "book",
+      "a": {
+        "task_id": "Q206",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All six core claims are covered with well-grounded citations, though the 16-to-17 stay fraction is misderived as 1/272 rather than about 1/17, which does not change the qualitative conclusion."
+      },
+      "b": {
+        "task_id": "Q206",
+        "answer_support": 1,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "All six core claims are addressed with strong citation coverage, but the headline arithmetic is wrong because 16-to-17 buckets retain 1/17, not 1/272, of keys, so the modulo explanation is only partially supported."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 1,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q207",
+      "layer": "book",
+      "a": {
+        "task_id": "Q207",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers all six core claims (identity separation, two-class GOAWAY boundary, stream-7 replay, five-step bounded drain, pre-termination record, lookup-not-retry) and cites every required section."
+      },
+      "b": {
+        "task_id": "Q207",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers all six core claims (identity layers, GOAWAY partition, stream 7 replay, five-step bounded drain, pre-termination record with reconciliation, and no atomic cancellation), with every required anchor cited."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q208",
+      "layer": "book",
+      "a": {
+        "task_id": "Q208",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains both failure modes as an allowance-versus-rate and window-averaging problem, then specifies paired long and short burn windows with tiered release gating, covering all six core claims with the required evidence cited."
+      },
+      "b": {
+        "task_id": "Q208",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains the monthly budget as a residual allowance and the long-window dilution, then prescribes paired long/short burn windows with tiered actions; all six core claims are addressed with specific anchors."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q209",
+      "layer": "book",
+      "a": {
+        "task_id": "Q209",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Directly explains why an in-place rewrite erases the accepted baseline, rejected alternatives and authority, and prescribes a forward-pointing SUPERSEDED record plus a new versioned ADR, covering all core claims with well-formed citations."
+      },
+      "b": {
+        "task_id": "Q209",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains why in-place rewriting erases the accepted baseline and rejected alternatives, and specifies the SUPERSEDED pointer plus the full contents of the new record; the stopping-rule facet is only summarized in the evidence map but the core question is fully answered."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q210",
+      "layer": "book",
+      "a": {
+        "task_id": "Q210",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: convergence versus invariant, the three-approval seat counterexample, concealed external effects, clock-order limits, the distinct acceptance states, and the pending-command route are all explicit."
+      },
+      "b": {
+        "task_id": "Q210",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: all six are covered, including the seat counterexample, receipt-versus-approval split and pending-command authority route."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q211",
+      "layer": "book",
+      "a": {
+        "task_id": "Q211",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: snapshot-position limits, slot retention and invalidation, the explicit recovery point, the four-cursor ledger, and idempotent at-least-once apply are all covered."
+      },
+      "b": {
+        "task_id": "Q211",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All core claims are substantively covered; the only unstated detail is C5's fingerprint field for the idempotency identity."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q212",
+      "layer": "book",
+      "a": {
+        "task_id": "Q212",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: the hour-mean-versus-burst arithmetic, attempts-versus-unique-claims gap, distinct demand nouns, and arrival-shape distinctions are covered, with per-quantity data-source and confidence recording the thinnest part."
+      },
+      "b": {
+        "task_id": "Q212",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Arithmetic is correct (0.847/s versus 120/s), attempts are kept distinct from unique claims and hot-key serialization, and window and arrival shape stay explicit, though per-quantity data-source and confidence recording is only lightly covered."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q213",
+      "layer": "book",
+      "a": {
+        "task_id": "Q213",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Separates the DNS record TTL from connection, membership, admitted-work and retry lifetimes, and specifies the readiness, drain, bounded-tail and observed data-plane conditions before retirement."
+      },
+      "b": {
+        "task_id": "Q213",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains that a TTL bounds only record freshness while connections, pools, retries and membership views persist, and sets an observed zero-traffic gate before retirement with the required discovery and drain citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q214",
+      "layer": "book",
+      "a": {
+        "task_id": "Q214",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers both window failure modes, the measurement, sample-sufficiency and ownership contract, and the hard correctness gate, with quoted evidence and clearly flagged illustrative arithmetic."
+      },
+      "b": {
+        "task_id": "Q214",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All six core claims are addressed, including multiwindow reasoning, sample sufficiency, SLO-revision integrity and the correctness-gate caveat, with internally consistent citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q215",
+      "layer": "book",
+      "a": {
+        "task_id": "Q215",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains non-additivity, request weighting, double dilution, and the histogram/boundary state needed to merge; only the fine-grained operation-ID and reconciliation details of the instrumentation claim are thin."
+      },
+      "b": {
+        "task_id": "Q215",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Explains non-additivity, weighting, histogram retention and downsampling well, but omits the core instrumentation record (logical operation ID, attempt/admission/final outcome, route, reconciliation), so core coverage is partial."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q216",
+      "layer": "book",
+      "a": {
+        "task_id": "Q216",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The answer addresses every core claim, including partition-scoped ordering, independent re-keying and the migration contract, with 24 well-formed citations matching its evidence map."
+      },
+      "b": {
+        "task_id": "Q216",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Answers both halves directly and covers all six claims with a coherent ordering, rekeying and migration-contract argument backed by well-formed citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q217",
+      "layer": "book",
+      "a": {
+        "task_id": "Q217",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the seat-limit counterexample, ACI join and transport obligations, three-stage acceptance, pending-command revalidation and last-writer limits, citing every required section."
+      },
+      "b": {
+        "task_id": "Q217",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers convergence versus the seat invariant, the two-seat counterexample, three-stage approval, authority revalidation of pending commands, and last-writer/clock limits, with all required anchors cited."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q218",
+      "layer": "book",
+      "a": {
+        "task_id": "Q218",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Separates interface conformance from the runtime failure, consistency and capacity guarantees and adds the wider adapter contract plus an executable failure and version matrix, covering all six core claims."
+      },
+      "b": {
+        "task_id": "Q218",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains why interface conformance cannot carry failure, consistency and capacity semantics, then specifies the widened adapter contract and concurrency, loss, latency and version-skew tests covering the core claims."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q219",
+      "layer": "book",
+      "a": {
+        "task_id": "Q219",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains why the additive copy is semantically breaking, requires a totality analysis with UNKNOWN quarantine and a versioned tenant-scoped mapping, and prescribes checkpointed, fenced handling of live writes, covering all core claims."
+      },
+      "b": {
+        "task_id": "Q219",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the semantic corruption, the quarantine of unprovable identities and the concurrent-write controls in depth with concrete section citations, although its declared book-only scope sits awkwardly with its decision-artifact citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q220",
+      "layer": "book",
+      "a": {
+        "task_id": "Q220",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: the GOAWAY boundary, stream-7 retry, stream-5 ambiguity, operation-identity resolution, bounded drain, and unresolved-ID reconciliation are all covered."
+      },
+      "b": {
+        "task_id": "Q220",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "No core claim missing: all six are covered, but the citation list omits required evidence diagnose-before-changing-pool-settings."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": false
+    },
+    {
+      "id": "Q221",
+      "layer": "book",
+      "a": {
+        "task_id": "Q221",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: plane separation, blocked lifecycle actions, steady-state versus recovery, label-versus-isolation, and the prescribed fault test are all covered."
+      },
+      "b": {
+        "task_id": "Q221",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All core claims are substantively covered; C4's container-is-not-a-kernel phrasing is only implicit in the shared-failure-domain argument."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q222",
+      "layer": "book",
+      "a": {
+        "task_id": "Q222",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: flow-control-versus-durable-log, the ambiguous acknowledgement, retention and resnapshot, the contract fields, acknowledgement semantics, and idempotent replay effects are all covered."
+      },
+      "b": {
+        "task_id": "Q222",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "Explains the lost-acknowledgement ambiguity on both sides, duplicate replay and skipped position, and gives the six-element stream contract, but the required section e067b74eabc24cabb209ca8835c0f7cd#5-which-architecture-is-justified is not among the citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": false
+    },
+    {
+      "id": "Q223",
+      "layer": "book",
+      "a": {
+        "task_id": "Q223",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Justifies side-effect suppression during replay, atomic view-plus-cursor commit, positional freshness, and the promotion gate before a rebuilt view may serve as current."
+      },
+      "b": {
+        "task_id": "Q223",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains why rebuild replay must suppress irreversible effects, why view and cursor must commit atomically, and the positional freshness conditions before the rebuilt view may serve as current."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q224",
+      "layer": "book",
+      "a": {
+        "task_id": "Q224",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Separates availability accounting from the hard exclusivity invariant and requires canary sampling, correctness-gate and persisted-effect checks, with illustrative numbers flagged; the in-text E-labels resolve only by position in the supplied citation list, which omits required anchor 447f#1."
+      },
+      "b": {
+        "task_id": "Q224",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The answer covers the hard-invariant versus budget distinction, population and denominator errors, canary sampling limits, burn projection and persisted-effect recovery, with coherent citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q225",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q225",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Directly answers the stale-fill and local-tier race and specifies the tier, fill, and serve records plus per-tier bound tests needed for all five core claims."
+      },
+      "b": {
+        "task_id": "Q225",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers all five core claims, including the stale-fill race, per-tier invalidation, version-fenced fills, SWR discipline and per-tier bound testing, with extensive cited evidence and labelled inference."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q226",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q226",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "It explains the non-transactional completion gap and specifies stage identity, ordering scope and checkpoint records with all required evidence cited, despite a minor stage-3 crash-window mislabel."
+      },
+      "b": {
+        "task_id": "Q226",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains the non-transactional loss and duplication failure and specifies stage identity, ordering scope and the recovery checkpoint in detail, covering all six claims."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q227",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q227",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the SOA hard contraindications, rule-bearing-bus anti-pattern, governed-contract declarations and the microservices versus modular-monolith comparisons, citing every required section."
+      },
+      "b": {
+        "task_id": "Q227",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the SOA contraindications, the rule-bearing bus as a shared bottleneck anti-pattern, the governed-contract declarations, and the microservice versus modular-monolith comparison conditions, with all required anchors cited."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q228",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q228",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers timestamp-versus-causality limits, the lost-intent and tombstone failure, synchrony's coordination cost and the multi-leader rejection conditions, with only the quorum membership-change overlap detail thin."
+      },
+      "b": {
+        "task_id": "Q228",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Shows last-write-wins is a total order rather than a conflict contract, traces the tombstone and reconciliation resurrection, and treats synchronous multi-master as coordination cost with explicit rejection conditions; all six core claims are covered, though one inline atlas anchor (4472c6e0...) is not repeated in the citation array."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q229",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q229",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Shows the resize lacks a demand envelope, bottleneck attribution and bounds, specifies the measurements and restart/cost/failure-domain limits, and gives the horizontal-scaling reversal conditions, covering all core claims."
+      },
+      "b": {
+        "task_id": "Q229",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Answers all three parts - why the resize is not a capacity plan, what to measure and bound, and when the card reverses to horizontal scaling - with specific, well-matched citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q230",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q230",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: the stamp invariant, shared-database and shared-identity failure, routing/state ownership, upgrade evidence, dependency enumeration, and cell comparison conditions are all explicit."
+      },
+      "b": {
+        "task_id": "Q230",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: all six are covered, including shared-dependency ownership and the cell-comparison conditions."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q231",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q231",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: key-versus-request bounds, the miss burst, vnode granularity, token limits, hot-tenant persistence, and rebalance ownership and transition are covered."
+      },
+      "b": {
+        "task_id": "Q231",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All core claims are substantively covered; C6's reverse-routing caveat is only implicit in the required forward-repair path."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q232",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q232",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: separate commit points, dual-write ambiguity, the four owned invariants, rebuild authority and unavailability, contraindications, and the outbox's local-only guarantee are covered."
+      },
+      "b": {
+        "task_id": "Q232",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": false,
+        "pass": true,
+        "notes": "Content on dual-write non-atomicity, six owned pre-read invariants and the outbox commit and non-commit boundary is strong, but claims carry only unresolved [E#] labels and two of the three required sections are absent from the citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": false
+    },
+    {
+      "id": "Q233",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q233",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the activity crash window and duplicate email, deterministic versioned replay, idempotency-key guarantees, and why coordinator completion is not proof of the external effect."
+      },
+      "b": {
+        "task_id": "Q233",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Separates replay compatibility from at-least-once activity execution, states the idempotency and completed-state limits, and cites all four required workflow sections."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q234",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q234",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains why a green probe can coexist with rejects and why the run-length retry counter loses recall, and enumerates the declarations a probe must bind before its result is evidence, with vendor figures correctly attributed."
+      },
+      "b": {
+        "task_id": "Q234",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "The probe-contract, green-versus-reject mechanisms and retry-rule critique are thorough, but the recovery half of core claim 5 (correct journey restored and sustained) is absent, so coverage is partial."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q235",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q235",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the distributed transition, fail-safe default, permission-decision separation, and snapshot/evaluation/lifecycle guarantees, with only publication schema and cohort detail thin."
+      },
+      "b": {
+        "task_id": "Q235",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Covers skew, fail-open defaults, permission separation and lifecycle controls, but omits stable exposure-cohort selection, schema/cross-field publication validation and the canary/branch-by-abstraction rejection, leaving two core claims partial."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q236",
+      "layer": "atlas",
+      "a": {
+        "task_id": "Q236",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All six core claims are covered and grounded, including entry conditions, visible status, recovery hysteresis and the case for explicit errors."
+      },
+      "b": {
+        "task_id": "Q236",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers all six claims, clearly distinguishing disguised degradation from declared degradation and specifying the entry, visibility and hysteresis contracts."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q237",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q237",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Correctly derives the single shared interaction term from the two-input decomposition and verifies all three 0.103 expressions while qualifying the screen's limits and citing every required section."
+      },
+      "b": {
+        "task_id": "Q237",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Covers the two-input variance partition, the 0.897-plus-0.103 arithmetic, the structural identity, the 48-row screening limits, and the conditional ranking, with the required anchors cited; the incoherent-total rejection rule is only implied."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q238",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q238",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Treats conservation as a necessary-but-not-sufficient census and names the timeout, stale-event, retry-budget and event-order checks that cover the outcome path, matching all five core claims."
+      },
+      "b": {
+        "task_id": "Q238",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Separates the conservation census from per-request assignment and names the timeout, stale-event, boundary, event-order, retry-amplification and replay checks that cover the outcome path, addressing all five core claims."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q239",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q239",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains that zero deletes the divergence mechanism and yields precise but meaningless metrics, and prescribes an insufficient-evidence record naming the measurement, range, owner and review trigger, covering all core claims."
+      },
+      "b": {
+        "task_id": "Q239",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains the zero-lag substitution as a changed model, the precise but meaningless run, and the insufficient-evidence record obligations, matching all core claims with concrete section citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q240",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q240",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim is missing: byte-level input hashing, the hash-excluded substantive result hash, the input/derived role split, replay drift order, and the metrics-only failure mode are all stated."
+      },
+      "b": {
+        "task_id": "Q240",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: all five are covered, including the canonical-fields result hash and the metrics-only failure mode."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q241",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q241",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: hard-versus-soft constraints, C's cost and p95 elimination, the undeclared success threshold, the B preference, and a declared success floor are covered."
+      },
+      "b": {
+        "task_id": "Q241",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "All five core claims are stated explicitly, including the undeclared success threshold and the prospective hard success constraint."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q242",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q242",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "No core claim missing: step-scaled flows, declared resolution, the 0.1-second order-intake contract and its invariants, the discretization artifact, required contract structure, and verification/validity limits are covered."
+      },
+      "b": {
+        "task_id": "Q242",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains why the 0.1-second step is contract-level (visibility, hash, replay, engine dependence) and how coarse steps create step-dependent rejection and throughput, with the reconstructed table labelled as arithmetic rather than a run, and all four required sections are cited."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q243",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q243",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Treats uncalibrated as a complete declared status, describes the all-assumed contract, and limits the run to conditional, replayable synthetic-workload claims rather than production evidence."
+      },
+      "b": {
+        "task_id": "Q243",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Establishes uncalibrated as a complete declared status and bounds the run's license, illustrating completeness with the checkout model rather than the order-intake example."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q244",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q244",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Correctly distinguishes declared unit labels from dimensional analysis and states that the contract claims inspectability rather than proof, while preserving the documented 'units' scope tension."
+      },
+      "b": {
+        "task_id": "Q244",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "The answer explains unit fields as unvalidated labels, the validator's structural limits, the inspectability claim and the unresolved units gate-scope tension, with coherent citations."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q245",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q245",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Strong on one-directional reference checks and the provenance chain, but omits the separate V12-E decision gate and most of its required record elements, leaving one core claim materially uncovered."
+      },
+      "b": {
+        "task_id": "Q245",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Explains one-directional reference checks and the orphan classification well, but never addresses the separate V12-E decision gate and its required decision-record contents, so core coverage is partial."
+      },
+      "pass": false,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q246",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q246",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "It cleanly separates invalidity from ambiguity and covers all core claims, citing all required evidence and labeling artifact observations as such."
+      },
+      "b": {
+        "task_id": "Q246",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Correctly distinguishes ambiguity from invalidity and covers all six claims about model and scenario contracts, structural checks and calibration status."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q247",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q247",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Explains empty-list validity versus decision sufficiency, constraint semantics and V12-E obligations, notes the unenforced scenario-to-decision constraint link, and cites every required section."
+      },
+      "b": {
+        "task_id": "Q247",
+        "answer_support": 2,
+        "core_coverage": 1,
+        "citation_valid": true,
+        "pass": false,
+        "notes": "Fully explains validity versus decision support and constraint semantics, but contradicts the core claim that V12-E fails such a record, reporting instead that the decision-to-scenario constraint link is unenforced and the record can still validate."
+      },
+      "pass": false,
+      "agreement": false,
+      "support_min": 2,
+      "coverage_min": 1,
+      "citation": true
+    },
+    {
+      "id": "Q248",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q248",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Reads the no-recommendation record as a complete outcome and the least-bad addition as the named forced-recommendation failure, covering all five core claims with the required evidence cited."
+      },
+      "b": {
+        "task_id": "Q248",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Treats insufficient-evidence with recommendation none as a complete outcome, identifies forced recommendation and recommendation by default as the named failure modes, and explains the hidden measurement agenda and evidence-inflation alternatives."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    },
+    {
+      "id": "Q249",
+      "layer": "modeling-and-simulation",
+      "a": {
+        "task_id": "Q249",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Distinguishes execution completion from a boundary outcome, requires an observed result and test path, and contrasts a falsifiable boundary oracle with a smoke-test liveness check, covering all core claims."
+      },
+      "b": {
+        "task_id": "Q249",
+        "answer_support": 2,
+        "core_coverage": 2,
+        "citation_valid": true,
+        "pass": true,
+        "notes": "Distinguishes a completion event from a boundary verification result and specifies the required case fields and smoke-test limits, though it names only one of the two boundary test identifiers."
+      },
+      "pass": true,
+      "agreement": true,
+      "support_min": 2,
+      "coverage_min": 2,
+      "citation": true
+    }
+  ]
+}
