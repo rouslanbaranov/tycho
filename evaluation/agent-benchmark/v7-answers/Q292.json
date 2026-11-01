@@ -1,0 +1,466 @@
+{
+  "task_id": "Q292",
+  "answer": "# Q292 - Why priority and tie-breaking belong to the model, and what a determinism test cannot prove\n\n## Scope and layer selection\n\nThis is a modeling-and-simulation question. The decisive evidence is the V12 modeling layer:\nthe event-ordering page, the reference-engine page, the model-specification contract, the\nmodel-verification matrix, the reproducibility and replay page, and the calibration and\nvalidation-gate records. I also searched the book layer, because the V12 pages are canonical\nbook pages and the verification/validation distinction is book prose. I searched the atlas\nlayer for a timeout or tie-breaking pattern; it returned no relevant pattern evidence (one\nunrelated security page), so no atlas claim is used here. A zero result in the atlas is not\nproof that no pattern exists.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| F1. Equal-time completion versus timeout | \"event ordering tie-breaking equal timestamps priority\"; \"completion before timeout\"; \"timeout before completion\" | tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model (C1) |\n| F2. Total order and priority values | \"priority queue insertion sequence determinism\"; \"priorities modeling choice declared tested\" | tycho.page.f914586e44ea034deaf2710c570328fc#priorities (C3-C5); tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules (C2, C6) |\n| F3. Seed versus order | \"determinism seed reproducibility simulation\"; \"same seed different outcome\"; \"which rules must be fixed for two runs with the same seed\" | tycho.page.f914586e44ea034deaf2710c570328fc#overview (C7); tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules (C6) |\n| F4. Contract and declaration | \"model contract assumptions invariants declared\"; \"model scope abstraction resolution\" | tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram (C8); tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure (C9) |\n| F5. Deterministic test versus production | \"verification validation production correspondence\"; \"production scheduler priority order\"; \"operational validity production trace\" | tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation (C13); tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering (C12); tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified (C16) |\n| F6. Replay, hashes and versioning | \"deterministic replay result hash engine version\"; \"reproducibility contract\" | tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract (C10-C11); tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves (C20) |\n| F7. Calibration and gate limits | \"calibration uncalibrated measured timeout\"; \"validation gates what not establish\" | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview (C17); tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes (C24); tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish (C18) |\n\n## 1. The mechanism: the event order is a state-transition rule\n\nA discrete-event model advances by selecting the next event, executing its handler, letting\nthat handler read and mutate state, and scheduling further events. When two events carry the\nsame timestamp, the model has not yet said which one runs. The V12 event-ordering page gives\nthe exact case in the question: a service completion and a timeout at t=1.0. If the completion\nis processed first, the request succeeds. If the timeout is processed first, the request fails\nand may retry (C1). That is not two views of one outcome. It is a different outcome, with\ndifferent counters, different server occupancy and a different downstream event set. The loser of the tie is not absent. It stays in the heap and is processed later as a stale event; the engine checks the request state when the event is processed, and a stale event must never change the outcome (C25). The order therefore decides which event is valid and which is stale.\n\nV12 closes the gap with a total order: time, then priority, then insertion sequence (C2). The\ninsertion sequence is a monotonically increasing integer, so the order is total and\ndeterministic. The priority table gives 0 to both service completion and timeout, 1 to arrival\nand 2 to retry (C3). For the completion-versus-timeout race, therefore, priority does not\nseparate the two events; the insertion-sequence tie-break does (C4). C4 is an inference from\nthe priority table and the total-order rule; the page states the values and the rule, not a\nconcrete winner for this exact pair. Whatever the implementation mechanism is - a comparator,\nan insertion counter, timestamp rounding or heap behavior for equal keys - changing it changes\nthe event that runs first and therefore changes the model's state trajectory.\n\nThis is the first reason the \"implementation detail\" label fails. An implementation detail is\na choice that the model's contract leaves free because it cannot change observable behaviour.\nTie-breaking is not free: with the same model, scenario and seed, one engine can produce\nsuccess and another failure while both are internally deterministic. That follows from C1 and\nC2; it is an inference, not a recorded experiment. The seed fixes the random stream; it does\nnot fix the event sequence. V12 keeps those as separate rules: the seed comes from the\nscenario, while equal-time events are ordered by priority and insertion sequence (C6). The\nevent-ordering page's own question is which ordering and timeout rules must be fixed so that\ntwo runs with the same seed produce the same outcome (C7). The same seed is necessary for\nreproducing the draws; it is not sufficient for reproducing the run. If the order changes, the\nsame draws meet a different state trajectory, and the runs can disagree (C7; an inference, as\nthe corpus does not record the specific two runs).\n\n## 2. Why priority and tie-breaking must be declared as model content\n\nFour properties make priority and tie-breaking model content rather than engine trivia.\n\nFirst, they are behavioural. The completion/timeout example shows the order selecting between\nsuccess and failure (C1). A rule that selects outcomes is part of the model's transition\nsemantics.\n\nSecond, the choice is not universal. \"The priorities are a modeling choice, not a universal\nrule. A different system may need a different order. The important property is that the choice\nis declared and tested\" (C5). There is no production-independent correct priority table. A\nmodel that omits the table has not specified its behaviour; it has specified a family of\nbehaviours. That is a model-theoretic inference from C5 and C8, not a quotation.\n\nThird, the model contract exists to expose exactly such choices. A diagram can hide every\ndecision, while a contract \"forces those choices into named fields that a validator can check\nand a reader can challenge\" (C8). The required fields include abstraction and resolution,\nassumptions and unknowns, invariants and verification cases (C9). An ordering rule that\nchanges outcomes belongs in those fields, not only in engine code. That is what makes the\nmodel reviewable: a reader can ask why completion and timeout share priority 0, why insertion\norder is the final tie-break, and what would change if the order were reversed. The contract\ndoes not prove the model is useful; it makes the claims inspectable (C8).\n\nFourth, the reproducibility contract binds the result to the engine: the run record stores an\ninput hash over \"the model, scenario and engine version,\" and replay reruns the scenario and\ncompares the recomputed result hash (C10). An engine refactor that changes equal-time ordering\nis therefore a versioned reproducibility event, not a silent no-op (C11). Either the declared\norder and engine version change and prior runs are regenerated, or the old and new runs are\nnot the same model. Calling the change an implementation detail tries to keep one model\nidentity over two behaviours.\n\nThe failure modes reinforce the point. The event-ordering page names \"Unstable tie-breaking.\nTwo events at the same time depend on hash order\" and floating-point equality without a\ndeclared tolerance (C23). The calibration page names \"Validity drift. A model is reused after\nits boundary or mechanism changes\" (C24). Changing the tie-break is a mechanism change; reusing\nthe old validity claim is validity drift. The model must say which order it assumes, or its\nresults have no stable meaning.\n\n## 3. Why a deterministic ordering test still cannot show production match\n\nThe V12 event-order test is concrete: it \"schedules three events at the same time with\ndifferent priorities and checks the processing order.\" The timeout tests check\ntimeout-before-completion, completion-before-timeout and stale events. The page then states the\nlimit directly: \"The tests do not prove that the chosen priority order matches a production\nscheduler. They prove that the implemented order is deterministic and that the timeout state\nmachine is self-consistent\" (C12). That sentence answers the second half of the question.\n\nThe general reason is the verification/validation distinction. Verification asks whether the\nprogram implements the model correctly; validation asks whether the model is adequate for its\nintended purpose. \"A model can be verified and still be invalid for a decision because its\nstructure or data are wrong\" (C13). Replay is explicitly \"a verification check for the engine's\ndeterminism. It is not a validation check for the model's assumptions\" (C14). A deterministic\ntest compares the implementation with the declared rule, or with itself. It cannot establish\nthat the declared rule is the production rule.\n\nThere are concrete gaps:\n\n- The reference engine \"does not implement ... a production scheduler\" (C15), and the chapter\n  \"does not claim that a queue model predicts a production service\" (C15).\n- The model's queue discipline is FIFO only, request priority and preemption are not\n  implemented, and the arrival process is not tested against a production trace (C16). A\n  production scheduler may order by request class, deadline, preemption or fairness. Event\n  priority 0/1/2 is not a production scheduling policy.\n- Every V12 model is uncalibrated; arrival rates, service times and timeouts are assumed (C17).\n  A measured timeout and retry policy, an arrival trace and a service-time sample are exactly\n  what the calibration page lists as missing (C17).\n- The V12-B gate covers event ordering as local model correctness, but \"the tests do not prove\n  operational validity\" and the gates \"do not establish that the models match a real system\"\n  (C18).\n\nThere is also a test-oracle problem. A reference case is only as good as its expected value. If\nthe expected value is copied from current output, the test can never fail; the Monte Carlo page\nnames this \"Reference to a moving target\" (C19). A known-answer case \"does not catch a model\nthat is implemented correctly but mis-specified for the decision\" (C19). A deterministic\nordering test can be written to assert the new order after a refactor and pass; it then pins\nthe implementation to the new declaration, not to production.\n\nReplay is even narrower. It \"runs the same scenario twice and compares the hash\" and catches a\nbroken event order, a wall-clock dependency or a hidden module cache (C20). Those are forms of\nnondeterminism. A consistently changed order runs twice identically and passes. Determinism is\northogonal to validity: any fixed order, including an arbitrary one, can be deterministic. The\ntest can fail for instability; it cannot fail for \"this is the wrong order for production\"\n(C20, an inference from what replay compares; the corpus does not test a changed-order engine).\n\nWhat would support a production-match claim? Production observations: an arrival trace, a\nmeasured timeout and retry policy, a service-time sample including the tail, and an\noperational-validity comparison within a declared domain (C21; an inference from the\nmeasurement list). Even then the evidence is bounded. A trace can falsify an order or bound its\nfrequency, not prove a universal tie rule; ties may be rare or unobservable. The honest claim is\nconditional: under the declared inputs and this declared order, the model reproduces these\nresults. It is not \"the order matches the production scheduler.\" The model can rank what to\nmeasure first; \"it cannot substitute for the measurement.\"\n\nA deterministic ordering test is still useful. It is a regression check against the declared\nmodel, it catches an accidental comparator change, and it supports replay. The error is to\ntreat that internal consistency as external correspondence. The test answers \"does the\nimplementation follow the declaration?\" It does not answer \"is the declaration what production\ndoes?\" Only operational validation with production evidence can address the second question,\nand even that is domain-bounded.\n\n## 4. Boundaries and what would change the answer\n\n- If the decision metric were insensitive to the completion/timeout tie, the rule would still\n  matter for reproducibility but might not reverse the decision. Here the tie changes\n  success/failure, so it is decision-relevant.\n- If a production trace identified the tie behaviour and the model reproduced it within a\n  declared domain, the validation claim would be supported for that domain, not universally.\n- If the engine version is bumped and runs are regenerated, the change is a declared\n  model/engine change. The wrong response is to keep one model identity and call the new order\n  an implementation detail.\n- Floating-point equality is itself a declaration: V12 rounds scheduled times to 12 decimal\n  places and compares as floats; a model with smaller time units needs a declared tolerance\n  (C23). Changing the tolerance can create or remove ties.\n- The premise that two specific runs disagreed is scenario-supplied. The corpus does not record\n  the incident, the engine diff or a production scheduler; I treat the premise as given, not as\n  observed evidence.\n\n## 5. Evidence map\n\n- tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model -> C1, C2, C4, C7, C11. Equal-time outcome, total order and insertion tie-break.\n- tycho.page.f914586e44ea034deaf2710c570328fc#priorities -> C3, C4, C5. Priority values and the modeling-choice statement.\n- tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes -> C23. Unstable tie-breaking and floating-point equality.\n- tycho.page.f914586e44ea034deaf2710c570328fc#stale-events -> C25. The losing event is processed as a stale event and must not change the outcome.\n- tycho.page.f914586e44ea034deaf2710c570328fc#overview -> C7. The same-seed question and the total-order short answer.\n- tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules -> C2, C6. Seed and equal-time ordering rules.\n- tycho.page.687d2196433c3b076d00c73144dad431#scope -> C15. No production scheduler in the engine scope.\n- tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation -> C13. Verification is not validation.\n- tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering -> C12. What the ordering test does and does not prove.\n- tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified -> C16. FIFO-only queue, no request priority or preemption, no production trace.\n- tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay -> C14. Replay is a verification check.\n- tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter -> C19. A known-answer case does not catch mis-specification.\n- tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-2-deterministic-replay -> C20. Same scenario twice; catches instability.\n- tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes -> C19. Reference to a moving target.\n- tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram -> C8. Contract turns hidden choices into checkable fields.\n- tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure -> C9. Required abstraction, assumptions, unknowns and verification fields.\n- tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview -> C17. Every model uncalibrated; timeouts assumed.\n- tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change -> C17, C21. Measured timeout, arrival trace and service sample are missing.\n- tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes -> C24. Validity drift after a mechanism change.\n- tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness -> C18. V12-B covers event order but not operational validity.\n- tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish -> C18, C21. Gates do not establish a real-system match.\n- tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract -> C10, C11. Input hash includes engine version; inputs invalidate runs.\n- tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves -> C11, C20. Replay proves stored inputs, engine version and seed reproduce stored metrics on the same platform family.\n- tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission -> C15, C22. Execution semantics include event ordering and tie-breaking; no production claim.\n\n## 6. Unknowns and unverified claims\n\n- No production scheduler trace or measured tie behaviour is present in the read evidence. The\n  production order is unknown; I do not assert which event production processes first.\n- No measurement of the timeout and retry policy, arrival process or service-time distribution\n  is present. Every V12 model is uncalibrated (C17); the results are conditional.\n- No record of the specific engine refactor, the two runs or their disagreement is present. The\n  premise is treated as given, not as observed evidence.\n- No independent review, CI, owner acceptance or production observation is established by the\n  V12-A to V12-E gates; V12-F is a separate review gate and the gates explicitly do not\n  establish a real-system match (C18).\n- The concrete V12 winner of an exact completion/timeout tie depends on insertion order. The\n  corpus states the total order, not which event is inserted first in that scenario. The\n  load-bearing point is that the rule decides, not which side wins.\n- The atlas search returned no relevant pattern evidence. That is not proof of absence.\n\n## 7. Bottom line\n\nPriority and tie-breaking must be declared because they are part of the model's state-transition\nsemantics: at equal timestamps they select which event observes and mutates state, and the\ncompletion/timeout race can flip success into failure. The seed fixes randomness, not order, so\nsame-seed agreement is not evidence that the order is irrelevant; a changed order is a changed\nmodel. A deterministic ordering test proves only that the implementation follows its declared\norder and that the timeout state machine is self-consistent. It cannot prove that the declared\norder is the production scheduler's order, because the engine is not a production scheduler,\nthe model omits request priority and preemption and production traces, every model is\nuncalibrated, and the test's oracle comes from the same declaration it is testing.\nCorrespondence to production requires operational validation against measured traces and\npolicies, and even then only within a declared domain.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A service completion and a timeout at the same timestamp lead to different outcomes depending on which event is processed first: completion first succeeds, timeout first fails and may retry.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "Two events at the same timestamp can produce different results depending on which is\nprocessed first. A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp.\nIf the completion is processed first, the request succeeds. If the timeout is processed\nfirst, the request fails and may retry.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "V12 makes equal-time order total and deterministic by ordering on time, then priority, then a monotonically increasing insertion sequence; dictionary iteration order or an unstable sort is not reproducible.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "The V12 event queue orders by time, then priority, then insertion sequence. The insertion\nsequence is a monotonically increasing integer, so the order is total and deterministic.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "A model that relies on dictionary iteration order or an unstable sort is not reproducible.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "Events at the same time are ordered by priority and insertion sequence.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "V12 assigns priority 0 to both service completion and timeout, priority 1 to arrival and priority 2 to retry.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+          "quote": "V12 uses three priorities:\n\n- 0 for service completion and timeout;\n- 1 for arrival;\n- 2 for retry.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "Because completion and timeout share priority 0, the insertion-sequence tie-break is the rule that decides their relative order in the completion-versus-timeout race.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+          "quote": "V12 uses three priorities:\n\n- 0 for service completion and timeout;\n- 1 for arrival;\n- 2 for retry.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "The V12 event queue orders by time, then priority, then insertion sequence. The insertion\nsequence is a monotonically increasing integer, so the order is total and deterministic.",
+          "supports": "C4",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "The priority order is a modeling choice, not a universal rule; a different system may need a different order, and the important property is that the choice is declared and tested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+          "quote": "The priorities are a modeling choice, not a universal rule. A different system may need a\ndifferent order. The important property is that the choice is declared and tested.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The seed rule and the equal-time ordering rule are separate: the seed comes from the scenario, while equal-time events are ordered by priority and insertion sequence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "The seed comes from the scenario, not from the wall clock.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+          "quote": "Events at the same time are ordered by priority and insertion sequence.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A same-seed comparison is not sufficient for reproducibility: the event-ordering rules must also be fixed, and a changed order can make two same-seed runs disagree.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#overview",
+          "quote": "Which event-ordering and timeout rules must be fixed so that two runs with the\nsame seed produce the same outcome?",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "Two events at the same timestamp can produce different results depending on which is\nprocessed first. A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp.\nIf the completion is processed first, the request succeeds. If the timeout is processed\nfirst, the request fails and may retry.",
+          "supports": "C7",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The model contract exists to turn hidden modeling choices into named fields that a validator can check and a reader can challenge, rather than leaving them in a diagram or in engine code.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+          "quote": "A diagram can show the shape of a model and still leave every decision hidden.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+          "quote": "A contract forces those\nchoices into named fields that a validator can check and a reader can challenge.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The contract's required fields include abstraction and resolution, assumptions and unknowns, invariants and verification cases, which is where an outcome-changing ordering rule has to be declared.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "abstraction: time unit, state unit, boundary and resolution.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+          "quote": "validity_limits, assumptions and unknowns.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The run record stores an input hash over the model, scenario and engine version, and replay reruns the scenario and compares the recomputed result hash; a change to an input invalidates the run until it is regenerated.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "quote": "an input hash over the model, scenario and engine version;",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "quote": "A change\nto either input invalidates the run until it is regenerated.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "Replay proves that the stored inputs, engine version and seed produce the stored metrics on\nthe same platform family.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "An engine refactor that changes equal-time ordering is therefore a versioned reproducibility event, not a silent implementation detail that leaves the same model intact.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+          "quote": "an input hash over the model, scenario and engine version;",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "Replay proves that the stored inputs, engine version and seed produce the stored metrics on\nthe same platform family.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+          "quote": "Two events at the same timestamp can produce different results depending on which is\nprocessed first. A service completion at t=1.0 and a timeout at t=1.0 are the same timestamp.\nIf the completion is processed first, the request succeeds. If the timeout is processed\nfirst, the request fails and may retry.",
+          "supports": "C11",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "The deterministic event-order test proves that the implemented order is deterministic and that the timeout state machine is self-consistent; it does not prove that the chosen priority order matches a production scheduler.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+          "quote": "The tests do not prove that the chosen priority order matches a production scheduler. They\nprove that the implemented order is deterministic and that the timeout state machine is\nself-consistent.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Verification and validation are distinct: a model can be verified and still be invalid for a decision because its structure or data are wrong, and a verified engine is not a validated system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+          "quote": "A model can\nbe verified and still be invalid for a decision because its structure or data are wrong.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Replay is a verification check for the engine's determinism; it is not a validation check for the model's assumptions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+          "quote": "Replay is a verification check for the engine's determinism. It is not a validation check for\nthe model's assumptions.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "The reference engine does not implement a production scheduler, and the chapter does not claim that a queue model predicts a production service.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+          "quote": "It does not implement a general-purpose simulation language, distributed execution, a\ngraphical interface, a database or a production scheduler.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+          "quote": "The chapter does not claim that a queue model predicts a production service.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "The model's queue discipline is FIFO only, request priority and preemption are not implemented, and the arrival process is not tested against a production trace.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The queue discipline is FIFO only; priority and preemption are not implemented.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+          "quote": "The arrival process is not tested against a production trace.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "Every V12 model is uncalibrated, arrival rates, service times and timeouts are assumed, and a measured timeout and retry policy is listed as missing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+          "quote": "Every V12 model is uncalibrated. Arrival rates, service times, timeouts,\ndual-write lag and reconciliation capacity are assumed.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+          "quote": "- an arrival trace from the target environment;\n- a service-time sample, including the tail;\n- a measured timeout and retry policy;",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The V12-B gate covers event ordering as local model correctness, but the tests do not prove operational validity, and the validation gates do not establish that the models match a real system.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+          "quote": "The tests do not prove\noperational validity.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish that the models match a real system.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "A reference case can be a moving target when its expected value is copied from current output, and a known-answer case does not catch a model that is implemented correctly but mis-specified for the decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+          "quote": "**Reference to a moving target.** The expected value is copied from the current output, so\n  the test can never fail.",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+          "quote": "A reference case with a known answer catches some of these. It does not catch a model that is\nimplemented correctly but mis-specified for the decision.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The replay test runs the same scenario twice and catches a broken event order, a wall-clock dependency or a hidden module cache, but a consistently changed order runs identically on both runs and passes; replay compares the engine with itself.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-2-deterministic-replay",
+          "quote": "The test runs the same scenario twice and compares the hash. A broken event order, a\nwall-clock dependency or a hidden module cache fails the test.",
+          "supports": "C20",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+          "quote": "Replay proves that the stored inputs, engine version and seed produce the stored metrics on\nthe same platform family.",
+          "supports": "C20",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "A production-match claim would require production observations, including an arrival trace, a measured timeout and retry policy and a service-time sample, plus an operational-validity argument; the corpus records these as missing.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+          "quote": "- an arrival trace from the target environment;\n- a service-time sample, including the tail;\n- a measured timeout and retry policy;",
+          "supports": "C21",
+          "status": "inference"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+          "quote": "- They do not establish that the models match a real system.",
+          "supports": "C21",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The chapter fixes event ordering and tie-breaking as execution semantics and defines deterministic reference cases that a model must pass before its output is used in a decision.",
+      "evidence": [
+        {
+          "section_key": "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+          "quote": "This chapter fixes the execution semantics that make a discrete-event result reproducible:\nevent ordering, tie-breaking, timeouts, retries, queue capacity, backpressure and replay.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "Unstable tie-breaking is a named failure mode, and floating-point equality without a declared tolerance is another; V12 rounds scheduled times to 12 decimal places and compares as floats.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "**Unstable tie-breaking.** Two events at the same time depend on hash order.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "**Floating-point equality.** Events at 1.0 and 1.0000000001 are treated as equal or not\n  equal without a declared tolerance.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "V12 rounds scheduled times to 12 decimal places and compares event times as floats.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+          "quote": "a model with very small time units would need a\ndeclared tolerance.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The calibration page names validity drift, reusing a model after its boundary or mechanism changes, as a failure mode, so changing the event-order mechanism without restating the model is that failure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+          "quote": "**Validity drift.** A model is reused after its boundary or mechanism changes.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "A completion after a timeout and a timeout after a completion are stale events; the engine keeps them in the heap, checks the request state when the event is processed, and requires that a stale event never change the outcome.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+          "quote": "The completion event after a timeout is stale. The timeout event after a completion is stale.\nThe engine does not delete stale events from the heap; it checks the request state when the\nevent is processed.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events",
+          "quote": "A stale event must never change the outcome. The engine's tests include a completion after a\ntimeout and a timeout after a completion.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#why-event-order-is-part-of-the-model",
+    "tycho.page.687d2196433c3b076d00c73144dad431#determinism-rules",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#priorities",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#overview",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#why-a-contract-instead-of-a-diagram",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#the-reproducibility-contract",
+    "tycho.page.6c54ed1288a4f0806889865916dc8ccf#what-replay-proves",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#event-ordering",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#verification-versus-validation",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#replay",
+    "tycho.page.687d2196433c3b076d00c73144dad431#scope",
+    "tycho.chapter.ad6455916f994c0e22e0df7881857f23#purpose-and-mission",
+    "tycho.page.621e495fcadc4849d2f21d55be4c52e4#what-is-not-verified",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-b-model-correctness",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#what-the-gates-do-not-establish",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#failure-modes",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#why-reference-cases-matter",
+    "tycho.page.4e13fd6ac1103a15c800e939b13bd2f9#case-2-deterministic-replay",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.f914586e44ea034deaf2710c570328fc#stale-events"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
