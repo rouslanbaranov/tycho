@@ -1,0 +1,423 @@
+{
+  "task_id": "Q288",
+  "answer": "# Q288 - Narrow intervals, general caveats and usable reversal triggers\n\n**Layers needed.** modeling-and-simulation (primary: decision records, Monte Carlo evidence,\nvalidation) and book (supporting retrieval; the V12 pages are also served through the book\nlayer). Atlas is not needed: the question is about a decision record's triggers and the\nevidence behind them, not pattern identity or coverage.\n\n## 1. Facet matrix\n\n| Facet | Query formulations used | Evidence (section keys) |\n|---|---|---|\n| F1 What a confidence interval covers, and what narrowness means | \"confidence interval convergence replication count\"; \"narrow confidence interval precise not representative\"; \"standard error confidence interval coverage\" | tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error; #coverage-and-its-assumptions; #what-convergence-does-not-mean |\n| F2 B's interval and why it is narrow | \"candidate B recommendation narrow confidence interval\"; \"replications would not change the decision\"; \"operability unverified conditional recommendation\" | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run |\n| F3 Layer separation and the acceptance basis | \"reversal trigger decision confidence interval candidate\"; \"falsifiable observable threshold trigger\"; \"conditional recommendation decision-supported limitations\" | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers; #forbidden-inferences; #evidence-statuses-used-in-decision-records; tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes |\n| F4 The trigger contract: what a usable trigger must contain | \"reversal trigger must name a quantity threshold measurement\"; \"trigger names measurement range owner consequence\"; \"decision record triggers revisit\" | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure; #failure-modes; #example-excerpt; tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome; #failure-modes |\n| F5 The measured changes that reverse B | \"decision record reversal trigger contract\"; \"sensitivity ranking not evidence missing measurement\"; \"conditional recommendation caveat unfalsifiable trigger\" | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation; #applying-the-constraints; #sensitivity-and-uncertainty; tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities |\n| F6 Why more replications cannot reverse it | \"replications precision representativeness synthetic\"; \"replications would not change the decision\"; \"caveat decision could change\" | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation; tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean |\n\nThe last searches in the session (\"narrow confidence interval precise not representative\",\n\"vague caveat not actionable decision\") returned only sections already read; search stopped\nunder the two-consecutive-searches rule.\n\n## 2. Short answer\n\nThe reviewer's acceptance rests on a simulation-layer statistic and the requested caveat is\nnot a condition at all.\n\n- **Why narrowness is not a reversal trigger.** A confidence interval on B's success rate is\n  a sampling interval of a mean under the model's declared assumptions. It is narrow because\n  the workload is synthetic, the 30 replications are independent and success near 1.0 has\n  little variance. The book says of these very intervals that they are \"narrow because the\n  workload is synthetic and the replications are independent\" and that \"narrow intervals do\n  not make the inputs measured\". It also states that convergence does not mean the model is\n  valid, the inputs are measured or the decision correct, and that a confidence interval\n  does not cover the production value when the model is biased or the inputs are\n  mis-specified. Accepting B **because** the interval is narrow therefore converts precision\n  into decision confidence - the family of inference the volume forbids (an interval that\n  \"proves the business case\", a recommendation taken as safe to deploy) and the failure mode\n  it names as uncertainty theater. Narrowness is a property of the model run, not a\n  condition that can be observed to hold or fail in the system the decision is about.\n- **Why a general caveat is not a trigger.** \"The decision could change\" names no\n  measurement, no range, no owner, no consequence and no review point. It is compatible with\n  every possible observation, so it can never be checked, monitored or closed. The record is\n  already conditional because the non-quantitative operability constraint C3 is untested, so\n  the caveat adds nothing that is not already recorded. If it replaced the specific trigger\n  list, the record would fall into the contract's missing-reversal-trigger failure mode or,\n  worse, the perpetual-insufficient-evidence mode in which the record never names the\n  measurement or the trigger and so cannot be resolved.\n- **What a usable trigger must name.** The measurement; the range that would support or\n  reject the decision; the owner of the measurement; the consequence of staying in the\n  current state; and the next review trigger. It must also bind to a decision element (a\n  hard constraint, a calibration input, or a non-quantitative constraint) and be observable\n  outside the model. The contract's own example, \"arrival rate above 22 requests/second\",\n  shows the quantity, direction and threshold part of that pattern.\n- **Which measured changes actually reverse B.** A measured arrival rate above 22 requests\n  per second; a measured mean service time above 0.65 seconds; a measured p95 service time\n  whose tail pushes B above the 1.5-second hard ceiling; a measured retry rate materially\n  above the modeled 1.003; and failure of the operability review. A cost-weight change under\n  which B no longer beats A per successful request also reverses the choice, but that is a\n  change in declared priorities, not a measurement. More replications would not reverse\n  anything: they reduce sampling error only, the book states that increasing replications\n  does not reduce input uncertainty, and the record itself says a narrower interval on the\n  synthetic workload would not reverse it.\n\n## 3. Mechanism\n\n### 3.1 What the interval is\n\nFor n independent replications with sample standard deviation s, the standard error is\ns/sqrt(n) and the 95% interval is the mean plus or minus 1.96 standard errors. B's run uses\n30 replications, reports success 0.9996 with a 95% interval of 0.9995-0.9997 and a relative\nerror of 0.00003 against a 0.02 threshold. The interval is narrow for three compounding\nreasons: replications are independent by construction; the success metric is bounded near\n1.0, where variance collapses (the ceiling effect the book names); and the workload is\nsynthetic, so no real-world variation enters the number.\n\nNone of those reasons is about the world. A 95% interval covers the true mean in repeated\nsampling about 95% of the time under the model's assumptions; it does not cover the true\nproduction value if the model is biased or the inputs are mis-specified, and it does not\ncover a single future request. The volume's stopping logic makes the same point: convergence\nmeans the sampling error of the reported metric is small under the declared model, and the\npage lists five things convergence does not mean, including that the decision is correct and\nthat more replications will fix a biased model.\n\n### 3.2 Why \"narrow, therefore accept\" is a layer error\n\nV12 separates five layers: source and claim evidence, model verification, calibration,\nsimulation evidence and decision evidence. The decision layer is defined by candidates,\nhard constraints, non-quantitative limits and reversal triggers - not by interval width. A\ndecision-supported outcome with an uncalibrated model is a conditional result: it says the\ndecision follows from the declared assumptions and constraints, not that the assumptions are\ntrue, and the record must state the condition and the measurements that would reverse it.\n\nThe reviewer's move crosses simulation evidence into decision evidence without the\ncalibration evidence that the boundary requires. The volume calls the same move uncertainty\ntheater when a confidence interval across replications is presented as an uncertainty budget\nfor input parameters, and it lists precision without accuracy as a failure mode. The\nforbidden-inference list closes the loop: neither \"the confidence interval excludes zero, so\nthe business case is proven\" nor \"the decision record recommends B, so B is safe to deploy\"\nis admissible; \"the interval is narrow, so accept B\" belongs to the same family. The narrow\ninterval is a statement about the model's sampling, and the inputs of that model - arrival\nrate, service mean, queue, timeout, retry policy, deployment capacity - are all assumed and\nuncalibrated.\n\n### 3.3 Why a general caveat is not a reversal trigger\n\nA reversal trigger is a condition on the world that, if observed, removes the support for\nthe recommendation. \"The decision could change\" satisfies none of the properties that make\nsuch a condition usable:\n\n1. **No quantity.** There is nothing to observe; the sentence does not say which variable.\n2. **No range or threshold.** There is no value at which the decision flips, so no pass/fail\n   can be computed.\n3. **No owner.** Nobody is accountable for producing the measurement or the review.\n4. **No consequence.** The cost of staying in the current state is not stated, so the\n   condition carries no urgency or priority.\n5. **No review point.** There is no event or date at which the record is reopened, so the\n   condition can never fire.\n\nA statement that is compatible with every observation is unfalsifiable, and an unfalsifiable\nstatement cannot be a control on a decision. The record already declares its conditionality\n(C3 operability unverified), so the caveat is also redundant. The contract treats a decision\nwith no condition under which it should be revisited as the missing-reversal-trigger failure\nmode, and a record that never names the measurement or the trigger as perpetual insufficient\nevidence. A generic caveat, if accepted in place of the named triggers, produces exactly that\nstate: the record looks complete and cannot be resolved.\n\n### 3.4 What a usable trigger must name\n\n| Element | What it must contain | Checkout instantiation | What fails without it |\n|---|---|---|---|\n| Quantity and unit | a named observable with a unit | arrival rate in requests/second; mean service time in seconds; p95 latency in seconds; retry amplification | the trigger cannot be measured |\n| Direction and threshold or range | the value, direction and the range that would support or reject the decision, declared before measurement | above 22 requests/second; above 0.65 seconds; above 1.5 seconds; materially above 1.003 | no pass/fail, and thresholds can be chosen after the fact |\n| Owner | who produces the measurement or review | role that would own it (not assigned on the page): target-environment owner for the arrival trace; service owner for the service-time sample; operations for the operability review | nobody is accountable and the trigger lapses |\n| Consequence of staying | what the current conditional state costs or risks | B deployed on unmeasured inputs; hard p95 ceiling could be breached in production | the condition has no priority |\n| Next review trigger | the event or date at which the record is reopened | the measurement review; the operability review | the record is never revisited |\n| Decision element bound | a hard constraint, a calibration input, or a non-quantitative constraint | C4 cost ceiling, C5 p95 ceiling, C3 operability, the assumed arrival/service/retry inputs | the trigger is not decision-relevant |\n| Observability outside the model | obtainable from a trace, sample, measurement or review, not from re-running the model | measured arrival trace, service-time sample, retry rate, review outcome | replications masquerade as evidence |\n\nThe record's own example, \"arrival rate above 22 requests/second\", satisfies quantity,\ndirection and threshold. The worked example lists the quantities and single cutoffs rather than the full range that\nwould support or reject the decision, and does not assign measurement owners or\nnext-review points on the page; those parts of the checklist are not evidenced there and are\nrecorded as unknown below.\n\n### 3.5 The measured changes that would actually reverse B\n\n| Reversal condition | Kind | What it attacks | Mechanism |\n|---|---|---|---|\n| Measured arrival rate above 22 requests/second | measurement of an assumed input | utilization boundary | baseline capacity is 24 requests/second from 12 servers at 0.5 seconds, so utilization is 20/24 = 0.833 at the modeled load and 22/24 = 0.917 at the trigger; queueing delay, timeout risk and retry load rise non-linearly as utilization approaches one, which can break the 1.5-second p95 ceiling and erode B's success advantage |\n| Measured mean service time above 0.65 seconds | measurement of an assumed input | capacity | at 0.65 seconds the capacity falls to 12/0.65 = 18.5 requests/second, below the offered 20, so utilization exceeds one and the backlog grows through the 1,800-second window; timeouts and retries rise, B's two-second timeout and retry budget amplify the load, and hard constraints can fail |\n| Measured p95 service time whose tail pushes B above 1.5 seconds | measurement of the latency tail | hard constraint C5 | B's modeled p95 is 1.206 seconds, only 0.294 seconds under the ceiling; the normal approximation can understate a heavy tail, and a measured tail above 1.5 eliminates B rather than merely re-ranking it |\n| Measured retry rate materially above the modeled 1.003 | measurement of an assumed input | retry amplification, cost and load | retry amplification is a declared metric; a higher measured retry rate raises offered load and cost per success, and B's advantage (cost 1.34 versus A's 1.81, success 0.9996 versus 0.9218) depends on retries resolving rather than amplifying |\n| Failure of the operability review | non-quantitative review outcome | constraint C3 | C3 cannot be simulated; a failed review removes the condition that makes the recommendation conditional, and the outcome becomes insufficient evidence or a different candidate |\n| A cost weight under which B no longer beats A per successful request | decision-weight change, not a measurement | declared priority | B wins cost per success (1.34 versus 1.81) and success (0.9996 versus 0.9218); A wins p95 (0.870 versus 1.206); the record says the prioritization of success and cost over the latency difference is a decision, not a fact produced by the simulation, so a re-weighting reverses the choice without any new measurement |\n\nThe first four are measurements of the assumed inputs or of the latency tail. The fifth is a\nreview outcome attached to the non-quantitative constraint. The sixth is a change in the\ndecision's declared priorities and should be recorded as such, not disguised as a\nmeasurement.\n\n### 3.6 Why more replications would not reverse it\n\nMore replications reduce the standard error and narrow the interval further. They do not\nchange the calibration status of a single input. The volume distinguishes input uncertainty\n(the arrival rate, service time, timeout or another parameter is not known exactly) from\nsampling error (a finite number of replications gives an estimate with error): replications\naddress sampling error, parameter draws address input uncertainty, and increasing\nreplications does not reduce input uncertainty. The convergence page adds that more\nreplications will not fix a biased model and that convergence does not mean the inputs are\nmeasured or the decision correct. The worked example states the conclusion directly: a\nnarrower confidence interval on the synthetic workload would not reverse the recommendation,\nbecause more replications make the synthetic estimate more precise, not more\nrepresentative.\n\nThe binding uncertainty for this decision is therefore input and operational, not sampling:\nan arrival trace, a service-time sample including the tail, a measured timeout and retry\npolicy, measured deployment capacity and cost, and the operability review. Those are the\nmeasurements the calibration page says would change the checkout decision.\n\n### 3.7 Contrast: when the missing evidence is quantitative\n\nThe checkout record stays conditional because its missing evidence is non-quantitative\n(operability). Where the missing evidence is a quantitative input assumed over a wide range,\nthe same volume returns insufficient evidence instead. The modernization record has a\nnon-zero divergence and an incomplete rollback against a clean baseline, and the model\ncannot show that the divergence is acceptable or the rollback achievable because the inputs\nare assumed over wide ranges; the correct next step is a measurement program - instrument\ndual-write lag, measure reconciliation throughput under target load, rehearse a rollback,\nmeasure divergence over a sustained shadow period, and re-run with measured inputs. That is\nthe same trigger logic applied to a quantitative gap: the trigger names the measurement, not\na caveat.\n\n## 4. Boundaries and what this does not establish\n\n- Every V12 model is uncalibrated; no production measurement, operational validation, owner\n  acceptance or pattern promotion is asserted. The validation page records the local gates\n  and says a passing local check is not independent review, CI, owner acceptance or\n  production validity.\n- B's recommendation is conditional on C3. Nothing in the trigger list makes B deployable;\n  the record tells a reader what to measure, not what to assume.\n- The full decision record artifact (edition/v12/decisions/checkout-candidate.json) is not\n  readable through this CLI, which accepts only canonical Markdown paths under book/. The\n  quoted JSON excerpt in the contract is explicitly non-normative and non-schema-valid, so\n  the exact full trigger list, owners and review dates are not verified here.\n- The 22 requests/second and 0.65-second thresholds are stated on the page without a\n  derivation; the utilization and capacity arithmetic above is my inference from the queue\n  page's capacity formula and the run configuration, not a source claim.\n- \"Materially above 1.003\" has no numeric threshold on the page, and the cost weight at which\n  B loses to A is not stated numerically.\n- The sensitivity screen is a quadratic approximation over 48 rows; the page says it does not\n  prove that service time is the dominant production factor and is used to identify what to\n  measure first.\n- The interval uses a normal approximation that can understate a heavy-tailed latency, so a\n  measured tail is the right check; a tighter interval is not.\n- The two-replication convergence-stress run is insufficient-sample and is not used as\n  evidence in the record.\n\n## 5. What the reviewer should have required\n\nNot a caveat, but the decision-layer test: confirm that each reversal trigger names a\nmeasurement, a pre-declared range, an owner, the consequence of staying and the next review\npoint; confirm that the triggers are observable outside the model; and confirm that the\nacceptance rests on the constraints and calibration statuses rather than on interval width.\nThe correct acceptance statement is that B is decision-supported under the declared\nconstraints and conditional on C3 and the named measurements - which is what the record\nalready says. A general caveat is neither necessary nor sufficient, and substituting it for\nthe trigger list would create the missing-reversal-trigger failure the contract names.\n\n## 6. Evidence map\n\n| Claim | Claim summary | Section keys |\n|---|---|---|\n| C1 | B is recommended but conditional on untested C3 | 3cfd08ee#applying-the-constraints |\n| C2 | B's run values and interval | 3cfd08ee#the-results |\n| C3 | Narrowness comes from the synthetic workload and independent replications; narrow intervals do not make inputs measured | 3cfd08ee#the-results |\n| C4 | Coverage is under model assumptions, not production value or a future request | 0fff38d9#coverage-and-its-assumptions |\n| C5 | Ceiling effect at success near 1.0 | 0fff38d9#coverage-and-its-assumptions |\n| C6 | What convergence does not mean, including more replications will not fix a biased model | 0fff38d9#what-convergence-does-not-mean |\n| C7 | Replications address sampling error, not input uncertainty | 7a8c030b#two-kinds-of-uncertainty |\n| C8 | Decision evidence layer is candidates, constraints, non-quantitative limits and triggers | 1a3833c3#the-five-layers |\n| C9 | Forbidden inferences crossing from interval or recommendation to business or deployment conclusion | 1a3833c3#forbidden-inferences |\n| C10 | Conditional result must state the measurements that would reverse it | 1a3833c3#evidence-statuses-used-in-decision-records |\n| C11 | Uncertainty theater failure mode | b0c704c8#failure-modes |\n| C12 | Every V12 model is uncalibrated | b0c704c8#overview |\n| C13 | Five elements a usable trigger names | ea9adae8#what-would-change-the-outcome |\n| C14 | Checkout trigger is a measured arrival, service or retry rate outside the declared range | ea9adae8#what-would-change-the-outcome |\n| C15 | Missing reversal trigger failure mode | c7a43944#failure-modes |\n| C16 | Perpetual insufficient evidence failure mode | ea9adae8#failure-modes |\n| C17 | Contract requires triggers; example names quantity, direction and threshold | c7a43944#required-structure; c7a43944#example-excerpt |\n| C18 | The listed reversal conditions | 3cfd08ee#what-would-reverse-the-recommendation |\n| C19 | Narrower interval would not reverse; precision is not representativeness | 3cfd08ee#what-would-reverse-the-recommendation |\n| C20 | 1.5-second p95 is a hard constraint, so a tail above it eliminates B | 3cfd08ee#applying-the-constraints; 3cfd08ee#what-would-reverse-the-recommendation |\n| C21 | B wins success and cost; A wins p95; prioritization is a decision, not a fact | 3cfd08ee#applying-the-constraints |\n| C22 | Capacity 24, utilization 0.833, arithmetic for 22 and 0.65 | c264e48a#the-basic-quantities |\n| C23 | Sensitivity screen is not proof of the production driver | 3cfd08ee#sensitivity-and-uncertainty |\n| C24 | B's run limitations: synthetic workload and normal approximation | 20124804#example-candidate-b-run |\n| C25 | Decision validity requires triggers and limitations; local checks are not review or acceptance | 6fd0d561#v12-e-decision-validity; 6fd0d561#overview |\n| C26 | Measurements that would change the checkout decision | b0c704c8#what-measurement-would-change |\n| C27 | Quantitative missing evidence yields insufficient evidence and a measurement program | 7732cad0#why-the-decision-is-insufficient-evidence |\n\n## 7. Unknowns\n\n- The full checkout decision record artifact could not be read through the CLI; owners,\n  review dates and any triggers not quoted on the page are unknown.\n- The derivation of the 22 requests/second and 0.65-second thresholds is not shown; the\n  capacity arithmetic is inference.\n- No numeric threshold exists on the page for \"materially above 1.003\" or for the cost weight.\n- No production measurement or operational validation exists for any V12 model.\n- Whether the operability review has been scheduled, and by whom, is not stated.\n- The review status of the decision record (accepted, conditional, open) is not evidenced on\n  the page; the volume states owner acceptance remains open and the pages are self-checked.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The record recommends B but the recommendation is conditional because the non-quantitative operability constraint C3 is untested.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "C3 is not tested. The record says the operability constraint remains unverified and requires\nan operational review. The recommendation is therefore conditional.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Candidate B's reported result is success 0.9996 with a 95% interval of 0.9995-0.9997, p95 1.206 s, cost 1.34 and timeout 0.0041.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "- B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The intervals are narrow because the workload is synthetic and the replications are independent; the page states that narrow intervals do not make the inputs measured.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "The confidence intervals are\nnarrow because the workload is synthetic and the replications are independent. Narrow\nintervals do not make the inputs measured.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A 95% interval covers the true mean in repeated sampling only under the model's assumptions; it does not cover the production value when the model is biased or the inputs are mis-specified, and it does not cover a single future request.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "It does not cover the true production value if the model is\nbiased or the inputs are mis-specified. It does not cover a single future request.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Success near 1.0 creates a ceiling effect: variance is small and the interval is narrow, but the metric cannot reveal failures that the model does not represent.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+          "quote": "a ceiling effect: when success is near 1.0, the variance is small and\nthe interval is narrow, but the metric cannot reveal failures that the model does not\nrepresent.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Convergence does not mean the model is valid, the inputs are measured, the decision is correct, or that the interval contains the production value; and more replications will not fix a biased model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+          "quote": "- the model is valid;\n- the inputs are measured;\n- the decision is correct;\n- the confidence interval contains the production value;\n- more replications will fix a biased model.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Replications address sampling error only; increasing replications does not reduce input uncertainty.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+          "quote": "Replications address sampling error. Parameter draws address input uncertainty. Increasing\nreplications does not reduce input uncertainty.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "The decision evidence layer is defined by candidates, hard constraints, non-quantitative limits and reversal triggers, and is separate from simulation evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+          "quote": "**Decision evidence:** does the decision follow from the model and the constraints? This is\n  the layer of candidates, hard constraints, non-quantitative limits and reversal triggers.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The volume forbids conclusions that cross from an interval result or a recommendation to a business or deployment conclusion; accepting B because its interval is narrow belongs to that family of inference.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "- \"The confidence interval excludes zero, so the business case is proven.\"",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "- \"The decision record recommends B, so B is safe to deploy.\"",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+          "quote": "Each inference crosses a layer boundary without the required evidence.",
+          "supports": "C9",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A decision-supported outcome with an uncalibrated model is conditional: it says the decision follows from the declared assumptions, not that the assumptions are true, and the record must state the measurements that would reverse it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+          "quote": "A decision-supported outcome with an uncalibrated model is a conditional result. It says\nthe decision follows from the declared assumptions and constraints. It does not say the\nassumptions are true. The record must state the condition and the measurements that would\nreverse it.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Presenting a confidence interval across replications as an uncertainty budget for input parameters is a named failure mode, uncertainty theater; precision without accuracy is another.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+          "quote": "**Uncertainty theater.** A confidence interval across replications is presented as an\n  uncertainty budget for the input parameters.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Every V12 model is uncalibrated, so any recommendation is conditional on assumptions rather than on measurement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+          "quote": "Every V12 model is uncalibrated.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A usable trigger must name the measurement, the range that would support or reject the decision, the owner of the measurement, the consequence of staying in the current state, and the next review trigger.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "A useful insufficient-evidence record is actionable. It names:\n\n- the measurement;\n- the range that would support or reject the decision;\n- the owner of the measurement;\n- the consequence of staying in the current state;\n- the next review trigger.",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "For the checkout record the trigger is a measured arrival rate, service time or retry rate outside the declared range.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+          "quote": "For the checkout record, the trigger is a measured arrival rate, service time or\nretry rate outside the declared range.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A decision with no condition under which it should be revisited is the Missing reversal trigger failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+          "quote": "**Missing reversal trigger.** A decision has no condition under which it should be\n  revisited.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A record that never names the measurement or the trigger cannot be resolved; that is the perpetual insufficient evidence failure mode.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+          "quote": "**Perpetual insufficient evidence.** The record never names the measurement or the trigger,\n  so it cannot be resolved.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The decision-record contract requires a reversal-trigger field alongside limitations and pattern links, and its example trigger is a named quantity with a direction and threshold: arrival rate above 22 requests per second.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+          "quote": "- reversal triggers, limitations and pattern links.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#example-excerpt",
+          "quote": "\"reversal_triggers\": [\"arrival rate above 22 requests/second\"]",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The record lists reversal conditions: arrival rate above 22 requests per second or mean service time above 0.65 seconds, a measured p95 tail above 1.5 seconds, a retry rate materially above the modeled 1.003, a failed operability review and a cost weight under which B no longer beats A.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A measured arrival rate above 22 requests per second or a mean service time above 0.65\n  seconds changes the utilization boundary.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A measured p95 service time whose tail pushes B above 1.5 seconds.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A measured retry rate materially above the modeled 1.003.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A failure of the operability review.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A cost weight under which B no longer beats A per successful request.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The record states that a narrower confidence interval on the synthetic workload would not reverse the recommendation, because more replications make the synthetic estimate more precise, not more representative.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "The record also says what would not reverse it: a narrower confidence interval on the\nsynthetic workload. More replications would make the synthetic estimate more precise, not\nmore representative.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "The 1.5-second p95 ceiling is a hard constraint, so a measured tail that pushes B above it eliminates B rather than merely re-ranking it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "- C5: p95 latency at most 1.5 seconds (hard).",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "- A measured p95 service time whose tail pushes B above 1.5 seconds.",
+          "supports": "C20",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "B beats A on success and cost per success while A has the lower p95, and the preference for success and cost over the latency difference is a decision, not a fact produced by the simulation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "The record recommends B because the\ndeclared decision prioritizes successful completions and cost per success over the latency\ndifference inside the 1.5-second ceiling. That prioritization is a decision, not a fact\nproduced by the simulation.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "The baseline capacity is 24 requests per second from 12 servers at 0.5 seconds mean service, giving utilization 20/24 = 0.833; arithmetically, 22 requests per second gives 0.917 and a 0.65-second mean gives 12/0.65 = 18.5 requests per second capacity, so offered load exceeds capacity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+          "quote": "The service capacity is 12 / 0.5 = 24 requests per second, so the\nutilization is 20 / 24 = 0.833.",
+          "supports": "C22",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "The sensitivity screen explains more fitted variance through service time but does not prove that service time dominates production; it is used to identify what to measure first.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "It does not prove that service time is the dominant production factor.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+          "quote": "it uses it to identify what to measure\nfirst.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "The B run uses 30 replications with a relative error of 0.00003 and its limitations record that the workload is synthetic and the intervals use a normal approximation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+          "quote": "The limitations say the workload is synthetic\nand the confidence intervals use a normal approximation.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "Decision validity requires reversal triggers and limitations, and a passing local check is not independent review, CI, owner acceptance or production validity.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+          "quote": "- reversal triggers and limitations.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+          "quote": "A passing local check is not independent\nreview, CI, owner acceptance or production validity.",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "The calibration page lists the measurements that would change the checkout decision: an arrival trace, a service-time sample including the tail, a measured timeout and retry policy, and measured deployment capacity and cost.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+          "quote": "- an arrival trace from the target environment;\n- a service-time sample, including the tail;\n- a measured timeout and retry policy;\n- a measured deployment capacity and cost.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "When the missing evidence is a quantitative input assumed over a wide range, the volume returns insufficient evidence and names a measurement program; the modernization record cannot show that divergence is acceptable or rollback achievable because its inputs are assumed over wide ranges, so the next step is instrumentation, measurement, rollback rehearsal and re-run.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+          "quote": "The model cannot show either because the inputs are assumed over wide ranges.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+          "quote": "The correct next step is measurement:",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#evidence-statuses-used-in-decision-records",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#overview",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#what-would-change-the-outcome",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#failure-modes",
+    "tycho.page.ea9adae8cf8a3196a3515d383b075f53#failure-modes",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#required-structure",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#example-excerpt",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#the-basic-quantities",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-e-decision-validity",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#overview",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#what-measurement-would-change",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
