@@ -145,6 +145,25 @@ full report and index its SHA-256.
 Charts are produced only after promotion. Intermediate reports contain no chart
 section and no chart links.
 
+### 4.7.1 Green gate after promotion
+
+Do not start the next entry until the full suite passes at the promotion merge
+commit under Python 3.15. If any test fails, fix it in a separate green-main
+change before continuing.
+
+The green-main change must:
+
+- update hardcoded promotion counts and the AI-review index;
+- update evaluation qrels whose verbatim excerpts cite changed owner text;
+- refresh V12 `protected-baseline.json` for every changed book page and
+  promotion record;
+- rebuild the section FTS index and the route index;
+- update the V12 qrels snapshot and source-plan route snapshot;
+- scan V12 links to book pages and fix broken links;
+- record the full-suite result in the PR/MR.
+
+A promotion is not complete while the suite is red.
+
 ## 5. Rebind rules
 
 A neighbour promotion may be rebound only when all are true:
