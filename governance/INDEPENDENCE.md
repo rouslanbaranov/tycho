@@ -1,22 +1,51 @@
 # Independence and source admissibility
 
-Status: mandatory. Effective: 2026-10-18.
+Status: mandatory. Effective: 2026-10-18. Wording revision: 2026-11-01.
 
 ## Absolute prohibition
 
-Tycho must never cite, link, ingest, copy, summarize, paraphrase, translate, reconstruct, or derive examples from employer-specific documents, sources, source code, internal technology choices, architectural solutions, decisions, component names, identifiers, diagrams, screenshots, logs, configurations, URLs, or operational information. Public availability of an employer-authored artifact does not make it admissible. Renaming or anonymizing restricted material does not make it admissible.
+**Restricted-origin material** means material obtained from a non-public,
+private, or access-restricted source, or material that cannot be admitted under
+the public-source rules in this document. Public availability alone does not make
+material admissible.
 
-Employer names and abbreviations must not appear anywhere in the project, including governance, scanner configuration, examples, fixtures, metadata, and history. There are no exceptions for statements of this prohibition. Do not embed literal, encoded, or obfuscated organization identifiers in checks; use generic source-admissibility rules and independent-origin review.
+Tycho must never cite, link, ingest, copy, summarize, paraphrase, translate,
+reconstruct, or derive examples from restricted-origin material, including
+internal documents, sources, source code, internal technology choices,
+architectural solutions, decisions, component names, identifiers, diagrams,
+screenshots, logs, configurations, URLs, or operational information. Public
+availability of a restricted-origin artifact does not make it admissible.
+Renaming or anonymizing restricted material does not make it admissible.
+
+Names and abbreviations associated with restricted-origin material must not
+appear anywhere in the project, including governance, scanner configuration,
+examples, fixtures, metadata, and history. There are no exceptions for
+statements of this prohibition. Do not embed literal, encoded, or obfuscated
+restricted-origin identifiers in checks; use generic source-admissibility rules
+and independent-origin review.
 
 ## Independent public technology treatment
 
-A generally available technology may be explained using its own public specifications, official documentation, research papers, or independently admissible source code. Never assert, imply, or rely on whether an employer uses it. A technology's incidental presence in restricted material neither establishes its admissibility nor disqualifies independently sourced public knowledge.
+A generally available technology may be explained using its own public
+specifications, official documentation, research papers, or independently
+admissible source code. Never assert, imply, or rely on whether a
+restricted-origin source uses it. A technology's incidental presence in
+restricted material neither establishes its admissibility nor disqualifies
+independently sourced public knowledge.
 
 ## Clean creation boundary
 
 Only general authoring techniques may be reused. Do not copy another book's prose, scripts, schemas, graphs, source inventories, examples, internal terminology, or metadata records. Implement generic tooling independently. Restricted context from prior conversations, memory, attachments, retrieval, or tools is not a source for Tycho.
 
-Use only public, independently accessible sources and original synthetic examples. Do not search internal systems or load employer repositories. Do not follow links to restricted resources. Admit a source before using it: record public origin, author/publisher, version or revision, access date, scope, and reuse/licensing constraints. Unknown admissibility means do not use. Adding a new public source unit is automatically authorized once these admission and record requirements are met; no separate owner confirmation is required. This does not authorize restricted material or waive independent review, promotion, sufficient-state, scope-change or owner-acceptance decisions.
+Use only public, independently accessible sources and original synthetic examples.
+Do not search internal systems or load restricted repositories. Do not follow
+links to restricted resources. Admit a source before using it: record public
+origin, author/publisher, version or revision, access date, scope, and
+reuse/licensing constraints. Unknown admissibility means do not use. Adding a new
+public source unit is automatically authorized once these admission and record
+requirements are met; no separate owner confirmation is required. This does not
+authorize restricted material or waive independent review, promotion,
+sufficient-state, scope-change or owner-acceptance decisions.
 
 ## Scope of enforcement
 
