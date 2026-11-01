@@ -1,0 +1,377 @@
+{
+  "task_id": "Q259",
+  "answer": "# Q259 — A committed reservation, scope cancellation and the error contract\n\n## Scope and layers\n\nThis question needs the **book** layer. It is a conceptual architecture question about\nstructured concurrency, remote effects, task contracts and durable recovery; the book layer\nstates those mechanisms directly. I did not use the atlas or modeling-and-simulation layers:\nthe atlas indexes pattern ownership rather than adding a mechanism here, and the modeling\nlayer would add modeled evidence rather than production evidence. The describe result\nreported complete coverage, 555 documents and 3,132 sections at snapshot\n4445fa068e7a0392182bb996f9e6c6dcd4dc0bdb6dd991fec215d020f2f8e04a; all reads below used\nthat snapshot.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Scope lifetime and sibling cancellation | structured concurrency cancellation sibling scope; scope cancels sibling child task; cancellation propagation lexical scope | task-lifetime section 3; task-lifetime section 2 |\n| F2. Deadline expiry and an ambiguous remote commit | deadline expires caller timeout ambiguous outcome; cancellation cannot undo committed side effect; client loses response after commit no answer | shared-state-effects section 5; deadlines-retries section 3; HTTP walkthrough |\n| F3. Task-contract contents | task contract cancellation ownership outcome; parent logical operation ID total deadline task contract; recording cancellation outcomes deadline | task-lifetime section 2 |\n| F4. Durable job and effect identity | durable job record state machine recovery; stable launch identity and outcome lookup; idempotency key retry duplicate side effect; durable operation register | task-lifetime section 1; effect-identity sections 1-2; periodic-work section 2; retries integrated route; intent-identity section 1 |\n| F5. Compensation, error return and unknown state | compensating transaction saga stock reservation; unknown outcome compensation user-visible state; error contract documented error partial success; partial success error returned caller | saga section 4; saga section 5; effect-identity section 1; HTTP walkthrough; shared-state-effects section 5 |\n\n## Short answer\n\nA structured scope is a **lifetime boundary**, not a transaction boundary. It can ensure that\nthe two child tasks belong to one parent, that the parent joins or cancels them, and that a\nfailure of the validation child requests cancellation of its sibling. It cannot make the\nremote stock reservation atomic with the local validation result. If the reservation child\nhas crossed the remote service's commit point, the reservation is durable at the stock\nowner and remains authoritative even when the caller never receives the acknowledgement.\nThe scope's cancellation, Java interruption and the caller's deadline only stop local work\nand waiting; they do not undo that commit. Reversing it requires a **new business\ncompensation** (for example a release or cancellation of the reservation) with its own\nidentity, retry policy, owner and failure handling.\n\nBefore an error is returned, the task contract must define the parent operation and deadline,\nthe validation and authorization state, which child outcomes must join, the cancellation and\ncommit points, effect reversibility or reconciliation, the caller-visible failure classes,\nresource release and concurrency budgets. The durable job record must bind a stable operation\nkey to persisted intent, an authoritative outcome and state machine, the commit result and\ncancellation contract, the compensation or repair owner, and a status lookup. The error may\nthen say \"committed\", \"validation failed and nothing was reserved\", \"release pending\" or\n\"outcome unknown\" — but it may not use a generic failure to imply that the cancellation\nrolled the reservation back.\n\n## Mechanism: why the cancellation does not undo the committed reservation\n\n1. **The scope only owns task lifetimes.** Structured execution makes it clearer that child\n   tasks do not silently outlive their parent, and it supplies fork/join and a cancellation\n   policy. The book is explicit that it does not make remote writes atomic or remove\n   database/pool limits (C1). A Future can expose completion or cancellation, but neither\n   says that an external effect was reversed (C1).\n\n2. **The remote reservation is a separate committed effect.** In the book's synthetic\n   reservation trace, child A commits reservation R7 with logical key K42 and child B is a\n   noncritical notification. If A commits and B then fails, cancelling A cannot undo the\n   completed effect; that needs a business-level saga or recovery contract (C2). In the trace,\n   R7 is authoritative even if the caller never receives a success response, and the parent's\n   deadline fires only to stop waiting and release resources: it must not be read as evidence\n   that R7 was undone (C4). The question's validation failure is the same pattern with a\n   different second child: B's validation error says nothing about A's remote commit.\n\n3. **Cancellation is a request, not a rollback.** Timeouts, explicit client cancellation,\n   interruption and server shutdown have different observability and cleanup semantics.\n   Neither gRPC cancellation nor Java interruption guarantees that previously committed\n   database or external effects never occurred (C3). A parent deadline limits useful wait; it\n   does not establish \"no prior business commit\" (C3). Cancellation stops work where possible\n   but does not roll back a committed effect, and an ambiguous timeout requires an outcome\n   lookup (C3). The scope's cancel(A) can stop A's local task, close a connection or release a\n   lock; it cannot retract a remote commit that already happened.\n\n4. **The caller's deadline explains the error, not the effect.** The caller's end-to-end\n   deadline is the latest point at which it is willing to wait. If it expires after A's commit\n   but before the acknowledgement reaches the handler, the handler returns an error because it\n   cannot meet the caller's budget — not because the reservation is absent. The API must define\n   which result is still meaningful after the caller stops waiting and what cleanup follows\n   (C4). A response lost after a commit is compatible with a transport failure; it is not\n   evidence of no effect (C18).\n\n5. **The honest partial-failure result is an unknown or pending outcome.** The partial-failure\n   path reports an unknown outcome when the response was lost rather than treating interruption\n   as an automatic business abort (C5). On retry, the state owner either returns R7 or exposes\n   a bounded pending/reconciliation state (C5). This is the book's supported way to avoid both false\n   success and a duplicate reservation.\n\n6. **Undoing the reservation is compensation, and compensation is not rollback.** A\n   compensating transaction is a new business action that creates an acceptable counter-effect;\n   it is not rollback and it can fail (C6). It needs idempotent effect identity, retry/repair\n   ownership and a user-visible unknown state when the counter-effect cannot be proven (C6).\n   The domain decides which actions are reversible and which require manual reconciliation\n   (C6). A release of stock may be impossible if the stock was allocated or delivered; a\n   release call may itself time out. The handler cannot assume that cancelling the sibling or\n   returning an error performs the release.\n\n7. **The window can be narrowed only by changing the remote contract.** A conditional\n   reservation, a hold with a later confirm/release, a two-phase protocol or one local\n   transaction would change what cancellation can mean. A plain remote reserve call does not.\n   The book's saga alternative recommends one local transaction or two-phase commit when steps\n   do not genuinely cross independent owners, or when compensation is unsafe; that is a\n   different design, not a property the structured scope can add after the fact.\n\n## What the task contract must define before an error is returned\n\nThe book's task-contract requirement names: parent logical operation ID and total deadline;\ninput validation and authorization state; which child results must join before responding;\nresponse, error and cancellation propagation; timeout/abort behavior and connection/lock\nrelease; whether effects are reversible, committed or require reconciliation; and maximum\nqueue/concurrency budget per dependency (C7). For this scenario, that becomes the following\ndecision list. The contract must decide each item before the handler is allowed to return the\nerror.\n\n1. **Parent identity and budget.** A stable logical operation ID for the whole request, the\n   caller's absolute or relative deadline, and the budget allocated to each child. A child\n   must not get a fresh unbounded timeout when the parent budget is nearly exhausted.\n\n2. **Validation and authorization state.** B's validation failure is a definite validation\n   result; it must be named as such. A's authorization must be checked independently.\n   B's failure must not be used as evidence that A did not commit.\n\n3. **Required joins.** Define which child results must join before a success response and\n   which must join or be recorded before an error response. If A's reservation is a required\n   effect, its committed outcome must be part of the record even though the overall result is\n   an error. \"Cancel the sibling and return\" is not a join policy for a committed effect.\n\n4. **Cancellation propagation and ownership.** Name who cancels whom, at which points, with\n   what signal, and what the receiver must do. Cancellation of a sibling is appropriate only\n   when the sibling's work can still be stopped or its outcome recorded. Cancellation is not\n   an authoritative transaction abort (C13).\n\n5. **Commit point and cancellation points for each child.** For the remote reserve call,\n   distinguish before-send, sent/in-flight and committed. Before send, cancellation may prevent\n   the effect. In flight, the outcome is unknown and must be resolved. After commit,\n   cancellation can only stop local waiting; release is a separate compensating action. The\n   contract should state this explicitly rather than treating every cancellation as equivalent.\n\n6. **Effect classification and reconciliation owner.** For each child, say whether its effect\n   is reversible, committed or requires reconciliation, and who owns the reconciliation. The\n   task contract's \"whether effects are reversible, committed or require reconciliation\" item\n   (C7) is exactly the missing decision in the question's scenario.\n\n7. **Compensation policy.** If the reservation must be released, name the release operation,\n   its owner, its idempotency/effect key, its retry and repair path, and what \"released\" means\n   when the remote service cannot prove it. Compensation can fail (C6); the contract must\n   define the user-visible state for that case.\n\n8. **Resource release.** Timeout/abort must release the database connection, stock-service\n   connection, locks, permits and queue slot. Resource cleanup is not the same as business\n   compensation.\n\n9. **Caller-visible failure envelope.** Define distinguishable validation, conflict,\n   transient overload, unavailable and unknown-outcome results, and state what success\n   commits (C8). A generic error that says only \"request failed\" is insufficient: the client\n   cannot tell whether to retry the same intent, query the outcome, or abandon it.\n\n10. **Retry and idempotency contract.** Give the operation a stable effect key and say how a\n    retry resolves the original outcome. A reused key with different parameters is a conflict,\n    not a second reservation (C15). Do not let a client that saw the error create a new\n    logical intent and reserve twice.\n\n11. **Observability.** Record the transport timeout, the domain/commit status, the ledger or\n    outcome lookup, and the cancellation time and reason. These are separate facts (C13);\n    the absence of a response is not a domain status.\n\n12. **Queue and concurrency budget.** Bound the parent and each dependency so that a slow\n    remote service cannot turn cancellation into unbounded queued work.\n\n## What any durable job record must define before an error is returned\n\nA durable job or operation record is the state authority that survives the request task and\nthe caller's deadline. The book's background-work rule is that durably accepted background\nwork should be an independently tracked job with a stable ID, not hidden in an unbounded\nin-process queue (C17). For this scenario the record needs at least the following.\n\n1. **Stable identity.** The job/workflow identity and the parent logical operation ID; the\n   owner, tenant and principal; the payload digest or normalized parameters; the scope and\n   configuration revision; and the retention window. The identity must be usable outside the\n   request and outside one scheduler (C19). The book's five-identity model separates logical\n   operation, transport attempt, resource/business identity, event identity and consumer-effect\n   key; a retry identity must be scoped to the owner/tenant/principal and operation semantics\n   (C15).\n\n2. **Intent before the attempt.** Persist that job J is about to attempt the reservation at\n   time T, including the operation key and deadline. The periodic-work pattern calls this the\n   intent record; the second synchronization point is the observed completion, including an\n   authoritative lookup result (C10).\n\n3. **Observed outcome after the attempt.** Persist the result of the remote call and, if the\n   acknowledgement was lost, the result of the authoritative lookup. If the owner dies between\n   intent and completion, the next owner resolves the existing intent rather than creating a\n   new one (C10). The record must not be left with an in-memory \"maybe\" state.\n\n4. **State machine.** Keep at least accepted/pending, in-flight, committed/reserved (for\n   example R7), validation-rejected, compensating/release-pending, released, failed and\n   unknown/needs-reconciliation as distinct states. An ambiguous external effect must be held\n   or repaired, not marked complete (C11). The record must be able to say \"reservation R7\n   exists; overall request failed; release not yet proven\" — not collapse that into \"failed\".\n\n5. **Operation/effect key and atomic claim.** The record binds one logical intent, caller and\n   payload scope, and retention window to an authoritative outcome record; the key is checked\n   atomically with the effect, and a duplicate returns the recorded outcome instead of\n   executing again (C18). The same key with materially different arguments is a conflict (C9).\n   A status-read operation is part of the contract so a caller can reconcile after a lost\n   response (C9).\n\n6. **Per-step commit and cancellation contract.** For the reservation step, persist identity,\n   commit result and cancellation contract; for any request step, persist request identity and\n   an uncertain-outcome policy; for a compensation step, persist confirmed release or repair\n   state. Do not encode \"timeout means rejected\" or \"a compensation call always succeeds\"\n   (C12). These are exactly the false assumptions the saga table warns about.\n\n7. **Dispatch, lease and recovery.** If a worker executes the reservation, the record needs a\n   durable dispatch state or outbox, an owner/lease or fencing token, and a recovery rule for\n   in-flight work. Scheduler state is not the external effect; a new owner must reconcile\n   before opening new work. The book's periodic-work page makes the launch identity and the\n   external outcome lookup part of the scheduler contract, not an implementation detail.\n\n8. **Compensation and repair.** Name the release operation, its idempotent effect identity,\n   retry policy, deadline, operator/manual reconciliation path and audit trail. Compensation\n   may fail; the record must retain that failure and the unresolved state (C6, C11).\n\n9. **Retention and expiry.** Define how long the operation key and outcome record are kept,\n   and what happens after expiry. After the retention horizon, historical deduplication is no\n   longer guaranteed; the record must expose a bounded retry window and an outcome-lookup or\n   expiry policy rather than implying permanent exactly-once behavior.\n\n10. **Caller-visible projection.** The record must provide the operation ID, current state,\n    the error class, whether the effect is committed or unknown, and the status/query path.\n    This is what lets the handler return an error without lying about the reservation.\n\n## The error-return rule\n\nThe error can be returned quickly; the durable record and reconciliation cannot be skipped.\nBefore returning, the handler must be able to point to a durable record that states one of:\n\n- **No effect:** the reservation was never attempted, or the remote service definitively\n  rejected it before commit. Then a validation or definite-failure error is honest.\n- **Committed effect:** reservation R7 exists. The handler must return a partial-failure or\n  unknown-outcome error that names R7, the operation key and whether release is pending,\n  completed or intentionally retained. It must not return a plain validation error.\n- **Unknown/in-flight:** the request may have committed and the acknowledgement is missing.\n  The handler must return an explicit unknown-outcome result with a lookup key and a bounded\n  reconciliation owner; it must not assert \"not reserved\".\n\nIf the record cannot be written, the handler cannot claim that no effect occurred; it must\nfail without false certainty, or fail closed. A generic 5xx is not proof that no effect occurred.\n\nThe caller's retry must use the same logical operation key. A retry with the same key and\narguments resolves R7 or the pending state; a retry with a different payload is a conflict,\nnot a new reservation (C15, C18). This is how the error avoids both duplicate stock and a\nsilently lost reservation.\n\nReconciliation may need to continue after the synchronous request budget. Critical cleanup\nand reconciliation may need an explicitly durable workflow rather than an unbounded request\ntask (C14), and a cancelled response must not be treated as retracting committed state or\nemitted events (C14). The handler can return the error when the durable handoff is recorded;\nit does not need to keep the caller waiting while the release or lookup completes.\n\n## Boundaries, contradictions and unknowns\n\n- The book's reservation, outbox and saga examples are **synthetic design traces**, not\n  production observations. The shared-state trace explicitly says its numbers are design\n  assumptions, and the saga diagram is conceptual, not an executed durable workflow. Java\n  structured concurrency is a preview API. No claim here is a production measurement.\n- The decisive unknown is the remote service's contract and timing. If cancellation reaches\n  the service before commit, the reservation may not occur. If the request is in flight, the\n  outcome is ambiguous. If it committed, only a compensating release can counter it. The\n  local scope cannot distinguish these cases without an effect key and an outcome lookup.\n- If the remote service has neither a stable effect key nor an outcome lookup, a blind retry\n  remains a duplicate risk; the record must expose an explicit unknown state and a manual\n  reconciliation path rather than invent certainty (C16).\n- Compensation may be impossible, forbidden or unsafe. The domain, not the handler, decides\n  whether stock may be released after allocation or delivery; a release can fail and remain\n  unresolved.\n- The book does not prescribe exact state names, HTTP status codes, retention periods or a\n  numeric deadline split. Those are contract decisions. A generic status code alone may not\n  tell the caller whether the business change committed (C8).\n- Idempotency-key retention is finite. After expiry, historical deduplication is not\n  guaranteed; delayed replay can still duplicate an effect.\n- \"Join all required children\" and \"return within the caller's deadline\" can conflict. When\n  they do, an asynchronous durable job with an explicit pending/unknown response is the\n  honest design; a scoped fire-and-forget task is not.\n- I found no book evidence for a universal exactly-once guarantee across the local scope and\n  the remote stock service. The supported conclusion is narrower: preserve one authoritative\n  effect identity and an outcome record, and use compensation or reconciliation for the rest.\n\n## Evidence map\n\n| Claim | What it establishes | Section key(s) |\n|---|---|---|\n| C1 | Scope lifetime is not remote atomicity; completion/cancellation does not reverse an effect | task-lifetime section 3; task-lifetime section 2 |\n| C2 | A sibling commit survives the other child's failure and cancellation | task-lifetime section 3 |\n| C3 | Cancellation, interruption and deadlines do not prove rollback | shared-state-effects section 5; deadlines-retries section 3 |\n| C4 | A reservation committed before a lost acknowledgement remains authoritative | shared-state-effects section 5; deadlines-retries section 3 |\n| C5 | Partial failure must be unknown/pending, with bounded reconciliation | shared-state-effects section 5 |\n| C6 | Compensation is a new, fallible business action with repair ownership | saga section 4 |\n| C7 | The task-contract checklist | task-lifetime section 2 |\n| C8 | The caller contract needs distinguishable failure classes and success semantics | effect-identity section 1 |\n| C9 | Durable record: identity, atomic claim, recorded outcome and status read | effect-identity section 2 |\n| C10 | Intent and completion are two persisted synchronization points | periodic-work section 2 |\n| C11 | Unknown effects must be held or repaired, not marked complete | saga section 5; effect-identity section 2 |\n| C12 | Per-step record needs commit, cancellation and uncertain-outcome fields | saga section 4 |\n| C13 | Error return must record transport, domain and ledger facts | HTTP walkthrough |\n| C14 | Durable cleanup may outlive the request; cancellation does not retract state | deadlines-retries section 3 |\n| C15 | Operation identity is scoped and stable; changed payload is a conflict | intent-identity section 1 |\n| C16 | No effect key or lookup means blind retry is unsafe | periodic-work section 2 |\n| C17 | Background work needs an independently tracked job with a stable ID | task-lifetime section 1 |\n| C18 | Lost responses resolve from durable identity, not fresh writes | HTTP walkthrough; retries integrated route |\n| C19 | Job identity includes workflow, window and owner/tenant/configuration | periodic-work section 2 |\n\nAll evidence entries in the claim ledger are direct fragments read from the cited sections;\nno claim is supported by a search snippet alone. The remaining uncertainty is the remote\nservice contract and the domain's compensation policy, not the meaning of cancellation in the\nlocal scope.\n",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A structured scope owns child task lifetimes, fork/join and a cancellation policy, but it does not make remote writes atomic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#3-structured-concurrency-is-a-task-lifetime-mechanism",
+          "quote": "Structured execution can make it clearer that child tasks do not silently outlive their parent. It does not make remote writes atomic or remove database/pool limits.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#2-executorservice-and-cooperative-cancellation",
+          "quote": "A Future can expose completion and cancellation; neither says that an external effect was reversed.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "If child A commits an external effect and child B then fails, cancelling A cannot undo the completed effect; undoing it needs a business-level saga or recovery contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#3-structured-concurrency-is-a-task-lifetime-mechanism",
+          "quote": "If child A commits an external effect and child B then fails, cancelling A cannot undo the completed effect. That needs a business-level saga or recovery contract.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Cancellation, interruption and a parent deadline bound waiting and may stop initiated work, but none of them guarantees that a previously committed database or external effect never occurred.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+          "quote": "Neither gRPC cancellation nor Java interruption guarantees that previously committed database or external effects never occurred.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+          "quote": "| Parent deadline | Limits useful wait | No prior business commit |",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Cancellation\nstops work where possible but does not roll back a committed effect; an ambiguous timeout\nrequires outcome lookup.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "When a deadline fires after the reservation commit but before its acknowledgement, the reservation remains authoritative and the error must not imply that it was undone.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+          "quote": "**R7 is authoritative** even if the caller never receives a success response",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+          "quote": "Stop waiting for B and release resources; **do not infer R7 was undone**",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "An API must define which result is still meaningful after the caller stops waiting, and what resource cleanup follows.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A partial failure after a commit must be reported as an explicit unknown or pending outcome with a bounded reconciliation state, not as an automatic business abort.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+          "quote": "The partial-failure path reports an **unknown outcome** if the response was lost, rather than treating interruption as an automatic business abort.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+          "quote": "On retry the state owner either returns R7 or exposes a bounded pending/reconciliation state.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Undoing a committed reservation is a new business compensation, not rollback; it can fail, needs idempotent effect identity, retry and repair ownership, and a user-visible unknown state, and the domain decides which actions are reversible.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "A compensating transaction is a new business action that creates an\nacceptable counter-effect; it is not rollback and it can fail.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "It needs idempotent effect\nidentity, retry/repair ownership and a user-visible unknown state when the counter-effect\ncannot be proven.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "The domain must determine which actions are reversible and which require manual reconciliation.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "The task contract must name the parent logical operation ID and total deadline, validation and authorization state, required child joins, error and cancellation propagation, timeout/abort and resource release, effect reversibility or commitment or reconciliation, and the queue/concurrency budget.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#2-executorservice-and-cooperative-cancellation",
+          "quote": "The intended task contract should name:\n- parent logical operation ID and total deadline;\n- input validation and authorization state;\n- which child results must join before responding;\n- response, error and cancellation propagation;\n- timeout/abort behavior and connection/lock release;\n- whether effects are reversible, committed or require reconciliation;\n- maximum queue/concurrency budget per dependency.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A caller-facing contract must distinguish validation, conflict, overload, unavailable and unknown outcome, and must state what success commits, because a generic error can make a client give up on an applied command or retry a permanent violation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers",
+          "quote": "| Failure envelope | Distinguishable validation, conflict, transient overload, unavailable, unknown outcome | Client retries a permanent violation or gives up on an applied command |",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers",
+          "quote": "| Operation and effect | Read/query, command, creation, update, cancellation; what “success” commits | A timed-out creation is retried and duplicated |",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "A durable job record must validate identity and authorization, atomically claim the operation key, and record a stable job identity and state before acknowledging; a duplicate with the same intent resolves to the recorded outcome and a status read supports reconciliation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "The service validates identity and authorization, atomically claims that key, and records a stable job identity and state before acknowledging.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "Repeated requests with the **same key and same arguments** return or point to the recorded job outcome; reusing the key with materially different arguments is rejected as a conflict.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "A status-read operation permits reconciliation after a lost response.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "The durable record needs two synchronization points: persisted intent before the attempt and persisted observed outcome, including an authoritative lookup result, after it; a crash between them is resolved by the next owner rather than by creating a new intent.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+          "quote": "1. **Intent:** persist that launch J at time T is about to be attempted.\n2. **Completion:** persist the observed outcome, including an authoritative\n   lookup result.",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+          "quote": "If the leader dies between them, the next leader resolves the intent rather\nthan creating a new one.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The record's state machine must keep committed, compensating, unknown and repair states distinct and must not mark an ambiguous external effect as complete.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+          "quote": "Recover from the durable history, keep\nactivities idempotent and hold or repair an ambiguous external effect rather than marking\nthe workflow complete.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+          "quote": "| During worker effect before completion recorded | External effect may already exist | Worker requires a separate effect idempotency/reconciliation contract |",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "For each externally visible step the durable record must carry identity, commit result and cancellation contract; request identity and an uncertain-outcome policy; and confirmed release or repair state, rather than assuming timeout means rejection or that compensation succeeds.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "| Reserve device | Identity, commit result and cancellation contract | Every accepted step is instantly reversible |",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "| Request kit | Request identity and uncertain outcome policy | Timeout means rejected |",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+          "quote": "| Compensate device | Confirmed release or repair state | A compensation call always succeeds |",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Before returning an error the handler must record the independent transport timeout, domain status and ledger lookup outcome and expose a machine-distinguishable result; treating cancellation as an authoritative transaction abort is unsafe.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "quote": "gRPC deadline/cancellation guidance distinguishes no-longer-waiting from undoing a side effect. Record independent transport timeout, domain status and ledger lookup outcomes.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "quote": "errors must remain machine distinguishable and within the client's retry budget.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "quote": "Treat cancellation as authoritative transaction abort",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Cleanup and reconciliation may need to continue after the synchronous response budget in an explicitly durable workflow, and a cancelled response must not be treated as retracting committed state or emitted events.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Critical cleanup and reconciliation may need to continue after the synchronous response budget expires, using an explicitly durable workflow rather than an unbounded request task.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "Reject the assumption that a cancelled response retracts committed state or emitted events.",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Operation identity must be stable across retries and scoped to owner, tenant and principal; a reused key with a changed payload is a conflict, not idempotency.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "| Logical operation ID | One authorized user intent with defined parameters and scope | New ID created for every retry |",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "A retry identity must be scoped to the relevant owner/tenant/principal and operation semantics.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+          "quote": "When a key is reused with **different intent or parameters**, a safe API detects the conflict rather than silently returning an unrelated prior result.",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "If the external system has neither a stable effect key nor an outcome lookup, a blind retry remains a duplicate risk and the record must expose an explicit unknown state and a manual reconciliation path.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+          "quote": "When the external system supports neither a stable effect key nor an outcome\nlookup, a blind retry remains a duplicate risk. The scheduler should expose an\nexplicit unknown state and a manual reconciliation path, not invent certainty.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A task can outlive the caller or its user-visible deadline, so durably accepted background work should be an independently tracked job with a stable ID, not hidden in an unbounded in-process queue.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#1-four-distinct-concurrency-boundaries",
+          "quote": "An accepted task may still sit in a queue after its user-visible deadline. A task can remain running after the caller disconnects. Durably accepted background work should be represented as an independently tracked job with a stable ID—not hidden in an unbounded in-process queue.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "A lost response after commit must be resolved from durable operation identity, not blindly retried as a fresh write; the idempotency-key contract binds logical intent, caller scope and retention to an authoritative outcome record.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+          "quote": "| Response lost after S2 commit | Resolve from durable operation identity | Blindly retry as a fresh write |",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route",
+          "quote": "**Idempotency-key contract.** The key binds one logical intent, caller/payload scope and\nretention window to an authoritative outcome record. It must be stable across retries,\nscoped so another caller cannot collide, and checked atomically with the effect. The\nserver returns the recorded outcome for a duplicate, rather than executing again.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "The job identity should include the job or workflow identity, the scheduled time or logical window, and the owner, tenant and configuration revision so it remains usable outside a single scheduler.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+          "quote": "- the job or workflow identity;\n- the scheduled time or logical window;\n- the owner/tenant and configuration revision where relevant.",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#3-structured-concurrency-is-a-task-lifetime-mechanism",
+    "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#2-executorservice-and-cooperative-cancellation",
+    "tycho.page.113050e25ec643da98578b98eba1c519#5-a-cancellation-is-a-request-not-a-rollback",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#4-a-saga-is-a-business-protocol-not-an-automatic-rollback",
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#1-the-contract-has-multiple-layers",
+    "tycho.page.e7e65b602c5a41fb80fa4a1e88a33298#2-http-method-semantics-are-not-business-effect-deduplication",
+    "tycho.page.dd184f1c3947e0eab68938d31f51ec0e#2-stable-launch-identity-and-outcome-lookup",
+    "tycho.page.71aea7bc58a6411ba7baf8a2ff40ffbd#5-durable-workflow-selection-is-conditional",
+    "tycho.page.cccbd188936543a2aaf904f4002236d8#engineering-walkthrough-mixed-clients-and-an-unacknowledged-committed-post",
+    "tycho.page.d20ce26599b442d2bc00a6e388ac2c35#1-distinguish-five-identities",
+    "tycho.page.2cdffb0fc6394a1596c8358c852a30e8#1-four-distinct-concurrency-boundaries",
+    "tycho.page.8d28a6e14a1c49d6b67bf9cb5bfb242f#integrated-decision-and-reading-route"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
