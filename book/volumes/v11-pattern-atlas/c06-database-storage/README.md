@@ -158,33 +158,7 @@ See the [dedicated Multi-Leader Replication card](multi-leader-replication.md).
 
 ### Read Replicas
 
-**Identity.** Read Replicas; family Database and storage architecture; kind
-replication-pattern; priority core.
-
-**Decision question.** Should read-only replicas serve queries to offload the writer?
-
-**Good-fit conditions.** Reads tolerate bounded lag; routing can separate stale reads;
-replica health and lag are observable.
-
-**Hard contraindications.** Reject when every read requires linearizable freshness, when
-lag is unbounded, or when replicas add no capacity benefit.
-
-**Competing alternative.** Single writer or cached read models. Reverse the choice when
-replica lag and routing complexity exceed read-scale benefit.
-
-**Failure and recovery.** Stale reads and replica lag are common; verify read routing in
-the owner section.
-
-**Technical owner.** [Read Replicas](../../v04-distributed-coordination-and-events/c02-replication-consensus-and-leader-changes/replication-consensus-and-leader-change.md#read-replicas) — read-replica scaling is bounded by replica lag, read routing and staleness.
-
-**Sources.** [src.postgresql](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch3-pg-warm.2026-10-21: all twenty headings read; Hot
-Standby and Failover are separate pages. The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Leader-Follower Replication; Quorum; Materialized View; CQRS.
+See the [dedicated Read Replicas card](read-replicas.md).
 
 ### Quorum-Based Reads / Writes
 

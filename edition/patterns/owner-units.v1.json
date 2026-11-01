@@ -8997,8 +8997,8 @@
         },
         "alternative": {
           "state": "supported",
-          "quote": "Read-only database servers can be combined relatively easily",
-          "reason": "PostgreSQL binds read-only replicas and stale asynchronous reads; leader/quorum preference and freshness rule are Tycho guidance.",
+          "quote": "Read from the leader or use a quorum read when freshness dominates; add replicas when read volume and tolerance for bounded staleness justify the extra copies.",
+          "reason": "PostgreSQL binds read-only replicas and stale asynchronous reads; the owner quote states the leader/quorum and freshness rule as Tycho guidance.",
           "binding": {
             "source_id": "src.postgresql",
             "ledger_record": "read.pg18-ha.2026-10-30",
@@ -9025,7 +9025,7 @@
       "review_state": "self-checked",
       "technical_coverage": "partial-bounded",
       "decision_coverage": "partial-bounded",
-      "notes": "Alternative bound to PostgreSQL read-only servers and stale asynchronous reads; leader/quorum preference is Tycho guidance. Coverage partial-bounded; no promotion."
+      "notes": "Alternative bound to PostgreSQL read-only servers and stale asynchronous reads; the owner quote states the leader/quorum preference as Tycho guidance. Dedicated card split 2026-11-01; coverage partial-bounded; no promotion."
     },
     {
       "pattern_id": "tycho.pattern.quorum-based-reads-writes",
@@ -18744,7 +18744,7 @@
     "mechanism_supported": 124,
     "invariant_supported": 100,
     "failure_recovery_supported": 98,
-    "alternative_supported": 101,
+    "alternative_supported": 102,
     "technical_partial_bounded": 9,
     "technical_partial": 47,
     "technical_name_only": 0,
