@@ -1,0 +1,126 @@
+{
+  "task_id": "Q082",
+  "answer": "# Direct answer\n\nHold every scenario input except the candidate configuration identical. For the V12\ncheckout A/B/C comparison, the aligned inputs are:\n\n- **Model**: the same model identifier and model hash (the checkout model), with the\n  same scope, resolution and validity domain.\n- **Workload**: the same arrival process (Poisson), arrival rate (20 requests/second),\n  time unit, duration (1,800 seconds) and warmup (300 seconds).\n- **Uncertainty inputs**: the same parameter draws and distribution assumptions, and\n  the same declared input correlations.\n- **Seeds**: the same base seed (20261029 in the worked example) and the same\n  seed = base + replication derivation; the example uses 30 replications per candidate.\n- **Metrics**: the same metric identifiers, units and directions for success rate,\n  p95 latency, throughput, cost per 1000 successes, rejection rate and retry\n  amplification, including the business-comparable flag.\n- **Constraints**: the same hard constraints (C1 request accounting, C2 no silent drop,\n  C4 cost <= 3.0, C5 p95 <= 1.5 s) and the same declared non-quantitative constraint\n  (C3 operability).\n\nOnly the candidate configuration changes: server count, service-time distribution,\nqueue capacity, timeout, attempts, backoff, bulkhead and unit cost. The scenario\nspecification states the rule directly: \"For a candidate comparison, the workload,\nduration, warmup, metric definitions and seed scheme are identical. Only the candidate\nconfiguration changes.\"\n\n# Mechanism and justification\n\nA V12 scenario is a versioned input contract. It fixes the model identifier, workload,\ncandidate configuration, uncertainty inputs, replication count, seed scheme, metrics and\nconstraints, and the schema requires every field. Each run binds its model and scenario\nby SHA-256, so editing either input invalidates the stored result and replay fails.\n\nThe comparison is a controlled experiment. Held-constant inputs define what is measured;\nthe configuration is the intended experimental variable. If arrivals, duration, warmup,\nmetric definitions, seeds or constraints differ, the candidate difference mixes the\ndesign effect with an input change. The page is explicit: \"A comparison is not a\ncomparison if each candidate receives a different arrival pattern, duration or warmup,\"\nand a candidate that needs a lower arrival rate or shorter warmup to look good makes the\ncomparison invalid.\n\nThe checkout example applies the rule: all three candidates get the same Poisson\n20 requests/second load for 1,800 seconds after a 300-second warmup, 30 replications with\nseed base 20261029, and the same six metrics. A, B and C differ only in capacity,\ndeadline, queue, retry and unit cost. The shared hard constraints eliminate C (cost 3.63\nabove 3.0; p95 1.769 seconds above 1.5 seconds) before A and B are compared on success\nrate and cost per success. The recommendation stays conditional because the\nnon-quantitative operability constraint is unverified.\n\n# Boundaries and trade-offs\n\n- Alignment is necessary, not sufficient. The inputs are synthetic and the model is\n  uncalibrated. Narrow confidence intervals come from many independent replications, not\n  from measured inputs; more replications reduce sampling error, not input uncertainty,\n  and do not make the estimate representative.\n- A different workload is allowed only as a declared workload family. The rule says to\n  record the workload as part of the candidate and compare under a declared family, not\n  to change arrivals silently. That is a different comparison, not a favourable rerun.\n- The model must also be adequate. Identical inputs do not help if the model cannot\n  represent the decision metric: a stock-and-flow model cannot show p95 latency, so the\n  checkout comparison needs event-level resolution.\n- Seed alignment has a caveat. Sharing one random stream creates common random numbers,\n  which can be desirable but must be a declared choice; V12 uses the same seed scheme and\n  samples independently per replication. Same base seed is not automatically the same\n  stream.\n- Replication count is a scenario field and the example uses 30 per candidate, but the\n  explicit identical list names the seed scheme, not the replication count. Equal counts\n  make interval widths comparable; the text does not state a hard equality rule.\n- Metric choice is part of fairness. Average CPU utilization is not business-comparable\n  across candidates with different server counts unless cost and work units are stated;\n  using an undeclared metric is a validation failure, and substituting p99 for a declared\n  p95 is a metric-substitution failure.\n- Constraints must stay fixed. Hard constraints eliminate candidates before ranking, and\n  a hard cost ceiling must not become a soft preference after a candidate fails it.\n- Enforcement boundary: the V12-A structural gate summary lists ID resolution, stored-hash\n  matching and link checks; it does not name a mechanical equality check across candidate\n  scenarios. The identical-workload rule reads as a contract and review obligation, not a\n  demonstrated computed gate.\n\n# Evidence map\n\n| Claim | Section key |\n|---|---|\n| Scenario fixes model, workload, config, uncertainty, replications, seeds, metrics, constraints | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview |\n| Different arrival pattern, duration or warmup invalidates the comparison | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule |\n| A/B/C share 1,800 s, 300 s warmup, Poisson 20 rps, metric IDs/units, seed base+scheme, hard constraints | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule |\n| Contract fields include uncertainty, replications, metrics and constraints | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure |\n| Seed is an input contract; replications cover sampling error only | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications |\n| Metrics carry unit and direction; business-comparable caveat; undeclared metric fails validation | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics |\n| Failure modes: workload drift, seed reuse, ignored correlation, metric substitution, constraint laundering | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes |\n| Checkout experiment: shared workload, seeds and metrics; A/B/C configurations | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment |\n| Shared hard constraints eliminate C; A/B compared on comparable metrics | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints |\n| Narrow synthetic intervals are not measured inputs | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty |\n| More replications are more precise, not more representative | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation |\n| Model and scenario hashes; per-candidate scenario file | tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run |\n| Input uncertainty versus sampling error | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty |\n| Independent draws are an assumption; declared correlations matter | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs |\n| Model must represent the decision metric (p95 needs events) | tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events |\n| Hard constraints eliminate before ranking; conditional recommendation | tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences |\n| Structural gate summary lists ID and hash checks, not cross-candidate equality | tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural |\n\n# Unknowns and confidence\n\n- I did not inspect edition/v12/scenarios/*.json; this CLI exposes book sections. The\n  artifact-level claim that the checkout scenario files actually share every workload,\n  seed, metric and constraint field rests on the book prose, not on a diff of the JSON.\n- The explicit identical list names workload, duration, warmup, metric definitions and\n  seed scheme. Model identity and uncertainty inputs are fixed by the overview (\"only the\n  candidate configuration changes\") and by the required-structure fields, not by that list\n  alone.\n- Whether replication counts must be exactly equal, and whether a mechanical validator\n  enforces cross-candidate equality, is not stated in the pages read.\n- What a measured workload would show is outside the evidence; the synthetic inputs and\n  the uncalibrated model are the main reasons the recommendation is conditional.\n- Confidence: high for the aligned-input set and the invalidity of workload drift; medium\n  for the replication-count and enforcement points.",
+  "citations": [
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+    "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis"
+  ],
+  "evidence": [
+    {
+      "claim": "A V12 scenario fixes the model identifier, workload, candidate configuration, uncertainty inputs, replication count, seed scheme, metrics and constraints; for a comparison only the candidate configuration changes.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#overview",
+      "note": "Observed: contract overview and short answer."
+    },
+    {
+      "claim": "A comparison is invalid when candidates receive different arrival patterns, durations or warmups.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+      "note": "Observed: identical-workload rule."
+    },
+    {
+      "claim": "The checkout A/B/C scenarios share a 1,800-second horizon, 300-second warmup, Poisson arrivals at 20 requests/second, metric identifiers and units, the same seed base and base+replication scheme, and the same hard constraints.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+      "note": "Observed: explicit shared list."
+    },
+    {
+      "claim": "The candidate configuration is the intended variable: server count, service-time distribution, queue capacity, timeout, retry budget, bulkhead and unit cost.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#the-identical-workload-rule",
+      "note": "Observed: listed as differing fields."
+    },
+    {
+      "claim": "A scenario contract includes workload (duration, warmup, time unit, arrival process), configuration, uncertainty draws and correlations, replications and seed, metrics, and hard/soft/non-quantitative constraints; the schema requires every field.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+      "note": "Observed: required structure."
+    },
+    {
+      "claim": "The seed base and per-replication derivation are part of the input contract; replications estimate sampling error but do not remove input uncertainty.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+      "note": "Observed: seeds and replications section."
+    },
+    {
+      "claim": "Metrics carry a direction and unit; success rate and cost per 1000 successes are business-comparable, average CPU utilization is not across different server counts, and an undeclared metric is a validation failure.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+      "note": "Observed: business-comparable metrics section."
+    },
+    {
+      "claim": "Workload drift, seed reuse creating common random numbers, ignored correlation, metric substitution and constraint laundering are declared failure modes.",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+      "note": "Observed: failure-modes list."
+    },
+    {
+      "claim": "The checkout comparison fixes the workload, seed scheme and metrics, then eliminates candidates on hard constraints and compares survivors on business-comparable metrics.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#overview",
+      "note": "Observed: comparative decision overview."
+    },
+    {
+      "claim": "The checkout experiment gives all three candidates the same Poisson 20 requests/second workload for 1,800 seconds after a 300-second warmup, 30 replications from seed base 20261029, and the same six metrics.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+      "note": "Observed: experiment description."
+    },
+    {
+      "claim": "Shared hard constraints eliminate C (cost 3.63 > 3.0; p95 1.769 s > 1.5 s); A and B are compared on success and cost; operability remains unverified so the recommendation is conditional.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+      "note": "Observed: constraint application and outcome."
+    },
+    {
+      "claim": "Narrow confidence intervals on a synthetic workload do not make the inputs measured; more replications make an estimate more precise, not more representative.",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#sensitivity-and-uncertainty",
+      "note": "Observed; repeated in what-would-reverse-the-recommendation."
+    },
+    {
+      "claim": "Each run binds model and scenario by SHA-256; candidate B uses checkout-b-queue.json as its scenario, so a changed scenario invalidates the stored run.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+      "note": "Observed: provenance example."
+    },
+    {
+      "claim": "Input uncertainty (unknown parameters) and sampling error (finite replications) are distinct; replications do not reduce input uncertainty.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+      "note": "Observed: uncertainty taxonomy."
+    },
+    {
+      "claim": "Independent draws are a modeling assumption; declared correlations are applied to input draws, and ignoring a known correlation yields an output distribution that is too narrow.",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#correlated-inputs",
+      "note": "Observed: correlated-inputs section."
+    },
+    {
+      "claim": "A model must be able to represent the decision metric: a stock-and-flow model cannot show p95 latency, so the checkout comparison needs an event-level model.",
+      "section_key": "tycho.page.d860bc57cdfe6c6163912819f7679d17#worked-example-why-the-checkout-comparison-needs-events",
+      "note": "Observed: worked example on model scope."
+    },
+    {
+      "claim": "Hard constraints eliminate candidates before ranking; a non-quantitative constraint can keep a recommendation conditional.",
+      "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+      "note": "Observed: decision-record contract."
+    },
+    {
+      "claim": "The V12-A structural gate summary lists ID resolution, stored-hash matching and link checks, but not a cross-candidate equality check of workload, seeds or metrics.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-a-structural",
+      "note": "Observed list; absence of a named equality check is a reading of the summary, not proof that no other check exists."
+    },
+    {
+      "claim": "The three checkout candidates use the same arrivals, duration, seed scheme and metrics.",
+      "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+      "note": "Observed: volume-level synthesis."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 55000,
+    "estimated": true
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "task_id": "Q054",
+  "answer": "## Direct answer\n\nWrite-triggered cache invalidation depends on one precondition: **the authoritative write path is itself a reliable, complete change-signal source.** Every authoritative change must be able to emit an invalidation (or new-version) event for the affected key at update time, and that event must be durably recorded, retried and delivered to every cache copy that could hold the old value: local tiers, shared replicas and regions.\n\nTycho states the condition directly. The Cache Invalidation card fits only when \"the authoritative change can emit an invalidation signal\", and must be rejected \"when no reliable invalidation path exists\". Where changes cannot be reliably signaled, that dependency is unmet: a superseded entry survives until expiry and is served to readers, so the design must fall back to bounded TTL expiration, with version checks or direct authoritative reads when the contract needs immediate visibility.\n\n## Mechanism and justification\n\n1. **The signal is a second write, not part of the data commit.** The pattern is commit the store, then delete the key, and \"two separate writes are not atomic by default\". A write can commit while its delete fails, so the invalidation intent must be durable at commit time, in the same local transaction (for example an outbox row), and then retried; recording it only after a failed delete can lose it in a crash, and \"without a TTL, a lost invalidation is unbounded\".\n\n2. **Coverage of writers and caches is the dependency, not merely message delivery.** Invalidation \"couples every writer to every cache and region: fan-out, multi-cache coherence and partial purge are architectural costs\". It presumes a closed, known writer set. A local invalidation is not global: replica A invalidates its own cache while replica B keeps serving the previous version until TTL. Multi-level designs require that \"every tier must receive the invalidation, or each tier must carry a bounded staleness contract and a version check\".\n\n3. **Without the signal the stale copy has no bound.** An invalidation method must specify \"key/tenant namespace, owning writer, change event/version, order of operations and fallback behavior\". If the writer cannot emit that event because the change happens outside the instrumented command path, through another system, or through a channel that can drop or lag, the cache keeps the superseded value until expiry. Write-around policies make this explicit: the policy \"requires reliable invalidation or versioning at the update\".\n\n4. **That is why expiration becomes the alternative.** The card's competing alternative is \"expiration after a configured period\": TTL fits when staleness is bounded by time, refill cost is acceptable and the TTL is shorter than the business freshness requirement. With an untrustworthy signal, expiry converts an unbounded correctness risk into a declared, measurable stale window.\n\n## Boundaries and trade-offs\n\n- **Holds** when the producer set is closed and instrumented, the signal channel is durable and retried, purge propagation is observable, and consumers tolerate a bounded stale window.\n- **Fails** when writers are not all instrumented (direct store access, batch or backfill jobs, other services, revocation flows), when the notification can be lost or partitioned, or when purge completion cannot be evidenced: \"a purge request without completion evidence is not a proven revocation bound\". It is also contraindicated when read-after-write or revocation contracts are hard, and a TTL does not rescue a hard read-after-write contract.\n- **Reliable signaling is necessary but not sufficient.** A delivered invalidation can still be undone by a slower in-flight read that refills the older value; version-fenced fills, atomic compare-and-set or tombstones are separate requirements, not substitutes for the signal.\n- **Cost side.** The write path becomes coupled to cache availability and to every tier's purge path; retries, failure alerting and reconciliation must have an owner, or the write path silently loses invalidation.\n- **Alternatives when signaling is unreliable:** bounded TTL/expiry; versioned or immutable keys so readers select a version; version-checked fills and tombstones; direct authoritative reads or bypass for correctness-critical operations; a shorter TTL with retried invalidation for content that tolerates it.\n\n## Evidence map\n\n| Claim | Evidence |\n|---|---|\n| Fit requires that the authoritative change can emit an invalidation signal; reject without a reliable invalidation path; alternative is expiry. | tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview |\n| Invalidation couples every writer to every cache and region; fan-out, coherence and partial purge are costs. | tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes |\n| Invalidation intent must be durable at commit and retried; a lost invalidation is unbounded without TTL. | tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem |\n| Local invalidation is not globally strong; another replica stays stale until TTL; shared cache or invalidation bus needed. | tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness |\n| Every tier must receive the invalidation, or each tier needs bounded staleness plus a version check. | tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes |\n| An invalidation method must name the owning writer and the change event/version, ordering and fallback. | tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value |\n| Write-through needs the cache update integrated into the command path; the two writes are not atomic by default. | tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices |\n| Write-around requires reliable invalidation or versioning at the update; TTL alone does not meet the fit condition when invalidation is unreliable. | tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes |\n| Cache-Aside fits when the application can own fill and invalidation; reject when invalidation has no owner. | tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory |\n| TTL fits when staleness is bounded by time and the TTL is shorter than the freshness requirement; reject for hard read-after-write. | tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview |\n| Explicit invalidation or versioned keys are preferable when the change must be visible immediately; TTL suits bounded staleness. | tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes |\n| A purge request without completion evidence is not a proven revocation bound; purge can lag the origin. | tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example |\n| Cache-aside writes to the source then invalidates; write-then-DEL alone is not enough under concurrent fills. | tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy |\n\n## Unknowns and confidence\n\n- **Layer needed:** the book layer (V06/C01 caching, V06/C02 invalidation, V08/C08 edge delivery), whose paths also contain the V11 pattern-atlas cards. The CLI reported layer=book for every retrieval and zero modeling artifacts, so the modeling-and-simulation layer is not applicable here and was not queried.\n- **Composite, not a single named component.** The corpus treats emission (owning writer and change event), durability and retry, and delivery coverage to every tier and region as one composite condition. It does not name a specific technology such as change-data-capture or a broker, so a question expecting one named component is not answered by these sources.\n- **No measurements.** Card and owner text is synthetic design guidance plus public mechanism sources; there is no production signal-loss rate, propagation latency or purge-completion measurement, so \"unsuitable\" is a conditional design judgment, not an observed failure rate.\n- **Gap.** The corpus does not discuss database triggers or log-tailing as an alternative reliable signal source; if such a mechanism existed and were trustworthy, the same dependency would be satisfied without instrumenting every writer, which would soften the conclusion.\n- **Confidence:** high that Tycho contraindicates write-triggered invalidation where no reliable invalidation path exists and points to bounded expiration as the alternative; medium on which sub-dependency (write-path control, signal durability, or fan-out coverage) a reader intends by \"the dependency\".",
+  "citations": [
+    "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+    "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+    "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices",
+    "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+    "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+    "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+    "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes",
+    "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example"
+  ],
+  "evidence": [
+    {
+      "claim": "Cache invalidation fits only when the authoritative change can emit an invalidation signal; it is rejected when no reliable invalidation path exists, and its competing alternative is configured expiration.",
+      "section_key": "tycho.page.0eb276434c29430e99bb17a65bc0ade9#overview",
+      "note": "Observed. Card reads: good-fit = 'the authoritative change can emit an invalidation signal'; hard contraindication = 'Reject when no reliable invalidation path exists'; competing alternative = 'Expiration after a configured period'."
+    },
+    {
+      "claim": "Invalidation couples every writer to every cache and region; fan-out, multi-cache coherence and partial purge are architectural costs.",
+      "section_key": "tycho.page.e0f0d5b68f834acbae94cc6714895dd3#bounded-pattern-ownership-notes",
+      "note": "Observed. 'Limits' paragraph under the Cache Invalidation ownership notes."
+    },
+    {
+      "claim": "The invalidation intent must be durable at commit time (e.g., an outbox row in the same transaction) and retried; a lost invalidation is unbounded without a TTL.",
+      "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#4-cache-aside-is-a-sequence-not-a-consistency-theorem",
+      "note": "Observed. Failure-and-recovery paragraph; also 'neither proves freshness when the invalidation itself can be lost'."
+    },
+    {
+      "claim": "A successful local invalidation is not globally strong freshness; another replica serves the old revision until TTL expiry, so a shared cache or invalidation bus is required.",
+      "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#engineering-walkthrough-local-cache-update-versus-cross-instance-freshness",
+      "note": "Observed. A writes v18 and invalidates only its own cache; B continues serving v17 until TTL; walkthrough table names 'shared cache or invalidation bus'."
+    },
+    {
+      "claim": "Every cache tier must receive the invalidation, or each tier must carry a bounded staleness contract and a version check; a local-only tier is the alternative when invalidation paths cannot be bounded.",
+      "section_key": "tycho.page.33742c54f667446cbf57cb9f3696a533#bounded-pattern-ownership-notes",
+      "note": "Observed in the Multi-Level Caching ownership note; the same section also states write-around 'requires reliable invalidation or versioning at the update' and that 'a bounded TTL alone does not meet the card's fit condition when invalidation is unreliable'."
+    },
+    {
+      "claim": "A cache invalidation method must specify the key/tenant namespace, owning writer, change event/version, order of operations and fallback behavior.",
+      "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#1-first-name-the-authoritative-value",
+      "note": "Observed. Closing paragraph of section 1."
+    },
+    {
+      "claim": "Write-through requires the explicit cache update to be integrated into the command path, and two separate writes are not atomic by default.",
+      "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#5-cache-choices-and-invalidation-matrices",
+      "note": "Observed in the cache-choices matrix rows 'Write-through' and 'Cache-aside'."
+    },
+    {
+      "claim": "Cache-Aside fits when the application can own fill and invalidation, and must be rejected when invalidation has no owner.",
+      "section_key": "tycho.chapter.87e52392e206a451ea5c79a4194c384b#entry-inventory",
+      "note": "Observed in the Cache-Aside entry; the Write-Around entry likewise requires 'invalidation is reliable' and rejects 'when invalidation is unreliable'."
+    },
+    {
+      "claim": "TTL-based expiration fits when staleness is bounded by time and the TTL is shorter than the business freshness requirement; it is rejected for a hard read-after-write contract.",
+      "section_key": "tycho.page.cf5d48a4f68b40f8890649805a798bf4#overview",
+      "note": "Observed in the TTL-Based Expiration card good-fit and hard-contraindication lines."
+    },
+    {
+      "claim": "Explicit invalidation or versioned keys may be preferable when a source change must be visible immediately; TTL is a fit only when bounded staleness is acceptable and the origin can absorb refill load.",
+      "section_key": "tycho.page.76f6d792c80a448fa1a76001ca6699e1#bounded-pattern-ownership-notes",
+      "note": "Observed in the TTL-Based Expiration ownership note."
+    },
+    {
+      "claim": "A purge request without completion evidence is not a proven revocation bound, and a purge can lag the origin; direct origin or a private cache may be preferable when the purge contract cannot be enforced.",
+      "section_key": "tycho.page.3349b84b088ebcca496bb52fbdbbc565#original-worked-example",
+      "note": "Observed in the edge-cache worked example and its CDN-Edge Caching ownership note."
+    },
+    {
+      "claim": "The cache-aside sequence invalidates cache entries when the application writes to the source, but write-then-DEL alone may not be enough under concurrent fills for a hard consistency requirement.",
+      "section_key": "tycho.page.ded52d8d012347b79d70e608488cf6a4#3-distributed-cache-and-cache-aside-policy",
+      "note": "Observed; supports treating the signal as necessary but not sufficient."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 40000,
+    "estimated": true
+  }
+}

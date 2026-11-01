@@ -1,0 +1,77 @@
+{
+  "task_id": "Q084",
+  "answer": "Layer: modeling-and-simulation (compatibility alias v12). The normative contract prose is indexed in the book layer's V12 volume; model, scenario, run and decision artifacts belong to the modeling-and-simulation layer.\n\n## Direct answer\n\nA V12 model contract must attach two things to an input whose evidence status is `measured`: a named source, and a measurement record. The measurement record must state the measurement method, the sample size, and the period over which the measurement was taken. Without both, the input is not measured by V12's definition, even if it has a precise number. The contract's parameter block carries the evidence status and source identifiers; the validator checks that every parameter with evidence status `measured` has a source and a measurement record.\n\n## Mechanism and justification\n\nV12 separates four input statuses. `Measured` means a value comes from a named measurement with a method, sample size and period. `Assumed` means a value was chosen for the model and is not a measurement. `Derived` means a value was computed from other inputs by a stated formula. `Unknown` means no defensible value exists and the model must not invent one.\n\nThe model specification makes this enforceable. Each parameter is declared with its name, unit, value type, evidence status, source identifiers and note. The prose rule is explicit: a parameter with an assumed value cannot claim a measured source, while a measured parameter must name a source and a measurement method, sample size and period. The validator translates that rule into a structural check: every parameter with evidence status `measured` must have a source and a measurement record.\n\nThe status is evidentiary, not cosmetic. A parameter can change status only with new evidence, and repeating an assumed value in a decision record does not make it measured. A derived value inherits the weakest status of its inputs unless the derivation itself is validated. That is why attaching a source and a measurement record is necessary but still not a claim that the measurement is adequate.\n\n## Boundaries and trade-offs\n\n- **Structural check, not semantic verification.** The validator can require a source and a measurement record, but it cannot check that the source actually supports the parameter or that the method, sample size and period are adequate. That remains an editorial and review task.\n- **Calibration laundering remains possible.** V12 lists the failure mode where an assumed value is copied into a measured field; source and measurement requirements make this harder, not impossible.\n- **A number is not a measurement.** \"A parameter is labeled measured because it has a number\" is a named failure mode. Precision, a simulation confidence interval, or a matching replay does not turn an assumed input into a measured one; replay explicitly does not prove that inputs are measured.\n- **Uncertainty vocabulary is narrower than a metrological budget.** JCGM 100 describes a measurement result as a value plus uncertainty with a coverage interval at a stated coverage probability. V12 uses that vocabulary but not the full method. A scenario's uniform range is an assumed input range, and a confidence interval across replications is a sampling interval, not a metrological coverage interval. The contract pages read here require source, method, sample size and period; they do not establish that a full uncertainty budget is a required field.\n- **Current V12 state is uncalibrated.** Every V12 model is uncalibrated, and the input table marks arrival rates, service times, timeouts, lag, capacity and thresholds as assumed. The requirement above describes what a future `measured` label would have to carry; it is not a description of existing evidence.\n- **Scenario overrides can blur status.** A scenario that overrides a parameter without updating the model's calibration note leaves the evidence status ambiguous.\n\n## Evidence map\n\n- `measured` requires a named source plus method, sample size and period — `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses` (observed).\n- The parameter block carries evidence status and source identifiers — `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure` (observed).\n- A measured parameter must name a source and a measurement method, sample size and period — `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure` (observed).\n- The validator requires a source and a measurement record for every measured parameter — `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated` (observed).\n- A measured input without a source and measurement record is not measured; status changes only with new evidence; derived inherits the weakest status — `tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses` (observed).\n- The validator cannot verify that the source supports the parameter — `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated` (observed).\n- Calibration laundering is a listed failure mode — `tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes` (observed).\n- A number alone, precision without accuracy, and uncertainty theater are listed failure modes — `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes` (observed).\n- V12 uses JCGM 100 vocabulary without a full uncertainty budget — `tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language` (observed).\n- Replay does not prove inputs are measured — `tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves` (observed).\n- Every V12 model is uncalibrated; contracts list evidence status and missing measurement — `tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration` (observed).\n\n## Unknowns and confidence\n\n- The exact JSON keys of the \"measurement record\" are not established by the prose pages read. They name the required evidence (source, method, sample size, period) but not whether it is a nested `measurement` object or separate fields. The CLI exposes book prose, not the strict schema or artifact JSON, so I did not verify serialization.\n- It is also not established whether the schema additionally requires an uncertainty or coverage-interval field. JCGM 100 supplies the vocabulary, but V12 says it does not perform a metrological uncertainty budget.\n- No measured input exists to inspect: every current V12 model is uncalibrated. A worked example would be the strongest way to confirm the exact record shape.\n- Confidence is high on the substantive requirement (named source plus method, sample size, period). Confidence is medium on exact JSON serialization and on whether uncertainty is a required attachment. Reading the strict model schema or a future measured artifact would change that.",
+  "citations": [
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+    "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration"
+  ],
+  "evidence": [
+    {
+      "claim": "V12 defines measured as a value from a named source and a measurement method, sample size and period.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+      "note": "Observed. The page lists the four input statuses and gives this definition of measured."
+    },
+    {
+      "claim": "The model contract's parameter block carries name, unit, value type, evidence status, source identifiers and note.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed. The required-structure list names these parameter fields."
+    },
+    {
+      "claim": "A measured parameter must name a source and a measurement method, sample size and period.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#required-structure",
+      "note": "Observed. The page states this explicitly and contrasts it with an assumed value claiming a measured source."
+    },
+    {
+      "claim": "The validator requires every parameter with evidence status measured to have a source and a measurement record.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+      "note": "Observed. This is the fourth listed validator check."
+    },
+    {
+      "claim": "A measured input without a source and a measurement record is not measured; a parameter changes status only with new evidence; a derived input inherits the weakest status of its inputs.",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+      "note": "Observed. The calibration-statuses section states all three rules."
+    },
+    {
+      "claim": "The validator cannot check that a source actually supports a parameter; that is an editorial and review task.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#how-the-contract-is-validated",
+      "note": "Observed. The page limits the validator to preventing an obvious mismatch between label and record."
+    },
+    {
+      "claim": "Calibration laundering, copying an assumed value into a measured field, is a listed failure mode that the source and measurement requirements make harder but not impossible.",
+      "section_key": "tycho.page.d8d9d15b402d8f65928ca0e3f3e5b939#failure-modes",
+      "note": "Observed. The failure-modes section lists it and calls the contract a guardrail, not a reviewer."
+    },
+    {
+      "claim": "Labeling a parameter measured because it has a number, precision without accuracy, and uncertainty theater are listed failure modes.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+      "note": "Observed. The calibration failure-mode list names each of these."
+    },
+    {
+      "claim": "JCGM 100 describes a measurement result as a value plus uncertainty with a coverage interval, but V12 uses the vocabulary without performing a metrological uncertainty budget; scenario ranges and replication intervals are not such a budget.",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+      "note": "Observed. The page distinguishes the vocabulary from the full method and warns against treating synthetic intervals as calibrated uncertainty budgets."
+    },
+    {
+      "claim": "Replay proves stored inputs, engine version and seed reproduce stored metrics; it does not prove the inputs are measured.",
+      "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+      "note": "Observed. The page separates reproducibility from truth and measurement."
+    },
+    {
+      "claim": "Every current V12 model is uncalibrated; model contracts list each parameter's evidence status and the missing measurement.",
+      "section_key": "tycho.page.6fd0d561e3e2900dc8b59a3011071cd2#v12-d-calibration",
+      "note": "Observed. The V12-D gate section states this and says no production claim is made."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

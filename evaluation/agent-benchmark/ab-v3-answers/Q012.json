@@ -1,0 +1,144 @@
+{
+  "task_id": "Q012",
+  "answer": "# Why a parallel-run comparison must keep an authoritative old result\n\n## Direct answer\n\nA parallel run executes the same work in the old and candidate implementations but grants production authority to only the old side. The old result must be preserved and stay authoritative because it is at once the comparison baseline, the response users and consumers still receive, and the recovery point if the candidate is wrong. The candidate is an unproven experiment. If the old result is overwritten, mutated by the candidate, or retired before equivalence is demonstrated, the comparison loses its trusted reference, a candidate defect can reach production, and rollback and reconciliation lose the state they depend on. The comparison is therefore not \"old plus new\" in the same authority position; it is a candidate observed against a preserved authoritative old result.\n\n## Mechanism and justification\n\n### 1. Dual execution with a single authority\n\nThe owner note defines parallel run as processing the same work in old and new implementations and comparing the results while the old path remains authoritative; a candidate failure must never affect the response, and the old authority is kept until cutover. The atlas card states the same fit condition (\"the old path remains authoritative until cutover\") and failure rule (\"keep the old authority until cutover\"). Comparison does not transfer authority: the old side is both the reference and the fallback.\n\nIn Stripe's reported read migration, GitHub Scientist evaluated the incumbent and candidate code paths in production while the response came from the incumbent. The \"served result versus experimental result\" distinction is described as crucial because a broken candidate cannot be allowed to corrupt an otherwise healthy production request merely because it is shadowed. In Meta's ingestion migration, the legacy job wrote the consumer-facing table while the candidate wrote an isolated shadow table; only after comparison did reverse shadow flip production to the new job and the old job to shadow, retaining a runnable rollback path and continuing comparisons.\n\n### 2. The old result is the comparison's oracle\n\nA difference is evidence only when the reference is authoritative and both sides are observed under the same boundary. The Meta case models every comparison as \"source snapshot + schema version + partition identity + job revision + equality rule + freshness window\" and says to reject comparisons whose tuple differs in a way the domain owner has not explicitly normalized. The reconciliation section makes the same point: comparing a live source at revision 120 with a lagging target at 110 produces expected differences; do not repair them by overwriting newer target data from an older snapshot, and record watermark/snapshot identity and field ownership. If the candidate can write the old store or the old result is replaced, these controls collapse: a real candidate bug, a timing difference and a snapshot mismatch become indistinguishable.\n\n### 3. Failure isolation is part of the comparison's validity\n\nThe old result must be preserved not only as data but as the served result. The decision-page test \"read shadow exception: force experimental code to throw without impacting the production-served response\" makes the candidate's failure a measured observation rather than a user-visible incident. The cutover-gates table lists \"shadow requests accidentally mutate authoritative state\" as a failure mode of shadow reads. A comparison in which the candidate can alter the thing being compared is not a comparison; it is a second authority.\n\n### 4. Preservation is what makes cutover reversible\n\nThe Meta completion contract asks \"which preserved state permits rollback after the flip\"; reverse shadow is allowed only when the old writer still runs as shadow, and retirement only after late partitions, critical consumers and recovery conditions are reviewed. The rollback page adds that a code rollback works only if the old route is still operational and authorized, and that a binary rollback cannot restore discarded meanings, later retired data or already emitted effects. If the old result is deleted or its meaning is retired early, you can no longer distinguish a failed cutover from a successful one, and you cannot reconcile or repair forward from a known-good boundary. The modernization plan therefore orders the work as old source authority, dual-state writes and backfill, comparison of old and new values with temporal alignment, low-risk read switching, write inversion under canary, and decommissioning only after proven zero callers.\n\n### 5. Cutover is a gate, not a switch\n\nThe authority-state sequence keeps writes authoritative while the shadow index ingests copies and clients keep reading the old path; a bounded subset may use the new read path only with a freshness guard and a route back \"only if behavior/data assumptions still hold\". The old read path may retire only after client/query inventory proves safe. \"Preserve\" is therefore a phase-long obligation: the old result has to remain available and trustworthy until the evidence for the new one is complete.\n\n## Boundaries and trade-offs\n\n- **Side effects invalidate the pattern.** Parallel run must not execute both implementations for side-effecting operations such as sending an email or charging a card; the atlas card rejects it for side-effecting operations, when comparison is meaningless, or when cost is prohibitive. Use branch by abstraction with a smaller, monitored rollout instead.\n- **Comparison needs a normalization contract.** Identity, ordering, null/default semantics, client serialization, authorization and temporal freshness can differ legitimately. A bare equality assertion cannot decide whether a difference is a bug or a snapshot-timing artifact. Meta's warning is explicit: row count and checksum can match while output still diverges semantically when windows, canonicalization or fingerprint coverage differ.\n- **Cost is real.** Doubled compute and comparison storage are named costs; a comparison that ignores nondeterminism or side effects produces false confidence.\n- **Green is parity, not truth.** A successful comparison proves the candidate agrees with the old result under the observed boundary, not that either is correct. Identical outputs can reflect a shared semantic bug; a digest detects differences only under a canonical encoding and a common window; undefined identity or semantics can make every automated comparison give a misleading green result.\n- **Preservation is temporary and bounded.** Keeping the old path forever is maintenance cost; the point is to preserve it until provable invariants hold and no supported client depends on it. After irreversible effects or discarded meanings, preservation cannot restore everything; the residual loss must be recorded.\n- **The choice is conditional.** The selection matrix picks parallel legacy/new runs for repeatable snapshot-to-table analytics with reproducible inputs and output-difference inspection, while other constraints call for dual representation, partition checkpoints or staying on current authority. For a tiny, immutable offline table, a one-shot recompute and direct comparison may be simpler than maintaining two job generations.\n- **The same rule applies to controlled experiments.** A baseline result must be frozen and measured under the same arrivals, data snapshot and resource limits as the candidate; otherwise differences are confounded. The performance chapter requires baseline and treatment to share attempted arrivals, key skew, logical outcomes and total resource limits, and the architecture-experiment walkthrough freezes the trace, dataset snapshot, query/index definitions and build before any run. This is the experimental analogue of keeping the old result authoritative.\n\n## Evidence map\n\n| Claim | Section key |\n|---|---|\n| Parallel run compares old and new while the old path remains authoritative; candidate failure must not affect the response; side-effect and cost contraindications | tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview |\n| Owner definition and limits: same work, old authority until cutover; doubled cost; false confidence from ignored nondeterminism; no threshold or sample size claimed | tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes |\n| State-authority contract: prevent double-writing, name the current source, reconcile; recovery needs a rollback window and forward-repair path | tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts |\n| Staged transition: writes remain authoritative, clients read the old path, bounded new reads need a freshness guard, retirement needs proven-safe inventory | tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states |\n| Incumbent response exposed while the candidate is evaluated; served versus experimental distinction; broken candidate must not corrupt production; normalization contract | tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard |\n| Scientist compares old and new results; the response initially comes from the old path; experimental failures must not become primary failures; old data is deleted only after no code depends on it | tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority |\n| Old path served until verified; do not retire the legacy system before provable invariants hold | tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility |\n| Legacy job writes the production table while the candidate writes an isolated shadow table; reverse shadow retains a runnable rollback path; the old job is removed only after stable observation | tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism |\n| Comparison tuple; green comparison can still diverge semantically; retiring the old job too early blocks cleanup and requires preserving reverse operation | tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee |\n| Preserved state permits rollback after the authority flip; reverse shadow and retirement gates | tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract |\n| Pinned comparison boundary; do not overwrite newer target data from an older snapshot; old state sufficiency for reversal; rollback cannot restore discarded meanings | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover |\n| Rollback requires the old route to be operational and authorized, with compatible persisted state and replayable effects | tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think |\n| Read-shadow exception must not affect the served response; irreversible cleanup is refused unless backups and reverse transformations can restore accepted writes | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests |\n| Old source authority, temporal comparison, read switching, write inversion, then decommission only after proven zero callers | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan |\n| Ask which representation or job is authoritative at each phase, whether former execution remains runnable, and which exact mismatch triggers rollback | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta |\n| A successful comparison establishes only the named invariant; mutation races, unobserved clients and rollback after old-data deletion remain unproved | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete |\n| Shadow reads fail when they mutate authoritative state; branch-by-abstraction keeps the switch reversible until the old path is removed | tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications |\n| Method choice depends on the dominant constraint; parallel runs fit reproducible batch comparisons; shared semantic bugs can survive identical output | tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified |\n\n## Facet coverage (search process)\n\n| Facet | Query formulations used | Evidence |\n|---|---|---|\n| What parallel run does and which side is authoritative | \"parallel run comparison\", \"old authority until cutover\", \"dual execution incumbent only return\" | atlas #overview; authority ownership notes |\n| Why the old result must remain the reference | \"authoritative old result candidate comparison\", \"served result experimental result\", \"preserved authoritative old copy\" | Stripe read comparison and stage table; authority state sequence |\n| How comparison validity is controlled | \"shadow comparison difference\", \"comparison tuple\", \"old result overwritten comparison lost\" | Meta green-comparison section; reconciliation section |\n| Failure isolation | \"candidate failure must not affect response\", \"read shadow exception\", \"shadow reads mutate authoritative state\" | owner notes; decision test; cutover-gates |\n| Reversibility and rollback | \"old state sufficient for reversal\", \"preserved state rollback\", \"keep old path runnable\" | Meta completion contract; rollback page |\n| Boundaries and alternatives | \"side effects\", \"branch by abstraction\", \"selection matrix\" | atlas contraindications; cutover-gates; selection matrix |\n\n## Unknowns and confidence\n\n- The book gives no mismatch threshold, sample size or cost measurement for parallel run. The owner note explicitly says the MinimumCD record supports dual execution, incumbent-only return, background candidate comparison and the side-effect boundary but not those numbers, so any quantitative \"how much comparison is enough\" is not established here.\n- The migration cases are public-source accounts, not benchmarks and not production measurements by this book; they support the mechanism, not a guarantee that a particular migration achieved zero loss.\n- The exact state that must be preserved is system-specific: write authority, checkpoints, retention, consumer inventory and irreversible effects determine what the \"old result\" means. The sources give the decision test, not a universal state machine.\n- Confidence is high on the core principle, which appears independently in the atlas card, the owner note, the Stripe case, the Meta case and the reconciliation page. Confidence is medium on sufficiency: a candidate that is deterministic, side-effect-free and reproducible from immutable inputs might be validated by a one-shot diff, while side-effecting or nondeterministic candidates cannot be safely parallel-run at all. If those conditions change, the preservation requirement weakens or the pattern becomes invalid.",
+  "citations": [
+    "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+    "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+    "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+    "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+    "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+    "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+    "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+    "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment"
+  ],
+  "evidence": [
+    {
+      "claim": "Parallel run compares old and new implementations while the old path remains authoritative; a candidate failure must never affect the response.",
+      "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+      "note": "Observed: 'the old path remains authoritative until cutover' and 'A candidate failure must never affect the response; keep the old authority until cutover.'"
+    },
+    {
+      "claim": "Parallel run is bounded to side-effect-free, comparable outputs and is contraindicated for side-effecting operations, meaningless comparisons or prohibitive cost.",
+      "section_key": "tycho.page.066e7bd31c33fd91500bda7e55a3dedb#overview",
+      "note": "Observed: good-fit conditions and hard contraindications; side effects and cost are named explicitly."
+    },
+    {
+      "claim": "The owner note defines dual execution with old authority and names doubled compute/storage and false confidence as limits; it claims no mismatch threshold, sample size or cost measurement.",
+      "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#bounded-pattern-ownership-notes",
+      "note": "Observed: 'Parallel run processes the same work in old and new implementations and compares the results while the old path remains authoritative.'"
+    },
+    {
+      "claim": "State-authority contracts must say how double-writing is prevented, which source is current, and how to reconcile; recovery needs a rollback window and forward-repair path.",
+      "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#1-keep-five-distinct-contracts",
+      "note": "Observed: the state-authority and failure/recovery rows of the five-contract table."
+    },
+    {
+      "claim": "In the staged transition, writes remain authoritative while the shadow index ingests copies and clients still read the old path; bounded new reads need a freshness guard and a route back only if assumptions hold.",
+      "section_key": "tycho.page.78d0f89ac4184b19bfef3a72e8b4f2cc#3-a-versioned-sequence-of-safe-intermediate-states",
+      "note": "Observed: S1 and S2 rows of the state table."
+    },
+    {
+      "claim": "Stripe exposed the incumbent response while evaluating the candidate in production; the served-versus-experimental distinction prevents a broken candidate from corrupting production.",
+      "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#read-comparison-is-an-architectural-interface-not-a-dashboard",
+      "note": "Observed: 'exposing the incumbent response' and 'a broken candidate cannot be allowed to corrupt an otherwise healthy production request'."
+    },
+    {
+      "claim": "In Stripe's read migration, Scientist compared old and new results while the response initially came from the old path; experimental failures must not become primary failures; old data is deleted only after no code depends on it.",
+      "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#observed-migration-preserve-the-subscription-api-while-changing-authority",
+      "note": "Observed: stage 2 and stage 4 rows of the migration table."
+    },
+    {
+      "claim": "Stripe served the old path until verified and advises not retiring the legacy system before provable invariants hold.",
+      "section_key": "tycho.page.f0337e16699d4cd1be934cbbcfb5fa87#execution-stages-validation-and-reversibility",
+      "note": "Observed: 'serving the old path until verified' and checklist item 4."
+    },
+    {
+      "claim": "Meta ran the legacy job against the production table and the candidate against an isolated shadow table, then reverse-shadowed with a runnable rollback path; the old job was removed only after stable observation.",
+      "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#concrete-migration-safety-mechanism",
+      "note": "Observed: migration lifecycle and its text alternative."
+    },
+    {
+      "claim": "A comparison must fix its tuple (source snapshot, schema version, partition identity, job revision, equality rule, freshness window); a green comparison can still diverge semantically; retiring the old job early blocks cleanup.",
+      "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#what-a-green-shadow-comparison-cannot-guarantee",
+      "note": "Observed: tuple instruction and the 'legacy shadow job is retired too early' failure row."
+    },
+    {
+      "claim": "The completion contract asks which preserved state permits rollback after the authority flip; reverse shadow requires the old writer still running as shadow.",
+      "section_key": "tycho.page.0c8a001625a545c1bbfa56bcb89accc4#explicit-completion-and-rollback-contract",
+      "note": "Observed: 'which preserved state permits rollback after the flip'."
+    },
+    {
+      "claim": "Reconciliation needs a pinned comparison boundary, must not overwrite newer target data from an older snapshot, and must record when old state is no longer sufficient for reversal.",
+      "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#reconciliation-repair-and-evidence-for-a-migration-cutover",
+      "note": "Observed: 'Do not repair those by overwriting newer target data from an older snapshot' and 'point where old state is no longer sufficient for reversal'."
+    },
+    {
+      "claim": "A code rollback requires the old route to be operational and authorized and old persisted state to be interpretable; otherwise forward repair or restore is required.",
+      "section_key": "tycho.page.47b67ebf3dbf477e818e83f9e1683ffe#4-when-rollback-means-less-than-users-think",
+      "note": "Observed: the five conditions for a reversible code rollback."
+    },
+    {
+      "claim": "A read-shadow exception must not change the production-served response; irreversible cleanup is refused unless backups and reverse transformations can restore accepted writes.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#synthetic-dual-authority-failure-tests",
+      "note": "Observed: test items 5 (read shadow exception) and 6 (irreversible cleanup)."
+    },
+    {
+      "claim": "The modernization order preserves old source authority, compares old and new values with temporal alignment, then switches low-risk reads and decommissions only after proven zero callers.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#modernization-plan",
+      "note": "Observed: the one-line modernization plan."
+    },
+    {
+      "claim": "The decision guard asks which representation or job is authoritative at each phase, whether former execution remains runnable, and which exact mismatch triggers rollback.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#data-authority-decision-guard-stripe-versus-meta",
+      "note": "Observed: the transferred decision test."
+    },
+    {
+      "claim": "A successful comparison establishes only the named invariant; mutation races, unobserved clients and rollback after old-data deletion remain unproved.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#four-different-meanings-of-migration-complete",
+      "note": "Observed for the Stripe row; inference when applied generally to parallel-run gates."
+    },
+    {
+      "claim": "Shadow reads fail when they accidentally mutate authoritative state; branch by abstraction keeps the switch reversible until the old path is removed.",
+      "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#6-alternative-migration-mechanisms-and-contraindications",
+      "note": "Observed: the shadow-read failure row and the branch-by-abstraction invariant."
+    },
+    {
+      "claim": "Method choice depends on the dominant constraint; parallel legacy/new runs fit repeatable batch comparisons with reproducible inputs and output-difference inspection.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#selection-matrix-which-migration-method-is-justified",
+      "note": "Observed: the 'repeatable snapshot-to-table analytics job' row; inference that this is not a universal choice."
+    },
+    {
+      "claim": "Identical outputs can still reflect a shared semantic bug, and a comparison with undefined identity or semantics can give a misleading green result.",
+      "section_key": "tycho.decision.c089ea2f22f54b0ebbe9ebc3804a7e14#applicability-and-counterindications",
+      "note": "Observed: 'Identical outputs can still reflect a shared semantic bug'."
+    },
+    {
+      "claim": "A valid experiment compares baseline and treatment under the same attempted arrivals, key skew, logical outcomes and total resource limits.",
+      "section_key": "tycho.page.62ad1ae9e0d243d69b08be0ff32930a1#7-experiments-acceptance-criteria-and-costs",
+      "note": "Observed: opening sentence of the experiments, acceptance and cost section."
+    },
+    {
+      "claim": "An architecture experiment freezes the arrival trace, dataset snapshot, query/index definitions, build and warm/cold state before any run.",
+      "section_key": "tycho.page.a2cd4465792a4740aa5150ad248fd420#engineering-walkthrough-a-falsifiable-cache-versus-query-experiment",
+      "note": "Observed: the pre-run freeze list in the cache-versus-query walkthrough."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

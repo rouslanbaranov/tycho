@@ -1,0 +1,109 @@
+{
+  "task_id": "Q078",
+  "answer": "## Direct answer\n\nA confidence interval across synthetic replications is a **sampling-error interval** for a simulated metric under fixed, declared inputs, not a **calibrated input uncertainty budget**. It estimates how precisely the simulation estimated its own output mean; it does not estimate how uncertain the inputs are or how much output range follows from that uncertainty. In V12 the gap is explicit: replications address sampling error, parameter draws address input uncertainty, and \"increasing replications does not reduce input uncertainty.\" A budget would require evidence-based input distributions, their correlations, combined uncertainty components and a stated coverage probability. V12 uses JCGM 100 vocabulary but \"does not perform a metrological uncertainty budget,\" and every V12 model is uncalibrated. Presenting the replication interval as an input budget is named \"uncertainty theater\" and is a layer-boundary violation.\n\n## Mechanism and justification\n\n**1. The interval has one source of randomness.** V12 separates input uncertainty (a parameter such as arrival rate or service time is not known exactly) from sampling error (a finite number of replications gives an estimate with error). Replications estimate only the second; parameter draws address the first. The two do not substitute for each other: more replications do not reduce input uncertainty, and more input draws do not remove sampling error.\n\n**2. The arithmetic confirms what it measures.** With n independent replications and sample standard deviation s, the standard error is se = s / sqrt(n), and the 95% interval is mean +/- 1.96 * se. It narrows as n grows or output variance falls. It does not become more valid when replications are correlated or the output is heavy-tailed. Coverage holds \"under the model's assumptions\" and does not cover the true production value if the model is biased or inputs are mis-specified, nor a single future request. Convergence therefore means only that \"the sampling error of the reported metric is small under the declared model\" - a narrow but useful statement.\n\n**3. A budget rests on calibration evidence that is absent.** The V12 input table marks every input assumed: arrival rate, service mean, service CV, servers, queue capacity, timeout, dual-write lag, reconciliation capacity and divergence threshold, each with a named missing measurement. \"Assumed\" means a value chosen for the model with no measurement claim; repeating it in a decision record does not make it measured, and a derived value inherits the weakest status of its inputs. JCGM 100 describes a measured value plus uncertainty and a coverage interval at a stated coverage probability, with Type A and Type B components. V12 borrows only the vocabulary: \"A uniform range in a scenario is not a Type A or Type B component. It is an assumed input range. A confidence interval across replications is a sampling interval, not a metrological coverage interval.\" The page states this precisely to stop a reader treating a synthetic interval as a calibrated budget.\n\n**4. Narrowing the interval makes the assumption precise, not true.** The scenario contract says: \"If the input distribution is assumed, more replications make the assumption more precise, not more true.\" The decision worked example says the same operationally: a narrower confidence interval on the synthetic workload would not reverse the recommendation, because more replications make the synthetic estimate \"more precise, not more representative.\" Treating the interval as an input budget would therefore manufacture confidence: the failure modes list \"precision without accuracy\" and \"uncertainty theater,\" and convergence without calibration leaves a stable estimate of a biased model still biased.\n\n**5. The error is a boundary crossing.** V12 separates five layers: source/claim evidence, model verification, calibration, simulation evidence and decision evidence. The replication interval belongs to simulation evidence; an input uncertainty budget belongs to calibration. The forbidden-inferences list rejects \"the simulation succeeded, so production will succeed\" and \"the confidence interval excludes zero, so the business case is proven\" because each crosses a layer boundary without the required evidence. A decision-supported outcome with an uncalibrated model is only a conditional result under declared assumptions.\n\n## Boundaries and trade-offs\n\n- **The interval is legitimate for its own job.** It supports convergence checks against the 0.02 relative-error threshold, reproducibility through recorded seeds and replication counts, comparison of candidates under an identical synthetic workload, and prioritization of what to measure first. The source explicitly calls that \"a narrow but useful statement.\"\n- **It is not a production claim.** Validity limits - synthetic workload only, no individual latency, no dependency calls or storage, no record-level reconciliation, no production claim without measurement - are conditions on use, not appended disclaimers.\n- **A measured-input simulation could get closer, but not automatically.** A credible budget would still need measured distributions including tails, declared correlations (sampling correlated inputs independently narrows the output distribution), a validated model, explicit component combination and a coverage statement. The sources do not demonstrate such a budget, so the correct conclusion is that this replication interval is not one, not that probabilistic simulation can never support an output uncertainty statement.\n- **Distributional limits remain.** The normal approximation can understate heavy-tail latency, and a success rate near 1.0 yields a narrow interval that cannot reveal failures the model does not represent. Correlation and peeking can invalidate nominal coverage.\n- **Narrower is not wrong, only narrower.** A shrinking interval is real evidence about numerical precision. The error is relabeling that evidence as input-parameter uncertainty.\n\n## Evidence map\n\n| Claim | Section key |\n|---|---|\n| Input uncertainty and sampling error are distinct; replications address only sampling error | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty |\n| Replications reduce standard error but do not remove input uncertainty; assumed distributions become precise, not true | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications |\n| se = s/sqrt(n), 95% interval, normal approximation and its limits | tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error |\n| Coverage is conditional on model assumptions and does not cover production or a future request | tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions |\n| Convergence does not mean validity, measured inputs, a correct decision or production coverage | tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean |\n| Four calibration statuses; assumed is not measured and cannot become measured by repetition | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses |\n| Every V12 input is assumed, with the missing measurement named | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table |\n| JCGM vocabulary is used, but the replication interval is a sampling interval, not a metrological coverage interval | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language |\n| \"Uncertainty theater\" is presenting a replication interval as an input uncertainty budget | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes |\n| V12 does not perform a metrological uncertainty budget; every model is uncalibrated | tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses |\n| Five evidence layers separate calibration from simulation evidence | tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers |\n| Cross-layer inferences about production and business cases are forbidden | tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences |\n| The sensitivity screen is an approximation, not production importance | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen |\n| A narrower synthetic interval would not reverse the recommendation | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation |\n| Validity limits are conditions on use | tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits |\n| Assumed-as-measured, correlation narrowing and quadratic overreach are known failure modes | tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes |\n\n## Unknowns and confidence\n\n- The sources do not quantify how much the replication interval understates total uncertainty; there is no measured comparison against a target environment.\n- No worked calibrated budget exists in V12, so the positive requirements for one are stated through JCGM vocabulary and the input-status contract rather than demonstrated end to end.\n- If inputs were measured, the model validated, correlations declared and components combined with a coverage probability, a probabilistic simulation could support something budget-like. The sources do not establish that V12 does this, and the book explicitly says it does not.\n- Confidence is high on the negative claim (the interval is not a calibrated budget) because the book states the distinction directly and repeats it across calibration, convergence, decision and failure-mode pages. Confidence is medium on the exact boundary of what a future budget would require, because the metrological method is referenced but not implemented in the evidence base.\n- The question is answered from the book layer; the owning evidence sits in the V12 modeling-and-simulation volume, whose prose is the canonical explanation.",
+  "citations": [
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+    "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+    "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+    "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes"
+  ],
+  "evidence": [
+    {
+      "claim": "Input uncertainty and sampling error are separate; replications reduce only sampling error",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#two-kinds-of-uncertainty",
+      "note": "Observed: explicit two-item distinction and the sentence 'Increasing replications does not reduce input uncertainty.'"
+    },
+    {
+      "claim": "More replications make an assumed input distribution precise, not true",
+      "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#seeds-and-replications",
+      "note": "Observed: 'If the input distribution is assumed, more replications make the assumption more precise, not more true.'"
+    },
+    {
+      "claim": "The interval is se = s/sqrt(n) around the mean, with a normal approximation",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#standard-error",
+      "note": "Observed: formula and caveats for correlated replications and heavy tails."
+    },
+    {
+      "claim": "Coverage is conditional on model assumptions and does not reach production",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#coverage-and-its-assumptions",
+      "note": "Observed: 'It does not cover the true production value if the model is biased or the inputs are mis-specified.'"
+    },
+    {
+      "claim": "Convergence does not establish validity, measured inputs or a correct decision",
+      "section_key": "tycho.page.0fff38d91e019ef6d81869c4b462c5fb#what-convergence-does-not-mean",
+      "note": "Observed: explicit list of what convergence does not mean."
+    },
+    {
+      "claim": "Calibration status is evidence-bound; assumed cannot become measured by repetition",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-four-statuses",
+      "note": "Observed: four statuses and the rule that repeating an assumed value does not make it measured."
+    },
+    {
+      "claim": "Every V12 input, including arrival rate and service time, is assumed",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#the-v12-input-table",
+      "note": "Observed: input table with status assumed and a named missing measurement for each row."
+    },
+    {
+      "claim": "The replication CI is a sampling interval, not a metrological coverage interval",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#jcgm-100-and-uncertainty-language",
+      "note": "Observed: direct statement, plus 'V12 uses the vocabulary but not the full method.'"
+    },
+    {
+      "claim": "Presenting the replication CI as an input uncertainty budget is 'uncertainty theater'",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#failure-modes",
+      "note": "Observed: named failure mode with the exact substitution."
+    },
+    {
+      "claim": "V12 does not perform a metrological uncertainty budget and every model is uncalibrated",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#calibration-statuses",
+      "note": "Observed: both statements in the calibration-statuses section."
+    },
+    {
+      "claim": "Calibration and simulation evidence are separate layers",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#the-five-layers",
+      "note": "Observed: five-layer list and the statement that a model can be verified without being calibrated."
+    },
+    {
+      "claim": "Cross-layer inferences about production and business cases are forbidden",
+      "section_key": "tycho.page.1a3833c3b4431428b25fa9896bcdd072#forbidden-inferences",
+      "note": "Observed: forbidden-inferences list including the CI-excludes-zero example."
+    },
+    {
+      "claim": "Simulation sensitivity is an approximation, not a production claim",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#the-v12-screen",
+      "note": "Observed: quadratic screen over 48 rows; 'does not prove that service time is more important in production.'"
+    },
+    {
+      "claim": "A narrower synthetic interval would not reverse the recommendation",
+      "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+      "note": "Observed: exact statement plus 'more precise, not more representative.'"
+    },
+    {
+      "claim": "Validity limits are conditions on use, not disclaimers",
+      "section_key": "tycho.page.b0c704c825b2faf15a1d118dc9a6b1cc#validity-limits",
+      "note": "Observed: 'A validity limit is not a disclaimer appended to a result.'"
+    },
+    {
+      "claim": "Assumed-as-measured and correlation default are recognized failure modes",
+      "section_key": "tycho.page.7a8c030b04dc4f4809d4943e9be47ede#failure-modes",
+      "note": "Observed: failure-mode list including assumed-as-measured and independent-by-default."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

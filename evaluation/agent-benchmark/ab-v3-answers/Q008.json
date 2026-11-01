@@ -1,0 +1,68 @@
+{
+  "task_id": "Q008",
+  "answer": "## Direct answer\n\nAfter the modeled rollback trigger, the V12 modernization model sends new traffic to the **legacy path**. The trigger sets the target share to zero, so every newly offered request or write is allocated to legacy (legacy_share = 1 - target_share = 1). The target receives no new traffic; it only drains its dual-write backlog and accumulated divergence, and the model returns to the legacy state only when that drain completes. If legacy capacity were below the offered rate, the surplus would be modeled as rejected, not re-routed to the target.\n\n## Mechanism and justification\n\nThe model has only two traffic destinations, legacy and target, and allocates offered load between them by share:\n\n    target_served = min(arrival * target_share * dt, target_capacity * dt)\n    legacy_served = min(arrival * (1 - target_share) * dt, legacy_capacity * dt)\n    rejected      = offered - target_served - legacy_served\n\nA rollback trigger acts on the allocation rule, not on a third path: \"A rollback trigger sets the target share to zero. The legacy path must absorb the traffic, and the target must drain its backlog and divergence.\" The same page lists the model state as `legacy_share` and `target_share`, and describes the rollback state as \"traffic returns to the legacy path while the target drains\".\n\nThe staged scenario makes the switch concrete. The target share is shifted to 0.2 at t=0, 0.5 at t=300 and 1.0 at t=600 over a 2,400-second horizon, and the rollback is triggered at t=1,200. So at the trigger the target holds the whole share, and the post-trigger allocation is zero target / full legacy for all new work. The target's remaining role is draining the 1.5-second dual-write lag backlog and the divergence accumulated before the trigger.\n\nDrain, not new traffic, is what ends the rollback. The state diagram moves Cutover -> Rollback on the trigger and Rollback -> Legacy only on \"drain complete\". In the staged run, rollback completed in only 0.1 of replications (mean 1,080 s; non-completions censored at 1,200 s after the trigger), so in about 90% of replications the model stays in rollback with the target share at zero for the rest of the horizon: traffic remains on legacy and the backlog and divergence stay on the target. The \"rollback that cannot drain\" failure mode reinforces the intent: a target that \"keeps receiving work after the trigger\" is treated as a defect, because new work on the target prevents the drain.\n\n## Boundaries and trade-offs\n\n- **Binary destination.** The model exposes two shares only. There is no modeled third path, regional fallback or partial rollback; \"where new traffic goes\" is a share-level statement, not a routing policy for a real gateway.\n- **A fluid approximation.** It does not represent individual records, schema compatibility, deployment orchestration, or who owns business continuity. Redirecting the share to legacy is not evidence that the legacy system can absorb and reconcile the real load.\n- **Legacy capacity is not exercised in the scenario.** The staged run reports success rate 1.0 and both paths are declared to have enough capacity for the synthetic load. If delivered traffic exceeded legacy capacity, the accounting would report rejects; the model has no legacy queue or backpressure behavior beyond that subtraction.\n- **Drain is not deletion or data repair.** The target keeps its data and divergence after the shares return to legacy; the run reports maximum divergence of 8,925.5 records (95% CI 5,561.6-12,289.3) and does not establish that records reconcile.\n- **The trigger's definition is ambiguous in the evidence.** The chapter diagram labels the transition \"divergence trigger\", but the staged experiment schedules the rollback at t=1,200 s and records time since the trigger. The model text treats the trigger as an input event; no modeled divergence threshold that fires it is documented. I preserve this as an unresolved gap rather than asserting a threshold rule.\n- **The model is synthetic and the decision is unsupported.** The decision record returns insufficient evidence: the staged path has non-zero divergence and an incomplete rollback, and the model cannot show that the divergence is acceptable or the rollback executable. \"New traffic goes to legacy\" is the model's rule, not a validated production behavior.\n\n## Evidence map\n\n| Claim | Evidence (section_key) |\n|---|---|\n| A rollback trigger sets target share to zero; legacy absorbs the traffic; target drains backlog and divergence | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback |\n| Offered traffic is split by legacy_share/target_share; service is capped by capacity; excess is rejected | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting |\n| Rollback state: traffic returns to legacy while the target drains; states list legacy/dual-write/shadow/cutover/rollback | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date |\n| Cutover -> Rollback on trigger; Rollback -> Legacy only on drain complete | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#a-state-diagram |\n| Staged shares 0.2/0.5/1.0 at t=0/300/600; rollback triggered at t=1,200 over 2,400 s | tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design |\n| Rollback completes in 10% of replications; mean 1,080 s; non-completions censored at 1,200 s after trigger | tycho.page.7732cad079d3148dd26b24cc1fdef318#results and tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result |\n| A target that keeps receiving work after the trigger cannot drain (failure mode) | tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes |\n| Decision record returns insufficient evidence; rollback executability and divergence acceptability are unshown | tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence |\n| The model is synthetic; it does not model record-level reconciliation, schema, orchestration or continuity | tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence |\n\nLayer note: the question needs the `modeling-and-simulation` layer (v12 alias) for the model's stage/rollback semantics and the `book` layer where that V12 prose is canonical. Both were searched; the CLI returns book-layer sections with `volume: v12`.\n\n## Unknowns and confidence\n\nConfidence is **high** for the declaration that post-trigger traffic goes to legacy: two pages of the same V12 chapter state it independently, and the state diagram and failure-mode list agree. Confidence is **lower** for anything operational, because the evidence is a synthetic fluid model.\n\nUnresolved gaps:\n\n1. The underlying JSON artifacts (`edition/v12/models/*`, `edition/v12/runs/modernization-staged.json`, `edition/v12/decisions/modernization-cutover.json`) were not retrievable with the CLI: `page` rejects non-book paths (\"path must be a canonical Markdown path under book/\") and CLI search returned no artifacts. The claim rests on the V12 book pages that specify the model, not on the artifact fields (for example a literal `target_share: 0` configuration).\n2. Whether the modeled trigger is a divergence-threshold rule or a scheduled time (t=1,200 s) is not settled by the pages read.\n3. The declared legacy capacity and its headroom are not given, so the model's post-trigger rejection behavior is unexercised.\n4. What would change the answer: an artifact or page showing a third destination, a shadow path that keeps receiving new traffic after the trigger, or a rule that keeps a non-zero target share during rollback. None was found.",
+  "citations": [
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#a-state-diagram",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-staged-result",
+    "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+    "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+    "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence"
+  ],
+  "evidence": [
+    {
+      "claim": "A rollback trigger sets the target share to zero; the legacy path must absorb the traffic; the target must drain its backlog and divergence.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#rollback",
+      "note": "Observed; direct statement in the Rollback section."
+    },
+    {
+      "claim": "Offered traffic is split between legacy and target by share; each path serves up to its capacity; the remainder is rejected.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#the-accounting",
+      "note": "Observed; the section prints the target_served, legacy_served and rejected formulas."
+    },
+    {
+      "claim": "In the rollback state, traffic returns to the legacy path while the target drains; the model's states are legacy only, dual write, shadow, cutover and rollback.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#coexistence-is-a-state-not-a-date",
+      "note": "Observed; state list plus rollback description with legacy_share and target_share as model stocks."
+    },
+    {
+      "claim": "Cutover moves to Rollback on the trigger, and Rollback returns to Legacy only after the drain completes.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#a-state-diagram",
+      "note": "Observed in the mermaid state diagram and its text alternative."
+    },
+    {
+      "claim": "The staged scenario shifts the target share to 0.2, 0.5 and 1.0 at t=0, 300 and 600, and triggers rollback at t=1,200 within a 2,400-second horizon.",
+      "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#experiment-design",
+      "note": "Observed experiment inputs."
+    },
+    {
+      "claim": "Rollback completed in 0.1 of replications, mean 1,080 s, with non-completions censored at 1,200 s after the trigger.",
+      "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#results",
+      "note": "Observed run result; implies that in about 90% of replications the target share stays at zero to the horizon (inference from censoring)."
+    },
+    {
+      "claim": "A rollback that cannot drain is a failure mode; a target that keeps receiving work after the trigger prevents the drain.",
+      "section_key": "tycho.page.ea00bb677b242deed4a1ff3fa91f948a#failure-modes",
+      "note": "Observed failure-mode text; supports the rule that new work stops going to the target."
+    },
+    {
+      "claim": "The decision record returns insufficient evidence: the model cannot show the divergence is acceptable or the rollback executable.",
+      "section_key": "tycho.page.7732cad079d3148dd26b24cc1fdef318#why-the-decision-is-insufficient-evidence",
+      "note": "Observed; the limits of the modeled routing claim."
+    },
+    {
+      "claim": "The modernization model is synthetic and does not model record-level reconciliation, schema compatibility, deployment orchestration or business continuity.",
+      "section_key": "tycho.chapter.26ddd5ca6c1bea39738561c3bdb1cf23#boundaries-and-evidence",
+      "note": "Observed chapter boundary statement."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": null,
+    "estimated": true
+  }
+}

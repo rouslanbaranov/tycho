@@ -1,0 +1,64 @@
+{
+  "task_id": "Q006",
+  "answer": "## Direct answer\n\nThe **August 2008 database-corruption event** — a major database corruption failure that interrupted DVD shipping for three days — is the failure the retrospective places at the start of the cloud migration. It is the failure that helped motivate rebuilding the platform rather than lifting the existing application unchanged: the book records that Netflix rejected the simpler \"lift and shift\" option (running unchanged datacenter systems on rented cloud machines) and instead rebuilt for elastic, fault-contained services.\n\nLayer note: this question needs the **book** layer only. The retrospective is canonical case prose (book/cases/netflix-seven-year-cloud-rearchitecture.md); the atlas layer catalogues patterns and the modeling-and-simulation layer carries models/runs/decisions, neither of which is the historical account being asked about.\n\n## Mechanism and justification\n\n- **What failed.** A major database corruption event interrupted DVD shipping for three days in August 2008. The case page ties the migration's motivation directly to this event and repeats the date in its evidence table.\n- **What the failure exposed.** The book is careful about the lesson: the event was \"not evidence that DVDs, relational databases or centralized architecture were inherently wrong.\" It exposed **concentration of failure and scaling dependencies** in Netflix's specific vertically scaled datacenter environment.\n- **Why that argued against a lift-and-shift.** Rehosting the unchanged monolith on rented machines would have carried the same concentrated dependency and failure-containment structure into the cloud. The retrospective explicitly contrasts the \"simpler lift-and-shift option\" with rebuilding virtually all of the platform, and describes moving from a monolithic application toward hundreds of independently operated services and denormalized NoSQL data models.\n- **Why it was a reconstruction, not a weekend conversion.** The effort spanned roughly seven years: customer-facing capabilities were largely in the cloud before the last remaining datacenter streaming components were switched off in early January 2016, and the slowest final stage involved sensitive, durable operational data and subscription/customer management.\n- **Beyond hosting.** The migration also changed the operating model — long provisioning and coordinated approvals replaced by infrastructure self-service, continuous delivery and more independent team release decisions — capabilities that merely rehosting the monolith would not have produced.\n\n## Boundaries and trade-offs\n\n- The book explicitly qualifies the evidence: the corruption event is \"a triggering operational failure, not controlled evidence that all monoliths are unavailable.\" The retrospective is a **first-party historical company account**, not an independent measurement.\n- The case does not claim the 2008 event was the sole cause, nor that reconstruction was the only rational response. It says the company traced its migration motivation to the event and placed it at the project's start.\n- The retrospective does not publish incident counts, complete chaos-testing methods, a fleet-wide rollback protocol, cost/service baselines or per-team productivity deltas, and its company-growth figures are explicitly **not causal A/B evidence** for microservices. It is also not proof that every Netflix database became nonrelational.\n- A cloud migration is not automatically a microservices migration. The book's decision test rejects direct transfer of this story when a system has one stable deployment team, low release frequency, a reliable transactional model and no measured multi-region or independent-scaling requirement; a modular-monolith response (Shopify case) may address coupling without introducing every network failure mode.\n- Distributed services add their own failure surfaces: network partitions, observability and incident ownership, contract evolution, infrastructure cost, cross-team planning and consistency. These are inferred architecture risks, not measured Netflix outcomes.\n\n## Evidence map\n\n| Claim | section_key |\n|---|---|\n| Migration motivation traced to a major database-corruption event that interrupted DVD shipping for three days in 2008 | tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected |\n| The event exposed concentration of failure and scaling dependencies, not inherent wrongness of DVDs/relational databases/centralized architecture | tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected |\n| Engineering choice was to rebuild for elastic, fault-contained services rather than transfer unchanged monolithic software to rented machines | tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected |\n| Retrospective places the August 2008 event at the start and contrasts lift-and-shift with rebuilding virtually all of the platform | tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes |\n| Operating-model change (self-service infrastructure, continuous delivery, team autonomy) was part of the value, beyond rehosting | tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes |\n| Event characterized as a triggering operational failure; effort spanned roughly seven years; staged, not big-bang | tycho.page.db99bd9dbe5c4058a286afaeb129f156#transition-sequence-and-evidence |\n| Source does not publish incident counts or causal measurements; direct transfer should be rejected for small single-team systems | tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership |\n| A cloud migration is not automatically a microservices migration; distributed costs are inferred risks | tycho.page.db99bd9dbe5c4058a286afaeb129f156#trade-offs-missing-facts |\n| Reusable principle is a migration dependency graph, keeping the original stack running while new components accumulate | tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy |\n\n## Unknowns and confidence\n\n- **High confidence** on the identity of the failure: the August 2008 database-corruption event, with three days of interrupted DVD shipping, appears as the opening motivation in multiple sections of the same page, and repeated searches with different formulations converged on those sections with no competing candidate.\n- **Moderate confidence** on causal weight: the book says Netflix \"traced its migration motivation\" to the event and that the retrospective \"places\" it at the start of the project; it does not quantify the event's share of the decision or rule out other contributing pressures.\n- **Unknowns preserved:** the exact technical nature of the corruption, whether other incidents contributed, and the retrospective's own incident-level detail. The case's content review is marked draft and evidence status unknown in frontmatter; the page cites the first-party retrospective (src.m9-n01) rather than independent measurement.\n- What would change the answer: a primary-source statement attributing the reconstruction decision to a different failure, or evidence that the corruption event was cited only as background rather than as migration motivation.",
+  "citations": [
+    "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+    "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes",
+    "tycho.page.db99bd9dbe5c4058a286afaeb129f156#transition-sequence-and-evidence",
+    "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership",
+    "tycho.page.db99bd9dbe5c4058a286afaeb129f156#trade-offs-missing-facts",
+    "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy"
+  ],
+  "evidence": [
+    {
+      "claim": "Netflix traced its migration motivation to a major database corruption event that interrupted DVD shipping for three days in 2008.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+      "note": "Observed evidence: the section's opening two sentences state the event and the three-day shipping interruption. The date August 2008 is confirmed in the transition-sequence table."
+    },
+    {
+      "claim": "The failure exposed concentration of failure and scaling dependencies in a vertically scaled datacenter environment, not inherent wrongness of DVDs, relational databases or centralized architecture.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+      "note": "Observed evidence: explicit interpretive boundary in the section text."
+    },
+    {
+      "claim": "The engineering choice was to rebuild for elastic, fault-contained services rather than transfer unchanged monolithic software to rented machines.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#the-original-problem-and-why-a-lift-and-shift-was-rejected",
+      "note": "Observed evidence: final paragraph of the section; the phrase 'rebuild for elastic, fault-contained services' is the reconstruction commitment."
+    },
+    {
+      "claim": "The February 2016 retrospective places the August 2008 database-corruption event at the project's start and explicitly contrasts the simpler lift-and-shift option with rebuilding virtually all of the platform, moving from a monolith to hundreds of independently operated services.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes",
+      "note": "Observed evidence: second paragraph of the section, citing src.m9-n01. The book labels this a reported historical design direction, not proof of universal NoSQL adoption."
+    },
+    {
+      "claim": "The migration also changed the operating model (self-service infrastructure, continuous delivery, independent team release decisions) in a way that mere rehosting would not have yielded.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-the-2016-retrospective-actually-establishes",
+      "note": "Observed evidence: third paragraph of the section."
+    },
+    {
+      "claim": "The event is characterized as a triggering operational failure, not controlled evidence that all monoliths are unavailable; the datacenter-to-cloud effort spanned roughly seven years and was staged rather than a big-bang.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#transition-sequence-and-evidence",
+      "note": "Observed evidence: evidence table rows for August 2008, roughly seven years, earlier customer-facing migration, and early-January-2016 shutdown."
+    },
+    {
+      "claim": "The retrospective does not publish incident counts, complete chaos-testing methods or a fleet-wide rollback protocol; direct transfer should be rejected for systems with one stable team, low release frequency, a reliable transactional model and no measured multi-region scaling need.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#failure-containment-and-migration-ownership",
+      "note": "Observed evidence: source-limits sentence plus the book's conditional 'reject direct transfer' guidance."
+    },
+    {
+      "claim": "A cloud migration is not automatically a microservices migration; distributed operation adds inferred failure surfaces and costs.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#trade-offs-missing-facts",
+      "note": "Observed evidence: decision test and the explicitly inferred list of distributed-systems risks."
+    },
+    {
+      "claim": "The reusable principle is a migration dependency graph, not a cloud-vendor mandate: keep the original stack functioning while new components accumulate and migrate write ownership only with correctness guarantees.",
+      "section_key": "tycho.page.db99bd9dbe5c4058a286afaeb129f156#what-an-architect-should-actually-copy",
+      "note": "Observed evidence: section's stated reusable principle and counterdecision for smaller systems."
+    }
+  ],
+  "abstain": false,
+  "token_usage": {
+    "total": 27500,
+    "estimated": true
+  }
+}
