@@ -2381,12 +2381,11 @@
         "heading": "Client-Side Discovery",
         "anchor": "client-side-discovery",
         "level": 3,
-        "line": 216,
+        "line": 218,
         "unit_kind": "dedicated",
         "unit_terms": [
           "caller obtains",
           "caches",
-          "stale membership",
           "Client-side"
         ]
       },
@@ -2455,12 +2454,11 @@
         "heading": "Server-Side Discovery",
         "anchor": "server-side-discovery",
         "level": 3,
-        "line": 231,
+        "line": 233,
         "unit_kind": "dedicated",
         "unit_terms": [
           "proxy, gateway",
           "stable virtual name",
-          "stale membership",
           "Server-side"
         ]
       },
@@ -4630,7 +4628,7 @@
         "heading": "Command Query Responsibility Segregation (CQRS)",
         "anchor": "command-query-responsibility-segregation-cqrs",
         "level": 3,
-        "line": 308,
+        "line": 319,
         "unit_kind": "dedicated",
         "unit_terms": [
           "CQRS begins with a",
@@ -4797,7 +4795,7 @@
         "heading": "2. Event sourcing: what becomes authoritative?",
         "anchor": "2-event-sourcing-what-becomes-authoritative",
         "level": 2,
-        "line": 83,
+        "line": 87,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Event sourcing",
@@ -4859,7 +4857,7 @@
       "decision_evidence": {
         "atlas_section": "event-sourcing",
         "question": "Should authoritative state be derived from an ordered event history rather than stored as current rows?",
-        "competing_alternative": "Current-state store plus audit log/outbox or event notification. Reverse when full replay is unnecessary, schema ownership is absent or external side effects cannot be isolated.",
+        "competing_alternative": "Current-state store plus audit log/outbox or event notification. Choose event sourcing when replay/audit value exceeds schema and rebuild cost; reverse when full replay is unnecessary, schema ownership is absent or external side effects cannot be isolated.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -4892,7 +4890,7 @@
         "heading": "Domain Events",
         "anchor": "domain-events",
         "level": 3,
-        "line": 278,
+        "line": 289,
         "unit_kind": "dedicated",
         "unit_terms": [
           "committed business fact",
@@ -6173,7 +6171,7 @@
         "heading": "Materialized View",
         "anchor": "materialized-view",
         "level": 3,
-        "line": 292,
+        "line": 303,
         "unit_kind": "dedicated",
         "unit_terms": [
           "materialized view stores",
@@ -6240,7 +6238,7 @@
         "heading": "Command-Side Replica",
         "anchor": "command-side-replica",
         "level": 3,
-        "line": 255,
+        "line": 266,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Command-Side Replica"
@@ -9530,7 +9528,7 @@
         "heading": "CQRS Read Projections",
         "anchor": "cqrs-read-projections",
         "level": 3,
-        "line": 369,
+        "line": 380,
         "unit_kind": "dedicated",
         "unit_terms": [
           "The projection owner publishes",
@@ -13409,7 +13407,7 @@
         "heading": "Load Balancing",
         "anchor": "load-balancing",
         "level": 3,
-        "line": 258,
+        "line": 260,
         "unit_kind": "dedicated",
         "unit_terms": [
           "selector can count",
@@ -13471,7 +13469,7 @@
       "decision_evidence": {
         "atlas_section": "load-balancing",
         "question": "Should requests be distributed across equivalent backends by a resolver or proxy?",
-        "competing_alternative": "Client-side selection or a single backend. Reverse the choice when balancing complexity and stale membership exceed availability benefit.",
+        "competing_alternative": "Client-side selection or a single backend. Reverse the choice when balancing complexity and stale membership exceed availability benefit. Among policies, round-robin, random choice, least-active requests and affinity compete; affinity is Tycho guidance.",
         "decision_state": "applicable-under-conditions",
         "card_components": 10
       },
@@ -16644,7 +16642,7 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Network location is not trust; a valid token is not object permission.",
+          "quote": "network location is not trust and a valid token is not object permission.",
           "reason": "ASVS binds administrative-interface and network-location controls; object-permission enforcement is Tycho synthesis.",
           "binding": {
             "source_id": "src.owasp-asvs",
