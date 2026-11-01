@@ -1,0 +1,636 @@
+{
+  "task_id": "Q338",
+  "answer": "# Q338 — The declared timeout bounds an attempt, not the request\n\n## Direct answer\n\nThe 1.5-second and 2-second values in the V12 comparison are **per-attempt timeouts**, not end-to-end deadlines. In the model a request receives a timeout event when it enters an attempt; when that timer fires and attempts remain, the retry schedules a *new* timeout at the retry time plus the timeout. The section says explicitly that the deadline is \"per-attempt, not per-request lifetime\", and that a request with three attempts can spend \"up to three timeouts plus two backoffs in the system\". Nothing in the declaration carries the caller's elapsed time across attempts. That is why the declared value bounds an attempt: it is an input to each attempt's timer, not a shared request budget.\n\nA logical request can therefore accumulate attempts multiplied by timeout plus inter-attempt backoffs, plus ingress and authentication, queue wait, composition, durable-write and network time. For B (three attempts, 2-second timeout, exponential backoff base 0.2 seconds with full jitter) the attempt budget alone is 6 seconds and the backoff ceiling is about 0.6 seconds, roughly 6.6 seconds before the other stages. For C (two attempts, 1.5-second timeout, linear backoff) the attempt budget alone is 3 seconds plus at least one backoff; the linear base and cap are not recorded.\n\nB's modeled p95 of 1.206 seconds cannot prove that a 1.5-second caller deadline will hold, for four independent reasons.\n\n1. B's own per-attempt timeout is **2 seconds**, already larger than the claimed 1.5-second deadline. Any attempt that reaches its timeout has breached the caller deadline before a retry begins.\n2. B's run reports a **nonzero timeout rate of 0.0041**. A fired timeout occurs at the 2-second attempt deadline, so those attempts wait 2 seconds, above 1.5 seconds. They sit above the 95th percentile, exactly where p95 is blind by construction.\n3. A p95 is a **distribution quantile, not a maximum and not an attainment statement**. B passes the decision record's p95-at-most-1.5-seconds constraint (C5); that is a different claim from \"every intended request completes within 1.5 seconds\".\n4. The same experiment supplies the counterexample: **C declares a 1.5-second timeout and reports p95 1.769 seconds**, above its own declared timeout. The modeled request-level result exceeded the attempt-level declaration.\n\nA caller-deadline claim and a latency metric therefore need different records. The claim needs a named boundary and population, the end-to-end budget and its propagation, retry ownership and a cumulative budget, cancellation and late-reply rules, and an attainment statistic over all intended requests including timeouts and explicit failures. The metric needs its boundary, population and inclusion rules, window and sampling, statistic and estimator, uncertainty, workload, provenance and validity limits. The pages record B's 1.206 seconds and 30 replications, but not the p95 boundary, population, timeout-inclusion rule or estimator; those are unknowns, not established facts.\n\n## Facet matrix\n\n| Facet | Query formulations | Evidence |\n|---|---|---|\n| F1. Timeout scope and timer reset | timeout per attempt; retry schedules a new timeout; timeout versus request deadline | tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle; tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets |\n| F2. Accumulation across attempts | three timeouts plus two backoffs; retry consumes the remaining deadline; retry amplification | tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle; tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract; tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification |\n| F3. The A/B/C numbers and the C5 constraint | comparative decision worked example; candidate C p95 1.769; p95 at most 1.5 seconds (hard) | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints |\n| F4. p95 semantics and measurement population | percentile is not a maximum; include timed-out requests; latency sample boundary | tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request; tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low |\n| F5. Caller-deadline claim requirements | deadline design records; deadline named boundary; budget partition | tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract; tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets |\n| F6. Evidence status and contradictions | synthetic workload; replay proves reproducibility; two-second deadline wording | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves; tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#7-source-to-claim-ledger-and-review-boundary; tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis |\n\n## 1. Why the declared timeout bounds an attempt rather than the request\n\nThe timeout lifecycle is explicit. A request receives a timeout event when it enters; the deadline is the arrival time plus the configured timeout. If the timeout fires first, the attempt is counted as timed out, and a retry schedules a new timeout at the retry time plus the timeout. The same section draws the conclusion: per-attempt, not per-request lifetime. A retry therefore does not inherit the previous attempt's clock reading. It waits for backoff, re-enters the queue, and starts a fresh timeout window. The retry state diagram shows the same sequence: a timed-out request with attempts remaining waits for backoff and re-enters the queue; otherwise it fails.\n\nThe book separates the two terms. A timeout is a local wait bound on one operation; the request deadline is the caller's end-to-end budget. The scenario contract's configuration field is timeout, not deadline; the candidate configuration lists servers, service time, queue capacity, timeout, attempts, backoff and bulkhead. The volume summary's phrase a two-second deadline is a wording slip relative to the experiment's 2-second timeout, three attempts; it is a contradiction to record, not a definition to build a customer claim on.\n\nA per-attempt timer cannot bound the request by construction. If the intent is an end-to-end bound, the declaration must say so and the implementation must enforce it: one absolute deadline per logical request, each attempt limited to the smaller of the per-attempt timeout and the remaining budget, no retry when the remaining budget cannot fit a useful attempt, and an explicit deadline-exceeded outcome. The book's design guidance points the same way: each hop should use at most the remaining deadline, minus its own processing and margin, and propagate the remainder; do not retry when the remaining deadline cannot fit the attempt. A 2-second attempt cannot fit a 1.5-second budget.\n\nThe book's 300-millisecond counterexample makes the arithmetic concrete. A 220-millisecond first attempt starting at T=20 expires at T=240; the 220-millisecond retry then has only about 60 milliseconds and cannot complete within the caller deadline. A retry consumes the same deadline rather than a fresh one.\n\n## 2. What a request can accumulate across attempts\n\n**Time.** With A attempts, per-attempt timeout T and inter-attempt backoff B_i, the hard upper bound is A times T plus the sum of B_i, before ingress/authentication, queue wait, composition, durable write and network margin. The model states the qualitative bound: three attempts can spend up to three timeouts plus two backoffs. For B, A=3, T=2 s, exponential backoff with base 0.2 seconds and full jitter, so the backoff maxima are 0.2 and 0.4 seconds; the declared configuration alone permits about 6.6 seconds. For C, A=2, T=1.5 s, so the attempts alone permit 3 seconds plus one linear backoff; the page does not record C's linear base or cap, so the exact ceiling is unknown, but it is at least 3 seconds plus one backoff.\n\n**Queue wait.** A request can time out while queued as well as in service. The timeout fires at the attempt's deadline and the attempt is counted as timed out; a retry then re-enters the queue after backoff. An attempt can therefore consume its whole window without service, and the next attempt repeats the queue wait. Queueing, authentication, proxies, internal RPCs and durable state can all consume the caller's budget.\n\n**Attempts and load.** Retry amplification is total attempts divided by offered requests. B's modeled amplification is 1.004 and C's is 1.079; in principle three attempts can make load three times higher. A per-request attempt cap bounds one logical operation; it does not bound the aggregate retry work created by many clients. The per-client retry ratio and the service-wide retry budget are separate controls.\n\n**Effects.** A timed-out attempt may already have committed an effect. A retry must be safe under the operation's identity, and an ambiguous timeout needs outcome lookup rather than an assumption that nothing happened. The queue model does not represent business idempotency. This is a second kind of accumulation: duplicate or ambiguous effects, not only elapsed time.\n\n**Metric population.** One logical request can appear as several attempts. If the latency population is attempts rather than requests, retries inflate the sample and change the denominator; if the population is successful completions only, timed-out attempts vanish. Either choice changes what the p95 means and must be declared.\n\n## 3. Why B's p95 does not prove a 1.5-second caller deadline\n\n**The p95 is below 1.5, but the tail is not.** A p95 is a value of a distribution, not a single request's maximum. Five percent of the measured population lies above it, and nothing in the p95 value bounds that five percent. B's nonzero 0.0041 timeout rate means some attempts reach the 2-second timeout; on the reported denominator, that is a 0.41% mass at 2 seconds, which a p95 over the same population does not describe. The p95 of 1.206 seconds is entirely consistent with a small population of requests that waited 2 seconds or longer. Citing p95 as proof that a 1.5-second deadline holds is therefore a tail-blind inference.\n\n**The declared configuration already violates the claimed deadline.** B's per-attempt timeout is 2 seconds. A single attempt that runs to its timeout has already exceeded a 1.5-second caller deadline, whether or not the request later succeeds on a retry. A timeout larger than the caller deadline is a named failure mode: the server continues work after the caller has given up, wasting capacity. Three attempts plus two backoffs make the permitted request window wider still. The declaration cannot support a claim it contradicts.\n\n**C5 is a p95 constraint, not a deadline guarantee.** The decision record declares C5: p95 latency at most 1.5 seconds (hard). C is eliminated because 1.769 is above 1.5; A and B pass both constraints. The record treats A's lower p95 (0.870 versus 1.206) as a tradeoff rather than a failed constraint. B passes C5 means the modeled p95 is at most 1.5 seconds. It does not mean every intended request completes by 1.5 seconds. The team's customer claim upgrades a distribution constraint into a per-request deadline; that upgrade is not in the evidence.\n\n**C is the counterexample inside the same run.** C declares a 1.5-second timeout, two attempts and linear backoff; its modeled p95 is 1.769 seconds, above its own declared timeout. The most economical explanation is the lifecycle: first attempts expire at 1.5 seconds, the retry waits for backoff and then runs, and successful retries complete after 1.5 seconds plus backoff plus service. The run therefore demonstrates, in its own model, that a declared 1.5-second timeout does not bound the request at 1.5 seconds.\n\n**B's lower p95 is a consequence of low retry activity, not an end-to-end bound.** B has a timeout rate of 0.0041 and retry amplification of 1.004; C has 0.111 and 1.079. B's high success rate means most requests never exercise the retry path, so its p95 largely reflects first-attempt service times. When the retry path is exercised, the 2-second timer is the relevant number. A lower p95 under light retry activity says nothing about the rare requests that do time out.\n\n**The evidence is modeled, not measured.** The comparison uses a Poisson workload at 20 requests per second for 1,800 seconds after a 300-second warmup, with 30 replications and a shared seed base. The result section says the confidence intervals are narrow because the workload is synthetic and the replications are independent, and narrow intervals do not make the inputs measured. Replay proves that the stored inputs, engine version and seeds reproduce the stored metrics on the same platform family; it does not prove that the model is valid, that the inputs are measured or that the decision is correct. The chapter ledger states that no benchmark was run, that latency sampling bias remains unverified, and that published production lessons are not portable numerical SLO thresholds. A modeled p95 under a synthetic workload is not a production deadline guarantee for customers.\n\n**A's numbers show that latency and success are different outcomes.** A has a one-second timeout and one attempt: p95 0.870 seconds, success 0.9218, timeout 0.0778. A's failed requests are quick failures, not necessarily late completions; B's higher success can coexist with later failures and longer waits. A p95 figure does not reconcile success, failure timing and deadline attainment. That is why a caller-deadline claim needs an attainment statistic over all intended requests, not a single latency percentile.\n\n**What would support the claim.** A request-level attainment statement over all intended requests, including timeouts, explicit failures and cancellations, at the named boundary: for example, the fraction of intended requests that receive a useful result or an explicit failure within 1.5 seconds, with a confidence interval, under a declared workload and configuration, with per-attempt timeouts clamped to the remaining budget. If the claim is about the modeled system, say so and give the run, scenario, model hashes and replication count. If it is about customers, it needs production measurement or an explicitly stated model-to-production gap. A p95 alone is neither.\n\n## 4. What a caller-deadline claim must record\n\n| Field | What must be recorded | Why it matters |\n|---|---|---|\n| Boundary and population | The named boundary at which the deadline applies (client-observed request, ingress-to-egress, and so on) and the population of intended requests, including successes, explicit failures, timeouts and cancellations. | A deadline is the latest useful completion time at a named boundary; a number without a boundary and population cannot be checked. |\n| Deadline semantics and clock | The start point, the absolute or relative deadline, monotonic elapsed-time measurement, and how the remaining duration is propagated to remote calls. | A timeout is a local wait bound; the request deadline is the caller's end-to-end budget. Clock skew and lost timeout headers silently remove the bound. |\n| Budget partition | The planned allocation across ingress/authentication, queue wait, downstream work, composition, durable write and network margin; the maximum queue time before work begins. | Proxies, authentication, queueing, internal RPCs and durable state consume the budget. A queue that admits already-expired work adds cost without useful output. |\n| Retry ownership and cumulative budget | Which layer owns retries, the attempt cap, the backoff policy, the cumulative retry budget, and the idempotency/effect identity that makes a retry safe. | A per-request attempt cap bounds one logical operation, not aggregate load; each retry must consume the same deadline, not a fresh one. |\n| Fit check | The rule that an attempt starts only if the remaining deadline can fit a useful attempt, with each attempt limited to the remaining budget. | Do not retry when the remaining deadline cannot fit the attempt. A timeout larger than the caller deadline lets work continue after the caller gives up. |\n| Cancellation and cleanup | What cancellation stops, what it cannot undo, how late replies are drained or ignored, how resources are released, and how partial results are represented. | Cancellation is not proof that a committed effect was undone; an ambiguous timeout requires outcome lookup. |\n| Attainment statistic | The measured or modeled fraction of intended requests that meet the deadline, with its population, window, sample size and uncertainty; not a p95 substituted for attainment. | A p95 is a quantile, not the probability of meeting the deadline. The claim is only as good as the population and inclusion rule behind it. |\n| Evidence and validity limits | Whether the evidence is modeled or measured; model, scenario and run hashes; engine and seed; workload; confidence interval; known limitations and the model-to-production gap. | Replay proves reproducibility, not validity; a synthetic run under 20 requests per second is not a customer workload. |\n| Falsification | Observations that would defeat the claim, such as a measured request above the deadline or a measured tail that pushes the p95 above the ceiling. | A claim that cannot name its defeat condition is not testable. |\n\nA compact claim template is: At boundary B, over population P (all intended requests, including timeouts and explicit failures), at least q of requests receive a useful result or an explicit failure within D seconds, measured over window W under workload X and configuration Y, with confidence interval Z and model/run provenance R. The number D is the caller's deadline; the per-attempt timeout is a separate configuration value and must be no larger than the remaining budget at each attempt.\n\n## 5. What a latency metric must record\n\n| Field | What must be recorded | Why it matters |\n|---|---|---|\n| Boundary | Client-observed request, ingress-to-egress request, queue wait, individual dependency call, database lock wait, or full background job. | A latency sample must be named by boundary; otherwise two p95 values can describe different objects. |\n| Population and inclusion | Whether the population is all offered/intended requests, successful completions only, or attempts; whether timed-out, rejected, failed and cancelled requests are included; whether the unit is a logical request or a transport attempt. | A percentile is a value of a distribution. Omitting timed-out or failed intended operations biases success and latency SLOs. |\n| Window and sampling | Observation window, warmup, arrival process, sampling method, and whether the generator is open or closed. | A closed generator can hide backlog; finite windows and completed-only sampling change the picture. |\n| Statistic and estimator | The quantile (p95, p99), the estimator, the sample size, the replication count, the standard error and the confidence interval. | The run contract requires value, unit, replication count, standard error and confidence interval; a p95 without uncertainty is not a complete metric record. |\n| Unit and direction | The unit (seconds), the direction (lower is better) and the business-comparable flag. | The scenario contract marks every metric with a direction and a unit; a decision record that uses an undeclared metric is a validation failure. |\n| Workload and resources | Offered demand, resource ceilings, cost basis and the workload family; equal treatment of candidates. | A metric is business-comparable only when hidden normalization is absent; workload drift invalidates comparison. |\n| Provenance and validity | Model and scenario hashes, engine and version, seed base, replication scheme, result hash, synthetic/modeled label and limitations. | Replay proves reproducibility, not model validity or measured inputs. |\n| What the metric does not say | That p95 is not a maximum, not a deadline-attainment probability, and not a production guarantee. | The tail above p95 is unbounded by the p95 value; a p95 constraint is not a per-request deadline. |\n\nFor B's run, the pages record the value (1.206 seconds), the replication count (30) and a synthetic-workload limitation; the required metric record also calls for a unit, standard error and confidence interval, and the tail-latency page adds boundary, population, window and timeout-inclusion. The pages do not state the p95's boundary, its population, whether timeout attempts are included, or the estimator. Those are unknowns. The 1.206 seconds is therefore a modeled metric whose exact request-level meaning is not established by the record.\n\nOne more boundary on that record: the V12 discrete-event model \"measures latency directly from completed requests\", and the queue-model page warns that \"a finite warmup and horizon can bias the estimate\"; measurements over a finite interval are \"neither long-run averages nor stationary expectations\". If \"completed\" excludes timed-out attempts, the 1.206-second p95 is a completed-request metric and the 2-second timeout tail is outside its population. Even if \"completed\" includes every terminal outcome, the finite-window caveat must be recorded.\n\n## 6. What this means for the team's customer statement\n\nThe statement conflates three different objects:\n\n- the **configuration value** (a 1.5-second per-attempt timeout for C; a 2-second per-attempt timeout for B);\n- the **modeled metric** (B's p95 of 1.206 seconds under a synthetic 20-requests-per-second workload);\n- the **caller deadline** (a claimed 1.5-second end-to-end bound for a customer request).\n\nThey are not interchangeable. The configuration value bounds an attempt. The modeled p95 describes a distribution under a declared workload. The caller deadline is an end-to-end claim about when the caller stops waiting and what outcome it receives. The evidence supports a narrower statement: B's modeled p95 is 1.206 seconds and satisfies the decision record's p95-at-most-1.5-seconds constraint. It does not support the declared timeout is the end-to-end deadline, and it does not support a 1.5-second caller deadline will hold.\n\nIf the team needs the stronger claim, the system must be changed and re-evaluated, not re-labelled. B would need a per-attempt timeout no larger than the remaining budget, an attempt/backoff policy that fits inside 1.5 seconds, and a re-run that reports request-level deadline attainment including timeouts and failures. C is the warning: a declared 1.5-second timeout produced a modeled p95 of 1.769 seconds. A is the other tradeoff: its one-second, one-attempt configuration has a lower p95 (0.870 seconds) but a 7.8% timeout rate. Fast failure and successful completion are different outcomes, and neither is established for customers by a modeled p95.\n\n## 7. Contradictions, boundaries and unknowns\n\n**Contradiction: deadline versus timeout.** The volume summary says B: a bounded queue, a two-second deadline and a small retry budget; the experiment says B has a 2-second timeout, three attempts; the scenario contract's configuration field is timeout; and the retry state diagram labels the per-attempt timer deadline reached. The conceptual layer reserves deadline for the caller's end-to-end budget. The same word is being used for two different objects. Until the artifact resolves that, a customer claim must say which object it means; the only defensible reading of the declared 1.5/2-second numbers is per-attempt timeout.\n\n**Unknown: the p95's boundary and population.** The pages do not state whether 1.206 seconds is client-observed request latency, ingress-to-egress latency, or attempt latency; whether timed-out attempts are included; whether failed requests share the population; or which estimator produced the quantile. The run contract requires value, unit, replications, standard error and confidence interval, but not these fields; the tail-latency page requires them conceptually. The record is incomplete for a deadline claim.\n\n**Unknown: the timeout rate's denominator.** The run reports 0.0041 for B and 0.111 for C, but the pages do not state whether the denominator is offered requests or attempts. The interpretation of the tail mass changes accordingly. Either denominator leaves a nonzero population that waits 2 seconds (B) or 1.5 seconds (C) per timed-out attempt.\n\n**Unknown: C's linear backoff.** The experiment says C uses linear backoff but does not record its base or cap. The exact worst-case accumulation for C cannot be computed; the attempt budget alone is 3 seconds, and the modeled p95 of 1.769 seconds shows that the second attempt contributes to the request-level result.\n\n**Unknown: client-observed outcome after a timeout.** The lifecycle says an attempt is counted as timed out and, if no attempts remain, the request is terminally failed. The pages do not record whether the caller receives an explicit failure at the attempt deadline or waits for the retry path. This matters for deadline attainment: a fast explicit failure can meet the caller deadline while a later success misses it.\n\n**Boundary: synthetic evidence.** The comparison is a discrete-event model with 30 replications under a Poisson 20-requests-per-second workload. The chapter ledger says no benchmark was run, latency sampling bias and third-party review remain unverified, and published production lessons are not portable numerical SLO thresholds. The decision record's recommendation is conditional because operability is unverified. None of this is a production observation or an independent acceptance.\n\n**Boundary: p95 is not a guarantee even in the model.** Even if the p95 population were request-level and included timeouts, the p95 value would leave the upper 5% unbounded. A deadline claim needs the attainment fraction and, ideally, a bound on the tail, not only the 95th percentile.\n\n**What would change the conclusion.** If the run were redefined as request-level attainment over all intended requests including timeouts and B met the 1.5-second deadline with a stated confidence interval, the narrower claim could be supported for that modeled workload. If production traces showed no attempt above 1.5 seconds and an explicit deadline enforcement path, the customer claim would have measured support. If B's 2-second value were actually an end-to-end deadline clamped across attempts, the interpretation would change; the declared configuration (timeout with three attempts) says it is not.\n\n## 8. Evidence map\n\n| Claim | Section key | What the evidence establishes |\n|---|---|---|\n| C1 | tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle | A retry schedules a new timeout at retry time plus timeout; the deadline is per-attempt. |\n| C2 | tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle | Three attempts can spend up to three timeouts plus two backoffs. |\n| C3 | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets | A timeout is a local wait bound; the request deadline is the caller's end-to-end budget. |\n| C4 | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets | Proxies, authentication, queueing, internal RPCs and durable state consume the budget; each hop uses the remainder. |\n| C5 | tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets; tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes | Do not retry when the remaining deadline cannot fit the attempt; a timeout larger than the caller deadline is a failure mode. |\n| C6 | tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split | A retry consumes the same caller deadline; the 300 ms example leaves only about 60 ms. |\n| C7 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b | C declares 1.5 s/two attempts/linear; B declares 2 s/three attempts/exponential base 0.2 s with full jitter. |\n| C8 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification | C p95 1.769 s and timeout 0.111; B p95 1.206 s and timeout 0.0041; amplification 1.079 versus 1.004. |\n| C9 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results | C's modeled p95 exceeds its declared 1.5-second timeout. |\n| C10 | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b; tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract | B's per-attempt timeout is 2 s; a per-hop timeout is a local waiting limit. |\n| C11 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle | B's timeout rate is nonzero; a fired timeout is counted at the attempt deadline. |\n| C12 | tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request | A p95 is a distribution value, not a maximum; boundary, window, inclusion and population must be defined. |\n| C13 | tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low | Failed and timed-out intended operations must be included; user-visible start/end points must be defined. |\n| C14 | tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics; tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run | Metrics need value, unit, replications, SE and CI; scenarios add direction and unit; B records 30 replications and 1.206 s synthetic. |\n| C15 | tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves; tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#7-source-to-claim-ledger-and-review-boundary | Replay proves reproducibility, not validity; no benchmark was run; latency sampling bias is unverified. |\n| C16 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints; tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences | C5 is a hard p95 limit; B passes C5; A's lower p95 is a tradeoff, not a failed constraint. |\n| C17 | tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure; tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram | The volume says two-second deadline; the experiment says 2-second timeout; the scenario field is timeout; the state diagram calls it a deadline. |\n| C18 | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification; tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets | Amplification is total attempts divided by offered requests; three attempts can triple load; a per-request cap does not bound aggregate work. |\n| C19 | tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract | The deadline design record includes clock/propagation, queue, cancellation, retry ownership/budget and late replies. |\n| C20 | tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract | A deadline is the latest useful completion time at a named boundary; a per-hop timeout is a local waiting limit. |\n| C21 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation | Narrow intervals do not make inputs measured; a measured p95 tail pushing B above 1.5 s is a reversal trigger. |\n| C22 | tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results; tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification | A has p95 0.870 s and a 7.8% timeout rate with one attempt. |\n| C23 | tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics; tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes | A decision record using an undeclared metric is a validation failure; p99-for-p95 substitution is a metric substitution failure. |\n| C24 | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter | Exponential backoff grows per attempt; V12 implements none, exponential and linear with jitter variants; the scenario declares the choice. |\n| C25 | tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram | A timed-out request with attempts remaining waits for backoff and re-enters the queue; otherwise it fails. |\n| C26 | tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission | Fast median service times can still miss a user-visible objective; the tail can determine whether the result meets its deadline. |\n| C27 | tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat | Latency is measured from completed requests; a finite warmup and horizon can bias the estimate; finite intervals are not long-run averages. |\n\n## 9. Unknowns and abstention statement\n\nThe answer does not abstain: the mechanism is stated directly in the read sections. The following are unknown and are recorded rather than filled in.\n\n- The boundary, population, timeout-inclusion rule and estimator behind the 1.206-second p95.\n- The denominator of the 0.0041 and 0.111 timeout rates (offered requests versus attempts).\n- The base and cap of C's linear backoff.\n- Whether the 1.206-second p95 uses completed-only sampling; the queue-model page says latency is measured from completed requests, and a finite window can bias the estimate.\n- Whether the modeled timeout produces an explicit caller-visible failure at the attempt deadline or a later retry outcome.\n- Whether any of this was measured outside the synthetic model. The pages say no benchmark was run and that latency sampling bias remains unverified.\n- Whether the decision record's conditional recommendation (operability unverified) has any production acceptance.\n\nNo customer-facing deadline claim can be derived from a per-attempt timeout plus a modeled p95. The claim requires the records in sections 4 and 5, and the evidence in this corpus supplies only part of them.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "The declared timeout is armed per attempt: each retry schedules a new timeout at the retry time plus the timeout, and the model calls the deadline per-attempt.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "A retry schedules a new timeout at the retry time plus the timeout.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "per-attempt, not per-request lifetime",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "A logical request can spend up to attempts times timeout plus inter-attempt backoffs; the model states that three attempts can spend up to three timeouts plus two backoffs.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "up to three timeouts plus two backoffs in the system.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "a request with three attempts can spend",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "A timeout is a local wait bound on one operation, while the request deadline is the caller's end-to-end budget; they are different objects.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A timeout is a local wait bound on one operation",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "deadline is the caller's end-to-end budget.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The caller's end-to-end budget is consumed by proxies, authentication, queueing, internal RPCs and durable state, and each hop should use at most the remaining deadline and propagate the remainder.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "proxies, authentication, queueing, internal RPCs and durable state can consume it.",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "deadline, minus its own processing and margin, and propagate the remainder.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Retries must fit the remaining deadline; a timeout larger than the caller deadline is a failure mode because the server continues work after the caller has given up.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "the remaining deadline cannot fit the attempt",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+          "quote": "Timeout larger than the caller deadline.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+          "quote": "The server continues work after the caller",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "A retry consumes the same caller deadline: in the book's 300 ms example, a 220 ms first attempt plus a 220 ms retry leaves only about 60 ms at T=240 and cannot complete within the caller deadline.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+          "quote": "An attempt starting at T=20 expires at T=240",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+          "quote": "cannot complete within the caller deadline.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "In the V12 comparison, C declares a 1.5 s timeout with two attempts and linear backoff, while B declares a 2 s timeout with three attempts and exponential backoff with base 0.2 s and full jitter.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "1.5-second timeout, two",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "attempts, linear backoff, 160-request bulkhead, cost 14.0.",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "2-second timeout, three attempts,",
+          "supports": "C7",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b",
+          "quote": "exponential backoff with base 0.2 seconds and full jitter",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "C's modeled p95 is 1.769 s and B's is 1.206 s; C's modeled timeout rate is 0.111 and B's is 0.0041; C's retry amplification is 1.079 and B's is 1.004.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "C: success 0.9679 (95% CI 0.9595-0.9764), p95 1.769 s, cost 3.63, timeout 0.111.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "C has two attempts with linear backoff: retry amplification 1.079,",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "B has three attempts with exponential backoff and full jitter: retry amplification 1.004,",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "C's modeled p95 of 1.769 s is above its own declared 1.5 s timeout.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "C: success 0.9679 (95% CI 0.9595-0.9764), p95 1.769 s, cost 3.63, timeout 0.111.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "1.5-second timeout, two",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "B's per-attempt timeout is 2 s, which is larger than a 1.5 s caller deadline; a per-hop timeout is only a local waiting limit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b",
+          "quote": "a 2-second timeout, three attempts,",
+          "supports": "C10",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "A per-hop timeout is a local waiting limit.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "B's run reports a nonzero timeout rate of 0.0041, and a fired timeout is counted at the attempt deadline; those attempts wait 2 s, above a 1.5 s deadline.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "B: success 0.9996 (95% CI 0.9995-0.9997), p95 1.206 s, cost 1.34, timeout 0.0041.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+          "quote": "the attempt is counted as timed out",
+          "supports": "C11",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "A p95 is a distribution quantile, not a maximum; a latency sample must be named by boundary and the metric must define the observation window, timeout inclusion, sampling and population.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "A percentile is a value of a **distribution**, not a single request's maximum.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "A latency sample must be named by boundary",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+          "quote": "whether timed-out requests are included, how sampling works",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "Failed and timed-out intended operations must be included when computing success and latency SLOs; user-visible start and end points must be defined before percentile targets.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "do not silently omit requests that never entered the measured service.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+          "quote": "Define user-visible start/end points",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "The run record requires a metric value, unit, replication count, standard error and confidence interval; the scenario adds direction, unit and business-comparable flag; B's example records 30 replications and a p95 of 1.206 s under a synthetic-workload limitation.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+          "quote": "- metrics: value, unit, replication count, standard error and confidence interval;",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "The scenario contract marks every metric with a direction and a unit.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+          "quote": "0.9995-0.9997, a p95 latency of 1.206 seconds, and a relative error of 0.00003.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+          "quote": "The limitations say the workload is synthetic",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "Replay proves reproducibility, not model validity or measured inputs; the chapter states that no benchmark was run and that latency sampling bias remains unverified.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "It does not prove that the model is valid",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+          "quote": "measured or that the decision is correct.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#7-source-to-claim-ledger-and-review-boundary",
+          "quote": "No benchmark was run and no production recommendation is made.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#7-source-to-claim-ledger-and-review-boundary",
+          "quote": "latency sampling bias and third-party review remain **unverified**",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "C5 is a hard p95-latency limit of at most 1.5 s, not a per-request deadline; B passes C5 on p95, and A's lower p95 is treated as a tradeoff rather than a failed constraint.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "- C5: p95 latency at most 1.5 seconds (hard).",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+          "quote": "above 1.5. A and B pass both constraints.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "two hard quantitative limits (cost and p95 latency)",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+          "quote": "A wins on p95 latency, which is a tradeoff rather than a failed constraint.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "The volume summary calls B's 2 s limit a deadline, while the experiment and scenario contract call it a timeout; the retry state diagram also labels the per-attempt timer as a deadline, so the wording is contradictory.",
+      "evidence": [
+        {
+          "section_key": "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+          "quote": "B: a bounded queue, a two-second deadline and a small retry budget;",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+          "quote": "2-second timeout, three attempts,",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+          "quote": "configuration: servers, service time, queue capacity, timeout, attempts, backoff,",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+          "quote": "InService --> TimedOut: deadline reached",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "Retry amplification is total attempts divided by offered requests; B's 1.004 and C's 1.079 show extra load, and a per-request attempt cap does not bound aggregate retry work.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "The retry amplification metric is total attempts divided by offered requests.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "If every request is attempted three times, the load can be three times higher.",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+          "quote": "A per-request attempt cap bounds one logical operation. It does not bound the aggregate work",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "An implementation-aware deadline design records clock and propagation semantics, maximum queue time, cancellation limits, per-hop retry ownership with attempts, backoff and cumulative budget, and late-reply and partial-result handling.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "An implementation-aware deadline design records:",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "Clock and deadline propagation semantics",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "Maximum time spent queued before work begins",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "Per-hop retry ownership, attempts, backoff, cumulative budget",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "How late replies are drained/ignored",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A deadline is the latest useful completion time at a named boundary, while a per-hop timeout is only a local waiting limit.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "A **deadline** is the latest useful completion time for a request at a named boundary.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+          "quote": "A per-hop timeout is a local waiting limit.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The synthetic comparison's narrow intervals do not make inputs measured, and the record names a measured p95 tail pushing B above 1.5 s as a reversal trigger.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "intervals do not make the inputs measured.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+          "quote": "A measured p95 service time whose tail pushes B above 1.5 seconds.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "A's one-attempt 1 s configuration has p95 0.870 s but a 7.8% timeout rate, so latency and success are different outcomes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+          "quote": "A: success 0.9218 (95% CI 0.9211-0.9226), p95 0.870 s, cost 1.81, timeout 0.0778.",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+          "quote": "amplification but loses 7.8% of requests to its one-second deadline.",
+          "supports": "C22",
+          "status": "inference"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "A decision record that uses a metric not declared in the scenario is a validation failure, and substituting p99 for p95 is a metric-substitution failure; a latency claim must name its statistic.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+          "quote": "uses a metric not declared in the scenario is a validation failure.",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+          "quote": "A decision uses p99 latency while the scenario declares p95.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Exponential backoff grows the delay after each attempt; V12 implements none, exponential and linear backoff with no, full or equal jitter, and the scenario declares the choice.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+          "quote": "Exponential backoff increases the delay after each attempt.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+          "quote": "V12 implements three backoff kinds: none, exponential and linear.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+          "quote": "The scenario declares the choice.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "On timeout with attempts remaining, the request waits for backoff and re-enters the queue; otherwise it fails.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+          "quote": "A timed-out request with attempts remaining waits for backoff and re-enters the",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Fast median service times can still miss a user-visible latency objective, and a slow tail can determine whether the entire result meets its deadline.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission",
+          "quote": "A system can have fast median service times and still miss a user-visible latency objective.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission",
+          "quote": "if a request needs many dependent results, a slow outlier can determine whether the entire result meets its deadline.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "The V12 discrete-event model measures latency directly from completed requests, a finite warmup and horizon can bias the estimate, and finite-interval measurements are neither long-run averages nor stationary expectations.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+          "quote": "The discrete-event model measures latency directly from completed requests",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+          "quote": "a finite warmup and horizon can bias the estimate.",
+          "supports": "C27",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat",
+          "quote": "neither long-run averages nor stationary expectations",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.f914586e44ea034deaf2710c570328fc#timeout-lifecycle",
+    "tycho.page.43414664520b4866929f7f006f27f59b#3-end-to-end-deadlines-cancellation-and-retry-budgets",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#failure-modes",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#6-worked-decision-retain-hedge-or-split",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-experiment",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#example-candidate-b",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#the-results",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#retry-amplification",
+    "tycho.page.e229cbbcdc4a45bb9e368313f129b25b#3-deadlines-are-a-resource-and-correctness-contract",
+    "tycho.page.45935212b3b7476d8a163520f065b825#1-one-percentile-cannot-describe-a-distributed-request",
+    "tycho.page.c8b09f5ad28441ab89a6d9e06e0ff4c9#5-why-test-tool-latency-can-be-deceptively-low",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#required-fields",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#business-comparable-metrics",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#example-candidate-b-run",
+    "tycho.page.201248045fa3cd67e617ce04a1c56feb#what-replay-proves",
+    "tycho.chapter.2ad010c2b29c4390b83bbdadeb346289#7-source-to-claim-ledger-and-review-boundary",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#applying-the-constraints",
+    "tycho.page.c7a43944f1d41e810eec0d17ec33b85a#hard-constraints-versus-preferences",
+    "tycho.volume.fd0c1a798f9968eed4a679b048deea14#a-worked-cross-chapter-synthesis",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#required-structure",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#a-retry-state-diagram",
+    "tycho.page.3cfd08ee56330be9b7a2d37975c3fe26#what-would-reverse-the-recommendation",
+    "tycho.page.dedc5f2d31912a9ba5f562a86009fda0#failure-modes",
+    "tycho.page.3a70b1cf7e6d7dbbf95c47bd085fc6f4#backoff-and-jitter",
+    "tycho.page.eb130a7f820544a2ba0e0883c0ce587b#purpose-and-mission",
+    "tycho.page.c264e48a38af3148eff0c87a3b98a8dd#little-s-law-and-its-finite-window-caveat"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
