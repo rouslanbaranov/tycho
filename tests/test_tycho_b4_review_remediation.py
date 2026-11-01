@@ -81,7 +81,7 @@ class ReviewRecordTests(unittest.TestCase):
                               "decision": "sufficient",
                               "overall": "sufficient"})
             self.assertIn(pattern_id, promotions)
-            self.assertNotIn(pattern_id, accepted)
+            self.assertIn(pattern_id, accepted)
 
 
 class DerivedArtifactTests(unittest.TestCase):

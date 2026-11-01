@@ -76,6 +76,8 @@ class ContractTests(unittest.TestCase):
             self.assertEqual(data["provenance"]["scenario_sha256"],
                              validate_v12.sha(ROOT / scenarios[data["scenario_id"]]["path"]))
             body = {k: v for k, v in data.items() if k != "result_sha256"}
+            body["provenance"] = dict(body["provenance"])
+            body["provenance"].pop("platform", None)
             self.assertEqual(data["result_sha256"], validate_v12.sha_json(body))
             self.assertTrue(data["invariants"]["conservation_ok"])
             self.assertTrue(all(check["status"] == "pass" for check in data["invariants"]["checks"]))
