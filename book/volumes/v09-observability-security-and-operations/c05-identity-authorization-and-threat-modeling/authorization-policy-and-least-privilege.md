@@ -74,17 +74,22 @@ validated claims; it does not prescribe this policy design.
 
 **Zero-trust mechanism.** Every request is authenticated and authorized at the resource
 boundary using principal identity, workload/device posture, policy and least privilege.
-Network location is not trust; a valid token is not object permission. Continuous
-verification applies to service-to-service and user-to-service paths alike.
+**Tycho synthesis:** network location is not trust and a valid token is not object permission. Continuous
+verification applies to service-to-service and user-to-service paths alike. **Tycho synthesis:**
+the every-request/resource-boundary rule extends the ASVS session controls.
 
-**Failure and recovery.** Policy gaps, legacy bypass paths and identity-provider outages are
-common. Deny by default, test indirect and confused-deputy paths, keep a bounded break-glass
-path with audit, and fail closed when authority cannot be established.
+**Failure and recovery (Tycho analysis).** Policy gaps, legacy bypass paths and identity-provider
+outages are possible. NIST warns that "If one vital component is disrupted or unreachable, there
+could be a cascade of failures that impact one or multiple business processes." Deny by default,
+test indirect and confused-deputy paths, keep a bounded break-glass path with audit, and fail
+closed when authority cannot be established; these responses are Tycho guidance.
 
-**Alternative.** Network segmentation, a VPN or mTLS-only service identity may be preferable
-when legacy components cannot enforce per-request identity or when policy-evaluation cost
-exceeds the threat reduction. Reverse the zero-trust choice when the remaining perimeter
-control is the only enforceable boundary.
+**Alternative (Tycho comparison).** NIST expects that "Most enterprise infrastructures will
+operate in a hybrid zero trust/perimeter-based mode." Network segmentation, a VPN or mTLS-only
+service identity may therefore be preferable when legacy components cannot enforce per-request
+identity or when policy-evaluation cost exceeds the threat reduction. Reverse the zero-trust
+choice when the remaining perimeter control is the only enforceable boundary; the preference
+rule is Tycho guidance.
 
 **Limits.** Policy-decision latency and telemetry coverage are costs; a zero-trust label does
 not prove enforcement.
@@ -92,11 +97,12 @@ not prove enforcement.
 ## Least Privilege
 
 Least privilege grants each principal only the permissions its task needs, limited in resource
-scope, action and time. Every credential must have a bounded scope, an owner and a revocation
-path that does not depend on the compromised principal.
+scope, action and time. Every credential must have a bounded scope, an owner and a revocation path that does not
+depend on the compromised principal. **Tycho analysis:** ASVS binds revocation mechanics, not
+this per-credential ownership rule.
 
-Permission creep and long-lived credentials widen the blast radius without any visible
-incident; review grants on a schedule and prefer short-lived scoped credentials.
+**Tycho guidance:** permission creep and long-lived credentials widen the blast radius without
+a visible incident; review grants on a schedule and prefer short-lived scoped credentials.
 
 **Alternative: dual control.** When no narrow role can express the task, keep a task-capable
 identity and require independent approval by more than one principal before a high-value

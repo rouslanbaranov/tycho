@@ -16570,7 +16570,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "Every request is authenticated and authorized at the resource boundary using principal identity, workload/device posture, policy and least privilege.",
-          "reason": "States the mechanism, invariant, failure or alternative.",
+          "reason": "ASVS binds adaptive authentication/authorization; the every-request resource-boundary and least-privilege extension is Tycho synthesis.",
           "binding": {
             "source_id": "src.owasp-asvs",
             "ledger_record": "read.batch6-asvs.2026-10-21",
@@ -16582,7 +16582,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Network location is not trust; a valid token is not object permission.",
-          "reason": "States the no-implicit-trust rule and requires denied-path testing.",
+          "reason": "ASVS binds administrative-interface and network-location controls; object-permission enforcement is Tycho synthesis.",
           "binding": {
             "source_id": "src.owasp-asvs",
             "ledger_record": "read.batch6-asvs.2026-10-21",
@@ -16592,14 +16592,28 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Policy gaps, legacy bypass paths and identity-provider outages are common.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "If one vital component is disrupted or unreachable, there could be a cascade of failures that impact one or multiple business processes.",
+          "reason": "NIST binds component-failure cascade risk; policy gaps, denial and break-glass responses are Tycho guidance.",
+          "binding": {
+            "source_id": "src.nist-sp-800-207",
+            "ledger_record": "read.nist-sp-800-207.2026-11-01",
+            "section": "B.4.7 Resilience of ZTA to Enterprise and Network Disruption",
+            "quote": "If one vital component is disrupted or unreachable, there could be a cascade of failures that impact one or multiple business processes.",
+            "revision": "0290d6ece24874287316f4bf430fef770aa4ec08a2227c8f2c1e5b2ff975e03d"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "Network segmentation, a VPN or mTLS-only service identity may be preferable when legacy components cannot enforce per-request identity or when policy-evaluation cost exceeds the threat reduction.",
-          "reason": "External review 2026-10-27: binding does not support the full owner claim."
+          "state": "supported",
+          "quote": "Most enterprise infrastructures will operate in a hybrid zero trust/perimeter-based mode.",
+          "reason": "NIST binds hybrid zero-trust/perimeter operation; the segmentation/VPN/mTLS preference is Tycho guidance.",
+          "binding": {
+            "source_id": "src.nist-sp-800-207",
+            "ledger_record": "read.nist-sp-800-207.2026-11-01",
+            "section": "7.2 Hybrid ZTA and Perimeter-Based Architecture",
+            "quote": "Most enterprise infrastructures will operate in a hybrid zero trust/perimeter-based mode.",
+            "revision": "0290d6ece24874287316f4bf430fef770aa4ec08a2227c8f2c1e5b2ff975e03d"
+          }
         }
       },
       "decision_evidence": {
@@ -16614,12 +16628,19 @@
         "source_id": "src.owasp-asvs",
         "unit_type": "specification",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.nist-sp-800-207",
+            "ledger_record": "read.nist-sp-800-207.2026-11-01",
+            "revision": "0290d6ece24874287316f4bf430fef770aa4ec08a2227c8f2c1e5b2ff975e03d"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Only a one-sentence no-implicit-trust rule exists; the page does not explain a full zero-trust architecture."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Technical and decision coverage sufficient. Mechanism/invariant bind OWASP ASVS; failure/alternative bind NIST SP 800-207. Response and preference rules are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.least-privilege",
@@ -16641,7 +16662,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "Least privilege grants each principal only the permissions its task needs, limited in resource scope, action and time.",
-          "reason": "Defines task-scoped permissions bounded by resource, action and time.",
+          "reason": "ASVS binds backend component least privilege in configuration; bounded scope, owner and revocation for every credential are Tycho analysis.",
           "binding": {
             "source_id": "src.owasp-asvs",
             "ledger_record": "read.batch6-asvs.2026-10-21",
@@ -16653,7 +16674,7 @@
         "invariant": {
           "state": "supported",
           "quote": "Every credential must have a bounded scope, an owner and a revocation path that does not depend on the compromised principal.",
-          "reason": "Requires bounded scope, ownership and a revocation path independent of the principal.",
+          "reason": "ASVS binds token revocation; least-privilege resource/action/time granularity is Tycho analysis.",
           "binding": {
             "source_id": "src.owasp-asvs",
             "ledger_record": "read.batch6-asvs.2026-10-21",
@@ -16665,7 +16686,7 @@
         "failure_recovery": {
           "state": "supported",
           "quote": "Permission creep and long-lived credentials widen the blast radius without any visible incident; review grants on a schedule and prefer short-lived scoped credentials.",
-          "reason": "Names permission creep and long-lived credentials and requires scheduled review and short-lived credentials.",
+          "reason": "ASVS binds short-lived and revocable tokens; permission creep and scheduled review are Tycho guidance.",
           "binding": {
             "source_id": "src.owasp-asvs",
             "ledger_record": "read.batch6-asvs.2026-10-21",
@@ -16704,7 +16725,7 @@
       "review_state": "self-checked",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Alternative bound 2026-10-29 to ASVS 5.0.0 requirement 2.3.5; all four dimensions supported, coverage partial-bounded, no promotion; approver independence and approval evidence remain outside the source."
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. ASVS binds backend least privilege and revocation; credential scope/owner and review cadence are Tycho analysis."
     },
     {
       "pattern_id": "tycho.pattern.rbac-abac",
