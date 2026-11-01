@@ -45,7 +45,7 @@ content_review:
   reviewer: "Automated authoring agent"
   proof_uri: null
 authored_at: "2026-10-21"
-updated_at: "2026-10-30"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
 content_verified_at: null
 ---
@@ -218,37 +218,7 @@ See the [dedicated Request-Reply Messaging card](request-reply-messaging.md).
 
 ### Correlation Identifier
 
-**Identity.** Correlation Identifier; family Messaging and event-driven integration; kind
-integration-pattern; priority core.
-
-**Decision question.** Should related messages carry an explicit identifier so replies and
-follow-ups can be matched?
-
-**Good-fit conditions.** Flows span multiple messages or services; the identifier is
-stable per logical operation; retention and collision policy are defined.
-
-**Hard contraindications.** Reject when one synchronous call carries the whole exchange,
-when identifiers are reused across operations, or when the receiver cannot retain
-correlation state.
-
-**Competing alternative.** Transport-level request IDs only, or a synchronous call.
-Reverse the choice when correlation state and retention cost exceed the routing benefit.
-
-**Failure and recovery.** Identifier collisions or premature expiry break matching; verify
-scope and retention in the owner section.
-
-**Technical owner.** [Correlation identifiers and workflow failure gates](../../v04-distributed-coordination-and-events/c06-messaging-families-and-delivery-contracts/workflow-failure.md#correlation-identifier) — workflow failure gates are bounded, not a complete request-reply contract.
-
-**Sources.**
-[src.enterprise-integration](../../../../edition/patterns/reading-ledger.v1.json)
-read record read.batch2-correlation.2026-10-21: served problem/solution; publisher-abridged.
-The source is a public pattern/documentation
-unit, not a benchmark.
-
-**Decision state.** applicable-under-conditions.
-
-**Related entries.** Request-Reply Messaging; Idempotency Key; Distributed Tracing;
-Process Manager.
+See the [dedicated Correlation Identifier card](correlation-identifier.md).
 
 ### Content-Based Router
 

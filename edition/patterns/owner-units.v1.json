@@ -3144,37 +3144,51 @@
       "technical_evidence": {
         "mechanism": {
           "state": "supported",
-          "quote": "A correlation identifier ties together messages that belong to one request, workflow or conversation.",
-          "reason": "Defines an identifier tying messages to one request, workflow or conversation.",
+          "quote": "A correlation identifier ties together messages that belong to one request or reply.",
+          "reason": "EIP binds request/reply matching; propagation and retention are Tycho design guidance.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-correlation.2026-10-21",
             "section": "Solution (unlabelled)",
-            "quote": "Each reply message should contain a Correlation Identifier , a unique identifier that indicates which request message this reply is for.",
+            "quote": "A reply carries a Correlation Identifier matching the Request ID of the request it answers.",
             "revision": "d388f9c3f4b82638a3d57033e9e8e779ab919370c13af8a5fd79c76219e327e1"
           }
         },
         "invariant": {
           "state": "supported",
-          "quote": "It needs a generation rule, propagation across asynchronous boundaries, a retention window and a collision check.",
-          "reason": "Requires generation, propagation, retention and collision rules.",
+          "quote": "A reply carries a Correlation Identifier matching the Request ID of the request it answers.",
+          "reason": "EIP binds reply/request matching; generation, propagation, retention and collision checks are Tycho synthesis.",
           "binding": {
             "source_id": "src.enterprise-integration",
             "ledger_record": "read.batch2-correlation.2026-10-21",
             "section": "Solution (unlabelled)",
-            "quote": "Request ID — A token in the request that uniquely identifies the request. Correlation ID — A token in the reply that has the same value as the request ID in the request.",
+            "quote": "A reply carries a Correlation Identifier matching the Request ID of the request it answers.",
             "revision": "d388f9c3f4b82638a3d57033e9e8e779ab919370c13af8a5fd79c76219e327e1"
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "The failure path is a lost or duplicated identifier; carry it in the message contract and record it at every boundary.",
-          "reason": "Page defines IDs only; no lost/duplicate or failure path."
+          "state": "supported",
+          "quote": "Azure duplicate detection removes repeated MessageId submissions",
+          "reason": "Azure binds MessageId duplicate detection; CorrelationId collision handling is Tycho guidance.",
+          "binding": {
+            "source_id": "src.azure-service-bus",
+            "ledger_record": "read.azure-service-bus-messages.2026-11-01",
+            "section": "Message properties",
+            "quote": "If enabled, the duplicate detection feature identifies and removes second and further submissions of messages with the same MessageId.",
+            "revision": "1eb90aff576f436387bea36245c4111684dd000685ee06b5163e51ca6771cdcc"
+          }
         },
         "alternative": {
-          "state": "partial",
+          "state": "supported",
           "quote": "A transport-native message identity is the alternative when the broker guarantees the needed scope and lifetime.",
-          "reason": "Page lists related patterns without alternative comparison."
+          "reason": "Azure binds MessageId uniqueness; the preference rule is Tycho guidance.",
+          "binding": {
+            "source_id": "src.azure-service-bus",
+            "ledger_record": "read.azure-service-bus-messages.2026-11-01",
+            "section": "Message properties",
+            "quote": "The message identifier is an application-defined value that uniquely identifies the message and its payload.",
+            "revision": "1eb90aff576f436387bea36245c4111684dd000685ee06b5163e51ca6771cdcc"
+          }
         }
       },
       "decision_evidence": {
@@ -3189,12 +3203,19 @@
         "source_id": "src.enterprise-integration",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.azure-service-bus",
+            "ledger_record": "read.azure-service-bus-messages.2026-11-01",
+            "revision": "1eb90aff576f436387bea36245c4111684dd000685ee06b5163e51ca6771cdcc"
+          }
+        ]
       },
-      "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Bounded ownership note; complete mechanism, constraints, failure path and alternative."
+      "review_state": "independent-reviewed",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. EIP binds request/reply matching; Azure binds MessageId duplicate detection; generation, retention and collision handling are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.content-based-router",
@@ -3795,7 +3816,7 @@
         "heading": "Dead Letter Channel-DLQ",
         "anchor": "dead-letter-channel-dlq",
         "level": 3,
-        "line": 199,
+        "line": 207,
         "unit_kind": "dedicated",
         "unit_terms": [
           "quarantine queue",
@@ -3975,10 +3996,10 @@
           }
         ]
       },
-      "review_state": "self-checked",
+      "review_state": "independent-reviewed",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Mechanism EIP; invariant EIP/AWS/Azure; failure/recovery AWS receive-count plus Azure cleanup and AWS retention; alternative Hookdeck database persistence/retry table/outbox. Age, payload/header retention, leak prevention, outcome classification, drop-with-record and replay-frequency reversal remain Tycho guidance. Coverage partial-bounded; no promotion."
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. Card excludes updated during the 2026-11-01 rebind."
     },
     {
       "pattern_id": "tycho.pattern.durable-subscriber",
@@ -16652,7 +16673,7 @@
         "heading": "Least Privilege",
         "anchor": "least-privilege",
         "level": 2,
-        "line": 92,
+        "line": 97,
         "unit_kind": "dedicated",
         "unit_terms": [
           "Least Privilege"
@@ -18773,14 +18794,14 @@
     "invariant_supported": 100,
     "failure_recovery_supported": 98,
     "alternative_supported": 102,
-    "technical_partial_bounded": 8,
+    "technical_partial_bounded": 6,
     "technical_partial": 47,
     "technical_name_only": 0,
-    "technical_sufficient": 90,
-    "decision_partial_bounded": 55,
+    "technical_sufficient": 92,
+    "decision_partial_bounded": 53,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 90,
+    "decision_sufficient": 92,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {

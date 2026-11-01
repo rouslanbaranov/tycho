@@ -20,7 +20,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.a4b31346a691566550633efe0cf2693e"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "dead-letter-channel-dlq"
@@ -35,14 +35,14 @@ evidence_scope:
   status: "source-linked"
   notes: "Dedicated card page; source bindings remain in the owner unit."
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-30"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  status: "independent-reviewed"
+  reviewed_at: "2026-11-01"
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "authoring/ai-reviews/2026-11-01-dlq-card-rebind-deepseek.md"
 authored_at: "2026-10-30"
-updated_at: "2026-10-30"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
-content_verified_at: null
+content_verified_at: "2026-11-01"
 ---
 
 # Dead Letter Channel / DLQ

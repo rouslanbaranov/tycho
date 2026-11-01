@@ -174,20 +174,28 @@ See the [dedicated Claim Check owner note](claim-check.md).
 
 ### Correlation Identifier
 
-A correlation identifier ties together messages that belong to one request, workflow or
-conversation. It needs a generation rule, propagation across asynchronous boundaries, a
-retention window and a collision check. Uniqueness is scoped to the operation, not global; a
-value reused across operations is a collision, and generation must verify that scope. Use it
-when independent messages must be joined for diagnosis, deduplication or reply
-routing. Do not use it as an authorization token or when the transport already
-provides an equivalent identity.
+A correlation identifier ties together messages that belong to one request or reply. **Tycho
+design model:** the same identifier may group a broader workflow or conversation, and it needs a generation rule, propagation across
+asynchronous boundaries, a retention window and a collision check. Uniqueness is scoped to the
+operation, not global. Azure Service Bus documents the transport property: "Enables an
+application to specify a context for the message for the purposes of correlation; for example,
+reflecting the MessageId of a message that is being replied to."
 
-The failure path is a lost or duplicated identifier; carry it in the message contract and
-record it at every boundary. Ambiguous matching or an expired identifier needs a disposition:
-quarantine unmatched messages, resolve by a secondary key, or reissue; an expired identifier
-maps to a dead-letter or audit record with an owner. A transport-native message
-identity is the alternative when the broker guarantees the needed scope and
-lifetime.
+**Invariant.** A reply carries a Correlation Identifier matching the Request ID of the request it
+answers. **Tycho synthesis:** a read or reply must state the correlation scope it requires, propagate
+it across every asynchronous boundary, define a retention window and check collisions. Do not use
+the identifier as an authorization token.
+
+**Failure and recovery.** Azure duplicate detection removes repeated MessageId submissions; a
+CorrelationId collision is not broker-detected and remains application-side. Quarantine
+unmatched messages, resolve by a secondary key or reissue; Tycho guidance: an expired identifier maps to a dead-letter or audit
+record with an owner.
+
+**Alternative (Tycho comparison).** A transport-native message identity is the alternative when
+the broker guarantees the needed scope and lifetime. Azure documents MessageId: "The message
+identifier is an application-defined value that uniquely identifies the message and its
+payload." Prefer it when duplicate detection already enforces the required identity; the
+choice rule is Tycho guidance.
 
 **Limits.** Correlation is not deduplication: it groups messages but does not prove one effect;
 identifier retention and trust boundaries need an owner.

@@ -32,11 +32,12 @@ content_review:
   status: "independent-reviewed"
   reviewed_at: "2026-11-01"
   reviewer: "DeepSeek Reviewer"
-  proof_uri: "authoring/ai-reviews/2026-11-01-zero-trust-least-privilege-deepseek.md"
-  content_verified_at: "2026-11-01"
+  proof_uri: "https://github.com/rouslanbaranov/tycho/blob/612599a4/authoring/\
+    ai-reviews/2026-11-01-zero-trust-least-privilege-deepseek.md"
 authored_at: "2026-10-27"
 updated_at: "2026-11-01"
 source_inspection_date: "2026-10-29"
+content_verified_at: "2026-11-01"
 ---
 # Least Privilege
 
