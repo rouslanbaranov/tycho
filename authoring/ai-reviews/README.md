@@ -219,3 +219,4 @@ output verbatim. Do not edit the report; add corrections as a separate addendum.
 | 2026-11-01 | DeepSeek Reviewer | Remaining card split batch | pass | `2026-11-01-remaining-card-split-deepseek.md` | `723359e59bf8cb546fd1e1e2387206d5dd446a9c28062864b27441043dfc1a9f` |
 | 2026-11-01 | DeepSeek Reviewer | CQRS relocation | pass | `2026-11-01-cqrs-relocation-deepseek.md` | `b1c98fcb43b1143e7993bece9704f5b8d3d36dda71aa56f0652529ff41d953d6` |
 | 2026-11-01 | DeepSeek Reviewer | Promoted-note reconciliation | pass | `2026-11-01-note-cleanup-deepseek.md` | `b63379cd049cfe8fd81d586fa812bec693734e440bbc7559099d71bfd9eb7f17` |
+| 2026-11-01 | DeepSeek Reviewer | Event Sourcing | pass | `2026-11-01-event-sourcing-deepseek.md` | `9b85a96c17e9666e8b97d104a557d9be870b64039252192feb7361fcaf6d4127` |

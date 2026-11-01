@@ -4821,8 +4821,8 @@
         },
         "invariant": {
           "state": "supported",
-          "quote": "Rebuilds must check offset continuity and event schema compatibility.",
-          "reason": "States a must-hold rebuild precondition for snapshots and replay.",
+          "quote": "The application reconstructs an entity’s current state by replaying the events.",
+          "reason": "Richardson binds replay reconstruction from the append-only event log; expected-version mechanics are Tycho guidance.",
           "binding": {
             "source_id": "src.microservices-patterns",
             "ledger_record": "read.batch2-event-sourcing.2026-10-21",
@@ -4832,14 +4832,28 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.",
-          "reason": "Source lists drawbacks but not replay under changed semantics or versioned handlers."
+          "state": "supported",
+          "quote": "Replaying events can resend external updates",
+          "reason": "Fowler binds the replay/external-update hazard; versioned handlers and an effect boundary are Tycho guidance.",
+          "binding": {
+            "source_id": "src.fowler-event-sourcing",
+            "ledger_record": "read.fowler-event-sourcing.2026-11-01",
+            "section": "External Updates",
+            "quote": "if these events cause update messages to be sent to external systems, then things will go wrong because those external systems don't know the difference between real processing and replays.",
+            "revision": "3e13fbecdd148ec6d8fdcc1626e716fd1ea74f46a56740df538518d56913766f"
+          }
         },
         "alternative": {
-          "state": "partial",
-          "quote": "State-stored CRUD with an audit log, CDC/outbox or event notification may be preferable when full replay is unnecessary, event-schema ownership is absent or external side effects cannot be isolated.",
-          "reason": "Source does not name state-stored CRUD, CDC/outbox or event notification as alternatives."
+          "state": "supported",
+          "quote": "the official system of record can be the event logs or the current application state.",
+          "reason": "Fowler allows current application state as the official system of record; audit log and CDC/outbox are Tycho guidance.",
+          "binding": {
+            "source_id": "src.fowler-event-sourcing",
+            "ledger_record": "read.fowler-event-sourcing.2026-11-01",
+            "section": "Snapshots",
+            "quote": "the official system of record can be the event logs or the current application state.",
+            "revision": "3e13fbecdd148ec6d8fdcc1626e716fd1ea74f46a56740df538518d56913766f"
+          }
         }
       },
       "decision_evidence": {
@@ -4854,12 +4868,19 @@
         "source_id": "src.microservices-patterns",
         "unit_type": "pattern-page",
         "status": "read",
-        "card_citation": true
+        "card_citation": true,
+        "auxiliary": [
+          {
+            "source_id": "src.fowler-event-sourcing",
+            "ledger_record": "read.fowler-event-sourcing.2026-11-01",
+            "revision": "3e13fbecdd148ec6d8fdcc1626e716fd1ea74f46a56740df538518d56913766f"
+          }
+        ]
       },
       "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Dedicated event-sourcing section including the replay example. Contraindications sit in sections 5-6, outside the unit."
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Pending independent review: four dimensions and decision evidence bound; promoted status not yet claimed."
     },
     {
       "pattern_id": "tycho.pattern.domain-events",

@@ -34,6 +34,7 @@ evidence_scope:
   - src.fowler-cqrs
   - src.microservices-patterns
   - src.postgresql
+  - src.fowler-event-sourcing
   claim_ids: []
   status: source-linked
   notes: Read source-plan units; page-level, not claim-mapped.
@@ -89,6 +90,8 @@ In event sourcing, a durable append-only record of domain facts becomes an autho
 to reconstruct the present state. The chapter source ledger records the origin material as
 context; this section's technical boundary is the declared pattern source.
 
+Richardson states: "The application reconstructs an entity’s current state by replaying the events."
+
 A **fictional** registration aggregate might have immutable facts such as `RegistrationRequested`, `SeatReserved`, `RegistrationConfirmed` and `RegistrationCancelled`. Commands are **requests to change state**; events assert that an accepted transition **already occurred** under an authoritative validation rule.
 
 ```mermaid
@@ -104,6 +107,23 @@ flowchart LR
 
 Text alternative: validate a command under the aggregate's version/invariant contract. A valid command appends an event; replay derives current state and an independent projector may build a query view. Rejected commands do not mutate the authoritative event stream in this example.
 
+**Tycho guidance (expected-version invariant).** A command appends only when its expected stream version matches the current
+version; a racing command is rejected and the caller re-reads before deciding. Retrying an
+already-appended command needs the same operation identity, or a write-side retry can
+double-append the event.
+
+A snapshot can accelerate replay by recording a state at a known stream offset/version, followed by applying later events. However, a snapshot is a **derivative cache** unless declared and validated as the authority. Rebuilds must check offset continuity and event schema compatibility. "Append-only" alone is not a security-compliant audit log: deletion policies, integrity protection, identity, corruption, retention and privileged access still matter.
+
+**Alternative.** A current-state store as the official system of record, with a complementary audit
+log, CDC/outbox or event notification, may be preferable when full replay is unnecessary,
+event-schema ownership is absent or external side effects cannot be isolated. **Tycho guidance:**
+audit log, CDC/outbox and event notification are alternatives to replay, not source claims. Fowler
+notes that the official system of record can be the event logs or the current application state.
+Choose event sourcing when audit/replay value exceeds schema-evolution and rebuild cost.
+
+**Failure and recovery.** Replaying events can resend external updates. **Tycho guidance:**
+versioned handlers and an effect boundary must keep replay from repeating external side effects.
+
 ### A small original replay example
 
 Start with no confirmed bookings. Apply, in the intended aggregate order:
@@ -115,18 +135,6 @@ Start with no confirmed bookings. Apply, in the intended aggregate order:
 | 3 | Booking A cancelled | 1 |
 
 The projection `confirmed_count` is calculated as `+1, +1, -1`, yielding **1**. This is **synthetic arithmetic**, not a tested business database. Replaying a historical event sequence under different event semantics may not produce the same result; versioned event handlers and invariant rules must be specified.
-
-**Invariant.** A command appends only when its expected stream version matches the current
-version; a racing command is rejected and the caller re-reads before deciding. Retrying an
-already-appended command needs the same operation identity, or a write-side retry can
-double-append the event.
-
-A snapshot can accelerate replay by recording a state at a known stream offset/version, followed by applying later events. However, a snapshot is a **derivative cache** unless declared and validated as the authority. Rebuilds must check offset continuity and event schema compatibility. "Append-only" alone is not a security-compliant audit log: deletion policies, integrity protection, identity, corruption, retention and privileged access still matter.
-
-**Alternative.** State-stored CRUD with an audit log, CDC/outbox or event notification may
-be preferable when full replay is unnecessary, event-schema ownership is absent or external
-side effects cannot be isolated. Reverse the event-sourcing choice when audit/replay value
-exceeds schema-evolution and rebuild cost.
 
 ## 3. CQRS and asynchronous projection freshness
 
