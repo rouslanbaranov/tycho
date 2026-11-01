@@ -49,7 +49,7 @@ content_review:
   reviewer: null
   proof_uri: null
 authored_at: "2026-10-19"
-updated_at: "2026-10-29"
+updated_at: "2026-11-01"
 source_inspection_date: null
 content_verified_at: null
 ---
@@ -114,19 +114,45 @@ ownership. That alternative is an architecture choice, not a temporary failure t
 
 ### Service-Oriented Architecture (SOA)
 
-SOA publishes capabilities as governed service contracts and routes consumers through a mediation
-layer. The service registry, contract version and consumer inventory are the control plane; a
-service bus is an implementation of mediation, not the source of ownership.
+SOA publishes capabilities as governed service contracts and routes consumers through a
+mediation layer. The bus is one implementation of that mediation, not the source of
+ownership: the
+[OASIS SOA Reference Model v1.0](https://docs.oasis-open.org/soa-rm/v1.0/soa-rm.html)
+calls SOA "a paradigm for organizing and utilizing distributed capabilities that may be
+under the control of different ownership domains" (§2.1) and states that "a service
+contract is a measurable assertion that governs the requirements and expectations of two or
+more parties" (§3.3.2.2). The reference model is technology-neutral; it does not prescribe
+an interface language, a registry protocol, a bus topology or a service size.
 
-A service contract must declare its capability, message semantics, version and consumer obligations.
-Mediation can translate, route and meter, but it must not become a hidden domain authority.
-Governance needs a contract owner, a deprecation window and an observability path for mediated
-calls; a centralized bus is a shared bottleneck and single point that must be sized and failed over.
+**Contract invariant.** A service contract must declare its capability, message semantics,
+version and consumer obligations. OASIS lists what a consumer needs from the description:
+"That the service performs a certain function or set of functions", the applicable policies
+and constraints, and "the format and content of information exchanged between the service
+and the consumer and the sequences of information exchange that may be expected" (§3.3.1).
+Microsoft's [service-oriented architectural
+style](https://learn.microsoft.com/en-us/previous-versions/msp-n-p/ee658117(v=pandp.10))
+adds that "Each service is maintained, developed, deployed, and versioned independently"
+and that "Services share contracts and schemas when they communicate, not internal
+classes." Fowler and Lewis tie independence to "cohesive service boundaries and evolution
+mechanisms in the service contracts", and describe consumer-driven contracts that "aid
+service contracts in evolving independently." Treating capability, message semantics,
+version and consumer obligations as mandatory contract metadata, with a maintained
+consumer inventory, is Tycho synthesis; the sources describe the content and the
+independence aim, not a contract schema.
 
-Microservices may be preferable when capabilities map to independent product teams; a
-modular monolith when one ownership boundary suffices. SOA is a fit when many
-independent owners must integrate through stable contracts and mediation is a real,
-owned capability.
+**Failure and recovery.** Microsoft's .NET architecture guidance lists "large central
+brokers, central orchestrators at the organization level, and the Enterprise Service Bus
+(ESB)" among typical SOA features, and reports that "in most cases, these are anti-patterns
+in the microservice community." Fowler and Lewis observe that ESB products "often include
+sophisticated facilities for message routing, choreography, transformation, and applying
+business rules." Tycho synthesis: a centralized bus is a shared bottleneck and single point
+that must be sized and failed over; keep an observed fallback path that does not depend on
+it. These sources do not state a timeout, a recovery-time bound or a failover procedure.
+
+**Alternative.** Microservices may be preferable when capabilities map to independent product
+teams; a modular monolith when one ownership boundary suffices. SOA is a fit when many
+independent owners must integrate through stable contracts and mediation is a real, owned
+capability.
 
 ## Integrated decision and reading route
 
