@@ -1,0 +1,566 @@
+{
+  "task_id": "Q279",
+  "answer": "# Q279 — One shared word is not one shared model\n\n## Layers this question needs\n\n- **book** — owns the argument: domain semantics and authority, context maps,\n  semantic adapters and service boundaries. Every mechanism claim below is grounded\n  in a book section read through the CLI.\n- **atlas** — required to test the decision conditions and contraindications of the\n  two patterns at stake (Bounded Context, Anti-Corruption Layer) instead of citing\n  prose alone. Atlas cards are draft decision guidance, not manuscripts and not\n  independent review; each is cited only where it states a condition.\n- **modeling-and-simulation** — not used. The question asks for a design argument,\n  not a model, scenario, run or decision record, and no claim here depends on\n  modeled or synthetic run evidence. Nothing below asserts a measured outcome.\n\n## Facet matrix (as executed)\n\n| Facet | Query formulations | Evidence |\n| --- | --- | --- |\n| F1 one word, many rules | bounded context; ubiquitous language; same word means different things; atlas: bounded context | domain-authority s1; c02 purpose; BC card |\n| F2 what a model contains | polysemy same word; canonical model single schema; merge models | domain-authority s1-s2 |\n| F3 preconditions before a boundary | service boundary; context map relationship; customer record | domain-authority s2; ownership-isolation s6-s7; atlas conditions |\n| F4 canonical schema, shared vocabulary, one service | canonical data model; shared schema; canonical schema; shared service; translation | service-independence s1; semantic-translation s1; ACL purpose |\n| F5 context map versus service graph | context map; knowledge graph context map; service graph; atlas: anti-corruption layer | domain-authority s3; BC card notes |\n| F6 failure modes and reversal | merge models; consolidate services; boundary | architecture-styles s1/s4/s5/s6; c02 walkthrough; ACL card |\n\nSearch mechanics: a CLI query returns at most two sections inside the 6000-character\nresponse budget. For every facet the closing queries returned section keys already in\nthis ledger; that repetition is where the facet was stopped. Atlas searches were run\nas their own layer, not only as book results.\n\n## Short answer\n\nBilling, support and marketing may all say \"customer\" without sharing a model.\nA word names a role in a language; a model is the invariants, allowed state\ntransitions, authority and validation rules that the word participates in. The\nplatform proposal argues from a coincidence of labels to a merger of rule sets, and\nthat inference is exactly the one the evidence rejects. A canonical schema, a shared\nvocabulary list and one service are three different mergers, and each asserts\nsomething stronger than the word: that the rules coincide, that one owner can\narbitrate meaning for all three, and that one authority can decide all three sets of\nstate. What must be established before a boundary is drawn is therefore not a\nglossary but a rule set: behaviors and invariants, exactly one authority per\ninvariant, the state-authority contract, an enforcement mechanism in code, data or\nteam ownership, a named vocabulary arbiter, and an owner for each translation.\nAnd a context map is not a service graph because it maps meanings and ownership,\nnot processes and calls: its nodes are internally consistent models that need not\ncoincide with deployables, and its edges are translations with a direction and a\nmaintainer, not remote invocations.\n\n## 1. Why one shared word is not one shared model\n\nThe page's governing question is not whether a word is shared but when shared names\nconceal different invariants and owners [C32].\n\n**The word is the thinnest possible agreement.** The book's own analogue is a\nmakerspace where \"item\" means a catalogue specification, an allocatable physical\nunit, a device under maintenance or a notification target, depending on the\ncapability. The page is explicit that a shared word \"item\" should not force a\ndatabase schema shared by all four contexts [C1]. Failure comes when we assume the\nsame word implies the same invariant, owner or state transition everywhere [C1].\n\n**Different valid meanings are normal.** Related concepts can legitimately mean\ndifferent things in different contexts [C2], and distinct contexts may model the\nsame real-world notion differently [C2]. Polysemy is not a defect to be normalised\naway by a central dictionary; it is the reason a context has a boundary at all.\n\n**A language change is a model change.** The atlas card states that a shared term\nthat changes meaning is a model change, citing Evans: \"Recognize that a change in\nthe language is a change to the model.\" [C3] So agreement on the word is not\nagreement on the model, and the moment one consumer redefines the word, all three\nconsumers of a single model are forced into a coordinated change.\n\n**A model is not a schema plus a name.** A schema declares formats; it does not by\nitself specify domain semantics [C23]. Two teams can use the same entity name and\nstill disagree about its legal transitions, and schema agreement alone does not\nresolve ownership [C23]. That is why an interface document, a JSON Schema or a\nshared glossary can be syntactically satisfied while the business meaning diverges.\n\n**The operative test is whether the rules can be stated separately.** A boundary\nis weak if none of its business rules can be stated separately, and overextended if\nunrelated decisions must share transactions just because they sit together [C4].\nA merger justified only by a shared noun fails that test: the merged model cannot\nstate the billing rule, the support rule and the marketing rule separately, so no\none can say which rule wins when they conflict.\n\n## 2. What must be established before a boundary is drawn\n\nThe book orders this work as a sequence, not a checklist of boxes to tick after the\ndiagram exists.\n\n1. **Behaviors and invariants.** Model what each capability must be true of before\n   drawing ownership boxes, then assign each invariant and authoritative state\n   transition to an owner before dividing storage or deployment [C5]. For a\n   customer record that means naming the invariant each consumer actually enforces\n   and which transition may violate it.\n2. **An authority contract, not a table.** The page lists the elements a state\n   authority contract must record [C6]: logical identity and aliasing; exactly\n   which operation may create, mutate, cancel or delete authoritative state; where\n   consistency and preconditions are checked atomically; the concurrency mechanism;\n   who may publish read models and with what staleness; how retries identify the\n   same logical operation and how a lost acknowledgment is resolved; and how new\n   fields and retired contracts coexist.\n3. **One writer per invariant, whatever the storage.** A single physical database\n   can house several contexts, but it must still define which module owns writes to\n   each logical aggregate or table [C7]. Equal storage does not create equal\n   authority, and separate databases do not prove exclusive authority.\n4. **Enforceability.** A boundary that cannot be enforced in code, data or team\n   ownership is rejected as a fit [C8], because a diagram label is an assertion\n   [C8]. Module dependency checks, single-writer rules and named owners are what\n   turn the line into a constraint.\n5. **Vocabulary ownership and arbitration.** One accountable model owner holds one\n   accepted vocabulary [C9], and a named domain expert co-owns it and arbitrates\n   disputed meanings [C9]. The model owner may reject a term carrying a conflicting\n   invariant even when another team introduced it [C10]. This is precisely the\n   authority a \"shared vocabulary\" programme quietly removes.\n6. **Translation ownership and cost.** Translation must be ownable for separation\n   to be legitimate [C11], and each mapping needs an owner and a review path [C11].\n7. **Authorization agreement.** The domain owner decides the business effect but\n   must validate the caller's authorized relationship to it, enforced server-side at\n   the resource authority rather than only at a gateway [C12].\n8. **Acceptance evidence.** The pass condition is the expected logical outcome, not\n   the presence of API calls: concurrent attempts on the same unit, a simultaneous\n   restriction, a lost reply, an old-client replay [C13].\n9. **The axis being drawn.** Domain, module, runtime/deployment and data-ownership\n   boundaries are distinct [C14]. Every database table or REST endpoint is not a\n   bounded context [C14]; drawing the wrong axis is how a service diagram gets\n   mistaken for a model map.\n\nTwo negative results belong here too. If these items cannot be established, the\nhonest output is to keep measuring rather than to draw a boundary; unstable domain\nboundaries count as evidence against immediate distribution [C29]. And if the\nboundary is later dissolved, an invariant that lost its owner must be re-specified\nwith an enforceable owner and recovery path, because a gateway and retries cannot\nrestore it [C30].\n\n## 3. Why a context map is not a service graph\n\nThree differences, and each one is load-bearing.\n\n**Subject matter.** A context map tells readers whose meaning is authoritative and\nhow mappings are enforced [C17]. Two contexts may cooperate through a published\nlanguage, a translation layer or agreed upstream/downstream conventions [C17]; the\nmap records that relationship, the translation direction and the mapping maintainer\n[C18]. A service graph records who invokes whom, with what protocol and failure\nmode. Those are different assertions about the system.\n\n**Cardinality.** A bounded context is not a service: one deployable can host\nseveral contexts and one context can span services [C15], and reading a bounded\ncontext as a synonym for a microservice is a misreading [C15]. A service may own\nseveral processes and a process may contain several modules, so no one-to-one\nmapping may be inferred without evidence [C16]. A graph that forces one node per\nservice therefore encodes a claim the architecture does not make.\n\n**Purpose and update rule.** The map is an ownership artifact that changes with the\nmodel; it is not a diagram produced once for review [C18]. It explains language and\nownership and is explicitly not an infrastructure knowledge graph or proof of\nsource-version compatibility [C20], and it does not imply building a curated\nknowledge graph as product infrastructure [C19].\n\nThat is why \"a mandatory graph of services\" is a failure mode rather than a\nstrengthening: the card names turning a context map into a mandatory graph as a\ncommon failure [C19]. The move also corrupts the map's content. Mappings are often\none-to-many, time-scoped and incomplete [C21], so a map has to be able to say\n\"cannot translate\" and mean it; a mandatory edge has no way to express refusal,\nand unknown is not success [C21].\n\nA note on diagrams generally: a dependency arrow must name its kind — interface,\nnetwork connection, transaction, event or runtime deployment relationship — because\nruntime identity such as a process or container is not interchangeable with a\nbusiness capability [C31]. A graph whose edges are unlabelled arrows is ambiguous\nbetween exactly the axes the book keeps apart.\n\n## 4. Why the platform proposal fails as stated\n\nEach of its three artefacts asserts more than it can support.\n\n**One canonical customer schema.** A single global canonical model may hide\ncontextual differences [C22]. The schema can be valid while the semantics differ\nacross consumers [C23], and an endpoint does not establish ownership [C33]. In\npractice the canonical record forces a union of optional fields, and the conflict\nbetween the three rule sets is then resolved by convention, by documentation, or by\nwhichever consumer writes last — none of which is an authority contract.\n\n**One shared vocabulary.** A vocabulary is owned, not just agreed: one accepted\nvocabulary per accountable owner and a named expert who arbitrates disputes [C9],\nwith the right to reject a term carrying a conflicting invariant [C10]. A shared\nglossary replaces arbitration with consensus, and consensus is not an authority.\n\n**One service to remove translation.** An anti-corruption layer is a translation\nboundary, not by definition a standalone service, a universal façade or a message\nqueue [C25]. The need for translation arises even with the same protocol and\ndatabase engine, and it does not require a microservice [C24]. Removing the adapter\ndoes not remove the semantic difference; the coupling moves rather than disappears,\nand extraction adds a network contract with changed latency and error semantics\n[C24]. Built as one service, the merger also concentrates change: one schema, one\nrelease cadence and one failure domain for three different rule sets. That is the\ndistributed-monolith failure in its monolith form.\n\nThe danger is not decorative. Translating the word without translating its meaning\nis dangerous [C26], and a weak adapter copies strings between differently named\nfields and silently accepts unrepresentable business states [C26]. A single merged\nmodel does the same thing without an adapter to point at.\n\n## 5. When the merger would be honest\n\nThe book does not forbid sharing; it makes sharing conditional. Merging is honest\nwhen the vocabularies truly coincide and when translation cost exceeds the value of\nkeeping separate meanings, and the rationale must be recorded so a later team can\ntell a deliberate merger from an accidental one [C27]. Symmetrically, an\nanti-corruption layer should not be built where models already align [C25].\n\nSo the platform team's proposal becomes defensible only if it demonstrates that the\nthree rule sets are the same: same invariants, same legal transitions, same single\nauthority, same audit and consent obligations, and one owner able to govern the\nresult. That is an empirical claim about the domain, not a vocabulary observation.\n\nBoundaries are also reversible. Reopen one when a shared term changes meaning, a\ntranslation gains a second owner, or releases become unavoidably coupled [C28].\nA mandatory graph is hostile to exactly this revision.\n\n## 6. Limits, contradictions and unknowns\n\n- The book's worked examples are fictional (makerspace catalogue, reservation,\n  maintenance, notification; equipment migration). No section models a\n  billing/support/marketing customer record, so applying the mechanism to that\n  split is my inference from the question's premise, not a source claim.\n- No page measures translation cost or names the crossover point at which merging\n  becomes cheaper; the decision is left to named owners with a recorded rationale\n  [C27]. I found no quantified threshold and do not invent one.\n- The sequenced expert review before a boundary move is Tycho operational\n  guidance, not a quoted Evans or Microsoft rule; the pages say so explicitly.\n- \"Mandatory graph\" is characterised as a failure mode without an incident report\n  or measurement behind it; treat it as a design caution, not observed frequency.\n- Atlas cards are draft decision guidance and their coverage is not independent\n  review; owner citations are heading anchors, not section keys.\n- I did not search the modeling-and-simulation layer. Absence of run or decision\n  evidence there is not evidence of absence, and I claim nothing from it.\n- No source inspected specifies a context-map notation, so I do not claim a\n  required diagram syntax; the claims are about what the map must record.\n\n## Evidence map\n\nClaim ids group by the section that carries them:\n\n- tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary -> C8, C31\n- tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission -> C2, C25, C26\n- tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree -> C12\n- tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work -> C13\n- tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition -> C20\n- tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route -> C5, C23\n- tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission -> C1, C14\n- tycho.page.4e0e4db7547b45469f36915886473750#1-separate-concept-deployment-and-ownership -> C22, C33\n- tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes -> C1, C4, C5\n- tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns -> C6, C7\n- tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs -> C17, C19, C21\n- tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes -> C9, C10, C11, C15, C18, C27, C28\n- tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#overview -> C32\n- tycho.page.849bdcae7fb65f6daa4d9db920961789#overview -> C25\n- tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields -> C24, C26\n- tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes -> C2, C14, C16\n- tycho.page.c226850223614886b61b7cb36c7d5032#4-service-orientation-versus-microservice-packaging -> C24\n- tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot -> C29\n- tycho.page.c226850223614886b61b7cb36c7d5032#6-failure-and-recovery-synthetic-counterexample -> C30\n- tycho.page.cdb86c0b91a6489f979689ab08efad35#5-service-descriptions-are-more-than-interface-schemas -> C23\n- tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview -> C3, C8, C11, C19\n- tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping -> C21\n\nAll evidence statuses are observed (a verbatim fragment read from the cited\nsection). No inference-status evidence is used to carry a claim; inferences are\nconfined to this answer's framing, which is why the makerspace-to-customer\nmapping appears in the limits rather than in the ledger.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A shared noun is only a label; a model is the rule set the label stands for, so the same word can carry different invariants, owners and legal state transitions in different contexts.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+          "quote": "A shared word \"item\" should not force a database schema shared by all four contexts.",
+          "supports": "C1",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+          "quote": "Architecture fails when we assume that the same word implies the same invariant, owner or state transition everywhere.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "Different valid meanings for one real-world notion are normal, not an error to be normalised away by a single dictionary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission",
+          "quote": "explains why related concepts can have different valid meanings in different contexts",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+          "quote": "explains why distinct contexts may model the same real-world notion differently",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "Agreement on a word is not agreement on a model, because a change in the language counts as a change to the model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+          "quote": "A shared term that changes meaning is a model change",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+          "quote": "Recognize that a change in the language is a change to the model.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "A boundary is only meaningful when its business rules can be stated separately; if unrelated decisions must share transactions it is overextended.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+          "quote": "A boundary is weak if none of its business rules can be stated separately.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "Before a boundary is drawn, behaviors and invariants must be modeled and each invariant and authoritative state transition assigned to an owner.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+          "quote": "Assign each invariant and authoritative state transition to an owner before dividing storage or deployment.",
+          "supports": "C5",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+          "quote": "Model behaviors and invariants before drawing ownership boxes",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "The boundary decision needs an explicit state-authority contract covering identity, command ownership, validation, concurrency, read models, failure recovery and version retirement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "A state authority contract records:",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "exactly which operation may create, mutate, cancel or delete authoritative state",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "Authority is separate from storage: one physical database can house several contexts, but each logical aggregate or table still needs one declared writer.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+          "quote": "A single physical relational database can house several contexts; it must still define which module owns writes to each logical aggregate or table.",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "A proposed boundary that cannot be enforced in code, data or team ownership is a diagram label, not a boundary.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+          "quote": "or when the proposed boundary cannot be enforced in code, data or team ownership",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+          "quote": "A diagram label is an assertion.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "The vocabulary itself needs an owner: one accountable model owner, one accepted vocabulary, and a named domain expert who arbitrates disputed meanings.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "A bounded context has one accountable model owner and one accepted vocabulary.",
+          "supports": "C9",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "A named domain expert co-owns that vocabulary and arbitrates disputed meanings.",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A model owner may reject a term introduced elsewhere when that term carries a conflicting invariant, so a shared word does not by itself grant shared meaning.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "The model owner may reject a term carrying a conflicting invariant, even when another team introduced it.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "Separability also depends on translation being ownable: each mapping needs an owner and a review path, and translation between models must be owned.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+          "quote": "translation between models can be owned",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "Translation has a maintenance cost: each mapping needs an owner and a review path.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Domain ownership and authorization must agree: object-level authorization is enforced server-side at the resource authority, not only at a gateway.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+          "quote": "Object-level authorization needs server-side enforcement at the resource authority, not only at an API gateway.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A boundary is proved by acceptance tests of logical outcomes, not by the presence of API calls.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work",
+          "quote": "An acceptance suite would test two concurrent booking attempts for the same unit",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work",
+          "quote": "not merely the presence of API calls, is the pass condition",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Domain, module, runtime/deployment and data-ownership boundaries are distinct axes that must not be collapsed into one another.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+          "quote": "These distinctions are related but are not the same.",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+          "quote": "Which concepts, rules and invariants belong together, with one consistent language?",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "A bounded context is not a service: one deployable can host several contexts and one context can span services.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "Keep deployment choices separate from model boundaries: one deployable can host several contexts, and one context can span services.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "Do not read a bounded context as a synonym for a microservice",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "A service may own several processes and a process may contain several modules, so no one-to-one mapping may be inferred without evidence.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+          "quote": "A service may own multiple processes and a process may contain several modules.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+          "quote": "Do not infer a one-to-one mapping without evidence.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A context map is a semantic integration map: it states whose meaning is authoritative and how mappings are enforced, not which process calls which.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+          "quote": "tells readers whose meaning is authoritative and how mappings are enforced.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+          "quote": "Two contexts can cooperate through a published language, a translation layer, or agreed upstream/downstream conventions.",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The map records relationship, translation direction and mapping maintainer, and is an ownership artifact that changes with the model.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "The context map records each relationship, translation direction and mapping maintainer.",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Turning a context map into a mandatory graph is a documented failure mode, and the map does not imply a curated knowledge graph as product infrastructure.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+          "quote": "turning a context map into a mandatory graph",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+          "quote": "does not imply building a curated knowledge graph",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "A context map explains language and ownership; it is not an infrastructure knowledge graph and not proof of source-version compatibility.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition",
+          "quote": "A bounded-context map explains language/ownership; it is not an infrastructure knowledge graph or proof of source-version compatibility.",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "Mappings are often one-to-many, time-scoped and incomplete, so substitutability must be refused rather than assumed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+          "quote": "The mapping may be one-to-many, time-scoped and incomplete.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping",
+          "quote": "Unknown is not success.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "A single global canonical model is a design caution because it can hide contextual differences.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e0e4db7547b45469f36915886473750#1-separate-concept-deployment-and-ownership",
+          "quote": "One global canonical model may hide contextual differences",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C23",
+      "text": "A schema or interface description declares formats, not domain semantics; schema agreement alone does not resolve ownership when two teams mean different transitions.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.cdb86c0b91a6489f979689ab08efad35#5-service-descriptions-are-more-than-interface-schemas",
+          "quote": "does not by itself specify all domain semantics",
+          "supports": "C23",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+          "quote": "Two teams using the same entity name can disagree on its legal transitions; schema agreement alone does not resolve ownership.",
+          "supports": "C23",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C24",
+      "text": "Removing the adapter does not remove translation: the need arises even with a shared protocol and database engine, and the coupling moves into a network contract.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields",
+          "quote": "This need can arise even with the same protocol and database engine; it does not require a microservice.",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#4-service-orientation-versus-microservice-packaging",
+          "quote": "Coupling moves rather than disappears",
+          "supports": "C24",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#4-service-orientation-versus-microservice-packaging",
+          "quote": "extraction adds a network contract and changes latency/error semantics.",
+          "supports": "C24",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C25",
+      "text": "An anti-corruption layer is a translation boundary, not by definition a service, and it should not exist where models already align.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission",
+          "quote": "It is not by definition a standalone service, a universal façade, or a message queue.",
+          "supports": "C25",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.849bdcae7fb65f6daa4d9db920961789#overview",
+          "quote": "when the models already align; when the layer adds no semantic translation",
+          "supports": "C25",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C26",
+      "text": "Translating the word without translating its meaning is dangerous; a weak adapter silently accepts unrepresentable business states.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission",
+          "quote": "Translating the word without translating its meaning is dangerous.",
+          "supports": "C26",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields",
+          "quote": "A weak adapter copies strings between differently named fields and silently accepts unrepresentable business states.",
+          "supports": "C26",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C27",
+      "text": "Merging models is a conditional trade: merge when translation cost exceeds the value of separate meanings and the vocabularies truly coincide, and record why.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "Merge models when that cost exceeds the value of keeping separate meanings; merging is honest when the vocabularies truly coincide.",
+          "supports": "C27",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C28",
+      "text": "Boundaries are reversible: reopen one when a shared term changes meaning, a translation gains a second owner, or releases become unavoidably coupled.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+          "quote": "Reopen the boundary when a shared term changes meaning, a translation gains a second owner or releases become unavoidably coupled.",
+          "supports": "C28",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C29",
+      "text": "Distribution is justified by evidence such as a cohesive capability, an operating team, independent change pressure and measured benefit, while unstable boundaries count against it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot",
+          "quote": "includes a cohesive business capability with an externally clear contract, an established team able to operate it, materially independent release/change pressure",
+          "supports": "C29",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot",
+          "quote": "unstable domain boundaries, substantial synchronous chatty calls",
+          "supports": "C29",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C30",
+      "text": "After extraction an invariant that lost its owner must be re-specified with an enforceable owner and recovery path; a gateway and retries cannot restore it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#6-failure-and-recovery-synthetic-counterexample",
+          "quote": "The correct answer cannot be",
+          "supports": "C30",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.c226850223614886b61b7cb36c7d5032#6-failure-and-recovery-synthetic-counterexample",
+          "quote": "the seat-allocation invariant must be re-specified with an enforceable owner and recovery path",
+          "supports": "C30",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C31",
+      "text": "A diagram dependency must name its kind, because runtime identity such as a process or container is not interchangeable with a business capability.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+          "quote": "process, executor, container or deployed artifact; not interchangeable with a business capability",
+          "supports": "C31",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+          "quote": "an interface, network connection, transaction, event or runtime deployment relationship with a named meaning",
+          "supports": "C31",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C32",
+      "text": "The governing question for a context boundary is not whether a name is shared but when shared names conceal different invariants and owners.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#overview",
+          "quote": "When do shared names conceal different invariants and owners?",
+          "supports": "C32",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C33",
+      "text": "An API endpoint exposes a capability but does not by itself establish ownership of the state behind it.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.4e0e4db7547b45469f36915886473750#1-separate-concept-deployment-and-ownership",
+          "quote": "An endpoint does not establish ownership",
+          "supports": "C33",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.13760750168f4e339d5d014e189828af#1-start-with-concerns-and-a-coherent-vocabulary",
+    "tycho.page.31c8e450f78c451d90cb6090df330c5a#purpose-and-mission",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#6-domain-ownership-and-authorization-must-agree",
+    "tycho.page.461b24a5b47b4b8e82d37125cac20c8d#7-selecting-boundaries-and-proving-they-work",
+    "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#engineering-walkthrough-two-teams-change-the-same-concept-during-a-schema-transition",
+    "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#integrated-decision-and-reading-route",
+    "tycho.page.4681b3ba9e234c46bdb4b5993634b0e3#purpose-and-mission",
+    "tycho.page.4e0e4db7547b45469f36915886473750#1-separate-concept-deployment-and-ownership",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#1-model-behaviors-and-invariants-before-drawing-ownership-boxes",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#2-authority-and-storage-are-separate-concerns",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#3-context-maps-are-semantic-integration-maps-not-mandatory-graphs",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#bounded-pattern-ownership-notes",
+    "tycho.page.55c22c6b24ff456a95dd9cc3d71ca238#overview",
+    "tycho.page.849bdcae7fb65f6daa4d9db920961789#overview",
+    "tycho.page.91c10dd544b441ddb940aaee24825638#4-anti-corruption-adapters-protect-meaning-not-just-json-fields",
+    "tycho.page.c226850223614886b61b7cb36c7d5032#1-separate-four-different-architectural-axes",
+    "tycho.page.c226850223614886b61b7cb36c7d5032#4-service-orientation-versus-microservice-packaging",
+    "tycho.page.c226850223614886b61b7cb36c7d5032#5-what-could-justify-distribution-and-what-cannot",
+    "tycho.page.c226850223614886b61b7cb36c7d5032#6-failure-and-recovery-synthetic-counterexample",
+    "tycho.page.cdb86c0b91a6489f979689ab08efad35#5-service-descriptions-are-more-than-interface-schemas",
+    "tycho.page.df51f8d69e7e4fa6beb678a5256a4f61#overview",
+    "tycho.page.e5195a1aafa640359f05aebc08744584#1-an-adapter-has-a-semantic-contract-not-just-a-schema-mapping"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
