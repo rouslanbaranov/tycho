@@ -251,20 +251,13 @@ only as strong as versioned state persistence, activity semantics, timer reliabi
 configuration.
 
 Operational failure appears as a lost coordinator, a history that cannot advance, or an activity
-applied twice. Temporal's guidance names the partial-effect case: "A credit card may be charged
-but the Activity fails before returning success." It requires that "Compensations must be
-idempotent and tolerate a forward Activity that never executed." Replay durable history, keep
-activities idempotent and park an uncertain external effect for repair. Central compensation
-ordering improves visibility but adds a bottleneck and a single point of failure; choreography
-wins when participant autonomy dominates. The coordinator itself needs an owner, backup,
-upgrade path and drills.
+applied twice. Replay durable history, keep activities idempotent and park an uncertain external
+effect for repair. Central compensation ordering improves visibility but adds a bottleneck and a
+single point of failure; choreography wins when participant autonomy dominates. The coordinator
+itself needs an owner, backup, upgrade path and drills.
 
-Microservices.io states that "There are two ways of coordination sagas": choreography publishes
-domain events that trigger other services, while orchestration uses an orchestrator that tells
-participants what to execute. Temporal's comparison rates choreography as "Very loose" coupling
-with "Event-driven compensations". Tycho guidance: prefer one transaction when every effect
-shares an owner and a database. Orchestration earns its cost only when the operation spans
-independently owned effects whose failures and repairs differ.
+Prefer one transaction when every effect shares an owner and a database. Orchestration earns its
+cost only when the operation spans independently owned effects whose failures and repairs differ.
 
 ### Compensating Transaction
 
