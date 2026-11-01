@@ -24,7 +24,7 @@ route_hints:
   related_ids:
     - "tycho.chapter.e996607f707421ca388796732547cafd"
   excludes:
-    - "No sufficient coverage, promotion or owner acceptance is claimed for this moved page."
+    - "No owner acceptance is claimed for this card."
   keywords:
     - "pattern atlas"
     - "clean architecture"
@@ -38,14 +38,14 @@ evidence_scope:
   status: "source-linked"
   notes: "Moved card page; alternative binding remains in the owner unit."
 content_review:
-  status: "self-checked"
-  reviewed_at: "2026-10-30"
-  reviewer: "Automated authoring agent"
-  proof_uri: null
+  status: "independent-reviewed"
+  reviewed_at: "2026-11-01"
+  reviewer: "DeepSeek Reviewer"
+  proof_uri: "https://github.com/rouslanbaranov/tycho/blob/466d9044/authoring/ai-reviews/2026-11-01-hexagonal-deepseek.md"
 authored_at: "2026-10-30"
-updated_at: "2026-10-30"
+updated_at: "2026-11-01"
 source_inspection_date: "2026-10-30"
-content_verified_at: null
+content_verified_at: "2026-11-01"
 ---
 
 # Clean / Onion Architecture

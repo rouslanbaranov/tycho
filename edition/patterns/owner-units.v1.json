@@ -526,7 +526,7 @@
         "mechanism": {
           "state": "supported",
           "quote": "A port names the capability the application needs; an adapter maps a technology to it.",
-          "reason": "Shows the port contract with two interchangeable adapters.",
+          "reason": "AWS describes ports as interfaces and adapters as technology translators; the two-adapter example is Tycho design guidance.",
           "binding": {
             "source_id": "src.aws-hexagonal",
             "ledger_record": "read.aws-hexagonal.2026-10-21",
@@ -548,9 +548,16 @@
           }
         },
         "failure_recovery": {
-          "state": "partial",
-          "quote": "Mapping layers can hide latency and translate adapter errors inconsistently; contract tests and explicit error translation keep the boundary honest.",
-          "reason": "Source names added-layer latency but not adapter-error translation or contract-test recovery."
+          "state": "supported",
+          "quote": "Mapping layers add latency overhead and can translate adapter errors inconsistently",
+          "reason": "AWS binds adapter maintenance and latency overhead; error translation and contract-test recovery are Tycho guidance.",
+          "binding": {
+            "source_id": "src.aws-hexagonal",
+            "ledger_record": "read.aws-hexagonal.2026-10-21",
+            "section": "Issues and considerations",
+            "quote": "Ports and adapters isolate domain logic from infrastructure, support multiple input/output adapters and independent testing, and add adapter maintenance and latency overhead.",
+            "revision": "1f1251e05084ad30f148d8f9b5491a56a9d1261513d0f6c36fc50045d721b17b"
+          }
         },
         "alternative": {
           "state": "supported",
@@ -579,10 +586,10 @@
         "status": "read",
         "card_citation": true
       },
-      "review_state": "self-checked",
-      "technical_coverage": "partial-bounded",
-      "decision_coverage": "partial-bounded",
-      "notes": "Port/adapter mechanism is in the walkthrough; the shorter definition sits in Purpose and decision question."
+      "review_state": "independent-reviewed",
+      "technical_coverage": "sufficient",
+      "decision_coverage": "sufficient",
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. AWS binds adapter maintenance/latency; error translation and contract-test recovery are Tycho guidance."
     },
     {
       "pattern_id": "tycho.pattern.clean-onion-architecture",
@@ -674,10 +681,10 @@
           }
         ]
       },
-      "review_state": "self-checked",
+      "review_state": "independent-reviewed",
       "technical_coverage": "sufficient",
       "decision_coverage": "sufficient",
-      "notes": "Alternative binding extended 2026-10-30 with the Fowler mapper/Hexagonal sentence. Invariant and failure/recovery reasons state that the automated build check and the dependency-test/adapter remedy are Tycho guidance. Coverage remains partial-bounded; no promotion."
+      "notes": "Promoted and frozen: technical and decision coverage sufficient. Decision body unchanged; metadata/excludes updated; section-scoped page rebind."
     },
     {
       "pattern_id": "tycho.pattern.domain-driven-design-bounded-context",
@@ -18794,14 +18801,14 @@
     "invariant_supported": 100,
     "failure_recovery_supported": 98,
     "alternative_supported": 102,
-    "technical_partial_bounded": 6,
+    "technical_partial_bounded": 5,
     "technical_partial": 47,
     "technical_name_only": 0,
-    "technical_sufficient": 92,
-    "decision_partial_bounded": 53,
+    "technical_sufficient": 93,
+    "decision_partial_bounded": 52,
     "decision_partial": 0,
     "decision_name_only": 0,
-    "decision_sufficient": 92,
+    "decision_sufficient": 93,
     "partial_reviewed": 0,
     "independent_reviews": 0,
     "shared_page_decisions": {
