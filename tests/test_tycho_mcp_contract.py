@@ -38,6 +38,23 @@ class McpToolContractTests(unittest.TestCase):
             Draft202012Validator.check_schema(schema)
             self.assertEqual(schema["type"], "object")
 
+    def test_every_schema_is_external_and_loadable(self):
+        for name in mcp_server.TOOL_ORDER:
+            input_schema = mcp_contract.input_schema(name)
+            output_schema = mcp_contract.output_schema(name)
+            Draft202012Validator.check_schema(input_schema)
+            Draft202012Validator.check_schema(output_schema)
+            self.assertTrue(
+                (ROOT / "mcp/schemas/input" / (name + ".json")).is_file())
+            self.assertTrue(
+                (ROOT / "mcp/schemas/output" / (name + ".json")).is_file())
+
+    def test_instructions_are_loaded_from_markdown(self):
+        onboarding = (ROOT / "mcp/INSTRUCTIONS.md").read_text(encoding="utf-8")
+        self.assertIn("# Tycho MCP onboarding", onboarding)
+        self.assertEqual(mcp_contract.INSTRUCTIONS, onboarding.strip())
+        self.assertEqual(mcp_server.INSTRUCTIONS, onboarding.strip())
+
     def test_server_and_http_versions_agree(self):
         self.assertEqual(
             mcp_server.SERVER_VERSION, mcp_http_server.SERVICE_VERSION)

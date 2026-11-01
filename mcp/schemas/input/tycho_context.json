@@ -1,0 +1,55 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "evidence_status": {
+      "description": "Optional evidence-status filter.",
+      "type": "string"
+    },
+    "include_evidence": {
+      "default": false,
+      "description": "Include bounded registered evidence metadata for each section document.",
+      "type": "boolean"
+    },
+    "kind": {
+      "description": "Optional document-kind filter.",
+      "type": "string"
+    },
+    "limit": {
+      "default": 5,
+      "description": "Maximum sections in the bundle.",
+      "maximum": 8,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "max_chars": {
+      "default": 6000,
+      "description": "Hard UTF-8 response budget.",
+      "maximum": 20000,
+      "minimum": 2048,
+      "type": "integer"
+    },
+    "path_prefix": {
+      "description": "Optional relative book path prefix.",
+      "type": "string"
+    },
+    "question": {
+      "description": "Agent question or bounded task.",
+      "maxLength": 2000,
+      "minLength": 1,
+      "type": "string"
+    },
+    "snapshot_id": {
+      "description": "Optional snapshot pin for consistency.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "topic": {
+      "description": "Optional topic filter.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "question"
+  ],
+  "type": "object"
+}

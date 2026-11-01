@@ -1,0 +1,39 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "limit": {
+      "default": 3,
+      "description": "Maximum cited cells per option.",
+      "maximum": 5,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "max_chars": {
+      "default": 6000,
+      "description": "Hard UTF-8 response budget.",
+      "maximum": 12000,
+      "minimum": 2048,
+      "type": "integer"
+    },
+    "options": {
+      "description": "Two to five options, patterns or approaches.",
+      "items": {
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 5,
+      "minItems": 2,
+      "type": "array"
+    },
+    "snapshot_id": {
+      "description": "Optional snapshot pin for consistency.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "options"
+  ],
+  "type": "object"
+}

@@ -1,0 +1,38 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "budget_chars": {
+      "default": 2500,
+      "description": "Maximum codepoints to return.",
+      "maximum": 6000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "include_evidence": {
+      "default": false,
+      "description": "Attach registered document evidence.",
+      "type": "boolean"
+    },
+    "offset": {
+      "default": 0,
+      "description": "Codepoint offset inside the page body.",
+      "minimum": 0,
+      "type": "integer"
+    },
+    "path": {
+      "description": "Canonical book path, for example book/README.md.",
+      "maxLength": 500,
+      "minLength": 1,
+      "type": "string"
+    },
+    "snapshot_id": {
+      "description": "Optional snapshot pin for consistency.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "path"
+  ],
+  "type": "object"
+}

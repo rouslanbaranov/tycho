@@ -1,0 +1,43 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "description": "Optional document-kind filter; closed values match tycho_search.kind.",
+      "enum": [
+        "book",
+        "chapter",
+        "decision",
+        "landing",
+        "page",
+        "volume"
+      ],
+      "type": "string"
+    },
+    "limit": {
+      "default": 8,
+      "description": "Maximum outline entries.",
+      "maximum": 20,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "max_chars": {
+      "default": 6000,
+      "description": "Hard UTF-8 response budget.",
+      "maximum": 20000,
+      "minimum": 2048,
+      "type": "integer"
+    },
+    "path_prefix": {
+      "description": "Optional relative book path prefix.",
+      "maxLength": 500,
+      "type": "string"
+    },
+    "topic": {
+      "description": "Topic, chapter or pattern family to outline.",
+      "maxLength": 200,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "type": "object"
+}

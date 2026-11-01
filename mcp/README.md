@@ -3,9 +3,15 @@
 This directory owns the read-only Tycho MCP server, HTTP wrapper, shared
 tool contract, launchable client CLI and MCP-specific smokes/benchmarks.
 
-- `mcp_server.py` - stdio MCP adapter.
+- `mcp_server.py` - thin stdio protocol/composition facade.
+- `mcp_*_tools.py` - feature mixins for search, reads, context, patterns and
+  describe.
+- `mcp_protocol.py` - JSON-RPC errors, argument validation and stdio loop.
+- `mcp_shared.py` - shared evidence and frontmatter helpers.
+- `mcp_contract.py` - constants, enums, tool metadata and schema loaders.
+- `schemas/input/*.json`, `schemas/output/*.json` - one schema per tool.
+- `INSTRUCTIONS.md` - detailed external-client onboarding, loaded by discover.
 - `mcp_http_server.py` - authenticated HTTP MCP and book/search wrapper.
-- `mcp_contract.py` - input/output schema and tool catalog metadata.
 - `agent_session_cli.py` - small read-only CLI drill-down entry point.
 - `*_smoke.py` - stdlib and optional official-SDK transport smokes.
 - `mcp_multi_process_benchmark.py` - MCP process benchmark.

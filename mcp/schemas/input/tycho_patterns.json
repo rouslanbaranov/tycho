@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "family": {
+      "description": "Optional exact family ID.",
+      "maxLength": 200,
+      "type": "string"
+    },
+    "limit": {
+      "default": 20,
+      "description": "Maximum pattern summaries to return.",
+      "maximum": 50,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "offset": {
+      "default": 0,
+      "description": "Zero-based result offset.",
+      "maximum": 10000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "query": {
+      "description": "Optional case-insensitive text filter.",
+      "maxLength": 500,
+      "type": "string"
+    },
+    "registry_snapshot_id": {
+      "description": "Optional pattern-registry snapshot pin.",
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "type": "object"
+}
