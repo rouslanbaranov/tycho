@@ -1,0 +1,469 @@
+{
+  "task_id": "Q305",
+  "answer": "# Q305 — The last few percent are the migration: average coverage, ownership and evidence\n\n## Scope, layers and retrieval note\n\n**Layers needed: book.** The question is about the meaning of a completion claim, the organizational mechanics that survive the last few percent, and the evidential status of reported figures. All three are argued in canonical book prose and case pages.\n\n**Atlas checked, not used as evidence.** One atlas query (\"migration long tail adoption\") returned no relevant card. The atlas layer is explicitly a discovery layer: the registry is draft, cards are navigation, owner citations are heading anchors, and coverage is not independent review. No atlas card changes the answer.\n\n**Modeling-and-simulation not needed.** There is no model, run, scenario or decision artifact for a 96% adoption claim, and a modeled result would not be an audited production outcome anyway. This is a book-evidence question.\n\n**Retrieval limitation.** The snapshot was `3db217e9075d8572f71b62778b4ab91f1460bb9421174ede7e891136aa26101a`. The `outline` tool returned `status: snapshot-mismatch` (\"Route metadata and index differ\"), so navigation used `search`, `page` and `read` only. Search responses were frequently budget-truncated to one result, so each facet was probed with two or three formulations and every cited section was then read in full. No snippet is cited as a section.\n\n**Premise check that changes the answer.** No retrieved section reports a 96% adoption figure for the Spotify migration case. The case page says, in its outcomes section, that \"adoption percentages are not supplied in this article.\" I therefore treat 96% as the platform group's own published figure, not as a book-verified fact, and I audit what such a figure can and cannot establish. Its denominator (services, repositories, deployables, traffic), weighting and snapshot date are unknown.\n\n## Facet matrix\n\n| Facet | Query formulations used | Evidence (section keys) |\n|---|---|---|\n| F1. Why an average is not completion | \"migration completion average adoption long tail\"; \"average coverage stragglers upgrade burden\"; \"last mile migration holdouts\" | b9bdcfd7...#the-explicit-incompleteness-trap-the-last-few-percent; #outcomes-and-negative-lessons |\n| F2. Ownership through the tail | \"migration team disbanded ownership handover\"; \"internal migration product manager accountable exceptional consumers\"; \"service ownership accountable team catalog\" | b9bdcfd7...#treat-internal-migrations-as-products-with-accountable-owners; ea1c3ca3...#7-go-no-go-and-the-no-return-contract |\n| F3. Product mechanics | \"platform as a product internal product owner\"; \"migration program wind down who owns the remainder\"; \"exception register owner reduction target\" | b9bdcfd7...#migration-mechanics-and-reliability; #synthetic-adoption-process-for-an-independent-fleet; 09cb3135...#migration-and-validation |\n| F4. Generated-PR and dashboard evidence | \"generated pull request completion evidence\"; \"generated pull request merged deployed verified separately\"; \"version metadata does not prove deployed binary\"; \"fleet inventory runtime version observability\" | acfab58b...#quantitative-claims-and-why-they-cannot-be-mixed; #controlling-progress-and-measuring-failure-honestly; #a-versioned-transformation-contract-for-each-consumer-cohort |\n| F5. Aspiration versus audited outcome | \"96% adoption migration completion\"; \"aspiration versus audited outcome self-reported figure\"; \"first-party report not independently reproduced\"; \"future goal presented as completed result\" | b9bdcfd7...#the-explicit-incompleteness-trap-the-last-few-percent; #outcomes-and-negative-lessons; acfab58b...#quantitative-claims-and-why-they-cannot-be-mixed |\n| F6. Closure gates and handover | \"go no-go no-return contract decommissioning evidence old callers\"; \"transition state observed gate not calendar milestone\"; \"completion evidence declare success prematurely\" | ea1c3ca3...#7-go-no-go-and-the-no-return-contract; b9bdcfd7...#decision-alternatives-and-failure-gates |\n\n## 1. Why average coverage is not completion\n\n**Completion is a predicate over each consumer, not a property of a fleet mean.** A 96% average says that a large fraction of some population reached some state. It does not name the 4%, does not say what they are, and does not say whether they can move. The case is explicit that migration ownership should cover \"the remaining non-upgraded consumers, rather than celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden.\" The mean and the completion question are therefore different objects: one summarizes a population, the other asks whether every member is in an acceptable state.\n\n**The residual determines the platform's cost, not its percentage.** As long as any consumer is pinned to the old library, the platform must keep the old path buildable, patched, compatible and testable. That is a step function, not a linear function of the residual share: 4% of consumers can hold 100% of the dual-maintenance obligation. This is why \"total adoption may require expensive tail support\" is a statement about the shape of the remaining work, not a complaint about stragglers. Four services with unusual builds, missing tests or critical transaction semantics can consume more migration effort than four hundred routine ones.\n\n**The denominator and the snapshot are undefined.** \"96%\" could mean 96% of services, 96% of repositories, 96% of deployables, 96% of traffic, or 96% of catalog entries. Those populations are not interchangeable. A traffic-weighted 96% can coexist with most services still on the old binary; a service-count 96% can coexist with the highest-risk services in the residual. Nor does a snapshot say when each consumer moved, how long it has been there, whether it regressed, or whether the target is a direct dependency or a transitive one. The book's inventory step is precisely aimed at this: record \"true deployed versions\" and \"distinguish repository default branch from production artifact.\" A single percentage cannot carry that structure.\n\n**Exemptions and rounding can manufacture a high number.** The case says to refuse 100% completion when \"stale services are simply exempted without recorded policy\" and when exceptions are \"concealed in a rounded percentage.\" A 96% can be an arithmetic result, an exemption-adjusted result, or a denominator-shrunk result. Without the exception register and the population definition, the reader cannot tell which. The number is therefore not auditable from the number itself.\n\n**The last few percent are structurally different work.** The case's boundary rows are blunt: a single migration map \"does not resolve incompatible libraries or transactional changes\"; pilot cohorts \"may miss atypical legacy integrations\"; training \"is not deployment compatibility evidence\"; marketing a migration \"cannot override safety or unsupported platform constraints.\" The tail is where the deterministic automation stops: ambiguous semantics, nonstandard builds, missing test harnesses, critical consumers with no safe rollback. The Honk case makes this concrete: a framework too varied to automate was explicitly excluded, and repositories without build-time tests required owner-run manual verification. That is not a rounding error; it is a different kind of task.\n\n**Pinning is a signal, not a lag.** \"The remaining consumers keep pinning the old library\" should be read as evidence of an unresolved constraint: an API or behavior incompatibility, a build-tool limitation, a missing test oracle, or an ownership gap. The case warns that \"aggressive mandates can hide broken clients\" and that an internal PM or tracking model \"also consumes engineering effort.\" A mandate that converts a broken client into a silent pin has not migrated it; it has moved the failure out of the dashboard.\n\n**Adopting the target is not retiring the old path.** Completion has a second half: the old path must be decommissioned, or explicitly supported under a recorded policy with an owner and a cost. The no-return checklist requires \"decommissioning evidence for all old callers/subscriptions,\" and the synthetic process says not to remove old support until \"the allowed exception register, recovery plan, and actual dependent production versions justify it.\" A 96% target-adoption figure says nothing about either half of that gate.\n\n**The source's own diagnosis is ownership, not technology.** The 2020 account traces the 2017 problem to around 300 globally distributed squads receiving independent deadlines and deprecations, sometimes without usable upgrade instructions. It calls this a \"work ownership and attention-budget failure,\" not evidence that any one runtime was technically inadequate. The response was a single company-wide migration map in which each candidate had an estimated engineering cost, affected consumers and a deadline, aligning the 45+ infrastructure product managers plus many engineers took significant negotiation; the new governance was not automatically free or universally welcomed. That is the mechanism a 96% average cannot replace: the ownership and attention budget are what move the tail, and they do not disappear when the campaign team does.\n\n**A compact way to see the category error:**\n\n| Aggregate claim | What it actually measures | Why it is not completion |\n|---|---|---|\n| 96% of services on the target version | Catalog or manifest state at a moment | Not runtime; not transitive; not per-consumer verification; not old-path retirement |\n| 96% of generated PRs merged | Source-control activity | Not build, deploy, runtime verification, or business result |\n| 96% of traffic on the target | Usage-weighted adoption | Critical low-traffic holdouts can remain; support burden persists |\n| 96% of exceptions closed | Register bookkeeping | The open 4% may be exactly the unsafe or unowned cases |\n\nThe first three rows are Tycho's analytic decomposition, not source claims; the underlying distinctions are source-grounded in the sections cited above.\n\n## 2. Ownership mechanics that must continue through the last few percent\n\n**A named migration owner must survive the average.** The case's product table gives the migration owner/PM one job that specifically does not end at mass adoption: \"Accountable for coordination and exceptional consumers through the long tail.\" The same row adds the constraint that makes the role real: \"Product accountability must connect to actual technical owner of each service.\" A central team that owns the campaign but not the exceptions can declare victory and leave; a central team that owns the exceptions cannot. The handover question is therefore not \"does the migration team still exist?\" but \"who is named for the residual consumers, the exception register, the sunset decision and the recovery plan?\"\n\n**The exception register is the ownership artifact.** Exceptions are legitimate — the case accepts \"targeted cohort exceptions ... with evidence\" — but they must be \"visible and managed rather than concealed in a rounded percentage.\" The Shopify boundary case supplies the operating pattern: grandfather known exceptions \"with explicit reduction targets,\" enable new-violation-only rejection while \"older exceptions have accountable owners and a scheduled review,\" and do not announce completion \"when a large exception set is still active.\" Applied to a library migration: every pinned consumer either has a verified migration or is an entry with an owner, a reason, an expiry/review date and a reduction plan. The register, not the average, is the thing that can be audited.\n\n**The owner map must include the awkward consumers.** The completion refusal explicitly includes the case where \"the owner map omits unsupported but critical consumers.\" An ownership model that covers the easy 96% is not an ownership model for the migration; it is a coverage report for the easy 96%. The tail is exactly where the map is most likely to be wrong, because those consumers are atypical, poorly documented or outside the platform's normal onboarding path.\n\n**Handover must be an observed exit gate, not a disbanding date.** The no-return section requires a \"named change owner and approved versions/assets\" and says a transition state \"should end with an observed gate, not a calendar milestone.\" Disbanding the migration team is a calendar event. If the residual has no named owner, no exception register, no enforcement mechanism and no sunset authority, the 4% becomes permanent by default. This is an inference from the ownership requirements, not a source claim about the scenario: the corpus does not describe this specific disbanding, so the correct statement is conditional — disband only after the residual ownership and enforcement are demonstrably transferred, or keep a smaller owner for the tail.\n\n**Enforcement must outlive the campaign.** New violations should be rejected while old ones burn down. If the ratchet is removed with the team, the old library re-enters through new consumers, and the migration becomes a recurring campaign rather than a completed transition. The book's \"owner → evidence → prioritization → verification\" method is explicitly not tied to a particular portal; the durable parts are the owner and the verification, not the dashboard product.\n\n## 3. Product mechanics that must continue through the last few percent\n\n**Treat the migration as an internal product.** The case describes the 2020 practice as \"treating migration as an internal product with training, quality and ownership.\" That means a roadmap, a prioritized queue with estimated cost and affected teams, published timelines, training for teams unfamiliar with the target, and quality criteria for the change — not a one-off announcement campaign. The product manager role is what converts \"please upgrade\" into a service with a queue, an owner and a support path.\n\n**Publish an upgrade path, not just a target version.** The synthetic process requires an \"accountable PM/technical pair per migration\" and a \"machine-readable upgrade recipe, compatibility exceptions, sample pull request and rollout/recovery criteria.\" The recipe is the product's interface: it tells a consumer owner what to change, what cannot change, how to test it and how to roll back. Without it, the residual consumers are asked to reverse-engineer a platform change, which is precisely how pins become permanent.\n\n**Run the tail as assisted migration, not self-service.** The source describes \"tracking, direct assistance and sometimes hands-on work with the last teams.\" The product mechanics therefore include capacity for the tail: office hours, pairing, exception triage, and sometimes the platform team doing the change in the consumer's repository. The case also notes that \"total adoption may require expensive tail support\" and that the tracking model itself \"consumes engineering effort.\" A program that budgets for the first 90% but not the last 10% will stop at the point where the work becomes bespoke.\n\n**Define the completion signal before retiring the library.** \"A new platform should also define incompatible consumer handling and a reliable completion signal before retiring a library.\" The signal should be a per-consumer state machine, not a fleet percentage: generated → reviewed → merged → built → deployed → verified, with an explicit rolled-back state, tracked \"by cohort and elapsed time,\" with \"special attention to long-tail critical consumers.\" The Honk case separately requires recording \"every generated, reviewed, merged, deployed or rolled-back PR as separate status\" and warns: \"Do not smooth away the long tail by reporting only automatic successes.\"\n\n**Keep the sunset decision with the product, not with the campaign.** The synthetic process says: \"Do not remove old platform support until the allowed exception register, recovery plan, and actual dependent production versions justify it.\" That is a product decision with a named owner and a cost, not an engineering afterthought. If the migration team disbands, that decision must move somewhere explicit — otherwise the old library is either removed while dependent deployables remain (an outage risk) or supported forever with no owner (a cost sink).\n\n**Automate only where the semantics are deterministic.** \"Generate PRs only where change semantics are deterministic and validators exist; do not label missing tests as passed. Surface unresolved meaning to original owners.\" This is both a product rule and an ownership rule: automation is appropriate for the repeatable middle, and the ambiguous tail must be routed to a human owner with authority to decide. The Honk case's Scio exclusion is the exemplar: a framework too varied to automate was stopped rather than forced.\n\n## 4. Three pieces of \"evidence\" that are not completion\n\n### 4.1 A generated pull request is a proposal\n\nThe product table lists automation/PRs as removing \"some repeatable work from service owners,\" with the boundary: \"PR generated is not PR merged, deployed, tested or monitored.\" The Honk contract section is even more precise: discovering affected repositories, generating patches, testing semantic correctness, and merging/rolling out \"are different acceptance states.\" A generated PR awaiting owner action must keep the status \"proposed, not 'migrated'.\"\n\nThe quantitative table shows how easily this is inflated: 240 \"automated migration PRs rolled out\" is a \"rollout metric; not proof of 240 merges or of 1,800 migrations complete.\" The 1,800 direct downstream pipelines are an impact estimate, and the page says that population \"must not be reported as the set successfully changed.\" Without semantic tests, a generated PR is not even a candidate for verification: \"A compile-success label and a visually plausible SQL diff are not correctness evidence.\" The correct evidence is merge state from a trusted workflow, build and deployment state, and an owner-verified behavioral check.\n\n### 4.2 Dashboard version metadata is declared status\n\nThe product table's Tech Insights row says the dashboard \"tracks visible migration status by team and segment,\" but \"version metadata does not prove the deployed binary or business result.\" The outcomes section adds: \"A migration dashboard is not proof that consumers can upgrade safely.\" And the decision section cautions that a Backstage-like portal is justified only when \"its metadata cost and freshness guarantees are justified.\"\n\nThe distinction is not pedantic. A catalog can show the version a team declared, the version in the default branch, or the version in a manifest, while the running artifact is built from a different branch, carries a transitive old dependency, or runs in an environment the catalog does not model. The inventory step therefore starts with \"true deployed versions\" and explicitly says to \"distinguish repository default branch from production artifact.\" A dashboard that cannot make that distinction is a claim about metadata, not about runtime.\n\n### 4.3 An average is a summary, not a state\n\nAn average can be mathematically correct and evidentially useless for completion. It hides which consumers remain, whether they are critical, whether their pins are safe, and whether the old path can be retired. The book's refusal rule is the operational form of this: refuse completion when exemptions are unrecorded, old binaries remain, generated PRs lack tests, or the owner map omits critical consumers. Each refusal is a per-consumer fact that no average can supply.\n\n## 5. Which reported figures are aspirations rather than audited outcomes\n\nThe corpus does not contain an independently audited cross-fleet outcome for this migration. The case explicitly says it does not publish \"one audited cross-fleet before/after adoption curve, total time saved, or defect escape rate,\" and the Honk case similarly reports no controlled escaped-defect rate. The figures that do appear have different statuses, and mixing them is the error the question is probing.\n\n| Figure | Where it appears | Status | What it cannot establish |\n|---|---|---|---|\n| **96% adoption** (the scenario's premise) | Not in the retrieved case text; the case says \"adoption percentages are not supplied in this article\" | Self-published platform figure with unknown denominator, weighting and snapshot; not an audited outcome | Per-consumer completion, runtime state, criticality of the residual, old-path retirement |\n| **99% hidden migrations** (2020) | Spotify long-tail case, incompleteness section | Explicit **future aspiration**, \"not a delivered product feature or outcome\" | That 99% of migrations were hidden, automated or completed in 2020 |\n| **240 automated migration PRs rolled out** | Honk case, quantitative table | **Rollout/activity metric** | 240 merges, 240 deployments, 1,800 migrated pipelines, or semantic correctness |\n| **~1,800 direct downstream pipelines** | Honk case, quantitative table | **Impact estimate** for two datasets | The set successfully changed |\n| **>1,500 AI-generated PRs merged** | Honk case, quantitative table | Earlier cross-fleet **self-report**, different population | The 240 targeted cohort, or completion of either migration |\n| **~10 engineering weeks** manual effort | Honk case, quantitative table | **Hypothetical estimate** | Measured savings, quality, or defect rate |\n| **60–90% estimated development time saving** | Honk case, quantitative table | **Self-reported estimate**; \"no claim of independently audited defect rate\" | Audited productivity or quality outcome |\n| **About one third adopting Packwerk restrictions** | Shopify Packwerk case, 2020 rollout table | First-party **partial adoption** | Universal enforcement or zero cross-component coupling |\n| **Total component acyclicity** | Shopify Packwerk case, 2020 rollout table | **Long-term goal**, \"not a published completed result\" | A cycle-free codebase, then or now |\n| **Dashboard version metadata** | Spotify long-tail case, product table | **Declared/visible status** | The deployed binary or the business result |\n\n**Aspirations:** the 99% hidden-migrations goal; any use of 96% as a closure claim; total acyclicity; the implicit hope that generated PRs will cover the fleet. These are legitimate as goals or directions, but not as evidence of delivered outcomes.\n\n**Estimates and hypotheses:** the 10-week manual effort and the 60–90% time saving. They may be useful for planning, but the Honk page says to treat estimated engineering-week savings as \"hypotheses, not verified effort saved.\"\n\n**Activity metrics:** 240 PRs rolled out, >1,500 PRs merged, 96% of some population touched. Activity is consistent with completion but does not demonstrate it.\n\n**Audited outcomes:** none in the corpus. The nearest thing to an auditable outcome would be a per-consumer, timestamped record of deployed and verified target versions, reconciled against the old path's decommissioning evidence and the exception register. The corpus does not publish that, and the case's own outcome section says so.\n\n## 6. What would justify closing the migration at 96%\n\nA defensible closure decision would need all of the following; each maps to a book section rather than to the average:\n\n1. **A defined population and snapshot.** Name the unit (service, deployable, pipeline), the target version, the date, and the weighting. Reconcile the number to the inventory of \"true deployed versions,\" not to catalog declarations.\n2. **A complete owner map.** Every residual consumer has a named service owner and a named migration owner/PM accountable for it; no critical consumer is missing from the map.\n3. **A visible exception register.** Each residual consumer is either verified-migrated or an exception with a recorded policy, owner, reason, review date and reduction/exit plan. The register, not the rounded percentage, is the audit artifact.\n4. **Separate state tracking.** Generated, reviewed, merged, built, deployed and verified are distinct states by cohort and elapsed time; rolled-back PRs are recorded, not smoothed away. Generated PRs without semantic tests are not counted as migrated.\n5. **Runtime evidence, not metadata.** The dashboard is reconciled to observed deployed versions; the repository default branch is not used as a proxy for the production artifact.\n6. **A sunset/decommissioning decision.** Either there is evidence that all old callers and subscriptions are gone, or there is an explicit, funded decision to support the old path for a defined period with an owner.\n7. **An observed exit gate.** The handover to the residual owner is demonstrated, not scheduled; the enforcement mechanism (new-violation rejection, exception review) remains active after the campaign team dissolves.\n\nIf items 1–3 and 5–7 are missing, \"96% complete\" is a statement about coverage or activity at a moment. It may be a useful progress metric; it is not a completion audit.\n\n## 7. Boundaries and counterarguments\n\n**Averages are not useless.** They are appropriate for trend, capacity planning and comparing cohorts. The argument is not that averages are always misleading; it is that an average cannot serve as the acceptance predicate for a migration whose residual is heterogeneous and whose support cost is step-shaped.\n\n**Not every exception is failure.** The case explicitly permits targeted cohort exceptions \"with evidence.\" A consumer that cannot migrate for a documented platform or safety reason can be a correct exception. The defect is an invisible or unowned exception, or a completion claim that counts it as migrated.\n\n**100% is not always the right target.** A platform may deliberately support an old path indefinitely for some consumers. But then the correct statement is \"the old path remains supported under policy X with owner Y and cost Z,\" not \"the migration is 96% complete.\" The book's refusal rule is about honesty of the claim, not about forcing every last consumer.\n\n**The case is specific and draft.** The Spotify long-tail page is an original case draft with independent review pending; its claims are attributed to a 2020 company report, and the page warns that a company report of successful alignment \"does not by itself prove a platform engineering program improved SLOs.\" The transfer to another fleet is analytic, not empirical.\n\n**The disbanding detail is outside the source.** The corpus does not describe this specific platform group disbanding its migration team. The handover requirement above is an inference from the ownership and observed-gate evidence, and should be read as a conditional: if the residual has no durable owner, the average cannot be converted into completion.\n\n## 8. Unknowns and contradictions\n\n- The provenance, denominator, weighting and snapshot date of the 96% figure are unknown; the cited case does not publish it.\n- It is unknown whether the pinned consumers are pinned because of API incompatibility, build constraints, missing tests, unowned services, or simple inattention. The answer treats the pin as a signal requiring diagnosis, not as a diagnosis.\n- It is unknown whether the generated PRs were merged, built, deployed or verified; the corpus's own numbers distinguish rolled-out PRs from merges and explicitly refuse to equate them.\n- It is unknown whether the dashboard's version metadata is derived from runtime observation or from repository/catalog declarations. The book's warning applies in the latter case; in the former, it still does not prove business correctness.\n- It is unknown whether the migration team was disbanded, and if so, who owns the residual, the exception register and the sunset decision.\n- The corpus contains no audited cross-fleet adoption curve, no measured total time saved, and no defect-escape rate. That absence is a result, not a gap to fill with inference.\n- Tension in the source itself: the 2020 report describes successful alignment and a long tail in the same program, and the book explicitly separates the 2020 aspiration from the later 2025–2026 Honk case. Combining them would be an unsupported claim of continuity.\n\n## Evidence map\n\n| Claim | Evidence sections |\n|---|---|\n| C1 average vs completion | b9bdcfd7...#the-explicit-incompleteness-trap-the-last-few-percent |\n| C2 residual burden | b9bdcfd7...#the-explicit-incompleteness-trap-the-last-few-percent; #outcomes-and-negative-lessons |\n| C3 no adoption percentage or audit | b9bdcfd7...#outcomes-and-negative-lessons; #the-explicit-incompleteness-trap-the-last-few-percent |\n| C4 99% aspiration | b9bdcfd7...#the-explicit-incompleteness-trap-the-last-few-percent; #outcomes-and-negative-lessons |\n| C5 refuse completion | b9bdcfd7...#decision-alternatives-and-failure-gates |\n| C6 exceptions visible | b9bdcfd7...#decision-alternatives-and-failure-gates; 09cb3135...#a-source-grounded-adoption-reversal-rubric-tycho-synthesis |\n| C7 migration owner/PM | b9bdcfd7...#treat-internal-migrations-as-products-with-accountable-owners |\n| C8 exception register ownership | 09cb3135...#testable-and-reversible-decision-transfer; #migration-and-validation; #a-source-grounded-adoption-reversal-rubric-tycho-synthesis |\n| C9 internal product | b9bdcfd7...#migration-mechanics-and-reliability |\n| C10 upgrade recipe | b9bdcfd7...#synthetic-adoption-process-for-an-independent-fleet |\n| C11 tail assistance | b9bdcfd7...#the-explicit-incompleteness-trap-the-last-few-percent; #outcomes-and-negative-lessons |\n| C12 sunset gate | b9bdcfd7...#synthetic-adoption-process-for-an-independent-fleet; #migration-mechanics-and-reliability |\n| C13 PR is a proposal | b9bdcfd7...#treat-internal-migrations-as-products-with-accountable-owners; acfab58b...#a-versioned-transformation-contract-for-each-consumer-cohort |\n| C14 rollout counts | acfab58b...#quantitative-claims-and-why-they-cannot-be-mixed; #a-versioned-transformation-contract-for-each-consumer-cohort |\n| C15 tests required | acfab58b...#controlling-progress-and-measuring-failure-honestly; b9bdcfd7...#synthetic-adoption-process-for-an-independent-fleet |\n| C16 metadata vs runtime | b9bdcfd7...#treat-internal-migrations-as-products-with-accountable-owners; #synthetic-adoption-process-for-an-independent-fleet; #outcomes-and-negative-lessons; #decision-alternatives-and-failure-gates |\n| C17 decommissioning/observed gate | ea1c3ca3...#7-go-no-go-and-the-no-return-contract |\n| C18 figures not audited | acfab58b...#quantitative-claims-and-why-they-cannot-be-mixed |\n| C19 handover inference | b9bdcfd7...#treat-internal-migrations-as-products-with-accountable-owners; ea1c3ca3...#7-go-no-go-and-the-no-return-contract; 09cb3135...#testable-and-reversible-decision-transfer |\n| C20 per-consumer tracking | b9bdcfd7...#synthetic-adoption-process-for-an-independent-fleet; acfab58b...#controlling-progress-and-measuring-failure-honestly; b9bdcfd7...#decision-alternatives-and-failure-gates |\n| C21 2017 governance diagnosis | b9bdcfd7...#the-actual-2017-to-2020-transition-in-migration-governance |\n| C22 Shopify partial adoption | 09cb3135...#the-2020-rollout-precisely-scoped |\n\n**Short answer.** 96% is an aggregate over a population; completion is a conjunction over consumers and the old path. The residual is where the platform's support cost, the unsafe clients and the unowned services live, so it must be carried by named owners, a visible exception register, an upgrade product with a recipe and assisted tail support, and a sunset decision backed by deployed-version and decommissioning evidence. A generated PR is a proposal until it is merged, built, deployed and verified; a dashboard of version metadata is declared status until it is reconciled to the running binary. The 99% hidden-migrations figure is explicitly a 2020 aspiration, the PR and effort figures are activity or estimates, and no figure in this corpus is an independently audited outcome.",
+  "claims": [
+    {
+      "claim_id": "C1",
+      "text": "A high fleet-average adoption percentage is compatible with remaining non-upgraded consumers, so the average alone cannot establish migration completion.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+          "quote": "The authors insist that migration ownership should cover the remaining non-upgraded consumers, rather than celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden.",
+          "supports": "C1",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C2",
+      "text": "The non-upgraded remainder determines the platform's continuing upgrade burden; that burden is not proportional to the residual percentage.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+          "quote": "The authors insist that migration ownership should cover the remaining non-upgraded consumers, rather than celebrating a high average coverage while stragglers continue to determine the platform's upgrade burden.",
+          "supports": "C2",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#outcomes-and-negative-lessons",
+          "quote": "Total adoption may require expensive tail support.",
+          "supports": "C2",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C3",
+      "text": "The cited Spotify case supplies no adoption percentage and no audited cross-fleet adoption curve, time-saved figure, or defect-escape rate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#outcomes-and-negative-lessons",
+          "quote": "They distinguish goals, successful practices and future plans; adoption percentages are not supplied in this article.",
+          "supports": "C3",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+          "quote": "It does not publish one audited cross-fleet before/after adoption curve, total time saved, or defect escape rate.",
+          "supports": "C3",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C4",
+      "text": "The 99% hidden-migrations figure was a 2020 future aspiration, not a delivered product feature or outcome.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+          "quote": "the stated **99% hidden migrations** was a *future aspiration*, not a delivered product feature or outcome",
+          "supports": "C4",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#outcomes-and-negative-lessons",
+          "quote": "Do not infer that Spotify's stated aspiration to hide 99% of migrations was already achieved in 2020.",
+          "supports": "C4",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C5",
+      "text": "A completion claim is unsupported when stale services are exempted without recorded policy, production deployables remain on old binaries, generated PRs lack semantic tests, or the owner map omits unsupported but critical consumers.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+          "quote": "**Refuse 100% completion** when stale services are simply exempted without recorded policy, known production deployables remain on old binaries, generated PRs have no semantic tests, or the owner map omits unsupported but critical consumers.",
+          "supports": "C5",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C6",
+      "text": "Exceptions may be legitimate, but they must be visible, evidence-backed and managed rather than concealed in a rounded percentage; completion should not be announced while a large exception set is active.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+          "quote": "Targeted cohort exceptions may be accepted with evidence, but they must be visible and managed rather than concealed in a rounded percentage.",
+          "supports": "C6",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#a-source-grounded-adoption-reversal-rubric-tycho-synthesis",
+          "quote": "Avoid announcing that dependency enforcement has been completed when a large exception set is still active.",
+          "supports": "C6",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C7",
+      "text": "A migration owner or product manager must remain accountable for exceptional consumers through the long tail, and that product accountability must connect to the actual technical owner of each service.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#treat-internal-migrations-as-products-with-accountable-owners",
+          "quote": "| Migration owner / PM | Accountable for coordination and exceptional consumers through the long tail | Product accountability must connect to actual technical owner of each service |",
+          "supports": "C7",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C8",
+      "text": "Exception handling requires accountable owners, scheduled review, explicit reduction targets and new-violation-only enforcement, not a claim of universal compliance.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#testable-and-reversible-decision-transfer",
+          "quote": "Enable **new-violation-only rejection** for the pilot while older exceptions have accountable owners and a scheduled review, not an unsupported claim of universal zero violations.",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#migration-and-validation",
+          "quote": "grandfather known exceptions with explicit reduction targets",
+          "supports": "C8",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#a-source-grounded-adoption-reversal-rubric-tycho-synthesis",
+          "quote": "Avoid announcing that dependency enforcement has been completed when a large exception set is still active.",
+          "supports": "C8",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C9",
+      "text": "Migrations must be run as internal products with prioritization, training, quality and ownership.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#migration-mechanics-and-reliability",
+          "quote": "treating migration as an internal product with training, quality and ownership",
+          "supports": "C9",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C10",
+      "text": "A durable upgrade path requires a machine-readable upgrade recipe, compatibility exceptions, a sample pull request, and rollout/recovery criteria.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "Assign an accountable PM/technical pair per migration; publish a machine-readable upgrade recipe, compatibility exceptions, sample pull request and rollout/recovery criteria.",
+          "supports": "C10",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C11",
+      "text": "The last teams require tracking, targeted assistance and sometimes hands-on work; total adoption can require expensive tail support.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+          "quote": "The source discusses tracking, direct assistance and sometimes hands-on work with the last teams.",
+          "supports": "C11",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#outcomes-and-negative-lessons",
+          "quote": "Total adoption may require expensive tail support.",
+          "supports": "C11",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C12",
+      "text": "Old platform support must not be removed until the allowed exception register, recovery plan and actual dependent production versions justify it, and a reliable completion signal must exist before a library is retired.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "Do not remove old platform support until the allowed exception register, recovery plan, and actual dependent production versions justify it.",
+          "supports": "C12",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#migration-mechanics-and-reliability",
+          "quote": "A new platform should also define incompatible consumer handling and a reliable completion signal before retiring a library.",
+          "supports": "C12",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C13",
+      "text": "A generated pull request is a proposal, not completion: generation, review, merge, build, deployment and verification are distinct acceptance states.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#treat-internal-migrations-as-products-with-accountable-owners",
+          "quote": "PR generated is not PR merged, deployed, tested or monitored",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "These are different acceptance states.",
+          "supports": "C13",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "Keep status **proposed**, not “migrated”",
+          "supports": "C13",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C14",
+      "text": "Rollout and merge counts do not establish completion; 240 rolled-out PRs are not proof of 240 merges or of 1,800 migrations complete.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+          "quote": "Rollout metric; **not** proof of 240 merges or of 1,800 migrations complete",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "The cited lineage population of about **1,800 direct pipelines** is an impact estimate for two datasets",
+          "supports": "C14",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+          "quote": "it must not be reported as the set successfully changed",
+          "supports": "C14",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C15",
+      "text": "PR automation without semantic tests cannot be accepted as verified, and missing tests must not be labeled as passed.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "A compile-success label and a visually plausible SQL diff are not correctness evidence.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "Do not smooth away the long tail by reporting only automatic successes.",
+          "supports": "C15",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "do not label missing tests as passed",
+          "supports": "C15",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C16",
+      "text": "Dashboard version metadata records visible or declared status, not the deployed binary or business result; true deployed versions must be inventoried separately from repository default branches.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#treat-internal-migrations-as-products-with-accountable-owners",
+          "quote": "Version metadata does not prove the deployed binary or business result",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "Inventory true *deployed* versions, consumer owners, unsupported dependencies, health/recovery obligations and change lead time; distinguish repository default branch from production artifact.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#outcomes-and-negative-lessons",
+          "quote": "A migration dashboard is not proof that consumers can upgrade safely.",
+          "supports": "C16",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+          "quote": "Use a Backstage-like portal only when its metadata cost and freshness guarantees are justified.",
+          "supports": "C16",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C17",
+      "text": "A transition requires decommissioning evidence for all old callers and subscriptions and an observed gate rather than a calendar milestone.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "decommissioning evidence for all old callers/subscriptions.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "A transition state should end with **an observed gate**, not a calendar milestone.",
+          "supports": "C17",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "named change owner and approved versions/assets;",
+          "supports": "C17",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C18",
+      "text": "The quantitative figures in the case corpus are self-reported estimates, hypotheticals, activity metrics or long-term goals, not independently audited outcomes.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+          "quote": "Hypothetical estimated manual effort; not measured savings or quality",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+          "quote": "Self-reported estimate; no claim of independently audited defect rate",
+          "supports": "C18",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+          "quote": "Earlier cross-fleet background-agent total; **not** identical to src.m9-sp03's 240 targeted PRs",
+          "supports": "C18",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C19",
+      "text": "Inference, not a source claim: disbanding a migration team is supportable only if residual ownership, exception handling, enforcement and sunset authority are transferred to named durable owners.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#treat-internal-migrations-as-products-with-accountable-owners",
+          "quote": "| Migration owner / PM | Accountable for coordination and exceptional consumers through the long tail | Product accountability must connect to actual technical owner of each service |",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract",
+          "quote": "named change owner and approved versions/assets;",
+          "supports": "C19",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#testable-and-reversible-decision-transfer",
+          "quote": "Enable **new-violation-only rejection** for the pilot while older exceptions have accountable owners and a scheduled review",
+          "supports": "C19",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C20",
+      "text": "Per-consumer verified deployment plus a managed exception register are the relevant completion evidence, and cohort tracking must keep merged, built, deployed and verified states separate.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+          "quote": "Track *merged, built, deployed, verified* versions separately, by cohort and elapsed time; give special attention to long-tail critical consumers.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+          "quote": "Record every excluded/ambiguous mapping and every generated, reviewed, merged, deployed or rolled-back PR **as separate status**.",
+          "supports": "C20",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+          "quote": "**Refuse 100% completion** when stale services are simply exempted without recorded policy",
+          "supports": "C20",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C21",
+      "text": "The source diagnoses the 2017 baseline as a work-ownership and attention-budget failure, and its governance response was a negotiated single migration map with estimated cost, affected consumers and deadlines rather than a purely technical fix.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance",
+          "quote": "This is a **work ownership and attention-budget failure**, not evidence that Gradle, Kafka or any one runtime was technically inadequate.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance",
+          "quote": "Each candidate had an estimated engineering cost, affected consumers and deadline before being put on the roadmap.",
+          "supports": "C21",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance",
+          "quote": "The post states that aligning **45+ infrastructure product managers** plus many engineers took significant negotiation; the new governance was not automatically free or universally welcomed.",
+          "supports": "C21",
+          "status": "observed"
+        }
+      ]
+    },
+    {
+      "claim_id": "C22",
+      "text": "Shopify's 2020 report describes about one third adoption of Packwerk restrictions and total dependency acyclicity as a long-term goal, which is first-party partial adoption rather than completed enforcement.",
+      "evidence": [
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#the-2020-rollout-precisely-scoped",
+          "quote": "**About one third** adopting Packwerk restrictions",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#the-2020-rollout-precisely-scoped",
+          "quote": "Total component dependency acyclicity as a **long-term goal**",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#the-2020-rollout-precisely-scoped",
+          "quote": "A desired improvement, not a published completed result",
+          "supports": "C22",
+          "status": "observed"
+        },
+        {
+          "section_key": "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#the-2020-rollout-precisely-scoped",
+          "quote": "They are first-party historical reports, not independently reproduced measurements or extrapolated productivity gains.",
+          "supports": "C22",
+          "status": "observed"
+        }
+      ]
+    }
+  ],
+  "citations": [
+    "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#a-source-grounded-adoption-reversal-rubric-tycho-synthesis",
+    "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#migration-and-validation",
+    "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#testable-and-reversible-decision-transfer",
+    "tycho.page.09cb313598ad41bbafd7b10d9b4e8018#the-2020-rollout-precisely-scoped",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#a-versioned-transformation-contract-for-each-consumer-cohort",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#controlling-progress-and-measuring-failure-honestly",
+    "tycho.page.acfab58bfa6b470ca28010ac561dfeef#quantitative-claims-and-why-they-cannot-be-mixed",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#decision-alternatives-and-failure-gates",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#migration-mechanics-and-reliability",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#outcomes-and-negative-lessons",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#synthetic-adoption-process-for-an-independent-fleet",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-actual-2017-to-2020-transition-in-migration-governance",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#the-explicit-incompleteness-trap-the-last-few-percent",
+    "tycho.page.b9bdcfd7c9a84e2ba3dd446bae8e63c2#treat-internal-migrations-as-products-with-accountable-owners",
+    "tycho.page.ea1c3ca31f974bcbb6a432c55e56bc03#7-go-no-go-and-the-no-return-contract"
+  ],
+  "missing_required_anchors": [],
+  "abstain": false
+}
